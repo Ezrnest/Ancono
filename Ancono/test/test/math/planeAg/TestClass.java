@@ -42,6 +42,7 @@ public class TestClass {
 		print(cs);
 		print(pt.apply(p));
 		print(cs.contains(pt.apply(p)));
+		print("Test completed.");
 	}
 	
 	

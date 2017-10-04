@@ -8,7 +8,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.planeAG.PAffineTrans;
@@ -22,7 +21,6 @@ import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
  *
  */
 public class TestClass {
-
 	/**
 	 * 
 	 */

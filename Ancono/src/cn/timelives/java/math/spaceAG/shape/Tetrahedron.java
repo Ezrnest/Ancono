@@ -107,16 +107,12 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @see cn.timelives.java.utilities.math.spaceAG.shape.Polyhedron#getEdges()
 	 */
 	@Override
-	public Set<Line<T>> getEdges() {
-		Set<Line<T>> set = new HashSet<>(EGDE_NUM);
+	public Set<Segment<T>> getEdges() {
+		Set<Segment<T>> set = new HashSet<>(EGDE_NUM);
 		for(int i=0;i<EGDE_NUM;i++){
-			set.add(es[i].getLine());
+			set.add(es[i]);
 		}
 		return set;
-	}
-	
-	public Set<Segment<T>> getSegments(){
-		return ArraySup.createSet(es);
 	}
 
 	/* (non-Javadoc)

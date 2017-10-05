@@ -1,4 +1,4 @@
-package cn.timelives.java.math.planeAG;
+package test.math.planeAg;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.print_;
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.LinearEquationSolution;
@@ -22,13 +21,19 @@ import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.Formula;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
+import cn.timelives.java.math.numberModels.FracPoly;
 import cn.timelives.java.math.numberModels.Fraction;
-import cn.timelives.java.math.numberModels.FractionalPoly;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.PolyCalculator;
 import cn.timelives.java.math.numberModels.Polynomial;
 import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.planeAG.Circle;
+import cn.timelives.java.math.planeAG.Line;
+import cn.timelives.java.math.planeAG.LineSup;
+import cn.timelives.java.math.planeAG.PVector;
+import cn.timelives.java.math.planeAG.Point;
+import cn.timelives.java.math.planeAG.Triangle;
 import cn.timelives.java.math.planeAG.curve.EllipseV;
 import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
 import cn.timelives.java.math.planeAG.curve.HyperbolaV;
@@ -255,15 +260,15 @@ import cn.timelives.java.utilities.Printer;
 		pos[3] = new Polynomial(fc, Formula.valueOf("d[y1]"));
 		pos[4] = new Polynomial(fc, Formula.valueOf("d[y2]"));
 		pos[5] = new Polynomial(fc, Formula.valueOf("d[y3]"));
-		FractionalPoly[] fps = new FractionalPoly[6];
+		FracPoly[] fps = new FracPoly[6];
 		for (int i = 0; i < 6; i++) {
-			fps[i] = FractionalPoly.valueOf(pos[i]);
+			fps[i] = FracPoly.valueOf(pos[i]);
 		}
-		MathCalculator<FractionalPoly> mcfp = FractionalPoly.getCalculator();
-		Point<FractionalPoly> pa = new Point<>(mcfp, fps[0], fps[1]);
-		Point<FractionalPoly> pb = new Point<>(mcfp, fps[2], fps[3]);
-		Point<FractionalPoly> pc = new Point<>(mcfp, fps[4], fps[5]);
-		Triangle<FractionalPoly> tri = Triangle.fromVertex(mcfp, pa, pb, pc);
+		MathCalculator<FracPoly> mcfp = FracPoly.getCalculator();
+		Point<FracPoly> pa = new Point<>(mcfp, fps[0], fps[1]);
+		Point<FracPoly> pb = new Point<>(mcfp, fps[2], fps[3]);
+		Point<FracPoly> pc = new Point<>(mcfp, fps[4], fps[5]);
+		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, pa, pb, pc);
 //		print(dealWith(tri.centerG().toString()));
 //		print(dealWith(tri.centerH().toString()));
 		ps[0] = tri.centerO();
@@ -273,20 +278,20 @@ import cn.timelives.java.utilities.Printer;
 	}
 	FormulaCalculator fc = FormulaCalculator.getCalculator();
 	MathCalculator<Polynomial> fcp = Polynomial.getCalculator();
-	MathCalculator<FractionalPoly> mcfp = FractionalPoly.getCalculator(false);
+	MathCalculator<FracPoly> mcfp = FracPoly.getCalculator(false);
 	
 	final int def_size = 32;
 	Polynomial[] pos = new Polynomial[def_size];
-	FractionalPoly[] fps = new FractionalPoly[def_size];
+	FracPoly[] fps = new FracPoly[def_size];
 	@SuppressWarnings("unchecked")
-	Point<FractionalPoly>[] ps = new Point[def_size];
+	Point<FracPoly>[] ps = new Point[def_size];
 	
 	
 	
 	void compute(){
 		for (int i = 0; i < pos.length; i++) {
 			if (pos[i] != null)
-				fps[i] = FractionalPoly.valueOf(pos[i]);
+				fps[i] = FracPoly.valueOf(pos[i]);
 		}
 	}
 	
@@ -304,19 +309,19 @@ import cn.timelives.java.utilities.Printer;
 		print(pos[7]);
 		pos[8] = new Polynomial(fc, "a^2/3");
 		compute();
-		fps[6] = mcfp.subtract(FractionalPoly.ONE, fps[5]);
-		Point<FractionalPoly> A = new Point<>(mcfp, fps[1], fps[1]);
-		Point<FractionalPoly> B = new Point<>(mcfp, fps[0], mcfp.negate(fps[1]));
-		Point<FractionalPoly> D = new Point<>(mcfp, fps[2], fps[0]);
-		Point<FractionalPoly> C = new Point<>(mcfp, fps[3], fps[4]);
-		Point<FractionalPoly> E = A.proportionPoint(C, fps[5]);
-		Point<FractionalPoly> F = B.proportionPoint(C, fps[6]);
-		Line<FractionalPoly> ef = Line.twoPoint(E, F, mcfp);
-		Line<FractionalPoly> cd = Line.twoPoint(C, D, mcfp);
+		fps[6] = mcfp.subtract(FracPoly.ONE, fps[5]);
+		Point<FracPoly> A = new Point<>(mcfp, fps[1], fps[1]);
+		Point<FracPoly> B = new Point<>(mcfp, fps[0], mcfp.negate(fps[1]));
+		Point<FracPoly> D = new Point<>(mcfp, fps[2], fps[0]);
+		Point<FracPoly> C = new Point<>(mcfp, fps[3], fps[4]);
+		Point<FracPoly> E = A.proportionPoint(C, fps[5]);
+		Point<FracPoly> F = B.proportionPoint(C, fps[6]);
+		Line<FracPoly> ef = Line.twoPoint(E, F, mcfp);
+		Line<FracPoly> cd = Line.twoPoint(C, D, mcfp);
 		A = ef.intersectPoint(cd);
 		print(A);
 		print_();
-		FractionalPoly fpx = A.x;
+		FracPoly fpx = A.x;
 		print(fcp.subtract(fpx.getNume(), fcp.multiply(fpx.getDeno(), pos[7])));
 		fpx = A.y;
 		print(fcp.subtract(fpx.getNume(), fcp.multiply(fpx.getDeno(), pos[8])));
@@ -358,15 +363,15 @@ import cn.timelives.java.utilities.Printer;
 		ps[0] = new Point<>(mcfp,fps[0],fps[1]);
 		ps[1] = new Point<>(mcfp,fps[2],fps[0]);
 		ps[2] = new Point<>(mcfp,fps[3],fps[0]);
-		Triangle<FractionalPoly> tri = Triangle.fromVertex(mcfp, ps[0], ps[1], ps[2]);
+		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, ps[0], ps[1], ps[2]);
 		print(tri.centerO());
 	}
 	void m18(){
 		inputPoly("0","2","2");
 		compute();
-		Circle<FractionalPoly> cr = Circle.centerAndRadius(new Point<>(mcfp,fps[0],fps[0]), fps[1], mcfp);
+		Circle<FracPoly> cr = Circle.centerAndRadius(new Point<>(mcfp,fps[0],fps[0]), fps[1], mcfp);
 		print(cr);
-		Line<FractionalPoly> l = Line.slopeIntercept(fps[2], fps[0], mcfp);
+		Line<FracPoly> l = Line.slopeIntercept(fps[2], fps[0], mcfp);
 		print(l);
 		print(cr.intersectPoints(l));
 				
@@ -390,9 +395,9 @@ import cn.timelives.java.utilities.Printer;
 		inputPoly("a,b,3-b,3-a,2,3,1");
 		ps[0] = Point.valueOf(fps[0], fps[1], mcfp);
 		ps[1] = Point.valueOf(fps[2], fps[3], mcfp);
-		Line<FractionalPoly> l = LineSup.perpendicularMiddleLine(ps[0], ps[1]);
+		Line<FracPoly> l = LineSup.perpendicularMiddleLine(ps[0], ps[1]);
 		print(l);
-		Circle<FractionalPoly> cir = Circle.centerAndRadius(
+		Circle<FracPoly> cir = Circle.centerAndRadius(
 				Point.valueOf(fps[4], fps[5], mcfp), fps[6], mcfp);
 		l = Line.generalFormula(fps[5],fps[5], fps[4], mcfp);
 		cir = cir.symmetryCircle(l);
@@ -406,8 +411,8 @@ import cn.timelives.java.utilities.Printer;
 		b = of(3,-1);
 		Circle<Fraction> c1 = Circle.centerAndRadius(a, Fraction.valueOf(1), mc);
 		Circle<Fraction> c2 = Circle.centerAndRadius(b, Fraction.valueOf(3), mc);
-		Circle<FractionalPoly> c1f = c1.mapTo(CodePlace::mapperFF, mcfp);
-		Circle<FractionalPoly> c2f = c2.mapTo(CodePlace::mapperFF, mcfp);
+		Circle<FracPoly> c1f = c1.mapTo(CodePlace::mapperFF, mcfp);
+		Circle<FracPoly> c2f = c2.mapTo(CodePlace::mapperFF, mcfp);
 		c1f.outerCommonTangentLine(c2f).forEach(l -> 
 		{
 //			print(l.mapTo(CodePlace::mapperPF, mc).simplify(Fraction.getFractionSimplifier()));
@@ -417,19 +422,19 @@ import cn.timelives.java.utilities.Printer;
 	
 	void m22(){
 		inputPoly("0,1,-1,a,a^2,k,1-k");
-		Point<FractionalPoly> point_A = Point.valueOf(fps[1], fps[1], mcfp);
-		GeneralConicSection<FractionalPoly> c = GeneralConicSection.generalFormula(
+		Point<FracPoly> point_A = Point.valueOf(fps[1], fps[1], mcfp);
+		GeneralConicSection<FracPoly> c = GeneralConicSection.generalFormula(
 				Arrays.asList(fps[1],fps[0],fps[0],fps[0],fps[2],fps[0]), mcfp);
 		print(c);
-		Line<FractionalPoly> line_AB = c.tangentLine(point_A);
-		Point<FractionalPoly> point_B = Point.valueOf(fps[0],line_AB.computeY(fps[0]),mcfp);
-		Point<FractionalPoly> point_C = Point.valueOf(fps[3], fps[4], mcfp);
-		Point<FractionalPoly> point_D = line_AB.intersectPoint(of(0,1,0).mapTo(CodePlace::mapperFF, mcfp));
-		Point<FractionalPoly> point_E = point_A.proportionPoint(point_C, fps[5]);
-		Point<FractionalPoly> point_F = point_B.proportionPoint(point_C, fps[6]);
-		Line<FractionalPoly> line_EF = Line.twoPoint(point_E, point_F, mcfp);
-		Line<FractionalPoly> line_CD = Line.twoPoint(point_C, point_D, mcfp);
-		Point<FractionalPoly> point_P = line_EF.intersectPoint(line_CD);
+		Line<FracPoly> line_AB = c.tangentLine(point_A);
+		Point<FracPoly> point_B = Point.valueOf(fps[0],line_AB.computeY(fps[0]),mcfp);
+		Point<FracPoly> point_C = Point.valueOf(fps[3], fps[4], mcfp);
+		Point<FracPoly> point_D = line_AB.intersectPoint(of(0,1,0).mapTo(CodePlace::mapperFF, mcfp));
+		Point<FracPoly> point_E = point_A.proportionPoint(point_C, fps[5]);
+		Point<FracPoly> point_F = point_B.proportionPoint(point_C, fps[6]);
+		Line<FracPoly> line_EF = Line.twoPoint(point_E, point_F, mcfp);
+		Line<FracPoly> line_CD = Line.twoPoint(point_C, point_D, mcfp);
+		Point<FracPoly> point_P = line_EF.intersectPoint(line_CD);
 		
 		print(simp(point_P.x));
 		print_();
@@ -438,11 +443,11 @@ import cn.timelives.java.utilities.Printer;
 	}
 	
 	
-	private static FractionalPoly mapperFF(Fraction f){
-		return FractionalPoly.valueOf(new Polynomial(PolyCalculator.DEFALUT_CALCULATOR.getCal(),f.toString()));
+	private static FracPoly mapperFF(Fraction f){
+		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFALUT_CALCULATOR.getCal(),f.toString()));
 	}
 	
-	private static Fraction mapperPF(FractionalPoly fp){
+	private static Fraction mapperPF(FracPoly fp){
 		Fraction n = getFraction(fp.getNume());
 		Fraction d = getFraction(fp.getDeno());
 		return n.divide(d);
@@ -460,8 +465,8 @@ import cn.timelives.java.utilities.Printer;
 		return p.getFormulaList().get(0).getDenominator().longValueExact();
 	}
 	
-	private static final Simplifier<FractionalPoly> sim = FractionalPoly.getSimplifier();
-	private static FractionalPoly simp(FractionalPoly fp){
+	private static final Simplifier<FracPoly> sim = FracPoly.getSimplifier();
+	private static FracPoly simp(FracPoly fp){
 		
 		return sim.simplify(Arrays.asList(fp)).get(0);
 	}
@@ -476,9 +481,9 @@ import cn.timelives.java.utilities.Printer;
 	
 	void m24(){
 		inputPoly("12,5,1,1,0");
-		EllipseV<FractionalPoly> ell = EllipseV.standardEquation(fps[0], fps[1],true, mcfp);
-		Line<FractionalPoly> l = Line.generalFormula(fps[2], fps[3],fps[4], mcfp);
-		Vector<FractionalPoly> vec = l.directionVector();
+		EllipseV<FracPoly> ell = EllipseV.standardEquation(fps[0], fps[1],true, mcfp);
+		Line<FracPoly> l = Line.generalFormula(fps[2], fps[3],fps[4], mcfp);
+		Vector<FracPoly> vec = l.directionVector();
 		ell.directTanLine(vec.getNumber(0), vec.getNumber(1))
 		.forEach(line -> print(sim(line.mapTo(CodePlace::mapperPF, mc))));
 	}
@@ -486,8 +491,8 @@ import cn.timelives.java.utilities.Printer;
 	
 	void m25(){
 		inputPoly("1,2,4,Sqr3,82/7");
-		EllipseV<FractionalPoly> ell = EllipseV.generalFormula(fps[0], fps[1],fps[2], mcfp);
-		Line<FractionalPoly> line = Line.slopeIntercept(fps[3],fps[3], mcfp);
+		EllipseV<FracPoly> ell = EllipseV.generalFormula(fps[0], fps[1],fps[2], mcfp);
+		Line<FracPoly> line = Line.slopeIntercept(fps[3],fps[3], mcfp);
 		print(ell);
 		print(line);
 		print(ell.chordLength(line));
@@ -497,7 +502,7 @@ import cn.timelives.java.utilities.Printer;
 	
 	void m26(){
 		inputPoly("2,Sqr3,-1/4,1");
-		EllipseV<FractionalPoly> e = EllipseV.standardEquation(fps[0], fps[1], true, mcfp);
+		EllipseV<FracPoly> e = EllipseV.standardEquation(fps[0], fps[1], true, mcfp);
 		print(e.directTanLine(fps[2], fps[3]));
 	}
 	
@@ -505,13 +510,13 @@ import cn.timelives.java.utilities.Printer;
 	
 	void m27(){
 		inputPoly("3,2,Pi/3");
-		EllipseV<FractionalPoly> ell = EllipseV.standardEquation(fps[0], fps[1],true, mcfp);
+		EllipseV<FracPoly> ell = EllipseV.standardEquation(fps[0], fps[1],true, mcfp);
 		print(ell);
-		print(ell.trianlgeArea(fps[2], fp -> FractionalPoly.valueOf(new PolyCalculator().tan(fp.getNume()))));
+		print(ell.trianlgeArea(fps[2], fp -> FracPoly.valueOf(new PolyCalculator().tan(fp.getNume()))));
 	}
 	
-	public static FractionalPoly tanF(FractionalPoly fp){
-		return FractionalPoly.valueOf(new PolyCalculator().tan(fp.getNume()));
+	public static FracPoly tanF(FracPoly fp){
+		return FracPoly.valueOf(new PolyCalculator().tan(fp.getNume()));
 	}
 	
 	void m28(){
@@ -598,18 +603,18 @@ import cn.timelives.java.utilities.Printer;
 	void m32(){
 		inputPoly("3,1,Pi/6");
 		//�������ݣ�������Բ�Ĺ��캯������a,b����������3,1
-		EllipseV<FractionalPoly> ell = EllipseV.standardEquation(fps[0], fps[1], mcfp);
+		EllipseV<FracPoly> ell = EllipseV.standardEquation(fps[0], fps[1], mcfp);
 		//����һ����Բ��fps[0] = 3,fps[1] = 1 , mcfp �Ǽ�����
-		Point<FractionalPoly> f1 = ell.foci().get(0);
+		Point<FracPoly> f1 = ell.foci().get(0);
 		//ell.foci()����������Բ���������㣬get(0)����󽹵�
-		Line<FractionalPoly> line = Line.pointSlope(f1, tanF(fps[2]), mcfp);
+		Line<FracPoly> line = Line.pointSlope(f1, tanF(fps[2]), mcfp);
 		//������󽹵��ֱ�ߡ�
 		print(ell);
 		print(ell.chordLength(line));
 		//���
-		Line<FractionalPoly> l2 = ell.chordMPL(line);
+		Line<FracPoly> l2 = ell.chordMPL(line);
 		//��ù����ĺ����е��ֱ��
-		Point<FractionalPoly> m = l2.intersectPoint(line);
+		Point<FracPoly> m = l2.intersectPoint(line);
 		//��ֱ�߽��㣬�õ����ĵ�����
 		print(f1.distance(m));
 		//���
@@ -640,22 +645,22 @@ import cn.timelives.java.utilities.Printer;
 //		print(hv);
 //		print(l);
 		MathCalculator<Formula> mc = Formula.getCalculator();
-		EllipseV<FractionalPoly> ell = EllipseV.standardEquationSqrt(Formula.valueOf("3"), Formula.ONE, true, mc)
+		EllipseV<FracPoly> ell = EllipseV.standardEquationSqrt(Formula.valueOf("3"), Formula.ONE, true, mc)
 				.mapTo(CodePlace::mapperFF2, mcfp);
 		print(ell);
-		Circle<FractionalPoly> cir = Circle.centerAndRadius(Point.pointO(mc), Formula.valueOf("Sqr6"), mc).mapTo(CodePlace::mapperFF2, mcfp);;
+		Circle<FracPoly> cir = Circle.centerAndRadius(Point.pointO(mc), Formula.valueOf("Sqr6"), mc).mapTo(CodePlace::mapperFF2, mcfp);;
 		print(cir);
-		Point<FractionalPoly> p = Point.valueOf(Formula.valueOf("cSqr6"), Formula.valueOf("sSqr6"), mc).mapTo(CodePlace::mapperFF2, mcfp);;
+		Point<FracPoly> p = Point.valueOf(Formula.valueOf("cSqr6"), Formula.valueOf("sSqr6"), mc).mapTo(CodePlace::mapperFF2, mcfp);;
 		print(p);
-		Line<FractionalPoly> line = Line.pointSlope(p, mapperFF2(Formula.valueOf("k")), mcfp);
+		Line<FracPoly> line = Line.pointSlope(p, mapperFF2(Formula.valueOf("k")), mcfp);
 		print(line);
-		QEquation<FractionalPoly> eq = ell.createEquationX(line);
+		QEquation<FracPoly> eq = ell.createEquationX(line);
 		print(eq);
-		FractionalPoly delta = eq.delta();
+		FracPoly delta = eq.delta();
 		print(delta);
 	}
-	static FractionalPoly mapperFF2(Formula f){
-		return FractionalPoly.valueOf(new Polynomial(PolyCalculator.DEFALUT_CALCULATOR.getCal(),f));
+	static FracPoly mapperFF2(Formula f){
+		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFALUT_CALCULATOR.getCal(),f));
 	}
 	
 	
@@ -663,17 +668,17 @@ import cn.timelives.java.utilities.Printer;
 		
 		//first: a parabola
 		inputPoly("p,d[y1],d[y2],d[y3]");
-		GeneralConicSection<FractionalPoly> parabola = GeneralConicSection.parabola(fps[0], mcfp);
+		GeneralConicSection<FracPoly> parabola = GeneralConicSection.parabola(fps[0], mcfp);
 		print(parabola);
 		//computes y
 		fps[4] = toX(fps[1]);
 		fps[5] = toX(fps[2]);
 		fps[6] = toX(fps[3]);
 		ps[0] = Point.valueOf(fps[4],fps[1] , mcfp);
-		Line<FractionalPoly> l1 = parabola.tangentLine(ps[0]);
-		Line<FractionalPoly> l2 = parabola.tangentLine(Point.valueOf(fps[5],fps[2] , mcfp));
-		Line<FractionalPoly> l3 = parabola.tangentLine(Point.valueOf(fps[6],fps[3] , mcfp));
-		Line<FractionalPoly> l4 ;
+		Line<FracPoly> l1 = parabola.tangentLine(ps[0]);
+		Line<FracPoly> l2 = parabola.tangentLine(Point.valueOf(fps[5],fps[2] , mcfp));
+		Line<FracPoly> l3 = parabola.tangentLine(Point.valueOf(fps[6],fps[3] , mcfp));
+		Line<FracPoly> l4 ;
 		print(dealWith(l1.toString()));
 		ps[0] = l1.intersectPoint(l2);
 		ps[1] = l2.intersectPoint(l3);
@@ -710,7 +715,7 @@ import cn.timelives.java.utilities.Printer;
 		print("SUB = "+dealWith(mcfp.add(fps[0], fps[1])));
 	}
 	
-	FractionalPoly toX(FractionalPoly fp){
+	FracPoly toX(FracPoly fp){
 		return mcfp.divide(mcfp.multiply(fp, fp),mcfp.multiplyLong(fps[0], 2l));
 	}
 	
@@ -718,14 +723,14 @@ import cn.timelives.java.utilities.Printer;
 	
 	void m36(){
 		inputPoly("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3],x,y");
-		Triangle<FractionalPoly> tri = Triangle.fromVertex(mcfp, fps[0], fps[3], 
+		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, fps[0], fps[3], 
 				fps[1], fps[4], 
 				fps[2], fps[5]);
-		Point<FractionalPoly> i = Point.valueOf(fps[6],fps[7], mcfp);
+		Point<FracPoly> i = Point.valueOf(fps[6],fps[7], mcfp);
 		ps[0] = tri.vertexA();
 		ps[1] = tri.vertexB();
 		ps[2] = tri.vertexC();
-		PVector<FractionalPoly> v1 , v2 ,v3;
+		PVector<FracPoly> v1 , v2 ,v3;
 		v1 = PVector.vector(ps[0],i).multiplyNumber(Triangle.fromVertex(mcfp, i,ps[1],ps[2]).areaPN());
 		v2 = PVector.vector(ps[1],i).multiplyNumber(Triangle.fromVertex(mcfp, i,ps[2],ps[0]).areaPN());
 		v3 = PVector.vector(ps[2],i).multiplyNumber(Triangle.fromVertex(mcfp, i,ps[0],ps[1]).areaPN());
@@ -762,7 +767,7 @@ import cn.timelives.java.utilities.Printer;
 		int d = 4; 
 		int len = d*(d+2);
 		pos = new Polynomial[len];
-		fps = new FractionalPoly[len];
+		fps = new FracPoly[len];
 		for(int i=0;i<=d+1;i++){
 			for(int j=0;j<d;j++){
 				pos[d*i+j] = Polynomial.valueOf("x["+i+","+(j+1)+"]");
@@ -770,9 +775,9 @@ import cn.timelives.java.utilities.Printer;
 		}
 		compute();
 		@SuppressWarnings("unchecked")
-		Vector<FractionalPoly>[] vs = new Vector[d+1];
+		Vector<FracPoly>[] vs = new Vector[d+1];
 		for(int i=0;i<=d+1;i++){
-			FractionalPoly[] fp = Arrays.copyOfRange(fps, d*i, d*i+d);
+			FracPoly[] fp = Arrays.copyOfRange(fps, d*i, d*i+d);
 			vs[i] = Vector.createVector(mcfp, fp);
 		}
 		//input part 
@@ -780,14 +785,14 @@ import cn.timelives.java.utilities.Printer;
 		
 		
 		for(int i=1;i<=d+1;i++){
-			FractionalPoly[][] mat = new FractionalPoly[d+1][d+1];
+			FracPoly[][] mat = new FracPoly[d+1][d+1];
 			for(int a=0;a<=d;a++){
 				for(int b=0;b<d;b++){
 //					mat[a][b] = 
 					//TODO
 				}
 			}
-			Matrix<FractionalPoly> matrix = Matrix.valueOf(mat, mcfp);
+			Matrix<FracPoly> matrix = Matrix.valueOf(mat, mcfp);
 		}
 	}
 	

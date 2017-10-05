@@ -13,17 +13,37 @@ import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculation
  * @author lyc
  *
  */
-public class FractionalPoly {
+public class FracPoly {
 	
 	private final Polynomial nume,deno;
 	
-	public static final FractionalPoly ZERO = new FractionalPoly(Polynomial.ZERO, Polynomial.ONE);
-	public static final FractionalPoly ONE = new FractionalPoly(Polynomial.ONE, Polynomial.ONE);
+	public static final FracPoly ZERO = new FracPoly(Polynomial.ZERO, Polynomial.ONE);
+	public static final FracPoly ONE = new FracPoly(Polynomial.ONE, Polynomial.ONE);
 	
 	
-	FractionalPoly(Polynomial nume,Polynomial deno){
+	FracPoly(Polynomial nume,Polynomial deno){
 		this.nume = nume;
 		this.deno = deno;
+	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return nume.hashCode() * 31 +deno.hashCode();
+	}
+	
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof FracPoly)) {
+			return false;
+		}
+		FracPoly fp = (FracPoly) obj;
+		return nume.equals(fp.nume) && deno.equals(fp.deno);
 	}
 	
 	@Override
@@ -50,121 +70,121 @@ public class FractionalPoly {
 	}
 	
 	/**
-	 * Returns a FractionalPoly that is equal to {@code nume/deno}.This method will not try to simplify the fraction.
+	 * Returns a FracPoly that is equal to {@code nume/deno}.This method will not try to simplify the fraction.
 	 * @param nume 
 	 * @param deno!=0
 	 * @return
 	 */
-	public static FractionalPoly valueOf(Polynomial nume,Polynomial deno){
+	public static FracPoly valueOf(Polynomial nume,Polynomial deno){
 		if(Polynomial.ZERO.equals(deno)){
 			throw new ArithmeticException("Deno = 0");
 		}
-		return new FractionalPoly(requireNonNull(nume).clone(), requireNonNull(deno).clone());
+		return new FracPoly(requireNonNull(nume).clone(), requireNonNull(deno).clone());
 	}
 	
-	public static FractionalPoly valueOf(Polynomial p){
-		return new FractionalPoly(requireNonNull(p),Polynomial.ONE);
+	public static FracPoly valueOf(Polynomial p){
+		return new FracPoly(requireNonNull(p),Polynomial.ONE);
 	}
 	
 	private static final FPCalculator cal = new FPCalculator();
 	private static final FPCalculator calD = new FPCalculatorD();
 	
 	/**
-	 * Get a calculator for FractionalPoly,the calculator will try to simplify the fraction while calculating.
-	 * @return a calculator for FractionalPoly
+	 * Get a calculator for FracPoly,the calculator will try to simplify the fraction while calculating.
+	 * @return a calculator for FracPoly
 	 */
-	public static MathCalculator<FractionalPoly> getCalculator(){
+	public static MathCalculator<FracPoly> getCalculator(){
 		return cal;
 	}
 	/**
-	 * Get a calculator for FractionalPoly,if {@code disableCompare == true},the calculator will 
+	 * Get a calculator for FracPoly,if {@code disableCompare == true},the calculator will 
 	 * throw an UnsupportedCalculationException in {@code compare()} method.
 	 * @param disableCompare whether to disable compare
-	 * @return a calculator for FractionalPoly
+	 * @return a calculator for FracPoly
 	 */
-	public static MathCalculator<FractionalPoly> getCalculator(boolean disableCompare){
+	public static MathCalculator<FracPoly> getCalculator(boolean disableCompare){
 		if(disableCompare){
 			return calD;
 		}
 		return cal;
 	}
 	
-	static class FPCalculator extends MathCalculatorAdapter<FractionalPoly>{
+	static class FPCalculator extends MathCalculatorAdapter<FracPoly>{
 		
 		
 		
 		protected PolyCalculator pc = new PolyCalculator(1);
-		protected final FractionalPoly pi;
-		protected final FractionalPoly e;
+		protected final FracPoly pi;
+		protected final FracPoly e;
 		private FPCalculator() {
-			pi = FractionalPoly.valueOf(pc.constantValue(STR_PI));
-			e = FractionalPoly.valueOf(pc.constantValue(STR_E));
+			pi = FracPoly.valueOf(pc.constantValue(STR_PI));
+			e = FracPoly.valueOf(pc.constantValue(STR_E));
 		}
 		
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculatorAdapter#isZero(java.lang.Object)
 		 */
 		@Override
-		public boolean isZero(FractionalPoly para) {
+		public boolean isZero(FracPoly para) {
 			return pc.isEqual(para.nume, Polynomial.ZERO);
 		}
 		
 		
 		@Override
-		public boolean isEqual(FractionalPoly para1, FractionalPoly para2) {
+		public boolean isEqual(FracPoly para1, FracPoly para2) {
 			return pc.multiply(para1.nume, para2.deno).equals(pc.multiply(para1.deno, para2.nume));
 		}
 
 		@Override
-		public int compare(FractionalPoly para1, FractionalPoly para2) {
+		public int compare(FracPoly para1, FracPoly para2) {
 //			throw new UnsupportedCalculationException("Cannot compare polynomial");
 			Polynomial p1 = pc.multiply(para1.nume, para2.deno);
 			Polynomial p2 = pc.multiply(para2.nume, para1.deno);
 			return pc.compare(p1, p2);
 		}
 		
-		private FractionalPoly createPoly(Polynomial re1,Polynomial re2){
+		private FracPoly createPoly(Polynomial re1,Polynomial re2){
 			if(re1.equals(Polynomial.ZERO)){
 				re2 = Polynomial.ONE;
 			}else if(re2.getNumOfFormula()==1){
 				re1 = pc.divide(re1, re2);
 				re2 = Polynomial.ONE;
 			}
-			return new FractionalPoly(re1, re2); 
+			return new FracPoly(re1, re2); 
 		}
 		
 		
 		@Override
-		public FractionalPoly add(FractionalPoly para1, FractionalPoly para2) {
+		public FracPoly add(FracPoly para1, FracPoly para2) {
 			Polynomial re1 = pc.add(pc.multiply(para1.nume, para2.deno), pc.multiply(para1.deno, para2.nume));
 			Polynomial re2 = pc.multiply(para1.deno, para2.deno);
 			return createPoly(re1, re2);
 		}
 
 		@Override
-		public FractionalPoly negate(FractionalPoly para) {
-			return new FractionalPoly(pc.negate(para.nume), para.deno);
+		public FracPoly negate(FracPoly para) {
+			return new FracPoly(pc.negate(para.nume), para.deno);
 		}
 
 		@Override
-		public FractionalPoly abs(FractionalPoly para) {
-			return new FractionalPoly(pc.abs(para.nume), pc.abs(para.deno));
+		public FracPoly abs(FracPoly para) {
+			return new FracPoly(pc.abs(para.nume), pc.abs(para.deno));
 		}
 
 		@Override
-		public FractionalPoly subtract(FractionalPoly para1, FractionalPoly para2) {
+		public FracPoly subtract(FracPoly para1, FracPoly para2) {
 			Polynomial re1 = pc.subtract(pc.multiply(para1.nume, para2.deno), pc.multiply(para1.deno, para2.nume));
 			Polynomial re2 = pc.multiply(para1.deno, para2.deno);
 			return createPoly(re1, re2);
 		}
 
 		@Override
-		public FractionalPoly getZero() {
-			return FractionalPoly.ZERO;
+		public FracPoly getZero() {
+			return FracPoly.ZERO;
 		}
 
 		@Override
-		public FractionalPoly multiply(FractionalPoly para1, FractionalPoly para2) {
+		public FracPoly multiply(FracPoly para1, FracPoly para2) {
 			Polynomial p1n = para1.nume;
 			Polynomial p1d = para1.deno;
 			Polynomial p2n = para2.nume;
@@ -186,7 +206,7 @@ public class FractionalPoly {
 		}
 
 		@Override
-		public FractionalPoly divide(FractionalPoly para1, FractionalPoly para2) {
+		public FracPoly divide(FracPoly para1, FracPoly para2) {
 			if(para2.nume.equals(Polynomial.ZERO)){
 				throw new ArithmeticException("Divide by zero: /0");
 			}
@@ -212,44 +232,44 @@ public class FractionalPoly {
 		}
 
 		@Override
-		public FractionalPoly getOne() {
-			return FractionalPoly.ONE;
+		public FracPoly getOne() {
+			return FracPoly.ONE;
 		}
 
 		@Override
-		public FractionalPoly reciprocal(FractionalPoly p) {
+		public FracPoly reciprocal(FracPoly p) {
 //			pc.reciprocal(p);
 			Polynomial re1 = p.deno,re2 = p.nume;
 			return createPoly(re1, re2);
 		}
 
 		@Override
-		public FractionalPoly multiplyLong(FractionalPoly p, long l) {
-			return new FractionalPoly(pc.multiplyLong(p.nume, l),p.deno);
+		public FracPoly multiplyLong(FracPoly p, long l) {
+			return new FracPoly(pc.multiplyLong(p.nume, l),p.deno);
 		}
 
 		@Override
-		public FractionalPoly divideLong(FractionalPoly p, long l) {
+		public FracPoly divideLong(FracPoly p, long l) {
 			if(p.deno.getNumOfFormula()==1){
-				return new FractionalPoly(pc.divideLong(p.nume, l),p.deno);
+				return new FracPoly(pc.divideLong(p.nume, l),p.deno);
 			}
-			return new FractionalPoly(p.nume,pc.multiplyLong(p.deno, l));
+			return new FracPoly(p.nume,pc.multiplyLong(p.deno, l));
 		}
 
 		@Override
-		public FractionalPoly squareRoot(FractionalPoly p) {
-			return new FractionalPoly(pc.squareRoot(p.nume),pc.squareRoot(p.deno));
+		public FracPoly squareRoot(FracPoly p) {
+			return new FracPoly(pc.squareRoot(p.nume),pc.squareRoot(p.deno));
 		}
 
 		@Override
-		public FractionalPoly pow(FractionalPoly p, long exp) {
-			return new FractionalPoly(pc.pow(p.nume, exp), pc.pow(p.deno, exp));
+		public FracPoly pow(FracPoly p, long exp) {
+			return new FracPoly(pc.pow(p.nume, exp), pc.pow(p.deno, exp));
 		}
 		
 		
 		
 		@Override
-		public FractionalPoly constantValue(String name) {
+		public FracPoly constantValue(String name) {
 			if(name.equalsIgnoreCase(STR_PI)){
 				return pi;
 			}
@@ -260,7 +280,7 @@ public class FractionalPoly {
 		}
 
 		@Override
-		public FractionalPoly exp(FractionalPoly a, FractionalPoly b) {
+		public FracPoly exp(FracPoly a, FracPoly b) {
 			throw new UnsupportedCalculationException();
 		}
 
@@ -268,37 +288,37 @@ public class FractionalPoly {
 		 * @see cn.timelives.java.utilities.math.MathCalculator#getNumberClass()
 		 */
 		@Override
-		public Class<FractionalPoly> getNumberClass() {
-			return FractionalPoly.class;
+		public Class<FracPoly> getNumberClass() {
+			return FracPoly.class;
 		}
 		
 	}
 	
 	static class FPCalculatorD extends FPCalculator{
 		@Override
-		public int compare(FractionalPoly para1, FractionalPoly para2) {
+		public int compare(FracPoly para1, FracPoly para2) {
 			throw new UnsupportedCalculationException("Cannot compare polynomial");
 		}
 	}
 	
-	public static Simplifier<FractionalPoly> getSimplifier(){
+	public static Simplifier<FracPoly> getSimplifier(){
 		return simfp;
 	}
 	private static final SimplifierFP simfp = new SimplifierFP();
 	
-	static class SimplifierFP implements Simplifier<FractionalPoly>{
+	static class SimplifierFP implements Simplifier<FracPoly>{
 		
 		private final Simplifier<Polynomial> simp = PolyCalculator.getSimplifier();
 		
 		@Override
-		public List<FractionalPoly> simplify(List<FractionalPoly> numbers) {
+		public List<FracPoly> simplify(List<FracPoly> numbers) {
 			//find the GCD 
-			FractionalPoly[] fps = numbers.toArray(new FractionalPoly[]{}); 
+			FracPoly[] fps = numbers.toArray(new FracPoly[]{}); 
 			
 			simplifyFraction(fps);
 			List<Polynomial> pns = new ArrayList<>(fps.length);
 			List<Polynomial> pds = new ArrayList<>(fps.length);
-			for(FractionalPoly fp : fps){
+			for(FracPoly fp : fps){
 				pns.add(fp.nume);
 				pds.add(fp.deno);
 			}
@@ -331,7 +351,7 @@ public class FractionalPoly {
 			pns = simp.simplify(pns);
 			
 			for(int i=0;i<fps.length;i++){
-				fps[i] = FractionalPoly.valueOf(pns.get(i), pds.get(i));
+				fps[i] = FracPoly.valueOf(pns.get(i), pds.get(i));
 			}
 			
 			return Arrays.asList(fps);
@@ -342,13 +362,13 @@ public class FractionalPoly {
 		 * @see cn.timelives.java.math.number_models.Simplifier#simplify(java.lang.Object)
 		 */
 		@Override
-		public FractionalPoly simplify(FractionalPoly x) {
+		public FracPoly simplify(FracPoly x) {
 			List<Polynomial> nd = Arrays.asList(x.nume,x.deno);
 			nd = PolyCalculator.getSimplifier().simplify(nd);
-			return new FractionalPoly(nd.get(0), nd.get(1));
+			return new FracPoly(nd.get(0), nd.get(1));
 		}
 		
-		private void simplifyFraction(FractionalPoly[] fps){
+		private void simplifyFraction(FracPoly[] fps){
 			List<Polynomial> list = new ArrayList<>(2);
 			list.add(null);
 			list.add(null);
@@ -356,7 +376,7 @@ public class FractionalPoly {
 				list.set(0, fps[i].nume);
 				list.set(1, fps[i].deno);
 				List<Polynomial> re = simp.simplify(list);
-				fps[i] = FractionalPoly.valueOf(re.get(0), re.get(1));
+				fps[i] = FracPoly.valueOf(re.get(0), re.get(1));
 			}
 			return;
 		}

@@ -1,4 +1,4 @@
-package cn.timelives.java.math.spaceAG;
+package test.math;
 
 import static cn.timelives.java.utilities.Printer.print;
 
@@ -12,16 +12,21 @@ import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.Formula;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
-import cn.timelives.java.math.numberModels.FractionalPoly;
+import cn.timelives.java.math.numberModels.FracPoly;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.spaceAG.Line;
+import cn.timelives.java.math.spaceAG.Plane;
+import cn.timelives.java.math.spaceAG.SPoint;
 import cn.timelives.java.math.spaceAG.SPoint.SPointGenerator;
+import cn.timelives.java.math.spaceAG.STriangle;
+import cn.timelives.java.math.spaceAG.SVector;
 import cn.timelives.java.math.spaceAG.SVector.SVectorGenerator;
 import cn.timelives.java.math.spaceAG.shape.Cube;
 import cn.timelives.java.math.spaceAG.shape.Tetrahedron;
 import cn.timelives.java.utilities.ArraySup;
-public class TestClass {
+public class SpaceAGTest {
 	private static final MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
 //	private Map<String,Point<Double>> cube = new HashMap<>();
 //	
@@ -80,27 +85,27 @@ public class TestClass {
 		pos[6] = new Polynomial(fc, Formula.valueOf("d[z1]"));
 		pos[7] = new Polynomial(fc, Formula.valueOf("d[z2]"));
 		pos[8] = new Polynomial(fc, Formula.valueOf("d[z3]"));
-		FractionalPoly[] fps = new FractionalPoly[9];
+		FracPoly[] fps = new FracPoly[9];
 		for (int i = 0; i < 9; i++) {
-			fps[i] = FractionalPoly.valueOf(pos[i]);
+			fps[i] = FracPoly.valueOf(pos[i]);
 		}
-		MathCalculator<FractionalPoly> mcfp = FractionalPoly.getCalculator();
-		SPoint<FractionalPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
-		SPoint<FractionalPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
-		SPoint<FractionalPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
-		SVector<FractionalPoly> v1 = SVector.vector(pa, pb);
-		SVector<FractionalPoly> v2 = SVector.vector(pa, pc);
-		FractionalPoly re1 = v1.outerProduct(v2).calLengthSq();
+		MathCalculator<FracPoly> mcfp = FracPoly.getCalculator();
+		SPoint<FracPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
+		SPoint<FracPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
+		SPoint<FracPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
+		SVector<FracPoly> v1 = SVector.vector(pa, pb);
+		SVector<FracPoly> v2 = SVector.vector(pa, pc);
+		FracPoly re1 = v1.outerProduct(v2).calLengthSq();
 		
-		SVector<FractionalPoly> vat = pa.getVector(),
+		SVector<FracPoly> vat = pa.getVector(),
 				vbt = pb.getVector(),
 				vct = pc.getVector();
-		SVector<FractionalPoly> va = vat.outerProduct(vbt),
+		SVector<FracPoly> va = vat.outerProduct(vbt),
 				vb = vbt.outerProduct(vct),
 				vc = vct.outerProduct(vat);
-		FractionalPoly f = mcfp.addX(va.calLengthSq(),vb.calLengthSq(),vc.calLengthSq());
-		FractionalPoly f2 = mcfp.multiplyLong(mcfp.addX(va.innerProduct(vb),vb.innerProduct(vc),vc.innerProduct(va)), 2l);
-		FractionalPoly re2 = mcfp.add(f, f2);
+		FracPoly f = mcfp.addX(va.calLengthSq(),vb.calLengthSq(),vc.calLengthSq());
+		FracPoly f2 = mcfp.multiplyLong(mcfp.addX(va.innerProduct(vb),vb.innerProduct(vc),vc.innerProduct(va)), 2l);
+		FracPoly re2 = mcfp.add(f, f2);
 		print(mcfp.isEqual(re1, re2));
 		dealWith(re1.toString());
 		dealWith(re2.toString());
@@ -111,7 +116,7 @@ public class TestClass {
 		print(str.replaceAll("d\\[(\\w+)]", "$1"));
 	}
 	Pattern pattern = Pattern.compile("d\\[(\\w+)]");
-	private void dealWith(FractionalPoly fp) {
+	private void dealWith(FracPoly fp) {
 		print(pattern.matcher(fp.toString()).replaceAll("$1"));
 	}
 	
@@ -158,19 +163,19 @@ public class TestClass {
 		pos[9] = new Polynomial(fc, Formula.valueOf("d[x4]"));
 		pos[10] = new Polynomial(fc, Formula.valueOf("d[y4]"));
 		pos[11] = new Polynomial(fc, Formula.valueOf("d[z4]"));
-		FractionalPoly[] fps = new FractionalPoly[pos.length];
+		FracPoly[] fps = new FracPoly[pos.length];
 		for (int i = 0; i < fps.length; i++) {
-			fps[i] = FractionalPoly.valueOf(pos[i]);
+			fps[i] = FracPoly.valueOf(pos[i]);
 		}
-		MathCalculator<FractionalPoly> mcfp = FractionalPoly.getCalculator();
-		SPoint<FractionalPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
-		SPoint<FractionalPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
-		SPoint<FractionalPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
-		SPoint<FractionalPoly> pp = SPoint.valueOf(fps[9], fps[10], fps[11], mcfp);
-		Tetrahedron<FractionalPoly> tetra = Tetrahedron.fourPoints(pp,pa, pb, pc);
-		FractionalPoly[] ts = new FractionalPoly[10];
+		MathCalculator<FracPoly> mcfp = FracPoly.getCalculator();
+		SPoint<FracPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
+		SPoint<FracPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
+		SPoint<FracPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
+		SPoint<FracPoly> pp = SPoint.valueOf(fps[9], fps[10], fps[11], mcfp);
+		Tetrahedron<FracPoly> tetra = Tetrahedron.fourPoints(pp,pa, pb, pc);
+		FracPoly[] ts = new FracPoly[10];
 		@SuppressWarnings("unchecked")
-		SVector<FractionalPoly>[] vs = (SVector<FractionalPoly>[]) new SVector<?>[10];
+		SVector<FracPoly>[] vs = (SVector<FracPoly>[]) new SVector<?>[10];
 		ts[0] = tetra.getBottom().areaSq();
 		ts[1] = tetra.getBottom().areaSq();
 		ts[2] = tetra.getBottom().areaSq();
@@ -197,10 +202,13 @@ public class TestClass {
 		Tetrahedron<Double> te = Tetrahedron.fourPoints(ps[0], ps[1],ps[2],ps[3]);
 		print(te);
 		double s = te.surfaceArea();
-		double left = te.radiusI() ;
-		double x = te.getBottom().area() * ps[0].x + te.getSideF2().area() * ps[1].x+te.getSideF3().area() * ps[2].x+te.getSideF1().area() * ps[3].x;
-		double y = te.getBottom().area() * ps[0].y + te.getSideF2().area() * ps[1].y+te.getSideF3().area() * ps[2].y+te.getSideF1().area() * ps[3].y;
-		double z = te.getBottom().area() * ps[0].z + te.getSideF2().area() * ps[1].z+te.getSideF3().area() * ps[2].z+te.getSideF1().area() * ps[3].z;
+		double left = te.radiusI();
+		double x = te.getBottom().area() * ps[0].getX() + te.getSideF2().area() * ps[1].getX()
+				+ te.getSideF3().area() * ps[2].getX() + te.getSideF1().area() * ps[3].getX();
+		double y = te.getBottom().area() * ps[0].getY() + te.getSideF2().area() * ps[1].getY()
+				+ te.getSideF3().area() * ps[2].getY() + te.getSideF1().area() * ps[3].getY();
+		double z = te.getBottom().area() * ps[0].getZ() + te.getSideF2().area() * ps[1].getZ()
+				+ te.getSideF3().area() * ps[2].getZ() + te.getSideF1().area() * ps[3].getZ();
 		x /= s;
 		y /= s;
 		z /= s;

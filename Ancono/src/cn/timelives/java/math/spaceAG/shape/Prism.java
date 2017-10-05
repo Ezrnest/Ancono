@@ -6,6 +6,7 @@ import java.util.function.Function;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
+import cn.timelives.java.math.spaceAG.Segment;
 
 public abstract class Prism<T> extends Polyhedron<T> {
 	
@@ -69,7 +70,7 @@ public abstract class Prism<T> extends Polyhedron<T> {
 	 * Gets the slantedges of this prism.
 	 * @return
 	 */
-	public abstract Set<Line<T>> getSlantedge();
+	public abstract Set<Segment<T>> getSlantedge();
 	/**
 	 * Returns the height.
 	 * @return

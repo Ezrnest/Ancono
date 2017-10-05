@@ -1,4 +1,4 @@
-package cn.timelives.java.math;
+package test.math;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.print_;
@@ -8,6 +8,8 @@ import java.math.MathContext;
 import java.util.Arrays;
 import java.util.function.LongFunction;
 
+import cn.timelives.java.math.Progression;
+import cn.timelives.java.math.ProgressionSup;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixOperation;
 import cn.timelives.java.math.linearAlgebra.Matrix.MatResult;
@@ -276,15 +278,15 @@ class Test {
 	
 	public static void detTest3(){
 		/*
-  86 23 35 63 14  5 62  7 89 69 ©´
-  3 48 30 60 37 50 17 56 85 64 ©¦
- 64 19 40 96 38 11 99 19 58 43 ©¦
- 52 62 78 34 94 13 17 91  1 50 ©¦
- 14 28 99 91 76 96 94 16  0 76 ©¦
-  0 75 26 36  1  3 66 58 81 40 ©¦
- 81 87 51 94 57 28 51 91 69 28 ©¦
- 38 27 36  0 69 61 37 51 62  5 ©¦
- 28 95 43 25 96 79  8 97 43 24 ©¦
+  86 23 35 63 14  5 62  7 89 69 ï¿½ï¿½
+  3 48 30 60 37 50 17 56 85 64 ï¿½ï¿½
+ 64 19 40 96 38 11 99 19 58 43 ï¿½ï¿½
+ 52 62 78 34 94 13 17 91  1 50 ï¿½ï¿½
+ 14 28 99 91 76 96 94 16  0 76 ï¿½ï¿½
+  0 75 26 36  1  3 66 58 81 40 ï¿½ï¿½
+ 81 87 51 94 57 28 51 91 69 28 ï¿½ï¿½
+ 38 27 36  0 69 61 37 51 62  5 ï¿½ï¿½
+ 28 95 43 25 96 79  8 97 43 24 ï¿½ï¿½
  35 36 71  6 10 63 77 61 40 77
 		 /
 		MatrixSup.class.getName();
@@ -529,25 +531,6 @@ class Test {
 	}
 	
 	
-	
-	public static void main(String[] args) throws Exception {
-//		progerssionTest(Long.valueOf(1));
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
-		Double[][] mat = new Double[][]{
-			{0d,1d,0d,0d},
-			{1d,0d,0d,0d},
-		};
-		Matrix<Double> m = Matrix.valueOf(mat,mc);
-		m.printMatrix();
-		MatResult<Double> mr = m.toStepMatrix();
-		for(MatrixOperation<Double> mo :mr.ops){
-			print(mo.toDetail());
-			m = m.doOperation(mo);
-			m.printMatrix();
-		}
-		mr.result.printMatrix();
-		
-	}
 	
 	
 	

@@ -12,7 +12,9 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * upper bound and downer bound, which is often shown as {@literal [a,b]}, {@literal (a,b)},  {@literal [a,b)} or {@literal (a,b]}. 
  * The interval contains a number if the number fits: {@code downerBound <= number <= upperBound}, but whether the 
  * equal sign is suitable is dependent on the type of the interval.
- * <p>The mathematical restriction is that {@code downerBound < upperBound}.
+ * <p>The mathematical restriction is that {@code downerBound < upperBound}, but this class also permits that 
+ *  {@code downerBound <= upperBound}, but if {@code downerBound == upperBound}, the interval must be a closed interval.
+ * 
  * The interval is immutable, any method that returns an interval as the result will always creates a new one.
  * <p>
  * The given calculator should implement the method {@link MathCalculator#compare(Object, Object)}, 
@@ -21,7 +23,7 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * @param T the format of number to be stored
  *
  */
-public abstract class Interval<T> extends AbstractMathSet<T>{
+public abstract class Interval<T> extends AbstractMathSet<T> implements IntersectableSet<T,Interval<T>>{
 	
 	protected Interval(MathCalculator<T> mc) {
 		super(mc);
@@ -172,12 +174,12 @@ public abstract class Interval<T> extends AbstractMathSet<T>{
 	public abstract boolean contains(Interval<T> iv);
 	/**
 	 * Returns a new interval that equals to the complement of {@code this} and {@code iv} , 
-	 * which is expressed as {@literal iv ∩  this} in mathematical.If the complement is empty,
-	 * then {@code null} will be returned.
-	 * @param iv a interval , or {@code null}
-	 * @return {@literal iv ∩  this}
+	 * which is expressed as {@literal iv ∩ this} in mathematical. If the complement is empty
+	 *  then {@code null} will be returned.
+	 * @param iv a interval, or {@code null}
+	 * @return {@literal iv ∩ this}
 	 */
-	public abstract Interval<T> complementOf(Interval<T> iv);
+	public abstract Interval<T> intersect(Interval<T> iv);
 	
 	/**
 	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)

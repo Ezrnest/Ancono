@@ -1,4 +1,4 @@
-package cn.timelives.java.math;
+ï»¿package cn.timelives.java.math;
 /**
  * Partial order is a relation between two object.The {@linkplain PartialOrderComparator} implements 
  * this kind of relationship and following requirements must be fitted.
@@ -13,25 +13,25 @@ package cn.timelives.java.math;
  *  	the same in this relationship,and for any object C {@code compareWith(A,C)} and {@code compareWith(B,C)} must return the same value,
  *  	{@code compareWith(C,A)} and {@code compareWith(C,B)} must return the same value too.
  * </ul>
- * This relationship is designed for the partial order in math , the using of math symbol {@literal ¨R } indicates this relationship.For instance,
- * {@literal A ¨R B} means {@code compareWith(A,B)==true}.
+ * This relationship is designed for the partial order in math , the using of math symbol {@literal â‰§ } indicates this relationship.For instance,
+ * {@literal A â‰§ B} means {@code compareWith(A,B)==true}.
  * <p>
  * This relation is partially symmetric,which means even if {@code compareWith(A,B)==true},{@code compareWith(B,A)} may return either {@code true}
  * or {@code false},and if {@code compareWith(A,B)==false},{@code compareWith(B,A)} may return either {@code true} or {@code false} as well.A simple 
- * example is interval in math.We dim a partial order that {@code compare(A,B)} returns true only if {@literal A ¡È  B = A} , in other words , A is bigger than B.
+ * example is interval in math.We dim a partial order that {@code compare(A,B)} returns true only if {@literal A âˆª  B = A} , in other words , A is bigger than B.
  * Examples are listed below:<p>
  * <ul>
- * <li>{@literal A ¨R B} and {@literal B ¨R A} : A = B = [0,1]. 
- * <li>{@literal A ¨R B} but {@literal B ¨R A} is false. A = [0,2] , B = [0,1].
- * <li>Both {@literal A ¨R B} and {@literal B ¨R A} are false. A = [0,2] , B = [1,3]. 
+ * <li>{@literal A â‰§ B} and {@literal B â‰§ A} : A = B = [0,1]. 
+ * <li>{@literal A â‰§ B} but {@literal B â‰§ A} is false. A = [0,2] , B = [0,1].
+ * <li>Both {@literal A â‰§ B} and {@literal B â‰§ A} are false. A = [0,2] , B = [1,3]. 
  * </ul>
  * <P>
  * This relationship is similar to {@link Object#equals(Object)} and {@link Comparable#compareTo(Object)} in some ways.Therefore , the relationship between
- * this partial order and {@code equals()} and {@code compareTo()} should be clear.It is highly recommended that {@literal A ¨R B && B ¨R A} should be equal 
+ * this partial order and {@code equals()} and {@code compareTo()} should be clear.It is highly recommended that {@literal A â‰§ B && B â‰§ A} should be equal 
  * to {@code A.equals(B) == true}.  
- * <p>For {@code comparaTo()} method , if implemented , if {@literal A ¨R B} , then {@code A.ompareTo(B)} should return either 
- * {0,1} or {0,-1} , which means unless {@literal B ¨R A}, the {@code compareTo()} method should return a same value (either 1 or -1) for any pair (A,B) that 
- *  {@literal A ¨R B}.In the special situation of {@literal A ¨R B && B ¨R A}, {@code A.compareTo(B)} should return {@code 0}.
+ * <p>For {@code comparaTo()} method , if implemented , if {@literal A â‰§ B} , then {@code A.ompareTo(B)} should return either 
+ * {0,1} or {0,-1} , which means unless {@literal B â‰§ A}, the {@code compareTo()} method should return a same value (either 1 or -1) for any pair (A,B) that 
+ *  {@literal A â‰§ B}.In the special situation of {@literal A â‰§ B && B â‰§ A}, {@code A.compareTo(B)} should return {@code 0}.
  * @author lyc
  *
  * @param <E> the type of object for this comparator to compare.
@@ -46,7 +46,7 @@ public interface PartialOrderComparator<T> {
 	 * @param A an object
 	 * @param B another object
 	 * 
-	 * @return true if {@literal A ¨R B} , else false.
+	 * @return true if {@literal A â‰§ B} , else false.
 	 * 
 	 * @throws NullPointerException if either A or B is null.
 	 */

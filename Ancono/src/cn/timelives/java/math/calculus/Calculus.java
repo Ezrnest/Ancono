@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.timelives.java.math;
+package cn.timelives.java.math.calculus;
 
 import java.util.function.DoubleUnaryOperator;
 

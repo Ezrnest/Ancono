@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import cn.timelives.java.math.Calculus;
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.calculus.Calculus;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.planeAG.Point;

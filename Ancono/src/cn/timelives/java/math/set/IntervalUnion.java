@@ -5,7 +5,9 @@ package cn.timelives.java.math.set;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
@@ -21,15 +23,27 @@ import cn.timelives.java.utilities.ModelPatterns;
  *
  */
 public class IntervalUnion<T> extends AbstractMathSet<T>{
+	/**
+	 * A sorted list. May be empty.
+	 */
 	private List<Interval<T>> is;
 	/**
 	 * @param mc
-	 * @param is a list of intervals, sorted.
+	 * @param is a list of intervals, sorted by it bounds and no intersection.
 	 */
 	IntervalUnion(MathCalculator<T> mc,List<Interval<T>> is) {
 		super(mc);
+		this.is = is;
 	}
-
+	/**
+	 * @param mc
+	 * @param is a list of intervals, sorted by it bounds and no intersection.
+	 */
+	IntervalUnion(MathCalculator<T> mc,Interval<T> v) {
+		super(mc);
+		this.is = new ArrayList<>(1);
+		is.add(v);
+	}
 	/**
 	 * @see cn.timelives.java.math.set.MathSet#contains(java.lang.Object)
 	 */
@@ -47,28 +61,61 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return is.get(pos).contains(t);
 	}
 	/**
+	 * Determines whether this IntervalUnion contains the interval.
+	 * @param v an Interval
+	 * @return {@code true} if the Interval is contained.
+	 */
+	public boolean contains(Interval<T> v) {
+		int pos = findSmallerDownerBound(v.downerBound());
+		if(pos == -1) {
+			return false;
+		}
+		return is.get(pos).contains(v);
+	}
+	
+	
+	
+	/**
 	 * Returns the interval that contains {@code t}, or returns 
 	 * {@code null} if it is not contained in all intervals.
 	 * @param t a number
-	 * @return
+	 * @return the interval or null
 	 */
 	public Interval<T> findInverval(T t){
 		int pos=findSmallerDownerBound(t);
-		Interval<T> candidate ;
 		if(pos == -1){
 			return null;
 		}
-		if(pos >= 0 ){
-			candidate = is.get(pos);
-		}else {
-			pos = - pos - 2;
-			candidate = is.get(pos);
-		}
+		Interval<T> candidate = is.get(pos);
 		if(candidate.contains(t)) {
 			return candidate;
 		}else {
 			return null;
 		}
+	}
+	/**
+	 * Gets the number of intervals in this interval union.
+	 * @return the number of intervals
+	 */
+	public int getNumber() {
+		return is.size();
+	}
+	
+	/**
+	 * Gets an interval from this interval union.
+	 * @param n the index
+	 * @return an Interval
+	 * @throws IndexOutOfBoundsException if {@code n<0||n>=this.getNumber()}.
+	 */
+	public Interval<T> getInterval(int n){
+		return is.get(n);
+	}
+	/**
+	 * Determines whether this IntervalUnion is empty.
+	 * @return {@code true} if this is empty.
+	 */
+	public boolean isEmpty() {
+		return is.isEmpty();
 	}
 	
 	/**
@@ -77,19 +124,205 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @return
 	 */
 	private int findSmallerDownerBound(T t) {
-		return ModelPatterns.binarySearch(0, is.size(), x -> {
+		if(is.isEmpty()) {
+			return -1;
+		}
+		int n = ModelPatterns.binarySearch(0, is.size(), x -> {
 			T downer = is.get(x).downerBound();
 			if (downer == null) {
 				return -1;
 			}
 			return mc.compare(downer, t);
 		});
+		if(n<-1) {
+			n = -n-2;
+		}
+		return n;
 	}
 	
+	private boolean shouldUnionWithThePrevInterval(Interval<T> v,int downer) {
+		if(v.isDownerBoundInclusive() && downer>0) {
+			Interval<T> prev = is.get(downer-1);
+			if(!prev.isUpperBoundInclusive() && mc.isEqual(v.downerBound(), prev.upperBound())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean shouldUnionWithTheNextInterval(Interval<T> v,Interval<T> in) {
+		return v.isUpperBoundInclusive() || in.isDownerBoundInclusive();
+	}
+	
+	/**
+	 * Union this with the given Interval, returns a new IntervalUnion.
+	 * @param v an Interval
+	 */
 	public IntervalUnion<T> unionWith(Interval<T> v){
-		return null;
+		if(is.isEmpty()) {
+			return new IntervalUnion<>(mc,v);
+		}
+		//find the closet intervals to the downer bound and the upper bound first.
+		int downer = findSmallerDownerBound(v.downerBound()),
+				upper = findSmallerDownerBound(v.upperBound());
+		if(upper == -1) {
+			//there is no interval smaller than it, it must be the lower one.
+			return insertInterval(0,v);
+		}
+//		if(downer==upper) {
+//			//the two interval is the same
+//			Interval<T> in = is.get(downer);
+//			int t = mc.compare(in.upperBound(), v.downerBound());
+//			if(t>=0) {
+//				if(in.isUpperBoundInclusive() || v.isDownerBoundInclusive() || t!=0) {
+//					//the new interval is the union of the two
+//					Interval<T> nin = in.expandUpperBound(v.upperBound(), v.isUpperBoundInclusive());
+//					return replaceInterval(downer, nin);
+//				}
+//				// the case that (a,b) (b,c)
+//			}
+//			return insertInterval(downer+1, v);
+//			
+//		}
+		T ndowner,nupper;
+		boolean ndownerIn,nupperIn;
+		int indexDowner,indexUpper;
+		if(downer==-1) {
+			ndownerIn = v.isDownerBoundInclusive();
+			ndowner = v.downerBound();
+			indexDowner = 0;
+		}else {
+			Interval<T> in = is.get(downer);
+			final T vdb= v.downerBound();
+			if(mc.isEqual(in.downerBound(), vdb)) {
+				if(shouldUnionWithThePrevInterval(v, downer)) {
+					Interval<T> prev = is.get(downer-1);
+					indexDowner = downer-1;
+					ndownerIn = prev.isDownerBoundInclusive();
+					ndowner = prev.downerBound();
+				}else {
+					ndownerIn = v.isDownerBoundInclusive() || in.isDownerBoundInclusive();
+					ndowner = in.downerBound();
+					indexDowner = downer;
+				}
+			}else {
+				int t2 = mc.compare(in.upperBound(), vdb);
+				if(t2>=0 && (t2!=0 || in.isUpperBoundInclusive() || v.isDownerBoundInclusive() )) {
+					indexDowner = downer;
+					ndownerIn = in.isDownerBoundInclusive();
+					ndowner = in.downerBound();
+				}else {
+					indexDowner = downer+1;
+					ndownerIn = v.isDownerBoundInclusive();
+					ndowner = v.downerBound();
+				}
+			}
+		}
+		
+		//deal with upper
+		{
+			Interval<T> in = is.get(upper);
+			final T vub= v.upperBound();
+			if(mc.isEqual(in.downerBound(), vub)) {
+				if(shouldUnionWithTheNextInterval(v,in)) {
+					nupperIn = in.isUpperBoundInclusive();
+					nupper = in.upperBound();
+					indexUpper = upper;
+				}else {
+					nupperIn = false;
+					nupper = vub;
+					indexUpper = upper-1;
+				}
+			}else {
+				int t2 = mc.compare(in.upperBound(),vub);
+				indexUpper= upper;
+				if(t2==0) {
+					nupper = in.upperBound();
+					nupperIn = in.isUpperBoundInclusive() || v.isUpperBoundInclusive();
+				}else if(t2>0) {
+					nupper = in.upperBound();
+					nupperIn = in.isUpperBoundInclusive();
+				}else {
+					nupper = v.upperBound();
+					nupperIn = v.isUpperBoundInclusive();
+				}
+			}
+		}
+		Interval<T> nin = new IntervalI<>(mc, ndowner, nupper, ndownerIn, nupperIn);
+		indexUpper++;
+		return replaceIntervalRange(indexDowner,indexUpper,nin);
+	}
+	/**
+	 * Union {@code this} with another IntervalUnion
+	 * @param in another IntervalUnion.
+	 * @return a new IntervalUnion
+	 */
+	public IntervalUnion<T> union(IntervalUnion<T> in){
+		List<Interval<T>> nivs = copyList();
+		for(Interval<T> v : in.is) {
+			unionWith0(nivs, v, mc);
+		}
+		return new IntervalUnion<>(mc, nivs);
 	}
 	
+	
+	/**
+	 * Insert the interval
+	 * @param n the index of the interval {@code v} in the nex interval union.
+	 * @param v
+	 * @return
+	 */
+	private IntervalUnion<T> insertInterval(int n,Interval<T> v){
+		final int size = is.size()+1;
+		List<Interval<T>> nivs = new ArrayList<>(size);
+		for(int i=0;i<n;i++) {
+			nivs.add(is.get(i));
+		}
+		nivs.add(v);
+		for(int i=n+1;i<size;i++) {
+			nivs.add(is.get(i-1));
+		}
+		return new IntervalUnion<>(mc, nivs);
+	}
+	
+	private IntervalUnion<T> replaceInterval(int n,Interval<T> v){
+		List<Interval<T>> nivs = copyList();
+		nivs.set(n, v);
+		return new IntervalUnion<>(mc,nivs);
+	}
+	/**
+	 * Replaces the intervals.
+	 * @param downer inclusive
+	 * @param upper exclusive
+	 * @param v
+	 * @return
+	 */
+	private IntervalUnion<T> replaceIntervalRange(int downer,int upper,Interval<T> v){
+		if(downer==upper) {
+			return insertInterval(downer, v);
+		}else if(downer == upper-1) {
+			return replaceInterval(downer,v);
+		}
+		final int size = is.size()+downer-upper+1;
+		List<Interval<T>> nivs = new ArrayList<>(size);
+		for(int i=0;i<downer;i++) {
+			nivs.add(is.get(i));
+		}
+		nivs.add(v);
+		for(int i=upper,isize = is.size();i<isize;i++) {
+			nivs.add(is.get(i));
+		}
+		return new IntervalUnion<>(mc, nivs);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Interval<T>> copyList(){
+		if(is instanceof ArrayList) {
+			return (List<Interval<T>>) ((ArrayList<T>)is).clone();
+		}else {
+			return new ArrayList<>(is);
+		}
+	}
 	
 	/**
 	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
@@ -104,7 +337,6 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 */
 	@Override
 	public boolean valueEquals(FlexibleMathObject<T> obj) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -118,14 +350,179 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 			sb.append(in.toString(nf));
 			sb.append('∪');
 		}
+		sb.deleteCharAt(sb.length()-1);
 		return sb.toString();
 	}
-	
-	
-	public static <T> IntervalUnion<T> valueOf(List<Interval<T>> intervals){
-		
-		//TODO
-		return null;
+	private static <T> int findSmallerDownerBound0(List<Interval<T>> is,T t,MathCalculator<T> mc) {
+		int n = ModelPatterns.binarySearch(0, is.size(), x -> {
+			T downer = is.get(x).downerBound();
+			if (downer == null) {
+				return -1;
+			}
+			return mc.compare(downer, t);
+		});
+		if(n<-1) {
+			n = -n-2;
+		}
+		return n;
 	}
-
+	
+	private static <T> void unionWith0(List<Interval<T>> is,Interval<T> v,MathCalculator<T> mc) {
+		if(is.isEmpty()) {
+			is.add(v);
+			return;
+		}
+		int downer = findSmallerDownerBound0(is,v.downerBound(),mc),
+				upper = findSmallerDownerBound0(is,v.upperBound(),mc);
+		if(upper == -1) {
+			//there is no interval smaller than it, it must be the lower one.
+			is.add(0, v);
+			return;
+		}
+//		if(downer==upper) {
+//			//the two interval is the same
+//			Interval<T> in = is.get(downer);
+//			int t = mc.compare(in.upperBound(), v.downerBound());
+//			if(t>=0) {
+//				if(in.isUpperBoundInclusive() || v.isDownerBoundInclusive() || t!=0) {
+//					//the new interval is the union of the two
+//					Interval<T> nin = in.expandUpperBound(v.upperBound(), v.isUpperBoundInclusive());
+//					return replaceInterval(downer, nin);
+//				}
+//				// the case that (a,b) (b,c)
+//			}
+//			return insertInterval(downer+1, v);
+//			
+//		}
+		T ndowner,nupper;
+		boolean ndownerIn,nupperIn;
+		int indexDowner,indexUpper;
+		if(downer==-1) {
+			ndownerIn = v.isDownerBoundInclusive();
+			ndowner = v.downerBound();
+			indexDowner = 0;
+		}else {
+			Interval<T> in = is.get(downer);
+			final T vdb= v.downerBound();
+			if(mc.isEqual(in.downerBound(), vdb)) {
+				if(shouldUnionWithThePrevInterval0(v, downer,is,mc)) {
+					Interval<T> prev = is.get(downer-1);
+					indexDowner = downer-1;
+					ndownerIn = prev.isDownerBoundInclusive();
+					ndowner = prev.downerBound();
+				}else {
+					ndownerIn = v.isDownerBoundInclusive() || in.isDownerBoundInclusive();
+					ndowner = in.downerBound();
+					indexDowner = downer;
+				}
+			}else {
+				int t2 = mc.compare(in.upperBound(), vdb);
+				if(t2>=0 && (t2!=0 || in.isUpperBoundInclusive() || v.isDownerBoundInclusive() )) {
+					indexDowner = downer;
+					ndownerIn = in.isDownerBoundInclusive();
+					ndowner = in.downerBound();
+				}else {
+					indexDowner = downer+1;
+					ndownerIn = v.isDownerBoundInclusive();
+					ndowner = v.downerBound();
+				}
+			}
+		}
+		
+		//deal with upper
+		{
+			Interval<T> in = is.get(upper);
+			final T vub= v.upperBound();
+			if(mc.isEqual(in.downerBound(), vub)) {
+				if(shouldUnionWithTheNextInterval0(v,in)) {
+					nupperIn = in.isUpperBoundInclusive();
+					nupper = in.upperBound();
+					indexUpper = upper;
+				}else {
+					nupperIn = false;
+					nupper = vub;
+					indexUpper = upper-1;
+				}
+			}else {
+				int t2 = mc.compare(in.upperBound(),vub);
+				indexUpper= upper;
+				if(t2==0) {
+					nupper = in.upperBound();
+					nupperIn = in.isUpperBoundInclusive() || v.isUpperBoundInclusive();
+				}else if(t2>0) {
+					nupper = in.upperBound();
+					nupperIn = in.isUpperBoundInclusive();
+				}else {
+					nupper = v.upperBound();
+					nupperIn = v.isUpperBoundInclusive();
+				}
+			}
+		}
+		Interval<T> nin = new IntervalI<>(mc, ndowner, nupper, ndownerIn, nupperIn);
+		indexUpper++;
+		replaceIntervalRange0(indexDowner,indexUpper,nin,is);
+	}
+	
+	private static <T> boolean shouldUnionWithThePrevInterval0(Interval<T> v,int downer,List<Interval<T>> is,MathCalculator<T> mc) {
+		if(v.isDownerBoundInclusive() && downer>0) {
+			Interval<T> prev = is.get(downer-1);
+			if(!prev.isUpperBoundInclusive() && mc.isEqual(v.downerBound(), prev.upperBound())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static <T> boolean shouldUnionWithTheNextInterval0(Interval<T> v,Interval<T> in) {
+		return v.isUpperBoundInclusive() || in.isDownerBoundInclusive();
+	}
+	/**
+	 * Replaces the intervals.
+	 * @param downer inclusive
+	 * @param upper exclusive
+	 * @param v
+	 * @return
+	 */
+	private static <T> void replaceIntervalRange0(int downer,int upper,Interval<T> v,List<Interval<T>> is){
+		if(downer==upper) {
+			is.add(downer,v);
+			return;
+		}else if(downer == upper-1) {
+			is.set(downer, v);
+			return;
+		}
+		is.set(downer, v);
+		for(int i=upper-1;i>downer;i--) {
+			is.remove(i);
+		}
+	}
+	/**
+	 * Creates an IntervalUnion with a list of intervals. The {@link MathCalculator} will
+	 * be taken from the first Interval.
+	 * @param intervals
+	 * @return a new IntervalUnion
+	 */
+	public static <T> IntervalUnion<T> valueOf(List<Interval<T>> intervals){
+		MathCalculator<T> mc = intervals.get(0).getMathCalculator();
+		List<Interval<T>> is = new ArrayList<>(intervals.size());
+		for(Interval<T> inv : intervals) {
+			unionWith0(is,inv,mc);
+		}
+		return new IntervalUnion<T>(mc,is);
+	}
+	/**
+	 * Creates an IntervalUnion with an array of intervals. The {@link MathCalculator} will
+	 * be taken from the first Interval.
+	 * @param intervals
+	 * @return a new IntervalUnion
+	 */
+	@SafeVarargs
+	public static <T> IntervalUnion<T> valueOf(Interval<T>...intervals){
+		MathCalculator<T> mc = intervals[0].getMathCalculator();
+		List<Interval<T>> is = new ArrayList<>(intervals.length);
+		for(Interval<T> inv : intervals) {
+			unionWith0(is,inv,mc);
+		}
+		return new IntervalUnion<T>(mc,is);
+	}
 }

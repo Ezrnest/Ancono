@@ -38,8 +38,14 @@ public class IntervalI<T> extends Interval<T>{
 		if(upperBound == null || ! upperInclusive){
 			type |= RIGHT_OPEN_MASK;
 		}
-		if(downerBound != null && upperBound != null && mc.compare(downerBound, upperBound) > 0){
-			throw new IllegalArgumentException("downer_bound > upper_bound");
+		if(downerBound != null && upperBound != null ){
+			int t =mc.compare(downerBound, upperBound);
+			if( t >0) {
+				throw new IllegalArgumentException("downerBound > upperBound");
+			}
+			if(t == 0 && (!downerInclusive || !upperInclusive)) {
+				throw new IllegalArgumentException("downerBound==upperBound but not a closed interval");
+			}
 		}
 		this.left = downerBound;
 		this.right = upperBound;
@@ -271,16 +277,21 @@ public class IntervalI<T> extends Interval<T>{
 
 
 	@Override
-	public Interval<T> complementOf(Interval<T> iv) {
+	public Interval<T> intersect(Interval<T> iv) {
 		T iL = iv.downerBound();
 		T iR = iv.upperBound();
-		if((right == null || iL ==null || mc.compare(right, iL)== 1) &&
-			(iR == null ||  left == null || mc.compare(iR, left) == 1)){
-			//have such complement
+		if((right == null || iL ==null || mc.compare(right, iL) >=0) &&
+			(iR == null ||  left == null || mc.compare(iR, left) >=0)){
 			if(mc.compare(left, iL) == -1){
+				if((!isUpperBoundInclusive()|| !iv.isDownerBoundInclusive())&& mc.isEqual(right, iL)) {
+					return null;
+				}
 				return new IntervalI<>
 				(mc, iL, right, iv.isDownerBoundInclusive(), isUpperBoundInclusive());
 			}else{
+				if((!isDownerBoundInclusive() || !iv.isUpperBoundInclusive()) && mc.isEqual(left, iR)) {
+					return null;
+				}
 				return new IntervalI<>
 				(mc, left, iR , isDownerBoundInclusive(),iv.isUpperBoundInclusive());
 			}
@@ -306,13 +317,13 @@ public class IntervalI<T> extends Interval<T>{
 			sb.append('(');
 		}
 		if(left==null){
-			sb.append("-¡Þ");
+			sb.append("-âˆž");
 		}else{
 			sb.append(nf.format(left, mc));
 		}
 		sb.append(',');
 		if(right == null){
-			sb.append("+¡Þ");
+			sb.append("+âˆž");
 		}else{
 			sb.append(nf.format(right, mc));
 		}
@@ -390,14 +401,6 @@ public class IntervalI<T> extends Interval<T>{
 			}
 		}
 		return false;
-	}
-
-	public static void main(String[] args) {
-		MathCalculator<Long> mc = MathCalculatorAdapter.getCalculatorLong();
-		IntervalI<Long> v1 = new IntervalI<Long>(mc, 1L, 3L, true, false);
-		print(v1);
-		print(v1.contains(4L));
-		
 	}
 
 	@Override

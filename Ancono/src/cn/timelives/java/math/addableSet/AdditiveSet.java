@@ -9,8 +9,6 @@ import java.util.regex.Pattern;
 import cn.timelives.java.math.numberModels.Polynomial;
 
 /**
- * 这个对象用于储存具有可叠加特性的对象
-
  * 
  * 
  * 

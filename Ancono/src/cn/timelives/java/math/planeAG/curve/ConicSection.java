@@ -14,7 +14,6 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.SVPEquation;
 import cn.timelives.java.math.SVPEquation.LEquation;
 import cn.timelives.java.math.SVPEquation.QEquation;
-import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -29,7 +28,6 @@ import cn.timelives.java.math.planeAG.PAffineTrans;
 import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;
 import cn.timelives.java.math.planeAG.TransMatrix;
-import cn.timelives.java.math.planeAG.curve.ConicSection.Type;
 import cn.timelives.java.utilities.structure.Pair;
 /**
  * Conic section is a set of curves that can be described with the equation 

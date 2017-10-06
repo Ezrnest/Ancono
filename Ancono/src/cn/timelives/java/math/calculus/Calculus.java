@@ -134,7 +134,7 @@ public final class Calculus {
 	 * @param f
 	 * @return
 	 */
-	public static <T> SVPFunction<T> derivation(SVPFunction<T> f){
+	public static <T> AbstractSVPFunction<T> derivation(SVPFunction<T> f){
 		@SuppressWarnings("unchecked")
 		T[] cns = (T[]) new Object[f.getMaxPower()];
 		MathCalculator<T> mc = f.getMathCalculator();

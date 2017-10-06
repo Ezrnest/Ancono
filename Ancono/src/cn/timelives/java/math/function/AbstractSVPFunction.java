@@ -5,6 +5,7 @@ package cn.timelives.java.math.function;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -13,16 +14,14 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.calculus.Calculus;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.planeAG.Point;
-import cn.timelives.java.math.planeAG.curve.PlaneFunction;
 import cn.timelives.java.utilities.ArraySup;
 
 /**
- * 
+ * A class providing single variable polynomial function.
  * @author liyicheng
  *
  */
-public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> implements PlaneFunction<T>, SVPFunction<T> {
+public abstract class AbstractSVPFunction<T> extends AbstractSVFunction<T> implements SVPFunction<T> {
 	
 	/**
 	 * @param mc
@@ -54,14 +53,6 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 	}
 
 	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.planeAG.PlanePointSet#contains(cn.timelives.java.math.planeAG.Point)
-	 */
-	@Override
-	public boolean contains(Point<T> p) {
-		return mc.isEqual(apply(p.getX()), p.getY());
-	}
-
-	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.function.SVPFunction#getCoefficient(int)
 	 */
 	@Override
@@ -78,11 +69,11 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public abstract  <N> AbstractSVPFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+	public abstract <N> AbstractSVPFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 	
 	
 	
-	public static class SVPFunctionImpl1<T> extends AbstractSVPFunction<T>{
+	static class SVPFunctionImpl1<T> extends AbstractSVPFunction<T>{
 		final T[] coes;
 		/**
 		 * @param mc
@@ -141,7 +132,7 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 	 *
 	 * @param <T>
 	 */
-	public static class SVPFunctionImpl2<T> extends AbstractSVPFunction<T>{
+	static class SVPFunctionImpl2<T> extends AbstractSVPFunction<T>{
 		final Map<Integer,T> map;
 		/**
 		 * 
@@ -248,6 +239,7 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 		return false;
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -273,7 +265,13 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 		}
 		return sb.toString();
 	}
-	
+	/**
+	 * Creates a function with it coefficients.
+	 * @param mc a {@link MathCalculator}
+	 * @param coes an array of coefficients, if an element is {@code null}, 
+	 * then it will be considered as zero.
+	 * @return a new single variable polynomial function
+	 */
 	@SafeVarargs
 	public static <T> AbstractSVPFunction<T> createFunction(MathCalculator<T> mc,T...coes){
 		for(int i=0;i<coes.length;i++){
@@ -289,7 +287,43 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 		return new SVPFunctionImpl1<>(mc,max, coes);
 	}
 	/**
-	 * 
+	 * Creates a function with it coefficients as a list.
+	 * @param coes an list of coefficients, {@code null} values are unacceptable. 
+	 * @param mc a {@link MathCalculator}
+	 * @return a new single variable polynomial function
+	 */
+	public static <T> AbstractSVPFunction<T> createFunction(List<T> coes,MathCalculator<T> mc){
+		@SuppressWarnings("unchecked")
+		T[] arr = (T[]) coes.toArray();
+		for(int i=0;i<arr.length;i++) {
+			if(arr[i]==null) {
+				throw new NullPointerException("null in list: index = "+i);
+			}
+		}
+		return new SVPFunctionImpl1<>(mc, arr.length-1, arr);
+	}
+	/**
+	 * Creates a function with it coefficients as a map.
+	 * @param coes an map of coefficients, {@code null} values are unacceptable. 
+	 * @param mc a {@link MathCalculator}
+	 * @return a new single variable polynomial function
+	 */
+	public static <T> AbstractSVPFunction<T> createFunction(Map<Integer,T> coes,MathCalculator<T> mc){
+		Map<Integer,T> map = new HashMap<>();
+		int mp = 0;
+		for(Entry<Integer,T> en : coes.entrySet()) {
+			
+			if(en.getKey() == null || en.getValue()==null) {
+				throw new NullPointerException();
+			}
+			mp = Math.max(mp, en.getKey());
+			map.put(en.getKey(), en.getValue());
+		}
+		return new SVPFunctionImpl2<>(mc, mp, map);
+	}
+	
+	/**
+	 * Add two functions.
 	 * @param p1
 	 * @param p2
 	 * @return

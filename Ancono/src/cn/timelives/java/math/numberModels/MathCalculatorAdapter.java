@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 
 import cn.timelives.java.math.MathFunctions;
-import cn.timelives.java.utilities.structure.Pair;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 
 

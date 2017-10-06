@@ -13,13 +13,14 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  *
  */
 public abstract class SingleVInquation<T> extends Inequation<T> {
+	
 	/**
 	 * @param mc
+	 * @param op
 	 */
-	protected SingleVInquation(MathCalculator<T> mc) {
-		super(mc);
+	protected SingleVInquation(MathCalculator<T> mc, Type op) {
+		super(mc, op);
 	}
-	
 	@Override
 	public final int getVariableCount() {
 		return 1;
@@ -30,7 +31,6 @@ public abstract class SingleVInquation<T> extends Inequation<T> {
 	 * @return {@code true} if x is the solution of this equation.
 	 */
 	public abstract boolean isSolution(T x) ;
-	
 	
 	public abstract <N> SingleVInquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 }

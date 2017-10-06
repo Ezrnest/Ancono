@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
 import cn.timelives.java.utilities.ModelPatterns;
 
 
@@ -608,9 +608,9 @@ public class MathFunctions {
 	 * <pre>ax^2 + bx + c = 0</pre>
 	 * This method will ignore imaginary solutions.
 	 * <p>This method will return a list of solutions,which will contain 
-	 * no element if there is no real solution({@code жд<0}),
-	 * one if there is only one solution(or two solutions of the same value)({@code жд=0})
-	 * or two elements if there are two solutions(({@code жд>0}).
+	 * no element if there is no real solution({@code delta<0}),
+	 * one if there is only one solution(or two solutions of the same value)({@code delta==0})
+	 * or two elements if there are two solutions(({@code delta>0}).
 	 * <p>This method normally requires {@code squareRoot()} method of the {@link MathCalculator}. 
 	 * 
 	 * @param a the coefficient of x^2.
@@ -620,7 +620,7 @@ public class MathFunctions {
 	 * @return the list of solution,regardless of order.
 	 */
 	public static <T> List<T> solveEquation(T a,T b,T c,MathCalculator<T> mc){
-		//Calculate the жд
+		//Calculate the delta
 		T delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));
 		int compare = 1;
 		try{

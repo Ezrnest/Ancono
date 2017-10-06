@@ -11,7 +11,6 @@ import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.planeAG.PAffineTrans;
 import cn.timelives.java.math.planeAG.TransMatrix;
-import cn.timelives.java.math.planeAG.curve.ConicSection.Type;
 import cn.timelives.java.utilities.structure.Pair;
 /**
  * A final subclass for conic section.

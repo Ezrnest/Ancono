@@ -6,12 +6,15 @@ import java.util.function.Function;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
- * Equation is an abstract class for all kind of equations in math.
+ * Equation is an abstract class for all kind of equations in math. 
+ * An equation can be presented as <pre><i>left</i> = <i>right</i></pre>, where 
+ * <i>left</i> and <i>right</i> are two MathFunction, and {@link MathCalculator#isEqual(Object, Object)} is 
+ * used to determine whether the two results are the same.
  * @author lyc
  *
  * @param <T>
  */
-public abstract class Equation<T> extends FlexibleMathObject<T> {
+public abstract class Equation<T> extends CompareStructure<T> {
 
 	protected Equation(MathCalculator<T> mc) {
 		super(mc);

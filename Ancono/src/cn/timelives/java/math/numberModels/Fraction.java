@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.timelives.java.math.MathFunctions;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 
 /**

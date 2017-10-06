@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.function.AbstractSVPFunction;
+import cn.timelives.java.math.function.MathFunctionSup;
+import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
@@ -20,10 +22,11 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * @author lyc
  * @param <T>
  */
-public abstract class SVPEquation<T> extends SingleVEquation<T> {
-	
-	protected SVPEquation(MathCalculator<T> mc) {
+public abstract class SVPEquation<T> extends SingleVEquation<T> implements Multinomial<T>{
+	protected final int mp;
+	protected SVPEquation(MathCalculator<T> mc,int mp) {
 		super(mc);
+		this.mp = mp;
 	}
 	
 	/**
@@ -37,9 +40,10 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 	 * Returns the corresponding function f(x) of this equation.
 	 * @return a MathFunction
 	 */
-	public MathFunction<T,T> getFx(){
+	public SVFunction<T> asFunction(){
 		return this::compute;
 	}
+	
 	/**
 	 * Gets the coefficient of {@code x^n},if {@code n==0} then the 
 	 * coefficient {@code a0} will be returned.
@@ -57,7 +61,46 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 	 * @return an integer number indicates the max power.
 	 * 
 	 */
-	public abstract int getMaxPower();
+	public int getMaxPower() {
+		return mp;
+	}
+	
+	/**
+	 * Returns zero.
+	 */
+	@Override
+	public SVFunction<T> right() {
+		return MathFunctionSup.getConstant(mc.getZero(), mc);
+	}
+	
+	
+	@Override
+	public SVFunction<T> left(){
+		return asFunction();
+	}
+	
+	/*
+	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+	 */
+	@Override
+	public boolean valueEquals(FlexibleMathObject<T> obj) {
+		if (!(obj instanceof SVPEquation)) {
+			return false;
+		}
+		if(obj == this) {
+			return true;
+		}
+		SVPEquation<T> sv = (SVPEquation<T>) obj;
+		if(sv.mp != mp) {
+			return false;
+		}
+		for(int i=0;i<mp;i++) {
+			if(!mc.isEqual(getCoefficient(i), sv.getCoefficient(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
@@ -85,24 +128,27 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 		}
 		return sb.toString();
 	}
-	
+	/*
+	 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 */
+	@Override
+	public abstract <N> SVPEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 	/**
 	 * A default implements for the equation.
 	 * @author lyc
 	 *
 	 * @param <T>
 	 */
-	public static class DSVPEquation<T> extends SVPEquation<T>{
+	static class DSVPEquation<T> extends SVPEquation<T>{
 		private final T[] coes;
 		
-		private final int mp;
+		
 		
 		private transient int hash = 0;
 		
 		protected DSVPEquation(MathCalculator<T> mc,T[] coes) {
-			super(mc);
+			super(mc,coes.length-1);
 			this.coes = coes;
-			mp = coes.length-1;
 		}
 		
 		@Override
@@ -125,40 +171,6 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 			return mp;
 		}
 		
-		/**
-		 * This method will try to solve the equation using the solution-formulas.Because 
-		 * formulas are only available when {@code n<5}, if {@code n>=5},an exception will 
-		 * be thrown.
-		 * @return a list of solutions,including imaginary roots.
-		 * @throws ArithmeticException if {@code n>=5}
-		 */
-		public List<T> solveUsingFormula(){
-			switch(mp){
-			case 1:{
-				return Arrays.asList(mc.negate(mc.divide(coes[0], coes[1])));
-			}
-			case 2:{
-				T a = coes[2];
-				T b = coes[1];
-				T c = coes[0];
-				T delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));
-				// x1 = (-b + sqr(delta)) / 2a
-				// x2 = (-b - sqr(delta)) / 2a
-				List<T> so = new ArrayList<>(2);
-				delta = mc.squareRoot(delta);
-				T a2 = mc.multiplyLong(a, 2);
-				T re = mc.divide(mc.subtract(delta, b), a2);
-				so.add(re);
-				re = mc.negate(mc.divide(mc.add(b, delta), a2));
-				so.add(re);
-				return so;
-			}
-			default:{
-				throw new ArithmeticException("No formula available.");
-			}
-			}
-			
-		}
 		
 
 		@Override
@@ -189,23 +201,7 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 			return hash;
 		}
 
-		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
-			if(obj instanceof SVPEquation){
-				DSVPEquation<T> sv = (DSVPEquation<T>) obj;
-				if(sv.mp == this.mp){
-					T[] svc = sv.coes;
-					for(int i=0;i<coes.length;i++){
-						if(!mc.isEqual(coes[i], svc[i])){
-							return false;
-						}
-					}
-					return true;
-				}
-				return false;
-			}
-			return false;
-		}
+		
 
 		@Override
 		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
@@ -233,7 +229,66 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 		
 	}
 	
+	static class SVPFEquation<T> extends SVPEquation<T>{
+		private final AbstractSVPFunction<T> f;
+		/**
+		 * @param mc
+		 */
+		protected SVPFEquation(MathCalculator<T> mc,AbstractSVPFunction<T> f) {
+			super(mc,f.getMaxPower());
+			this.f = f;
+		}
+		/*
+		 * @see cn.timelives.java.math.SVPEquation#compute(java.lang.Object)
+		 */
+		@Override
+		public T compute(T x) {
+			return f.apply(x);
+		}
+		/*
+		 * @see cn.timelives.java.math.SVPEquation#getCoefficient(int)
+		 */
+		@Override
+		public T getCoefficient(int n) {
+			return f.getCoefficient(n);
+		}
+		/*
+		 * @see cn.timelives.java.math.SVPEquation#getMaxPower()
+		 */
+		@Override
+		public int getMaxPower() {
+			return f.getMaxPower();
+		}
+		/*
+		 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 */
+		@Override
+		public <N> SVPEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+			return new SVPFEquation<>(newCalculator, f.mapTo(mapper, newCalculator));
+		}
+		
+		
+		
+	}
 	
+	/**
+	 * Creates an SVPEquation from a list of coefficients. The index of the 
+	 * coefficient is considered as the corresponding power of {@code x}. 
+	 * For example, a list [1,2,3] represents for {@literal 3x^2+2x+1}.
+	 * @param coes a list of coefficient
+	 * @param mc a {@link MathCalculator}
+	 * @return an equation
+	 */
+	public static <T> SVPEquation<T> valueOf(List<T> coes,MathCalculator<T> mc){
+		@SuppressWarnings("unchecked")
+		T[] arr = (T[]) coes.toArray();
+		for(int i=0;i<arr.length;i++) {
+			if(arr[i]==null) {
+				throw new NullPointerException("null in list: index = "+i);
+			}
+		}
+		return new DSVPEquation<>(mc,arr);
+	}
 	
 	/**
 	 * Returns an equation that is equal to {@code (x-a)^p = 0},the roots are 
@@ -247,8 +302,28 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 		if(p<=0){
 			throw new IllegalArgumentException("p <= 0 ");
 		}
+		//TODO
 		return null;
 	}
+//	/**
+//	 * A root equation is 
+//	 * @author liyicheng
+//	 * 2017-10-06 15:59
+//	 *
+//	 * @param <T>
+//	 */
+//	static final class RootEquation<T> extends SVPEquation<T>{
+//
+//		/**
+//		 * @param mc
+//		 */
+//		protected RootEquation(MathCalculator<T> mc) {
+//			super(mc);
+//			// TODO Auto-generated constructor stub
+//		}
+//		
+//	}
+	
 	
 	/**
 	 * QEquation is quadratic equation with only one unknown.This class provides 
@@ -262,14 +337,14 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 		private final T a,b,c;
 		
 		protected QEquation(MathCalculator<T> mc,T a,T b,T c) {
-			super(mc);
+			super(mc,2);
 			this.a = Objects.requireNonNull(a);
 			this.b = Objects.requireNonNull(b);
 			this.c = Objects.requireNonNull(c);
 		}
 		
 		private QEquation(MathCalculator<T> mc,T a,T b,T c,T x1,T x2,T delta,int d){
-			super(mc);
+			super(mc,2);
 			this.a = a;
 			this.b = b;
 			this.c = c;
@@ -368,9 +443,9 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 		/**
 		 * Solve this equation in real number field,and take the duplicated root as one root,
 		 * <p>This method will return a list of solutions,which will contain 
-		 * no element if there is no real solution({@code ¦¤<0}),
-		 * one if there is only one solution(or two solutions of the same value)({@code ¦¤=0})
-		 * or two elements if there are two solutions(({@code ¦¤>0}).
+		 * no element if there is no real solution({@code ï¿½ï¿½<0}),
+		 * one if there is only one solution(or two solutions of the same value)({@code ï¿½ï¿½=0})
+		 * or two elements if there are two solutions(({@code ï¿½ï¿½>0}).
 		 * @return a list of solution,regardless of order.
 		 */
 		public List<T> solveR(){
@@ -550,7 +625,7 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 		private final T a,b;
 		private final T sol;
 		protected LEquation(MathCalculator<T> mc,T a,T b) {
-			super(mc);
+			super(mc,1);
 			if(mc.isZero(a)){
 				throw new IllegalArgumentException("a=0");
 			}
@@ -560,7 +635,7 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> {
 		}
 		
 		private LEquation(MathCalculator<T> mc,T a,T b,T sol){
-			super(mc);
+			super(mc,1);
 			this.a =  Objects.requireNonNull(a);
 			this.b =  Objects.requireNonNull(b);
 			this.sol =  Objects.requireNonNull(sol);

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;;
 
 /**
  * A fraction use polynomial as its numerator and denominator.

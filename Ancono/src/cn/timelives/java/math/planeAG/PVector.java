@@ -12,10 +12,10 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.AbstractVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
-import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 

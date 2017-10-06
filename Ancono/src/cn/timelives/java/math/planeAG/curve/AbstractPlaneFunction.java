@@ -1,17 +1,21 @@
 /**
  * 
  */
-package cn.timelives.java.math.planeAG;
+package cn.timelives.java.math.planeAG.curve;
 
+import java.util.function.Function;
+
+import cn.timelives.java.math.function.AbstractSVFunction;
 import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.planeAG.curve.AbstractPlaneCurve;
+import cn.timelives.java.math.planeAG.PlanePointSet;
+import cn.timelives.java.math.planeAG.Point;
 
 /**
  * @author liyicheng
  *
  */
-public abstract class AbstractPlaneFunction<T> extends AbstractPlaneCurve<T> implements SVFunction<T> {
+public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> implements SVFunction<T>,PlanePointSet<T>{
 
 	/**
 	 * @param mc
@@ -36,4 +40,9 @@ public abstract class AbstractPlaneFunction<T> extends AbstractPlaneCurve<T> imp
 		return Point.valueOf(x, apply(x), mc);
 	}
 	
+	/*
+	 * @see cn.timelives.java.math.planeAG.curve.AbstractPlaneCurve#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 */
+	@Override
+	public abstract <N> AbstractPlaneFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 }

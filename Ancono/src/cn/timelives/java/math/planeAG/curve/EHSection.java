@@ -5,8 +5,8 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
 import cn.timelives.java.math.planeAG.Line;
 import cn.timelives.java.math.planeAG.PAffineTrans;
 import cn.timelives.java.math.planeAG.Point;

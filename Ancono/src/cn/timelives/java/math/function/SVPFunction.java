@@ -5,6 +5,9 @@ package cn.timelives.java.math.function;
 
 import java.util.Iterator;
 
+import cn.timelives.java.math.MathCalculatorHolder;
+import cn.timelives.java.math.Multinomial;
+
 
 /**
  * Single value polynomial function. Generally, the equation can be shown as 
@@ -12,7 +15,7 @@ import java.util.Iterator;
  * @author liyicheng
  *
  */
-public interface SVPFunction<T> extends SVFunction<T>, Iterable<T>{
+public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, Multinomial<T>{
 	
 	/**
 	 * Returns the coefficient {@code x^n},if {@code n==0} then the 
@@ -31,40 +34,6 @@ public interface SVPFunction<T> extends SVFunction<T>, Iterable<T>{
 	 */
 	int getMaxPower();
 	
-	/** 
-	 * Iterators the coefficient from the lowest one(a0).
-	 */
-	@Override
-	public default Iterator<T> iterator() {
-		return new It<>(this);
-	}
-	
-}
-class It<T> implements Iterator<T>{
-	private final SVPFunction<T> f;
-	private final int max;
-	private int n;
-	/**
-	 * 
-	 */
-	public It(SVPFunction<T> f) {
-		this.f = f;
-		this.max = f.getMaxPower();
-	}
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#hasNext()
-	 */
-	@Override
-	public boolean hasNext() {
-		return n<=max;
-	}
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#next()
-	 */
-	@Override
-	public T next() {
-		return f.getCoefficient(n++);
-	}
 	
 	
 }

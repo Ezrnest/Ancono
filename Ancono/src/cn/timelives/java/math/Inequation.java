@@ -9,12 +9,13 @@ import java.util.function.Function;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
- * Describes inequation in math.
+ * Describes inequation in math. An inequation is presented as 
+ *  <pre> left <i>op</i> right</pre>, 
  * @author liyicheng
  * 2017-10-06 08:49
  *
  */
-public abstract class Inequation<T> extends FlexibleMathObject<T> {
+public abstract class Inequation<T> extends CompareStructure<T> {
 	enum Type{
 		GREATER,
 		GREATER_OR_EQUAL,
@@ -23,12 +24,17 @@ public abstract class Inequation<T> extends FlexibleMathObject<T> {
 	}
 	
 	/**
+	 * 
+	 */
+	protected final Type op;
+	
+	/**
 	 * @param mc
 	 */
-	protected Inequation(MathCalculator<T> mc) {
+	protected Inequation(MathCalculator<T> mc,Type op) {
 		super(mc);
+		this.op = op;
 	}
-	
 	
 	/**
 	 * Determines whether the given list of variables is the solution of this inequation.

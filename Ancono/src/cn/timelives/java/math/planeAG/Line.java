@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.Fraction;
@@ -15,7 +16,6 @@ import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
 import cn.timelives.java.math.planeAG.curve.AbstractPlaneCurve;
 import cn.timelives.java.math.planeAG.curve.SubstituableCurve;
 import cn.timelives.java.utilities.Printer;
@@ -223,9 +223,9 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		return false;
 	}
 	/**
-	 * Return {@code true} only if {@code this ¡Í l}.
+	 * Return {@code true} only if {@code this ï¿½ï¿½ l}.
 	 * @param l another line
-	 * @return {@code true} only if {@code this ¡Í l}
+	 * @return {@code true} only if {@code this ï¿½ï¿½ l}
 	 */
 	public boolean isPerpendicular(Line<T> l){
 		T m = mc.add(mc.multiply(a, l.a), mc.multiply(b, l.b));
@@ -497,7 +497,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Return the distance of this line to the point p.
 	 * @param p a point
-	 * @return |a*p.x+b*p.y+c|/¡Ì(a^2+b^2)
+	 * @return |a*p.x+b*p.y+c|/ï¿½ï¿½(a^2+b^2)
 	 */
 	public T distance(Point<T> p){
 		return distance(p.x,p.y);
@@ -505,7 +505,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Return the distance of this line to the point p.
 	 * @param p a point
-	 * @return |a*p.x+b*p.y+c|/¡Ì(a^2+b^2)
+	 * @return |a*p.x+b*p.y+c|/ï¿½ï¿½(a^2+b^2)
 	 */
 	public T distance(T x,T y){
 		T sub = mc.abs(substitute(x, y));

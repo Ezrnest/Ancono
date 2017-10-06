@@ -7,8 +7,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.MathFunctions;
 import cn.timelives.java.math.ProgressionSup;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.planeAG.Point;

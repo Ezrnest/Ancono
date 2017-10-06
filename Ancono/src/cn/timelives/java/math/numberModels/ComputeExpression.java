@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.EasyConsole;
 import cn.timelives.java.utilities.Printer;

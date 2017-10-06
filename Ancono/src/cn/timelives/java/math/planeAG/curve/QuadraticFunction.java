@@ -3,10 +3,7 @@
  */
 package cn.timelives.java.math.planeAG.curve;
 
-import static cn.timelives.java.utilities.Printer.print;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
@@ -14,9 +11,7 @@ import cn.timelives.java.math.SVPEquation.QEquation;
 import cn.timelives.java.math.function.SVPFunction;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.planeAG.AbstractPlaneFunction;
 import cn.timelives.java.math.planeAG.Line;
 import cn.timelives.java.math.planeAG.Point;
 
@@ -216,14 +211,6 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 		return toEquation().toString(nf);//TODO
 	}
 	
-	
-	public static void main(String[] args) {
-		QuadraticFunction<Double> f1 = generalFormula(1d, 2d, 3d, MathCalculatorAdapter.getCalculatorDouble());
-		print(f1);
-		print(f1.getPoint(2d));
-		print(f1.climax());
-		
-	}
 
 
 }

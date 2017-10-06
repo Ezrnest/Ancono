@@ -7,9 +7,9 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.MathFunctions;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
 import cn.timelives.java.math.planeAG.curve.ClosedCurve;
 import cn.timelives.java.math.planeAG.curve.ConicSection;
 import cn.timelives.java.math.planeAG.curve.RectifiableCurve;

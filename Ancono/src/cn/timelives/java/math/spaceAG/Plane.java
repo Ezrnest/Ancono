@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.LinearEquationSolution;
-import cn.timelives.java.math.LinearEquationSolution.Situation;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -856,7 +856,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 		//here we solve the equation and get one solution as
 		//v1=(x,y,z), v2=(k,q,j)
 		//a = jy - qz , b = kz - jx , c = qx - ky
-		// or (a,b,c) = v1 ¡Á v2 (outer product)
+		// or (a,b,c) = v1 ï¿½ï¿½ v2 (outer product)
 		SVector<T> abc = v1.outerProduct(v2);
 		if(abc.isZeroVector()){
 			return null;
@@ -880,7 +880,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 		//here we solve the equation and get one solution as
 		//v1=(x,y,z), v2=(k,q,j)
 		//a = jy - qz , b = kz - jx , c = qx - ky
-		// or (a,b,c) = v1 ¡Á v2 (outer product)
+		// or (a,b,c) = v1 ï¿½ï¿½ v2 (outer product)
 		SVector<T> abc = v1.outerProduct(v2);
 		if(abc.isZeroVector()){
 			throw new IllegalArgumentException("v1 // v2");

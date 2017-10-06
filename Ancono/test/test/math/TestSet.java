@@ -4,6 +4,7 @@
 package test.math;
 
 import static cn.timelives.java.utilities.Printer.print;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
@@ -75,6 +76,20 @@ public class TestSet {
 		printIntervalUnion(v1,v2,v3);
 		v1 = Interval.fromNegativeInf(1, false, mc);
 		printIntervalUnion(v1,v2);
+	}
+	
+	@Test
+	public void testIntervalUnion2() {
+		Interval<Integer> v1,v2,v3;
+		v1 = Interval.closedInterval(0, 2, mc);
+		v2 = Interval.closedInterval(-2, 4, mc);
+		v3 = Interval.closedInterval(5, 7, mc);
+		IntervalUnion<Integer> in1 = IntervalUnion.valueOf(v1, v2,v3);
+		v1 = Interval.openInterval(1, 2, mc);
+		v2 = Interval.openInterval(2, 6, mc);
+		v3 = Interval.closedInterval(2, 2, mc);
+		IntervalUnion<Integer> in2 = IntervalUnion.valueOf(v1, v2,v3);
+		assertEquals("Interval intersect "+in1.toString()+" and "+in2.toString(), "(1,4]∪[5,6)", in1.intersect(in2).toString());
 	}
 	
 	@SafeVarargs

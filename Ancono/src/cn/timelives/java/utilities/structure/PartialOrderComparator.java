@@ -1,4 +1,4 @@
-﻿package cn.timelives.java.math;
+﻿package cn.timelives.java.utilities.structure;
 /**
  * Partial order is a relation between two object.The {@linkplain PartialOrderComparator} implements 
  * this kind of relationship and following requirements must be fitted.

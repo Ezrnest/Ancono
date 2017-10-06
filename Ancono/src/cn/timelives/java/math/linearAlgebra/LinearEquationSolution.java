@@ -1,11 +1,7 @@
-package cn.timelives.java.math;
+package cn.timelives.java.math.linearAlgebra;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.printnb;
-
-import cn.timelives.java.math.linearAlgebra.Matrix;
-import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.linearAlgebra.Vector;
 /**
  * A wrapper for the solution of a linear equation.This class objects are often 
  * returned by {@link MatrixSup#solveLinearEquation(Matrix)}.

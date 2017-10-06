@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.LinearEquationSolution;
-import cn.timelives.java.math.LinearEquationSolution.Situation;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.AbstractVector;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -175,10 +175,10 @@ public final class SVector<T> extends AbstractVector<T> {
 	/**
 	 * Returns the inner(scalar) product of {@code this} and {@code s}, which 
 	 * is equal to <pre>
-	 * this ¡¤ s
+	 * this ï¿½ï¿½ s
 	 * </pre>
 	 * @param s
-	 * @return this ¡¤ s
+	 * @return this ï¿½ï¿½ s
 	 */
 	public T innerProduct(SVector<T> s){
 		return mc.add(mc.add(mc.multiply(x, s.x), mc.multiply(y, s.y)), mc.multiply(z, s.z));
@@ -187,7 +187,7 @@ public final class SVector<T> extends AbstractVector<T> {
 	/**
 	 * Returns the outer product of {@code this} and {@code s}, which 
 	 * is equal to <pre>
-	 * this ¡Á s
+	 * this ï¿½ï¿½ s
 	 * </pre>
 	 * @param s
 	 * @return
@@ -247,9 +247,9 @@ public final class SVector<T> extends AbstractVector<T> {
 	
 	/**
 	 * Returns the angle of {@code this} and {@code s}.
-	 * <pre> arccos(this ¡¤ s / (|this| |s|))</pre>
+	 * <pre> arccos(this ï¿½ï¿½ s / (|this| |s|))</pre>
 	 * @param s
-	 * @return <pre> arccos(this ¡¤ s / (|this| |s|))</pre>
+	 * @return <pre> arccos(this ï¿½ï¿½ s / (|this| |s|))</pre>
 	 */
 	public <R> R angle(SVector<T> s,MathFunction<T, R> arccos){
 		T pro = innerProduct(s);
@@ -258,9 +258,9 @@ public final class SVector<T> extends AbstractVector<T> {
 	}
 	/**
 	 * Returns the cos value of the angle of {@code this} and {@code s}.
-	 * <pre>this ¡¤ s / (|this| |s|)</pre>
+	 * <pre>this ï¿½ï¿½ s / (|this| |s|)</pre>
 	 * @param s
-	 * @return <pre>this ¡¤ s / (|this| |s|)</pre>
+	 * @return <pre>this ï¿½ï¿½ s / (|this| |s|)</pre>
 	 */
 	public T angleCos(SVector<T> s){
 		T pro = innerProduct(s);
@@ -611,7 +611,7 @@ public final class SVector<T> extends AbstractVector<T> {
 	
 	/**
 	 * Returns the mixed product of a,b,c which is equal to <pre>
-	 * (a ¡Á b) ¡¤ c
+	 * (a ï¿½ï¿½ b) ï¿½ï¿½ c
 	 * </pre>
 	 * @param a
 	 * @param b
@@ -622,8 +622,8 @@ public final class SVector<T> extends AbstractVector<T> {
 		return MatrixSup.det3(toMatrix(a,b,c), a.mc);
 	}
 	/**
-	 * Returns a vector which is on the same plane of {@code n ¡Á v} and {@code v} and the cosine value of the 
-	 * angle of it and {@code v} is equal to {@code cos}. The mix product of {@code (result ¡Á v) ¡¤ n}
+	 * Returns a vector which is on the same plane of {@code n ï¿½ï¿½ v} and {@code v} and the cosine value of the 
+	 * angle of it and {@code v} is equal to {@code cos}. The mix product of {@code (result ï¿½ï¿½ v) ï¿½ï¿½ n}
 	 * will be positive.
 	 * @param v
 	 * @param n
@@ -637,7 +637,7 @@ public final class SVector<T> extends AbstractVector<T> {
 		return res;
 	}
 	/**
-	 * Returns the two possible vectors that are on the same plane of {@code n ¡Á v} and {@code v} 
+	 * Returns the two possible vectors that are on the same plane of {@code n ï¿½ï¿½ v} and {@code v} 
 	 *  and the cosine value of the 
 	 * angle of either of them and {@code v} is equal to {@code cos}.
 	 * @param v

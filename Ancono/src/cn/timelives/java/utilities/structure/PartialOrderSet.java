@@ -1,4 +1,4 @@
-package cn.timelives.java.math;
+package cn.timelives.java.utilities.structure;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.print_;
@@ -13,10 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-
-import cn.timelives.java.utilities.structure.DirectedGraph;
-import cn.timelives.java.utilities.structure.DirectedGraphNode;
-import cn.timelives.java.utilities.structure.LinkedDirectedGraph;
 
 /**
  * A partial order set is a set that contains a set of partial ordered

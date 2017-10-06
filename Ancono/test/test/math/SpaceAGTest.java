@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import cn.timelives.java.math.LinearEquationSolution;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;

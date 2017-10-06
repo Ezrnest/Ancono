@@ -10,7 +10,6 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  * @author lyc
  *
  * @param <T>
- * @param <S>
  */
 public abstract class Equation<T> extends FlexibleMathObject<T> {
 
@@ -23,13 +22,13 @@ public abstract class Equation<T> extends FlexibleMathObject<T> {
 	 */
 	public abstract int getVariableCount();
 	/**
-	 * Compute whether the given list {@code so} is the list of solution of this equation.
+	 * Compute whether the given list {@code x} is the list of solution of this equation.
 	 * The size of the list should be equal to the number of the variables and the order is 
 	 * considered.
-	 * @param so a list of number
-	 * @return {@code true} if {@code so} is the list of solution of this equation.
+	 * @param x a list of number
+	 * @return {@code true} if {@code x} is the list of solution of this equation.
 	 */
-	public abstract boolean isSolution(List<T> so);
+	public abstract boolean isSolution(List<T> x);
 	
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)

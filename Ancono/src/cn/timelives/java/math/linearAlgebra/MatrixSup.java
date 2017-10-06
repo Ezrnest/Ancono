@@ -9,9 +9,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.timelives.java.math.LinearEquationSolution;
-import cn.timelives.java.math.LinearEquationSolution.Situation;
-import cn.timelives.java.math.LinearEquationSolution.SolutionBuilder;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.SolutionBuilder;
 import cn.timelives.java.math.linearAlgebra.Matrix.MatResult;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -54,7 +53,7 @@ public class MatrixSup {
 	 */
 	public static Fraction fastDet(Matrix<Fraction> mat){
 		if(mat.row!=mat.column){
-			throw new ArithmeticException("Cannot calculate det for: "+ mat.row + "¡Á" + mat.column);
+			throw new ArithmeticException("Cannot calculate det for: "+ mat.row + "ï¿½ï¿½" + mat.column);
 		}
 		Fraction[][] mar = (Fraction[][]) mat.getValues();
 		List<MatrixOperation<Fraction>> ops = mat.toUpperTri0(mar,mat.row,mat.column);

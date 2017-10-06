@@ -11,11 +11,11 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.LinearEquationSolution;
 import cn.timelives.java.math.MathFunctions;
 import cn.timelives.java.math.Progression;
 import cn.timelives.java.math.ProgressionSup;
 import cn.timelives.java.math.SVPEquation.QEquation;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;

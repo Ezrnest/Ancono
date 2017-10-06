@@ -1,12 +1,9 @@
 package cn.timelives.java.math.set;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 public class IntervalI<T> extends Interval<T>{
 
@@ -283,13 +280,13 @@ public class IntervalI<T> extends Interval<T>{
 		if((right == null || iL ==null || mc.compare(right, iL) >=0) &&
 			(iR == null ||  left == null || mc.compare(iR, left) >=0)){
 			if(mc.compare(left, iL) == -1){
-				if((!isUpperBoundInclusive()|| !iv.isDownerBoundInclusive())&& mc.isEqual(right, iL)) {
+				if(mc.isEqual(right, iL) && (!isUpperBoundInclusive()|| !iv.isDownerBoundInclusive())) {
 					return null;
 				}
 				return new IntervalI<>
 				(mc, iL, right, iv.isDownerBoundInclusive(), isUpperBoundInclusive());
 			}else{
-				if((!isDownerBoundInclusive() || !iv.isUpperBoundInclusive()) && mc.isEqual(left, iR)) {
+				if(mc.isEqual(left, iR) && (!isDownerBoundInclusive() || !iv.isUpperBoundInclusive()) ) {
 					return null;
 				}
 				return new IntervalI<>

@@ -175,9 +175,9 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	/**
 	 * Returns a new interval that equals to the complement of {@code this} and {@code iv} , 
 	 * which is expressed as {@literal iv ∩ this} in mathematical. If the complement is empty
-	 *  then {@code null} will be returned.
+	 * then {@code null} will be returned.
 	 * @param iv a interval, or {@code null}
-	 * @return {@literal iv ∩ this}
+	 * @return {@literal iv ∩ this} or {@code null} if the result is an empty set.
 	 */
 	public abstract Interval<T> intersect(Interval<T> iv);
 	
@@ -207,7 +207,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * meet the requirement that {@code downer<upper}
 	 * @param downer the downer bound
 	 * @param upper the upper bound
-	 * @param mc
+	 * @param mc a {@link MathCalculator}
 	 * @return [downer,upper]
 	 */
 	public static <T> Interval<T> closedInterval(T downer,T upper,MathCalculator<T> mc){
@@ -218,7 +218,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * meet the requirement that {@code downer<upper}
 	 * @param downer the downer bound
 	 * @param upper the upper bound
-	 * @param mc
+	 * @param mc a {@link MathCalculator}
 	 * @return (downer,upper)
 	 */
 	public static <T> Interval<T> openInterval(T downer,T upper,MathCalculator<T> mc){
@@ -229,7 +229,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * meet the requirement that {@code downer<upper}
 	 * @param downer the downer bound
 	 * @param upper the upper bound
-	 * @param mc
+	 * @param mc a {@link MathCalculator}
 	 * @return (downer,upper]
 	 */
 	public static <T> Interval<T> leftOpenRightClosed(T downer,T upper,MathCalculator<T> mc){
@@ -240,7 +240,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * meet the requirement that {@code downer<upper}
 	 * @param downer the downer bound
 	 * @param upper the upper bound
-	 * @param mc
+	 * @param mc a {@link MathCalculator}
 	 * @return [downer,upper)
 	 */
 	public static <T> Interval<T> leftClosedRightOpen(T downer,T upper,MathCalculator<T> mc){
@@ -250,7 +250,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * Returns an interval from negative infinity to the upper bound.
 	 * @param upper the upper bound
 	 * @param closed determines whether this 
-	 * @param mc
+	 * @param mc a {@link MathCalculator}
 	 * @return (-∞,upper) or (-∞,upper]
 	 */
 	public static <T> Interval<T> fromNegativeInf(T upper,boolean closed,MathCalculator<T> mc){
@@ -261,12 +261,21 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * Returns an interval from the downer bound to positive infinity.
 	 * @param downer the downer bound
 	 * @param closed determines whether this 
-	 * @param mc
+	 * @param mc a {@link MathCalculator}
 	 * @return (downer,+∞) or [downer,+∞)
 	 */
 	public static <T> Interval<T> toPositiveInf(T downer,boolean closed,MathCalculator<T> mc){
 		return new IntervalI<T>(mc, Objects.requireNonNull(downer), null, 
 				IntervalI.RIGHT_OPEN_MASK | (closed ? 0 : IntervalI.LEFT_OPEN_MASK));
+	}
+	/**
+	 * Returns the interval representing the whole real number, whose downer bound 
+	 * is negative infinity and upper bound is positive infinity.
+	 * @param mc a {@link MathCalculator}
+	 * @return (-∞,+∞)
+	 */
+	public static <T> Interval<T> universe(MathCalculator<T> mc){
+		return new IntervalI<T>(mc, null, null, IntervalI.RIGHT_OPEN_MASK | IntervalI.LEFT_OPEN_MASK);
 	}
 	
 	static <T> Interval<T> instanceNonNull(T a,T b,boolean dc,boolean uc, MathCalculator<T> mc){

@@ -73,6 +73,8 @@ public class TestSet {
 		v3 = Interval.closedInterval(2, 2, mc);
 		printIntervalUnion(v1,v2);
 		printIntervalUnion(v1,v2,v3);
+		v1 = Interval.fromNegativeInf(1, false, mc);
+		printIntervalUnion(v1,v2);
 	}
 	
 	@SafeVarargs

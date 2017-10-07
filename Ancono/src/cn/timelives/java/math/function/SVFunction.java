@@ -3,8 +3,6 @@
  */
 package cn.timelives.java.math.function;
 
-import cn.timelives.java.math.MathCalculatorHolder;
-
 /**
  * Describes the function {@code f(x)} in the plane which only contains single variable. 
  * @author liyicheng

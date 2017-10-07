@@ -3,7 +3,8 @@
  */
 package cn.timelives.java.math.function;
 
-import java.util.Iterator;
+
+import java.util.function.BiPredicate;
 
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Multinomial;
@@ -20,8 +21,8 @@ public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, M
 	/**
 	 * Returns the coefficient {@code x^n},if {@code n==0} then the 
 	 * coefficient {@code a0} will be returned.
-	 * @param n
-	 * @return
+	 * @param n the power of {@code x}
+	 * @return the coefficient
 	 * @throws IndexOutOfBoundsException if {@code n} is bigger than {@code getMaxPower()} or 
 	 * it is smaller than 0.
 	 */
@@ -34,6 +35,15 @@ public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, M
 	 */
 	int getMaxPower();
 	
-	
-	
+	/**
+	 * Determines whether the two SVPFunctions are equal. The subclasses may 
+	 * use this method to test whether the two objects are equal.
+	 * @param f1 a function
+	 * @param f2 another function
+	 * @param equal
+	 * @return
+	 */
+	public static <T,S> boolean isEqual(SVPFunction<T> f1,SVPFunction<S> f2,BiPredicate<T, S> equal) {
+		return Multinomial.isEqual(f1, f2, equal);
+	}
 }

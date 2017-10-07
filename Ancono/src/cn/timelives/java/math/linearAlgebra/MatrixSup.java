@@ -216,7 +216,7 @@ public class MatrixSup {
 		for(int i=rank;i<len;i++){
 			baseF[i] = mc.getZero();
 		}
-		Vector<T> base = new Vector<>(baseF,false,mc);
+		DVector<T> base = new DVector<>(baseF,false,mc);
 		SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
 		sb.setEquation(expandedMatrix);
 		sb.setBase(base);
@@ -227,7 +227,7 @@ public class MatrixSup {
 			return sb.build();
 		}else{
 			sb.setSituation(Situation.UNBOUNDED_SOLUTION);
-			Vector<T>[] vs = new Vector[numberOfKSolution];
+			DVector<T>[] vs = new DVector[numberOfKSolution];
 			int searchPos = 0;
 			int curCol = 0;
 			for(int s=0;s<numberOfKSolution;s++){
@@ -248,7 +248,7 @@ public class MatrixSup {
 					}
 				}
 				solution[curCol] = mc.getOne();
-				vs[s] = new Vector<T>(solution,false,mc);
+				vs[s] = new DVector<T>(solution,false,mc);
 				curCol++;
 			}
 			sb.setVariableSolution(vs);

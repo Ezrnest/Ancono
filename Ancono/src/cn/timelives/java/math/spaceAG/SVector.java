@@ -8,12 +8,11 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.AbstractVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
-import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -33,7 +32,7 @@ import cn.timelives.java.utilities.ArraySup;
  *
  * @param <T>
  */
-public final class SVector<T> extends AbstractVector<T> {
+public final class SVector<T> extends Vector<T> {
 	
 	final T x,y,z;
 	
@@ -593,7 +592,7 @@ public final class SVector<T> extends AbstractVector<T> {
 	 * @param v a vector whose size is bigger than or equal to 3.
 	 * @return a new SVector
 	 */
-	public static <T> SVector<T> fromVector(AbstractVector<T> v){
+	public static <T> SVector<T> fromVector(Vector<T> v){
 		if(v.getSize()< 3){
 			throw new IllegalArgumentException("Too small");
 		}

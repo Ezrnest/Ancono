@@ -3,7 +3,7 @@ package cn.timelives.java.math.planeAG;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 /**
@@ -41,8 +41,8 @@ public final class Point<T> extends FlexibleMathObject<T> {
 	 * vector and the length of this vector will be 2.
 	 * @return a vector
 	 */
-	public Vector<T> getVector(){
-		return Vector.createVector(mc,x,y);
+	public PVector<T> getVector(){
+		return PVector.valueOf(x, y, mc);
 	}
 	/**
 	 * Return the square of the distance between this point and the given point.This method 
@@ -200,10 +200,10 @@ public final class Point<T> extends FlexibleMathObject<T> {
 	 * @param p another point
 	 * @return a column vector with two dimensions.
 	 */
-	public Vector<T> directVector(Point<T> p){
+	public PVector<T> directVector(Point<T> p){
 		T vx = mc.subtract(p.x, x);
 		T vy = mc.subtract(p.y, y);
-		return Vector.createVector(mc, vx,vy);
+		return PVector.valueOf(vx, vy, mc);
 	}
 
 }

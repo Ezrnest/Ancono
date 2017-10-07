@@ -1,19 +1,21 @@
 /**
  * 
  */
-package cn.timelives.java.math.planeAG.curve;
+package cn.timelives.java.math.function;
 
 
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.SVPEquation.QEquation;
-import cn.timelives.java.math.function.SVPFunction;
+import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.planeAG.Line;
 import cn.timelives.java.math.planeAG.Point;
+import cn.timelives.java.math.planeAG.curve.AbstractPlaneFunction;
+import cn.timelives.java.math.planeAG.curve.ConicSection;
+import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
 
 /**
  * Describes function {@code f(x) = ax^2+bx+c (a!=0)}.
@@ -149,16 +151,18 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
+	
 	@Override
 	public boolean valueEquals(FlexibleMathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}
-		if(obj instanceof QuadraticFunction){
-			QuadraticFunction<T> q = (QuadraticFunction<T>) obj;
-			return mc.isEqual(a, q.a) &&mc.isEqual(c, q.c) &&mc.isEqual(b, q.b);
+		if(!(obj instanceof SVPFunction)){
+			return false;
 		}
-		return false;
+		@SuppressWarnings("unchecked")
+		SVPFunction<T> f = (SVPFunction<T>)obj;
+		return SVPFunction.isEqual(this,f , mc::isEqual);
 	}
 
 	/* (non-Javadoc)
@@ -166,11 +170,15 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 */
 	@Override
 	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
-		if(obj instanceof QuadraticFunction){
-			QuadraticFunction<N> q = (QuadraticFunction<N>) obj;
-			return mc.isEqual(a, mapper.apply(q.a)) &&mc.isEqual(c, mapper.apply(q.c))&&mc.isEqual(b, mapper.apply(q.b));
+		if(this == obj){
+			return true;
 		}
-		return false;
+		if(!(obj instanceof SVPFunction)){
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		SVPFunction<N> f = (SVPFunction<N>)obj;
+		return SVPFunction.isEqual(this,f , (x,y)->mc.isEqual(x, mapper.apply(y)));
 	}
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.function.SVPFunction#getCoefficient(int)

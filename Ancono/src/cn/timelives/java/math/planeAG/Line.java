@@ -9,7 +9,6 @@ import java.util.function.Function;
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
@@ -31,7 +30,7 @@ import cn.timelives.java.utilities.Printer;
  * {@link #twoPoint(Point, Point, MathCalculator)},<p>
  * {@link #twoPoint(Object, Object, Object, Object, MathCalculator)}
  * </ul><li>Point Direction:Create a line that passes through the point and has such a direction vector.<p> <ul>
- * {@link #pointDirection(Point, Vector, MathCalculator)},<p>
+ * {@link #pointDirection(Point, DVector, MathCalculator)},<p>
  * {@link #pointDirection(Point, Object, Object, MathCalculator)},<p>
  * {@link #pointDirection(Object, Object, Object, Object, MathCalculator)}<p>
  * </ul><li>Point Slope:Create a line that passes through the point and has such a slope<p>
@@ -41,7 +40,7 @@ import cn.timelives.java.utilities.Printer;
  * </ul>
  * <li>Point Normal Vector:Create a line with the normal vector that passes through the point.<p>
  * <ul>
- *  {@link #pointNormal(Point, Vector, MathCalculator)},<p>
+ *  {@link #pointNormal(Point, DVector, MathCalculator)},<p>
  *  {@link #pointNormal(Object, Object, Object, Object, MathCalculator)}
  * </ul>
  * <li>Two Intercept:Use intercept in x axis and y axis to create a line.<p>
@@ -570,18 +569,18 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * will have a length of two.
 	 * @return a 2-dimension column vector
 	 */
-	public Vector<T> directionVector(){
+	public PVector<T> directionVector(){
 		T x = b;
 		T y = mc.negate(a);
-		return Vector.createVector(mc, x,y);
+		return PVector.valueOf(x, y, mc);
 	}
 	/**
 	 * Returns one of the formal vector of this line.The vector 
 	 * will have a length of two.
 	 * @return a 2-dimension column vector
 	 */
-	public Vector<T> normalVector(){
-		return Vector.createVector(mc, a,b);
+	public PVector<T> normalVector(){
+		return PVector.valueOf(a, b, mc);
 	}
 	/**
 	 * Get the number of coefficient A in the equation.
@@ -813,8 +812,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return line {@code (x - p.x) / v.x = (y - p.y) / v.y}
 	 * @throws IllegalArgumentException if {@code |v| = 0}
 	 */
-	public static <T> Line<T> pointDirection(Point<T> p,Vector<T> v,MathCalculator<T> mc){
-		return pointDirection(p.x,p.y, v.getNumber(0), v.getNumber(1),mc);
+	public static <T> Line<T> pointDirection(Point<T> p,PVector<T> v,MathCalculator<T> mc){
+		return pointDirection(p.x,p.y, v.x, v.y,mc);
 	}
 	
 	/**
@@ -1009,8 +1008,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return line {@literal v.x * (x - p.x) + v.y * (y - p.y) = 0}
 	 * @throws IllegalArgumentException if {@code |v|==0}
 	 */
-	public static <T> Line<T> pointNormal(Point<T> p,Vector<T> v,MathCalculator<T> mc){
-		return pointNormal(p.x,p.y ,v.getNumber(0),v.getNumber(1), mc);
+	public static <T> Line<T> pointNormal(Point<T> p,PVector<T> v,MathCalculator<T> mc){
+		return pointNormal(p.x,p.y ,v.x,v.y, mc);
 	}
 	/**
 	 * Create a new line according to intercept of the line in x axis and y axis.The 

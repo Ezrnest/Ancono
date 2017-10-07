@@ -9,10 +9,10 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
-import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
+import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.spaceAG.Line;
@@ -425,7 +425,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 		if(sov.getSolutionSituation() == Situation.UNBOUNDED_SOLUTION){
 			throw new IllegalArgumentException("Four points same plane");
 		}
-		Vector<T> vec = sov.getBase();
+		DVector<T> vec = sov.getBase();
 		SPoint<T> o = SPoint.valueOf(vec.getNumber(0), vec.getNumber(1), vec.getNumber(2), mc);
 		T r2 = a.distanceSq(o);
 		return new Sphere<T>(mc, null, r2, o);

@@ -21,10 +21,10 @@ public class LinearEquationSolution<T> {
 	private final Situation sit ;
 	
 	
-	private final Vector<T> base ;
-	private final Vector<T>[] solution;
+	private final DVector<T> base ;
+	private final DVector<T>[] solution;
 	
-	LinearEquationSolution(Matrix<T> equ,Situation sit,Vector<T> base,Vector<T>[] solution){
+	LinearEquationSolution(Matrix<T> equ,Situation sit,DVector<T> base,DVector<T>[] solution){
 		equation = equ;
 		this.sit = sit;
 		this.base = base;
@@ -57,7 +57,7 @@ public class LinearEquationSolution<T> {
 	/**
 	 * @return the base
 	 */
-	public Vector<T> getBase() {
+	public DVector<T> getBase() {
 		return base;
 	}
 
@@ -65,7 +65,7 @@ public class LinearEquationSolution<T> {
 	 * Get the part of k*vector
 	 * @return the solution
 	 */
-	public Vector<T>[] getSolution() {
+	public DVector<T>[] getSolution() {
 		return solution;
 	}
 	/**
@@ -106,8 +106,8 @@ public class LinearEquationSolution<T> {
 		}
 		private Matrix<T> equation;
 		private Situation situation ;
-		private Vector<T> base ;
-		private Vector<T>[] ss;
+		private DVector<T> base ;
+		private DVector<T>[] ss;
 		/**
 		 * @param equation the equation to set
 		 */
@@ -129,7 +129,7 @@ public class LinearEquationSolution<T> {
 		/**
 		 * @param base the base to set
 		 */
-		public void setBase(Vector<T> base) {
+		public void setBase(DVector<T> base) {
 			if(base.isRow()){
 				this.base = base.transportMatrix();
 			}else{
@@ -137,7 +137,7 @@ public class LinearEquationSolution<T> {
 			}
 		}
 		
-		public void setVariableSolution(Vector<T>[] ss){
+		public void setVariableSolution(DVector<T>[] ss){
 			for(int i=0;i<ss.length;i++){
 				if(ss[i].isRow()){
 					ss[i] = ss[i].transportMatrix();

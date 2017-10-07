@@ -1,8 +1,8 @@
 package cn.timelives.java.utilities.xml;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TABLE;
 import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TD;
 import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TH;
 import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TR;
-import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TABLE;
 import static cn.timelives.java.utilities.xml.HtmlUtilities.RemainAttributes.BORDER;
 
 import java.util.List;

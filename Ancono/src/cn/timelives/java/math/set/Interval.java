@@ -3,7 +3,6 @@ package cn.timelives.java.math.set;
 import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 

@@ -18,7 +18,7 @@ import cn.timelives.java.utilities.ModelPatterns;
  * @author lyc
  *
  */
-public class MathFunctions {
+public class MathUtils {
 	/**
 	 * Calculate two numbers' GCD.Make sure that these two numbers are both bigger than zero.
 	 * @param n1 a number
@@ -249,7 +249,7 @@ public class MathFunctions {
 	 * @param n a number
 	 * @param p > -1
 	 * @throws ArithmeticException if p < 0 or p==0&&n==0
-	 * @see MathFunctions#power(long, int)
+	 * @see MathUtils#power(long, int)
 	 * @deprecated bad time performance
 	 * @return n^p
 	 */
@@ -576,7 +576,7 @@ public class MathFunctions {
 	 * being one). 
 	 * @param x a number,positive
 	 * @return true if the number passes the test.
-	 * @see MathFunctions#doMillerRabin(long, long)
+	 * @see MathUtils#doMillerRabin(long, long)
 	 */
 	public static boolean doMillerRabin(long x){
 		return doMillerRabin(x,25);
@@ -774,12 +774,12 @@ public class MathFunctions {
 	}
 	
 	
-	public static void main(String[] args) {
-//		MathCalculator<Long> mc = MathCalculatorAdapter.getCalculatorLong();
-//		List<Long> list = solveEquation(1l, -4l, 3l, mc);
-//		print(list);
-		print((long)Math.sqrt(Long.MAX_VALUE));
-		print(3037000500l * 3037000500L);
-	}
+//	public static void main(String[] args) {
+////		MathCalculator<Long> mc = MathCalculatorAdapter.getCalculatorLong();
+////		List<Long> list = solveEquation(1l, -4l, 3l, mc);
+////		print(list);
+//		print((long)Math.sqrt(Long.MAX_VALUE));
+//		print(3037000500l * 3037000500L);
+//	}
 	
 }

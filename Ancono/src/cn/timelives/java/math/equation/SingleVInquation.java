@@ -1,10 +1,13 @@
 /**
  * 2017-10-06
  */
-package cn.timelives.java.math;
+package cn.timelives.java.math.equation;
 
+import java.util.List;
 import java.util.function.Function;
 
+import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
@@ -12,7 +15,7 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  * 2017-10-06 09:22
  *
  */
-public abstract class SingleVInquation<T> extends Inequation<T> {
+public abstract class SingleVInquation<T> extends Inequation<T>implements SVCompareStructure<T> {
 	
 	/**
 	 * @param mc
@@ -25,12 +28,14 @@ public abstract class SingleVInquation<T> extends Inequation<T> {
 	public final int getVariableCount() {
 		return 1;
 	}
-	/**
-	 * Determines whether {@code x} is the solution of this equation.
-	 * @param x a number
-	 * @return {@code true} if x is the solution of this equation.
+	
+	/*
+	 * @see cn.timelives.java.math.equation.SVCompareStructure#isSolution(java.lang.Object)
 	 */
-	public abstract boolean isSolution(T x) ;
+	@Override
+	public boolean isSolution(T x) {
+		return op.matches(compareZero(compute(x)));
+	}
 	
 	public abstract <N> SingleVInquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 }

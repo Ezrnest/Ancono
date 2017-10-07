@@ -3,8 +3,6 @@ package cn.timelives.java.utilities.xml;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-
 import cn.timelives.java.utilities.AbstractBuilder;
 /**
  * 

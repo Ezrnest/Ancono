@@ -1,4 +1,4 @@
-package cn.timelives.java.math;
+package cn.timelives.java.math.equation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,11 +7,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.Multinomial;
+import cn.timelives.java.math.Utils;
 import cn.timelives.java.math.function.AbstractSVPFunction;
+import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.function.MathFunctionSup;
 import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.Simplifiable;
+import cn.timelives.java.math.numberModels.Simplifier;
 
 
 /**
@@ -22,40 +28,14 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * @author lyc
  * @param <T>
  */
-public abstract class SVPEquation<T> extends SingleVEquation<T> implements Multinomial<T>{
+public abstract class SVPEquation<T> extends SingleVEquation<T> 
+implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	protected final int mp;
 	protected SVPEquation(MathCalculator<T> mc,int mp) {
 		super(mc);
 		this.mp = mp;
 	}
 	
-	/**
-	 * Returns the value of {@code f(x)} in this equation.
-	 * @param x a value
-	 * @return the result
-	 */
-	public abstract T compute(T x);
-	
-	/**
-	 * Returns the corresponding function f(x) of this equation.
-	 * @return a MathFunction
-	 */
-	public SVFunction<T> asFunction(){
-		return this::compute;
-	}
-	
-	/**
-	 * Gets the coefficient of {@code x^n},if {@code n==0} then the 
-	 * coefficient {@code a0} will be returned.
-	 * @param n the index,positive
-	 * @return coefficient
-	 */
-	public abstract T getCoefficient(int n);
-	
-	@Override
-	public boolean isSolution(T x){
-		return mc.isZero(compute(x));
-	}
 	/**
 	 * Returns the max power of x in this equation.
 	 * @return an integer number indicates the max power.
@@ -64,23 +44,34 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> implements Multi
 	public int getMaxPower() {
 		return mp;
 	}
-	
-	/**
-	 * Returns zero.
+	/*
+	 * @see cn.timelives.java.math.numberModels.Simplifiable#simplify()
 	 */
 	@Override
-	public SVFunction<T> right() {
-		return MathFunctionSup.getConstant(mc.getZero(), mc);
+	public SVPEquation<T> simplify() {
+		return this;
 	}
-	
-	
-	@Override
-	public SVFunction<T> left(){
-		return asFunction();
-	}
-	
 	/*
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+	 * @see cn.timelives.java.math.numberModels.Simplifiable#simplify(cn.timelives.java.math.numberModels.Simplifier)
+	 */
+	@Override
+	public SVPEquation<T> simplify(Simplifier<T> sim) {
+		List<T> list = new ArrayList<>(mp+1);
+		for(int i=0;i<=mp;i++) {
+			list.add(getCoefficient(i));
+		}
+		list = sim.simplify(list);
+		return valueOf(list, mc);
+	}
+	/**
+	 * Determine whether the two equations are equal, this method only 
+	 * compare the corresponding coefficient. 
+	 * <p>Therefore, for example, 
+	 * {@literal 2x=0} and {@literal x=0} are considered to be not the same.
+	 * This assures that if two equations are equal, then the functions returned
+	 * <p>To compare the another 
+	 * by {@link #asFunction()} are equal. 
+	 * 
 	 */
 	@Override
 	public boolean valueEquals(FlexibleMathObject<T> obj) {
@@ -91,15 +82,19 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> implements Multi
 			return true;
 		}
 		SVPEquation<T> sv = (SVPEquation<T>) obj;
-		if(sv.mp != mp) {
+		return Multinomial.isEqual(this,sv, mc::isEqual);
+	}
+	
+	@Override
+	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		if (!(obj instanceof SVPEquation)) {
 			return false;
 		}
-		for(int i=0;i<mp;i++) {
-			if(!mc.isEqual(getCoefficient(i), sv.getCoefficient(i))) {
-				return false;
-			}
+		if(obj == this) {
+			return true;
 		}
-		return true;
+		SVPEquation<N> sv = (SVPEquation<N>) obj;
+		return Multinomial.isEqual(this,sv,Utils.mappedIsEqual(mc, mapper));
 	}
 	
 	/* (non-Javadoc)
@@ -126,8 +121,10 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> implements Multi
 		}else{
 			sb.deleteCharAt(sb.length()-1);
 		}
+		sb.append(" = 0");
 		return sb.toString();
 	}
+	
 	/*
 	 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 	 */
@@ -225,6 +222,7 @@ public abstract class SVPEquation<T> extends SingleVEquation<T> implements Multi
 		public T getCoefficient(int n) {
 			return coes[n];
 		}
+
 
 		
 	}

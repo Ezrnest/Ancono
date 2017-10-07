@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import cn.timelives.java.utilities.Printer; 
+import java.util.jar.JarFile; 
 /**
  * @author liyicheng
  *
@@ -73,19 +71,19 @@ public final class Utilities {
 //    }  
 	
 	 /** 
-     * »ñÈ¡Ä³°üÏÂ£¨°üÀ¨¸Ã°üµÄËùÓĞ×Ó°ü£©ËùÓĞÀà 
-     * @param packageName °üÃû 
-     * @return ÀàµÄÍêÕûÃû³Æ 
+     * ï¿½ï¿½È¡Ä³ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+     * @param packageName ï¿½ï¿½ï¿½ï¿½ 
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
      */  
     public static List<String> getClassName(String packageName) {  
         return getClassName(packageName, true,Thread.currentThread().getContextClassLoader());  
     }  
   
     /** 
-     * »ñÈ¡Ä³°üÏÂËùÓĞÀà 
-     * @param packageName °üÃû 
-     * @param childPackage ÊÇ·ñ±éÀú×Ó°ü 
-     * @return ÀàµÄÍêÕûÃû³Æ 
+     * ï¿½ï¿½È¡Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+     * @param packageName ï¿½ï¿½ï¿½ï¿½ 
+     * @param childPackage ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ 
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
      */  
     public static List<String> getClassName(String packageName, boolean childPackage,ClassLoader loader) {  
         List<String> fileNames = new ArrayList<>();  
@@ -106,11 +104,11 @@ public final class Utilities {
     }  
   
     /** 
-     * ´ÓÏîÄ¿ÎÄ¼ş»ñÈ¡Ä³°üÏÂËùÓĞÀà 
-     * @param filePath ÎÄ¼şÂ·¾¶ 
-     * @param className ÀàÃû¼¯ºÏ 
-     * @param childPackage ÊÇ·ñ±éÀú×Ó°ü 
-     * @return ÀàµÄÍêÕûÃû³Æ 
+     * ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½Ä¼ï¿½ï¿½ï¿½È¡Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+     * @param filePath ï¿½Ä¼ï¿½Â·ï¿½ï¿½ 
+     * @param className ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+     * @param childPackage ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ 
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
      */  
     private static List<String> getClassNameByFile(String filePath, List<String> className, boolean childPackage,ClassLoader loader) {  
         File file = new File(filePath);  
@@ -134,10 +132,10 @@ public final class Utilities {
     }  
   
     /** 
-     * ´Ójar»ñÈ¡Ä³°üÏÂËùÓĞÀà 
-     * @param jarPath jarÎÄ¼şÂ·¾¶ 
-     * @param childPackage ÊÇ·ñ±éÀú×Ó°ü 
-     * @return ÀàµÄÍêÕûÃû³Æ 
+     * ï¿½ï¿½jarï¿½ï¿½È¡Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+     * @param jarPath jarï¿½Ä¼ï¿½Â·ï¿½ï¿½ 
+     * @param childPackage ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ 
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
      */  
     private static List<String> getClassNameByJar(String jarPath, boolean childPackage,ClassLoader loader,List<String> className) {  
         String[] jarInfo = jarPath.split("!");  
@@ -177,18 +175,18 @@ public final class Utilities {
     }  
   
     /** 
-     * ´ÓËùÓĞjarÖĞËÑË÷¸Ã°ü£¬²¢»ñÈ¡¸Ã°üÏÂËùÓĞÀà 
-     * @param urls URL¼¯ºÏ 
-     * @param packagePath °üÂ·¾¶ 
-     * @param childPackage ÊÇ·ñ±éÀú×Ó°ü 
-     * @return ÀàµÄÍêÕûÃû³Æ 
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½jarï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+     * @param urls URLï¿½ï¿½ï¿½ï¿½ 
+     * @param packagePath ï¿½ï¿½Â·ï¿½ï¿½ 
+     * @param childPackage ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ 
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
      */  
     private static List<String> getClassNameByJars(URL[] urls, String packagePath, boolean childPackage,ClassLoader loader,List<String> className) {  
         if (urls != null) {  
             for (int i = 0; i < urls.length; i++) {  
                 URL url = urls[i];  
                 String urlPath = url.getPath();  
-                // ²»±ØËÑË÷classesÎÄ¼ş¼Ğ  
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½classesï¿½Ä¼ï¿½ï¿½ï¿½  
                 if (urlPath.endsWith("classes/")) {  
                     continue;  
                 }  

@@ -10,7 +10,8 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.ProgressionSup;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.linearAlgebra.DVector;
+import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;
 import cn.timelives.java.utilities.Printer;
 /**
@@ -74,8 +75,8 @@ public final class Complex<T> extends FlexibleMathObject<T> {
 	 * Returns the vector of this({@code <a,b>}).
 	 * @return a vector
 	 */
-	public Vector<T> toVector(){
-		return Vector.createVector(mc, a,b);
+	public PVector<T> toVector(){
+		return PVector.valueOf(a, b, mc);
 	}
 	
 	/**

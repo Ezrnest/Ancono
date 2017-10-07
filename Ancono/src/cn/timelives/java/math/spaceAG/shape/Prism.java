@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
 import cn.timelives.java.math.spaceAG.Segment;
 

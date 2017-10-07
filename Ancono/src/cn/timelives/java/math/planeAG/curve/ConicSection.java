@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.SVPEquation;
-import cn.timelives.java.math.SVPEquation.LEquation;
-import cn.timelives.java.math.SVPEquation.QEquation;
+import cn.timelives.java.math.equation.SVPEquation;
+import cn.timelives.java.math.equation.SVPEquation.LEquation;
+import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.MathCalculator;

@@ -8,7 +8,6 @@ import java.util.function.Function;
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.spaceAG.MathTools;
-import cn.timelives.java.math.spaceAG.Plane;
 import cn.timelives.java.math.spaceAG.SPlaneCurve;
 import cn.timelives.java.math.spaceAG.SPoint;
 import cn.timelives.java.math.spaceAG.SPointTrans;

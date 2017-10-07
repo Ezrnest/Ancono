@@ -11,14 +11,15 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.MathFunctions;
+import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.Progression;
 import cn.timelives.java.math.ProgressionSup;
-import cn.timelives.java.math.SVPEquation.QEquation;
+import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.numberModels.Formula;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.FracPoly;
@@ -406,7 +407,7 @@ import cn.timelives.java.utilities.Printer;
 	}
 
 	void m21(){
-		print(MathFunctions.lcm(5, 5));
+		print(MathUtils.lcm(5, 5));
 		a = of(-1,-3);
 		b = of(3,-1);
 		Circle<Fraction> c1 = Circle.centerAndRadius(a, Fraction.valueOf(1), mc);

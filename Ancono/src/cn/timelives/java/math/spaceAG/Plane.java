@@ -7,11 +7,11 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.linearAlgebra.Vector;
-import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -196,11 +196,11 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 			return null;
 		}
 //		so.printSolution();
-		Vector<T>[] ks = so.getSolution();
+		DVector<T>[] ks = so.getSolution();
 		if(ks.length == 2){
 			throw new ArithmeticException("Coincide");
 		}
-		Vector<T> base = so.getBase();
+		DVector<T> base = so.getBase();
 		return new Line<>(mc,
 				new SPoint<>(mc,base.getNumber(0),base.getNumber(1),base.getNumber(2)),
 				SVector.fromVector(ks[0]));

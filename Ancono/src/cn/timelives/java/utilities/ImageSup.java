@@ -1,14 +1,6 @@
 package cn.timelives.java.utilities;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
 
 /**
  * A simple but convenient loader for loading {@link BufferedImage} from a file.

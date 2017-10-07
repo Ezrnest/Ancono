@@ -142,7 +142,22 @@ public final class Calculus {
 			//(Ax^i)' = iA*x^(i-1)
 			cns[i-1] = mc.multiplyLong(f.getCoefficient(i), i);
 		}
-		return AbstractSVPFunction.createFunction(mc, cns);
+		return AbstractSVPFunction.valueOf(mc, cns);
 	}
-	
+	/**
+	 * Returns the integration of a single variable polynomial function.
+	 * @param f
+	 * @return
+	 */
+	public static <T> AbstractSVPFunction<T> integration(SVPFunction<T> f){
+		@SuppressWarnings("unchecked")
+		T[] cns = (T[]) new Object[f.getMaxPower()+2];
+		MathCalculator<T> mc = f.getMathCalculator();
+		for(int i=0;i<=f.getMaxPower();i++){
+			//(Ax^(i+1))' = (i+1)*Ax^i
+			cns[i+1] = mc.divideLong(f.getCoefficient(i), i+1);
+		}
+		cns[0] = mc.getZero();
+		return AbstractSVPFunction.valueOf(mc, cns);
+	}
 }

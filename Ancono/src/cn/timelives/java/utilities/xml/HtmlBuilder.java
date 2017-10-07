@@ -1,6 +1,17 @@
 package cn.timelives.java.utilities.xml;
 import static cn.timelives.java.utilities.xml.HtmlUtilities.DIV;
-import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.*;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.A;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.FORM;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.LI;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.OL;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.P;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TABLE;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TBODY;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TD;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TH;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.THEAD;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.TR;
+import static cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags.UL;
 import static cn.timelives.java.utilities.xml.HtmlUtilities.SingleTags.BR;
 import static cn.timelives.java.utilities.xml.XmlUtilities.quote;
 

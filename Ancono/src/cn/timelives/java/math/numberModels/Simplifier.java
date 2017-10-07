@@ -15,13 +15,13 @@ import cn.timelives.java.math.FlexibleMathObject;
 @FunctionalInterface
 public interface Simplifier<T> {
 	/**
-	 * Input a list of numbers to simplify,and return another list of simplified numbers,
+	 * Input a list of numbers to simplify, and return a list of simplified numbers,
 	 * the number and order of numbers should be the same.<p>
 	 * This simplify method should be equal to multiply a non-zero value to all 
 	 * of the numbers to make the result simpler. For example, for the input {@code [2,4,6]}, the 
 	 * simplifier may  multiply number {@code 1/2} so the result will be {@code [1,2,3]}, which 
 	 * should be simpler than the input. 
-	 * @param numbers arguments
+	 * @param numbers arguments, the content may be changed.
 	 * @return a list of numbers.
 	 */
 	public List<T> simplify(List<T> numbers);

@@ -6,6 +6,9 @@ package cn.timelives.java.math;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiPredicate;
+
+import cn.timelives.java.math.numberModels.MathCalculator;
 
 
 /**
@@ -38,6 +41,25 @@ public interface Multinomial<T> extends Iterable<T>{
 	@Override
 	public default Iterator<T> iterator() {
 		return new It<>(this);
+	}
+	/**
+	 * Determines whether the two multinomial are equal.
+	 * @param m1 
+	 * @param m2
+	 * @param equal
+	 * @return
+	 */
+	public static <T,S> boolean isEqual(Multinomial<T> m1,Multinomial<S> m2,BiPredicate<T, S> equal) {
+		if(m1.getMaxPower() != m2.getMaxPower()) {
+			return false;
+		}
+		int mp =m1.getMaxPower();
+		for(int i=0;i<mp;i++) {
+			if(!equal.test(m1.getCoefficient(i), m2.getCoefficient(i))) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
 class It<T> implements ListIterator<T>{

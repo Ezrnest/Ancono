@@ -2,7 +2,6 @@ package cn.timelives.java.utilities.swingTools;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 
 import javax.swing.border.BevelBorder;
 

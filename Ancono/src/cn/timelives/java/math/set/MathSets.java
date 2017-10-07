@@ -11,13 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 
 /**
  * @author liyicheng

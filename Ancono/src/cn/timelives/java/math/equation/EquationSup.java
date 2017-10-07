@@ -1,7 +1,7 @@
 /**
  * 2017-10-06
  */
-package cn.timelives.java.math;
+package cn.timelives.java.math.equation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public final class EquationSup {
 	 * @throws ArithmeticException if {@code n>=5}
 	 */
 	public static <T> List<T> solveUsingFormula(SVPEquation<T> sv){
-		MathCalculator<T> mc = sv.mc;
+		MathCalculator<T> mc = sv.getMathCalculator();
 		switch(sv.mp){
 		case 1:{
 			return Arrays.asList(mc.negate(mc.divide(sv.getCoefficient(0), 

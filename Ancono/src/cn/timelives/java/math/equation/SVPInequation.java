@@ -10,6 +10,8 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.Multinomial;
 import cn.timelives.java.math.Utils;
 import cn.timelives.java.math.function.AbstractSVPFunction;
+import cn.timelives.java.math.function.AbstractSVPFunction.LinearFunction;
+import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
@@ -22,7 +24,7 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * 2017-10-06 09:33
  *
  */
-public abstract class SVPInequation<T> extends SingleVInquation<T> implements Multinomial<T>{
+public abstract class SVPInequation<T> extends SVInquation<T> implements Multinomial<T>{
 	protected final int mp;
 	
 	/**
@@ -148,7 +150,50 @@ public abstract class SVPInequation<T> extends SingleVInquation<T> implements Mu
 		}
 	}
 	
-	
+	public static class LinearInequation<T> extends SVPInequation<T>{
+		private final AbstractSVPFunction.LinearFunction<T> f;
+		/**
+		 * @param mc
+		 * @param op
+		 * @param mp
+		 */
+		protected LinearInequation(MathCalculator<T> mc, Type op,AbstractSVPFunction.LinearFunction<T> f) {
+			super(mc, op, 1);
+			this.f = f;
+		}
+		
+		/*
+		 * @see cn.timelives.java.math.Multinomial#getCoefficient(int)
+		 */
+		@Override
+		public T getCoefficient(int n) {
+			return f.getCoefficient(n);
+		}
+		
+		/*
+		 * @see cn.timelives.java.math.equation.SVCompareStructure#compute(java.lang.Object)
+		 */
+		@Override
+		public T compute(T x) {
+			return f.apply(x);
+		}
+		
+		/*
+		 * @see cn.timelives.java.math.equation.CompareStructure#asFunction()
+		 */
+		@Override
+		public LinearFunction<T> asFunction() {
+			return f;
+		}
+
+		/*
+		 * @see cn.timelives.java.math.equation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 */
+		@Override
+		public <N> LinearInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+			return new LinearInequation<>(newCalculator, op, f.mapTo(mapper, newCalculator));
+		}
+	}
 	
 	/**
 	 * Creates an SVPInequation from a list of coefficients. The index of the 

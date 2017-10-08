@@ -14,9 +14,11 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * 2017-10-06 19:21
  *
  */
-public abstract class AbstractSVCompareStructure<T> extends AbstractCompareStructure<T> 
+public abstract class AbstractSVCompareStructure<T> extends AbstractCompareStructure<T, T>
 implements SVCompareStructure<T>{
-
+	
+	
+	
 	/**
 	 * @param mc
 	 * @param op

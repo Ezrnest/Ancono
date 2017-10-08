@@ -290,7 +290,7 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 		 * @see cn.timelives.java.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 		 */
 		@Override
-		public <N> AbstractSVPFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+		public <N> LinearFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
 			return new LinearFunction<N>(newCalculator, mapper.apply(a), mapper.apply(b));
 		}
 		

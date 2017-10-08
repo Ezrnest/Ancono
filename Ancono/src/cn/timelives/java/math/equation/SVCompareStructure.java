@@ -3,10 +3,8 @@
  */
 package cn.timelives.java.math.equation;
 
-import java.util.List;
 import java.util.function.Predicate;
 
-import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.function.SVFunction;
 
 /**
@@ -15,15 +13,7 @@ import cn.timelives.java.math.function.SVFunction;
  * 2017-10-06 19:34
  *
  */
-public interface SVCompareStructure<T> extends CompareStructure<T>,Predicate<T>{
-	
-	/*
-	 * @see cn.timelives.java.math.CompareStructure#getVariableCount()
-	 */
-	@Override
-	default int getVariableCount() {
-		return 1;
-	}
+public interface SVCompareStructure<T> extends Predicate<T>,CompareStructure<T, T>{
 	
 	/**
 	 * Gets the left part of the SVCompareStructure as a {@link SVFunction}.
@@ -53,17 +43,5 @@ public interface SVCompareStructure<T> extends CompareStructure<T>,Predicate<T>{
 	@Override
 	default boolean test(T x) {
 		return isSolution(x);
-	}
-	/*
-	 * @see cn.timelives.java.math.CompareStructure#isSolution(java.util.List)
-	 */
-	@Override
-	default boolean isSolution(List<T> x) {
-		return isSolution(x.get(0));
-	}
-	
-	@Override
-	default MathFunction<List<T>, T> getFunction() {
-		return list -> asFunction().apply(list.get(0));
 	}
 }

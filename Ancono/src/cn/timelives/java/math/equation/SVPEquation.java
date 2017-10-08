@@ -28,7 +28,7 @@ import cn.timelives.java.math.numberModels.Simplifier;
  * @author lyc
  * @param <T>
  */
-public abstract class SVPEquation<T> extends SingleVEquation<T> 
+public abstract class SVPEquation<T> extends SVEquation<T> 
 implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	protected final int mp;
 	protected SVPEquation(MathCalculator<T> mc,int mp) {

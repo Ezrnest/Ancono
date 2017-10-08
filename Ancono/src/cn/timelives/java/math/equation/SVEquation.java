@@ -12,16 +12,12 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  * @author lyc
  *
  */
-public abstract class SingleVEquation<T> extends Equation<T> implements SVCompareStructure<T>{
+public abstract class SVEquation<T> extends Equation<T,T> implements SVCompareStructure<T>{
 
-	protected SingleVEquation(MathCalculator<T> mc) {
+	protected SVEquation(MathCalculator<T> mc) {
 		super(mc);
 	}
 
-	@Override
-	public final int getVariableCount() {
-		return 1;
-	}
 	/**
 	 * Determines whether {@code x} is the solution of this equation.
 	 * @param x a number
@@ -31,9 +27,10 @@ public abstract class SingleVEquation<T> extends Equation<T> implements SVCompar
 		return mc.isZero(compute(x));
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.Equation#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public abstract <N> SingleVEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+	public abstract <N> SVEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 }

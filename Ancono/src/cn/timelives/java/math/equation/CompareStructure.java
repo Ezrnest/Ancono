@@ -1,25 +1,29 @@
 /**
- * 2017-10-06
+ * 2017-10-08
  */
 package cn.timelives.java.math.equation;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import cn.timelives.java.math.MathCalculatorHolder;
+import cn.timelives.java.math.SolutionPredicate;
 import cn.timelives.java.math.equation.CompareStructure.Type;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
- *  A CompareStructure is the super class of {@link Equation} and {@link Inequation}, which 
+ * A CompareStructure is the super class of {@link Equation} and {@link Inequation}, which 
  * is composed of a function and an operator : <pre>f(x) <i>op</i> 0</pre> where 
  * the operation is one of the {@link CompareStructure.Type}
  * @author liyicheng
- * 2017-10-06 09:56
+ * 2017-10-08 11:27
  *
+ * @param <T> the {@link MathCalculator} type
+ * @param <S> the input of the compare structure
  */
-public interface CompareStructure<T> extends MathCalculatorHolder<T>{
+public interface CompareStructure<T,S> 
+extends MathCalculatorHolder<T>,SolutionPredicate<S>
+{
 	/**
 	 * An enumeration that describes all the types of a compare structure.
 	 * <ul>
@@ -95,29 +99,23 @@ public interface CompareStructure<T> extends MathCalculatorHolder<T>{
 			return operation;
 		}
 	}
-	
-	/**
-	 * Gets the number of variables in this CompareStructure. 
-	 * @return the variable count.
-	 */
-	int getVariableCount();
-	
-	/**
-	 * Determines whether the given list of variables is one of the solutions.
-	 * The size of the list should be equal to the number of the variables and the order is 
-	 * considered.
-	 * @param x a list of variable
-	 * @return {@code true} if {@code x} is solution.
-	 */
-	boolean isSolution(List<T> x);
+
 	/**
 	 * Gets the MathFunction of the left part of the compare structure.
 	 * @return
 	 */
-	MathFunction<List<T>,T> getFunction();
+	MathFunction<S,T> asFunction();
+	
 	/**
 	 * Returns the type of the operation.
 	 * @return the type
 	 */
 	Type getOperationType();
+	
+	/**
+	 * Determines whether the give variable {@code x} is one of the 
+	 * solution of this compare structure.
+	 */
+	@Override
+	boolean isSolution(S x);
 }

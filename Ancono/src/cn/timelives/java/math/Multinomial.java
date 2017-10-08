@@ -8,8 +8,6 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.function.BiPredicate;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
-
 
 /**
  * A multinomial is an math expression of a variable, usually called {@code x}, with 

@@ -18,7 +18,7 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  * 2017-10-06 08:49
  *
  */
-public abstract class Inequation<T> extends AbstractCompareStructure<T> {
+public abstract class Inequation<T,S> extends AbstractCompareStructure<T,S> {
 	
 	private static final Set<Type> inoperation = 
 			Collections.unmodifiableSet(
@@ -32,8 +32,6 @@ public abstract class Inequation<T> extends AbstractCompareStructure<T> {
 		super(mc,check(op));
 	}
 	
-	@Override
-	public abstract <N> Inequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 	
 	/**
 	 * Determines whether the {@code type} is one of the inequation type.

@@ -1,11 +1,8 @@
 package cn.timelives.java.math.numberModels;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
-import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;
 import cn.timelives.java.utilities.SNFSupport;

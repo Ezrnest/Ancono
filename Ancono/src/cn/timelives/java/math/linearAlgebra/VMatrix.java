@@ -66,7 +66,8 @@ final class VMatrix<T> extends Matrix<T> {
 		}
 		return obj;
 	}
-	private Matrix<T> mapTo0(Function<Vector<T>,Vector> f){
+	private Matrix<T> mapTo0(@SuppressWarnings("rawtypes") Function<Vector<T>,Vector> f){
+		@SuppressWarnings("unchecked")
 		Vector<T>[] vn = ArraySup.mapTo(vs, f,Vector.class);
 		return new VMatrix<>(vn, row, column, mc, isRow);
 	}

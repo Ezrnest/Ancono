@@ -7,7 +7,6 @@ import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.planeAG.PVector;
 
 /**
  * A vector is a matrix but one dimension (row or column) is one in length.

@@ -6,10 +6,7 @@ package cn.timelives.java.math.equation;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 
 /**
  *

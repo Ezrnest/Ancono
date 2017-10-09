@@ -13,9 +13,9 @@ import cn.timelives.java.math.set.MathSet;
 public interface Solveable<T> extends SolutionPredicate<T> {
 	
 	/**
-	 * Gets the solution of this SolutionPredicate, which means 
-	 * 
-	 * @return
+	 * Gets the solution of this SolutionPredicate, returning an instance of 
+	 * MathSet. The actual returned type may be a subclass.
+	 * @return a MathSet representing the solution.
 	 */
 	MathSet<T> getSolution();
 }

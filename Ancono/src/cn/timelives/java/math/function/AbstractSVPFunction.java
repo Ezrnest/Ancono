@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
@@ -22,9 +22,9 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
 /**
- * A class providing single variable polynomial function.
+ * A class providing single variable polynomial functions.
  * @author liyicheng
- *
+ * @see SVPFunction
  */
 public abstract class AbstractSVPFunction<T> extends AbstractSVFunction<T>
 implements SVPFunction<T>,Derivable<T>,Integrable<T>{
@@ -141,6 +141,7 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 	@Override
 	public String toString(NumberFormatter<T> nf) {
 		StringBuilder sb = new StringBuilder();
+		sb.append("f(x) = ");
 		for(int i=mp;i>0;i--){
 			if(mc.isZero(getCoefficient(i)))
 				continue;
@@ -270,6 +271,9 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 			super(mc, 1);
 			this.a = Objects.requireNonNull(a);
 			this.b = Objects.requireNonNull(b);
+			if(mc.isZero(a)) {
+				throw new IllegalArgumentException("a==0");
+			}
 		}
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVPFunction#getCoefficient(int)
@@ -294,12 +298,78 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 			return new LinearFunction<N>(newCalculator, mapper.apply(a), mapper.apply(b));
 		}
 		
-		
-		
-		
-		
 	}
-	
+	/**
+	 * A constant function is a type of MathFunction that 
+	 * always returns the same result.
+	 * @author 
+	 *
+	 */
+	public final static class ConstantFunction<T> extends AbstractSVPFunction<T> implements SVFunction<T>{
+		private final T r;
+		ConstantFunction(MathCalculator<T> mc,T r){
+			super(mc,0);
+			this.r = r;
+		}
+		
+		
+		/*
+		 * @see cn.timelives.java.math.function.MathFunction#apply(java.lang.Object)
+		 */
+		@Override
+		public T apply(T x) {
+			return r;
+		}
+		/**
+		 * Returns the result.
+		 * @return
+		 */
+		public T getResult() {
+			return r;
+		}
+
+
+		/*
+		 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 */
+		@Override
+		public <N> ConstantFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+			return new ConstantFunction<N>(newCalculator,mapper.apply(r));
+		}
+
+
+		/*
+		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+		 */
+		@Override
+		public boolean valueEquals(FlexibleMathObject<T> obj) {
+			if(!(obj instanceof ConstantFunction)) {
+				return false;
+			}
+			return mc.isEqual(r, ((ConstantFunction<T>)obj).r);
+		}
+
+		/*
+		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 */
+		@Override
+		public String toString(NumberFormatter<T> nf) {
+			return "f(x) = "+nf.format(r, mc);
+		}
+
+
+		/*
+		 * @see cn.timelives.java.math.function.SVPFunction#getCoefficient(int)
+		 */
+		@Override
+		public T getCoefficient(int n) {
+			if(n!=0) {
+				throw new IndexOutOfBoundsException("n!=0");
+			}
+			return r;
+		}
+	}
+
 	
 	/**
 	 * Creates a function with it coefficients.
@@ -357,6 +427,18 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 		}
 		return new SVPFunctionImpl2<>(mc, mp, map);
 	}
+	
+	/**
+	 * Returns a constant function:
+	 * <pre>c</pre>
+	 * @param c the constant
+	 * @param mc a {@link MathCalculator}
+	 * @return a new ConstantFunction
+	 */
+	public static <T> ConstantFunction<T> constant(T c,MathCalculator<T> mc){
+		return new ConstantFunction<T>(mc, c);
+	}
+	
 	/**
 	 * Returns a linear function:
 	 * <pre>ax+b</pre>
@@ -367,9 +449,6 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 	 * @return a new LinearFunction
 	 */
 	public static <T> LinearFunction<T> linear(T a,T b,MathCalculator<T> mc){
-		if(mc.isZero(a)) {
-			throw new IllegalArgumentException();
-		}
 		return new LinearFunction<T>(mc, a, b);
 	}
 	
@@ -386,6 +465,27 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 	public static <T> QuadraticFunction<T> quadratic(T a,T b,T c,MathCalculator<T> mc){
 		return new QuadraticFunction<T>(mc, a, b, c);
 	}
+	
+	/**
+	 * Returns a function from a multinomial.
+	 * @param m a {@link Multinomial}
+	 * @param mc a {@link MathCalculator}
+	 * @return an {@link AbstractSVPFunction}
+	 */
+	public static <T> AbstractSVPFunction<T> fromMultinomial(Multinomial<T> m,MathCalculator<T> mc){
+		if(m instanceof AbstractSVPFunction) {
+			return (AbstractSVPFunction<T>)m;
+		}
+		final int size = m.getMaxPower()+1;
+		@SuppressWarnings("unchecked")
+		T[] list = (T[]) new Object[size];
+		for(int i=0;i<size;i++) {
+			list[i] = m.getCoefficient(i);
+		}
+		return new SVPFunctionImpl1<>(mc, size-1, list);
+	}
+	
+	
 	/**
 	 * Add two functions.
 	 * @param p1

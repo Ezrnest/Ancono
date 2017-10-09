@@ -4,12 +4,9 @@
 package cn.timelives.java.math.equation;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.equation.CompareStructure.Type;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
  * Multiple variable compare structure, using a list as input.

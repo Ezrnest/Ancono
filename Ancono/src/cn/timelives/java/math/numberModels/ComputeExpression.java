@@ -3,8 +3,6 @@
  */
 package cn.timelives.java.math.numberModels;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,8 +10,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import cn.timelives.java.utilities.ArraySup;
-import cn.timelives.java.utilities.EasyConsole;
-import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.structure.Pair;
 
 /**
@@ -1193,26 +1189,26 @@ public class ComputeExpression{
 	}
 	
 	
-	public static void main(String[] args) {
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
-		EasyConsole ec = EasyConsole.getSwingImpl();
-		ec.open();
-//		String expr = "(2$1(exp(1,2)))(23)";
-//		ComputeExpression ce = compile(expr);
-//		print(ce.generateCode("mc"));
-		Printer.reSet(ec.getOutput());
-		while(true){
-			String expr = ec.nextLine();
-			try{
-				ComputeExpression ce = compile(expr);
-				print(ce.generateCode("mc"));
-			}catch(ComputeExpressionParseException e){
-				print(e.getMessage());
-			}
-			
-			
-		}
-	}
+//	public static void main(String[] args) {
+//		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+//		EasyConsole ec = EasyConsole.getSwingImpl();
+//		ec.open();
+////		String expr = "(2$1(exp(1,2)))(23)";
+////		ComputeExpression ce = compile(expr);
+////		print(ce.generateCode("mc"));
+//		Printer.reSet(ec.getOutput());
+//		while(true){
+//			String expr = ec.nextLine();
+//			try{
+//				ComputeExpression ce = compile(expr);
+//				print(ce.generateCode("mc"));
+//			}catch(ComputeExpressionParseException e){
+//				print(e.getMessage());
+//			}
+//			
+//			
+//		}
+//	}
 	
 	
 	

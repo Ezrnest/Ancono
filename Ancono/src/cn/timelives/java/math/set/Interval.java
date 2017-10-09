@@ -274,10 +274,21 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return (-∞,+∞)
 	 */
 	public static <T> Interval<T> universe(MathCalculator<T> mc){
-		return new IntervalI<T>(mc, null, null, IntervalI.RIGHT_OPEN_MASK | IntervalI.LEFT_OPEN_MASK);
+		return new IntervalI<T>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
+	}
+	/**
+	 * Returns the interval representing a single real number, whose downer bound 
+	 * and upper bound are both {@code x}
+	 * @param mc a {@link MathCalculator}
+	 * @return [x,x]
+	 */
+	public static <T> Interval<T> single(T x,MathCalculator<T> mc){
+		return new IntervalI<T>(mc,x,x,0);
 	}
 	
 	static <T> Interval<T> instanceNonNull(T a,T b,boolean dc,boolean uc, MathCalculator<T> mc){
 		return new IntervalI<T>(mc, Objects.requireNonNull(a), Objects.requireNonNull(b), dc, uc);
 	}
+	
+	
 }

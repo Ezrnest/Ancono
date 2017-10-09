@@ -3,8 +3,6 @@
  */
 package cn.timelives.java.math.equation;
 
-import java.util.function.Function;
-
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
@@ -35,6 +33,8 @@ implements CompareStructure<T, S>{
 	protected int compareZero(T y) {
 		return mc.compare(y, mc.getZero());
 	}
+	
+	
 	
 	/**
 	 * Determines whether the given list of variables is one of the solutions.

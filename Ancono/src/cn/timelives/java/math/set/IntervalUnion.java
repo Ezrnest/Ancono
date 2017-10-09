@@ -4,6 +4,7 @@
 package cn.timelives.java.math.set;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +52,6 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	IntervalUnion(MathCalculator<T> mc,Interval<T> v) {
 		super(mc);
 		this.is = Collections.singletonList(v);
-		is.add(v);
 	}
 	/**
 	 * @see cn.timelives.java.math.set.MathSet#contains(java.lang.Object)
@@ -442,13 +442,17 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		StringBuilder sb = new StringBuilder();
-		for(Interval<T> in : is){
-			sb.append(in.toString(nf));
-			sb.append('∪');
+		if(is.isEmpty()) {
+			return "∅";
+		}else {
+			StringBuilder sb = new StringBuilder();
+			for(Interval<T> in : is){
+				sb.append(in.toString(nf));
+				sb.append('∪');
+			}
+			sb.deleteCharAt(sb.length()-1);
+			return sb.toString();
 		}
-		sb.deleteCharAt(sb.length()-1);
-		return sb.toString();
 	}
 	
 	
@@ -660,9 +664,74 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * Creates an IntervalUnion that only contains one interval:(-∞,+∞). This 
 	 * is equal to create an universe.
 	 * @param interval an interval
-	 * @return {@literal Ω}
+	 * @return {@literal (-∞,+∞)}
 	 */
 	public static <T> IntervalUnion<T> universe(MathCalculator<T> mc){
 		return new IntervalUnion<>(mc,Interval.universe(mc));
+	}
+	/**
+	 * Creates an IntervalUnion that contains each element from the {@code set}.
+	 * @param set an AbstractLimitedSet
+	 * @return a new {@link IntervalUnion}
+	 */
+	public static <T> IntervalUnion<T> fromLimitedSet(AbstractLimitedSet<T> set){
+		if(set.size()>Integer.MAX_VALUE) {
+			throw new IllegalArgumentException("The size of the set is too big!");
+		}
+		@SuppressWarnings("unchecked")
+		T[] list = (T[]) new Object[(int)set.size()];
+		int n=0;
+		for(T t : set) {
+			list[n++] = t;
+		}
+		MathCalculator<T> mc = set.getMathCalculator();
+		Arrays.sort(list, mc::compare);
+		List<Interval<T>> ins = new ArrayList<>(n);
+		for(int i=0;i<n;i++) {
+			ins.add(Interval.single(list[i],mc));
+		}
+		return new IntervalUnion<>(mc, ins);
+	}
+	
+	/**
+	 * Returns the interval representing a single real number, whose downer bound 
+	 * and upper bound are both {@code x}
+	 * @param x a number
+	 * @param mc a {@link MathCalculator}
+	 * @return {@literal [x,x]}
+	 */
+	public static <T> IntervalUnion<T> single(T x,MathCalculator<T> mc){
+		return new IntervalUnion<T>(mc,Interval.single(x, mc));
+	}
+	/**
+	 * Returns the interval representing the real numbers except {@code x}.
+	 * @param x a number
+	 * @param mc a {@link MathCalculator}
+	 * @return {@literal (-∞,x) ∪ (x,+∞)}
+	 */
+	public static <T> IntervalUnion<T> except(T x,MathCalculator<T> mc){
+		List<Interval<T>> list = new ArrayList<>(2);
+		list.add(Interval.fromNegativeInf(x, false, mc));
+		list.add(Interval.toPositiveInf(x, false, mc));
+		return new IntervalUnion<>(mc, list);
+	}
+	/**
+	 * Returns the interval representing the real numbers between {@code x1} and {@code x2},
+	 * the order will be adjusted properly. If {@code x1==x2}, then an empty set will be returned.
+	 * @param x1 a number
+	 * @param x2 another number
+	 * @param mc
+	 * @return {@literal (x1,x2)} (or maybe {@literal (x2,x1)})
+	 */
+	public static <T> IntervalUnion<T> between(T x1,T x2,MathCalculator<T> mc){
+		if(mc.isEqual(x1, x2)) {
+			return empty(mc);
+		}
+		if(mc.compare(x1, x2)>0) {
+			T t = x1;
+			x1 = x2;
+			x2 = t;
+		}
+		return new IntervalUnion<>(mc, Interval.openInterval(x1, x2, mc));
 	}
 }

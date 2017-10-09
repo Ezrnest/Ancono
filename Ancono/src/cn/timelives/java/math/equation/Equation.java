@@ -1,8 +1,5 @@
 package cn.timelives.java.math.equation;
 
-import java.util.List;
-import java.util.function.Function;
-
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**

@@ -6,7 +6,6 @@ package cn.timelives.java.math.equation;
 import java.util.function.Function;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 
 /**
  * 

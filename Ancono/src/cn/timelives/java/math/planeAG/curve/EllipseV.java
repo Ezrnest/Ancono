@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
@@ -345,7 +346,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 			eb = mc.multiplyLong(mc.multiply(b2, mc.multiply(k, c)), 2l);
 			ec = mc.multiply(b2, mc.subtract(square(c), a2));
 		}
-		return QEquation.equation2(ea, eb, ec, mc);
+		return SVPEquation.quadratic(ea, eb, ec, mc);
 	}
 	
 	/**
@@ -394,7 +395,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 			eb = mc.multiplyLong(mc.multiply(b2, mc.multiply(k, c)), 2l);
 			ec = mc.multiply(b2, mc.subtract(square(c), a2));
 		}
-		return QEquation.equation2(ea, eb, ec, mc);
+		return SVPEquation.quadratic(ea, eb, ec, mc);
 	}
 	
 	/**

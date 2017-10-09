@@ -7,6 +7,7 @@ package cn.timelives.java.math.function;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -102,7 +103,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 * @return
 	 */
 	public QEquation<T> toEquation(){
-		return QEquation.equation2(a, b, c, mc);
+		return SVPEquation.quadratic(a, b, c, mc);
 	}
 	/**
 	 * Returns a ConicSection representing this function.

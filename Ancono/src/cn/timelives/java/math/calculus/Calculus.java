@@ -5,9 +5,9 @@ package cn.timelives.java.math.calculus;
 
 import java.util.function.DoubleUnaryOperator;
 
+import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.function.SVPFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.function.AbstractSVPFunction;
 
 /**
  * A utility class for some calculus calculations. This class 

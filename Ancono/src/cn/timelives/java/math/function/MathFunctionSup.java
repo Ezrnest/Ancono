@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.math.function;
 
+import cn.timelives.java.math.function.AbstractSVPFunction.ConstantFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
@@ -19,7 +20,7 @@ public final class MathFunctionSup {
 	}
 
 	/**
-	 * Returns a constant function: f(x)=c
+	 * Returns a constant function: f(x)= c
 	 * @param c
 	 * @param mc
 	 * @return
@@ -28,7 +29,7 @@ public final class MathFunctionSup {
 		return new ConstantFunction<T>(mc, c);
 	}
 	/**
-	 * Returns a constant function: f(x)=c
+	 * Returns a constant function: f(x)= c
 	 * @param c
 	 * @return
 	 */

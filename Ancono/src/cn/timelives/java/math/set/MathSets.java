@@ -37,6 +37,12 @@ public final class MathSets {
 	public static <T> CollectionSet<T> asSet(MathCalculator<T> mc,T...ts){
 		List<T> list = new ArrayList<>(ts.length);
 		for(T t : ts){
+			for(T t0 : list) {
+				if(mc.isEqual(t, t0)) {
+					//equal
+					continue;
+				}
+			}
 			list.add(t);
 		}
 		return new CollectionSet<>(mc, list);
@@ -49,6 +55,16 @@ public final class MathSets {
 	 * @return
 	 */
 	public static <T> CollectionSet<T> fromCollection(Collection<T> coll,MathCalculator<T> mc){
+		List<T> list = new ArrayList<>(coll.size());
+		for(T t : coll){
+			for(T t0 : list) {
+				if(mc.isEqual(t, t0)) {
+					//equal
+					continue;
+				}
+			}
+			list.add(t);
+		}
 		return new CollectionSet<>(mc, coll);
 	}
 	/**

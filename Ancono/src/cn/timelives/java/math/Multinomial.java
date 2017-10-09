@@ -12,7 +12,7 @@ import java.util.function.BiPredicate;
 /**
  * A multinomial is an math expression of a variable, usually called {@code x}, with 
  * defined operations <i>add</i> and <i>multiply</i>. Generally, a multinomial can be shown as 
- * <pre>a_n*x^n + ... + a_1*x + a0 , (a_n!=0,n>0)</pre> The operator {@literal x^n} represents 
+ * <pre>a_n*x^n + ... + a_1*x + a0 , (a_n!=0,n>=0)</pre> The operator {@literal x^n} represents 
  * for multiply {@code x} for {@code n} times. {@code n} is called the power of {@code x} and 
  * {@code a_n} is called the coefficient.
  * @author liyicheng
@@ -52,13 +52,55 @@ public interface Multinomial<T> extends Iterable<T>{
 			return false;
 		}
 		int mp =m1.getMaxPower();
-		for(int i=0;i<mp;i++) {
+		for(int i=0;i<=mp;i++) {
 			if(!equal.test(m1.getCoefficient(i), m2.getCoefficient(i))) {
 				return false;
 			}
 		}
 		return true;
 	}
+	/**
+	 * Determines whether the two multinomial are equal, using the 
+	 * equals() method in object.
+	 * @param m1 
+	 * @param m2
+	 * @return
+	 */
+	public static boolean isEqual(Multinomial<?> m1,Multinomial<?> m2) {
+		if(m1.getMaxPower() != m2.getMaxPower()) {
+			return false;
+		}
+		int mp =m1.getMaxPower();
+		for(int i=0;i<=mp;i++) {
+			if(!m1.getCoefficient(i).equals(m2.getCoefficient(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns the basically implemented hash code. 
+	 * <code>int hash = 0;
+	 *	int mp = m.getMaxPower();
+	 *	for(int i=0;i<=mp;i++) {
+	 *		hash = hash *31 + m.getCoefficient(i).hashCode();
+	 *	}
+	 *	return hash;</code>
+	 * 
+	 * @param m
+	 *            a Multinomial
+	 * @return
+	 */
+	public static int hashCodeOf(Multinomial<?> m) {
+		int hash = 0;
+		int mp =m.getMaxPower();
+		for(int i=0;i<=mp;i++) {
+			hash = hash *31 + m.getCoefficient(i).hashCode();
+		}
+		return hash;
+	}
+	
 }
 class It<T> implements ListIterator<T>{
 	private final Multinomial<T> f;

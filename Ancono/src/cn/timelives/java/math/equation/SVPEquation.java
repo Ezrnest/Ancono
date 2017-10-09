@@ -9,22 +9,22 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.Multinomial;
+import cn.timelives.java.math.Solveable;
 import cn.timelives.java.math.Utils;
 import cn.timelives.java.math.function.AbstractSVPFunction;
-import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.function.MathFunctionSup;
-import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.set.MathSets;
+import cn.timelives.java.math.set.SingletonSet;
 
 
 /**
  * SVPEquation stands for <i>single variable polynomial equation</i>,which means that this 
  * equation can be transformed to a polynomial function {@code f} that {@code f(x) = 0}.
  * Generally,the equation can be shown as 
- * <pre>an*x^n + ... + a1*x + a0 = 0 , (an!=0,n>0)</pre>
+ * <pre>an*x^n + ... + a1*x + a0 = 0 , (an!=0,n>=0)</pre>
  * @author lyc
  * @param <T>
  */
@@ -123,6 +123,29 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 		sb.append(" = 0");
 		return sb.toString();
+	}
+	
+	/*
+	 * @see cn.timelives.java.math.FlexibleMathObject#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if(!(obj instanceof SVPEquation)) {
+			return false;
+		}
+		SVPEquation<?> sv = (SVPEquation<?>)obj;
+		return Multinomial.isEqual(this, sv);
+	}
+	
+	/*
+	 * @see cn.timelives.java.math.FlexibleMathObject#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return op.hashCode()*31 + Multinomial.hashCodeOf(this);
 	}
 	
 	/*
@@ -324,6 +347,49 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	
 	
 	/**
+	 * Creates an equation of 
+	 * <pre>ax + b = 0</pre>
+	 * @param a coefficient of x.
+	 * @param b coefficient.
+	 * @param mc a {@link MathCalculator}
+	 * @return a new LEquation
+	 */
+	public static <T> LEquation<T> linear(T a,T b,MathCalculator<T> mc){
+		return new LEquation<T>(mc, a, b);
+	}
+	
+	/**
+	 * Create an equation that 
+	 * <pre>ax^2 + bx + c = 0</pre>
+	 * @param a the coefficient of x^2.
+	 * @param b the coefficient of x.
+	 * @param c the constant coefficient
+	 * @param mc a {@link MathCalculator}
+	 * @return an equation
+	 */
+	public static <T> QEquation<T> quadratic(T a,T b,T c,MathCalculator<T> mc){
+		if(mc.isZero(a)){
+			throw new IllegalArgumentException("a == 0");
+		}
+		return new QEquation<T>(mc, a, b, c);
+	}
+	/**
+	 * Returns an equation that 
+	 * <pre>(x-d)^2 = 0</pre>
+	 * @param a an coefficient
+	 * @param mc a {@link MathCalculator}
+	 * @return an equation
+	 */
+	public static <T> QEquation<T> perfectSquare(T d,MathCalculator<T> mc){
+		T a = mc.getOne();
+		T b = mc.multiplyLong(d, -2l);
+		T c = mc.multiply(d, d);
+		T delta = mc.getZero();
+		int t = QEquation.ONE_IN_R;
+		return new QEquation<T>(mc, a, b, c, d, d, delta, t);
+	}
+	
+	/**
 	 * QEquation is quadratic equation with only one unknown.This class provides 
 	 * simple method for solving the equation,calculate x1+x2,x1x2 and so on.
 	 * @author lyc
@@ -407,6 +473,8 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 			so.add(x2);
 			return so;
 		}
+		
+		
 		/**
 		 * Computes the delta value of this equation,which is calculated by 
 		 * <pre> b^2 - 4ac </pre>
@@ -565,36 +633,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 			return sb.toString();
 		}
 		
-		/**
-		 * Create an equation that 
-		 * <pre>ax^2 + bx + c = 0</pre>
-		 * @param a the coefficient of x^2.
-		 * @param b the coefficient of x.
-		 * @param c the constant coefficient
-		 * @param mc a {@link MathCalculator}
-		 * @return an equation
-		 */
-		public static <T> QEquation<T> equation2(T a,T b,T c,MathCalculator<T> mc){
-			if(mc.isZero(a)){
-				throw new IllegalArgumentException("a == 0");
-			}
-			return new QEquation<T>(mc, a, b, c);
-		}
-		/**
-		 * Returns an equation that 
-		 * <pre>(x-d)^2 = 0</pre>
-		 * @param a an coefficient
-		 * @param mc a {@link MathCalculator}
-		 * @return an equation
-		 */
-		public static <T> QEquation<T> perfectSquare(T d,MathCalculator<T> mc){
-			T a = mc.getOne();
-			T b = mc.multiplyLong(d, -2l);
-			T c = mc.multiply(d, d);
-			T delta = mc.getZero();
-			int t = ONE_IN_R;
-			return new QEquation<T>(mc, a, b, c, d, d, delta, t);
-		}
+		
 
 		@Override
 		public T getCoefficient(int n) {
@@ -618,7 +657,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 *
 	 * @param <T>
 	 */
-	public static final class LEquation<T> extends SVPEquation<T>{
+	public static final class LEquation<T> extends SVPEquation<T> implements Solveable<T>{
 		
 		private final T a,b;
 		private final T sol;
@@ -663,6 +702,14 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		public T solution(){
 			return sol;
 		}
+		
+		/*
+		 * @see cn.timelives.java.math.Solveable#getSolution()
+		 */
+		@Override
+		public SingletonSet<T> getSolution() {
+			return MathSets.singleton(sol, mc);
+		}
 
 		@Override
 		public <N> LEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -700,16 +747,6 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 			}
 			return false;
 		}
-		/**
-		 * Creates an equation of 
-		 * <pre>ax + b = 0</pre>
-		 * @param a coefficient of x.
-		 * @param b coefficient.
-		 * @param mc a {@link MathCalculator}
-		 * @return a new LEquation
-		 */
-		public static <T> LEquation<T> createEquation(T a,T b,MathCalculator<T> mc){
-			return new LEquation<T>(mc, a, b);
-		}
+		
 	}
 }

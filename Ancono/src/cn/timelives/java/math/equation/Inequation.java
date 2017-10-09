@@ -5,9 +5,7 @@ package cn.timelives.java.math.equation;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
 
@@ -34,7 +32,13 @@ public abstract class Inequation<T,S> extends AbstractCompareStructure<T,S> {
 	
 	
 	/**
-	 * Determines whether the {@code type} is one of the inequation type.
+	 * Determines whether the {@code type} is one of the inequation type:
+	 * <ul>
+	 * <li>GREATER
+	 * <li>GREATER_OR_EQUAL
+	 * <li>LESS
+	 * <li>LESS_OR_EQUAL
+	 * </ul>
 	 * @param type
 	 * @return
 	 */
@@ -42,7 +46,7 @@ public abstract class Inequation<T,S> extends AbstractCompareStructure<T,S> {
 		return inoperation.contains(type);
 	}
 	/**
-	 * Gets all the supported operations.
+	 * Gets all the supported operations: {@literal >,<,>=,<=}
 	 * @return a set of operations.
 	 */
 	public static Set<Type> getOperation(){

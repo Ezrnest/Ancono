@@ -36,9 +36,9 @@ public abstract class Progression<T> extends FlexibleMathObject<T> implements It
 	 */
 	protected final long length;
 	/**
-	 * An long value to indicate the progression is unlimited.
+	 * An long value returned by {@link #getLength()} indicating that the progression is unlimited.
 	 */
-	protected static final long UNLIMITED = -1;
+	public static final long UNLIMITED = -1;
 	
 	
 	protected Progression(MathCalculator<T> mc,long length) {

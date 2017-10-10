@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.MathFunctions;
+import cn.timelives.java.math.MathUtils;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
 import cn.timelives.java.math.planeAG.curve.ClosedCurve;
 import cn.timelives.java.math.planeAG.curve.ConicSection;
 import cn.timelives.java.math.planeAG.curve.RectifiableCurve;
@@ -333,7 +333,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 		T ca = mc.getOne();
 		T cb = mc.multiplyLong(t1,2l);
 		T cc = mc.subtract(t2, mc.multiply(r2, mc.add(mc.multiply(x, x),mc.multiply(y, y))));
-		List<T> c = MathFunctions.solveEquation(ca, cb, cc, mc);
+		List<T> c = MathUtils.solveEquation(ca, cb, cc, mc);
 		List<Line<T>> re = new ArrayList<>(2);
 		re.add(Line.generalFormula(x, y, c.get(0), mc));
 		re.add(Line.generalFormula(x, y, c.get(1), mc));
@@ -356,7 +356,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 			T a = B;
 			T b = E;
 			T c = mc.add(square(x), mc.add(mc.multiply(D, x), F));
-			List<T> so = MathFunctions.solveEquation(a, b, c, mc);
+			List<T> so = MathUtils.solveEquation(a, b, c, mc);
 			List<Point<T>> list = new ArrayList<Point<T>>(so.size());
 			for(T t : so){
 				list.add(new Point<>(mc,x,t));
@@ -370,7 +370,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 						mc.multiply(E, mc.multiply(l.a, l.b))));
 		T c = mc.add(square(l.c), 
 				mc.subtract(mc.multiply(F, b0_2), mc.multiply(E, mc.multiply(l.b, l.c))));
-		List<T> so = MathFunctions.solveEquation(a, b, c, mc);
+		List<T> so = MathUtils.solveEquation(a, b, c, mc);
 		List<Point<T>> list = new ArrayList<Point<T>>(so.size());
 		for(T t : so){
 			list.add(new Point<>(mc,t,l.computeY(t)));

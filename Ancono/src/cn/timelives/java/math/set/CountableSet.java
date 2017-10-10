@@ -5,16 +5,12 @@ package cn.timelives.java.math.set;
 
 import java.math.BigInteger;
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * A countable set is a set that is iterable, but it contains either 
  * infinite or finite elements. For example, the set of all the integers or
- * {x|x=2k,k¡ÊZ} are both countable set with infinite elements.
+ * {x|x=2k,kï¿½ï¿½Z} are both countable set with infinite elements.
  * @author liyicheng
  * @see LimitedSet
  *

@@ -1,11 +1,9 @@
 package cn.timelives.java.math.numberModels;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;
 import cn.timelives.java.utilities.SNFSupport;
 /**
@@ -328,16 +326,16 @@ public final class ComplexI {
 	 * the default Double-calculator.
 	 * @return a point
 	 */
-	public Point<Double> toPoint(){
-		return new Point<>(MathCalculatorAdapter.getCalculatorDouble(),a,b);
+	public Point<Double> toPoint(MathCalculator<Double> mc){
+		return new Point<>(mc,a,b);
 	}
 	/**
 	 * Returns the vector representing this Complex number,the calculator will be 
 	 * the default Double-calculator.
 	 * @return a vector
 	 */
-	public Vector<Double> toVector(){
-		return Vector.createVector(MathCalculatorAdapter.getCalculatorDouble(), a,b);
+	public PVector<Double> toVector(MathCalculator<Double> mc){
+		return PVector.valueOf(a, b, mc);
 	}
 	
 	@Override
@@ -571,20 +569,20 @@ public final class ComplexI {
 	
 	
 	
-	public static void main(String[] args) {
-		//test here 
-//		ComplexI[] zs = new ComplexI[16];
-//		zs[0] = of(-2,1);
-//		zs[1] = of(1,-2);
-//		print(zs[0].reciprocal().add(zs[1].reciprocal()));
-		ComplexI w = modArg(1, TWO_PI/3),sum = ZERO;
-		print(format(w));
-		for(int i=0;i<2011;i++){
-			sum = sum.add(w.pow(i));
-		}
-		print(format(sum));
-		print(format(w.pow(30).add(w.pow(40)).add(w.pow(50))));
-		print(format(w.pow(2009).add(w.reciprocal().pow(2009))));
-		
-	}
+//	public static void main(String[] args) {
+//		//test here 
+////		ComplexI[] zs = new ComplexI[16];
+////		zs[0] = of(-2,1);
+////		zs[1] = of(1,-2);
+////		print(zs[0].reciprocal().add(zs[1].reciprocal()));
+//		ComplexI w = modArg(1, TWO_PI/3),sum = ZERO;
+//		print(format(w));
+//		for(int i=0;i<2011;i++){
+//			sum = sum.add(w.pow(i));
+//		}
+//		print(format(sum));
+//		print(format(w.pow(30).add(w.pow(40)).add(w.pow(50))));
+//		print(format(w.pow(2009).add(w.reciprocal().pow(2009))));
+//		
+//	}
 }

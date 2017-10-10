@@ -3,9 +3,9 @@
  */
 package cn.timelives.java.math;
 
-import java.util.Arrays;
+import static cn.timelives.java.utilities.Printer.print;
 
-import static cn.timelives.java.utilities.Printer.*;
+import java.util.Arrays;
 
 /**
  * The class for getting prime numbers, this class supports  

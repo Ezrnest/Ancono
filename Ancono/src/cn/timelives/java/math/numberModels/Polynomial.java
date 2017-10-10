@@ -1,4 +1,4 @@
-package cn.timelives.java.math.numberModels;
+ï»¿package cn.timelives.java.math.numberModels;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import cn.timelives.java.math.addableSet.MathAdder;
 import cn.timelives.java.math.addableSet.SortedAdditiveSet;
 
 /**
- * ¶àÏîÊ½ÊÇÓÉ¶à¸öformula×é³ÉµÄ±í´ïÊ½
- * <p>Ã¿¸öformulaÖ®¼äÒÔ¼ÓºÅÏàÁ¬
+ * å¤šé¡¹å¼æ˜¯ç”±å¤šä¸ªformulaç»„æˆçš„è¡¨è¾¾å¼
+ * <p>æ¯ä¸ªformulaä¹‹é—´ä»¥åŠ å·ç›¸è¿
  * 
  * 
  * 
@@ -23,7 +23,7 @@ import cn.timelives.java.math.addableSet.SortedAdditiveSet;
 public class Polynomial implements Comparable<Polynomial>
 {
 	/**
-	 * fs ÊÇÓÃÓÚ´¢´æ¶àÏîÊ½ÄÚÈİµÄSortedAdditiveSet
+	 * fs æ˜¯ç”¨äºå‚¨å­˜å¤šé¡¹å¼å†…å®¹çš„SortedAdditiveSet
 	 */
 	private AdditiveSet<Formula> fs;
 	
@@ -38,7 +38,7 @@ public class Polynomial implements Comparable<Polynomial>
 	
 	
 	/**
-	 * Òª½¨Á¢Polynomial¶ÔÏó£¬±ØĞëÖ¸¶¨Ò»¸ö¼ÆËãÆ÷¶ÔÏó
+	 * è¦å»ºç«‹Polynomialå¯¹è±¡ï¼Œå¿…é¡»æŒ‡å®šä¸€ä¸ªè®¡ç®—å™¨å¯¹è±¡
 	 * 
 	 * @param ma
 	 */
@@ -66,7 +66,7 @@ public class Polynomial implements Comparable<Polynomial>
 		this.fs.add(Formula.ZERO);
 	}
 	/**
-	 * ¸ù¾İ×Ö·û´®±í´ïÊ½À´½¨Á¢µÄPolynomial
+	 * æ ¹æ®å­—ç¬¦ä¸²è¡¨è¾¾å¼æ¥å»ºç«‹çš„Polynomial
 	 * @param ma
 	 * @param str
 	 */
@@ -135,7 +135,7 @@ public class Polynomial implements Comparable<Polynomial>
 	}
 	
 	/**
-	 * ÔÚ¸Ã¶àÏîÊ½ÖĞÌí¼ÓÒ»Ïî
+	 * åœ¨è¯¥å¤šé¡¹å¼ä¸­æ·»åŠ ä¸€é¡¹
 	 * @param f
 	 * @return
 	 */
@@ -151,13 +151,18 @@ public class Polynomial implements Comparable<Polynomial>
 		return this.fs.equals(p.fs);
 	}
 	
+	private int hashCode = 0;
+	
 	@Override
 	public int hashCode(){
-		int code = 0;
-		for(Formula f : this.fs){
-			code+=f.hashCode()*31;
+		if(hashCode ==0) {
+			int hash = 0;
+			for(Formula f : this.fs){
+				hash+=f.hashCode()*31;
+			}
+			hashCode = hash;
 		}
-		return code;
+		return hashCode;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * Integer to Double , or other kind of math number. 
  * <p>
  * @author lyc
- * @param T the kind of object used,usually a subclass of number
+ * @param <T> the kind of object used, usually a subclass of number
  * @see {@linkplain MathCalculator}
  */
 public abstract class FlexibleMathObject<T> implements MathCalculatorHolder<T>{
@@ -44,8 +44,8 @@ public abstract class FlexibleMathObject<T> implements MathCalculatorHolder<T>{
 	 * type to it instead of just returning a FlexibleMathObject. 
 	 * @param newCalculator a new calculator of type {@code N}
 	 * @param mapper the function used in mapping.
+	 * @param <N> the new number type.
 	 * @return a new FlexibleMathObject of type N
-	 * @param N the new number type.
 	 */
 	public abstract <N> FlexibleMathObject<N> mapTo(Function<T,N> mapper,MathCalculator<N> newCalculator);
 	/**

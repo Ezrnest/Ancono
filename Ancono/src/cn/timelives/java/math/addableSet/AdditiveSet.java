@@ -1,6 +1,7 @@
 package cn.timelives.java.math.addableSet;
 
 import static cn.timelives.java.utilities.Printer.print;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,8 +10,6 @@ import java.util.regex.Pattern;
 import cn.timelives.java.math.numberModels.Polynomial;
 
 /**
- * 这个对象用于储存具有可叠加特性的对象
-
  * 
  * 
  * 

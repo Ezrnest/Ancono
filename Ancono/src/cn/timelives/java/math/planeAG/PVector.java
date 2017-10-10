@@ -6,13 +6,14 @@ package cn.timelives.java.math.planeAG;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.LinearEquationSolution;
-import cn.timelives.java.math.LinearEquationSolution.Situation;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.AbstractVector;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
@@ -24,7 +25,7 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  * @author liyicheng
  *
  */
-public final class PVector<T> extends AbstractVector<T> {
+public final class PVector<T> extends Vector<T> {
 	public final T x,y;
 	private T length,lengthSq;
 	/**
@@ -221,10 +222,10 @@ public final class PVector<T> extends AbstractVector<T> {
 	/**
 	 * Returns the inner(scalar) product of {@code this} and {@code s}, which 
 	 * is equal to <pre>
-	 * this · s
+	 * this 路 s
 	 * </pre>
 	 * @param s
-	 * @return this · s
+	 * @return this 路 s
 	 */
 	public T innerProduct(PVector<T> s){
 		return mc.add(mc.multiply(x, s.x), mc.multiply(y, s.y));
@@ -232,9 +233,9 @@ public final class PVector<T> extends AbstractVector<T> {
 	
 	/**
 	 * Returns the angle of {@code this} and {@code s}.
-	 * <pre> arccos(this · s / (|this| |s|))</pre>
+	 * <pre> arccos(this 路 s / (|this| |s|))</pre>
 	 * @param s
-	 * @return <pre> arccos(this · s / (|this| |s|))</pre>
+	 * @return <pre> arccos(this 路 s / (|this| |s|))</pre>
 	 */
 	public <R> R angle(PVector<T> s,MathFunction<T, R> arccos){
 		T pro = innerProduct(s);
@@ -243,9 +244,9 @@ public final class PVector<T> extends AbstractVector<T> {
 	}
 	/**
 	 * Returns the cos value of the angle of {@code this} and {@code s}.
-	 * <pre>this · s / (|this| |s|)</pre>
+	 * <pre>this 路 s / (|this| |s|)</pre>
 	 * @param s
-	 * @return <pre>this · s / (|this| |s|)</pre>
+	 * @return <pre>this 路 s / (|this| |s|)</pre>
 	 */
 	public T angleCos(PVector<T> s){
 		T pro = innerProduct(s);
@@ -326,10 +327,6 @@ public final class PVector<T> extends AbstractVector<T> {
 		return sn;
 	}
 	
-	@Override
-	public String toString() {
-		return toString(NumberFormatter.getToStringFormatter());
-	}
 	
 	@Override
 	public String toString(NumberFormatter<T> nf) {
@@ -368,7 +365,6 @@ public final class PVector<T> extends AbstractVector<T> {
 	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
 		
 		if(obj instanceof PVector){
-			@SuppressWarnings("unchecked")
 			PVector<N> s = (PVector<N>) obj;
 			return mc.isEqual(x, mapper.apply(s.x)) &&
 					mc.isEqual(y, mapper.apply(s.y)); 
@@ -382,7 +378,6 @@ public final class PVector<T> extends AbstractVector<T> {
 			return true;
 		}
 		if(obj instanceof PVector){
-			@SuppressWarnings("unchecked")
 			PVector<T> s = (PVector<T>) obj;
 			return mc.isEqual(x, s.x) &&
 					mc.isEqual(y, s.y) ;
@@ -511,7 +506,7 @@ public final class PVector<T> extends AbstractVector<T> {
 	 * @param v a vector whose size is bigger than or equal to 2.
 	 * @return a new SVector
 	 */
-	public static <T> PVector<T> fromVector(AbstractVector<T> v){
+	public static <T> PVector<T> fromVector(Vector<T> v){
 		if(v.getSize()< 2){
 			throw new IllegalArgumentException("Too small");
 		}
@@ -532,8 +527,17 @@ public final class PVector<T> extends AbstractVector<T> {
 	 * @return a new vector
 	 */
 	public static <T> PVector<T> zeroVector(MathCalculator<T> mc){
-		T z = mc.getZero();
-		return new PVector<T>(z, z, mc);
+		@SuppressWarnings("unchecked")
+		PVector<T> v = (PVector<T>) zvs.get(mc);
+		if(v == null) {
+			T z = mc.getZero();
+			v =  new PVector<T>(z, z, mc);
+			zvs.put(mc, v);
+		}
+		return v;
+		
 	}
+	
+	private static final Map<MathCalculator<?>,PVector<?>> zvs = new ConcurrentHashMap<>();
 	
 }

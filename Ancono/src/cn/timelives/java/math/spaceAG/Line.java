@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.LinearEquationSolution;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.linearAlgebra.DVector;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.Simplifiable;
@@ -151,7 +151,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 		}
 		
 		//here shows the advantage of naming the vector in space as SVector 
-		Vector<T> base = sov.getBase();
+		DVector<T> base = sov.getBase();
 		T k = base.getNumber(0);
 		
 		return new SPoint<T>(mc,mc.add(p0.x, mc.multiply(k, vec.x)),

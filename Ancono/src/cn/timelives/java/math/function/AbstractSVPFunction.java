@@ -5,24 +5,29 @@ package cn.timelives.java.math.function;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.Calculus;
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.Multinomial;
+import cn.timelives.java.math.Utils;
+import cn.timelives.java.math.calculus.Calculus;
+import cn.timelives.java.math.calculus.Derivable;
+import cn.timelives.java.math.calculus.Integrable;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.planeAG.Point;
-import cn.timelives.java.math.planeAG.curve.PlaneFunction;
 import cn.timelives.java.utilities.ArraySup;
 
 /**
- * 
+ * A class providing single variable polynomial functions.
  * @author liyicheng
- *
+ * @see SVPFunction
  */
-public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> implements PlaneFunction<T>, SVPFunction<T> {
+public abstract class AbstractSVPFunction<T> extends AbstractSVFunction<T>
+implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 	
 	/**
 	 * @param mc
@@ -53,36 +58,103 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 		return re;
 	}
 
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.planeAG.PlanePointSet#contains(cn.timelives.java.math.planeAG.Point)
-	 */
-	@Override
-	public boolean contains(Point<T> p) {
-		return mc.isEqual(apply(p.getX()), p.getY());
-	}
-
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.function.SVPFunction#getCoefficient(int)
-	 */
-	@Override
-	public abstract T getCoefficient(int n);
 	/**
 	 * Returns the derivation of this function.
 	 * @return
 	 */
-	public SVPFunction<T> derivation(){
+	public AbstractSVPFunction<T> derive(){
 		return Calculus.derivation(this);
+	}
+	
+	/*
+	 * @see cn.timelives.java.math.calculus.Integrable#integrate()
+	 */
+	@Override
+	public AbstractSVPFunction<T> integrate() {
+		return Calculus.integration(this);
 	}
 	
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public abstract  <N> AbstractSVPFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+	public abstract <N> AbstractSVPFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 	
+	/* (non-Javadoc)
+	 * @see cn.timelives.java.math.FlexibleMathObject#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof AbstractSVPFunction){
+			@SuppressWarnings("unchecked")
+			AbstractSVPFunction<T> as = (AbstractSVPFunction<T>) obj;
+			if(getMaxPower()!=as.getMaxPower()){
+				return false;
+			}
+			for(int i=0;i<mp;i++){
+				if(!getCoefficient(i).equals(as.getCoefficient(i))){
+					return false;
+				}
+			}
+			return true;
+			
+		}
+		return false;
+	}
+
+	/**
+	 * Compares whether the another one is also a SVPFunction and determines whether 
+	 * they are equal
+	 */
+	@Override
+	public boolean valueEquals(FlexibleMathObject<T> obj) {
+		if(!(obj instanceof SVPFunction)){
+			return false;
+		}
+		if(obj == this) {
+			return true;
+		}
+		@SuppressWarnings("unchecked")
+		SVPFunction<T> f = (SVPFunction<T>) obj;
+		return SVPFunction.isEqual(this,f, mc::isEqual);
+	}
+
+	/* (non-Javadoc)
+	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
+	 */
+	@Override
+	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		if(!(obj instanceof SVPFunction)){
+			return false;
+		}
+		if(obj == this) {
+			return true;
+		}
+		@SuppressWarnings("unchecked")
+		SVPFunction<N> f = (SVPFunction<N>) obj;
+		return Multinomial.isEqual(this,f, Utils.mappedIsEqual(mc, mapper));
+	}
 	
+	/* (non-Javadoc)
+	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
+	 */
+	@Override
+	public String toString(NumberFormatter<T> nf) {
+		StringBuilder sb = new StringBuilder();
+		for(int i=mp;i>0;i--){
+			if(mc.isZero(getCoefficient(i)))
+				continue;
+			sb.append(nf.format(getCoefficient(i), mc)).append("*x^").append(i).append(" + ");
+		}
+		if(mc.isZero(getCoefficient(0))==false){
+			sb.append(nf.format(getCoefficient(0), mc));
+		}else{
+			sb.delete(sb.length()-3, sb.length());
+		}
+		return sb.toString();
+	}
 	
-	public static class SVPFunctionImpl1<T> extends AbstractSVPFunction<T>{
+	static class SVPFunctionImpl1<T> extends AbstractSVPFunction<T>{
 		final T[] coes;
 		/**
 		 * @param mc
@@ -141,7 +213,7 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 	 *
 	 * @param <T>
 	 */
-	public static class SVPFunctionImpl2<T> extends AbstractSVPFunction<T>{
+	static class SVPFunctionImpl2<T> extends AbstractSVPFunction<T>{
 		final Map<Integer,T> map;
 		/**
 		 * 
@@ -180,102 +252,133 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 			return mc.hashCode()*31 + map.hashCode();
 		}
 	}
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.FlexibleMathObject#equals(java.lang.Object)
+	
+	/**
+	 * Describe the linear function.
+	 * @author liyicheng
+	 * 2017-10-07 15:08
+	 *
+	 * @param <T>
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof AbstractSVPFunction){
-			@SuppressWarnings("unchecked")
-			AbstractSVPFunction<T> as = (AbstractSVPFunction<T>) obj;
-			if(getMaxPower()!=as.getMaxPower()){
+	public static final class LinearFunction<T> extends AbstractSVPFunction<T>{
+		private final T a,b;
+		/**
+		 * @param mc
+		 * @param maxp
+		 */
+		LinearFunction(MathCalculator<T> mc, T a,T b) {
+			super(mc, 1);
+			this.a = Objects.requireNonNull(a);
+			this.b = Objects.requireNonNull(b);
+			if(mc.isZero(a)) {
+				throw new IllegalArgumentException("a==0");
+			}
+		}
+		/*
+		 * @see cn.timelives.java.math.function.AbstractSVPFunction#getCoefficient(int)
+		 */
+		@Override
+		public T getCoefficient(int n) {
+			switch(n) {
+			case 0:{
+				return b;
+			}
+			case 1:{
+				return a;
+			}
+			}
+			throw new IndexOutOfBoundsException();
+		}
+		/*
+		 * @see cn.timelives.java.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 */
+		@Override
+		public <N> LinearFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+			return new LinearFunction<N>(newCalculator, mapper.apply(a), mapper.apply(b));
+		}
+		
+	}
+	/**
+	 * A constant function is a type of MathFunction that 
+	 * always returns the same result.
+	 * @author 
+	 *
+	 */
+	public final static class ConstantFunction<T> extends AbstractSVPFunction<T> implements SVFunction<T>{
+		private final T r;
+		ConstantFunction(MathCalculator<T> mc,T r){
+			super(mc,0);
+			this.r = r;
+		}
+		
+		
+		/*
+		 * @see cn.timelives.java.math.function.MathFunction#apply(java.lang.Object)
+		 */
+		@Override
+		public T apply(T x) {
+			return r;
+		}
+		/**
+		 * Returns the result.
+		 * @return
+		 */
+		public T getResult() {
+			return r;
+		}
+
+
+		/*
+		 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 */
+		@Override
+		public <N> ConstantFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+			return new ConstantFunction<N>(newCalculator,mapper.apply(r));
+		}
+
+
+		/*
+		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+		 */
+		@Override
+		public boolean valueEquals(FlexibleMathObject<T> obj) {
+			if(!(obj instanceof ConstantFunction)) {
 				return false;
 			}
-			for(int i=0;i<mp;i++){
-				if(!getCoefficient(i).equals(as.getCoefficient(i))){
-					return false;
-				}
-			}
-			return true;
-			
+			return mc.isEqual(r, ((ConstantFunction<T>)obj).r);
 		}
-		return false;
+
+		/*
+		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 */
+		@Override
+		public String toString(NumberFormatter<T> nf) {
+			return nf.format(r, mc);
+		}
+
+
+		/*
+		 * @see cn.timelives.java.math.function.SVPFunction#getCoefficient(int)
+		 */
+		@Override
+		public T getCoefficient(int n) {
+			if(n!=0) {
+				throw new IndexOutOfBoundsException("n!=0");
+			}
+			return r;
+		}
 	}
-	
 
 	
-	
-	
-	
-
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+	/**
+	 * Creates a function with it coefficients.
+	 * @param mc a {@link MathCalculator}
+	 * @param coes an array of coefficients, if an element is {@code null}, 
+	 * then it will be considered as zero.
+	 * @return a new single variable polynomial function
 	 */
-	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
-		if(obj instanceof AbstractSVPFunction){
-			AbstractSVPFunction<T> f = (AbstractSVPFunction<T>) obj;
-			if(f.mp != mp){
-				return false;
-			}
-			for(int i=0;i<=mp;i++){
-				if(!mc.isEqual(getCoefficient(i), f.getCoefficient(i))){
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
-	 */
-	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
-		if(obj instanceof AbstractSVPFunction){
-			AbstractSVPFunction<N> f = (AbstractSVPFunction<N>) obj;
-			if(f.mp != mp){
-				return false;
-			}
-			for(int i=0;i<=mp;i++){
-				if(!mc.isEqual(getCoefficient(i), mapper.apply(f.getCoefficient(i)))){
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return toString(NumberFormatter.getToStringFormatter());
-	}
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
-	 */
-	@Override
-	public String toString(NumberFormatter<T> nf) {
-		StringBuilder sb = new StringBuilder();
-		for(int i=mp;i>0;i--){
-			if(mc.isZero(getCoefficient(i)))
-				continue;
-			sb.append(nf.format(getCoefficient(i), mc)).append("*x^").append(i).append(" + ");
-		}
-		if(mc.isZero(getCoefficient(0))==false){
-			sb.append(nf.format(getCoefficient(0), mc));
-		}else{
-			sb.delete(sb.length()-3, sb.length());
-		}
-		return sb.toString();
-	}
-	
 	@SafeVarargs
-	public static <T> AbstractSVPFunction<T> createFunction(MathCalculator<T> mc,T...coes){
+	public static <T> AbstractSVPFunction<T> valueOf(MathCalculator<T> mc,T...coes){
 		for(int i=0;i<coes.length;i++){
 			if(coes[i]==null){
 				coes[i] = mc.getZero();
@@ -289,7 +392,101 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 		return new SVPFunctionImpl1<>(mc,max, coes);
 	}
 	/**
-	 * 
+	 * Creates a function with it coefficients as a list.
+	 * @param coes an list of coefficients, {@code null} values are unacceptable. 
+	 * @param mc a {@link MathCalculator}
+	 * @return a new single variable polynomial function
+	 */
+	public static <T> AbstractSVPFunction<T> valueOf(List<T> coes,MathCalculator<T> mc){
+		@SuppressWarnings("unchecked")
+		T[] arr = (T[]) coes.toArray();
+		for(int i=0;i<arr.length;i++) {
+			if(arr[i]==null) {
+				throw new NullPointerException("null in list: index = "+i);
+			}
+		}
+		return new SVPFunctionImpl1<>(mc, arr.length-1, arr);
+	}
+	/**
+	 * Creates a function with it coefficients as a map.
+	 * @param coes an map of coefficients, {@code null} values are unacceptable. 
+	 * @param mc a {@link MathCalculator}
+	 * @return a new single variable polynomial function
+	 */
+	public static <T> AbstractSVPFunction<T> valueOf(Map<Integer,T> coes,MathCalculator<T> mc){
+		Map<Integer,T> map = new HashMap<>();
+		int mp = 0;
+		for(Entry<Integer,T> en : coes.entrySet()) {
+			
+			if(en.getKey() == null || en.getValue()==null) {
+				throw new NullPointerException();
+			}
+			mp = Math.max(mp, en.getKey());
+			map.put(en.getKey(), en.getValue());
+		}
+		return new SVPFunctionImpl2<>(mc, mp, map);
+	}
+	
+	/**
+	 * Returns a constant function:
+	 * <pre>c</pre>
+	 * @param c the constant
+	 * @param mc a {@link MathCalculator}
+	 * @return a new ConstantFunction
+	 */
+	public static <T> ConstantFunction<T> constant(T c,MathCalculator<T> mc){
+		return new ConstantFunction<T>(mc, c);
+	}
+	
+	/**
+	 * Returns a linear function:
+	 * <pre>ax+b</pre>
+	 * It is required that {@code a!=0}.
+	 * @param a the coefficient of {@code x}
+	 * @param b the constant
+	 * @param mc a {@link MathCalculator}
+	 * @return a new LinearFunction
+	 */
+	public static <T> LinearFunction<T> linear(T a,T b,MathCalculator<T> mc){
+		return new LinearFunction<T>(mc, a, b);
+	}
+	
+	/**
+	 * Returns a new quadratic function.
+	 * <pre>ax^2+bx+c</pre>
+	 * It is required that {@code a!=0}.
+	 * @param a the coefficient of {@code x^2}
+	 * @param b the coefficient of {@code x}
+	 * @param c the constant
+	 * @param mc a {@link MathCalculator}
+	 * @return a new QuadraticFunction
+	 */
+	public static <T> QuadraticFunction<T> quadratic(T a,T b,T c,MathCalculator<T> mc){
+		return new QuadraticFunction<T>(mc, a, b, c);
+	}
+	
+	/**
+	 * Returns a function from a multinomial.
+	 * @param m a {@link Multinomial}
+	 * @param mc a {@link MathCalculator}
+	 * @return an {@link AbstractSVPFunction}
+	 */
+	public static <T> AbstractSVPFunction<T> fromMultinomial(Multinomial<T> m,MathCalculator<T> mc){
+		if(m instanceof AbstractSVPFunction) {
+			return (AbstractSVPFunction<T>)m;
+		}
+		final int size = m.getMaxPower()+1;
+		@SuppressWarnings("unchecked")
+		T[] list = (T[]) new Object[size];
+		for(int i=0;i<size;i++) {
+			list[i] = m.getCoefficient(i);
+		}
+		return new SVPFunctionImpl1<>(mc, size-1, list);
+	}
+	
+	
+	/**
+	 * Add two functions.
 	 * @param p1
 	 * @param p2
 	 * @return
@@ -302,7 +499,7 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 		for(int i=0;i<=max;i++){
 			coes[i] = mc.add(p1.getCoefficient(i), p2.getCoefficient(i));
 		}
-		return createFunction(mc, coes);
+		return valueOf(mc, coes);
 	}
 	
 	private static final int MAX_ARRAY_THREHOLD = 128;
@@ -320,6 +517,8 @@ public abstract class AbstractSVPFunction<T> extends FlexibleMathObject<T> imple
 			return multiplyToMap(p1,p2,max);
 		}
 	}
+	
+	
 	
 	/**
 	 * @param p1

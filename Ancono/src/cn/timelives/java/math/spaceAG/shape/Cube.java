@@ -11,6 +11,7 @@ import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
 import cn.timelives.java.math.spaceAG.SPoint;
+import cn.timelives.java.math.spaceAG.Segment;
 import cn.timelives.java.utilities.Printer;
 /**
  * A cube:<pre>
@@ -43,7 +44,7 @@ public final class Cube<T> extends RightPrism<T> {
 	 * AA1 BB1 CC1 DD1 4 5 6 7
 	 * A1 B1 C1 D1 8 9 10 11
 	 */
-	private final Line<T>[] edge;
+	private final Segment<T>[] edge;
 	/**
 	 * Bottom 0
 	 * front-right-behind-left 1-2-3-4
@@ -53,7 +54,7 @@ public final class Cube<T> extends RightPrism<T> {
 	
 	private final T a;
 	
-	protected Cube(MathCalculator<T> mc,SPoint<T>[] vertex,Line<T>[] edge,Plane<T>[] surface,T a) {
+	protected Cube(MathCalculator<T> mc,SPoint<T>[] vertex,Segment<T>[] edge,Plane<T>[] surface,T a) {
 		super(mc, 4);
 		this.vertex = vertex;
 		this.edge = edge;
@@ -89,8 +90,8 @@ public final class Cube<T> extends RightPrism<T> {
 	}
 
 	@Override
-	public Set<Line<T>> getSlantedge() {
-		Set<Line<T>> set = new HashSet<>(Slantedge_NUM);
+	public Set<Segment<T>> getSlantedge() {
+		Set<Segment<T>> set = new HashSet<>(Slantedge_NUM);
 		set.add(edge[4]);
 		set.add(edge[5]);
 		set.add(edge[6]);
@@ -116,8 +117,8 @@ public final class Cube<T> extends RightPrism<T> {
 
 	@Override
 	public boolean isEdge(Line<T> l) {
-		for(Line<T> p0 : edge){
-			if(p0.valueEquals(l)){
+		for(Segment<T> p0 : edge){
+			if(p0.getLine().valueEquals(l)){
 				return true;
 			}
 		}
@@ -144,9 +145,9 @@ public final class Cube<T> extends RightPrism<T> {
 	}
 
 	@Override
-	public Set<Line<T>> getEdges() {
-		Set<Line<T>> set = new HashSet<>(EDGE_NUM);
-		for(Line<T> p0 : edge){
+	public Set<Segment<T>> getEdges() {
+		Set<Segment<T>> set = new HashSet<>(EDGE_NUM);
+		for(Segment<T> p0 : edge){
 			set.add(p0);
 		}
 		return set;
@@ -283,24 +284,24 @@ public final class Cube<T> extends RightPrism<T> {
 	
 	private static <T> Cube<T> eightPoints(T a,SPoint<T>[] vs,MathCalculator<T> mc){
 		@SuppressWarnings("unchecked")
-		Line<T>[] vec = (Line<T>[]) new Line<?>[EDGE_NUM];
+		Segment<T>[] vec = (Segment<T>[]) new Segment<?>[EDGE_NUM];
 		for(int i=0;i<4;i++){
-			vec[i] = Line.twoPoints(vs[i], vs[(i+1)%4]);
+			vec[i] = Segment.twoPoints(vs[i], vs[(i+1)%4]);
 		}
 		for(int i=0;i<4;i++){
-			vec[i+4] = Line.twoPoints(vs[i], vs[i+4]);
+			vec[i+4] = Segment.twoPoints(vs[i], vs[i+4]);
 		}
 		for(int i=0;i<4;i++){
-			vec[i+8] = Line.twoPoints(vs[i+4], vs[(i+1)%4+4]);
+			vec[i+8] = Segment.twoPoints(vs[i+4], vs[(i+1)%4+4]);
 		}
 		@SuppressWarnings("unchecked")
 		Plane<T>[] pl = (Plane<T>[]) new Plane<?>[PLANE_NUM];
-		pl[0] = Plane.twoLines(vec[0], vec[3]);
-		pl[1] = Plane.twoLines(vec[0], vec[4]);
-		pl[2] = Plane.twoLines(vec[1], vec[5]);
-		pl[3] = Plane.twoLines(vec[2], vec[6]);
-		pl[4] = Plane.twoLines(vec[3], vec[7]);
-		pl[4] = Plane.twoLines(vec[8], vec[11]);
+		pl[0] = Plane.twoLines(vec[0].getLine(), vec[3].getLine());
+		pl[1] = Plane.twoLines(vec[0].getLine(), vec[4].getLine());
+		pl[2] = Plane.twoLines(vec[1].getLine(), vec[5].getLine());
+		pl[3] = Plane.twoLines(vec[2].getLine(), vec[6].getLine());
+		pl[4] = Plane.twoLines(vec[3].getLine(), vec[7].getLine());
+		pl[4] = Plane.twoLines(vec[8].getLine(), vec[11].getLine());
 		return new Cube<T>(mc, vs, vec, pl, a);
 	}
 	public static void main(String[] args) {

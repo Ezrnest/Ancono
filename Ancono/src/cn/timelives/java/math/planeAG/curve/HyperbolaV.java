@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.SVPEquation.QEquation;
+import cn.timelives.java.math.equation.SVPEquation.QEquation;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
 import cn.timelives.java.math.planeAG.Line;
 import cn.timelives.java.math.planeAG.Point;
 /**

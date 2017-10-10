@@ -3,7 +3,11 @@
  */
 package cn.timelives.java.math.function;
 
-import java.util.Iterator;
+
+import java.util.function.BiPredicate;
+
+import cn.timelives.java.math.MathCalculatorHolder;
+import cn.timelives.java.math.Multinomial;
 
 
 /**
@@ -12,13 +16,13 @@ import java.util.Iterator;
  * @author liyicheng
  *
  */
-public interface SVPFunction<T> extends SVFunction<T>, Iterable<T>{
+public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, Multinomial<T>{
 	
 	/**
 	 * Returns the coefficient {@code x^n},if {@code n==0} then the 
 	 * coefficient {@code a0} will be returned.
-	 * @param n
-	 * @return
+	 * @param n the power of {@code x}
+	 * @return the coefficient
 	 * @throws IndexOutOfBoundsException if {@code n} is bigger than {@code getMaxPower()} or 
 	 * it is smaller than 0.
 	 */
@@ -31,40 +35,15 @@ public interface SVPFunction<T> extends SVFunction<T>, Iterable<T>{
 	 */
 	int getMaxPower();
 	
-	/** 
-	 * Iterators the coefficient from the lowest one(a0).
-	 */
-	@Override
-	public default Iterator<T> iterator() {
-		return new It<>(this);
-	}
-	
-}
-class It<T> implements Iterator<T>{
-	private final SVPFunction<T> f;
-	private final int max;
-	private int n;
 	/**
-	 * 
+	 * Determines whether the two SVPFunctions are equal. The subclasses may 
+	 * use this method to test whether the two objects are equal.
+	 * @param f1 a function
+	 * @param f2 another function
+	 * @param equal
+	 * @return
 	 */
-	public It(SVPFunction<T> f) {
-		this.f = f;
-		this.max = f.getMaxPower();
+	public static <T,S> boolean isEqual(SVPFunction<T> f1,SVPFunction<S> f2,BiPredicate<T, S> equal) {
+		return Multinomial.isEqual(f1, f2, equal);
 	}
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#hasNext()
-	 */
-	@Override
-	public boolean hasNext() {
-		return n<=max;
-	}
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#next()
-	 */
-	@Override
-	public T next() {
-		return f.getCoefficient(n++);
-	}
-	
-	
 }

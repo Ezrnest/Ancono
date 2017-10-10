@@ -7,6 +7,7 @@ import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
 import cn.timelives.java.math.spaceAG.SPoint;
+import cn.timelives.java.math.spaceAG.Segment;
 /**
  * Polyhedron is a space object whose surfaces are all polygons and 
  * has several edges and vertexes.
@@ -72,7 +73,7 @@ public abstract class Polyhedron<T> extends SpaceObject<T> {
 	 * has no effect on this object.
 	 * @return a set
 	 */
-	public abstract Set<Line<T>> getEdges();
+	public abstract Set<Segment<T>> getEdges();
 	/**
 	 * Returns a set of surfaces, the modification of the set 
 	 * has no effect on this object.

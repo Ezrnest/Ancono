@@ -95,7 +95,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	/**
 	 * Return a copy of the values in this matrix. The returned array is a copy
 	 * of the value so the change of it won't change the original values in this
-	 * Matrix.
+	 * Matrix. The returned array assures that {@code arr[i][j] == getNumber(i,j)}
 	 * @return a two-dimension array containing the values in this matrix
 	 */
 	public abstract Object[][] getValues();
@@ -964,7 +964,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	 * @return a new Matrix
 	 */
 	@SuppressWarnings("unchecked")
-	public Matrix<T> replaceRow(int row, AbstractVector<T> v){
+	public Matrix<T> replaceRow(int row, Vector<T> v){
 		rowRangeCheck(row);
 		if(!v.isRow() || v.getSize() != column){
 			throw new IllegalArgumentException();
@@ -981,7 +981,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public Matrix<T> replaceColumn(int column,AbstractVector<T> v){
+	public Matrix<T> replaceColumn(int column,Vector<T> v){
 		columnRangeCheck(column);
 		if(v.isRow() || v.getSize() != row){
 			throw new IllegalArgumentException();
@@ -1738,11 +1738,11 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	 * @return
 	 */
 	@SafeVarargs
-	public static <T> Matrix<T> fromVectors(AbstractVector<T> v,AbstractVector<T>...vs){
+	public static <T> Matrix<T> fromVectors(Vector<T> v,Vector<T>...vs){
 		final boolean isRow = v.isRow();
 		final int column,row;
 		final int size = v.getSize();
-		for(AbstractVector<T> vt : vs){
+		for(Vector<T> vt : vs){
 			if(vt.getSize() != size){
 				throw new IllegalArgumentException("Size mismatch!");
 			}
@@ -1755,7 +1755,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 			 column = vs.length+1;
 		}
 		@SuppressWarnings("unchecked")
-		AbstractVector<T>[] arr = new AbstractVector[vs.length+1];
+		Vector<T>[] arr = new Vector[vs.length+1];
 		arr[0] = v;
 		System.arraycopy(vs, 0, arr, 1, vs.length);
 		return new VMatrix<>(arr, row, column, v.getMathCalculator(), isRow);

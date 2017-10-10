@@ -16,10 +16,10 @@ import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
 import cn.timelives.java.math.spaceAG.SPoint;
+import cn.timelives.java.math.spaceAG.SPoint.SPointGenerator;
 import cn.timelives.java.math.spaceAG.STriangle;
 import cn.timelives.java.math.spaceAG.SVector;
 import cn.timelives.java.math.spaceAG.Segment;
-import cn.timelives.java.math.spaceAG.SPoint.SPointGenerator;
 import cn.timelives.java.utilities.ArraySup;
 /**
  * Tetrahedron is a kind of space object with four vertexes, six edges and four surfaces which are all triangles.<p>
@@ -107,16 +107,12 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @see cn.timelives.java.utilities.math.spaceAG.shape.Polyhedron#getEdges()
 	 */
 	@Override
-	public Set<Line<T>> getEdges() {
-		Set<Line<T>> set = new HashSet<>(EGDE_NUM);
+	public Set<Segment<T>> getEdges() {
+		Set<Segment<T>> set = new HashSet<>(EGDE_NUM);
 		for(int i=0;i<EGDE_NUM;i++){
-			set.add(es[i].getLine());
+			set.add(es[i]);
 		}
 		return set;
-	}
-	
-	public Set<Segment<T>> getSegments(){
-		return ArraySup.createSet(es);
 	}
 
 	/* (non-Javadoc)
@@ -398,7 +394,6 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	@Override
 	public boolean valueEquals(FlexibleMathObject<T> obj) {
 		if(obj instanceof Tetrahedron){
-			@SuppressWarnings("unchecked")
 			Tetrahedron<T> tr = (Tetrahedron<T>) obj;
 			return ArraySup.arrayEqualNoOrder(ps, tr.ps, (p1,p2)->p1.valueEquals(p2));
 		}
@@ -411,7 +406,6 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	@Override
 	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Tetrahedron){
-			@SuppressWarnings("unchecked")
 			Tetrahedron<N> tr = (Tetrahedron<N>) obj;
 			SPoint<T>[] ar = ArraySup.mapTo(tr.ps, p -> p.mapTo(mapper, mc));
 			return ArraySup.arrayEqualNoOrder(ps, ar, (p1,p2)->p1.valueEquals(p2));

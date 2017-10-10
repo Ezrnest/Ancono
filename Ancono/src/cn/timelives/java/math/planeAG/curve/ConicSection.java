@@ -1,26 +1,19 @@
 package cn.timelives.java.math.planeAG.curve;
 
-import static cn.timelives.java.utilities.Printer.print;
-import static cn.timelives.java.utilities.Printer.printnb;
 import static  java.util.Objects.requireNonNull;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.SVPEquation;
-import cn.timelives.java.math.SVPEquation.LEquation;
-import cn.timelives.java.math.SVPEquation.QEquation;
-import cn.timelives.java.math.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.equation.SVPEquation;
+import cn.timelives.java.math.equation.SVPEquation.LEquation;
+import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.ComputeExpression;
-import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.planeAG.Circle;
@@ -29,7 +22,6 @@ import cn.timelives.java.math.planeAG.PAffineTrans;
 import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;
 import cn.timelives.java.math.planeAG.TransMatrix;
-import cn.timelives.java.math.planeAG.curve.ConicSection.Type;
 import cn.timelives.java.utilities.structure.Pair;
 /**
  * Conic section is a set of curves that can be described with the equation 
@@ -289,9 +281,9 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		T cc = mc.add(F, mc.multiply(b, mc.add(mc.multiply(C, b), E)));
 		if(mc.isZero(ca)){
 //			throw new ArithmeticException("a = 0");
-			return LEquation.createEquation(cb, cc, mc);
+			return SVPEquation.linear(cb, cc, mc);
 		}
-		return QEquation.equation2(ca, cb, cc, mc);
+		return SVPEquation.quadratic(ca, cb, cc, mc);
 	}
 	
 	/**
@@ -322,9 +314,9 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		T cc = mc.add(F, mc.multiply(b, mc.add(mc.multiply(A, b), D)));
 		if(mc.isZero(ca)){
 //			throw new ArithmeticException("a = 0");
-			return LEquation.createEquation(cb, cc, mc);
+			return SVPEquation.linear(cb, cc, mc);
 		}
-		return QEquation.equation2(ca, cb, cc, mc);
+		return SVPEquation.quadratic(ca, cb, cc, mc);
 	}
 	/**
 	 * Computes the intersect points with the given line. 
@@ -649,35 +641,35 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		sb.append("= 0");
 		return sb.toString();
 	}
-	public static void main(String[] args) {
-		Polynomial p = new Polynomial(FormulaCalculator.getCalculator(),
-				"Ax^2+Bxy+Cy^2+Dx+Ey+F");
-		PolyCalculator pc = PolyCalculator.DEFALUT_CALCULATOR;
-		p = pc.replace("x", p, Polynomial.valueOf("x-a"));
-		p = pc.replace("y", p, Polynomial.valueOf("y-b"));
-		print(p);
-		//x^2
-		BigDecimal TWO = BigDecimal.valueOf(2l),
-				ONE = BigDecimal.ONE,ZERO = BigDecimal.ZERO;
-		printnb("x^2: ");
-		p.getFormulaList().stream().filter(f -> TWO.equals(f.getCharacterPower("x"))).forEach(x -> printnb(x.removeChar("x")));
-		print();
-		printnb("y^2: ");
-		p.getFormulaList().stream().filter(f -> TWO.equals(f.getCharacterPower("y"))).forEach(x -> printnb(x.removeChar("y")));
-		print();
-		printnb("xy: ");
-		p.getFormulaList().stream().filter(f -> ONE.equals(f.getCharacterPower("x")) && ONE.equals(f.getCharacterPower("y")))
-		.forEach(x -> printnb(x.removeChar("y").removeChar("x")));
-		print();
-		printnb("x: ");
-		p.getFormulaList().stream().filter(f -> ONE.equals(f.getCharacterPower("x"))&& f.getCharacterPower("y")==null).forEach(x -> printnb(x.removeChar("x")));
-		print();
-		printnb("y: ");
-		p.getFormulaList().stream().filter(f -> ONE.equals(f.getCharacterPower("y"))&& f.getCharacterPower("x")==null).forEach(x -> printnb(x.removeChar("y")));
-		print();
-		printnb("constant: ");
-		p.getFormulaList().stream().filter(f -> f.getCharacterPower("y") == null && f.getCharacterPower("x")==null).forEach(x -> printnb(x));
-		print();
-		print(p);
-	}
+//	public static void main(String[] args) {
+//		Polynomial p = new Polynomial(FormulaCalculator.getCalculator(),
+//				"Ax^2+Bxy+Cy^2+Dx+Ey+F");
+//		PolyCalculator pc = PolyCalculator.DEFALUT_CALCULATOR;
+//		p = pc.replace("x", p, Polynomial.valueOf("x-a"));
+//		p = pc.replace("y", p, Polynomial.valueOf("y-b"));
+//		print(p);
+//		//x^2
+//		BigDecimal TWO = BigDecimal.valueOf(2l),
+//				ONE = BigDecimal.ONE,ZERO = BigDecimal.ZERO;
+//		printnb("x^2: ");
+//		p.getFormulaList().stream().filter(f -> TWO.equals(f.getCharacterPower("x"))).forEach(x -> printnb(x.removeChar("x")));
+//		print();
+//		printnb("y^2: ");
+//		p.getFormulaList().stream().filter(f -> TWO.equals(f.getCharacterPower("y"))).forEach(x -> printnb(x.removeChar("y")));
+//		print();
+//		printnb("xy: ");
+//		p.getFormulaList().stream().filter(f -> ONE.equals(f.getCharacterPower("x")) && ONE.equals(f.getCharacterPower("y")))
+//		.forEach(x -> printnb(x.removeChar("y").removeChar("x")));
+//		print();
+//		printnb("x: ");
+//		p.getFormulaList().stream().filter(f -> ONE.equals(f.getCharacterPower("x"))&& f.getCharacterPower("y")==null).forEach(x -> printnb(x.removeChar("x")));
+//		print();
+//		printnb("y: ");
+//		p.getFormulaList().stream().filter(f -> ONE.equals(f.getCharacterPower("y"))&& f.getCharacterPower("x")==null).forEach(x -> printnb(x.removeChar("y")));
+//		print();
+//		printnb("constant: ");
+//		p.getFormulaList().stream().filter(f -> f.getCharacterPower("y") == null && f.getCharacterPower("x")==null).forEach(x -> printnb(x));
+//		print();
+//		print(p);
+//	}
 }

@@ -14,7 +14,7 @@ import cn.timelives.java.utilities.ArraySup;
  *
  */
 final class VMatrix<T> extends Matrix<T> {
-	private final AbstractVector<T>[] vs;
+	private final Vector<T>[] vs;
 	/**
 	 * Whether the vectors are row vector
 	 */
@@ -25,7 +25,7 @@ final class VMatrix<T> extends Matrix<T> {
 	 * @param isRow determines whether the vectors are row vector
 	 * @param mc
 	 */
-	public VMatrix(AbstractVector<T>[] vs,int row, int column, MathCalculator<T> mc,boolean isRow) {
+	public VMatrix(Vector<T>[] vs,int row, int column, MathCalculator<T> mc,boolean isRow) {
 		super(row, column, mc);
 		this.vs = vs;
 		this.isRow = isRow;
@@ -66,8 +66,9 @@ final class VMatrix<T> extends Matrix<T> {
 		}
 		return obj;
 	}
-	private Matrix<T> mapTo0(Function<AbstractVector<T>,AbstractVector> f){
-		AbstractVector<T>[] vn = ArraySup.mapTo(vs, f,AbstractVector.class);
+	private Matrix<T> mapTo0(@SuppressWarnings("rawtypes") Function<Vector<T>,Vector> f){
+		@SuppressWarnings("unchecked")
+		Vector<T>[] vn = ArraySup.mapTo(vs, f,Vector.class);
 		return new VMatrix<>(vn, row, column, mc, isRow);
 	}
 	/* (non-Javadoc)
@@ -130,12 +131,12 @@ final class VMatrix<T> extends Matrix<T> {
 	 * @see cn.timelives.java.math.linearAlgebra.Matrix#replaceColumn(int, cn.timelives.java.math.linearAlgebra.AbstractVector)
 	 */
 	@Override
-	public Matrix<T> replaceColumn(int column, AbstractVector<T> v) {
+	public Matrix<T> replaceColumn(int column, Vector<T> v) {
 		if(isRow){
 			return super.replaceColumn(column, v);
 		}
 		columnRangeCheck(column);
-		AbstractVector<T>[] vn = Arrays.copyOf(vs, vs.length);
+		Vector<T>[] vn = Arrays.copyOf(vs, vs.length);
 		vn[column] = v;
 		return new VMatrix<>(vn, this.row, this.column, mc, isRow);
 	}
@@ -144,12 +145,12 @@ final class VMatrix<T> extends Matrix<T> {
 	 * @see cn.timelives.java.math.linearAlgebra.Matrix#replaceRow(int, cn.timelives.java.math.linearAlgebra.AbstractVector)
 	 */
 	@Override
-	public Matrix<T> replaceRow(int row, AbstractVector<T> v) {
+	public Matrix<T> replaceRow(int row, Vector<T> v) {
 		if(!isRow){
 			return super.replaceRow(column, v);
 		}
 		rowRangeCheck(column);
-		AbstractVector<T>[] vn = Arrays.copyOf(vs, vs.length);
+		Vector<T>[] vn = Arrays.copyOf(vs, vs.length);
 		vn[row] = v;
 		return new VMatrix<>(vn, this.row, this.column, mc, isRow);
 	}

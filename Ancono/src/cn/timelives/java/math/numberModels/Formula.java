@@ -1,4 +1,4 @@
-package cn.timelives.java.math.numberModels;
+ï»¿package cn.timelives.java.math.numberModels;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -11,73 +11,73 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /** Version 1.1
- * <p> FormulaÀà±í´ïÒ»¸ö¼òµ¥µÄ´úÊıÊ½£¬ËùÓĞÔªËØÖ®¼äÒÔ³Ë·¨ÏàÁ¬£¬²»º¬ÓĞ¼Ó·¨£¬ÀıÈç "123a","2e*Pi*a",...
- * ÆäÖĞĞ¡Ğ´e,´óĞ´Pi±íÊ¾³£Êıe£¬¦Ğ
- * ´úÊıÊ½µÄ³£Êı²¿·ÖÓĞÁ½ÖÖ±í´ï·½Ê½£¬·Ö±ğÊÇ´úÊı±íÊ¾ºÍĞ¡Êı±íÊ¾¡£
- * µ±´úÊıÊ½½ÓÊÜµ½£º1.º¬ÓĞ²»¿ÉÒÔ±íÊ¾Îª¼òµ¥¸ùÊ½(Èç¸ùºÅ2£¬¸ùºÅ10)µÄÎŞÀíÊı
- * 				  2.º¬ÓĞ³¬¹ıMAX_NUMµÄÊı×Ö»òÕßÎª¸ùÊ½ÖĞµÄÊı´óÓÚMAX_RAD
- * »á½«Êı¾İ±íÏÖÎª¿ÆÑ§¼ÆÊı·¨ĞÎÊ½£¬Êä³öÊ±Ö»±£ÁôÒ»¶¨µÄÓĞĞ§Êı×Ö¡£
- * µ±´úÊıÊ½½ÓÊÕµ½Î»ÊıĞ¡ÓÚ{@code MAX_FRACTION_DIGITAL}µÄĞ¡Êı£¬¿ÉÒÔ»¯³É·ÖÊı
+ * <p> Formulaç±»è¡¨è¾¾ä¸€ä¸ªç®€å•çš„ä»£æ•°å¼ï¼Œæ‰€æœ‰å…ƒç´ ä¹‹é—´ä»¥ä¹˜æ³•ç›¸è¿ï¼Œä¸å«æœ‰åŠ æ³•ï¼Œä¾‹å¦‚ "123a","2e*Pi*a",...
+ * å…¶ä¸­å°å†™e,å¤§å†™Piè¡¨ç¤ºå¸¸æ•°eï¼ŒÏ€
+ * ä»£æ•°å¼çš„å¸¸æ•°éƒ¨åˆ†æœ‰ä¸¤ç§è¡¨è¾¾æ–¹å¼ï¼Œåˆ†åˆ«æ˜¯ä»£æ•°è¡¨ç¤ºå’Œå°æ•°è¡¨ç¤ºã€‚
+ * å½“ä»£æ•°å¼æ¥å—åˆ°ï¼š1.å«æœ‰ä¸å¯ä»¥è¡¨ç¤ºä¸ºç®€å•æ ¹å¼(å¦‚æ ¹å·2ï¼Œæ ¹å·10)çš„æ— ç†æ•°
+ * 				  2.å«æœ‰è¶…è¿‡MAX_NUMçš„æ•°å­—æˆ–è€…ä¸ºæ ¹å¼ä¸­çš„æ•°å¤§äºMAX_RAD
+ * ä¼šå°†æ•°æ®è¡¨ç°ä¸ºç§‘å­¦è®¡æ•°æ³•å½¢å¼ï¼Œè¾“å‡ºæ—¶åªä¿ç•™ä¸€å®šçš„æœ‰æ•ˆæ•°å­—ã€‚
+ * å½“ä»£æ•°å¼æ¥æ”¶åˆ°ä½æ•°å°äº{@code MAX_FRACTION_DIGITAL}çš„å°æ•°ï¼Œå¯ä»¥åŒ–æˆåˆ†æ•°
  * 
  * 
  * 
  * 
  * 
  * --------
- * <p>ÈÎºÎ±í´ïÊ½¶¼ÓĞÓÃÓÚ¼ÇÂ¼×ÖÄ¸µÄ{@code character},{@code numOfChar},¿ÉÒÔÍ¨¹ıget·½·¨·Ö±ğ»ñÈ¡
- * <p>	{@code numOfChar}=0±íÊ¾Ã»ÓĞ×ÖÄ¸ÏµÊı,´ËÊ±{@code character}ÊÇÒ»¸ö¿ÕµÄ¼¯ºÏ
+ * <p>ä»»ä½•è¡¨è¾¾å¼éƒ½æœ‰ç”¨äºè®°å½•å­—æ¯çš„{@code character},{@code numOfChar},å¯ä»¥é€šè¿‡getæ–¹æ³•åˆ†åˆ«è·å–
+ * <p>	{@code numOfChar}=0è¡¨ç¤ºæ²¡æœ‰å­—æ¯ç³»æ•°,æ­¤æ—¶{@code character}æ˜¯ä¸€ä¸ªç©ºçš„é›†åˆ
  * 
- * <p>ÒÔ{@code decimal}Çø·Ö¸ÄÊ½×ÓÊÇ·ñÒÔĞ¡Êı±íÊ¾£¬{@code decimal}=true£ºÓÃĞ¡Êı±íÊ¾£¬
- * 														*Ä¬ÈÏÇé¿öÏÂ{@code decimal}=false
- * <p>µ±ÒÔĞ¡Êı±íÊ¾Ê±£¬±í´ïÊ½Ö»ÓĞÒÔÏÂµÄ±äÁ¿ÓĞÒâÒå£º{@code number},{@code character},{@code numOfChar}
- * <p>µ±ÒÔ·ÖÊı±íÊ¾Ê±£¬±í´ïÊ½Ö»ÓĞÒÔÏÂµÄ±äÁ¿ÓĞÒâÒå£º{@code positive,numerator,denominator,radical,character,numOfChar,number}
+ * <p>ä»¥{@code decimal}åŒºåˆ†æ”¹å¼å­æ˜¯å¦ä»¥å°æ•°è¡¨ç¤ºï¼Œ{@code decimal}=trueï¼šç”¨å°æ•°è¡¨ç¤ºï¼Œ
+ * 														*é»˜è®¤æƒ…å†µä¸‹{@code decimal}=false
+ * <p>å½“ä»¥å°æ•°è¡¨ç¤ºæ—¶ï¼Œè¡¨è¾¾å¼åªæœ‰ä»¥ä¸‹çš„å˜é‡æœ‰æ„ä¹‰ï¼š{@code number},{@code character},{@code numOfChar}
+ * <p>å½“ä»¥åˆ†æ•°è¡¨ç¤ºæ—¶ï¼Œè¡¨è¾¾å¼åªæœ‰ä»¥ä¸‹çš„å˜é‡æœ‰æ„ä¹‰ï¼š{@code positive,numerator,denominator,radical,character,numOfChar,number}
  * 
- * <p>{@code number} Îª±í´ïÊ½³£ÏµÊıµÄÖµ£¬ÔÚ·ÖÊı±íÊ¾Ê±²¢²»»áÕæÕı²ÎÓë¼ÆËã£¬µ«¿ÉÒÔ×÷Îª±í´ïÊ½µÄÖµÀ´±íÊ¾
+ * <p>{@code number} ä¸ºè¡¨è¾¾å¼å¸¸ç³»æ•°çš„å€¼ï¼Œåœ¨åˆ†æ•°è¡¨ç¤ºæ—¶å¹¶ä¸ä¼šçœŸæ­£å‚ä¸è®¡ç®—ï¼Œä½†å¯ä»¥ä½œä¸ºè¡¨è¾¾å¼çš„å€¼æ¥è¡¨ç¤º
  * 
- * <p> °æ±¾¸üĞÂ¼ÇÂ¼£º
- * <p> 1.1:½«{@code characterT}ÒÆ³ı,×ÖÄ¸ÏµÊıÓÃ{@code HashMap<String,BigDecimal> character}¼ÇÂ¼
+ * <p> ç‰ˆæœ¬æ›´æ–°è®°å½•ï¼š
+ * <p> 1.1:å°†{@code characterT}ç§»é™¤,å­—æ¯ç³»æ•°ç”¨{@code HashMap<String,BigDecimal> character}è®°å½•
  * 
- * <P> 1.2:½«ËùÓĞµÄ{@code numerator}{@code denominator}{@code radical}¶¼´ÓintÀàĞÍÌæ»»ÎªBigInteger
+ * <P> 1.2:å°†æ‰€æœ‰çš„{@code numerator}{@code denominator}{@code radical}éƒ½ä»intç±»å‹æ›¿æ¢ä¸ºBigInteger
  * 
- * <P> 1.3:½«Formula±äÎª²»¿É±ä¶ÔÏó
+ * <P> 1.3:å°†Formulaå˜ä¸ºä¸å¯å˜å¯¹è±¡
  * @author lyc
  * @see Polynomial ExpressionTree Calculator
  */
 public class Formula implements Comparable<Formula>{
-	/**positive ±íÊ¾±í´ïÊ½µÄÕı¸º
-	 * decimal ±íÊ¾±í´ïÊ½ÊÇ·ñÎª·ÖÊı
+	/**positive è¡¨ç¤ºè¡¨è¾¾å¼çš„æ­£è´Ÿ
+	 * decimal è¡¨ç¤ºè¡¨è¾¾å¼æ˜¯å¦ä¸ºåˆ†æ•°
 	 * 
 	 */
 	private final boolean decimal = false;
 	private final int signum;
-	/**numerator ·Ö×Ó
-	 * denominator ·ÖÄ¸
-	 * radical ¸ùºÅÄÚµÄÊı
+	/**numerator åˆ†å­
+	 * denominator åˆ†æ¯
+	 * radical æ ¹å·å†…çš„æ•°
 	 * 
 	 */
 	private final BigInteger numerator,
-							denominator,//·ÖÄ¸²»Îª0
+							denominator,//åˆ†æ¯ä¸ä¸º0
 							radical;
 	
 	//private int logarithm=0;
 	/**
-	 * number ±í´ïÊ½Öµ
+	 * number è¡¨è¾¾å¼å€¼
 	 */
 	private final BigDecimal number;
 	/**
-	 * character ±í´ïÊ½µÄ×ÖÄ¸ÏµÊı
-	 * °´ÕÕÌØ¶¨µÄË³ĞòÅÅÁĞ
+	 * character è¡¨è¾¾å¼çš„å­—æ¯ç³»æ•°
+	 * æŒ‰ç…§ç‰¹å®šçš„é¡ºåºæ’åˆ—
 	 */
 	private final HashMap<String,BigDecimal> character;
 	
 	
 	private int hashCode;
 	/**
-	 * Ö§³Ö±íÊ¾ÔÚ·ÖÊıÖĞµÄ×î´óÎ»Êı£¬¾ÍÊÇËµ£¬Èç¹û·ÖÊıÖĞ³öÏÖÁË´óÓÚÕâ¸öÎ»ÊıµÄ·Ö×Ó»ò·ÖÄ¸£¬¾Í»á»¯³ÉĞ¡Êı
+	 * æ”¯æŒè¡¨ç¤ºåœ¨åˆ†æ•°ä¸­çš„æœ€å¤§ä½æ•°ï¼Œå°±æ˜¯è¯´ï¼Œå¦‚æœåˆ†æ•°ä¸­å‡ºç°äº†å¤§äºè¿™ä¸ªä½æ•°çš„åˆ†å­æˆ–åˆ†æ¯ï¼Œå°±ä¼šåŒ–æˆå°æ•°
 	 */
 	private static int MAX_FRACTION_DIGIT=9;//you can set these number
 	/**
-	 * the max digi
+	 * the max digit
 	 */
 	private static int MAX_SHOWN_DIGIT=9;
 	private static String DECIMAL_PATTERN = "0.########E0";
@@ -85,7 +85,7 @@ public class Formula implements Comparable<Formula>{
 	
 	
 	/*
-	 * ´æ´¢³£ÓÃµÄFormula¶ÔÏó
+	 * å­˜å‚¨å¸¸ç”¨çš„Formulaå¯¹è±¡
 	 */
 	/**
 	 * ZERO : a formula that isn't decimal having 0 as numerator,radical,number and 1 as denominator with no character
@@ -103,8 +103,8 @@ public class Formula implements Comparable<Formula>{
 	public static String I_STR="i";
 	public static String SQR_STR="Sqr";
 	
-	public static String PI_SHOW ="¦Ğ";
-	public static String SQR_SHOW ="Sqr";//¡Ì
+	public static String PI_SHOW ="Ï€";
+	public static String SQR_SHOW ="Sqr";//âˆš
 	
 	public static final Formula PI;
 	static{
@@ -144,10 +144,10 @@ public class Formula implements Comparable<Formula>{
 	
 	
 	
-	/*readChar¶ÁÈ¡Ò»´®×Ö·û´®£¬½«ÆäÕûÀí¹éÄÉ³ÉÎªformulaµÄ×ÖÄ¸ÏµÊı
-	 * 	ÓÉÓÚ·½·¨½ÏÎªµÍ¼¶£¬Ö»ÄÜ¶ÁÈ¡ÆÕÍ¨µÄ±í´ïÊ½£¬ÀıÈça1b2,abcd,
-	 * 	²»ÄÜ¶ÁÈ¡ÀàËÆÓÚaaaµÄ±í´ïÊ½
-	 * 	µ«ÊÇÖ§³ÖeÓëP´ú±í³£Á¿eÓëPi
+	/*readCharè¯»å–ä¸€ä¸²å­—ç¬¦ä¸²ï¼Œå°†å…¶æ•´ç†å½’çº³æˆä¸ºformulaçš„å­—æ¯ç³»æ•°
+	 * 	ç”±äºæ–¹æ³•è¾ƒä¸ºä½çº§ï¼Œåªèƒ½è¯»å–æ™®é€šçš„è¡¨è¾¾å¼ï¼Œä¾‹å¦‚a1b2,abcd,
+	 * 	ä¸èƒ½è¯»å–ç±»ä¼¼äºaaaçš„è¡¨è¾¾å¼
+	 * 	ä½†æ˜¯æ”¯æŒeä¸Pä»£è¡¨å¸¸é‡eä¸Pi
 	 */
 	
 	
@@ -155,8 +155,8 @@ public class Formula implements Comparable<Formula>{
 
 	
 	
-	/*ÏÔÊ¾´úÊıÊ½,ÈôdÎªfalseÇÒ´úÊıÊ½Îª·ÖÊı±íÊ¾£¬ÔòÏÔÊ¾·ÖÊıĞÎÊ½
-	 * 	ÈôdÎªtrueÔòÖ±½ÓÏÔÊ¾Ğ¡Êı
+	/*æ˜¾ç¤ºä»£æ•°å¼,è‹¥dä¸ºfalseä¸”ä»£æ•°å¼ä¸ºåˆ†æ•°è¡¨ç¤ºï¼Œåˆ™æ˜¾ç¤ºåˆ†æ•°å½¢å¼
+	 * 	è‹¥dä¸ºtrueåˆ™ç›´æ¥æ˜¾ç¤ºå°æ•°
 	*/
 	public void printFormula(boolean decimal){
 		System.out.println(this.toString());
@@ -233,7 +233,7 @@ public class Formula implements Comparable<Formula>{
 	
 	
 	/**
-	 * getCharStr·½·¨·µ»ØµÄÊÇ¼òµ¥µÄ×ÖÄ¸±íÊ¾,¿ÉÒÔÓÃÀ´±È½ÏÁ½¸ö±í´ïÊ½µÄ×ÖÄ¸ÊÇ·ñÏàµÈ
+	 * getCharStræ–¹æ³•è¿”å›çš„æ˜¯ç®€å•çš„å­—æ¯è¡¨ç¤º,å¯ä»¥ç”¨æ¥æ¯”è¾ƒä¸¤ä¸ªè¡¨è¾¾å¼çš„å­—æ¯æ˜¯å¦ç›¸ç­‰
 	 * @return
 	 */
 	public String getCharStr(){
@@ -315,30 +315,30 @@ public class Formula implements Comparable<Formula>{
 	
 	@Override
 	public boolean equals(Object obj){
-		if(obj instanceof Formula){//class ĞèÒªÏàµÈ
+		if(obj instanceof Formula){//class éœ€è¦ç›¸ç­‰
 			Formula f=(Formula) obj;
-			if(this.haveSameChar(f)){//Ê×ÏÈ×ÖÄ¸ÏµÊıĞèÒªÏàµÈ
-				if(f.decimal==this.decimal){//Ğ¡Êı±íÊ¾Óë·ÖÊı±íÊ¾²»¿ÉÒÔÏàµÈ
+			if(this.haveSameChar(f)){//é¦–å…ˆå­—æ¯ç³»æ•°éœ€è¦ç›¸ç­‰
+				if(f.decimal==this.decimal){//å°æ•°è¡¨ç¤ºä¸åˆ†æ•°è¡¨ç¤ºä¸å¯ä»¥ç›¸ç­‰
 					if(f.decimal){
 						if(f.number.equals(this.number)){
-							return true;//ÔÚĞ¡Êı×´Ì¬Êı×ÖÏàµÈ·µ»Øtrue
+							return true;//åœ¨å°æ•°çŠ¶æ€æ•°å­—ç›¸ç­‰è¿”å›true
 						}
 					}
 					else{
 						if(f.signum==this.signum&&f.numerator.compareTo(this.numerator)==0){
 							if(f.denominator.compareTo(this.denominator)==0&&f.radical.compareTo(this.radical)==0){
-								return true;//½öµ±·Ö×Ó£¬·ÖÄ¸£¬¸ùÊ½¶¼ÏàµÈÊ±²ÅÏàµÈ
+								return true;//ä»…å½“åˆ†å­ï¼Œåˆ†æ¯ï¼Œæ ¹å¼éƒ½ç›¸ç­‰æ—¶æ‰ç›¸ç­‰
 							}
 						}
 					}
 				}
 			}
 		}
-		return false;//¶¼²»Âú×ã·µ»Ø false
+		return false;//éƒ½ä¸æ»¡è¶³è¿”å› false
 	}
 	
 	public boolean absEquals(Formula f){
-		if(this.haveSameChar(f)){//Ê×ÏÈ×ÖÄ¸ÏµÊıĞèÒªÏàµÈ
+		if(this.haveSameChar(f)){//é¦–å…ˆå­—æ¯ç³»æ•°éœ€è¦ç›¸ç­‰
 			if(f.numerator.compareTo(this.numerator)==0&&f.denominator.compareTo(this.denominator)==0&&f.radical.compareTo(this.radical)==0){
 				return true;
 			}
@@ -348,10 +348,10 @@ public class Formula implements Comparable<Formula>{
 	
 	
 	public boolean equalsIgnoreDecimal(Formula f){
-			if(this.haveSameChar(f)&&this.getNumber().compareTo(f.getNumber())==0){//Ê×ÏÈ×ÖÄ¸ÏµÊıĞèÒªÏàµÈ
+			if(this.haveSameChar(f)&&this.getNumber().compareTo(f.getNumber())==0){//é¦–å…ˆå­—æ¯ç³»æ•°éœ€è¦ç›¸ç­‰
 				return true;
 			}
-		return false;//¶¼²»Âú×ã·µ»Ø false
+		return false;//éƒ½ä¸æ»¡è¶³è¿”å› false
 	}
 
 	
@@ -696,7 +696,7 @@ public class Formula implements Comparable<Formula>{
 	private static Pattern numberPattern = Pattern.compile("[+-]?[\\d\\.]+");
 	private static Pattern charPattern = Pattern.compile("("+PI_STR+")|([a-zA-Z](\\[\\w+\\])?)");
 	/**
-	 * ´´½¨±í´ïÊ½µÄÖ÷·½·¨£¬Í¨¹ı¶ÁÈ¡Ò»´®×Ö·û´®À´²úÉúĞÂµÄ¹«Ê½
+	 * åˆ›å»ºè¡¨è¾¾å¼çš„ä¸»æ–¹æ³•ï¼Œé€šè¿‡è¯»å–ä¸€ä¸²å­—ç¬¦ä¸²æ¥äº§ç”Ÿæ–°çš„å…¬å¼
 	 * 
 	 * 
 	 * @param str
@@ -742,8 +742,8 @@ public class Formula implements Comparable<Formula>{
 		 */
 		boolean hasChar=false;
 		boolean hasOpe =false;
-		Matcher nm = numberPattern.matcher(str);//Æ¥ÅäÊı×ÖµÄÆ¥ÅäÆ÷
-		Matcher cm = charPattern.matcher(str);//Æ¥Åä×ÖÄ¸
+		Matcher nm = numberPattern.matcher(str);//åŒ¹é…æ•°å­—çš„åŒ¹é…å™¨
+		Matcher cm = charPattern.matcher(str);//åŒ¹é…å­—æ¯
 		BigInteger[] uad;
 		int end = str.length();
 		while(pos<end){
@@ -998,7 +998,7 @@ public class Formula implements Comparable<Formula>{
 		
 		//make sure the radical is positive and add i if necessary
 		if(radical.compareTo(BigInteger.ZERO)<0){
-			radical=radical.negate();//½«¸ùºÅÄÚµÄ-1Ìá³ö
+			radical=radical.negate();//å°†æ ¹å·å†…çš„-1æå‡º
 			addChar(character,"i",BigDecimal.ONE);
 		}
 		

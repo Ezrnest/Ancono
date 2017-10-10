@@ -3,9 +3,9 @@
  */
 package cn.timelives.java.math.prob;
 
-import static cn.timelives.java.math.MathFunctions.degFactorial;
+import static cn.timelives.java.math.MathUtils.degFactorial;
 import java.math.BigInteger;
-import cn.timelives.java.math.MathFunctions;
+import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.Primes;
 import cn.timelives.java.math.exceptions.NumberValueException;
 import cn.timelives.java.utilities.ArraySup;
@@ -102,7 +102,7 @@ public final class PFunctions {
 		final int len = pr.getCount(n);
 		int[] pp = new int[len];
 		for(int i=0;i<len;i++){
-			pp[i] = intOrTooBig(MathFunctions.degFactorial(pr.getPrime(i), n));
+			pp[i] = intOrTooBig(MathUtils.degFactorial(pr.getPrime(i), n));
 		}
 		return multiplyPrimePowers(pr,pp);
 	}
@@ -224,7 +224,7 @@ public final class PFunctions {
 			throw new IllegalArgumentException("m>n"); 
 		}
 		if(m==n){
-			return MathFunctions.degFactorial(p, n);
+			return MathUtils.degFactorial(p, n);
 		}
 		return degFactorial(p, n) - degFactorial(p, m);
 	}
@@ -464,7 +464,7 @@ public final class PFunctions {
 		}
 		int t = m-1;
 		long re = n % 2 == 0 ? t : -t;
-		return  re + MathFunctions.power(t, n);
+		return  re + MathUtils.power(t, n);
 	}
 	/**
 	 * Returns the number of different ways of passing a 
@@ -482,7 +482,7 @@ public final class PFunctions {
 		}
 		int t = n-1;
 		long re = m % 2 == 0 ? t : -t;
-		re +=MathFunctions.power(t,m);
+		re +=MathUtils.power(t,m);
 		return re/n;
 	}
 	

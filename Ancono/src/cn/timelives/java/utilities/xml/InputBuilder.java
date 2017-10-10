@@ -1,5 +1,7 @@
 package cn.timelives.java.utilities.xml;
-import static cn.timelives.java.utilities.xml.HtmlUtilities.*;
+import cn.timelives.java.utilities.xml.HtmlUtilities.CommonTags;
+import cn.timelives.java.utilities.xml.HtmlUtilities.InputTypes;
+import cn.timelives.java.utilities.xml.HtmlUtilities.RemainAttributes;
 public class InputBuilder<T extends AbstractHtmlBuilder<?,T>> extends AbstractHtmlBuilder<T, InputBuilder<T>> {
 
 	InputBuilder(T high, int level,InputTypes type,boolean d1,boolean d2) {

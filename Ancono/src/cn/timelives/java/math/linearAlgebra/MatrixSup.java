@@ -9,9 +9,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.timelives.java.math.LinearEquationSolution;
-import cn.timelives.java.math.LinearEquationSolution.Situation;
-import cn.timelives.java.math.LinearEquationSolution.SolutionBuilder;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
+import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.SolutionBuilder;
 import cn.timelives.java.math.linearAlgebra.Matrix.MatResult;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -54,7 +53,7 @@ public class MatrixSup {
 	 */
 	public static Fraction fastDet(Matrix<Fraction> mat){
 		if(mat.row!=mat.column){
-			throw new ArithmeticException("Cannot calculate det for: "+ mat.row + "¡Á" + mat.column);
+			throw new ArithmeticException("Cannot calculate det for: "+ mat.row + "ï¿½ï¿½" + mat.column);
 		}
 		Fraction[][] mar = (Fraction[][]) mat.getValues();
 		List<MatrixOperation<Fraction>> ops = mat.toUpperTri0(mar,mat.row,mat.column);
@@ -217,7 +216,7 @@ public class MatrixSup {
 		for(int i=rank;i<len;i++){
 			baseF[i] = mc.getZero();
 		}
-		Vector<T> base = new Vector<>(baseF,false,mc);
+		DVector<T> base = new DVector<>(baseF,false,mc);
 		SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
 		sb.setEquation(expandedMatrix);
 		sb.setBase(base);
@@ -228,7 +227,7 @@ public class MatrixSup {
 			return sb.build();
 		}else{
 			sb.setSituation(Situation.UNBOUNDED_SOLUTION);
-			Vector<T>[] vs = new Vector[numberOfKSolution];
+			DVector<T>[] vs = new DVector[numberOfKSolution];
 			int searchPos = 0;
 			int curCol = 0;
 			for(int s=0;s<numberOfKSolution;s++){
@@ -249,7 +248,7 @@ public class MatrixSup {
 					}
 				}
 				solution[curCol] = mc.getOne();
-				vs[s] = new Vector<T>(solution,false,mc);
+				vs[s] = new DVector<T>(solution,false,mc);
 				curCol++;
 			}
 			sb.setVariableSolution(vs);

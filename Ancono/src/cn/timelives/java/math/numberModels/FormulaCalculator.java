@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import cn.timelives.java.math.addableSet.MathAdder;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 
 /**
- * calculator Ö»ÄÜ¼ÆËãµ¥¸öformulaµÄ¼Ó¼õ³Ë³ýºÍ¿ª·½
+ * calculator Ö»ï¿½Ü¼ï¿½ï¿½ãµ¥ï¿½ï¿½formulaï¿½Ä¼Ó¼ï¿½ï¿½Ë³ï¿½ï¿½Í¿ï¿½ï¿½ï¿½
  * @author lyc
  *
  */
@@ -26,10 +27,10 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	
 	
 	private final int state;
-	/*¼ÆËãÆ÷µÄ×´Ì¬£º
-	 * 0£º½ö¼ÆËãÐ¡ÊýµÄÔËËã£¬²»Ö§³Ö¼ÆËã·ÖÊý¸ùÊ½ÐÎÊ½±íÊ¾
-	 * 1£ºÖ§³Ö¼ÆËã·ÖÊýµÈ±íÊ¾
-	 * 		1ÎªÄ¬ÈÏ×´Ì¬
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½
+	 * 0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½Ö§ï¿½Ö¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Ê½ï¿½ï¿½Ê¾
+	 * 1ï¿½ï¿½Ö§ï¿½Ö¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È±ï¿½Ê¾
+	 * 		1ÎªÄ¬ï¿½ï¿½×´Ì¬
 	 */
 	FormulaCalculator(int state){
 		this.state=state;
@@ -48,7 +49,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		return Formula.class;
 	}
 	/*
-	 * 0ÓënullÄÜÆäËûÊ½×ÓÏà¼Ó
+	 * 0ï¿½ï¿½nullï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	@Override
 	public boolean canAdd(Formula f1,Formula f2){
@@ -60,14 +61,14 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		}
 		if(f1.haveSameChar(f2)){
 			if(this.state==0||(f1.isDecimal()&&f2.isDecimal())){
-				return true;//¶¼Îª»òÕßÎªÐ¡Êý×´Ì¬Ð¡Êý¿ÉÒÔ¼Ó
+				return true;//ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ÎªÐ¡ï¿½ï¿½×´Ì¬Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½
 			}
 			else if(f1.isDecimal()||f2.isDecimal()){
-				return false;//ÓÐÒ»¸ö²»ÎªÐ¡Êý£¬Ò»¸öÎªÐ¡Êý²»¿ÉÒÔ¼Ó
+				return false;//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÎªÐ¡ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ÎªÐ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½
 			}
 			else{
 				if(f1.getRadical().compareTo(f2.getRadical())==0){
-					return true;//Á½¸ö¶¼Îª·ÖÊý£¬ÇÒ¸ùºÅ²¿·ÖÏàÍ¬¿ÉÒÔ¼Ó
+					return true;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¸ï¿½ï¿½Å²ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½Ô¼ï¿½
 				}
 				else{
 					return false;
@@ -75,12 +76,12 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 			}
 		}
 		else{
-			return false;//×ÖÄ¸ÏµÊý²»Ò»Ñù²»¿ÉÒÔ¼Ó
+			return false;//ï¿½ï¿½Ä¸Ïµï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½
 		}
 		
 	}
 	/*
-	 * ²»ÔÊÐínullÏà¼Ó
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½nullï¿½ï¿½ï¿½
 	 */
 	
 	private Formula addFormula(Formula f1,Formula f2){
@@ -92,7 +93,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		}
 		BigInteger[] ndr = new BigInteger[3];
 		if(this.state==0||f1.isDecimal()||f2.isDecimal()){
-			//ÓÐÈÎÒâÒ»¸öÎªÐ¡Êý±íÊ¾»òÕß¼ÆËãÆ÷ÎªÐ¡Êý×´Ì¬£¬Ôò¼ÆËãÐ¡Êý½á¹û
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ÎªÐ¡ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÐ¡ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½
 			throw new ArithmeticException(f1.toString()+"   "+f2.toString()+"---"+state);//TODO
 //			sum.setNumber(f1.getNumber().add(f2.getNumber()));
 //			sum.setDecimal(true);
@@ -124,8 +125,8 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		return this.addFormula(f1, f2.negate());
 	}
 	
-	/*multiFormula·½·¨£º
-	 * ½«Á½¸öÊ½×ÓÏà³Ë£¬×ÖÄ¸ÏµÊýÏà¼Ó
+	/*multiFormulaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½Ä¸Ïµï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 */
 	@Override
@@ -133,7 +134,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		int signum=0;
 		BigInteger[] ndr = new BigInteger[3];
 		
-		if(this.state==0||f1.isDecimal()||f2.isDecimal()){//µ±¼ÆËãÆ÷´¦ÓÚÐ¡Êý×´Ì¬Ê±£¬½øÐÐÐ¡Êý¼ÆËã
+		if(this.state==0||f1.isDecimal()||f2.isDecimal()){//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½×´Ì¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //			sum.setPositive(true);
 //			sum.setNumber(f1.getNumber().multiply(f2.getNumber()));
 //			//sum.setLogarithm(f1.getLogarithm()+f2.getLogarithm());
@@ -148,7 +149,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		ndr[1]=f1.getDenominator().multiply( f2.getDenominator() );
 		ndr[2]=f1.getRadical().multiply( f2.getRadical() ) ;
 		
-		//´¦Àí×ÖÄ¸ÏµÊý
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸Ïµï¿½ï¿½
 		HashMap<String,BigDecimal> ch = new HashMap<String,BigDecimal>(f1.getCharacterS());
 		for(Entry<String,BigDecimal> e: f2.getCharacterS().entrySet()){
 			Formula.addChar(ch, e.getKey(),e.getValue());
@@ -171,7 +172,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 //		if(f2.equalsIgnoreDecimal(Formula.ZERO)){//can't divide by zero
 //			throw new ArithmeticException("Can't divide by Zero:  "+f1.toString());
 //		}
-//		if(this.state==0||f1.isDecimal()||f2.isDecimal()){//µ±¼ÆËãÆ÷´¦ÓÚÐ¡Êý×´Ì¬Ê±£¬½øÐÐÐ¡Êý¼ÆËã
+//		if(this.state==0||f1.isDecimal()||f2.isDecimal()){//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½×´Ì¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //			result.setNumber(f1.getNumber().divide(f2.getNumber()));
 //			result.setDecimal(true);
 //		}
@@ -183,7 +184,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 //									multiply( f2.getRadical() ).multiply( f2.getRadical() )  );
 //			result.setRadical(  f1.getRadical().multiply( f2.getRadical() )  );
 //		}
-//		//´¦Àí×ÖÄ¸ÏµÊý
+//		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸Ïµï¿½ï¿½
 //		result.setCharacter(f1.getCharacter());
 //		for(Entry<String,BigDecimal> e : f2.getCharacter().entrySet()){
 //			result.addCharacter(e.getKey(), e.getValue().negate());// add negate exp of each character
@@ -200,11 +201,11 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	}
 	
 	/*
-	 * ¼ÆËãÄ³¸ö±í´ïÊ½µÄÆ½·½¸ù£º
-	 * µ±¼ÆËãÆ÷×´Ì¬´¦ÓÚ 0 (Ð¡Êý)Ö±½Ó¿ª¸ù¼ÆËã
-	 * µ±¼ÆËãÆ÷×´Ì¬´¦ÓÚ 1 (·ÖÊý)
-	 * 		--fÎªÐ¡Êý±íÊ¾»òÕßfº¬ÓÐ¸ùºÅ±í´ïÊ½ £ºÖ±½Ó¿ª¸ù¼ÆËã
-	 * 		--fÎª·ÖÊý±íÊ¾ÇÒ²»º¬¸ùºÅ±í´ïÊ½£º¼ÆËã¸ùºÅÖµ
+	 * ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ 0 (Ð¡ï¿½ï¿½)Ö±ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ 1 (ï¿½ï¿½ï¿½ï¿½)
+	 * 		--fÎªÐ¡ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½Ð¸ï¿½ï¿½Å±ï¿½ï¿½Ê½ ï¿½ï¿½Ö±ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * 		--fÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 	 */
 	
 	@SuppressWarnings("unused")
@@ -331,9 +332,9 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	
 	
 	
-	/*¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª¡ª·ÏÆú
-	 * ¿ÉÒÔ½«Ò»´®±í´ïÊ½½øÐÐ¼Ó·¨ÔËËã
-	 * 	»á½«±í´ïÊ½¾¡¿ÉÄÜµØÏà¼Ó..
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½ï¿½ï¿½Ô½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ð¼Ó·ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * 	ï¿½á½«ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½ï¿½..
 	 * 
 	 
 //	public Formula[] addFormula(Formula[] fs){
@@ -360,9 +361,9 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 //		}
 //		return result;
 //	}
-	/*±í´ïÊ½²»ÔÊÐí³öÏÖ0Ïî»òÕßnull
-	 * ¼´Ò»°ãÀ´Ëµ£¬ÐèÒªÏÈaddFormulaÔÙprint
-	 * Êä³ö±í´ïÊ½:¼Ó·¨ÏàÁ¬
+	/*ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½null
+	 * ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½addFormulaï¿½ï¿½print
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½:ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½
 	 
 //	public void printExpression(Formula[] fs){
 //		if(fs.length==0){
@@ -375,7 +376,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 //		System.out.println();
 //	}
 	/*
-	 * ¼ÆËãÁ½¸ö¹«Ê½×é
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
 	 
 //	public Formula[] multiFormula(Formula[] fs1,Formula[] fs2){
 //		Formula[] result=new Formula[fs1.length*fs2.length];
@@ -389,7 +390,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 //	}
 	
 //	/**
-//	 * ÓÃÓÚ¶ÁÈ¡ÈÎÒâµÄÖ»º¬-+/*Sqr»ìºÏÔËËãµÄ±í´ïÊ½
+//	 * ï¿½ï¿½ï¿½Ú¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½-+/*Sqrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ê½
 //	 
 //	public static Formula[] readAddedFormula(String expression){
 //		if(expression.trim().isEmpty()){

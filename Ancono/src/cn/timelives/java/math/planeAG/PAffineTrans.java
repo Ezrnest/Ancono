@@ -3,7 +3,9 @@
  */
 package cn.timelives.java.math.planeAG;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
@@ -244,14 +246,23 @@ public final class PAffineTrans<T> extends FlexibleMathObject<T> implements Poin
 	}
 	/**
 	 * Returns a identity affine transformation, which keeps all the points unmoved.
-	 * <pre>x' = x \n
-	 *y'=y
+	 * <pre>x' = x 
+	 *y'= y
 	 * @param mc
 	 * @return a new PAffineTrans
 	 */
 	public static <T> PAffineTrans<T> identity(MathCalculator<T> mc){
-		return new PAffineTrans<>(mc, TransMatrix.identityTrans(mc), PVector.zeroVector(mc));
+		@SuppressWarnings("unchecked")
+		PAffineTrans<T> pt = (PAffineTrans<T>) identities.get(mc);
+		if(pt == null) {
+			pt = new PAffineTrans<>(mc, TransMatrix.identityTrans(mc), PVector.zeroVector(mc));
+			identities.put(mc, pt);
+		}
+		return pt;
 	}
+	
+	private static final Map<MathCalculator<?>,PAffineTrans<?>> identities = new ConcurrentHashMap<>();
+	
 	/**
 	 * Returns a transformation that translates points.
 	 * <br>

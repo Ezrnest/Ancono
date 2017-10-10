@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.SVPEquation.QEquation;
+import cn.timelives.java.math.equation.SVPEquation;
+import cn.timelives.java.math.equation.SVPEquation.QEquation;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
 import cn.timelives.java.math.planeAG.Line;
 import cn.timelives.java.math.planeAG.LineSup;
 import cn.timelives.java.math.planeAG.Point;
@@ -112,7 +113,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		return ConicSection.Type.ELLIPSE;
 	}
 	/**
-	 * Computes the area of this ellipse,which is computed by the formula {@literal S = ¦Ðab}<p>
+	 * Computes the area of this ellipse,which is computed by the formula {@literal S = ï¿½ï¿½ab}<p>
 	 * This method requires the 
 	 * constant value of {@literal pi} is available in the calculator.
 	 * @return the area of this ellipse
@@ -345,7 +346,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 			eb = mc.multiplyLong(mc.multiply(b2, mc.multiply(k, c)), 2l);
 			ec = mc.multiply(b2, mc.subtract(square(c), a2));
 		}
-		return QEquation.equation2(ea, eb, ec, mc);
+		return SVPEquation.quadratic(ea, eb, ec, mc);
 	}
 	
 	/**
@@ -394,7 +395,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 			eb = mc.multiplyLong(mc.multiply(b2, mc.multiply(k, c)), 2l);
 			ec = mc.multiply(b2, mc.subtract(square(c), a2));
 		}
-		return QEquation.equation2(ea, eb, ec, mc);
+		return SVPEquation.quadratic(ea, eb, ec, mc);
 	}
 	
 	/**

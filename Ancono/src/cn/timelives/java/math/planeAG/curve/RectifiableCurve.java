@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.planeAG.curve;
 
-import cn.timelives.java.math.numberModels.MathCalculator.UnsupportedCalculationException;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 /**
  * RectifiableCurve is curve with a specified length, such as 

@@ -3,7 +3,6 @@ package cn.timelives.java.math.planeAG;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.Simplifier;
 
@@ -64,7 +63,7 @@ public class LineSup {
 			throw new IllegalArgumentException();
 		}
 		Point<T> M = A.middle(B);
-		Vector<T> nv = A.directVector(B);
+		PVector<T> nv = A.directVector(B);
 		return Line.pointNormal(M, nv, A.getMathCalculator());
 	}
 	/**

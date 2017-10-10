@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 
-import cn.timelives.java.math.MathFunctions;
-import cn.timelives.java.utilities.structure.Pair;
+import cn.timelives.java.math.MathUtils;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 
 
@@ -553,7 +553,7 @@ public abstract class MathCalculatorAdapter<T> implements MathCalculator<T> {
 		 */
 		@Override
 		public Integer gcd(Integer a, Integer b) {
-			return MathFunctions.gcd(a,b);
+			return MathUtils.gcd(a,b);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#decrease(java.lang.Object)
@@ -603,7 +603,7 @@ public abstract class MathCalculatorAdapter<T> implements MathCalculator<T> {
 		 */
 		@Override
 		public Integer deg(Integer a, Integer b) {
-			return MathFunctions.deg(a, b);
+			return MathUtils.deg(a, b);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
@@ -618,7 +618,7 @@ public abstract class MathCalculatorAdapter<T> implements MathCalculator<T> {
 		 */
 		@Override
 		public Integer powerAndMod(Integer a, Integer n, Integer m) {
-			return MathFunctions.powerAndMod(a, n, m);
+			return MathUtils.powerAndMod(a, n, m);
 		}
 		
 		@Override
@@ -969,7 +969,7 @@ public abstract class MathCalculatorAdapter<T> implements MathCalculator<T> {
 		 */
 		@Override
 		public Long gcd(Long a, Long b) {
-			return MathFunctions.gcd(a,b);
+			return MathUtils.gcd(a,b);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#decrease(java.lang.Object)
@@ -1019,7 +1019,7 @@ public abstract class MathCalculatorAdapter<T> implements MathCalculator<T> {
 		 */
 		@Override
 		public Long deg(Long a, Long b) {
-			return (long) MathFunctions.deg(a, b);
+			return (long) MathUtils.deg(a, b);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)

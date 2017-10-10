@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.timelives.java.math.MathFunctions;
+import cn.timelives.java.math.MathUtils;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 
 /**
@@ -29,15 +30,26 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	 * Also make sure that denominator != 0
 	 */
 	protected final long numerator,denominator;
+	
+	/**
+	 * Gets the numerator of this Fraction.
+	 * @return numerator
+	 */
 	public long getNumerator() {
 		return numerator;
 	}
-
+	/**
+	 * Gets the denominator of this Fraction.
+	 * @return denominator
+	 */
 	public long getDenominator() {
 		return denominator;
 	}
 
-
+	/**
+	 * Gets the sign number of this Fraction.
+	 * @return sign number
+	 */
 	public int getSignum() {
 		return signum;
 	}
@@ -110,7 +122,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	
 	private static long[] gcdNumAndDen(long num,long den){
 		long[] re = new long[2];
-		long g = MathFunctions.gcd(num, den);
+		long g = MathUtils.gcd(num, den);
 		re[0] = num / g;
 		re[1] = den / g;
 		return re;
@@ -330,12 +342,12 @@ public class Fraction extends Number implements Comparable<Fraction>{
 				sign = (n & 1) == 1 ? -1 : 1;
 				
 				//exchange two 
-				deno = MathFunctions.power(numerator, n);
-				nume = MathFunctions.power(denominator, n);
+				deno = MathUtils.power(numerator, n);
+				nume = MathUtils.power(denominator, n);
 			} else {
 				sign = 1;
-				nume = MathFunctions.power(numerator, n);
-				deno = MathFunctions.power(denominator, n);
+				nume = MathUtils.power(numerator, n);
+				deno = MathUtils.power(denominator, n);
 			}
 			
 			return new Fraction(nume,deno,sign);
@@ -394,13 +406,13 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		long an = this.numerator;
 		long ad = this.denominator;
 		
-		an = MathFunctions.rootN(an, bd);
-		ad = MathFunctions.rootN(ad, bd);
+		an = MathUtils.rootN(an, bd);
+		ad = MathUtils.rootN(ad, bd);
 		if(an==-1 || ad==-1){
 			throw new ArithmeticException("Cannot Find Root");
 		}
-		an = MathFunctions.power(an, bn);
-		ad = MathFunctions.power(ad, bn);
+		an = MathUtils.power(an, bn);
+		ad = MathUtils.power(ad, bn);
 		if(swap){
 			return new Fraction(ad,an,signum);
 		}
@@ -482,7 +494,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			signum = -1;
 			d = -d;
 		}
-		long deno = MathFunctions.power(10L, precision-1);
+		long deno = MathUtils.power(10L, precision-1);
 		double bound = deno;
 //		deno*= 10L;
 		while(d < bound){
@@ -700,8 +712,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			if(p.signum==0){
 				return Fraction.ZERO;
 			}else if(p.signum>0){
-				long noe = MathFunctions.squareRootExact(p.numerator);
-				long deo = MathFunctions.squareRootExact(p.denominator);
+				long noe = MathUtils.squareRootExact(p.numerator);
+				long deo = MathUtils.squareRootExact(p.denominator);
 				if(noe!=-1&&deo!=-1){
 					return new Fraction(noe,deo,1);
 				}
@@ -795,13 +807,13 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			long an = a.numerator;
 			long ad = a.denominator;
 			
-			an = MathFunctions.rootN(an, bd);
-			ad = MathFunctions.rootN(ad, bd);
+			an = MathUtils.rootN(an, bd);
+			ad = MathUtils.rootN(ad, bd);
 			if(an==-1 || ad==-1){
 				throw new UnsupportedCalculationException("Cannot Find Root");
 			}
-			an = MathFunctions.power(an, bn);
-			ad = MathFunctions.power(ad, bn);
+			an = MathUtils.power(an, bn);
+			ad = MathUtils.power(ad, bn);
 			if(swap){
 				return new Fraction(ad,an,signum);
 			}
@@ -840,8 +852,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 				denos[i] = f.denominator;
 				signs[i] = f.signum;
 			}
-			long gcd = MathFunctions.gcd(numes);
-			long lcm = MathFunctions.lcm(denos);
+			long gcd = MathUtils.gcd(numes);
+			long lcm = MathUtils.lcm(denos);
 //			Printer.print(lcm);
 			for(i=0;i<len;i++){
 				numes[i] = numes[i] / gcd * (lcm/denos[i]);

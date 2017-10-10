@@ -3,7 +3,6 @@
  */
 package cn.timelives.java.math.planeAG.curve;
 
-import cn.timelives.java.math.exceptions.UnableToCalculateException;
 import cn.timelives.java.math.planeAG.Point;
 
 /**

@@ -11,13 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 
 /**
  * @author liyicheng
@@ -41,6 +37,12 @@ public final class MathSets {
 	public static <T> CollectionSet<T> asSet(MathCalculator<T> mc,T...ts){
 		List<T> list = new ArrayList<>(ts.length);
 		for(T t : ts){
+			for(T t0 : list) {
+				if(mc.isEqual(t, t0)) {
+					//equal
+					continue;
+				}
+			}
 			list.add(t);
 		}
 		return new CollectionSet<>(mc, list);
@@ -53,6 +55,16 @@ public final class MathSets {
 	 * @return
 	 */
 	public static <T> CollectionSet<T> fromCollection(Collection<T> coll,MathCalculator<T> mc){
+		List<T> list = new ArrayList<>(coll.size());
+		for(T t : coll){
+			for(T t0 : list) {
+				if(mc.isEqual(t, t0)) {
+					//equal
+					continue;
+				}
+			}
+			list.add(t);
+		}
 		return new CollectionSet<>(mc, coll);
 	}
 	/**
@@ -75,6 +87,8 @@ public final class MathSets {
 	public static <T> MathSet<T> empty(){
 		return (MathSet<T>)EMPTY;
 	}
+	
+	
 	
 	private static final Universe<?> UNIVERSE= new Universe<>();
 	private static final Empty<?> EMPTY = new Empty<>();

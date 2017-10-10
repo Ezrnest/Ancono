@@ -6,366 +6,272 @@ import java.util.function.Function;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
-import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.math.numberModels.NumberFormatter;
 
 /**
  * A vector is a matrix but one dimension (row or column) is one in length.
- * 
- * @author lyc
+ * @author liyicheng
  *
+ * @param <T>
  */
-public class Vector<T> extends AbstractVector<T> {
-	
+public abstract class Vector<T> extends Matrix<T> {
 	/**
-	 * The data to be stored.
+	 * Decide whether this vector is a row-vector which means column count is
+	 * the length of vec. Otherwise,the column count will be 1 and row count will
+	 * be vec.length.
 	 */
-	private final T[] vec;
-
+	protected final boolean isRow;
+	protected Vector(int length,boolean isRow ,MathCalculator<T> mc) {
+		super(isRow ? length : 1, isRow ? 1 : length, mc);
+		this.isRow = isRow;
+	}
 	/**
-	 * Create a new vector with the given array and
-	 * 
-	 * @param vec
-	 * @param isRow
+	 * Returns the number of dimension of this vector.
+	 * @return
 	 */
-	protected Vector(T[] vec, boolean isRow,MathCalculator<T> mc) {
-		super(vec.length,isRow,mc);
-		this.vec = vec;
-	}
-
-	@Override
-	public T getNumber(int i, int j) {
-		super.rowRangeCheck(i);
-		super.columnRangeCheck(j);
-		if (isRow) {
-			return vec[j];
-		} else {
-			return vec[i];
-		}
-	}
-	
-	/**
-	 * The the dimension {@code i} of this vector.Which is equal to {@code getNumber( isRow ? 0 : i , isRow ? i : 0 )}
-	 * @param i the index of dimension
-	 * @return the number in {@code i} dimension of this vector
-	 */
-	@Override
-	public T getNumber(int i){
-		if(isRow){
-			super.rowRangeCheck(i);
-			return vec[i];
-		}else{
-			super.columnRangeCheck(i);
-			return vec[i];
-		}
-	}
-	
-	@Override
 	public int getSize() {
-		return vec.length;
+		return isRow ? row : column;
 	}
-
-	@SuppressWarnings("unchecked")
+	
+	/**
+	 * Determines whether the two vectors are of the same size.
+	 * @param v another vector.
+	 * @return {@code true} if they are the same in size.
+	 */
+	public boolean isSameSize(Vector<?> v) {
+		return getSize() == v.getSize();
+	}
+	
+	public abstract T getNumber(int index);
+	/**
+	 * Returns an array containing all of the elements in this vector in
+     * proper sequence (from first to last element),.
+	 * @return
+	 */
+	public abstract Object[] toArray();
+	/**
+	 * Returns an array containing all of the elements in this vector in
+     * proper sequence (from first to last element), the runtime type of
+     * the returned array is that of the specified array.  If the list fits
+     * in the specified array, it is returned therein.  Otherwise, a new
+     * array is allocated with the runtime type of the specified array and
+     * the size of this list.
+	 * @param arr
+	 * @return
+	 */
+	public abstract T[] toArray(T[] arr);
+	
+	/*
+	 * @see cn.timelives.java.math.linearAlgebra.Matrix#getValues()
+	 */
 	@Override
-	public T[][] getValues() {
-		if (isRow) {
-			return (T[][]) new Object[][] { vec.clone() };
-		} else {
-			T[][] mat = (T[][]) new Object[row][1];
-			for (int i = 0; i < row; i++) {
-				mat[i][0] = vec[i];
+	public Object[][] getValues() {
+		if(isRow) {
+			Object[][] mat = new Object[1][];
+			mat[0] = toArray();
+			return mat;
+		}else {
+			int size = getSize();
+			Object[][] mat = new Object[size][1];
+			for(int i=0;i<size;i++) {
+				mat[i][0] = getNumber(i);
 			}
 			return mat;
 		}
 	}
 	
-	 /* (non-Javadoc)
-	 * @see cn.timelives.java.math.AbstractVector#toArray()
-	 */
-	@Override
-	public T[] toArray() {
-		return Arrays.copyOf(vec, vec.length);
-	}
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.AbstractVector#toArray(java.lang.Object[])
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public T[] toArray(T[] arr) {
-		if (arr.length < vec.length)
-			// Make a new array of a's runtime type, but my contents:
-			return (T[]) Arrays.copyOf(vec, vec.length, arr.getClass());
-		System.arraycopy(vec, 0, arr, 0, vec.length);
-		if (arr.length > vec.length)
-			arr[vec.length] = null;
-		return arr;
-	}
-
-	@Override
-	public Vector<T> negative() {
-		int len = isRow ? column : row;
-		@SuppressWarnings("unchecked")
-		T[] reV = (T[]) new Object[len];
-		for (int i = 0; i < len; i++) {
-			reV[i] = mc.negate(vec[i]);
-		}
-		return new Vector<>(reV, isRow,mc);
-	}
-
-	@Override
-	public Vector<T> transportMatrix() {
-		return new Vector<>(vec, !isRow,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyNumber(long n) {
-		return multiplyNumberVector(n);
-	}
-
-	@Override
-	public Vector<T> multiplyNumber(T n) {
-		return multiplyNumberVector(n);
-	}
-
-	@Override
-	public Matrix<T> cofactor(int r, int c) {
-		throw new ArithmeticException("Too small for cofactor");
-	}
-
-	@Override
-	public Vector<T> multiplyAndAddColumn(T k, int c1, int c2) {
-		if (!isRow) {
-			throw new IllegalArgumentException("A column vector");
-		}
-		if (c1 == c2) {
-			throw new IllegalArgumentException("The same column:" + c1);
-		}
-		T[] rev = vec.clone();
-		rev[c2] = mc.add(mc.multiply(rev[c1], k), rev[c2]);
-		return new Vector<T>(rev, true,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyAndAddColumn(long k, int c1, int c2) {
-		if (!isRow) {
-			throw new IllegalArgumentException("A column vector");
-		}
-		if (c1 == c2) {
-			throw new IllegalArgumentException("The same column:" + c1);
-		}
-		T[] rev = vec.clone();
-		rev[c2] = mc.add(mc.multiplyLong(rev[c1], k), rev[c2]);
-		return new Vector<T>(rev, true,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyAndAddRow(long k, int r1, int r2) {
-		if (isRow) {
-			throw new IllegalArgumentException("A column vector");
-		}
-		if (r1 == r2) {
-			throw new IllegalArgumentException("The same row:" + r1);
-		}
-		T[] rev = vec.clone();
-		rev[r2] = mc.add(mc.multiplyLong(rev[r1], k), rev[r2]);
-		return new Vector<T>(rev, false,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyAndAddRow(T k, int r1, int r2) {
-		if (isRow) {
-			throw new IllegalArgumentException("A column vector");
-		}
-		if (r1 == r2) {
-			throw new IllegalArgumentException("The same row:" + r1);
-		}
-		T[] rev = vec.clone();
-		rev[r2] = mc.add(mc.multiply(rev[r1], k), rev[r2]);
-		return new Vector<T>(rev, false,mc);
-	}
-
-	@Override
-	public int calRank() {
-		T z = mc.getZero();
-		for (int i = 0; i < vec.length; i++) {
-			if (!mc.isEqual(vec[i], z)) {
-				return 1;
-			}
-		}
-		return 0;
-	}
-
-	@Override
-	public T calDet() {
-		if (vec.length == 1) {
-			return vec[0];
-		}
-		throw new ArithmeticException("Cannot calculate det for: " + row + "×" + column);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Matrix<T> subMatrix(int i1, int j1, int i2, int j2) {
-		super.subMatrix(i1, j1, i2, j2);
-		if (isRow) {
-			int len = j2 - j1 + 1;
-			T[] fs = (T[]) new Object[len];
-			System.arraycopy(vec, j1, fs, 0, len);
-			return new Vector<T>(fs, true,mc);
-		} else {
-			int len = i2 - i1 + 1;
-			T[] fs = (T[]) new Object[len];
-			System.arraycopy(vec, i1, fs, 0, len);
-			return new Vector<T>(fs, false,mc);
-		}
-
-	}
-
-	@Override
-	public Vector<T> exchangeRow(int r1, int r2) {
-		rowRangeCheck(r1, r2);
-		T[] rev = vec.clone();
-		rev[r1] = vec[r2];
-		rev[r2] = vec[r1];
-		return new Vector<T>(rev, false,mc);
-	}
-
-	@Override
-	public Vector<T> exchangeColumn(int c1, int c2) {
-		columnRangeCheck(c1, c2);
-		T[] rev = vec.clone();
-		rev[c1] = vec[c2];
-		rev[c2] = vec[c1];
-		return new Vector<T>(rev, true,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyNumberColumn(T n, int c) {
-		columnRangeCheck(c);
-		T[] rev = vec.clone();
-		rev[c] =  mc.multiply(rev[c], n);
-		return new Vector<T>(rev, true,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyNumberColumn(long n, int c) {
-		columnRangeCheck(c);
-		T[] rev = vec.clone();
-		rev[c] =  mc.multiplyLong(rev[c], n);
-		return new Vector<T>(rev, true,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyNumberRow(T n, int r) {
-		rowRangeCheck(r);
-		T[] rev = vec.clone();
-		rev[r] =  mc.multiply(rev[r], n);
-		return new Vector<T>(rev, false,mc);
-	}
-
-	@Override
-	public Vector<T> multiplyNumberRow(long n, int r) {
-		rowRangeCheck(r);
-		T[] rev = vec.clone();
-		rev[r] = mc.multiplyLong(rev[r], n);
-		return new Vector<T>(rev, false,mc);
-	}
-	/**
-	 * Return a new Vector = k * this.This method is generally the same 
-	 * to {@link #multiplyNumber(long)} , yet the returning object is 
-	 * sure to be a Vector.
-	 * @return k * this
-	 */
-	public Vector<T> multiplyNumberVector(long k){
-		int len = vec.length;
-		@SuppressWarnings("unchecked")
-		T[] reV = (T[]) new Object[len];
-		for (int i = 0; i < len; i++) {
-			reV[i] = mc.multiplyLong(vec[i], k);
-		}
-		return new Vector<T>(reV, isRow,mc);
-	}
 	
 	/**
-	 * Return a new Vector = k * this.This method is generally the same 
-	 * to {@link #multiplyNumber(T)} , yet the returning object is 
-	 * sure to be a Vector.
-	 * @return k * this
-	 */
-	public Vector<T> multiplyNumberVector(T k){
-		int len = vec.length;
-		@SuppressWarnings("unchecked")
-		T[] reV = (T[]) new Object[len];
-		for (int i = 0; i < len; i++) {
-			reV[i] = mc.multiply(vec[i], k);
-		}
-		return new Vector<T>(reV, isRow,mc);
-	}
-	/**
-	 * Return whether is vector is a row vector.
-	 * @return true if this vector is a row vector.
-	 */
-	@Override
-	public boolean isRow() {
-		return isRow;
-	}
-	/**
-	 * Return the value of |this|.The value will be a non-zero value. 
+	 * Return the value of |this|.The value will be a non-negative value.
 	 * @return |this|
 	 */
-	@Override
 	public T calLength(){
-		T re = mc.getZero();
-		for(int i=0;i<vec.length;i++){
-			re = mc.add(mc.multiply(vec[i], vec[i]), re);
-		}
-		return mc.squareRoot(re);
+		return mc.squareRoot(calLengthSq());
 	}
+	/**
+	 * Returns a unit vector of this vector's direction, throws an exception 
+	 * if this vector is an zero vector.
+	 * <pre>
+	 * this/|this|
+	 * </pre>
+	 * @return a vector
+	 */
+	public abstract Vector<T> unitVector();
+	
 	/**
 	 * Calculate the square of |this|,which has full precision and use T as the 
 	 * returning result.The result is equal to use {@link #scalarProduct(Vector, Vector)} as 
 	 * {@code scalarProduct(this,this)} but this method will have a better performance.
 	 * @return |this|^2
 	 */
-	@Override
 	public T calLengthSq(){
 		T re = mc.getZero();
-		for(int i=0;i<vec.length;i++){
-			re = mc.add(mc.multiply(vec[i], vec[i]), re);
+		int size = getSize();
+		for(int i=0;i<size;i++){
+			T t = getNumber(i);
+			re = mc.add(mc.multiply(t, t), re);
 		}
 		return re;
 	}
-	@Override
-	public Vector<T> unitVector() {
-		T l = calLength();
-		@SuppressWarnings("unchecked")
-		T[] vecn = (T[]) new Object[this.vec.length];
-		for(int i=0;i<vecn.length;i++){
-			vecn[i] = mc.divide(vec[i], l);
+	
+	protected final void checkSameSize(Vector<?> v) {
+		if(!isSameSize(v)) {
+			throw new ArithmeticException("Different dimension:"+getSize()+":"+v.getSize());
 		}
-		return new Vector<>(vecn,isRow,mc);
+	}
+	
+	/**
+	 * This method will return the inner product of {@code this} and {@code v}.
+	 * The size of the two vectors must be the same while what kind of vector
+	 * (row or column) is ignored. 
+	 * @param v a vector
+	 * @return the inner(scalar) product of this two vectors.
+	 * @throws ArithmeticException if dimension doesn't match
+	 */
+	public T innerProduct(Vector<T> v) {
+		checkSameSize(v);
+		final int size = getSize();
+		T re =  mc.getZero();
+		for(int i=0;i<size;i++){
+			re = mc.add(mc.multiply(getNumber(i), v.getNumber(i)), re);
+		}
+		return re;
+	}
+	
+	
+	/**
+	 * Determines whether the two vectors are perpendicular.
+	 * @param v another vector 
+	 * @return {@code true} of the vectors are perpendicular
+	 */
+	public boolean isPerpendicular(Vector<T> v){
+		return mc.isZero(innerProduct(v));
+	}
+	/**
+	 * Returns the angle of {@code this} and {@code v}.
+	 * <pre> arccos(this 路 v / (|this| |v|))</pre>
+	 * @param s
+	 * @return <pre> arccos(this 路 v / (|this| |v|))</pre>
+	 */
+	public T angle(Vector<T> v) {
+		return mc.arccos(angleCos(v));
+	}
+	/**
+	 * Returns the cos value of the angle of {@code this} and {@code v}.
+	 * <pre>this 路 v / (|this| |v|)</pre>
+	 * @param s
+	 * @return <pre>this 路 v / (|this| |v|)</pre>
+	 */
+	public T angleCos(Vector<T> v) {
+		T pro = innerProduct(v);
+		return mc.divide(pro, mc.multiply(calLength(), v.calLength()));
+	}
+	
+	
+	/**
+	 * Determines whether this vector is a zero vector.
+	 * @return
+	 */
+	public boolean isZeroVector(){
+		for(int i=0,size=getSize();i<size;i++) {
+			if(!mc.isZero(getNumber(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Determines whether the two vectors are parallel. 
+	 * If any of the two vector is a zero vector , than 
+	 * the method will return true.
+	 * @param v a vector
+	 * @return {@code true} if {@code this // v}
+	 */
+	public boolean isParallel(Vector<T> v){
+		// dimension check
+		checkSameSize(v);
+		if (isZeroVector() || v.isZeroVector()) {
+			return true;
+		}
+		final int size = getSize();
+		int not0 = 0;
+		while (mc.isZero(getNumber(not0))) {
+			if (mc.isZero(v.getNumber(not0)) == false) {
+				return false;
+			}
+			not0++;
+			if (not0 + 1 == size) {
+				return true;
+			}
+		}
+		T t1 = getNumber(not0);
+		T t2 = v.getNumber(not0);
+		for (int i = not0 + 1; i < size; i++) {
+			if (mc.isEqual(mc.multiply(t1, v.getNumber(i)), mc.multiply(t2, getNumber(i))) == false) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/* (non-Javadoc)
-	 * @see cn.timelives.java.utilities.math.AbstractVector#applyFunction(cn.timelives.java.utilities.math.MathFunction)
+	 * @see cn.timelives.java.utilities.math.Matrix#applyFunction(cn.timelives.java.utilities.math.MathFunction)
 	 */
 	@Override
-	public Vector<T> applyFunction(MathFunction<T, T> f) {
-		return new Vector<>(ArraySup.mapTo(vec, f),isRow,mc);
+	public abstract Vector<T> applyFunction(MathFunction<T, T> f);
+	/**
+	 * Gets whether it is a row vector.
+	 * @return
+	 */
+	public boolean isRow(){
+		return isRow;
 	}
 	
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	 * @see cn.timelives.java.math.linearAlgebra.Matrix#multiplyNumber(long)
 	 */
 	@Override
-	public String toString() {
-		return Arrays.toString(vec);
-	}
+	public abstract Vector<T> multiplyNumber(long n);
+	
+	/* (non-Javadoc)
+	 * @see cn.timelives.java.math.linearAlgebra.Matrix#multiplyNumber(java.lang.Object)
+	 */
 	@Override
-	public <N> Vector<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
-		N[] narr = ArraySup.mapTo(vec, mapper);
-		return new Vector<>(narr, isRow, newCalculator);
-		
+	public abstract Vector<T> multiplyNumber(T n);
+	
+	/* (non-Javadoc)
+	 * @see cn.timelives.java.math.linearAlgebra.Matrix#negative()
+	 */
+	@Override
+	public abstract Vector<T> negative();
+	
+	/* (non-Javadoc)
+	 * @see cn.timelives.java.math.linearAlgebra.Matrix#transportMatrix()
+	 */
+	@Override
+	public abstract Vector<T> transportMatrix();
+	
+	/* (non-Javadoc)
+	 * @see cn.timelives.java.math.linearAlgebra.Matrix#toString(cn.timelives.java.math.number_models.NumberFormatter)
+	 */
+	@Override
+	public String toString(NumberFormatter<T> nf) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		int size = getSize();
+		for(int i=0;i<size;i++){
+			sb.append(nf.format(getNumber(i), mc)).append(",");
+		}
+		sb.deleteCharAt(sb.length()-1);
+		sb.append(")");
+		return sb.toString();
 	}
+	/*
+	 * @see cn.timelives.java.math.linearAlgebra.Matrix#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 */
+	@Override
+	public abstract <N> Vector<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
 	
 	/**
 	 * Create a new Matrix with the given fraction array.A boolean representing whether the 
@@ -379,15 +285,16 @@ public class Vector<T> extends AbstractVector<T> {
 	 * @param isRow decides whether the vector return is a row-vector
 	 * @param fs the numbers,null values will be considered as {@value T#ZERO}
 	 * @return a newly created vector 
-	 * @see Vector#createVector(boolean, long[])
+	 * @see DVector#createVector(boolean, long[])
 	 */
-	public static <T> Vector<T> createVector(MathCalculator<T> mc,boolean isRow,@SuppressWarnings("unchecked") T...fs){
+	public static <T> Vector<T> createVector(MathCalculator<T> mc,boolean isRow,
+			@SuppressWarnings("unchecked") T...fs){
 		@SuppressWarnings("unchecked")
 		T[] vec = (T[]) new Object[fs.length];
 		for(int i=0;i<vec.length;i++){
 			vec[i] = fs[i] == null ? mc.getZero() : fs[i];
 		}
-		return new Vector<T>(vec,isRow,mc);
+		return new DVector<T>(vec,isRow,mc);
 	}
 	/**
 	 * Create a new Matrix with the given fraction array.A boolean representing whether the 
@@ -401,14 +308,14 @@ public class Vector<T> extends AbstractVector<T> {
 	 * @param isRow decides whether the vector return is a row-vector
 	 * @param ns the numbers
 	 * @return a newly created vector 
-	 * @see Vector#createVector(boolean, T[])
+	 * @see DVector#createVector(boolean, T[])
 	 */
 	public static Vector<Long> createVector(boolean isRow,long[] ns){
 		Long[] vec = new Long[ns.length];
 		for(int i=0;i<vec.length;i++){
 			vec[i] = Long.valueOf(ns[i]);
 		}
-		return new Vector<Long>(vec,isRow,MathCalculatorAdapter.getCalculatorLong());
+		return new DVector<Long>(vec,isRow,MathCalculatorAdapter.getCalculatorLong());
 	}
 	/**
 	 * Create a new column vector according to the array of fraction given.Null values will be considered 
@@ -432,28 +339,7 @@ public class Vector<T> extends AbstractVector<T> {
 		return createVector(false, arr);
 	}
 	
-	/**
-	 * This method will return the scalar product of the two vector.The two vector 
-	 * must have the same length while row vector and column vector are both acceptable.
-	 * @param v1 a vector
-	 * @param v2 another vector
-	 * @return the scalar product of this two vectors.
-	 * @throws ArithmeticException if dimension doesn't match
-	 */
-	public static <T> T scalarProduct(Vector<T> v1,Vector<T> v2){
-		//length check
-		T[] f1 =v1.vec;
-		T[] f2 = v2.vec;
-		if(f1.length!=f2.length){
-			throw new ArithmeticException("Different dimension:"+v1.vec.length+":"+v2.vec.length);
-		}
-		MathCalculator<T> mc = v1.mc;
-		T re =  mc.getZero();
-		for(int i=0;i<f1.length;i++){
-			re = mc.add(mc.multiply(f1[i], f2[i]), re);
-		}
-		return re;
-	}
+	
 	/**
 	 * This method provides a more suitable implement for vector adding than {@link Matrix#addMatrix(Matrix, Matrix)},
 	 * this method will add the two vector and return a column vector as the result.
@@ -461,18 +347,15 @@ public class Vector<T> extends AbstractVector<T> {
 	 * @throws ArithmeticException if dimension doesn't match
 	 */
 	public static <T> Vector<T> addVector(Vector<T> v1 , Vector<T> v2){
-		T[] f1 = v1.vec;
-		T[] f2 = v2.vec;
-		if(f1.length!=f2.length){
-			throw new ArithmeticException("Different dimension:"+v1.vec.length+":"+v2.vec.length);
-		}
+		v1.checkSameSize(v2);
+		final int size = v1.getSize();
 		@SuppressWarnings("unchecked")
-		T[] re = (T[]) new Object[f1.length];
+		T[] re = (T[]) new Object[size];
 		MathCalculator<T> mc = v1.mc;
 		for(int i=0;i<re.length;i++){
-			re[i] = mc.add(f1[i], f2[i]);
+			re[i] = mc.add(v1.getNumber(i), v2.getNumber(i));
 		}
-		return new Vector<T>(re,false,mc);
+		return new DVector<T>(re,false,mc);
 	}
 	/**
 	 * Calculate the intersection angle of the two vector.Which is usually shown as {@literal <v1,v2>}.
@@ -483,7 +366,7 @@ public class Vector<T> extends AbstractVector<T> {
 	 * @return {@literal <v1,v2>}.
 	 * @throws ArithmeticException if one of the vectors is zero vector
 	 */
-	public static <T,R> R intersectionAngle(Vector<T> v1,Vector<T> v2,MathFunction<T,R> arccos){
+	public static <T,R> R intersectionAngle(DVector<T> v1,DVector<T> v2,MathFunction<T,R> arccos){
 		return arccos.apply(cosValueOfIntersectionAngle(v1, v2));
 	}
 	/**
@@ -496,8 +379,8 @@ public class Vector<T> extends AbstractVector<T> {
 	 * @return cos{@literal <v1,v2>}.
 	 * @throws ArithmeticException if one of the vectors is zero vector
 	 */
-	public static <T> T cosValueOfIntersectionAngle(Vector<T> v1,Vector<T> v2){
-		T re = scalarProduct(v1, v2);
+	public static <T> T cosValueOfIntersectionAngle(DVector<T> v1,DVector<T> v2){
+		T re = v1.innerProduct(v2);
 		MathCalculator<T> mc = v1.mc;
 		T d1 = v1.calLength();
 		T d2 = v2.calLength();
@@ -525,7 +408,7 @@ public class Vector<T> extends AbstractVector<T> {
 		for(int i=0;i<length;i++){
 			f[i] = zero;
 		}
-		return new Vector<T>(f,isRow,mc);
+		return new DVector<T>(f,isRow,mc);
 	}
 	/**
 	 * Return a zero vector of the given length.The length of 
@@ -536,7 +419,7 @@ public class Vector<T> extends AbstractVector<T> {
 		return zeroVector(length, false,mc);
 	}
 	/**
-	 * Returns a vector that is 
+	 * Returns a vector that is filled with the same value.
 	 * @param length
 	 * @param value
 	 * @param mc
@@ -547,73 +430,9 @@ public class Vector<T> extends AbstractVector<T> {
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[]) new Object[length];
 		Arrays.fill(arr, value);
-		return  new Vector<T>(arr,isRow,mc);
+		return new DVector<T>(arr,isRow,mc);
 	}
 	
-	/**
-	 * Test the vector's dimension except for 0 dimension.
-	 * @param v
-	 * @return
-	 */
-	private static <T> boolean isZeroVector0(T[] fs,MathCalculator<T> mc){
-		T zero = mc.getZero();
-		for(int i=1;i<fs.length;i++){
-			if(!mc.isEqual(zero, fs[i])){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Calculate whether two vectors are parallel.If any of the two vector is a zero vector , than 
-	 * the method will return true.
-	 * @param v1 a vector 
-	 * @param v2 another vector
-	 * @return true if parallel , false if not.
-	 */
-	public static <T> boolean areParallel(Vector<T> v1 , Vector<T> v2){
-		//dimension check
-		T[] fs1 = v1.vec;
-		T[] fs2 = v2.vec;
-		MathCalculator<T> mc = v1.mc;
-		if(fs1.length!=fs2.length){
-			throw new ArithmeticException("Different dimension:"+fs1.length+":"+fs2.length);
-		}
-		if(isZeroVector0(fs2, mc) || isZeroVector0(fs1, mc)){
-			return true;
-		}
-		int not0 = 0;
-		while(mc.isZero(fs1[not0])){
-			if(mc.isZero(fs2[not0])==false){
-				return false;
-			}
-			not0 ++ ;
-			if(not0+1 == fs1.length){
-				return true;
-			}
-		}
-		T t1 = fs1[not0];
-		T t2 = fs2[not0];
-		for(int i=not0+1;i<fs1.length;i++){
-			if(mc.isEqual(mc.multiply(t1, fs2[i]), mc.multiply(t2, fs1[i]))==false){
-				return false;
-			}
-		}
-		return true;
-	}
-	/**
-	 * Calculate whether two vectors are perpendicular.If any of the two vector is a zero vector , than 
-	 * the method will return true.This method is generally equal to call {@link #scalarProduct(Vector, Vector)}
-	 * and test whether the value is equal to zero.
-	 * @param v1 a vector 
-	 * @param v2 another vector
-	 * @return true if the two vectors are perpendicular , false if not. 
-	 */
-	public static <T> boolean arePerpendicular(Vector<T> v1 , Vector<T> v2){
-		MathCalculator<T> mc = v1.mc;
-		return mc.isEqual(mc.getZero(), scalarProduct(v1,v2));
-	}
 
 	/**
 	 * Returns a column vector from the matrix. 
@@ -630,7 +449,7 @@ public class Vector<T> extends AbstractVector<T> {
 		for(int i=0;i<arr.length;i++){
 			arr[i] = mat.getNumber(i, column);
 		}
-		return new Vector<>(arr, false, mat.getMathCalculator());
+		return new DVector<>(arr, false, mat.getMathCalculator());
 	}
 	/**
 	 * Returns a row vector from the matrix. 
@@ -647,9 +466,6 @@ public class Vector<T> extends AbstractVector<T> {
 		for(int i=0;i<arr.length;i++){
 			arr[i] = mat.getNumber(row,i);
 		}
-		return new Vector<>(arr, true, mat.getMathCalculator());
+		return new DVector<>(arr, true, mat.getMathCalculator());
 	}
-	
-	
 }
- 

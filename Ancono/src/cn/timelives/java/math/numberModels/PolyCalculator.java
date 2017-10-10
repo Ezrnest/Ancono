@@ -14,21 +14,22 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import cn.timelives.java.math.addableSet.AdditiveSet;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.utilities.ArraySup;;
 /**
- * polyCalculator ÊÇÓÃÓÚ¼ÆËã¶àÏîÊ½µÄ¼ÆËãÆ÷
- * <p>¹¦ÄÜÓĞ£º
+ * polyCalculator ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+ * <p>ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½
  * <ul>
- * <li>¼Ó¼õ
- * <li>³Ë
- * <li>³ı
- * <li>ÕûÊı´Î³Ë·½
- * <li>ÕûÊı´Î¿ª·½
- * <li>Èı½Ç¼ÆËã
- * <li>Ö¸Êı,¶ÔÊı¼ÆËã
+ * <li>ï¿½Ó¼ï¿½
+ * <li>ï¿½ï¿½
+ * <li>ï¿½ï¿½
+ * <li>ï¿½ï¿½ï¿½ï¿½ï¿½Î³Ë·ï¿½
+ * <li>ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½
+ * <li>ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½
+ * <li>Ö¸ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  * <li>......
  * </ul>
- * <p><b>×¢Òâ£º</b>²¿·ÖÔËËãÓÉÓÚÆäÌØÊâĞÔ£¬²»ÄÜ¸ø³ö¶àÏîÊ½´ğ°¸£¬»áÅ×³öÒì³£
+ * <p><b>×¢ï¿½â£º</b>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½Ü¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ğ°¸£ï¿½ï¿½ï¿½ï¿½×³ï¿½ï¿½ì³£
  * 
  * 
  * @author lyc

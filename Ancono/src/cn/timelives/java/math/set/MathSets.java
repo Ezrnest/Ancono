@@ -88,6 +88,8 @@ public final class MathSets {
 		return (MathSet<T>)EMPTY;
 	}
 	
+	
+	
 	private static final Universe<?> UNIVERSE= new Universe<>();
 	private static final Empty<?> EMPTY = new Empty<>();
 	static final class Universe<T> implements MathSet<T>{

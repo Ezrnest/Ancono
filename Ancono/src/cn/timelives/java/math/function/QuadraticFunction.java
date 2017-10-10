@@ -217,7 +217,18 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		return toEquation().toString(nf);//TODO
+		StringBuilder sb = new StringBuilder();
+		for(int i=2;i>0;i--){
+			if(mc.isZero(getCoefficient(i)))
+				continue;
+			sb.append(nf.format(getCoefficient(i), mc)).append("*x^").append(i).append(" + ");
+		}
+		if(mc.isZero(getCoefficient(0))==false){
+			sb.append(nf.format(getCoefficient(0), mc));
+		}else{
+			sb.delete(sb.length()-3, sb.length());
+		}
+		return sb.toString();
 	}
 	
 

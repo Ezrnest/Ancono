@@ -6,8 +6,10 @@ package cn.timelives.java.math.set;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
@@ -387,9 +389,44 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @return a new IntervalUnion
 	 */
 	public IntervalUnion<T> intersect(IntervalUnion<T> in){
+		//special cases.
+		if(is.isEmpty()) {
+			return this;
+		}
+		if(in.isEmpty()) {
+			return in;
+		}
 		List<Interval<T>> nis = new ArrayList<>(Math.min(is.size(),in.is.size()));
 		for(Interval<T> v : in.is) {
 			intersect0(nis,v);
+		}
+		return new IntervalUnion<>(mc, nis);
+	}
+	
+	/**
+	 * Returns the complement of this interval union.
+	 * @return the complement
+	 */
+	public IntervalUnion<T> complement(){
+		if(is.isEmpty()) {
+			return universe(mc);
+		}
+		List<Interval<T>> nis = new ArrayList<>(is.size()+1);
+		T prev = null;
+		boolean prevInclusive = false;
+		for(Interval<T> v : is) {
+			T downer = v.downerBound();
+			if(downer!=null) {
+				//not -inf
+				Interval<T> in = Interval.valueOf(prev, downer, prevInclusive, !v.isDownerBoundInclusive(), mc);
+				nis.add(in);
+			}
+			prev = v.upperBound();
+			prevInclusive = !v.isUpperBoundInclusive();
+		}
+		if(prev != null) {
+			Interval<T> in = Interval.valueOf(prev, null, prevInclusive, false, mc);
+			nis.add(in);
 		}
 		return new IntervalUnion<>(mc, nis);
 	}
@@ -651,6 +688,9 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return new IntervalUnion<>(interval.getMathCalculator(), interval);
 	}
 	
+	private static final Map<MathCalculator<?>,IntervalUnion<?>> universemap = new HashMap<>(),
+			emptymap = new HashMap<>();
+	
 	/**
 	 * Creates an IntervalUnion that contains no interval. This is equal to 
 	 * create an empty set.
@@ -658,7 +698,13 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @return {@literal ∅}
 	 */
 	public static <T> IntervalUnion<T> empty(MathCalculator<T> mc){
-		return new IntervalUnion<>(mc);
+		@SuppressWarnings("unchecked")
+		IntervalUnion<T> in = (IntervalUnion<T>) emptymap.get(mc);
+		if(in == null) {
+			in = new IntervalUnion<>(mc);
+			emptymap.put(mc, in);
+		}
+		return in;
 	}
 	/**
 	 * Creates an IntervalUnion that only contains one interval:(-∞,+∞). This 
@@ -667,7 +713,13 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @return {@literal (-∞,+∞)}
 	 */
 	public static <T> IntervalUnion<T> universe(MathCalculator<T> mc){
-		return new IntervalUnion<>(mc,Interval.universe(mc));
+		@SuppressWarnings("unchecked")
+		IntervalUnion<T> in = (IntervalUnion<T>) universemap.get(mc);
+		if(in == null) {
+			in = new IntervalUnion<>(mc,Interval.universe(mc));
+			universemap.put(mc, in);
+		}
+		return in;
 	}
 	/**
 	 * Creates an IntervalUnion that contains each element from the {@code set}.

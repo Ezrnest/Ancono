@@ -5,6 +5,7 @@ package test.math;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -59,7 +60,7 @@ public class TestSet {
 		printIntersect(v1,v3);
 //		assertTrue("[0,2] intersect [2,4] shoule be [2,2]", v3.valueEquals(v1.intersect(v2)));
 	}
-	@Test
+//	@Test
 	public void testIntervalUnion() {
 		Interval<Integer> v1,v2,v3;
 		v1 = Interval.closedInterval(0, 2, mc);
@@ -90,6 +91,24 @@ public class TestSet {
 		v3 = Interval.closedInterval(2, 2, mc);
 		IntervalUnion<Integer> in2 = IntervalUnion.valueOf(v1, v2,v3);
 		assertEquals("Interval intersect "+in1.toString()+" and "+in2.toString(), "(1,4]∪[5,6)", in1.intersect(in2).toString());
+	}
+	
+	@Test
+	public void testIntervalUnion3() {
+		Interval<Integer> v1,v2,v3;
+		v1 = Interval.closedInterval(0, 2, mc);
+		v2 = Interval.closedInterval(-2, 4, mc);
+		v3 = Interval.closedInterval(5, 7, mc);
+		IntervalUnion<Integer> in1 = IntervalUnion.valueOf(v1, v2,v3);
+		v1 = Interval.openInterval(1, 2, mc);
+		v2 = Interval.openInterval(2, 6, mc);
+		v3 = Interval.closedInterval(2, 2, mc);
+		IntervalUnion<Integer> in2 = IntervalUnion.valueOf(v1, v2,v3);
+		assertTrue("S union complement(S) is universe", IntervalUnion.universe(mc).valueEquals(in1.union(in1.complement())));
+		assertTrue("S union complement(S) is universe", IntervalUnion.universe(mc).valueEquals(in2.union(in2.complement())));
+		assertTrue("The complement of universe is empty", IntervalUnion.universe(mc).complement().valueEquals(IntervalUnion.empty(mc)));
+//		print(IntervalUnion.empty(mc).complement());
+		assertTrue("The complement of empty is universe", IntervalUnion.empty(mc).complement().valueEquals(IntervalUnion.universe(mc)));
 	}
 	
 	@SafeVarargs

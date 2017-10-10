@@ -2,7 +2,9 @@ package cn.timelives.java.math.numberModels;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -355,9 +357,17 @@ public final class Complex<T> extends FlexibleMathObject<T> {
 	 * @return
 	 */
 	public static <T> Complex<T> zero(MathCalculator<T> mc){
-		T z = mc.getZero();
-		return new Complex<T>(mc,z,z);
+		@SuppressWarnings("unchecked")
+		Complex<T> c = (Complex<T>) zeros.get(mc);
+		if(c ==null) {
+			T z = mc.getZero();
+			c =  new Complex<T>(mc,z,z);
+			zeros.put(mc, c);
+		}
+		return c;
 	}
+	
+	private static final Map<MathCalculator<?>,Complex<?>> zeros = new ConcurrentHashMap<>();
 	
 	/**
 	 * Creates a new complex instance of 
@@ -552,18 +562,18 @@ public final class Complex<T> extends FlexibleMathObject<T> {
 		}
 	}
 	
-	public static void main(String[] args) {
-		//test here 
-		MathCalculator<Formula> mc = Formula.getCalculator();
-		List<Complex<Formula>> list = ProgressionSup
-				.createArithmeticProgression(Formula.valueOf("0.5"),Formula.ONE, mc)
-				.limit(10)
-				.mapTo(f -> Complex.real(f, mc), Complex.getCalculator(mc))
-				.stream()
-				.collect(Collectors.toList());
-		Complex<Formula> mul = Complex.ins(Formula.ONE, Formula.ONE.negate(), mc);
-		list.forEach(f -> Printer.print(f.multiply(mul)));
-	}
+//	public static void main(String[] args) {
+//		//test here 
+//		MathCalculator<Formula> mc = Formula.getCalculator();
+//		List<Complex<Formula>> list = ProgressionSup
+//				.createArithmeticProgression(Formula.valueOf("0.5"),Formula.ONE, mc)
+//				.limit(10)
+//				.mapTo(f -> Complex.real(f, mc), Complex.getCalculator(mc))
+//				.stream()
+//				.collect(Collectors.toList());
+//		Complex<Formula> mul = Complex.ins(Formula.ONE, Formula.ONE.negate(), mc);
+//		list.forEach(f -> Printer.print(f.multiply(mul)));
+//	}
 	
 	
 	

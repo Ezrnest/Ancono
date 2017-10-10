@@ -1,6 +1,9 @@
 package cn.timelives.java.math.set;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -172,13 +175,14 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 */
 	public abstract boolean contains(Interval<T> iv);
 	/**
-	 * Returns a new interval that equals to the complement of {@code this} and {@code iv} , 
+	 * Returns a new interval that equals to the intersect of {@code this} and {@code iv} , 
 	 * which is expressed as {@literal iv ∩ this} in mathematical. If the complement is empty
 	 * then {@code null} will be returned.
 	 * @param iv a interval, or {@code null}
 	 * @return {@literal iv ∩ this} or {@code null} if the result is an empty set.
 	 */
 	public abstract Interval<T> intersect(Interval<T> iv);
+	
 	
 	/**
 	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
@@ -274,8 +278,31 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return (-∞,+∞)
 	 */
 	public static <T> Interval<T> universe(MathCalculator<T> mc){
-		return new IntervalI<T>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
+		if (universemap.containsKey(mc)) {
+			@SuppressWarnings("unchecked")
+			Interval<T> in = (Interval<T>) universemap.get(mc);
+			return in;
+		} else {
+			Interval<T> in = new IntervalI<T>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
+			universemap.put(mc, in);
+			return in;
+		}
 	}
+	
+	private static final Map<MathCalculator<?>,Interval<?>> universemap = new ConcurrentHashMap<>();
+	
+	/**
+	 * Create a new Interval with the given arguments. 
+	 * @param mc the math calculator,only compare methods will be used.
+	 * @param downerBound the downer bound of this interval, or {@code null} to indicate unlimited.
+	 * @param upperBound  the upper bound of this interval, or {@code null} to indicate unlimited.
+	 * @param downerInclusive determines whether downer should be inclusive
+	 * @param upperInclusive  determines whether upper should be inclusive
+	 */
+	public static <T> Interval<T> valueOf(T downer,T upper,boolean downerInclusive,boolean upperInclusive,MathCalculator<T> mc){
+		return new IntervalI<T>(mc, downer, upper, downerInclusive, upperInclusive);
+	}
+	
 	/**
 	 * Returns the interval representing a single real number, whose downer bound 
 	 * and upper bound are both {@code x}
@@ -286,6 +313,39 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 		return new IntervalI<T>(mc,x,x,0);
 	}
 	
+	private static final Map<MathCalculator<?>,Interval<?>> positivemap = new ConcurrentHashMap<>();
+	
+	/**
+	 * Returns the interval representing the positive numbers.
+	 * @param mc
+	 * @return {@literal (0,+∞)}
+	 */
+	public static <T> Interval<T> positive(MathCalculator<T> mc){
+		@SuppressWarnings("unchecked")
+		Interval<T> in = (Interval<T>) positivemap.get(mc);
+		if(in == null) {
+			in = toPositiveInf(mc.getZero(), false, mc);
+			positivemap.put(mc, in);
+		}
+		return in;
+	}
+	
+	private static final Map<MathCalculator<?>,Interval<?>> negativemap = new ConcurrentHashMap<>();
+	
+	/**
+	 * Returns the interval representing the negative numbers.
+	 * @param mc
+	 * @return {@literal (-∞,0)}
+	 */
+	public static <T> Interval<T> negative(MathCalculator<T> mc){
+		@SuppressWarnings("unchecked")
+		Interval<T> in = (Interval<T>) negativemap.get(mc);
+		if(in == null) {
+			in = fromNegativeInf(mc.getZero(), false, mc);
+			negativemap.put(mc, in);
+		}
+		return in;
+	}
 	static <T> Interval<T> instanceNonNull(T a,T b,boolean dc,boolean uc, MathCalculator<T> mc){
 		return new IntervalI<T>(mc, Objects.requireNonNull(a), Objects.requireNonNull(b), dc, uc);
 	}

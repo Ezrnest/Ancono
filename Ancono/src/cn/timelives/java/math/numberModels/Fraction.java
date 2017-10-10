@@ -30,15 +30,26 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	 * Also make sure that denominator != 0
 	 */
 	protected final long numerator,denominator;
+	
+	/**
+	 * Gets the numerator of this Fraction.
+	 * @return numerator
+	 */
 	public long getNumerator() {
 		return numerator;
 	}
-
+	/**
+	 * Gets the denominator of this Fraction.
+	 * @return denominator
+	 */
 	public long getDenominator() {
 		return denominator;
 	}
 
-
+	/**
+	 * Gets the sign number of this Fraction.
+	 * @return sign number
+	 */
 	public int getSignum() {
 		return signum;
 	}

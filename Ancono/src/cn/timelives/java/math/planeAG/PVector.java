@@ -6,6 +6,8 @@ package cn.timelives.java.math.planeAG;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
@@ -525,8 +527,17 @@ public final class PVector<T> extends Vector<T> {
 	 * @return a new vector
 	 */
 	public static <T> PVector<T> zeroVector(MathCalculator<T> mc){
-		T z = mc.getZero();
-		return new PVector<T>(z, z, mc);
+		@SuppressWarnings("unchecked")
+		PVector<T> v = (PVector<T>) zvs.get(mc);
+		if(v == null) {
+			T z = mc.getZero();
+			v =  new PVector<T>(z, z, mc);
+			zvs.put(mc, v);
+		}
+		return v;
+		
 	}
+	
+	private static final Map<MathCalculator<?>,PVector<?>> zvs = new ConcurrentHashMap<>();
 	
 }

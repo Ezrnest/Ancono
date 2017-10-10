@@ -141,7 +141,6 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 	@Override
 	public String toString(NumberFormatter<T> nf) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("f(x) = ");
 		for(int i=mp;i>0;i--){
 			if(mc.isZero(getCoefficient(i)))
 				continue;
@@ -354,7 +353,7 @@ implements SVPFunction<T>,Derivable<T>,Integrable<T>{
 		 */
 		@Override
 		public String toString(NumberFormatter<T> nf) {
-			return "f(x) = "+nf.format(r, mc);
+			return nf.format(r, mc);
 		}
 
 

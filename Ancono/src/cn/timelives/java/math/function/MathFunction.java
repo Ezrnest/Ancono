@@ -1,6 +1,9 @@
 package cn.timelives.java.math.function;
 
 import java.util.function.Function;
+
+import cn.timelives.java.math.set.MathSet;
+import cn.timelives.java.math.set.MathSets;
 /**
  * MathFunction is an interface indicates math functions. Math function is a kind of special function.
  * This function must perform like a real math function:
@@ -19,8 +22,15 @@ import java.util.function.Function;
 public interface MathFunction<P,R> extends Function<P,R>{
 	@Override
 	R apply(P x);
-	@Override
-	boolean equals(Object obj);
+	
+	/**
+	 * Returns the domain of this MathFunction, the 
+	 * implementor should override this method to specify the domain.
+	 * @return a MathSet representing the domain
+	 */
+	default MathSet<P> domain() {
+		return MathSets.universe();
+	}
 	
 	@SuppressWarnings("rawtypes")
 	static final MathFunction same = new MathFunction() {

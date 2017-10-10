@@ -1,10 +1,14 @@
 package cn.timelives.java.math.planeAG;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.set.Interval;
+import cn.timelives.java.math.set.IntervalUnion;
 /**
  * Point is one of the most basic elements in the plane.A point has two dimensions,x and y.
  * @author lyc
@@ -191,8 +195,18 @@ public final class Point<T> extends FlexibleMathObject<T> {
 	 * @return point (0,0)
 	 */
 	public static <T> Point<T> pointO(MathCalculator<T> mc){
-		return new Point<>(mc,mc.getZero(),mc.getZero());
+		@SuppressWarnings("unchecked")
+		Point<T> p = (Point<T>) opoints.get(mc);
+		if(p == null) {
+			p = new Point<>(mc,mc.getZero(),mc.getZero());
+			opoints.put(mc, p);
+		}
+		return p;
 	}
+	
+	private static final Map<MathCalculator<?>,Point<?>> opoints = new ConcurrentHashMap<>();
+	
+	
 	
 	/**
 	 * Create a vector that is equal to <i>thisP</i>.

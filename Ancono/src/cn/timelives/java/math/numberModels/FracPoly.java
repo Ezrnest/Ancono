@@ -1,5 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
+import static cn.timelives.java.utilities.Printer.print;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -149,6 +150,12 @@ public class FracPoly {
 			}else if(re2.getNumOfFormula()==1){
 				re1 = pc.divide(re1, re2);
 				re2 = Polynomial.ONE;
+			}else {
+				//try divide
+				try {
+					re1 = pc.divide(re1, re2);
+					re2 = Polynomial.ONE;
+				}catch(UnsupportedCalculationException ex) {}
 			}
 			return new FracPoly(re1, re2); 
 		}
@@ -226,7 +233,8 @@ public class FracPoly {
 			}
 			
 			Polynomial re1 = pc.multiply(p1n, p2n);
-			Polynomial re2 = pc.multiply(p2n, p2d);
+			Polynomial re2 = pc.multiply(p1d, p2d);
+			
 			return createPoly(re1, re2);
 			
 		}

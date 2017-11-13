@@ -27,8 +27,8 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  *       <b>a</b>
  * </pre>
  * <h2>Angle</h2>
- * In a triangle,we usually use the vertex to indicate a inner angle.For example, angle {@literal ¡Ï}<i>ABC</i> is 
- * called by {@literal ¡Ï}<i>B</i>. In this class, as a result of the lack of trigonometric functions in {@linkplain MathCalculator},
+ * In a triangle,we usually use the vertex to indicate a inner angle.For example, angle {@literal ï¿½ï¿½}<i>ABC</i> is 
+ * called by {@literal ï¿½ï¿½}<i>B</i>. In this class, as a result of the lack of trigonometric functions in {@linkplain MathCalculator},
  * the related methods usually require a supplementary trigonometric function.If the 
  * @author lyc
  *
@@ -165,6 +165,13 @@ public final class Triangle<T> extends FlexibleMathObject<T> {
 		}
 		return lenC;
 	}
+	
+	public T angleCosA() {
+		PVector<T> v1 = PVector.vector(A, B),
+				v2 = PVector.vector(A, C);
+		return v1.angleCos(v2);
+	}
+	
 	/**
 	 * Returns the area of this triangle,the area is defined by the determinant of this 
 	 * triangle of <pre>

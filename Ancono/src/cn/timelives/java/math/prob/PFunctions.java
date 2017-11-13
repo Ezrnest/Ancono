@@ -4,7 +4,9 @@
 package cn.timelives.java.math.prob;
 
 import static cn.timelives.java.math.MathUtils.degFactorial;
+
 import java.math.BigInteger;
+
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.Primes;
 import cn.timelives.java.math.exceptions.NumberValueException;

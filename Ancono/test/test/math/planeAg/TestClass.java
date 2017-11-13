@@ -4,7 +4,7 @@
 package test.math.planeAg;
 
 import static cn.timelives.java.utilities.Printer.print;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 

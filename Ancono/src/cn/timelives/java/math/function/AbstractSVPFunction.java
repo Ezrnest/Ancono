@@ -27,7 +27,7 @@ import cn.timelives.java.utilities.ArraySup;
  * @see SVPFunction
  */
 public abstract class AbstractSVPFunction<T> extends AbstractSVFunction<T>
-implements SVPFunction<T>,Derivable<T>,Integrable<T>{
+implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	
 	/**
 	 * @param mc

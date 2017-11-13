@@ -6,15 +6,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import cn.timelives.java.math.FlexibleMathObject;
-import cn.timelives.java.math.ProgressionSup;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;
-import cn.timelives.java.utilities.Printer;
 /**
  * Complex number ,a type of number that can be written as A+Bi,where A,B are 
  * both real number,and "i" is the square root of {@code -1}.<p>

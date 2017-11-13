@@ -14,7 +14,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,6 +31,9 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+
+import cn.timelives.java.utilities.Printer;
+import cn.timelives.java.utilities.structure.CicularArrayListBuffer;
 
 
 
@@ -50,6 +55,8 @@ public class InputTextArea extends JTextArea {
 	 */
 	public static final int DEFAULT_BUFFER_REDUCE = 65536 >> 1; 
 	
+	public static final int DEFAULT_HISTORY_SIZE = 32;
+	
 	
 	private String prefixOutput = DEFAULT_PREFIX_OUT
 					,prefixInput = DEFAULT_PREFIX_IN;
@@ -70,12 +77,19 @@ public class InputTextArea extends JTextArea {
 	
 	private final Document doc ;
 	
+	private final int historySize;
+	
+	private final CicularArrayListBuffer<String> hisbuf;
+	
 	/**
 	 * Create a input text area as default out view.
 	 */
-	public InputTextArea(String text,int bufferSize,int bufferReduce){
+	public InputTextArea(String text,int bufferSize,int bufferReduce,int historySize){
 		this.bufSize = bufferSize <= 0 ? DEFAULT_BUFFER_SIZE : bufferSize;
 		this.bufReduce =  bufferReduce <= 0 ? DEFAULT_BUFFER_REDUCE : bufferReduce;
+		this.historySize = historySize<= 0 ? DEFAULT_HISTORY_SIZE : historySize;
+		hisbuf = new CicularArrayListBuffer<>(this.historySize);
+		
 		
 		setBackground(Color.BLACK);
 		setFont(new Font("Consolas", Font.PLAIN, 14));
@@ -105,7 +119,7 @@ public class InputTextArea extends JTextArea {
 	}
 	
 	public InputTextArea(){
-		this(message,DEFAULT_BUFFER_SIZE,DEFAULT_BUFFER_REDUCE);
+		this(message,DEFAULT_BUFFER_SIZE,DEFAULT_BUFFER_REDUCE,DEFAULT_HISTORY_SIZE);
 	}
 	
 	
@@ -132,7 +146,7 @@ public class InputTextArea extends JTextArea {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(userInputRequired()){
+				if(userInputAcceptable()){
 					InputTextArea.this.cut();
 				}
 			}
@@ -165,10 +179,16 @@ public class InputTextArea extends JTextArea {
 		this.add(pm);
 		pm.setEnabled(true);
 	}
-	
+	/**
+	 * The position of locked and unlocked contents. All the contents 
+	 * in front of it are locked. 
+	 * 
+	 */
 	private int lockedDotPos = 0;
 	
 	private boolean isSelecting = false;
+	
+	private int historyIndex = -1;
 	
 	
 	private void initListener(){
@@ -215,7 +235,7 @@ public class InputTextArea extends JTextArea {
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				if(userInputRequired()){
+				if(userInputAcceptable()){
 					if(getCaretPosition() <= 
 							lockedDotPos && e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
 						e.consume();
@@ -238,9 +258,18 @@ public class InputTextArea extends JTextArea {
 				//allow selecting and copying from this text area
 				
 				int code = e.getKeyCode();
+				if(code == KeyEvent.VK_UP) {
+					showHistory(historyIndex+1);
+					e.consume();
+					return;
+				}else if(code == KeyEvent.VK_DOWN) {
+					showHistory(historyIndex-1);
+					e.consume();
+					return;
+				}
 				if(e.isControlDown()){
 					if(code == KeyEvent.VK_X ){
-						if(!userInputRequired()){
+						if(!userInputAcceptable()){
 							e.consume();
 						}
 					}else if(code == KeyEvent.VK_V){
@@ -252,7 +281,7 @@ public class InputTextArea extends JTextArea {
 					}
 					return;
 				}
-				if(!userInputRequired()){
+				if(!userInputAcceptable()){
 					e.consume();
 					return;
 				}
@@ -282,7 +311,7 @@ public class InputTextArea extends JTextArea {
 	 * lockDotPos.
 	 * @return
 	 */
-	private boolean userInputRequired(){
+	private boolean userInputAcceptable(){
 		if(!inputEnabled){
 			return false;
 		}
@@ -293,13 +322,17 @@ public class InputTextArea extends JTextArea {
 			if(selectStart >= lockedDotPos){
 				return true;
 			}else{
+				lock.lock();
 				setCaretPosition(lockedDotPos);
+				lock.unlock();
 				return false;
 			}
 		}
 		int minPos = Math.min(selectStart, selectEnd);
 		if(minPos < lockedDotPos){
+			lock.lock();
 			setCaretPosition(lockedDotPos);
+			lock.unlock();
 			return false;
 		}
 		return true;
@@ -307,7 +340,7 @@ public class InputTextArea extends JTextArea {
 	private static Pattern lineP = Pattern.compile("\\R");
 	
 	private void pasteEvent(){
-		if(!userInputRequired()){
+		if(!userInputAcceptable()){
 			return;
 		}
 		
@@ -328,14 +361,15 @@ public class InputTextArea extends JTextArea {
 			int end = getSelectionEnd();
 			int pos = Math.min(start, end);
 			try {
-				doc.remove(pos, start-end);
+				doc.remove(pos, Math.abs(start-end));
 				lock.lock();
 				doc.insertString(pos, insertLines[0], null);
-				inputLineChange(true);
+				if(insertLines.length!=1)
+					inputLineChange(true);
 				lock.unlock();
 				for(int i=1;i<insertLines.length;i++){
 					lock.lock();
-					System.out.println(lockedDotPos);
+//					System.out.println(lockedDotPos);
 					doc.insertString(lockedDotPos, insertLines[i], null);
 					if(i!=insertLines.length-1){
 						inputLineChange(true);
@@ -376,18 +410,44 @@ public class InputTextArea extends JTextArea {
 			String line = doc.getText(lockedDotPos, doc.getLength()-lockedDotPos);
 //			Printer.print(line);
 			linesBuffer.add(line);
-			
+			hisbuf.add(line);
 		} catch (BadLocationException ignore) {
 		}
 		if(ensureBuffer)
 			ensureBufferSize(prefixInput.length()+1);
 		String input = "\n"+prefixInput;
 		append(input);
+		historyIndex = -1;
 		lockAll();
 		
 		con_getter.signal();
 		lock.unlock();
 	}
+	
+	
+	private void showHistory(int index) {
+		if(index < 0) {
+			if(historyIndex <0) {
+				return;
+			}
+			historyIndex = -1;
+			replaceText(lockedDotPos,"");
+			return;
+		}
+		if(index == historyIndex) {
+			return;
+		}
+		String line = hisbuf.getPrevious(index);
+		if(line == null) {
+			index = historyIndex;
+			return;
+		}
+		historyIndex = index;
+		//replace the current text
+		replaceText(lockedDotPos,line);
+	}
+	
+	
 	
 	/**
 	 * Ignore this operation.
@@ -404,9 +464,7 @@ public class InputTextArea extends JTextArea {
 	
 	
 	private void modifyLockPos(int pos){
-		if(pos < lockedDotPos){
-			return;
-		}
+		pos = Math.max(pos, 0);
 		int dot = getCaretPosition();
 //		if(dot<pos){
 //			setCaretPosition(pos);
@@ -428,6 +486,9 @@ public class InputTextArea extends JTextArea {
 	}
 	
 	private void ensureBufferSize(int toAdd){
+		if(toAdd<=0) {
+			return;
+		}
 		if(toAdd>bufSize){
 			throw new OutOfMemoryError("buffer size too small");
 		}
@@ -534,7 +595,51 @@ public class InputTextArea extends JTextArea {
 	}
 
 	public void setPrefixInput(String prefixInput) {
+		
+		//replace the current line one first
+		if(inputEnabled) {
+			lock.lock();
+			int length = this.prefixInput.length(),
+					nLength = prefixInput.length(),
+				delta = nLength-length;
+			int inPos = lockedDotPos - length;
+//			Printer.print(inPos);
+			int caret = getCaretPosition()+delta;
+			try {
+				doc.remove(inPos, length);
+				doc.insertString(inPos, prefixInput, null);
+			} catch (BadLocationException e) {
+			}
+			modifyLockPos(lockedDotPos+delta);
+			setCaretPosition(caret);
+			ensureBufferSize(delta);
+			lock.unlock();
+		}
 		this.prefixInput = prefixInput;
+	}
+	
+	/**
+	 * Replace the text 
+	 * @param start inclusive
+	 * @param end exclusive
+	 * @param text
+	 */
+	private void replaceText(int start,int end,String text) {
+		int length = end- start;
+		lock.lock();
+		try {
+			doc.remove(start, length);
+			doc.insertString(start, text,null);
+		} catch (BadLocationException e) {
+		}
+		if(end<=lockedDotPos && start < lockedDotPos) {
+			lockedDotPos = lockedDotPos + text.length() -length;
+		}
+		lock.unlock();
+	}
+	
+	private void replaceText(int start,String text) {
+		replaceText(start,doc.getLength(),text);
 	}
 
 	/**

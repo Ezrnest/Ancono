@@ -52,7 +52,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 	 *
 	 * @param <T>
 	 */
-	public static final class Ln<T> extends AbstractSVFunction<T> implements Derivable<T>{
+	public static final class Ln<T> extends AbstractSVFunction<T> implements Derivable<T,Power<T>>{
 		/**
 		 * @param mc
 		 */
@@ -125,7 +125,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 	 * 2017-10-10 18:37
 	 * @param <T>
 	 */
-	public static final class Log<T> extends AbstractSVFunction<T> implements Derivable<T>{
+	public static final class Log<T> extends AbstractSVFunction<T> implements Derivable<T,Power<T>>{
 		private final T a;
 		/**
 		 * @param mc
@@ -198,7 +198,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 	 *
 	 * @param <T>
 	 */
-	public static final class Power<T> extends AbstractSVFunction<T> implements Derivable<T>{
+	public static final class Power<T> extends AbstractSVFunction<T> implements Derivable<T,Power<T>>{
 		/**
 		 * @param mc
 		 */
@@ -362,7 +362,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 	 *
 	 * @param <T>
 	 */
-	public static final class Exp<T> extends AbstractSVFunction<T> implements Derivable<T>{
+	public static final class Exp<T> extends AbstractSVFunction<T> implements Derivable<T,Exp<T>>{
 		private final T a,c;
 		/**
 		 * @param mc
@@ -454,7 +454,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 	 *
 	 * @param <T>
 	 */
-	public static final class Ex<T> extends AbstractSVFunction<T> implements Derivable<T>{
+	public static final class Ex<T> extends AbstractSVFunction<T> implements Derivable<T,Ex<T>>{
 		/**
 		 * @param mc
 		 */

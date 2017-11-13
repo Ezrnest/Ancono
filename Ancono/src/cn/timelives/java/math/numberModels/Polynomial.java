@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import cn.timelives.java.math.addableSet.AdditiveSet;
+import cn.timelives.java.math.addableSet.MathAddableSet;
 import cn.timelives.java.math.addableSet.MathAdder;
 import cn.timelives.java.math.addableSet.SortedAdditiveSet;
 
@@ -25,7 +26,7 @@ public class Polynomial implements Comparable<Polynomial>
 	/**
 	 * fs 是用于储存多项式内容的SortedAdditiveSet
 	 */
-	private AdditiveSet<Formula> fs;
+	private SortedAdditiveSet<Formula> fs;
 	
 	
 	private static final FormulaCalculator fc = FormulaCalculator.DEFAULT_FORMULA_CALCULATOR;
@@ -43,7 +44,7 @@ public class Polynomial implements Comparable<Polynomial>
 	 * @param ma
 	 */
 	public Polynomial(MathAdder<Formula> ma,Formula[] fs) {
-		this.fs=new AdditiveSet<Formula>(ma);
+		this.fs=new SortedAdditiveSet<Formula>(ma);
 		for(Formula f:fs){
 			this.fs.add(f);
 		}
@@ -51,15 +52,15 @@ public class Polynomial implements Comparable<Polynomial>
 	}
 	
 	public Polynomial(MathAdder<Formula> ma,Formula f) {
-		this.fs=new AdditiveSet<Formula>(ma);
+		this.fs=new SortedAdditiveSet<Formula>(ma);
 		this.fs.add(f);
 	}
 	public Polynomial(MathAdder<Formula> ma) {
-		this.fs=new AdditiveSet<Formula>(ma);
+		this.fs=new SortedAdditiveSet<Formula>(ma);
 		this.fs.add(Formula.ZERO);
 	}
-	public Polynomial(AdditiveSet<Formula> fs) {
-		this.fs=new AdditiveSet<Formula>(fs.getAdder());
+	public Polynomial(MathAddableSet<Formula> fs) {
+		this.fs=new SortedAdditiveSet<Formula>(fs.getAdder());
 		for(Formula f:fs){
 			this.fs.add(f);
 		}
@@ -71,7 +72,7 @@ public class Polynomial implements Comparable<Polynomial>
 	 * @param str
 	 */
 	public Polynomial(MathAdder<Formula> ma,String expression) {
-		this.fs=new AdditiveSet<Formula>(ma);
+		this.fs=new SortedAdditiveSet<Formula>(ma);
 		if(expression.trim().isEmpty()){
 			return;
 		}
@@ -107,16 +108,14 @@ public class Polynomial implements Comparable<Polynomial>
 	 */
 	@Override
 	public String toString(){
-		StringBuilder sb=new StringBuilder();
-		boolean isFirst= true;
-		SortedAdditiveSet<Formula> sas = new SortedAdditiveSet<Formula>(this.fs.getAdder());
-		sas.addAll(this.fs);
-		for(Formula f:sas){
-			//if(!f.equalsIgnoreDecimal(Formula.ZERO))
-				sb.append(f.toString());
-			if(isFirst&&sb.charAt(0)=='+'){
+		StringBuilder sb = new StringBuilder();
+		boolean isFirst = true;
+		for (Formula f : fs) {
+			// if(!f.equalsIgnoreDecimal(Formula.ZERO))
+			sb.append(f.toString());
+			if (isFirst && sb.charAt(0) == '+') {
 				sb.deleteCharAt(0);
-				isFirst=false;
+				isFirst = false;
 			}
 		}
 		return sb.toString();
@@ -126,7 +125,7 @@ public class Polynomial implements Comparable<Polynomial>
 		return fs.size();
 	}
 	
-	AdditiveSet<Formula> getFormulas(){
+	SortedAdditiveSet<Formula> getFormulas(){
 		return fs;
 	}
 	
@@ -167,10 +166,8 @@ public class Polynomial implements Comparable<Polynomial>
 
 	@Override
 	public int compareTo(Polynomial o) {
-		SortedAdditiveSet<Formula> sas1 = new SortedAdditiveSet<Formula>(this.fs.getAdder());
-		SortedAdditiveSet<Formula> sas2 = new SortedAdditiveSet<Formula>(o.fs.getAdder());
-		sas1.addAll(this.fs);
-		sas2.addAll(o.fs);
+		SortedAdditiveSet<Formula> sas1 = this.fs;
+		SortedAdditiveSet<Formula> sas2 = o.fs;
 		int re =sas1.size()-sas2.size();
 		if(re==0){
 			Iterator<Formula> i1 = sas1.iterator();

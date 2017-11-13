@@ -7,8 +7,6 @@ import java.util.function.Function;
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.set.Interval;
-import cn.timelives.java.math.set.IntervalUnion;
 /**
  * Point is one of the most basic elements in the plane.A point has two dimensions,x and y.
  * @author lyc

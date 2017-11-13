@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import org.junit.Test;
+
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.Progression;
@@ -19,7 +21,6 @@ import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
-import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.numberModels.Formula;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.FracPoly;
@@ -41,7 +42,7 @@ import cn.timelives.java.math.planeAG.curve.HyperbolaV;
 import cn.timelives.java.utilities.EasyConsole;
 import cn.timelives.java.utilities.Printer;
 
- class CodePlace {
+public class CodePlace {
 
 //	public static void main(String[] args) {
 //		CodePlace cp = new CodePlace();
@@ -561,7 +562,6 @@ import cn.timelives.java.utilities.Printer;
 		print(hy.getEccentricity());
 	}
 	
-	@SuppressWarnings("unchecked")
 	void m31(){
 //		inputPoly("a,b,k,d,x,y,1+k^2,-x+kb-ky,-2yb+b^2+y^2+x^2,a,b,c,aa,bb,cc");
 //		mcfp = FractionalPoly.getCalculator(true);
@@ -810,11 +810,109 @@ import cn.timelives.java.utilities.Printer;
 		print(solution);
 		print(solution.getBase());
 	}
+	public void m40() {
+		//prove a/sinA = b/sinB
+		// a^2(sinB)^2 = b^2 (sinA)^2
+		inputPoly("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3]");
+		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, fps[0], fps[3], 
+				fps[1], fps[4], 
+				fps[2], fps[5]);
+		Point<FracPoly> A = tri.vertexA(),
+		B = tri.vertexB(),
+		C = tri.vertexC();
+		FracPoly a2 = C.distanceSq(B),
+				b2 = C.distanceSq(A);
+		print(dealWith(a2));
+		PVector<FracPoly> AB = PVector.vector(A, B);
+		PVector<FracPoly> AC = PVector.vector(A, C);
+		PVector<FracPoly> CB = PVector.vector(C, B);
+		fps[0] = CB.innerProduct(AB);
+		fps[1] = AB.innerProduct(AC);
+		fps[0] = mcfp.pow(fps[0], 2);
+		fps[1] = mcfp.pow(fps[1], 2);
+		FracPoly sinB2 = mcfp.subtract(FracPoly.ONE, mcfp.divide(fps[0], mcfp.multiply(CB.calLengthSq(), AB.calLengthSq()))),
+				sinA2 =  mcfp.subtract(FracPoly.ONE, mcfp.divide(fps[1], mcfp.multiply(AB.calLengthSq(), AC.calLengthSq())));
+		FracPoly left = mcfp.multiply(a2, sinB2);
+		FracPoly right = mcfp.multiply(b2,sinA2);
+		FracPoly result = mcfp.subtract(right, left);
+		print(dealWith(right));
+		print(dealWith(result));
+		print(mcfp.isZero(result));
+		
+	}
 	
 	
+	public void m41() {
+		inputPoly("k,-1/k,2");
+		FracPoly k = fps[0];
+		EllipseV<FracPoly> ell = EllipseV.standardEquationSqrt(fps[2], FracPoly.ONE, mcfp);
+		print(ell);
+		Line<FracPoly> AC = Line.slopeIntercept(k, FracPoly.ZERO, mcfp),
+				BD = Line.slopeIntercept(fps[1], FracPoly.ZERO, mcfp);
+		
+	}
+	@Test
+	public void m42() {
+		inputPoly("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3]");
+		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, fps[0], fps[3], 
+				fps[1], fps[4], 
+				fps[2], fps[5]);
+		Point<FracPoly> A = tri.vertexA(), 
+				B = tri.vertexB(), 
+				C = tri.vertexC(), 
+				O = tri.centerO(), 
+				H = tri.centerH();
+		PVector<FracPoly> v1 = PVector.vector(O, A),
+				v2 = PVector.vector(O, B),
+				v3 = PVector.vector(O, C),
+				v = v1.add(v2).add(v3),
+				oh = PVector.vector(O, H);
+//		print(dealWith(v));
+//		print(dealWith(oh));
+		print(dealWith(oh.subtract(v)));
+		fps[0] = oh.x;
+		fps[1] = v.x;
+		MathCalculator<Polynomial> mcp = Polynomial.getCalculator();
+//		print(dealWith(mcp.multiply(fps[0].getNume(), fps[1].getDeno())));
+//		print_();
+//		print(dealWith(mcp.multiply(fps[0].getNume(), fps[1].getDeno())));
+		print_();
+		print_();
+		print(dealWith(mcfp.divide(fps[0], fps[1])));
+	}
 	
-	
-	
+	public void m43() {
+		Random rd = new Random();
+		double[] cords = new double[6];
+		for(int i=0;i<6;i++) {
+			cords[i] = rd.nextDouble() * 16;
+		}
+		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev();
+		Triangle<Double> tri = Triangle.fromVertex(mc, cords[0], cords[3], 
+				cords[1], cords[4], 
+				cords[2], cords[5]);
+		Point<Double> A = tri.vertexA(), 
+				B = tri.vertexB(), 
+				C = tri.vertexC(), 
+				O = tri.centerO(), 
+				H = tri.centerH();
+		PVector<Double> v1 = PVector.vector(O, A),
+				v2 = PVector.vector(O, B),
+				v3 = PVector.vector(O, C),
+				v = v1.add(v2).add(v3),
+				oh = PVector.vector(O, H);
+		print(v1.calLength());
+		print(v2.calLength());
+		print(v3.calLength());
+		v1 = PVector.vector(H, A);
+				v2 = PVector.vector(H, B);
+				v3 = PVector.vector(H, C);
+		print(v1.innerProduct(tri.sideA().directionVector()));
+		print(v2.innerProduct(tri.sideB().directionVector()));
+		print(v3.innerProduct(tri.sideC().directionVector()));
+		print(oh);
+		print(v);
+	}
 	
 	
 	

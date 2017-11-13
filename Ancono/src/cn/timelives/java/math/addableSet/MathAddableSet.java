@@ -4,12 +4,12 @@ import java.util.Set;
 
 
 /**
- * ´Ë½Ó¿ÚÊÇÃèÊö¿ÉÒÔÍ¨¹ıÊıÑ§ÔËËãµş¼ÓµÄ¶ÔÏó£¬
- * ´ËÀà¶ÔÏó¶¼ÎªÄ³ÖÖ¼¯ºÏ£¬´¢´æµÄÊÇ{@code <E>}µÄ¶ÔÏó
+ * ï¿½Ë½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¶ï¿½ï¿½ï¿½
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÄ³ï¿½Ö¼ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½{@code <E>}ï¿½Ä¶ï¿½ï¿½ï¿½
  * 
  * 
- * ¶ÔÓÚ¿É¼Ó¶ÔÏó£¬»¹ĞèÒª¾ßÓĞÌØ¶¨¸ñÊ½µÄMathAdder
- * <p>¿Éµş¼ÓĞÔ:
+ * ï¿½ï¿½ï¿½Ú¿É¼Ó¶ï¿½ï¿½ó£¬»ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½Ê½ï¿½ï¿½MathAdder
+ * <p>ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½:
  * 
  * 
  * @see 
@@ -21,7 +21,7 @@ public abstract class MathAddableSet<E> implements Set<E>
 	/**
 	 * it should have a Adder when create
 	 */
-	MathAdder<E> ma;
+	final MathAdder<E> ma;
 	public MathAddableSet(MathAdder<E> ma){
 		this.ma=ma;
 	}
@@ -44,5 +44,8 @@ public abstract class MathAddableSet<E> implements Set<E>
 	@Override
 	abstract public boolean add(E e);
 	
+	public MathAdder<E> getAdder(){
+		return ma;
+	}
 	
 }

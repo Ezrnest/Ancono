@@ -61,6 +61,12 @@ public abstract class EasyConsole {
 	 * @param line
 	 */
 	public abstract void print(String line);
+	/**
+	 * Append the given text to the console, the given String should not contain any line separator such 
+	 * as {@code \n}. No flush operation is needed.
+	 * @param line
+	 */
+	public abstract void append(String text);
 	
 	/**
 	 * Set whether the console should enable line filter.If line filter is enabled,
@@ -318,7 +324,7 @@ public abstract class EasyConsole {
 		}
 		
 		public InputConsole(String text) {
-			input = new InputTextArea(text,-1,-1);
+			input = new InputTextArea(text,-1,-1,-1);
 			frame = new InputFrame(input);
 			frame.setTitle(text);
 			out = new PrintWriter(input.getOutputStream(),true);
@@ -372,6 +378,14 @@ public abstract class EasyConsole {
 		public void print(String line) {
 			input.outputLine(line);
 		}
+		/*
+		 * @see cn.timelives.java.utilities.EasyConsole#append(java.lang.String)
+		 */
+		@Override
+		public void append(String text) {
+			out.append(text);
+			out.flush();
+		}
 
 		@Override
 		public void setInputPrefix(String prefix) {
@@ -391,8 +405,6 @@ public abstract class EasyConsole {
 			input.setFont(f);
 		}
 		
-		
-		
 	}
 	
 	
@@ -402,9 +414,12 @@ public abstract class EasyConsole {
 		con.setLineFilter(COMMENT_PATTERN);
 		con.open();
 		con.setLineFilterActivated(true);
+		int i=0;
 		while(true){
 			String line = con.nextLine();
-			con.print(line);
+//			con.print(line);
+			con.setInputPrefix((i%2) == 0 ? "==":"----");
+			i++;
 //			con.beep();
 			System.out.println(line);
 		}

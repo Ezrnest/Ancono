@@ -107,7 +107,7 @@ public final class PVector<T> extends Vector<T> {
 	@Override
 	public T calLengthSq() {
 		if(lengthSq==null){
-			lengthSq = mc.squareRoot(mc.add(mc.multiply(x, x),mc.multiply(y, y)));
+			lengthSq = mc.add(mc.multiply(x, x),mc.multiply(y, y));
 		}
 		return lengthSq;
 	}

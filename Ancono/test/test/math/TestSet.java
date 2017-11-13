@@ -6,10 +6,8 @@ package test.math;
 import static cn.timelives.java.utilities.Printer.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import org.junit.Test;
+import java.util.Arrays;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;

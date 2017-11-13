@@ -12,13 +12,13 @@ import cn.timelives.java.math.function.SVFunction;
  * 2017-10-07 14:39
  *
  */
-public interface Derivable<T> extends SVFunction<T>{
+public interface Derivable<T,S extends SVFunction<T>> extends SVFunction<T>{
 	
 	/**
 	 * Returns the derivative of this function as 
 	 * a SVFunction
 	 * @return {@literal f'(x)}
 	 */
-	SVFunction<T> derive();
+	S derive();
 	
 }

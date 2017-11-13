@@ -1,11 +1,17 @@
 package cn.timelives.java.math.addableSet;
 
+import static cn.timelives.java.utilities.Printer.print;
+
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+
+import cn.timelives.java.math.numberModels.Polynomial;
 /**
- * SortedAdditiveSet ÊÇÒ»¸öÓÐÐòµÄ,´¢´æÌØ¶¨¶ÔÏóµÄ¼¯ºÏ
- * <p>´Ë¼¯ºÏ¿ÉÒÔ´¢´æÈÎÒâ¶ÔÏó£¬µ«Ò»°ãÀ´Ëµ£¬
+ * SortedAdditiveSet ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+ * <p>ï¿½Ë¼ï¿½ï¿½Ï¿ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬µï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
  * 
  * @author lyc
  *
@@ -18,6 +24,7 @@ public class SortedAdditiveSet<E> extends MathAddableSet<E>
 	public SortedAdditiveSet(MathAdder<E> ma) {
 		super(ma);
 	}
+	
 
 	@Override
 	public int size() {
@@ -128,6 +135,17 @@ public class SortedAdditiveSet<E> extends MathAddableSet<E>
 		}
 		return true;
 	}
-	
+//	public static void main(String[] args) {
+//		String str = "-1/16*d[y1]d[y3]^2*p, +1/16*d[y1]^2*d[y2]p, -1/16*d[y1]^2*d[y3]p, -1/16*d[y1]^2*d[y2]p, "
+//				+ "+1/8*d[y1]^2*d[y2]d[y3]^2*p^-1, -1/8*d[y1]^2*d[y2]d[y3]^2*p^-1, +1/16*d[y1]^3*d[y2]d[y3]^3*p^-3,"
+//				+ " -1/16*d[y1]^3*d[y2]d[y3]^3*p^-3, +1/16*d[y1]^2*d[y2]^3*d[y3]^2*p^-3, +1/16*d[y1]d[y2]^3*d[y3]^3*p^-3, "
+//				+ "-1/16*d[y1]d[y2]^3*d[y3]^3*p^-3, -1/16*d[y1]^2*d[y2]^3*d[y3]^2*p^-3, +1/16*d[y2]d[y3]^4*p^-1, +1/16*d[y1]d[y2]^2*p, "
+//				+ "+1/16*d[y1]^2*d[y3]p, +1/16*d[y1]d[y3]^2*p, -1/16*d[y2]d[y3]^4*p^-1, -1/16*d[y1]d[y2]^2*p, +1/16*d[y2]^2*d[y3]p,"
+//				+ " -1/16*d[y2]^2*d[y3]p, +1/16*d[y1]^3*d[y2]^2*p^-1, -1/16*d[y1]^3*d[y2]^2*p^-1";
+//		str = str.replaceAll(Pattern.quote(","), "").replaceAll(" +", "");
+//		print(str);
+//		Polynomial p = Polynomial.valueOf(str);
+//		print(p);//0
+//	}
 
 }

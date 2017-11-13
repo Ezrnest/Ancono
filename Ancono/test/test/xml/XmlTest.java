@@ -1,8 +1,9 @@
-package cn.timelives.java.utilities.xml;
+package test.xml;
 
 import org.junit.Test;
 
 import cn.timelives.java.utilities.Printer;
+import cn.timelives.java.utilities.xml.XmlRootBuilder;
 
 public class XmlTest {
 	@Test

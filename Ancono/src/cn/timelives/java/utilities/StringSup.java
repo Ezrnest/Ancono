@@ -41,4 +41,12 @@ public final class StringSup {
 			sb.append(c);
 		}
 	}
+	
+	public static int parseOrDefault(String x,int defaultValue) {
+		try {
+			return Integer.parseInt(x);
+		}catch(Exception ex ) {
+			return defaultValue;
+		}
+	}
 }

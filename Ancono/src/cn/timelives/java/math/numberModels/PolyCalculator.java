@@ -6,6 +6,7 @@ import static cn.timelives.java.utilities.Printer.print;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import cn.timelives.java.math.addableSet.AdditiveSet;
+import cn.timelives.java.math.addableSet.SortedAdditiveSet;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.utilities.ArraySup;;
 /**
@@ -260,7 +262,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @param p1
 	 * @param p2
 	 * @return p1/p2
-	 * @throws CannotCalculateException if cannot calculate
+	 * @throws UnsupportedCalculationException if cannot calculate
 	 */
 	@Override
 	public Polynomial divide(Polynomial p1,Polynomial p2){
@@ -304,7 +306,6 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		Formula[] f2 = new Formula[0];
 		Formula[] f1 = p1.getFormulas().toArray(f2);
 		f2 = p2.getFormulas().toArray(f2);
-		
 		result = divide1(f1,f2);
 		if(result != null){
 			return result;
@@ -971,7 +972,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		//This method is a very complex one.We should first check whether this is a number
 		if(p.getNumOfFormula()==1){
 			//only one formula
-			AdditiveSet<Formula> as = p.getFormulas();
+			SortedAdditiveSet<Formula> as = p.getFormulas();
 			Formula f = as.iterator().next();
 			FormulaCalculator fc = (FormulaCalculator)as.getAdder();
 //			Printer.print(p);
@@ -1010,6 +1011,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		
 		@Override
 		public List<Polynomial> simplify(List<Polynomial> numbers) {
+			
+			
 			int len = numbers.size();
 			List<Formula> list = new ArrayList<Formula>(len*2);
 			int[] indexes = new int[len];
@@ -1042,10 +1045,30 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				re.add(po);
 				pos++;
 			}
-			
+			if(re.size() == 2) {
+				re = simplifyFraction(re);
+			}
 			return re;
 		}
 		
+		public List<Polynomial> simplifyFraction(List<Polynomial> list) {
+			Polynomial p1 = list.get(0),
+					p2 = list.get(1);
+			if(p1.getNumOfFormula() != p2.getNumOfFormula()) {
+				return list;
+			}
+			if (DEFALUT_CALCULATOR.isEqual(Polynomial.ZERO, p2) == false) {
+				try {
+					p1 = DEFALUT_CALCULATOR.divide(p1, p2);
+					p2 = Polynomial.ONE;
+				} catch (UnsupportedOperationException ex) {
+
+				}
+			}
+			list.set(0, p1);
+			list.set(1, p2);
+			return list;
+		}
 		
 		
 	}

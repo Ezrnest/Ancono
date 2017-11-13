@@ -3,9 +3,12 @@
  */
 package cn.timelives.java.math.prob;
 
+import static cn.timelives.java.math.prob.PFunctions.combination;
+import static cn.timelives.java.math.prob.PFunctions.combinationB;
+import static cn.timelives.java.math.prob.PFunctions.factorial;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
-import static cn.timelives.java.math.prob.PFunctions.*;
 /**
  * A class provides basic distributions.
  * @author liyicheng

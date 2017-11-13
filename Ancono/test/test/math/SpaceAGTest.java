@@ -10,7 +10,6 @@ import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
-import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.numberModels.Formula;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.FracPoly;

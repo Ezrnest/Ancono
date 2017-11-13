@@ -10,9 +10,6 @@ import java.util.function.LongFunction;
 
 import cn.timelives.java.math.Progression;
 import cn.timelives.java.math.ProgressionSup;
-import cn.timelives.java.math.linearAlgebra.Matrix;
-import cn.timelives.java.math.linearAlgebra.MatrixOperation;
-import cn.timelives.java.math.linearAlgebra.Matrix.MatResult;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;

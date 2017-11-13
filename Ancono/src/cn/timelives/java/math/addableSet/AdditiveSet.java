@@ -127,16 +127,5 @@ public class AdditiveSet<E> extends MathAddableSet<E>
 		return false;
 	}
 	
-	public static void main(String[] args) {
-		String str = "-1/16*d[y1]d[y3]^2*p, +1/16*d[y1]^2*d[y2]p, -1/16*d[y1]^2*d[y3]p, -1/16*d[y1]^2*d[y2]p, "
-				+ "+1/8*d[y1]^2*d[y2]d[y3]^2*p^-1, -1/8*d[y1]^2*d[y2]d[y3]^2*p^-1, +1/16*d[y1]^3*d[y2]d[y3]^3*p^-3,"
-				+ " -1/16*d[y1]^3*d[y2]d[y3]^3*p^-3, +1/16*d[y1]^2*d[y2]^3*d[y3]^2*p^-3, +1/16*d[y1]d[y2]^3*d[y3]^3*p^-3, "
-				+ "-1/16*d[y1]d[y2]^3*d[y3]^3*p^-3, -1/16*d[y1]^2*d[y2]^3*d[y3]^2*p^-3, +1/16*d[y2]d[y3]^4*p^-1, +1/16*d[y1]d[y2]^2*p, "
-				+ "+1/16*d[y1]^2*d[y3]p, +1/16*d[y1]d[y3]^2*p, -1/16*d[y2]d[y3]^4*p^-1, -1/16*d[y1]d[y2]^2*p, +1/16*d[y2]^2*d[y3]p,"
-				+ " -1/16*d[y2]^2*d[y3]p, +1/16*d[y1]^3*d[y2]^2*p^-1, -1/16*d[y1]^3*d[y2]^2*p^-1";
-		str = str.replaceAll(Pattern.quote(","), "").replaceAll(" +", "");
-		print(str);
-		Polynomial p = Polynomial.valueOf(str);
-		print(p);
-	}
+	
 }

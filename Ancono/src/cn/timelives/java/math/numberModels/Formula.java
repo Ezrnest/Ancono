@@ -1090,7 +1090,7 @@ public class Formula implements Comparable<Formula>{
 	 */
 	public Formula reciprocal(){
 		if(this.equals(Formula.ZERO)){
-			throw new ArithmeticException("Cannot cal reciprocal"+this.toString());
+			throw new ArithmeticException("Cannot cal reciprocal:"+this.toString());
 		}
 		BigInteger[] ndr = new BigInteger[3];
 		ndr[0]=this.denominator;

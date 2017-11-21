@@ -40,6 +40,7 @@ import cn.timelives.java.math.planeAG.curve.EllipseV;
 import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
 import cn.timelives.java.math.planeAG.curve.HyperbolaV;
 import cn.timelives.java.utilities.EasyConsole;
+import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.Printer;
 
 public class CodePlace {
@@ -719,14 +720,26 @@ public class CodePlace {
 	FracPoly toX(FracPoly fp){
 		return mcfp.divide(mcfp.multiply(fp, fp),mcfp.multiplyLong(fps[0], 2l));
 	}
+	private Triangle<FracPoly> GT = null;
+	
+	/**
+	 * Returns a general triangle:
+	 * A(d[x1],d[y1])...
+	 * @return
+	 */
+	public Triangle<FracPoly> generalTriangle(){
+		if(GT==null) {
+			inputPoly("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3]");
+			GT = Triangle.fromVertex(mcfp, fps[0], fps[3], 
+					fps[1], fps[4], 
+					fps[2], fps[5]);
+		}
+		return GT;
+	}
 	
 	
-	
-	void m36(){
-		inputPoly("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3],x,y");
-		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, fps[0], fps[3], 
-				fps[1], fps[4], 
-				fps[2], fps[5]);
+	public void m36(){
+		Triangle<FracPoly> tri = generalTriangle();
 		Point<FracPoly> i = Point.valueOf(fps[6],fps[7], mcfp);
 		ps[0] = tri.vertexA();
 		ps[1] = tri.vertexB();
@@ -813,10 +826,7 @@ public class CodePlace {
 	public void m40() {
 		//prove a/sinA = b/sinB
 		// a^2(sinB)^2 = b^2 (sinA)^2
-		inputPoly("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3]");
-		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, fps[0], fps[3], 
-				fps[1], fps[4], 
-				fps[2], fps[5]);
+		Triangle<FracPoly> tri = generalTriangle();
 		Point<FracPoly> A = tri.vertexA(),
 		B = tri.vertexB(),
 		C = tri.vertexC();
@@ -851,12 +861,9 @@ public class CodePlace {
 				BD = Line.slopeIntercept(fps[1], FracPoly.ZERO, mcfp);
 		
 	}
-	@Test
+	
 	public void m42() {
-		inputPoly("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3]");
-		Triangle<FracPoly> tri = Triangle.fromVertex(mcfp, fps[0], fps[3], 
-				fps[1], fps[4], 
-				fps[2], fps[5]);
+		Triangle<FracPoly> tri = generalTriangle();
 		Point<FracPoly> A = tri.vertexA(), 
 				B = tri.vertexB(), 
 				C = tri.vertexC(), 
@@ -869,15 +876,14 @@ public class CodePlace {
 				oh = PVector.vector(O, H);
 //		print(dealWith(v));
 //		print(dealWith(oh));
-		print(dealWith(oh.subtract(v)));
+		print(dealWith(oh));
 		fps[0] = oh.x;
 		fps[1] = v.x;
-		MathCalculator<Polynomial> mcp = Polynomial.getCalculator();
+//		MathCalculator<Polynomial> mcp = Polynomial.getCalculator();
 //		print(dealWith(mcp.multiply(fps[0].getNume(), fps[1].getDeno())));
 //		print_();
 //		print(dealWith(mcp.multiply(fps[0].getNume(), fps[1].getDeno())));
-		print_();
-		print_();
+		
 		print(dealWith(mcfp.divide(fps[0], fps[1])));
 	}
 	
@@ -913,7 +919,22 @@ public class CodePlace {
 		print(oh);
 		print(v);
 	}
-	
-	
+	@Test
+	public void m44() {
+		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev(1E-10);
+		EllipseV<Double> ell = EllipseV.standardEquationSqrt(9d, 5d, mc);
+		double result = ModelPatterns.binarySolve(0.8d, 0.9d, (a, b)->(a+b)/2,k->{
+			Line<Double> l = Line.pointSlope(2d, 0d, k, mc);
+			List<Point<Double>> ps = ell.intersectPoints(l);
+			Point<Double> p0 = ps.get(0);
+			Point<Double> p1 = ps.get(1);
+			return mc.compare((p0.x-2)*3-(2-p1.x), 0d);
+		},50);
+		print(result,16);
+		print(Fraction.bestApproximate(result*result, 100));
+//		print(result,16);
+//		print(result*result,16);
+//		print(Fraction.valueOfDouble(result*result, 1000));
+	}
 	
 }

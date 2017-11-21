@@ -773,13 +773,114 @@ public class MathUtils {
 		return mc.arctan(mc.divide(y, x));
 	}
 	
+	/**
+	 * Returns {@code x*y<=0}
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static boolean oppositeSignum(double x,double y) {
+		return (x >= 0d && y <= 0d) || (x <= 0d && y >= 0d);
+	}
+	
+	/**
+	 * Returns {@code (x-a)(y-a)<=0}
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static boolean oppositeSide(double x,double y,double a) {
+		return (x >= a && y <= a) || (x <= a && y >= a);
+	}
+	
+	public static boolean sameSignum(int x,int y) {
+		if(x >0) {
+			return y>0;
+		}else if(x == 0) {
+			return y == 0;
+		}else {//x<0
+			return y<0;
+		}
+	}
+	
+	/**
+	 * Determines whether {@code x} is closer to zero than {@code y}(or equal),
+	 * in other words returns {@code Math.abs(x) <= Math.abs(y)}
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static boolean closerToZero(double x,double y) {
+		return Math.abs(x) <= Math.abs(y);
+	}
+	
+	/**
+	 * Returns the so-called 'Tschebyscheff distance':
+	 * {@code max(abs(x1-x2), abs(y1-y2))}
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
+	public static double tschebyscheffDistance(double x1,double y1,double x2,double y2) {
+		return Math.max(Math.abs(x1-x2), Math.abs(y1-y2));
+	}
+	
+	/**
+	 * Returns the biggest number n that meets the requirements that:
+	 * {@code n = k*p} where {@code k} is an integer,  
+	 * {@code n <= x}.
+	 * @param x a number
+	 * @param p a positive number
+	 * @return
+	 */
+	public static double maxBelow(double x,double p) {
+		p = Math.abs(p);
+		if(x <0) {
+			double t = x%p;
+			if(t == 0) {
+				return x;
+			}
+			return x - t - p;
+		}else {
+			return x - x%p;
+		}
+	}
+	
+	/**
+	 * Returns the biggest integer k that meets the requirements that:
+	 * {@code n = k*p} and
+	 * {@code n <= x}.
+	 * @param x a positive number
+	 * @param p a positive number
+	 * @return
+	 */
+	public static long maxBelowK(double x,double p) {
+		if(p > x) {
+			return 0;
+		}
+		long n = 1;
+		double t = p;
+		while(t < x) {
+			 t *= 2;
+			 n = n*2;
+		}
+		long d = n/2;
+		for(;n>d;n--) {
+			if(t <= x) {
+				return n;
+			}
+			t -= p;
+		}
+		return d;
+	}
 	
 //	public static void main(String[] args) {
+//		print(maxBelowK(12,2.5));
 ////		MathCalculator<Long> mc = MathCalculatorAdapter.getCalculatorLong();
 ////		List<Long> list = solveEquation(1l, -4l, 3l, mc);
 ////		print(list);
-//		print((long)Math.sqrt(Long.MAX_VALUE));
-//		print(3037000500l * 3037000500L);
 //	}
 	
 }

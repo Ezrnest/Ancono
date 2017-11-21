@@ -3,8 +3,16 @@
  */
 package cn.timelives.java.utilities;
 
+import static cn.timelives.java.utilities.Printer.print;
+
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.function.LongToIntFunction;
+import java.util.function.ToIntFunction;
+
+import cn.timelives.java.math.MathUtils;
 
 /**
  * Some useful abstract models or patterns that is used in programming.
@@ -91,7 +99,95 @@ public final class ModelPatterns {
         }
         return -(low + 1);  // key not found.
 	}
+	/**
+	 * Solve a 'problem' with binary search method. For example, to find a function's zero point, 
+	 * assuming the function is {@code f(x)} and the range to search is {@code [0,1]}, then
+	 * {@code binarySolve(0d,1d,(a,b)->(a+b)/2,x->signum(f(x)),100)} will try to find the zero point and iterate for 100 times.
+	 * @param low
+	 * @param high
+	 * @param middle
+	 * @param comparator
+	 * @param maxTime
+	 * @return
+	 */
+	public static <T> T binarySolve(T low,T high,BiFunction<T, T, T> middle,ToIntFunction<T> comparator,int maxTime) {
+		T mid = middle.apply(low, high);
+		int cl = comparator.applyAsInt(low);
+		int ch = comparator.applyAsInt(high);
+		if(cl == 0) {
+			return low;
+		}
+		if(ch == 0) {
+			return high;
+		}
+		if(MathUtils.sameSignum(cl, ch)) {
+			throw new IllegalArgumentException("Sign numbers are the same!");
+		}
+		
+		boolean downerNegative = cl < 0;
+		for(int i=0;i<maxTime;i++) {
+			int t = comparator.applyAsInt(mid);
+			if(t == 0) {
+				return mid;
+			}
+			if(downerNegative^(t<0)) {
+				high = mid;
+			}else {
+				low = mid;
+			}
+			mid = middle.apply(low, high);
+		}
+		return mid;
+		
+	}
+	/**
+	 * Solve a 'problem' with binary search method. For example, to find a function's zero point, 
+	 * assuming the function is {@code f(x)} and the range to search is {@code [0,1]}, then
+	 * {@code binarySolve(0d,1d,(a,b)->(a+b)/2,x->signum(f(x)),100)} will try to find the zero point and iterate for 100 times.
+	 * @param low
+	 * @param high
+	 * @param middle
+	 * @param comparator
+	 * @param next
+	 * @return
+	 */
+	public static <T> T binarySolve(T low,T high,BiFunction<T, T, T> middle,ToIntFunction<T> comparator,
+			BiPredicate<T, T> next) {
+		T mid = middle.apply(low, high);
+		int cl = comparator.applyAsInt(low);
+		int ch = comparator.applyAsInt(high);
+		if(cl == 0) {
+			return low;
+		}
+		if(ch == 0) {
+			return high;
+		}
+		if(MathUtils.sameSignum(cl, ch)) {
+			throw new IllegalArgumentException("Sign numbers are the same!");
+		}
+		
+		boolean downerNegative = cl < 0;
+		while(next.test(low, high)) {
+			int t = comparator.applyAsInt(mid);
+			if(t == 0) {
+				return mid;
+			}
+			if(downerNegative^(t<0)) {
+				high = mid;
+			}else {
+				low = mid;
+			}
+			mid = middle.apply(low, high);
+		}
+		return mid;
+		
+	}
 	
-	
-	
+//	public static void main(String[] args) {
+//		DoubleUnaryOperator f = d -> d*d-d;
+//		print(binarySolve(0.5d, 3d, (a,b)->(a+b)/2,x-> {
+//			double t = f.applyAsDouble(x);
+//			return t < 0 ? -1 : t == 0 ? 0 : 1;
+//		}, 10));
+//	}
 }

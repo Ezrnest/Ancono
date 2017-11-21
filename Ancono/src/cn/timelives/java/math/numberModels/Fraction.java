@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.linearAlgebra.Matrix;
+import cn.timelives.java.utilities.ArraySup;
 
 /**
  * A simple class that provides fractional calculation which means unless either numerator or denominator 
@@ -431,7 +432,54 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		return new Fraction(numerator*numerator,
 				denominator*denominator,1);
 	}
+	/**
+	 * Return the String expression of this fraction.
+	 */
+	@Override
+	public String toString(){
+		if(signum==0){
+			return "0";
+		}
+		if(denominator==1){
+			return signum < 0 ? "-"+Long.toString(numerator) 
+					:  Long.toString(numerator);
+		}
+		StringBuilder sb = new StringBuilder();
+		if(signum<0)
+			sb.append('-');
+		sb.append(numerator).append('/').append(denominator);
+		return sb.toString();
+	}
+	@Override
+	public int hashCode() {
+		long hash = signum * denominator;
+		hash = hash * 31 + numerator;
+		return (int)((hash>>>32) ^ hash);
+	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Fraction){
+			Fraction f = (Fraction) obj;
+			return (f.signum == this.signum &&
+					f.numerator == this.numerator && 
+					f.denominator == this.denominator);
+		}
+		return false;
+	}
+	/**
+	 * Compare two fractions , return -1 if this fraction is smaller than f,0 if equal,or 1
+	 * if this fraction is bigger than f.The method is generally equal to return {@code sgn(this-frac)}
+	 * @return -1,0 or 1 if this is smaller than,equal to or bigger than f. 
+	 */
+	@Override
+	public int compareTo(Fraction frac) {
+		long num = this.signum * this.numerator * frac.denominator -
+				frac.signum * frac.numerator * this.denominator;
+		return num > 0 ? 1 
+				: num ==0 ? 0 : -1;
+		
+	}
 	
 	public static Fraction valueOf(long number){
 		if(number==0){
@@ -505,6 +553,68 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		return new Fraction(nAd[0],nAd[1],signum);
 	}
 	
+	/**
+	 * Returns the best approximate fraction of the double number. The numerator and 
+	 * the denominator of the fraction are both smaller than {@code bound}.
+	 * @param d a number
+	 * @param bound the bound of the fraction, must be at least one.
+	 * @return
+	 */
+	public static Fraction bestApproximate(double x,long bound) {
+		if(bound < 1) {
+			throw new IllegalArgumentException("Bad bound: "+bound);
+		}
+		int signum;
+		if(x>0){
+			signum = 1;
+		}else if(x==0){
+			return ZERO;
+		}else{
+			signum = -1;
+			x = -x;
+		}
+		long[] es = new long[4];
+		long[] f = null;
+		long m = 1;
+		double y = 1;
+		int i = 0;
+		while(true) {
+			double reminder =  x % y;
+			long l = Math.round((x - reminder)/y);
+			x = y;
+			y = reminder;
+			
+			long t = m*l;
+			if(t > bound ||  t < 0 ||  Double.isNaN(y)) {
+				break;
+			}
+			m = t;
+			es = ArraySup.ensureCapacityAndAdd(es, l, i);
+			long[] ft = computeContinousFraction(es, i);
+			if(Math.max(ft[0], ft[1]) > bound || ft[0]< 0 || ft[1] <0) {
+				break;
+			}
+			i++;
+			f = ft;
+		}
+		if(f == null) {
+			return Fraction.ZERO;
+		}
+		return new Fraction(f[0],f[1],signum);
+	}
+	
+	private static long[] computeContinousFraction(long[] array,int index) {
+		long nume = array[index];
+		long deno = 1;
+		
+		for(index--;index>-1;index--) {
+			long nn = array[index] * nume +deno;
+			long nd = nume;
+			nume = nn;
+			deno = nd;
+		}
+		return new long[] {nume,deno};
+	}
 	
 	/**
 	 * Identify the given expression
@@ -536,54 +646,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	
 	
 	
-	/**
-	 * Return the String expression of this fraction.
-	 */
-	@Override
-	public String toString(){
-		if(signum==0){
-			return "0";
-		}
-		if(denominator==1){
-			return signum < 0 ? "-"+Long.toString(numerator) 
-					:  Long.toString(numerator);
-		}
-		StringBuilder sb = new StringBuilder();
-		if(signum<0)
-			sb.append('-');
-		sb.append(numerator).append('/').append(denominator);
-		return sb.toString();
-	}
-	@Override
-	public int hashCode() {
-		long hash = signum * denominator;
-		hash = hash * 31 + numerator;
-		return (int)((hash>>>32) ^ hash);
-	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof Fraction){
-			Fraction f = (Fraction) obj;
-			return (f.signum == this.signum &&
-					f.numerator == this.numerator && 
-					f.denominator == this.denominator);
-		}
-		return false;
-	}
-	/**
-	 * Compare two fractions , return -1 if this fraction is smaller than f,0 if equal,or 1
-	 * if this fraction is bigger than f.The method is generally equal to return {@code sgn(this-frac)}
-	 * @return -1,0 or 1 if this is smaller than,equal to or bigger than f. 
-	 */
-	@Override
-	public int compareTo(Fraction frac) {
-		long num = this.signum * this.numerator * frac.denominator -
-				frac.signum * frac.numerator * this.denominator;
-		return num > 0 ? 1 
-				: num ==0 ? 0 : -1;
-		
-	}
 	/**
 	 * Return 1 number , 0 , -1 number if the given fraction is bigger than , equal to or smaller than {@code n}.
 	 * @param f a number as Fraction 
@@ -608,13 +671,12 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	
 	
 	
-	public static void main(String[] args) {
-		
-		Fraction f = valueOfDouble(3.544d,4);
-		System.out.println(new BigDecimal(1.2d));
-		print(f);
-		print((double)f.numerator/f.denominator);
-	}
+//	public static void main(String[] args) {
+////		print(computeContinousFraction(new long[] {2,3,3,11,2}, 4));
+////		Fraction f = bestApproximate(M,10);
+//		print(f);
+////		print((double)f.numerator/f.denominator);
+//	}
 	
 	/**
 	 * Get the calculator of the class Fraction,the calculator ignores overflow.

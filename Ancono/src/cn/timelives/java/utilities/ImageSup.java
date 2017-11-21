@@ -1,6 +1,8 @@
 package cn.timelives.java.utilities;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+
 
 /**
  * A simple but convenient loader for loading {@link BufferedImage} from a file.
@@ -9,9 +11,9 @@ import java.awt.image.BufferedImage;
  */
 public class ImageSup{
 	/**
-	 * The bound of rgb expression for color.
+	 * The upper bound of rgb expression for color.
 	 */
-	public static final int MAX_NUM_FOR_RGB = 256;
+	public static final int MAX_NUM_FOR_RGB = 255;
 	
 	
 	
@@ -66,20 +68,54 @@ public class ImageSup{
 		return rgb;
 	}
 	/**
-	 * A opposite method of {@link #sparateRGB(int[], int)}
+	 * An inverse method of {@link #sparateRGB(int[], int)}
 	 */
-	public static int[] getRGBs(int[][][] rgb,int height,int width){
+	public static int[] getRGBs(int[][][] rgb,int width,int height){
 		int[] arr = new int[width*height];
 		int pos = 0;
 		for(int y=0;y<height;y++){
 			for(int x=0;x<width;x++){
 				int t = ALPHA;
-				t |= rgb[0][x][y]; 
+				t |= (rgb[0][x][y]<<16); 
 				t |= (rgb[1][x][y]<<8);
-				t |= (rgb[2][x][y]<<16);
+				t |= rgb[2][x][y];
 				arr[pos++] = t;
 			}
 		}
 		return arr;
+	}
+	
+	
+	public static int[][][] allocateRgbBuffer(int width,int height,Color background){
+		int[][][] rgb = new int[3][width][height];
+		if(!background.equals(Color.BLACK)) {
+			int r = background.getRed(),
+					g = background.getGreen(),
+					b = background.getBlue();
+			for(int y=0;y<height;y++){
+				for(int x=0;x<width;x++){
+					rgb[0][x][y] = r;
+					rgb[1][x][y] = g;
+					rgb[2][x][y] = b;
+				}
+			}
+		}
+		return rgb;
+	}
+	
+	public static BufferedImage createImage(int[][][] rgb,int width,int height) {
+		return createImage(getRGBs(rgb, width, height),width,height);
+	}
+	
+	public static BufferedImage createImage(int[] rgbArray,int width,int height) {
+		BufferedImage im = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+		im.setRGB(0, 0, width, height, rgbArray, 0, width);
+		return im;
+	}
+	
+	public static void setColorForBuffer(int[][][] rgb,int x,int y,Color c) {
+		rgb[0][x][y] = c.getRed();
+		rgb[1][x][y] = c.getGreen();
+		rgb[2][x][y] = c.getBlue();
 	}
 }

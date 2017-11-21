@@ -33,5 +33,6 @@ public final class Utils {
 	public static <T,S> BiPredicate<T, S> mappedIsEqual(MathCalculator<T> mc,Function<S,T> mapper){
 		return (x,y)->mc.isEqual(x, mapper.apply(y));
 	}
+	
 
 }

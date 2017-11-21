@@ -641,6 +641,11 @@ public class ArraySup {
 	}
 	
 	
+	/**
+	 * Test that this array contains no {@code null} element.
+	 * @param arr
+	 * @return
+	 */
 	public static <T> T[] notEmpty(T[] arr){
 		for(int i=0;i<arr.length;i++){
 			if(arr[i] == null){
@@ -713,6 +718,21 @@ public class ArraySup {
 		}
 		return arr;
 			
+	}
+	
+	/**
+	 * Set the given index to {@code x}, lengthen the array by 1.5x when needed.
+	 * @param arr
+	 * @param x
+	 * @param index
+	 * @return
+	 */
+	public static long[] ensureCapacityAndAdd(long[] arr,long x,int index) {
+		if(arr.length<= index) {
+			arr = Arrays.copyOf(arr, Math.max(arr.length*3/2, index+1));
+		}
+		arr[index] = x;
+		return arr;
 	}
 	
 //	public static void main(String[] args) {

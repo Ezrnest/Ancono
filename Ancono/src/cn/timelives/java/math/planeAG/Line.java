@@ -10,9 +10,9 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.DVector;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
@@ -1078,14 +1078,14 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	
 	
 	
-	public static void main(String[] args) {
-		MathCalculator<Fraction> mc = Fraction.getCalculator();
-		MathCalculator<Long> mct = MathCalculatorAdapter.getCalculatorLong();
-//		Point<Fraction> p = new Point<>(mct,0l,0l).mapTo(Fraction::valueOf, mc);
-		Line<Fraction> l1 = Line.generalFormula(1l, -1l, -2l, mct).mapTo(Fraction::valueOf, mc);
-		Line<Fraction> l2 = Line.generalFormula(3l, -1l, 3l, mct).mapTo(Fraction::valueOf, mc);
-		Printer.print(l1.symmetryLine(l2));
-	}
+//	public static void main(String[] args) {
+//		MathCalculator<Fraction> mc = Fraction.getCalculator();
+//		MathCalculator<Long> mct = Calculators.getCalculatorLong();
+////		Point<Fraction> p = new Point<>(mct,0l,0l).mapTo(Fraction::valueOf, mc);
+//		Line<Fraction> l1 = Line.generalFormula(1l, -1l, -2l, mct).mapTo(Fraction::valueOf, mc);
+//		Line<Fraction> l2 = Line.generalFormula(3l, -1l, 3l, mct).mapTo(Fraction::valueOf, mc);
+//		Printer.print(l1.symmetryLine(l2));
+//	}
 
 	
 

@@ -7,24 +7,24 @@ public class FormulaFormatException extends IllegalArgumentException
 	String details="";
 	
 	/**
-	 * ÔÚ¶ÁÈ¡×Ö·û´®Ê±·¢ÉúµÄ´íÎó
+	 * ï¿½Ú¶ï¿½È¡ï¿½Ö·ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
 	 */
 	private static final long serialVersionUID = 1L;
 	public FormulaFormatException(String formula){
 		this(formula,-1);
 	}
-	public FormulaFormatException(String formula,int pos){//ÔÚÄ³¸öÎ»ÖÃ´¦³öÏÖÁË¶ÁÈ¡´íÎó,posĞ¡ÓÚ0ÔòÒâÎ¶²»ÏÔÊ¾ÔÚÄÄÀï³öÏÖÎÊÌâ
+	public FormulaFormatException(String formula,int pos){//ï¿½ï¿½Ä³ï¿½ï¿½Î»ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½,posĞ¡ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½Î¶ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		super();
 		this.formula=formula;
 		this.pos=pos;
 	}
-	public FormulaFormatException(String details,String formula,int pos){//ÔÚÄ³¸öÎ»ÖÃ´¦³öÏÖÁË¶ÁÈ¡´íÎó,posĞ¡ÓÚ0ÔòÒâÎ¶²»ÏÔÊ¾ÔÚÄÄÀï³öÏÖÎÊÌâ
+	public FormulaFormatException(String details,String formula,int pos){//ï¿½ï¿½Ä³ï¿½ï¿½Î»ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½,posĞ¡ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½Î¶ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		super();
 		this.details=""+details;
 		this.formula=formula;
 		this.pos=pos;
 	}
-	public FormulaFormatException(String details,String formula){//ÔÚ
+	public FormulaFormatException(String details,String formula){//ï¿½ï¿½
 		this(formula,-1);
 		this.details=details;
 	}
@@ -44,7 +44,7 @@ public class FormulaFormatException extends IllegalArgumentException
 {
 
 	/**
-	 * ÔÚ±í´ïÊ½ÖĞ³öÏÖÁË£ºÈç¡®a1¡¯µÄÇé¿ö,¿ÉÒÔÖ¸³ö
+	 * ï¿½Ú±ï¿½ï¿½Ê½ï¿½Ğ³ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ç¡®a1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
 	 
 	private static final long serialVersionUID = 1L;
 	FormulaNumberFollowCharException(String formula){
@@ -54,14 +54,14 @@ public class FormulaFormatException extends IllegalArgumentException
 		super(formula,pos);
 	}
 	public String getMessage(){
-		return (this.pos<0)?("±í´ïÊ½×ÖÄ¸ºóÖ±½ÓÓĞÊı×Ö:"+formula):("±í´ïÊ½×ÖÄ¸ºóÖ±½ÓÓĞÊı×Ö:\""+formula+"\" µÚ"+(pos+1)+"×Ö·û´¦");
+		return (this.pos<0)?("ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Ä¸ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:"+formula):("ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Ä¸ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:\""+formula+"\" ï¿½ï¿½"+(pos+1)+"ï¿½Ö·ï¿½ï¿½ï¿½");
 	}
 }
 class FormulaInvalidCharException extends FormulaFormatException
 {
 
 	/**
-	 * ±í´ïÊ½ÖĞ³öÏÖÁËÆæ¹ÖµÄ¶«Î÷Èç£º@#$%}{:" µÈµÈ
+	 * ï¿½ï¿½ï¿½Ê½ï¿½Ğ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÄ¶ï¿½ï¿½ï¿½ï¿½ç£º@#$%}{:" ï¿½Èµï¿½
 	 
 	private static final long serialVersionUID = 1L;
 	FormulaInvalidCharException(String formula){
@@ -71,7 +71,7 @@ class FormulaInvalidCharException extends FormulaFormatException
 		super(formula,pos);
 	}
 	public String getMessage(){
-		return (this.pos<0)?("±í´ïÊ½º¬ÓĞ²»ºÏ·¨×Ö·û:"+formula):("±í´ïÊ½º¬ÓĞ²»ºÏ·¨×Ö·û:\""+formula+"\" µÚ"+(pos+1)+"×Ö·û´¦");
+		return (this.pos<0)?("ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½Ï·ï¿½ï¿½Ö·ï¿½:"+formula):("ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½Ï·ï¿½ï¿½Ö·ï¿½:\""+formula+"\" ï¿½ï¿½"+(pos+1)+"ï¿½Ö·ï¿½ï¿½ï¿½");
 	}
 }
 class FormulaNumberFormatException extends FormulaFormatException
@@ -84,6 +84,6 @@ class FormulaNumberFormatException extends FormulaFormatException
 		super(formula,pos);
 	}
 	public String getMessage(){
-		return (this.pos<0)?("±í´ïÊ½Êı×Ö¸ñÊ½³öÏÖÎÊÌâ:"+formula):("±í´ïÊ½º¬ÓĞ²»ºÏ·¨×Ö·û:\""+formula+"\" µÚ"+(pos+1)+"×Ö·û´¦");
+		return (this.pos<0)?("ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ö¸ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:"+formula):("ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½Ï·ï¿½ï¿½Ö·ï¿½:\""+formula+"\" ï¿½ï¿½"+(pos+1)+"ï¿½Ö·ï¿½ï¿½ï¿½");
 	}
 }*/

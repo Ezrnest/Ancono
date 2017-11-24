@@ -6,6 +6,9 @@ package cn.timelives.java.utilities;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
@@ -71,6 +74,16 @@ public final class CollectionSup {
 			}
 		}
 		return true;
+	}
+	/**
+	 * Applies the function to all the entries in the map.
+	 * @param map a map
+	 * @param f a function to compute the value
+	 */
+	public static <T,S> void modifyMap(Map<T,S> map,BiFunction<T,S,S> f) {
+		for(Entry<T,S> en : map.entrySet()) {
+			en.setValue(f.apply(en.getKey(), en.getValue()));
+		}
 	}
 
 }

@@ -7,7 +7,7 @@ package cn.timelives.java.math.prob;
  * Represents distribution functions, the function {@code F(x)} is 
  * required to be 
  * <ul><li>(i) Monotone increasing 
- * <li>(ii) {@code lim F(x)=0,x¡ú-¡Þ},{@code lim F(x)=1,x¡ú+¡Þ}
+ * <li>(ii) {@code lim F(x)=0,xï¿½ï¿½-ï¿½ï¿½},{@code lim F(x)=1,xï¿½ï¿½+ï¿½ï¿½}
  * <li>(iii) F(x-0) = F(x)
  * </ul>
  * @author liyicheng

@@ -577,17 +577,17 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	
 	
 	
-	public static void main(String[] args) {
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
-		STriangle<Double> t1 = 
-				STriangle.vertex(SPoint.valueOf(0d, 0d, 0d, mc), 
-						SPoint.valueOf(0d, 1d, 0d, mc), 
-						SPoint.valueOf(1d, 0d, 0d, mc)),
-				t2 = STriangle.vertex(SPoint.valueOf(0d, 0d, 0d, mc),SPoint.valueOf(1d, 0d, 0d, mc), 
-						SPoint.valueOf(0d, 1d, 0d, mc)
-						);
-		Printer.print(t1.contains(SPoint.valueOf(0.5d, 0.6d, 0d, mc)));
-		Printer.print(t1.equals(t2)+"..."+t1.valueEqualNoOrder(t2));
-		
-	}
+//	public static void main(String[] args) {
+//		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
+//		STriangle<Double> t1 = 
+//				STriangle.vertex(SPoint.valueOf(0d, 0d, 0d, mc), 
+//						SPoint.valueOf(0d, 1d, 0d, mc), 
+//						SPoint.valueOf(1d, 0d, 0d, mc)),
+//				t2 = STriangle.vertex(SPoint.valueOf(0d, 0d, 0d, mc),SPoint.valueOf(1d, 0d, 0d, mc), 
+//						SPoint.valueOf(0d, 1d, 0d, mc)
+//						);
+//		Printer.print(t1.contains(SPoint.valueOf(0.5d, 0.6d, 0d, mc)));
+//		Printer.print(t1.equals(t2)+"..."+t1.valueEqualNoOrder(t2));
+//		
+//	}
 }

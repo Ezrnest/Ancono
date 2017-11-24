@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -1400,7 +1401,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 				mat2[i][j] = Long.valueOf(mat[i][j]);
 			}
 		}
-		return new DMatrix<>(mat2, row, column,MathCalculatorAdapter.getCalculatorLong());
+		return new DMatrix<>(mat2, row, column,Calculators.getCalculatorLong());
 	}
 	/**
 	 * Create a matrix according to the given array.The row count of the matrix
@@ -1429,7 +1430,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 				mat2[i][j] = Double.valueOf(mat[i][j]);
 			}
 		}
-		return new DMatrix<>(mat2, row, column,MathCalculatorAdapter.getCalculatorDouble());
+		return new DMatrix<>(mat2, row, column,Calculators.getCalculatorDouble());
 	}
 	
 	
@@ -1459,7 +1460,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 				mat2[i][j] = Integer.valueOf(mat[i][j]);
 			}
 		}
-		return new DMatrix<Integer>(mat2, row, column,MathCalculatorAdapter.getCalculatorInteger());
+		return new DMatrix<Integer>(mat2, row, column,Calculators.getCalculatorInteger());
 	}
 	
 	

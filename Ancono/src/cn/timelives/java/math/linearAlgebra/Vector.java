@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -315,7 +316,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		for(int i=0;i<vec.length;i++){
 			vec[i] = Long.valueOf(ns[i]);
 		}
-		return new DVector<Long>(vec,isRow,MathCalculatorAdapter.getCalculatorLong());
+		return new DVector<Long>(vec,isRow,Calculators.getCalculatorLong());
 	}
 	/**
 	 * Create a new column vector according to the array of fraction given.Null values will be considered 

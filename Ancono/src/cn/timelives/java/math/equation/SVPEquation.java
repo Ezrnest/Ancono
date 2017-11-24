@@ -102,27 +102,10 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		StringBuilder sb = new StringBuilder();
-		int mp = getMaxPower();
-		for(int i=mp;i>1;i--){
-			T a = getCoefficient(i);
-			if(!mc.isZero(a)){
-				sb.append("(").append(nf.format(a, mc)).append(")x^").append(i).append("+");
-			}
-		}
-		T t = getCoefficient(1);
-		if(!mc.isZero(t)){
-			sb.append("(")
-			.append(nf.format(t, mc)).append(")x").append("+");
-		}
-		t = getCoefficient(0);
-		if(!mc.isZero(t)){
-			sb.append(nf.format(t, mc));
-		}else{
-			sb.deleteCharAt(sb.length()-1);
-		}
+		StringBuilder sb = new StringBuilder(Multinomial.stringOf(this, mc, nf));
 		sb.append(" = 0");
 		return sb.toString();
+		
 	}
 	
 	/*

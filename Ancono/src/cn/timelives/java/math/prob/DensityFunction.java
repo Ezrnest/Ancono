@@ -5,7 +5,7 @@ package cn.timelives.java.math.prob;
 
 /**
  * Represents density functions {@code p(x)},
- * it is required that {@code p(x)>= 0 } and <text>¡Ò<sub>-¡Þ</sub><sup>+¡Þ</sup>p(x)dx = 1</text> 
+ * it is required that {@code p(x)>= 0 } and <text>ï¿½ï¿½<sub>-ï¿½ï¿½</sub><sup>+ï¿½ï¿½</sup>p(x)dx = 1</text> 
  * <p>
  * This function should be the differential of a corresponding distribution function.
  * @author liyicheng

@@ -248,12 +248,33 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			for(Formula f2:p2.getFormulas()){
 				Formula f = ca.multiply(f1, f2);
 				if(f!=Formula.ZERO){
-					result.removeZero();
 					result.addFormula(f);
 				}
 			}
 		}
+		result.removeZero();
 //		Printer.print(result);
+		return result;
+	}
+	
+	public Polynomial multiply(Polynomial p, Formula f) {
+		Polynomial result = new Polynomial(ca);
+		for (Formula f1 : p.getFormulas()) {
+			Formula fr = ca.multiply(f1, f);
+			if (fr != Formula.ZERO) {
+				result.addFormula(fr);
+			}
+		}
+		result.removeZero();
+		return result;
+	}
+	
+	public Polynomial divide(Polynomial p1, Formula devisor) {
+		Polynomial result=new Polynomial(ca);
+		for(Formula f : p1.getFormulas()){
+			result.addFormula(ca.divide(f,devisor));
+		}
+		result.removeZero();
 		return result;
 	}
 	
@@ -268,13 +289,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	public Polynomial divide(Polynomial p1,Polynomial p2){
 		int num = p2.getNumOfFormula();
 		if(num==1){
-			Polynomial result=new Polynomial(ca);
-			Formula devisor = p2.getFormulas().iterator().next(); 
-			for(Formula f : p1.getFormulas()){
-				result.addFormula(ca.divide(f,devisor));
-			}
-			result.removeZero();
-			return result;
+			return divide(p1,p2.getFormulas().iterator().next());
 		}
 		else{   //    1/(Sqr2-1)
 			/* e.g. 1 / (Sqr2 -1 )
@@ -956,15 +971,31 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	@Override
 	public Polynomial multiplyLong(Polynomial p, long l) {
+		if(l==0) {
+			return Polynomial.ZERO;
+		}
+		if(l==1) {
+			return p;
+		}
+		if(l==-1) {
+			return negate(p);
+		}
 		return multiply(p, 
-				new Polynomial(p.getFormulas().getAdder()
-						,Formula.valueOf(BigInteger.valueOf(l))));
+				Formula.valueOf(BigInteger.valueOf(l)));
 	}
 	@Override
 	public Polynomial divideLong(Polynomial p, long l) {
+		if(l == 0) {
+			throw new ArithmeticException("Divide by zero");
+		}
+		if(l==1) {
+			return p;
+		}
+		if(l==-1) {
+			return negate(p);
+		}
 		return divide(p, 
-				new Polynomial(p.getFormulas().getAdder()
-						,Formula.valueOf(BigInteger.valueOf(l))));
+				Formula.valueOf(BigInteger.valueOf(l)));
 	}
 	
 	@Override
@@ -1073,30 +1104,25 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		
 	}
 	
-	public static void main(String[] args) {
-		print("Debugging:");
-		Polynomial p1 = Polynomial.valueOf("3x^2-3y^2"),
-				p2 = Polynomial.valueOf("x+y");
-		print(p1);
-		print(p2);
-		print(Polynomial.getCalculator().divide(p1, p2));
-		/*
-		Polynomial[] ps = new Polynomial[2];
-		ps[0] = new Polynomial(DEFAULT_FORMULA_CALCULATOR, "1");
-		ps[1] = new Polynomial(DEFAULT_FORMULA_CALCULATOR, "2");
-		PolyCalculator pc = new PolyCalculator();
-		print(pc.compare(ps[0], ps[1]));
-		Formula f1 = Formula.valueOf("1");
-		Formula f2 = Formula.valueOf("2");
-		print(DEFAULT_FORMULA_CALCULATOR.compare(f1, f2));
-		*/
-	}
+//	public static void main(String[] args) {
+//		print("Debugging:");
+//		Polynomial p1 = Polynomial.valueOf("3x^2-3y^2"),
+//				p2 = Polynomial.valueOf("x+y");
+//		print(p1);
+//		print(p2);
+//		print(Polynomial.getCalculator().divide(p1, p2));
+//		/*
+//		Polynomial[] ps = new Polynomial[2];
+//		ps[0] = new Polynomial(DEFAULT_FORMULA_CALCULATOR, "1");
+//		ps[1] = new Polynomial(DEFAULT_FORMULA_CALCULATOR, "2");
+//		PolyCalculator pc = new PolyCalculator();
+//		print(pc.compare(ps[0], ps[1]));
+//		Formula f1 = Formula.valueOf("1");
+//		Formula f2 = Formula.valueOf("2");
+//		print(DEFAULT_FORMULA_CALCULATOR.compare(f1, f2));
+//		*/
+//	}
 
-	@Override
-	public Polynomial exp(Polynomial a, Polynomial b) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.utilities.math.MathCalculator#getNumberClass()

@@ -13,7 +13,7 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  */
 public final class MathTools {
 	/**
-	 * Returns the angle of {@code ¡ÏAOB}
+	 * Returns the angle of {@code ï¿½ï¿½AOB}
 	 * @param A
 	 * @param O
 	 * @param B
@@ -25,7 +25,7 @@ public final class MathTools {
 	
 	/**
 	 * Returns the angle between two planes: <i>ABC</i> and <i>BCD</i>, or 
-	 * say {@code ¡ÏA-BC-D}.
+	 * say {@code ï¿½ï¿½A-BC-D}.
 	 * @param A a point
 	 * @param B a point
 	 * @param C a point

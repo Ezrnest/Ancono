@@ -1094,3 +1094,4 @@ public abstract class Progression<T> extends FlexibleMathObject<T> implements It
 		return cp;
 	}
 }
+

@@ -496,3 +496,4 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 		}
 	}
 }
+

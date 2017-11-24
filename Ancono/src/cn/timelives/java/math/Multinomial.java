@@ -7,6 +7,10 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
+
+import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.numberModels.NumberFormatter;
 
 
 /**
@@ -101,6 +105,40 @@ public interface Multinomial<T> extends Iterable<T>{
 		return hash;
 	}
 	
+	public static <T> String stringOf(Multinomial<T> m,MathCalculator<T> mc,NumberFormatter<T> nf) {
+		int maxPower = m.getMaxPower();
+		if(maxPower== 0) {
+			return nf.format(m.getCoefficient(0), mc);
+		}
+		StringBuilder sb = new StringBuilder();
+		for(int i=maxPower;i>0;i--){
+			if(mc.isZero(m.getCoefficient(i)))
+				continue;
+			T a = m.getCoefficient(i);
+			if(mc.isEqual(mc.getOne(), a)) {
+				if(i != 1) {
+					sb.append("x^").append(i);
+				}else {
+					sb.append("x");
+				}
+			}else {
+				sb.append(nf.format(m.getCoefficient(i), mc));
+				if(i != 1) {
+					sb.append("*x^").append(i);
+				}else {
+					sb.append("*x");
+				}
+			}
+			sb.append(" + ");
+			
+		}
+		if(mc.isZero(m.getCoefficient(0))==false){
+			sb.append(nf.format(m.getCoefficient(0), mc));
+		}else{
+			sb.delete(sb.length()-3, sb.length());
+		}
+		return sb.toString();
+	}
 }
 class It<T> implements ListIterator<T>{
 	private final Multinomial<T> f;

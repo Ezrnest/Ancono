@@ -6,8 +6,10 @@ import java.util.Set;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
 import cn.timelives.java.math.spaceAG.SPoint;
@@ -304,9 +306,11 @@ public final class Cube<T> extends RightPrism<T> {
 		pl[4] = Plane.twoLines(vec[8].getLine(), vec[11].getLine());
 		return new Cube<T>(mc, vs, vec, pl, a);
 	}
-	public static void main(String[] args) {
-		Cube<Double> cb = unitCube(MathCalculatorAdapter.getCalculatorDouble());
-		cb.getVertexes().forEach(p -> Printer.print(p));
-	}
+//	public static void main(String[] args) {
+//		Cube<Double> cb = unitCube(Calculators.getCalculatorDouble());
+//		cb.getVertexes().forEach(p -> Printer.print(p));
+//	}
+
+	
 
 }

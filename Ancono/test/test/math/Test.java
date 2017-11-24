@@ -12,7 +12,7 @@ import cn.timelives.java.math.Progression;
 import cn.timelives.java.math.ProgressionSup;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalI;
 import cn.timelives.java.utilities.Printer;
@@ -429,18 +429,18 @@ class Test {
 	*/
 	
 	static <T> void progerssionTest(T a){
-		Progression<Long> p2 = ProgressionSup.asFirstElementAndDifferece(1L,1L,MathCalculatorAdapter.getCalculatorLong());
-		p2 = Progression.combinedProgression(MathCalculatorAdapter.getCalculatorLong(), ls -> ls[0] * ls[0], p2);
+		Progression<Long> p2 = ProgressionSup.asFirstElementAndDifferece(1L,1L,Calculators.getCalculatorLong());
+		p2 = Progression.combinedProgression(Calculators.getCalculatorLong(), ls -> ls[0] * ls[0], p2);
 		p2.limit(100).stream().forEachOrdered(l -> print(l));
 		
 	}
 	
 	static void progerssionTest2(){
-		Progression<Long> p1 = ProgressionSup.asFirstElementAndDifferece(1L,1L,MathCalculatorAdapter.getCalculatorLong());
-		Progression<Double> p2 = p1.mapTo(l -> Math.log(Math.abs(l*l-l)+2), MathCalculatorAdapter.getCalculatorDouble());
+		Progression<Long> p1 = ProgressionSup.asFirstElementAndDifferece(1L,1L,Calculators.getCalculatorLong());
+		Progression<Double> p2 = p1.mapTo(l -> Math.log(Math.abs(l*l-l)+2), Calculators.getCalculatorDouble());
 		p2 = Progression.computeProgression(p2.getMathCalculator(), l -> Math.cos(l*2 - l*l), p2);
 		
-		Progression<BigDecimal> pr = p2.mapTo(d -> new BigDecimal( d*d *d - d*d), MathCalculatorAdapter.getCalculatorBigDecimal(MathContext.DECIMAL128));
+		Progression<BigDecimal> pr = p2.mapTo(d -> new BigDecimal( d*d *d - d*d), Calculators.getCalculatorBigDecimal(MathContext.DECIMAL128));
 		
 		Progression<BigDecimal> prc = Progression.cachedProgression(pr, 0, 100, true);
 		Timer t = new Timer();
@@ -461,23 +461,23 @@ class Test {
 	
 	static void progerssionTest3(){
 		Progression<Long> p1 = ProgressionSup.
-				asFirstElementAndDifferece(1L, 2L, MathCalculatorAdapter.getCalculatorLong());
+				asFirstElementAndDifferece(1L, 2L, Calculators.getCalculatorLong());
 		Progression<Long> p2 = ProgressionSup.
-				createGeometricProgression(1L, 2L, MathCalculatorAdapter.getCalculatorLong());
-		Progression<Long> pr = Progression.combinedProgression(MathCalculatorAdapter.getCalculatorLong(), ls -> ls[0] * ls[1], p1,p2);
+				createGeometricProgression(1L, 2L, Calculators.getCalculatorLong());
+		Progression<Long> pr = Progression.combinedProgression(Calculators.getCalculatorLong(), ls -> ls[0] * ls[1], p1,p2);
 		pr.limit(20).forEach(l -> print(l));
 		print("sum = "+pr.sumOf(0, 20));
 	}
 	
 	static void progressionTest4(){
-		MathCalculator<Long> mc = MathCalculatorAdapter.getCalculatorLong();
+		MathCalculator<Long> mc = Calculators.getCalculatorLong();
 		Progression<Long> p0 = Progression.createProgression(l -> l*l - 10*l - 100, -1, mc);
 		Interval<Long> iv = new IntervalI<>(mc,null,10L,false,true);
 		p0.limit(100).stream().filter(l -> iv.contains(l)).forEach(l -> print(l));
 	}
 	
 	static void progressionTest5(){
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		Progression<Double> ps = Progression.createProgression(d -> (d * (3.5d - d)),0.7d,-1, mc);
 		ps.stream().limit(30).forEach(Printer::print);
 	}
@@ -503,11 +503,11 @@ class Test {
 	
 	static void progressionDemo(){
 		
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		Progression<Double> ps = Progression.
 				createProgression(l -> Math.sqrt(l), -1, mc);
 //		Progression<Long> p2 = ps.mapTo(d -> Math.round(d), 
-//				MathCalculatorAdapter.getCalculatorLong());
+//				Calculators.getCalculatorLong());
 //		p2.limit(100).forEach(Printer::print);
 		Interval<Double> iv = new IntervalI<Double>(mc,4d,7d,true,true);
 		ps.limit(100).stream()
@@ -519,7 +519,7 @@ class Test {
 	}
 	
 	static void progression6(){
-		MathCalculator<Long> mc = MathCalculatorAdapter.getCalculatorLong();
+		MathCalculator<Long> mc = Calculators.getCalculatorLong();
 		Progression<Long> p1 = ProgressionSup.createArithmeticProgression(5L, 0L, mc);
 		Progression<Long> p2 = Progression.createPeriodicProgression(
 				Arrays.copyOf(p1.limit(25).toArray(), 25, Long[].class), mc, Progression.UNLIMITED);

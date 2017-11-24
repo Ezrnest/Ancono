@@ -140,18 +140,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		StringBuilder sb = new StringBuilder();
-		for(int i=mp;i>0;i--){
-			if(mc.isZero(getCoefficient(i)))
-				continue;
-			sb.append(nf.format(getCoefficient(i), mc)).append("*x^").append(i).append(" + ");
-		}
-		if(mc.isZero(getCoefficient(0))==false){
-			sb.append(nf.format(getCoefficient(0), mc));
-		}else{
-			sb.delete(sb.length()-3, sb.length());
-		}
-		return sb.toString();
+		return Multinomial.stringOf(this, mc, nf);
 	}
 	
 	static class SVPFunctionImpl1<T> extends AbstractSVPFunction<T>{
@@ -510,7 +499,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 * @return
 	 */
 	public static <T> AbstractSVPFunction<T> multiply(SVPFunction<T> p1,SVPFunction<T> p2){
-		int max = Math.max(p1.getMaxPower(), p2.getMaxPower());
+		int max = p1.getMaxPower()+ p2.getMaxPower();
 		if(max < MAX_ARRAY_THREHOLD){
 			return multiplyToArr(p1, p2, max);
 		}else{
@@ -529,10 +518,10 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	private static <T> AbstractSVPFunction<T> multiplyToMap(SVPFunction<T> p1, SVPFunction<T> p2, int max) {
 		MathCalculator<T> mc = p1.getMathCalculator();
 		HashMap<Integer,T> map = new HashMap<>();
-		for(int i=0,max1 = p1.getMaxPower();i<max1;i++){
-			for(int j=0,max2= p2.getMaxPower();j<max2;j++){
+		for(int i=0,max1 = p1.getMaxPower();i<=max1;i++){
+			for(int j=0,max2= p2.getMaxPower();j<=max2;j++){
 				int t = i+j;
-				T coe = mc.multiply(p1.getCoefficient(i), p1.getCoefficient(j));
+				T coe = mc.multiply(p1.getCoefficient(i), p2.getCoefficient(j));
 				map.compute(t, (p,c)-> c== null ? coe : mc.add(c, coe));
 			}
 		}
@@ -542,10 +531,10 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		MathCalculator<T> mc = p1.getMathCalculator();
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[]) new Object[max];
-		for(int i=0,max1 = p1.getMaxPower();i<max1;i++){
-			for(int j=0,max2= p2.getMaxPower();j<max2;j++){
+		for(int i=0,max1 = p1.getMaxPower();i<=max1;i++){
+			for(int j=0,max2= p2.getMaxPower();j<=max2;j++){
 				int t = i+j;
-				T coe = mc.multiply(p1.getCoefficient(i), p1.getCoefficient(j));
+				T coe = mc.multiply(p1.getCoefficient(i), p2.getCoefficient(j));
 				if(arr[t] == null){
 					arr[t] = coe;
 				}else{

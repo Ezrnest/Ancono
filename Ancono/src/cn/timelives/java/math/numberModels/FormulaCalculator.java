@@ -470,10 +470,28 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	}
 	@Override
 	public Formula multiplyLong(Formula p, long l) {
+		if(l==0) {
+			return Formula.ZERO;
+		}
+		if(l==1) {
+			return p;
+		}
+		if(l==-1) {
+			return p.negate();
+		}
 		return multiply(p, Formula.valueOf(BigInteger.valueOf(l)));
 	}
 	@Override
 	public Formula divideLong(Formula p, long l) {
+		if(l == 0) {
+			throw new ArithmeticException("Divide by zero");
+		}
+		if(l==1) {
+			return p;
+		}
+		if(l==-1) {
+			return p.negate();
+		}
 		return divide(p, Formula.valueOf(BigInteger.valueOf(l)));
 	}
 	@Override
@@ -528,14 +546,6 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		throw new UnsupportedCalculationException("Too complex!");
 	}
 	
-	/**
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#nroot(java.lang.Object, long)
-	 */
-	@Override
-	public Formula nroot(Formula x, long n) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	private static final SimplifierF sp = new SimplifierF();
 	
@@ -573,14 +583,14 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	
 	///////////////////////////////////////////////////////
 	//test area
-	public static void main(String[] args) {
-//		FractionalPoly fp = FractionalPoly.valueOf(, Polynomial.valueOf("-d[y1]p+d[y3]p"));
-		
-		Formula f1  = Formula.valueOf("-1/16*x^2*y");
-		Formula f2  = Formula.valueOf("1/16*x^2*y");
-//		print(sp.simplify(Arrays.asList(f1, f2)));
-		print(DEFAULT_FORMULA_CALCULATOR.canAdd(f1, f2));
-	}
+//	public static void main(String[] args) {
+////		FractionalPoly fp = FractionalPoly.valueOf(, Polynomial.valueOf("-d[y1]p+d[y3]p"));
+//		
+//		Formula f1  = Formula.valueOf("-1/16*x^2*y");
+//		Formula f2  = Formula.valueOf("1/16*x^2*y");
+////		print(sp.simplify(Arrays.asList(f1, f2)));
+//		print(DEFAULT_FORMULA_CALCULATOR.canAdd(f1, f2));
+//	}
 	
 	
 	

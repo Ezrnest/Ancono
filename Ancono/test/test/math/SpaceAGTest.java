@@ -14,7 +14,7 @@ import cn.timelives.java.math.numberModels.Formula;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.FracPoly;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Polynomial;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
@@ -27,7 +27,7 @@ import cn.timelives.java.math.spaceAG.shape.Cube;
 import cn.timelives.java.math.spaceAG.shape.Tetrahedron;
 import cn.timelives.java.utilities.ArraySup;
 public class SpaceAGTest {
-	private static final MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+	private static final MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 //	private Map<String,Point<Double>> cube = new HashMap<>();
 //	
 //	{
@@ -45,7 +45,7 @@ public class SpaceAGTest {
 	
 	
 	public void test(){
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		SVector<Double> sv1 = SVector.valueOf(1d, 1d, 0d, mc),
 				sv2 = SVector.valueOf(0d, 1d, 1d, mc);
 		print(sv1);
@@ -134,7 +134,7 @@ public class SpaceAGTest {
 	}
 	
 	public void triangleTest(){
-		SPointGenerator<Double> g = new SPointGenerator<>(MathCalculatorAdapter.getCalculatorDouble());
+		SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalculatorDouble());
 		SPoint<Double> p = g.of(1d, 1d, 1d);
 		@SuppressWarnings("unchecked")
 		SPoint<Double>[] ps = new SPoint[]{
@@ -191,8 +191,8 @@ public class SpaceAGTest {
 	
 	
 	public void proveCenterI2(){
-		SPointGenerator<Double> g = new SPointGenerator<>(MathCalculatorAdapter.getCalculatorDouble());
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+		SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalculatorDouble());
+		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		Random rd = new Random();
 		@SuppressWarnings("unchecked")
 		SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
@@ -221,8 +221,8 @@ public class SpaceAGTest {
 	
 	
 	public void studyHCenter(){
-		SPointGenerator<Double> g = new SPointGenerator<>(MathCalculatorAdapter.getCalculatorDouble());
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+		SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalculatorDouble());
+		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		Random rd = new Random();
 		@SuppressWarnings("unchecked")
 		SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
@@ -240,7 +240,7 @@ public class SpaceAGTest {
 	
 	
 	public void studyVertexAngle(){
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev();
+		MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
 		SVectorGenerator<Double> g = new SVectorGenerator<>(mc);
 		Random rd = new Random();
 		@SuppressWarnings("unchecked")
@@ -265,7 +265,7 @@ public class SpaceAGTest {
 	
 //	@Test
 	public void testMatrix(){
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev();
+		MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
 		final int row = 10;
 		for(int n=0;n<1000;n++){
 			double[][] mat = new double[row][];

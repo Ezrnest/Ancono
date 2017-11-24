@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.exceptions.UnsatisfiedCalculationResultException;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.spaceAG.Line;
@@ -451,24 +452,24 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 //	public 
 	
 	
-	public static void main(String[] args) {
-		SPointGenerator<Double> g= new SPointGenerator<>(MathCalculatorAdapter.getCalculatorDouble());
-		Tetrahedron<Double> te = fourPoints(g.of(1d,1d,1d),g.of(0d, 0d, 0d),g.of(0d, 1d, 0d),g.of(1d,0d,0d));
-		print(te);
-//		print(t1.f1);
-//		print(t1.f2);
-//		print(t1.f3);
-//		print("bot:"+t1.bot);
-//		print(t1.bot.getPlane().getNormalVector());
-//		print(t1.f1.getPlane().getNormalVector());
-//		print(t1.f2.getPlane().getNormalVector());
-//		print(t1.f3.getPlane().getNormalVector());
-		print(te.ps);
-		Sphere<Double> sp = te.sphereO();
-		print(sp);
-//		t1.getVertexes().forEach(v -> print(sp.contains(v)));
-		print(te.contains(te.centerG()));
-		Sphere<Double> spr = te.sphereI();
-		te.getSurfaces().forEach(c -> print(c.distance(spr.getCenter())));
-	}
+//	public static void main(String[] args) {
+//		SPointGenerator<Double> g= new SPointGenerator<>(Calculators.getCalculatorDouble());
+//		Tetrahedron<Double> te = fourPoints(g.of(1d,1d,1d),g.of(0d, 0d, 0d),g.of(0d, 1d, 0d),g.of(1d,0d,0d));
+//		print(te);
+////		print(t1.f1);
+////		print(t1.f2);
+////		print(t1.f3);
+////		print("bot:"+t1.bot);
+////		print(t1.bot.getPlane().getNormalVector());
+////		print(t1.f1.getPlane().getNormalVector());
+////		print(t1.f2.getPlane().getNormalVector());
+////		print(t1.f3.getPlane().getNormalVector());
+//		print(te.ps);
+//		Sphere<Double> sp = te.sphereO();
+//		print(sp);
+////		t1.getVertexes().forEach(v -> print(sp.contains(v)));
+//		print(te.contains(te.centerG()));
+//		Sphere<Double> spr = te.sphereI();
+//		te.getSurfaces().forEach(c -> print(c.distance(spr.getCenter())));
+//	}
 }

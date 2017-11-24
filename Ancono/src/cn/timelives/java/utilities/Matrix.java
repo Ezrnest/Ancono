@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 /**
  * A matrix is like a two dimension integer array,but the number in the matrix is unchangeable.
- * A n¡Ám matrix has n lines and m rows. m,n=1,2,3,4,5...
+ * A nï¿½ï¿½m matrix has n lines and m rows. m,n=1,2,3,4,5...
  * <p>To create a Matrix , you can either use a two-dimension array as parameter or directly call  
  * some prepared method.
  * @author lyc
@@ -195,7 +195,7 @@ public abstract class Matrix {
 	public Matrix subMatrix(int i1,int j1,int i2,int j2){
 		//do range check
 		if(i1<0||j1<0||i2>=line||j2>=row || i1>=i2 || j1>=j2){
-			throw new IllegalArgumentException("Illegal Argument:"+line+"¡Á"+row+":("+i1+","+j1+")-("+i2+","+j2+")");
+			throw new IllegalArgumentException("Illegal Argument:"+line+"ï¿½ï¿½"+row+":("+i1+","+j1+")-("+i2+","+j2+")");
 		}
 		return null;//
 	}
@@ -345,7 +345,7 @@ public abstract class Matrix {
 		public int getNumber(int i, int j) {
 			//range check
 			if(i<0||i>=line||j<0||j>=row){
-				throw new IndexOutOfBoundsException("Out of range:"+line+"¡Á"+row+" "+i+","+j);
+				throw new IndexOutOfBoundsException("Out of range:"+line+"ï¿½ï¿½"+row+" "+i+","+j);
 			}
 			return data[i+dx][j+dy];
 		}
@@ -454,7 +454,7 @@ public abstract class Matrix {
 			row = Math.max(row, arr.length);
 		}
 		if(line<1 || row<1){
-			throw new IllegalArgumentException("Illegal size:"+line+"¡Á"+row);
+			throw new IllegalArgumentException("Illegal size:"+line+"ï¿½ï¿½"+row);
 		}
 		
 		int[][] mat2 = new int[line][];
@@ -474,7 +474,7 @@ public abstract class Matrix {
 		
 		int n = arr.length;
 		if(n<1){
-			throw new IllegalArgumentException("Illegal size:"+n+"¡Á"+n);
+			throw new IllegalArgumentException("Illegal size:"+n+"ï¿½ï¿½"+n);
 		}
 		int[][] mat = new int[n][n];
 		for(int i=0;i<n;i++){
@@ -483,13 +483,13 @@ public abstract class Matrix {
 		return new DMatrix(mat,n,n);
 	}
 	/**
-	 * Return an identity matrix whose size is n¡Án
+	 * Return an identity matrix whose size is nï¿½ï¿½n
 	 * @param n
 	 * @return
 	 */
 	public static Matrix identityMatrix(int n){
 		if(n<1){
-			throw new IllegalArgumentException("Illegal size:"+n+"¡Á"+n);
+			throw new IllegalArgumentException("Illegal size:"+n+"ï¿½ï¿½"+n);
 		}
 		int[][] mat = new int[n][n];
 		for(int i=0;i<n;i++){
@@ -500,7 +500,7 @@ public abstract class Matrix {
 	
 	public static Matrix zeroMatrix(int n){
 		if(n<1){
-			throw new IllegalArgumentException("Illegal size:"+n+"¡Á"+n);
+			throw new IllegalArgumentException("Illegal size:"+n+"ï¿½ï¿½"+n);
 		}
 		int[][] mat = new int[n][n];
 		return new DMatrix(mat,n,n);
@@ -515,7 +515,7 @@ public abstract class Matrix {
 	 */
 	public static Matrix addMatrix(Matrix m1,Matrix m2){
 		if(m1.line!=m2.line || m1.row!=m2.row){
-			throw new IllegalArgumentException("Cannot add two matrix:"+m1.line+"¡Á"+m1.row+" + "+m2.line+"¡Á"+m2.row);
+			throw new IllegalArgumentException("Cannot add two matrix:"+m1.line+"ï¿½ï¿½"+m1.row+" + "+m2.line+"ï¿½ï¿½"+m2.row);
 		}
 		int line = m1.line;
 		int row = m1.row;
@@ -547,7 +547,7 @@ public abstract class Matrix {
 	 */
 	public static Matrix minusMatrix(Matrix m1,Matrix m2){
 		if(m1.line!=m2.line || m1.row!=m2.row){
-			throw new IllegalArgumentException("Cannot minus two matrix:"+m1.line+"¡Á"+m1.row+" - "+m2.line+"¡Á"+m2.row);
+			throw new IllegalArgumentException("Cannot minus two matrix:"+m1.line+"ï¿½ï¿½"+m1.row+" - "+m2.line+"ï¿½ï¿½"+m2.row);
 		}
 		int line = m1.line;
 		int row = m1.row;
@@ -576,13 +576,13 @@ public abstract class Matrix {
 	 * only provide O(n^3) time performance.
 	 * @param m1 a matrix
 	 * @param m2 another matrix
-	 * @return m1¡¤m2
+	 * @return m1ï¿½ï¿½m2
 	 * @throws IllegalArgumentException if size doesn't match
 	 * @throws NullPointerException if m1==null || m2==null
 	 */
 	public static Matrix multiplyMatrix(Matrix m1,Matrix m2){
 		if(m1.row!=m2.line){
-			throw new IllegalArgumentException("Cannot multiply two matrix:"+m1.line+"¡Á"+m1.row+" ¡¤ "+m2.line+"¡Á"+m2.row);
+			throw new IllegalArgumentException("Cannot multiply two matrix:"+m1.line+"ï¿½ï¿½"+m1.row+" ï¿½ï¿½ "+m2.line+"ï¿½ï¿½"+m2.row);
 		}
 		int n = m1.row;
 		int line = m1.line;
@@ -627,7 +627,7 @@ public abstract class Matrix {
 	public static Matrix matrixPower(Matrix mat,int pow){
 		//do range check
 		if(mat.line!=mat.row)
-			throw new IllegalArgumentException("Cannot calculate"+mat.line+"¡Á"+mat.row);
+			throw new IllegalArgumentException("Cannot calculate"+mat.line+"ï¿½ï¿½"+mat.row);
 		if(pow ==0 )
 			return identityMatrix(mat.line);
 		if(pow == 1)

@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import java.util.Arrays;
 
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.set.IntersectableSet;
@@ -35,7 +36,7 @@ public class TestSet {
 		print(set1.toString()+" ∩ "+set2.toString()+" = "+set1.intersect(set2));
 	}
 	
-	MathCalculator<Integer> mc = MathCalculatorAdapter.getCalculatorInteger();
+	MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
 	
 	
 	public void testInterval() {

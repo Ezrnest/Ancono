@@ -430,13 +430,13 @@ public final class Sphere<T> extends SpaceObject<T> {
 		T r2 = a.distanceSq(o);
 		return new Sphere<T>(mc, null, r2, o);
 	}
-	public static void main(String[] args) {
-		SPointGenerator<Double> sg = new SPointGenerator<>(MathCalculatorAdapter.getCalculatorDoubleDev());
-		SPoint<Double> a =sg.of(0d,0d,0d),
-				b = sg.of(1d, 1d, 0d),
-				c = sg.of(0d, 1d, 1d),
-				d = sg.of(1d, 0d, 1d);
-		Sphere<Double> sp = fourPoints(a, b, c, d);
-		Printer.print(sp);
-	}
+//	public static void main(String[] args) {
+//		SPointGenerator<Double> sg = new SPointGenerator<>(Calculators.getCalculatorDoubleDev());
+//		SPoint<Double> a =sg.of(0d,0d,0d),
+//				b = sg.of(1d, 1d, 0d),
+//				c = sg.of(0d, 1d, 1d),
+//				d = sg.of(1d, 0d, 1d);
+//		Sphere<Double> sp = fourPoints(a, b, c, d);
+//		Printer.print(sp);
+//	}
 }

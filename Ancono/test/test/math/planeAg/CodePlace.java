@@ -26,7 +26,7 @@ import cn.timelives.java.math.numberModels.FormulaCalculator;
 import cn.timelives.java.math.numberModels.FracPoly;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.PolyCalculator;
 import cn.timelives.java.math.numberModels.Polynomial;
 import cn.timelives.java.math.numberModels.Simplifier;
@@ -74,7 +74,7 @@ public class CodePlace {
 
 	public void m2() {
 		MathCalculator<Fraction> mc = Fraction.getCalculator();
-		MathCalculator<Long> mct = MathCalculatorAdapter.getCalculatorLong();
+		MathCalculator<Long> mct = Calculators.getCalculatorLong();
 		Line<Fraction> l1 = Line.generalFormula(1L, -2L, 4L, mct).mapTo(Fraction::valueOf, mc);
 		Line<Fraction> l2 = Line.generalFormula(1L, 1L, -2L, mct).mapTo(Fraction::valueOf, mc);
 		Point<Fraction> pin = l1.intersectPoint(l2);
@@ -86,7 +86,7 @@ public class CodePlace {
 	}
 
 	MathCalculator<Fraction> mc = Fraction.getCalculator();
-	MathCalculator<Long> mct = MathCalculatorAdapter.getCalculatorLong();
+	MathCalculator<Long> mct = Calculators.getCalculatorLong();
 
 	public void m3() {
 
@@ -381,7 +381,7 @@ public class CodePlace {
 	}
 	
 	void m19(){
-		MathCalculator<Double> cal = MathCalculatorAdapter.getCalculatorDouble();
+		MathCalculator<Double> cal = Calculators.getCalculatorDouble();
 		Circle<Double> cr = Circle.generalFormula(0d, -12d, 27d, cal);
 		Point<Double> p = new Point<>(cal,0d,0d);
 		Line<Double> l = cr.radicalAxis(p);
@@ -532,11 +532,11 @@ public class CodePlace {
 		print(l1.symmetryPoint(p2));
 		print(l2.intersectPoint(l3));
 		print(l2.relationWith(l3));
-//		print(l1.mapTo(f -> f.doubleValue(), MathCalculatorAdapter.getCalculatorDouble()));
+//		print(l1.mapTo(f -> f.doubleValue(), Calculators.getCalculatorDouble()));
 	}
 	
 //	void m29(){
-//		MathCalculator<Double> mcfp = MathCalculatorAdapter.getCalculatorDouble();
+//		MathCalculator<Double> mcfp = Calculators.getCalculatorDouble();
 //		inputPoly("0,-1,1,2,Sqr3,3,2Sqr2");
 //		Point f1 = Point.valueOf(0d, -Math.sqrt(2), mcfp);
 //		Point f2 = Point.valueOf(0d, Math.sqrt(2), mcfp);
@@ -557,7 +557,7 @@ public class CodePlace {
 //		}
 //	}
 	void m30(){
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		HyperbolaV<Double> hy = HyperbolaV.standardEquation(2d, 3d/2, false, mc);
 		print(hy);
 		print(hy.getEccentricity());
@@ -861,7 +861,7 @@ public class CodePlace {
 				BD = Line.slopeIntercept(fps[1], FracPoly.ZERO, mcfp);
 		
 	}
-	
+	@Test
 	public void m42() {
 		Triangle<FracPoly> tri = generalTriangle();
 		Point<FracPoly> A = tri.vertexA(), 
@@ -893,7 +893,7 @@ public class CodePlace {
 		for(int i=0;i<6;i++) {
 			cords[i] = rd.nextDouble() * 16;
 		}
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev();
+		MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
 		Triangle<Double> tri = Triangle.fromVertex(mc, cords[0], cords[3], 
 				cords[1], cords[4], 
 				cords[2], cords[5]);
@@ -919,9 +919,9 @@ public class CodePlace {
 		print(oh);
 		print(v);
 	}
-	@Test
+	
 	public void m44() {
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev(1E-10);
+		MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev(1E-10);
 		EllipseV<Double> ell = EllipseV.standardEquationSqrt(9d, 5d, mc);
 		double result = ModelPatterns.binarySolve(0.8d, 0.9d, (a, b)->(a+b)/2,k->{
 			Line<Double> l = Line.pointSlope(2d, 0d, k, mc);

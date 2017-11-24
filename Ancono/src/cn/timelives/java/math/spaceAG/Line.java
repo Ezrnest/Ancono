@@ -12,6 +12,7 @@ import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.Simplifiable;
@@ -501,13 +502,13 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 		return new Line<>(p1.getMathCalculator(),p1,SVector.vector(p1, p2));
 	}
 	
-	public static void main(String[] args) {
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
-		Line<Double> l1 = pointDirect(SPoint.valueOf(0d, 0d, 0d, mc),
-				SVector.valueOf(-1d, 1d, 0d, mc));
-		print(l1);
-		print(l1.perpendicular(SPoint.valueOf(1d, 0d,0d, mc)));
-		print(l1.projection(SPoint.valueOf(1d, 0d,0d, mc)));
-	}
+//	public static void main(String[] args) {
+//		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
+//		Line<Double> l1 = pointDirect(SPoint.valueOf(0d, 0d, 0d, mc),
+//				SVector.valueOf(-1d, 1d, 0d, mc));
+//		print(l1);
+//		print(l1.perpendicular(SPoint.valueOf(1d, 0d,0d, mc)));
+//		print(l1.projection(SPoint.valueOf(1d, 0d,0d, mc)));
+//	}
 	
 }

@@ -10,6 +10,7 @@ import java.util.function.Function;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -231,8 +232,8 @@ public final class TransMatrix<T> extends Matrix<T>{
 	}
 	
 	/**
-	 * Transforms the given vector¡£<br />
-	 * {@code this¡¤v}
+	 * Transforms the given vectorï¿½ï¿½<br />
+	 * {@code thisï¿½ï¿½v}
 	 * @param v a vector
 	 * @return transformed vector
 	 */
@@ -242,7 +243,7 @@ public final class TransMatrix<T> extends Matrix<T>{
 		return new PVector<T>(_x, _y, mc);
 	}
 	/**
-	 * Transforms the given point¡£<br />
+	 * Transforms the given pointï¿½ï¿½<br />
 	 * @param p a point
 	 * @return transformed vector
 	 */
@@ -252,7 +253,7 @@ public final class TransMatrix<T> extends Matrix<T>{
 		return new Point<T>( mc,_x, _y);
 	}
 	/**
-	 * Returns this¡¤tm
+	 * Returns thisï¿½ï¿½tm
 	 * @param tm
 	 * @return
 	 */
@@ -426,13 +427,13 @@ public final class TransMatrix<T> extends Matrix<T>{
 	}
 	
 	
-	//test
-	public static void main(String[] args) {
-		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev();
-		TransMatrix<Double> t1 = rotate(Math.PI/4,mc),
-				t2 = t1.andThen(t1);
-		t1.printMatrix();
-		Point<Double> p = Point.valueOf(1d, 0d, mc);
-		print(t2.transform(p));
-	}
+//	//test
+//	public static void main(String[] args) {
+//		MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
+//		TransMatrix<Double> t1 = rotate(Math.PI/4,mc),
+//				t2 = t1.andThen(t1);
+//		t1.printMatrix();
+//		Point<Double> p = Point.valueOf(1d, 0d, mc);
+//		print(t2.transform(p));
+//	}
 }

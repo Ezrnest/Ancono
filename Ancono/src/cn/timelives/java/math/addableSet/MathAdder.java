@@ -3,8 +3,8 @@ package cn.timelives.java.math.addableSet;
 import cn.timelives.java.math.numberModels.FormulaCalculator;
 
 /**
- * MathAdder ÊÇMathAddable µÄ±Ø±¸²¿·Ö£¬
- * <p>¸ÃÀàÃèÊöµÄÊÇÒ»¸ö¼ÆËã¹¤¾ß,¿ÉÒÔ¼ÆËãÁ½¸ö¿É¼Ó¶ÔÏóµÄµş¼Ó
+ * MathAdder ï¿½ï¿½MathAddable ï¿½Ä±Ø±ï¿½ï¿½ï¿½ï¿½Ö£ï¿½
+ * <p>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ã¹¤ï¿½ï¿½,ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¼Ó¶ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½
  * 
  * 
  * 

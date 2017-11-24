@@ -7,6 +7,7 @@ import static cn.timelives.java.utilities.Printer.print;
 import org.junit.Test;
 import cn.timelives.java.math.equation.EquationSup;
 import cn.timelives.java.math.equation.Type;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 /**
@@ -22,7 +23,7 @@ public class TestEquation {
 	public TestEquation() {
 		// TODO Auto-generated constructor stub
 	}
-	MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+	MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 	
 	@Test
 	public void testSolve() {

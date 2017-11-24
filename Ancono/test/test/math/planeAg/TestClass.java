@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.planeAG.PAffineTrans;
@@ -26,7 +27,7 @@ public class TestClass {
 	 */
 	public TestClass() {
 	}
-	MathCalculator<Double> mcd = MathCalculatorAdapter.getCalculatorDoubleDev();
+	MathCalculator<Double> mcd = Calculators.getCalculatorDoubleDev();
 	@Test
 	public void testAffineTrans(){
 		PAffineTrans<Double> pt = PAffineTrans.identity(mcd);

@@ -7,7 +7,9 @@ import static cn.timelives.java.utilities.Printer.print;
 
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 import java.util.function.LongToIntFunction;
 import java.util.function.ToIntFunction;
@@ -110,7 +112,7 @@ public final class ModelPatterns {
 	 * @param maxTime
 	 * @return
 	 */
-	public static <T> T binarySolve(T low,T high,BiFunction<T, T, T> middle,ToIntFunction<T> comparator,int maxTime) {
+	public static <T> T binarySolve(T low,T high,BinaryOperator<T> middle,ToIntFunction<T> comparator,int maxTime) {
 		T mid = middle.apply(low, high);
 		int cl = comparator.applyAsInt(low);
 		int ch = comparator.applyAsInt(high);
@@ -151,7 +153,7 @@ public final class ModelPatterns {
 	 * @param next
 	 * @return
 	 */
-	public static <T> T binarySolve(T low,T high,BiFunction<T, T, T> middle,ToIntFunction<T> comparator,
+	public static <T> T binarySolve(T low,T high,BinaryOperator<T> middle,ToIntFunction<T> comparator,
 			BiPredicate<T, T> next) {
 		T mid = middle.apply(low, high);
 		int cl = comparator.applyAsInt(low);
@@ -183,6 +185,55 @@ public final class ModelPatterns {
 		
 	}
 	
+	/**
+	 * Performs an operation like computing {@code exp(x,p)}.
+	 * @param p a non-negative number
+	 * @param unit the unit value, such as 1.
+	 * @param x
+	 * @param square
+	 * @param multiply
+	 * @return
+	 */
+	public static <T> T binaryReduce(long p,T unit,T x,Function<T,T> square,BinaryOperator<T> multiply) {
+		if(p<0){
+			throw new IllegalArgumentException("p<0");
+		}else if(p==0){
+			return unit;
+		}
+		T re = unit;
+		while(p>0){
+			if((p&1)!=0){
+				re = multiply.apply(x,re);
+			}
+			x = square.apply(x);
+			p>>=1;
+		}
+		return re;
+	}
+	/**
+	 * Performs an operation like computing {@code exp(x,p)}.
+	 * @param p a non-negative number
+	 * @param initVal
+	 * @param square
+	 * @param multiply
+	 * @return
+	 */
+	public static <T> T binaryReduce(long p,T unit,T x,BinaryOperator<T> multiply) {
+		if(p<0){
+			throw new IllegalArgumentException("p<0");
+		}else if(p==0){
+			return unit;
+		}
+		T re = unit;
+		while(p>0){
+			if((p&1)!=0){
+				re = multiply.apply(x,re);
+			}
+			x = multiply.apply(x,x);
+			p>>=1;
+		}
+		return re;
+	}
 //	public static void main(String[] args) {
 //		DoubleUnaryOperator f = d -> d*d-d;
 //		print(binarySolve(0.5d, 3d, (a,b)->(a+b)/2,x-> {

@@ -29,13 +29,14 @@ public class Polynomial implements Comparable<Polynomial> {
 	private SortedAdditiveSet<Formula> fs;
 
 	private static final FormulaCalculator fc = FormulaCalculator.DEFAULT_FORMULA_CALCULATOR;
-
+	
+	
 	/**
-	 * this is a Polynomial which value is one and it doesn't have any
-	 * MathCalculator because it is special __
+	 * Special constant values.
 	 */
-	public static final Polynomial ONE = new Polynomial(fc, Formula.ONE);
-	public static final Polynomial ZERO = new Polynomial(fc, Formula.ZERO);
+	public static final Polynomial ONE = new Polynomial(fc, Formula.ONE),
+			ZERO = new Polynomial(fc, Formula.ZERO),
+			NEGATIVE_ONE = new Polynomial(fc, Formula.ONE.negate());
 
 	/**
 	 * 要建立Polynomial对象，必须指定一个计算器对象
@@ -196,7 +197,7 @@ public class Polynomial implements Comparable<Polynomial> {
 	}
 
 	public static MathCalculator<Polynomial> getCalculator() {
-		return PolyCalculator.DEFALUT_CALCULATOR;
+		return PolyCalculator.DEFAULT_CALCULATOR;
 	}
 
 	/**

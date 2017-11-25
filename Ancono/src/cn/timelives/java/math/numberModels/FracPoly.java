@@ -334,7 +334,7 @@ public class FracPoly {
 			pds = simp.simplify(pds);
 			
 			Polynomial ds = Polynomial.ONE;
-			PolyCalculator pc = PolyCalculator.DEFALUT_CALCULATOR;
+			PolyCalculator pc = PolyCalculator.DEFAULT_CALCULATOR;
 			for(Polynomial p : pds){
 				ds = pc.multiply(ds, p);
 			}

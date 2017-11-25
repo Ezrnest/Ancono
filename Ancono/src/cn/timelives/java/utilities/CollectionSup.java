@@ -4,6 +4,7 @@
 package cn.timelives.java.utilities;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+
+import cn.timelives.java.math.MathUtils;
 
 
 /**
@@ -84,6 +87,24 @@ public final class CollectionSup {
 		for(Entry<T,S> en : map.entrySet()) {
 			en.setValue(f.apply(en.getKey(), en.getValue()));
 		}
+	}
+	
+	public static <T> int compareList(List<T> list1,List<T> list2,Comparator<T> comp) {
+		int com = list1.size() - list2.size();
+		if(com != 0) {
+			return com;
+		}
+		Iterator<T> it1 = list1.iterator(),
+				it2 = list2.iterator();
+		while(it1.hasNext()) {
+			T a = it1.next();
+			T b = it2.next();
+			com = comp.compare(a, b);
+			if(com!=0) {
+				return com;
+			}
+		}
+		return 0;
 	}
 
 }

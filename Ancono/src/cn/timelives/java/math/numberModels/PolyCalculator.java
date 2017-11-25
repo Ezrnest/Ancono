@@ -156,7 +156,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	/**
 	 * Default calculator is a calculator whose state is 1
 	 */
-	public static final PolyCalculator DEFALUT_CALCULATOR = new PolyCalculator(1);
+	public static final PolyCalculator DEFAULT_CALCULATOR = new PolyCalculator(1);
 	
 	private final Polynomial PI ;
 	private final Polynomial E ;
@@ -283,7 +283,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @param p1
 	 * @param p2
 	 * @return p1/p2
-	 * @throws UnsupportedCalculationException if cannot calculate
+	 * @throws UnsupportedCalculationException if cannot calculate it
 	 */
 	@Override
 	public Polynomial divide(Polynomial p1,Polynomial p2){
@@ -1088,9 +1088,9 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			if(p1.getNumOfFormula() != p2.getNumOfFormula()) {
 				return list;
 			}
-			if (DEFALUT_CALCULATOR.isEqual(Polynomial.ZERO, p2) == false) {
+			if (DEFAULT_CALCULATOR.isEqual(Polynomial.ZERO, p2) == false) {
 				try {
-					p1 = DEFALUT_CALCULATOR.divide(p1, p2);
+					p1 = DEFAULT_CALCULATOR.divide(p1, p2);
 					p2 = Polynomial.ONE;
 				} catch (UnsupportedOperationException ex) {
 

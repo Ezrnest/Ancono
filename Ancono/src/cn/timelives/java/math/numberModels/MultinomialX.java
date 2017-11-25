@@ -659,18 +659,18 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		
 	}
 	
-	public static void main(String[] args) {
-		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
-		MultinomialX<Integer> p1 = MultinomialX.valueOf(mc, 1,2,1);
-		MultinomialX<Integer> p2 = MultinomialX.valueOf(mc, 1,1);
-		MultinomialCalculator<Integer> mmc = getCalculator(mc);
-		MultinomialX<Integer> re = mmc.add(p1, p2);
-		print(p1);
-		print(p2);
-		print(re);
-		print(mmc.multiply(p1, p2));//x^3 + 3*x^2 + 3*x + 1
-		print(mmc.divideAndReminder(p1, p2).getSecond());
-		print(mmc.pow(p2, 5));
-		print(mmc.gcd(mmc.pow(p2, 5), mmc.pow(p2, 3)));
-	}
+//	public static void main(String[] args) {
+//		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
+//		MultinomialX<Integer> p1 = MultinomialX.valueOf(mc, 1,2,1);
+//		MultinomialX<Integer> p2 = MultinomialX.valueOf(mc, 1,1);
+//		MultinomialCalculator<Integer> mmc = getCalculator(mc);
+//		MultinomialX<Integer> re = mmc.add(p1, p2);
+//		print(p1);
+//		print(p2);
+//		print(re);
+//		print(mmc.multiply(p1, p2));//x^3 + 3*x^2 + 3*x + 1
+//		print(mmc.divideAndReminder(p1, p2).getSecond());
+//		print(mmc.pow(p2, 5));
+//		print(mmc.gcd(mmc.pow(p2, 5), mmc.pow(p2, 3)));
+//	}
 }

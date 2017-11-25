@@ -803,6 +803,10 @@ public class MathUtils {
 		}
 	}
 	
+	public static int signum(int x) {
+		return x < 0 ? -1 : x == 0 ? 0 : 1;
+	}
+	
 	/**
 	 * Determines whether {@code x} is closer to zero than {@code y}(or equal),
 	 * in other words returns {@code Math.abs(x) <= Math.abs(y)}

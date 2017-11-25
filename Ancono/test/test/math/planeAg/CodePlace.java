@@ -447,7 +447,7 @@ public class CodePlace {
 	
 	
 	private static FracPoly mapperFF(Fraction f){
-		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFALUT_CALCULATOR.getCal(),f.toString()));
+		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFAULT_CALCULATOR.getCal(),f.toString()));
 	}
 	
 	private static Fraction mapperPF(FracPoly fp){
@@ -662,7 +662,7 @@ public class CodePlace {
 		print(delta);
 	}
 	static FracPoly mapperFF2(Formula f){
-		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFALUT_CALCULATOR.getCal(),f));
+		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFAULT_CALCULATOR.getCal(),f));
 	}
 	
 	

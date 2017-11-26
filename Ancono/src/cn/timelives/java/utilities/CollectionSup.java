@@ -4,11 +4,15 @@
 package cn.timelives.java.utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -106,5 +110,32 @@ public final class CollectionSup {
 		}
 		return 0;
 	}
-
+	
+	/**
+	 * Creates a hash set from the array.
+	 * @param ts
+	 * @return
+	 */
+	@SafeVarargs
+	public static <T> Set<T> createHashSet(T...ts){
+		HashSet<T> set = new HashSet<>(ts.length);
+		for(T t : ts) {
+			set.add(t);
+		}
+		return set;
+	}
+	
+	@SafeVarargs
+	public static <T extends Enum<T>> Set<T> unmodifiableEnumSet(T...ts){
+		EnumSet<T> set;
+		if(ts.length==0) {
+			throw new IllegalArgumentException();
+		}
+		if(ts.length==1) {
+			set = EnumSet.of(ts[0]);
+		}else {
+			set = EnumSet.of(ts[0], ts);
+		}
+		return Collections.unmodifiableSet(set);
+	}
 }

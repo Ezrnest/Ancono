@@ -8,13 +8,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.PolyCalculator;
 import cn.timelives.java.math.numberModels.Polynomial;
 import cn.timelives.java.utilities.ArraySup;
 
 /**
- * @author liyicheng
- * 2017-11-24 20:04
+ * An expression function describes a function that the calculator should
+ * recognize and calculator when simplifying an expression. The ExprFunction is
+ * a combined class of the function's details(name, number of parameters...) and
+ * also the polynomial function in program(optional).
+ * <p>
+ * Polynomial functions in program is responsible for calculating the function
+ * directly to a polynomial result. Generally, a function can be 'computed' via
+ * directly applying the function or {@link SimplificationStrategy}.
+ * Simplification strategy is more flexible and can apply to more situations
+ * when the parameter is not a polynomial. However, it is vital to use polynomial function
+ * to simplify the expression to a plain Polynomial, which is the most efficient form
+ * of an expression and this calculation can be done in the first phase of simplification. 
+ * So if a function can be calculated to a polynomial result for some parameters, it is recommended 
+ * to implement a polynomial function.
+ * <p>
+ * The functions are divided to {@link PolyFunctionS}, {@link PolyFunctionB} and
+ * {@link PolyFunctionM}. The reason why the functions are divided is to speed the calculation.
+ * <p>
+ * There is a basic bundle of expression functions which is already defined in a {@link MathCalculator}.
+ * 
+ * @author liyicheng 2017-11-24 20:04
  * 
  */
 public class ExprFunction {

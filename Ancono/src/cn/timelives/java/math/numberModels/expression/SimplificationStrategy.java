@@ -18,6 +18,6 @@ public interface SimplificationStrategy {
 	 * @param node
 	 * @return
 	 */
-	public Node simplifyNode(Node node);
+	public Node simplifyNode(Node node,ExprCalculator mc);
 	
 }

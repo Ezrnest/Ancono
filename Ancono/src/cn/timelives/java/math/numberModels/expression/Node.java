@@ -7,19 +7,18 @@ import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.print_;
 import static cn.timelives.java.utilities.Printer.printnb;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.PolyCalculator;
 import cn.timelives.java.math.numberModels.Polynomial;
-import cn.timelives.java.math.numberModels.expression.Node.Multiply;
 import cn.timelives.java.utilities.CollectionSup;
+import cn.timelives.java.utilities.structure.Pair;
 
 /**
  * A node is a single unit in the expression tree. Each node has its direct reference to its 
@@ -84,6 +83,9 @@ public abstract class Node {
 		 */
 		M_FUNCTION;
 		
+		public static boolean isFunction(Type ty) {
+			return ty == Type.S_FUNCTION || ty == Type.D_FUNCTION || ty == M_FUNCTION;
+		}
 	}
 	
 	/**
@@ -195,11 +197,11 @@ public abstract class Node {
 		 */
 		public abstract List<Node> getChildrenList();
 		/**
-		 * Performs the sort operation with the given NodeComparator.
+		 * Performs the sort operation with the given Comparator<Node>.
 		 * Ignores the call if this kind of node requires its children's order.
 		 * @param nc
 		 */
-		abstract void doSort(NodeComparator nc);
+		abstract void doSort(Comparator<Node> nc);
 		
 		
 		
@@ -210,7 +212,7 @@ public abstract class Node {
 	
 //	public abstract boolean equalStructure(Node n);
 	public static abstract class ChildrenNode extends NodeWithChildren{
-		final List<Node> children;
+		List<Node> children;
 		boolean sortable;
 		ChildrenNode(NodeWithChildren parent,List<Node> children,boolean sortable) {
 			super(parent);
@@ -293,10 +295,10 @@ public abstract class Node {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#doSort(cn.timelives.java.math.numberModels.expression.NodeComparator)
+		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#doSort(cn.timelives.java.math.numberModels.expression.Comparator<Node>)
 		 */
 		@Override
-		void doSort(NodeComparator nc) {
+		void doSort(Comparator<Node> nc) {
 			if(sortable) {
 				children.sort(nc);
 			}
@@ -457,10 +459,10 @@ public abstract class Node {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#doSort(cn.timelives.java.math.numberModels.expression.NodeComparator)
+		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#doSort(cn.timelives.java.math.numberModels.expression.Comparator<Node>)
 		 */
 		@Override
-		void doSort(NodeComparator nc) {
+		void doSort(Comparator<Node> nc) {
 			//just one
 		}
 		
@@ -502,6 +504,13 @@ public abstract class Node {
 		 */
 		public Node getC2() {
 			return c2;
+		}
+		
+		void setBoth(Node n1,Node n2) {
+			c1 = n1;
+			c2 = n2;
+			n1.parent = this;
+			n2.parent = this;
 		}
 	
 		
@@ -579,10 +588,10 @@ public abstract class Node {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#doSort(cn.timelives.java.math.numberModels.expression.NodeComparator)
+		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#doSort(cn.timelives.java.math.numberModels.expression.Comparator<Node>)
 		 */
 		@Override
-		void doSort(NodeComparator nc) {
+		void doSort(Comparator<Node> nc) {
 			if(sortable) {
 				int comp = nc.compare(c1, c2);
 				if(comp>0) {
@@ -675,10 +684,14 @@ public abstract class Node {
 		 */
 		@Override
 		public void toString(StringBuilder sb, NumberFormatter<Polynomial> nf,boolean braketRecommended) {
+			String str = nf.format(p, POLY_CALCULATOR);
+			if(str.length() == 1) {
+				braketRecommended = false;
+			}
 			if(braketRecommended) {
 				sb.append('(');
 			}
-			sb.append(nf.format(p, POLY_CALCULATOR));
+			sb.append(str);
 			if(braketRecommended) {
 				sb.append(')');
 			}
@@ -835,8 +848,16 @@ public abstract class Node {
 		}
 		
 	}
-
-	public static final class SFunction extends SingleNode{
+	static interface FunctionNode{
+		String getFunctionName();
+	}
+	/**
+	 * The node contains a single-parameter function.
+	 * @author liyicheng
+	 * 2017-11-26 13:13
+	 *
+	 */
+	public static final class SFunction extends SingleNode implements FunctionNode{
 		
 
 		final String functionName;
@@ -902,7 +923,7 @@ public abstract class Node {
 		
 	}
 	
-	public static final class DFunction extends BiNode{
+	public static final class DFunction extends BiNode implements FunctionNode{
 
 		/**
 		 * @param parent
@@ -973,7 +994,7 @@ public abstract class Node {
 		
 	}
 	
-	public static final class MFunction extends ChildrenNode{
+	public static final class MFunction extends ChildrenNode implements FunctionNode{
 		final String functionName;
 		/**
 		 * @param parent
@@ -1032,6 +1053,14 @@ public abstract class Node {
 				sb.append(',');
 			}
 			sb.setCharAt(sb.length()-1, ')');
+		}
+
+		/*
+		 * @see cn.timelives.java.math.numberModels.expression.Node.FunctionNode#getFunctionName()
+		 */
+		@Override
+		public String getFunctionName() {
+			return functionName;
 		}
 	}
 	
@@ -1185,6 +1214,24 @@ public abstract class Node {
 		list.add(rt);
 		return nroot;
 	}
+	
+
+	/**
+	 * Returns {@code n*x} without any simplification.
+	 * <p>The node has no parent!
+	 * @param n
+	 * @param x
+	 * @return
+	 */
+	public static Multiply wrapNodeMultiply(Node n,Polynomial x) {
+		n.removeFromParent();
+		List<Node> list = new ArrayList<>(1);
+		Multiply nroot = new Multiply(null, x, list);
+		list.add(n);
+		n.parent = nroot;
+		return nroot;
+	}
+	
 	/**
 	 * Returns {@code n+x} without any simplification.
 	 * @param n
@@ -1250,6 +1297,26 @@ public abstract class Node {
 		return (Poly)n;
 	}
 	
+	public static Polynomial getPolynomialOrZero(CombinedNode node,ExprCalculator ec) {
+		Polynomial p = node.p;
+		if(p == null) {
+			return ec.pZero;
+		}
+		return p;
+	}
+	
+	/**
+	 * Returns the name of the function of the node if the node is a function node, or returns {@code null}.
+	 * @param n
+	 * @return
+	 */
+	public static String getFunctionName(Node n) {
+		if(n instanceof FunctionNode) {
+			return ((FunctionNode)n).getFunctionName();
+		}
+		return null;
+	}
+	
 	public static DFunction wrapCloneNodeDF(String fname,Node n1,Node n2) {
 		DFunction root = new DFunction(null,null,null,fname,false);
 		root.c1 = n1.cloneNode(root);
@@ -1262,4 +1329,20 @@ public abstract class Node {
 		linkToBiNode(n1,n2,root);
 		return root;
 	}
+	
+	public static Pair<Polynomial,Node> unwrapMultiply(Node node,ExprCalculator ec){
+		if(node.getType() != Type.MULTIPLY) {
+			return null;
+		}
+		Multiply m = (Multiply) node;
+		if(m.getNumberOfChildren()==1) {
+			Polynomial p = m.p;
+			if(p==null) {
+				p = ec.pOne;
+			}
+			return new Pair<Polynomial, Node>(p, m.getChildren(0));
+		}
+		return null;
+	}
+	
 }

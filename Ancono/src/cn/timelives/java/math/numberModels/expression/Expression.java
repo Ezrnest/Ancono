@@ -69,29 +69,13 @@ public final class Expression {
 	}
 	
 	public static void main(String[] args) {
-		
-		ArrayList<Node> list = new ArrayList<>();
-		Poly[] ps = new Poly[4];
-		ps[0] = new Poly(null, Polynomial.ONE);
-		ps[1] = new Poly(null, Polynomial.ZERO);
-		ps[2] = new Poly(null, Polynomial.NEGATIVE_ONE);
-		ps[3] = new Poly(null, Polynomial.valueOf("0"));
-		Multiply m = new Multiply(null, Polynomial.NEGATIVE_ONE, list);
-		Add add = new Add(m,Polynomial.ZERO,Collections.singletonList(ps[0]));
-		Node n = new SFunction(add,ps[3],"exp");
-		list.add(add);
-		list.add(ps[2]);
-		ps[2].parent = m;
-		list.add(n);
-		Expression expr = new Expression(m);
-		print(expr);
-		ExprCalculator exc = new ExprCalculator();
-		expr.listNode(Printer.getOutput());
-		print(exc.simplify(expr));
-		expr = exc.subtract(expr, exc.getZero());
-		expr.listNode();
-		expr = exc.cos(expr);
-		print(expr);
+		ExprCalculator mc = new ExprCalculator();
+		Expression x = mc.getOne();
+		x = mc.cos(x);
+		x = mc.reciprocal(x);
+		x = mc.reciprocal(x);
+		print(x);
+		x.listNode();
 	}
 	
 }

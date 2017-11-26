@@ -9,7 +9,7 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.Polynomial;
 
 /**
- * A single-parameter function
+ * A single-parameter function, which corresponds to {@link Node.SFunction}.
  * @author liyicheng
  * 2017-11-25 19:08
  *

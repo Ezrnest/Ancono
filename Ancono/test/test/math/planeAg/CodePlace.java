@@ -30,6 +30,7 @@ import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.PolyCalculator;
 import cn.timelives.java.math.numberModels.Polynomial;
 import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.expression.ExprCalculator;
 import cn.timelives.java.math.planeAG.Circle;
 import cn.timelives.java.math.planeAG.Line;
 import cn.timelives.java.math.planeAG.LineSup;
@@ -936,5 +937,9 @@ public class CodePlace {
 //		print(result*result,16);
 //		print(Fraction.valueOfDouble(result*result, 1000));
 	}
+	
+	private static final ExprCalculator ec = new ExprCalculator();
+	
+	
 	
 }

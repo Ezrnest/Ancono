@@ -11,7 +11,7 @@ import cn.timelives.java.math.numberModels.expression.Node.DFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Fraction;
 import cn.timelives.java.math.numberModels.expression.Node.MFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Multiply;
-import cn.timelives.java.math.numberModels.expression.Node.PolyNode;
+import cn.timelives.java.math.numberModels.expression.Node.Poly;
 import cn.timelives.java.math.numberModels.expression.Node.SFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Type;
 import cn.timelives.java.utilities.CollectionSup;
@@ -94,8 +94,8 @@ public final class NodeComparator implements Comparator<Node> {
 			}
 			return CollectionSup.compareList(a.children, b.children, this);
 		}
-		case NUMBER: {
-			PolyNode a = (PolyNode) n1, b = (PolyNode) n2;
+		case POLYNOMIAL: {
+			Poly a = (Poly) n1, b = (Poly) n2;
 			return a.p.compareTo(b.p);
 		}
 		case S_FUNCTION: {

@@ -340,11 +340,11 @@ public interface MathCalculator<T> {
 	/**
 	 * The string representation of pi.
 	 */
-	public static final String STR_PI = "PI";
+	public static final String STR_PI = "Pi";
 	/**
 	 * The string representation of e.
 	 */
-	public static final String STR_E = "E";
+	public static final String STR_E = "e";
 
 	/**
 	 * Gets a constant value from the calculator, the constant value is got by

@@ -289,7 +289,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	public Polynomial divide(Polynomial p1,Polynomial p2){
 		int num = p2.getNumOfFormula();
 		if(num==1){
-			return divide(p1,p2.getFormulas().iterator().next());
+			return divide(p1,p2.getFormulas().getFirst());
 		}
 		else{   //    1/(Sqr2-1)
 			/* e.g. 1 / (Sqr2 -1 )
@@ -307,7 +307,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			if(moreComplex){
 				return handleComplexDivision(p1, p2);
 			}else{
-				Formula d = p2.getFormulas().iterator().next(); 
+				Formula d = p2.getFormulas().getFirst();; 
 				Polynomial mul = subtract(p2, new Polynomial(ca,ca.addEle(d, d)));
 				return divide(multiply(p1, mul),this.multiply(mul, p2));
 			}
@@ -553,9 +553,52 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		}
 		
 	}
-
 	
-//	private static final BigInteger ANGLE_UPPER_BOUND = BigInteger.ONE;
+	
+	
+	/*
+	 * @see cn.timelives.java.math.numberModels.MathCalculator#exp(java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public Polynomial exp(Polynomial a, Polynomial b) {
+		return pow(a, b);
+	}
+	
+	/*
+	 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#ln(java.lang.Object)
+	 */
+	@Override
+	public Polynomial ln(Polynomial x) {
+		Formula f = Polynomial.asSingleFormula(x);
+		if(f == null) {
+			throw new UnsupportedCalculationException();
+		}
+		if(ca.isEqual(f, Formula.ONE)) {
+			//ln(1) = 0
+			return Polynomial.ZERO;
+		}
+		Map<String,BigDecimal> map = f.getCharacterS();
+		if(map.size() == 1 && map.containsKey(STR_E)) {
+			return new Polynomial(ca, Formula.valueOf(map.get(STR_E)));
+		}
+		throw new UnsupportedCalculationException();
+		
+	}
+	
+	/*
+	 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#exp(java.lang.Object)
+	 */
+	@Override
+	public Polynomial exp(Polynomial x) {
+		//if x is an integer, then it can be computed
+		BigInteger p = Polynomial.asBigInteger(x);
+		if(p == null) {
+			throw new UnsupportedCalculationException();
+		}
+		return new Polynomial(ca, Formula.characterPower(STR_E, new BigDecimal(p)));
+	}
+	
+	
 	
 	/**
 	 * @param f
@@ -621,7 +664,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	public Polynomial sin(Polynomial p){
 		p.removeZero();
 		if(p.getNumOfFormula()==1){
-			Formula f=p.getFormulas().iterator().next();
+			Formula f=p.getFormulas().getFirst();
 			Polynomial re = sinf(f);
 			if(re != null){
 				return re;
@@ -631,6 +674,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	
 	private Polynomial sinf(Formula f){
+		if(f.getSignum() == 0) {
+			//sin(0) = 1
+			return Polynomial.ZERO;
+		}
 		if(f.haveSameChar(Formula.PI)){
 			// ... pi
 			boolean nega = f.isPositive();
@@ -656,6 +703,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		return null;
 	}
 	private Polynomial cosf(Formula f){
+		if(f.getSignum() == 0) {
+			//cos(0) = 1
+			return Polynomial.ONE;
+		}
 		if(f.haveSameChar(Formula.PI)){
 			// ... pi
 			boolean nega = f.isPositive();
@@ -694,7 +745,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		try{
 			p.removeZero();
 			if(p.getNumOfFormula()==1){
-				Formula f=p.getFormulas().iterator().next();
+				Formula f=p.getFormulas().getFirst();
 				Polynomial re = cosf(f);
 				if(re != null){
 					return re;
@@ -715,9 +766,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 */
 	@Override
 	public Polynomial tan(Polynomial p){
+		
 		p.removeZero();
 		if(p.getNumOfFormula()==1){
-			Formula f=p.getFormulas().iterator().next();
+			Formula f=p.getFormulas().getFirst();
 			
 			Polynomial re = tanf(f);
 			if(re!=null){
@@ -728,6 +780,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	
 	private Polynomial tanf(Formula f){
+		if(f.getSignum() == 0) {
+			//tan(0) = 0
+			return Polynomial.ZERO;
+		}
 		if(f.haveSameChar(Formula.PI)){
 			boolean nega =f.isPositive();
 			if(!nega)
@@ -786,7 +842,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		try{
 			p.removeZero();
 			if(p.getNumOfFormula()==1){
-				Formula f=p.getFormulas().iterator().next();
+				Formula f=p.getFormulas().getFirst();
 				Polynomial re = cotf(f);
 				if(re!=null){
 					return re;
@@ -819,7 +875,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			return negate(result);
 		//this step deals with the undefined number
 		if(p.getNumOfFormula()==1){
-			Formula f = p.getFormulas().iterator().next();
+			Formula f = p.getFormulas().getFirst();
 			//f should be a constant value = [-1,1]
 			if(f.getNumOfChar()==0){
 				BigDecimal n = f.getNumber();
@@ -934,7 +990,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	public int[] intValue(Polynomial p){
 		int[] result = {0,0};
 		if(p.getNumOfFormula()==1){
-			Formula f =p.getFormulas().iterator().next();
+			Formula f =p.getFormulas().getFirst();
 			if(f.getNumOfChar()==0){
 				if(f.getNumber().remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO)==0){
 					result[0] = 1;
@@ -1004,7 +1060,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		if(p.getNumOfFormula()==1){
 			//only one formula
 			SortedAdditiveSet<Formula> as = p.getFormulas();
-			Formula f = as.iterator().next();
+			Formula f = as.getFirst();
 			FormulaCalculator fc = (FormulaCalculator)as.getAdder();
 //			Printer.print(p);
 			return new Polynomial(fc, fc.squareRoot(f));
@@ -1133,5 +1189,15 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	
 	
-	
+	public Polynomial valueOfLong(long l) {
+		return new Polynomial(ca, Formula.valueOf(l));
+	}
+	/**
+	 * Returns {@code 1/x}
+	 * @param l
+	 * @return
+	 */
+	public Polynomial valueOfRecipLong(long x) {
+		return new Polynomial(ca, Formula.asFraction(1, x, 1));
+	}
 }

@@ -63,7 +63,7 @@ public class Formula implements Comparable<Formula>{
 	/**
 	 * number 表达式值
 	 */
-	private final BigDecimal number;
+	private BigDecimal number;
 	/**
 	 * character 表达式的字母系数
 	 * 按照特定的顺序排列
@@ -98,9 +98,9 @@ public class Formula implements Comparable<Formula>{
 	/**The character with special meaning should be constant
 	 * 
 	 */
-	public static String PI_STR="Pi";
-	public static String E_STR="e";
-	public static String I_STR="i";
+	public static final String PI_STR="Pi";
+	public static final String E_STR="e";
+	public static final String I_STR="i";
 	public static String SQR_STR="Sqr";
 	
 	public static String PI_SHOW ="π";
@@ -121,16 +121,7 @@ public class Formula implements Comparable<Formula>{
 		this.numerator=numerator;
 		this.denominator=denominator;
 		this.radical=radical;
-		BigDecimal t = new BigDecimal(numerator).divide(new BigDecimal(denominator),MathContext.DECIMAL128);
-		if(signum<0){
-			t=t.negate();
-		}
-		if(radical.compareTo(BigInteger.ONE)==0){
-			this.number=t;
-		}
-		else{
-			this.number=t.multiply(new BigDecimal(Math.sqrt(radical.doubleValue())));
-		}
+		
 		
 		this.character=character;
 		//calculate the hashCode of this Formula
@@ -202,6 +193,18 @@ public class Formula implements Comparable<Formula>{
 		return radical;
 	}
 	public BigDecimal getNumber() {
+		if(number == null) {
+			BigDecimal t = new BigDecimal(numerator).divide(new BigDecimal(denominator),MathContext.DECIMAL128);
+			if(signum<0){
+				t=t.negate();
+			}
+			if(radical.compareTo(BigInteger.ONE)==0){
+				this.number=t;
+			}
+			else{
+				this.number=t.multiply(new BigDecimal(Math.sqrt(radical.doubleValue())));
+			}
+		}
 		return number;
 	}
 
@@ -320,7 +323,7 @@ public class Formula implements Comparable<Formula>{
 			if(this.haveSameChar(f)){//首先字母系数需要相等
 				if(f.decimal==this.decimal){//小数表示与分数表示不可以相等
 					if(f.decimal){
-						if(f.number.equals(this.number)){
+						if(f.getNumber().equals(this.getNumber())){
 							return true;//在小数状态数字相等返回true
 						}
 					}
@@ -404,7 +407,7 @@ public class Formula implements Comparable<Formula>{
 			}
 		}
 		else{
-			String num = number.toEngineeringString();//TODO
+			String num = getNumber().toEngineeringString();//TODO
 			if(num.length()-1>MAX_SHOWN_DIGIT){
 				result.append( DECIMAL_FORMAT.format(number));
 			}
@@ -571,7 +574,7 @@ public class Formula implements Comparable<Formula>{
 		//finally,let's deal with the number part
 		if(this.decimal){
 			if(formula.decimal){
-				return this.number.compareTo(formula.number);//compare the number if both of them are decimal
+				return this.getNumber().compareTo(formula.getNumber());//compare the number if both of them are decimal
 			}
 			else{
 				return 1;//this is the situation that A is decimal while B isn't.A should be after B
@@ -628,7 +631,64 @@ public class Formula implements Comparable<Formula>{
 //		}
 //		return true;
 	}
+	/**
+	 * 
+	 * @return -this
+	 */
+	public Formula negate(){
+		if(signum==0){
+			return ZERO;
+		}
+		return new Formula(-signum,numerator,denominator,radical,character);
+	}
+	/**
+	 * the method will return a Formula equals 1/this
+	 * <p>notice that the i part of the formula will be calculate for example : 1/i = i^-1 = -i
+	 * @return
+	 * @throws FormulaCalculationException if this==ZERO
+	 */
+	public Formula reciprocal(){
+		if(this.equals(Formula.ZERO)){
+			throw new ArithmeticException("Cannot cal reciprocal:"+this.toString());
+		}
+		BigInteger[] ndr = new BigInteger[3];
+		ndr[0]=this.denominator;
+		ndr[1]=this.numerator.multiply(this.radical);
+		ndr[2]=this.radical;
+		
+		BigInteger temp = ndr[0].gcd(ndr[1]);
+		ndr[0]=ndr[0].divide(temp);
+		ndr[1]=ndr[1].divide(temp);
+		
+		//deal with all chracter
+		HashMap<String,BigDecimal> character = new HashMap<String,BigDecimal>();
+		for(Entry<String,BigDecimal> e: this.character.entrySet()){
+			character.put(e.getKey(), e.getValue().negate());
+		}
+		int signum = this.signum;
+		//do with i
+		if(character.containsKey(I_STR)){
+			signum = -signum;
+			BigDecimal times = this.character.get(I_STR);
+			character.put(I_STR, BigDecimal.valueOf(2).subtract(times));
+			//the times of i should always be in [0,2) so the result of 1/i^a will be -i^(2-a)
+		}
+		
+		return new Formula(signum,ndr,character);
+		
+	}
 	
+//	private class FormulaBuilder{
+//		BigInteger numerator;
+//		BigInteger denominator;
+//		BigInteger radical;
+//		int signum;
+//		HashMap<String,BigDecimal> character;
+//	}
+
+	public boolean isPositive() {
+		return signum>0;
+	}
 	/**
 	 * 
 	 * @return a formula that equals -this
@@ -874,7 +934,7 @@ public class Formula implements Comparable<Formula>{
 		if(signum==0){
 			return ZERO;
 		}
-		if(val.compareTo(BigInteger.ONE)==0){
+		if(val.equals(BigInteger.ONE)){
 			return ONE;
 		}
 		if(signum<0){
@@ -882,6 +942,10 @@ public class Formula implements Comparable<Formula>{
 		}
 		return new Formula(signum,val,BigInteger.ONE,BigInteger.ONE,new HashMap<String,BigDecimal>());
 		
+	}
+	
+	public static Formula valueOf(long l) {
+		return valueOf(BigInteger.valueOf(l));
 	}
 	
 	public static Formula valueOf(BigDecimal number){
@@ -926,6 +990,9 @@ public class Formula implements Comparable<Formula>{
 		BigInteger[] uad = new BigInteger[2];
 		uad[0]=n.movePointRight(n.scale()).toBigIntegerExact();
 		uad[1]=BigDecimal.ONE.movePointRight(n.scale()).toBigIntegerExact();
+		BigInteger temp = uad[0].gcd(uad[1]);
+		uad[0]=uad[0].divide(temp);
+		uad[1]=uad[1].divide(temp);
 		return uad;
 		
 	}
@@ -1072,64 +1139,7 @@ public class Formula implements Comparable<Formula>{
 		}
 		return new Formula(signum,ndr,character);
 	}
-	/**
-	 * 
-	 * @return -this
-	 */
-	public Formula negate(){
-		if(signum==0){
-			return ZERO;
-		}
-		return new Formula(-signum,numerator,denominator,radical,character);
-	}
-	/**
-	 * the method will return a Formula equals 1/this
-	 * <p>notice that the i part of the formula will be calculate for example : 1/i = i^-1 = -i
-	 * @return
-	 * @throws FormulaCalculationException if this==ZERO
-	 */
-	public Formula reciprocal(){
-		if(this.equals(Formula.ZERO)){
-			throw new ArithmeticException("Cannot cal reciprocal:"+this.toString());
-		}
-		BigInteger[] ndr = new BigInteger[3];
-		ndr[0]=this.denominator;
-		ndr[1]=this.numerator.multiply(this.radical);
-		ndr[2]=this.radical;
-		
-		BigInteger temp = ndr[0].gcd(ndr[1]);
-		ndr[0]=ndr[0].divide(temp);
-		ndr[1]=ndr[1].divide(temp);
-		
-		//deal with all chracter
-		HashMap<String,BigDecimal> character = new HashMap<String,BigDecimal>();
-		for(Entry<String,BigDecimal> e: this.character.entrySet()){
-			character.put(e.getKey(), e.getValue().negate());
-		}
-		int signum = this.signum;
-		//do with i
-		if(character.containsKey(I_STR)){
-			signum = -signum;
-			BigDecimal times = this.character.get(I_STR);
-			character.put(I_STR, BigDecimal.valueOf(2).subtract(times));
-			//the times of i should always be in [0,2) so the result of 1/i^a will be -i^(2-a)
-		}
-		
-		return new Formula(signum,ndr,character);
-		
-	}
 	
-//	private class FormulaBuilder{
-//		BigInteger numerator;
-//		BigInteger denominator;
-//		BigInteger radical;
-//		int signum;
-//		HashMap<String,BigDecimal> character;
-//	}
-
-	public boolean isPositive() {
-		return signum>0;
-	}
 
 	public static MathCalculator<Formula> getCalculator(){
 		return FormulaCalculator.DEFAULT_FORMULA_CALCULATOR;
@@ -1267,5 +1277,34 @@ public class Formula implements Comparable<Formula>{
 			fs[i] = Formula.newInstanceP(f.getSignum(), nume, deno, rad, cha);
 		}
 		return Formula.newInstanceP(1, gcd_n, lcm_d, gcd_r, commonCharP);
+	}
+
+	/**
+	 * Returns an integer if the formula actually represents an integer, or {@code null}.
+	 * @param f
+	 * @return
+	 */
+	public static BigInteger asInteger(Formula f) {
+		if(f.signum == 0) {
+			return BigInteger.ZERO;
+		}
+		if(f.character.isEmpty()) {
+			if(f.radical.equals(BigInteger.ONE) && f.denominator.equals(BigInteger.ONE)) {
+				return f.signum < 0 ? f.numerator.negate() : f.numerator;
+			}
+		}
+		return null;
+	}
+	
+	public static Formula characterPower(String character,BigDecimal times) {
+		if(character.isEmpty() || times == null) {
+			throw new IllegalArgumentException();
+		}
+		if(BigDecimal.ZERO.equals(times)) {
+			return ONE;
+		}
+		HashMap<String,BigDecimal> map = new HashMap<>();
+		map.put(character, times);
+		return new Formula(1, BigInteger.ONE, BigInteger.ONE, BigInteger.ONE, map);
 	}
 }

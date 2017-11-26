@@ -14,9 +14,7 @@ import java.util.Objects;
 import cn.timelives.java.math.addableSet.AdditiveSet;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Polynomial;
-import cn.timelives.java.math.numberModels.expression.Node.Add;
-import cn.timelives.java.math.numberModels.expression.Node.Multiply;
-import cn.timelives.java.math.numberModels.expression.Node.PolyNode;
+import cn.timelives.java.math.numberModels.expression.Node.*;
 import cn.timelives.java.utilities.Printer;
 
 /**
@@ -56,30 +54,44 @@ public final class Expression {
 		Printer.reSet(out);
 		root.listNode(0);
 		Printer.reSet(pw);
-		
+	}
+	
+	public void listNode() {
+		root.listNode(0);
 	}
 	
 	public Node getRoot() {
 		return root;
 	}
 	
+	public static Expression fromPolynomial(Polynomial p) {
+		return new Expression(Node.newPolyNode(p, null));
+	}
 	
 	public static void main(String[] args) {
 		
 		ArrayList<Node> list = new ArrayList<>();
-		PolyNode[] ps = new PolyNode[3];
-		ps[0] = new PolyNode(null, Polynomial.ONE);
-		ps[1] = new PolyNode(null, Polynomial.ZERO);
-		ps[2] = new PolyNode(null, Polynomial.NEGATIVE_ONE);
+		Poly[] ps = new Poly[4];
+		ps[0] = new Poly(null, Polynomial.ONE);
+		ps[1] = new Poly(null, Polynomial.ZERO);
+		ps[2] = new Poly(null, Polynomial.NEGATIVE_ONE);
+		ps[3] = new Poly(null, Polynomial.valueOf("0"));
 		Multiply m = new Multiply(null, Polynomial.NEGATIVE_ONE, list);
 		Add add = new Add(m,Polynomial.ZERO,Collections.singletonList(ps[0]));
+		Node n = new SFunction(add,ps[3],"exp");
 		list.add(add);
 		list.add(ps[2]);
+		ps[2].parent = m;
+		list.add(n);
 		Expression expr = new Expression(m);
 		print(expr);
 		ExprCalculator exc = new ExprCalculator();
 		expr.listNode(Printer.getOutput());
 		print(exc.simplify(expr));
+		expr = exc.subtract(expr, exc.getZero());
+		expr.listNode();
+		expr = exc.cos(expr);
+		print(expr);
 	}
 	
 }

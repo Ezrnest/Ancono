@@ -122,6 +122,14 @@ public class SortedAdditiveSet<E> extends MathAddableSet<E>
 		return ma;
 	}
 	
+	public E getFirst() {
+		return eleData.first();
+	}
+	
+	public E getLast() {
+		return eleData.last();
+	}
+	
 	public boolean equals(SortedAdditiveSet<E> s){
 		if(s.size()!=this.size())
 			return false;

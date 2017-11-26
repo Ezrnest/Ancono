@@ -209,4 +209,30 @@ public class Polynomial implements Comparable<Polynomial> {
 	public static Polynomial valueOf(String expr) {
 		return new Polynomial(fc, expr);
 	}
+	
+	/**
+	 * Returns a formula if the {@link Polynomial} can be convert to a formula, or null
+	 * @param p
+	 * @return
+	 */
+	public static Formula asSingleFormula(Polynomial p) {
+		if(p.getNumOfFormula() == 1) {
+			return p.getFormulas().getFirst();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a big integer if the {@link Polynomial} can be convert to an integer, or null
+	 * @param p
+	 * @return
+	 */
+	public static BigInteger asBigInteger(Polynomial p) {
+		Formula f = asSingleFormula(p);
+		if(f == null) {
+			return null;
+		}
+		BigInteger x = Formula.asInteger(f);
+		return x;
+	}
 }

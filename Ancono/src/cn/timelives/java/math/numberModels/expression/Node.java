@@ -18,11 +18,14 @@ import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.PolyCalculator;
 import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.expression.Node.Multiply;
 import cn.timelives.java.utilities.CollectionSup;
 
 /**
  * A node is a single unit in the expression tree. Each node has its direct reference to its 
- * parent({@code null} if it is the root node), and circular references must be avoided.
+ * parent({@code null} if it is the root node), and circular references must be avoided. Node 
+ * is generally an immutable object to users, but for those who want to implement expression 
+ * extensions(such as SimplifyStrategy), essential and useful methods are accessible.
  * @author liyicheng
  * 2017-11-24 17:32
  *
@@ -37,21 +40,47 @@ public abstract class Node {
 		this.parent = parent;
 	}
 	
+	/**
+	 * The type of the nodes. Each type is associated with a specific class of Node.
+	 * The result why functions are divided into three parts is that they 
+	 * @author liyicheng
+	 * 2017-11-24 17:40
+	 *
+	 */
 	public enum Type{
-		NUMBER,
+		/**
+		 * A simple polynomial.
+		 * <p>{@link Node.Poly}
+		 */
+		POLYNOMIAL,
+		/**
+		 * Add, which contains a polynomial and several nodes.
+		 * <p>{@link Node.Add}
+		 */
 		ADD,
+		/**
+		 * Multiply, which contains a polynomial and several nodes.
+		 * <p>{@link Node.Multiply}
+		 */
 		MULTIPLY,
+		/**
+		 * Fraction, which contains a node as numerator and another node as denominator
+		 * <p>{@link Node.Fraction}
+		 */
 		FRACTION,
 		/**
 		 * Single-variable function such as abs,sin
+		 * <p>{@link Node.SFunction}
 		 */
 		S_FUNCTION,
 		/**
 		 * A function that accepts two parameters, such as exp(x,y)
+		 * <p>{@link Node.DFunction}
 		 */
 		D_FUNCTION,
 		/**
 		 * A function that accepts three or more parameters.
+		 * <p>{@link Node.MFunction}
 		 */
 		M_FUNCTION;
 		
@@ -74,6 +103,15 @@ public abstract class Node {
 	 */
 	public NodeWithChildren parent() {
 		return parent;
+	}
+	
+	boolean removeFromParent() {
+		if(parent!=null) {
+			parent.remove(this);
+			parent = null;
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -116,8 +154,15 @@ public abstract class Node {
 	 */
 	public abstract Node cloneNode(NodeWithChildren parent);
 	
-	
-	static abstract class NodeWithChildren extends Node{
+	/**
+	 * A node with children is a branch node(or root node). The node's children can 
+	 * be accessed via {@link #getChildren(int)} and {@link #getChildrenList()}. 
+	 *
+	 * @author liyicheng
+	 * 2017-11-25 18:23
+	 *
+	 */
+	public static abstract class NodeWithChildren extends Node{
 
 		/**
 		 * @param parent
@@ -135,10 +180,20 @@ public abstract class Node {
 		 */
 		abstract boolean replace(Node original,Node replacement);
 		
+		abstract boolean remove(Node n);
+		
 		public abstract int getNumberOfChildren();
-		
+		/**
+		 * Gets the child at the specified position.
+		 * @param index
+		 * @return
+		 */
 		public abstract Node getChildren(int index);
-		
+		/**
+		 * Get a copy of the list of the children of this node.
+		 * @return
+		 */
+		public abstract List<Node> getChildrenList();
 		/**
 		 * Performs the sort operation with the given NodeComparator.
 		 * Ignores the call if this kind of node requires its children's order.
@@ -146,11 +201,7 @@ public abstract class Node {
 		 */
 		abstract void doSort(NodeComparator nc);
 		
-		/**
-		 * Get a copy of the list of the children of this node.
-		 * @return
-		 */
-		public abstract List<Node> getChildrenList();
+		
 		
 	}
 	
@@ -175,6 +226,23 @@ public abstract class Node {
 		List<Node> getChildren() {
 			return children;
 		}
+		
+		/**
+		 * Adds the child node to this father node.
+		 * @param child
+		 */
+		void addChild(Node child) {
+			children.add(child);
+			child.parent = this;
+		}
+		/*
+		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#remove(cn.timelives.java.math.numberModels.expression.Node)
+		 */
+		@Override
+		boolean remove(Node n) {
+			return children.remove(n);
+		}
+		
 		/*
 		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#getChildrenList()
 		 */
@@ -296,14 +364,19 @@ public abstract class Node {
 	}
 	
 	
-	
+	/**
+	 * A single node only has one child.
+	 * @author liyicheng
+	 * 2017-11-25 18:25
+	 *
+	 */
 	public static abstract class SingleNode extends NodeWithChildren{
 		/**
 		 * @param parent
 		 */
 		SingleNode(NodeWithChildren parent,Node child) {
 			super(parent);
-			this.child = Objects.requireNonNull(child);
+			this.child = child;
 		}
 
 		Node child;
@@ -322,18 +395,33 @@ public abstract class Node {
 		 */
 		@Override
 		public boolean contains(Node child) {
-			return this.child.equals(child);
+			return Objects.equals(child, this.child);
 		}
-		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#replace(cn.timelives.java.math.numberModels.expression.Node, cn.timelives.java.math.numberModels.expression.Node)
+		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#remove(cn.timelives.java.math.numberModels.expression.Node)
+		 */
+		@Override
+		boolean remove(Node n) {
+			Objects.requireNonNull(n);
+			if (Objects.equals(child, n)) {
+				child = null;
+				return true;
+			}
+			return false;
+		}
+
+		/*
+		 * @see
+		 * cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#replace(
+		 * cn.timelives.java.math.numberModels.expression.Node,
+		 * cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
 		public boolean replace(Node original, Node replacement) {
-			if(replacement == null) {
+			if (replacement == null) {
 				throw new NullPointerException();
 			}
-			if(child.equals(original)) {
+			if(original.equals(child)) {
 				child = replacement;
 				return true;
 			}else {
@@ -422,7 +510,26 @@ public abstract class Node {
 		 */
 		@Override
 		public boolean contains(Node child) {
-			return c1.equals(child) || c2.equals(child);
+			return Objects.equals(c1, child) ||Objects.equals(c2, child);
+		}
+		
+		/*
+		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#remove(cn.timelives.java.math.numberModels.expression.Node)
+		 */
+		@Override
+		boolean remove(Node n) {
+			if(n==null) {
+				throw new NullPointerException();
+			}
+			if( Objects.equals(c1, n)) {
+				c1 = null;
+				return true;
+			}
+			if( Objects.equals(c2, n)) {
+				c2 = null;
+				return true;
+			}
+			return false;
 		}
 
 		/*
@@ -497,9 +604,15 @@ public abstract class Node {
 			c2.listNode(level+1);
 		}
 	}
-	public static final class PolyNode extends Node{
+	/**
+	 * A polynomial node which only contains a polynomial. 
+	 * @author liyicheng
+	 * 2017-11-25 20:28
+	 *
+	 */
+	public static final class Poly extends Node{
 		final Polynomial p;
-		PolyNode(NodeWithChildren parent,Polynomial p) {
+		Poly(NodeWithChildren parent,Polynomial p) {
 			super(parent);
 			this.p = Objects.requireNonNull(p); 
 		}
@@ -508,10 +621,10 @@ public abstract class Node {
 		 */
 		@Override
 		public boolean equalNode(Node n,PolyCalculator pc) {
-			if(!(n instanceof PolyNode)) {
+			if(!(n instanceof Poly)) {
 				return false;
 			}
-			PolyNode po = (PolyNode)n;
+			Poly po = (Poly)n;
 			return pc.isEqual(p, po.p);
 		}
 		/*
@@ -519,7 +632,7 @@ public abstract class Node {
 		 */
 		@Override
 		public Type getType() {
-			return Type.NUMBER;
+			return Type.POLYNOMIAL;
 		}
 		
 		/**
@@ -534,8 +647,8 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#clone()
 		 */
 		@Override
-		public PolyNode cloneNode(NodeWithChildren parent) {
-			return new PolyNode(parent, p);
+		public Poly cloneNode(NodeWithChildren parent) {
+			return new Poly(parent, p);
 		}
 		
 		
@@ -571,6 +684,12 @@ public abstract class Node {
 			}
 		}
 	}
+	/**
+	 * Describes the add operation.
+	 * @author liyicheng
+	 * 2017-11-25 20:28
+	 *
+	 */
 	public static final class Add extends CombinedNode{
 		/**
 		 * @param parent
@@ -976,9 +1095,10 @@ public abstract class Node {
 		}
 	}
 	
-	public static PolyNode newPolyNode(Polynomial p,NodeWithChildren parent) {
-		return new PolyNode(parent, p);
+	public static Poly newPolyNode(Polynomial p,NodeWithChildren parent) {
+		return new Poly(parent, p);
 	}
+	
 	
 	static boolean replaceChildNode(Node n,Node replacement) {
 		if(n.parent!=null) {
@@ -987,4 +1107,159 @@ public abstract class Node {
 		return false;
 	}
 	
+	/**
+	 * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
+	 * @param isAdd
+	 * @param n
+	 * @return
+	 */
+	public static Node wrapCloneNodeAM(boolean isAdd, Node n1,Node n2) {
+		NodeWithChildren root;
+		if(isAdd) {
+			Add add = new Add(null, null, new ArrayList<>(2));
+			add.addChild(n1.cloneNode(add));
+			add.addChild(n2.cloneNode(add));
+			root = add;
+		}else {
+			Multiply mul = new Multiply(null, null, new ArrayList<>(2));
+			mul.addChild(n1.cloneNode(mul));
+			mul.addChild(n2.cloneNode(mul));
+			root = mul;
+		}
+		return root;
+	}
+	/**
+	 * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
+	 * @param isAdd
+	 * @param n
+	 * @return
+	 */
+	public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns) {
+		NodeWithChildren root;
+		List<Node> list = new ArrayList<>(ns.size());
+		if(isAdd) {
+			root = new Add(null, null, new ArrayList<>(2));
+		}else {
+			root = new Multiply(null, null, new ArrayList<>(2));
+		}
+		for(Node n : ns) {
+			list.add(n.cloneNode(root));
+		}
+		return root;
+	}
+	
+	/**
+	 * Wraps the nodes' with either Add or Multiply. The newly created node has no parent node.
+	 * This method will try to clean the nodes original link to their parent node 
+	 * @param isAdd
+	 * @param n
+	 * @return
+	 */
+	public static Node wrapNodeAM(boolean isAdd, Node n1,Node n2) {
+		NodeWithChildren root;
+		n1.removeFromParent();
+		n2.removeFromParent();
+		List<Node> list = new ArrayList<>(2);
+		list.add(n1);
+		list.add(n2);
+		if(isAdd) {
+			root = new Add(null, null, list);
+		}else {
+			root = new Multiply(null, null, list);
+		}
+		n1.parent = root;
+		n2.parent = root;
+		return root;
+	}
+	
+	/**
+	 * Returns {@code n*x} without any simplification.
+	 * @param n
+	 * @param x
+	 * @return
+	 */
+	public static Multiply wrapCloneNodeMultiply(Node n,Polynomial x) {
+		List<Node> list = new ArrayList<>(1);
+		Multiply nroot = new Multiply(null, x, list);
+		Node rt = n.cloneNode(nroot);
+		list.add(rt);
+		return nroot;
+	}
+	/**
+	 * Returns {@code n+x} without any simplification.
+	 * @param n
+	 * @param x
+	 * @return
+	 */
+	public static Add wrapCloneNodeAdd(Node n,Polynomial x) {
+		List<Node> list = new ArrayList<>(1);
+		Add nroot = new Add(null, x, list);
+		Node rt = n.cloneNode(nroot);
+		list.add(rt);
+		return nroot;
+	}
+	/**
+	 * 
+	 * @param fname
+	 * @param n
+	 * @return
+	 */
+	public static SFunction wrapNodeSF(String fname,Node n) {
+		n.removeFromParent();
+		SFunction root = new SFunction(null, n, fname);
+		n.parent =root;
+		return root;
+	}
+	/**
+	 * 
+	 * @param fname
+	 * @param n
+	 * @return
+	 */
+	public static SFunction wrapCloneNodeSF(String fname,Node n) {
+		SFunction root = new SFunction(null, null, fname);
+		root.child = n.cloneNode(root);
+		return root;
+	}
+	
+	public static Fraction wrapCloneNodeFraction(Node nume,Node deno) {
+		Fraction root = new Fraction(null, null,null);
+		root.c1 = nume.cloneNode(root);
+		root.c2 = deno.cloneNode(root);
+		return root;
+	}
+	
+	static void linkToBiNode(Node c1,Node c2,BiNode root) {
+		c1.removeFromParent();
+		c2.removeFromParent();
+		c1.parent = root;
+		c2.parent = root;
+	}
+	
+	public static Fraction wrapNodeFraction(Node nume,Node deno) {
+		Fraction root = new Fraction(null, nume,deno);
+		linkToBiNode(nume,deno,root);
+		return root;
+	}
+	
+	public static boolean isPolynomial(Node n ) {
+		return n.getType() == Type.POLYNOMIAL;
+	}
+	
+	public static Poly toPolynomial(Node n) {
+		return (Poly)n;
+	}
+	
+	public static DFunction wrapCloneNodeDF(String fname,Node n1,Node n2) {
+		DFunction root = new DFunction(null,null,null,fname,false);
+		root.c1 = n1.cloneNode(root);
+		root.c2 = n2.cloneNode(root);
+		return root;
+	}
+	
+	public static DFunction wrapNodeDF(String fname,Node n1,Node n2) {
+		DFunction root = new DFunction(null, n1,n2, fname,false);
+		linkToBiNode(n1,n2,root);
+		return root;
+	}
 }

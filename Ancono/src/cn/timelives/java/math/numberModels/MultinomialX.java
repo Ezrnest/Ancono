@@ -5,6 +5,7 @@ package cn.timelives.java.math.numberModels;
 
 import static cn.timelives.java.utilities.Printer.print;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,18 +38,18 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 	 * A map.
 	 */
 	private final NavigableMap<Integer,T> map;
-	private final int maxPower;
+	private final int degree;
 	
 	
 	/**
 	 * 
 	 * @param calculator
-	 * @param maxPower
+	 * @param degree
 	 */
-	MultinomialX(MathCalculator<T> calculator,NavigableMap<Integer,T> map,int maxPower) {
+	MultinomialX(MathCalculator<T> calculator,NavigableMap<Integer,T> map,int degree) {
 		super(calculator);
 		this.map = Objects.requireNonNull(map);
-		this.maxPower = maxPower;
+		this.degree = degree;
 	}
 
 	
@@ -57,8 +58,8 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 	 * @see cn.timelives.java.math.Multinomial#getMaxPower()
 	 */
 	@Override
-	public int getMaxPower() {
-		return maxPower;
+	public int getDegree() {
+		return degree;
 	}
 	
 	private T getCoefficient0(Integer n) {
@@ -74,24 +75,40 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 	 */
 	@Override
 	public T getCoefficient(int n) {
-		if(n < 0 || n > maxPower) {
+		if(n < 0 || n > degree) {
 			throw new IndexOutOfBoundsException("For n="+n);
 		}
 		return getCoefficient0(n);
 	}
 	
 	/**
-	 * Returns the value of this multinimial
+	 * Returns the value of this multinomial
 	 * @param x
 	 * @return
 	 */
 	public T compute(T x) {
-		T re = getCoefficient(maxPower);
-		for(int i=maxPower-1;i>-1;i--){
+		T re = getCoefficient(degree);
+		for(int i=degree-1;i>-1;i--){
 			re = mc.multiply(x, re);
 			re = mc.add(getCoefficient(i), re);
 		}
 		return re;
+	}
+	
+	/**
+	 * Divides this multinomial by a number to get a new multinomial whose leading coefficient is one.
+	 * @return
+	 */
+	public MultinomialX<T> unit(){
+		if(mc.isEqual(mc.getOne(), getCoefficient(degree))) {
+			return this;
+		}
+		T k = getCoefficient(degree);
+		NavigableMap<Integer, T> nmap = getCoefficientMap();
+		for(Entry<Integer,T> en : nmap.entrySet()) {
+			en.setValue(mc.divide(en.getValue(),k));
+		}
+		return new MultinomialX<>(mc, nmap, degree);
 	}
 
 	/*
@@ -103,7 +120,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		for(Entry<Integer,T> en : map.entrySet()) {
 			nmap.put(en.getKey(),mapper.apply(en.getValue()));
 		}
-		return new MultinomialX<>(newCalculator, nmap, maxPower);
+		return new MultinomialX<>(newCalculator, nmap, degree);
 	}
 
 	/*
@@ -141,10 +158,10 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 	 */
 	@Override
 	public int compareTo(MultinomialX<T> o) {
-		int mp = o.maxPower;
-		if(mp > maxPower) {
+		int mp = o.degree;
+		if(mp > degree) {
 			return -1;
-		}else if( mp < maxPower) {
+		}else if( mp < degree) {
 			return 1;
 		}
 		for(int i=mp;i>-1;i--) {
@@ -167,7 +184,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 	@Override
 	public int hashCode() {
 		if(hashCode == 0) {
-			hashCode = map.hashCode() + 31*maxPower;
+			hashCode = map.hashCode() + 31*degree;
 		}
 		return hashCode;
 	}
@@ -244,6 +261,36 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		}
 		return new MultinomialX<>(mc, map, max);
 	}
+	public static MultinomialX<Formula> fromPolynomial(Polynomial p,String ch){
+		return fromPolynomial(p, ch,Formula.getCalculator());
+	}
+	/**
+	 * Converts the given polynomial to a multinomial of the given character {@code ch}.
+	 * @param p
+	 * @param ch
+	 * @param calculator
+	 * @return
+	 * @throws ArithmeticException if the polynomial has a fraction power or a negative power for the character
+	 * (such as x^0.5 or x^(-2)).
+	 */
+	public static MultinomialX<Formula> fromPolynomial(Polynomial p,String ch,MathCalculator<Formula> mc){
+		TreeMap<Integer,Formula> map = new TreeMap<>();
+		int max = 0;
+		for(Formula f : p.getFormulas()) {
+			BigDecimal bd = f.getCharacterPower(ch);
+			int pow = bd.intValueExact();
+			if(pow < 0) {
+				throw new ArithmeticException("Negative exponent for:["+ch+"] in "+f.toString());
+			}
+			if(pow > max) {
+				max = pow;
+			}
+			Formula coe = f.removeChar(ch);
+			map.put(pow, coe);
+		}
+		return new MultinomialX<>(mc, map, max);
+		
+	}
 	
 	/**
 	 * Gets a calculator of the specific type of MultinomialX
@@ -295,8 +342,8 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		@Override
 		public MultinomialX<T> add(MultinomialX<T> para1, MultinomialX<T> para2) {
 			TreeMap<Integer,T> map = new TreeMap<>();
-			int mp1 = para1.getMaxPower();
-			int mp2 = para2.getMaxPower();
+			int mp1 = para1.getDegree();
+			int mp2 = para2.getDegree();
 			int mp0 = mp1;
 			int mp = -1;
 			if(mp1>mp2) {
@@ -347,7 +394,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 			for(Entry<Integer,T> en : nmap.entrySet()) {
 				en.setValue(mc.negate(en.getValue()));
 			}
-			return new MultinomialX<>(mc, nmap, para.maxPower);
+			return new MultinomialX<>(mc, nmap, para.degree);
 		}
 
 		
@@ -358,8 +405,8 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		@Override
 		public MultinomialX<T> subtract(MultinomialX<T> para1, MultinomialX<T> para2) {
 			TreeMap<Integer,T> map = new TreeMap<>();
-			int mp1 = para1.getMaxPower();
-			int mp2 = para2.getMaxPower();
+			int mp1 = para1.getDegree();
+			int mp2 = para2.getDegree();
 			int mp0 = mp1;
 			int mp = -1;
 			if(mp1>mp2) {
@@ -431,7 +478,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 //					map.compute(t, (p,c)-> c== null ? coe : mc.add(c, coe));
 //				}
 //			}
-			return new MultinomialX<>(mc, map, para1.maxPower+para2.maxPower);
+			return new MultinomialX<>(mc, map, para1.degree+para2.degree);
 		}
 
 		/*
@@ -448,7 +495,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		
 		/**
 		 * Returns a pair of quotient and the reminder of the division of two MultinomialX.
-		 * <pre>p1 = k*p2 + r, r != n*p2 + m, where k,r,n,m are multinomials and n!=0</pre> 
+		 * <pre>p1 = k*p2 + r</pre> The degree of {@code r} is smaller than {@code p2}.
 		 * @param p1
 		 * @param p2
 		 * @return a pair of the quotient and the reminder.
@@ -457,7 +504,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 			if(isZero(p2)) {
 				throw new ArithmeticException("divide by zero!");
 			}
-			int mp1 = p1.maxPower,mp2 = p2.maxPower;
+			int mp1 = p1.degree,mp2 = p2.degree;
 			if(mp2 > mp1) {
 				return new Pair<>(zero,p1);
 			}
@@ -478,6 +525,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 				Entry<Integer,T> en = remains.pollLastEntry();
 				int p = en.getKey() - mp2;
 				if(p < 0) {
+					remains.put(en.getKey(), en.getValue());
 					break;
 				}
 				T k = mc.divide(en.getValue(), first);
@@ -500,6 +548,14 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 			MultinomialX<T> qm = new MultinomialX<>(mc, quotient, mp1-mp2);
 			MultinomialX<T> rm = remains.isEmpty() ? zero : new MultinomialX<>(mc, remains, remains.lastKey());
 			return new Pair<MultinomialX<T>, MultinomialX<T>>(qm, rm);
+		}
+		
+		/**
+		 * Returns the reminder of the two polynomials.
+		 */
+		@Override
+		public MultinomialX<T> reminder(MultinomialX<T> a, MultinomialX<T> b) {
+			return divideAndReminder(a, b).getSecond();
 		}
 
 		/*
@@ -527,7 +583,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 			}
 			NavigableMap<Integer, T> nmap = p.getCoefficientMap();
 			CollectionSup.modifyMap(nmap, (x,y)->mc.multiplyLong(y, l));
-			return new MultinomialX<>(mc, nmap, p.maxPower);
+			return new MultinomialX<>(mc, nmap, p.degree);
 		}
 
 		/*
@@ -546,7 +602,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 			}
 			NavigableMap<Integer, T> nmap = p.getCoefficientMap();
 			CollectionSup.modifyMap(nmap, (x,y)->mc.divideLong(y, l));
-			return new MultinomialX<>(mc, nmap, p.maxPower);
+			return new MultinomialX<>(mc, nmap, p.degree);
 		}
 
 		/*
@@ -586,11 +642,11 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 			if(exp == 1) {
 				return p;
 			}
-			if(p.maxPower == 0) {
+			if(p.degree == 0) {
 				//single 
 				return constant(mc, mc.pow(p.getCoefficient(0), exp));
 			}
-			long mp = exp*p.maxPower;
+			long mp = exp*p.degree;
 			if(mp > Integer.MAX_VALUE || mp < 0) {
 				throw new ArithmeticException("Too big for exp="+exp);
 			}
@@ -611,12 +667,32 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		 */
 		@Override
 		public MultinomialX<T> abs(MultinomialX<T> para) {
-			if(mc.compare(para.getCoefficient(para.maxPower), mc.getZero())<0) {
+			if(mc.compare(para.getCoefficient(para.degree), mc.getZero())<0) {
 				return negate(para);
 			}
 			return para;
 		}
-
+		
+		/**
+		 * Returns a the greatest common divisor of {@code a} and {@code b}. A greatest common divisor of polynomial {@code p} and {@code q} 
+		 * is a polynomial {@code d} that divides {@code p} and {@code q} such that every common divisor of {@code p} and {@code q} also divides {@code d}.
+		 * 
+		 * @return the  greatest common divisor of {@code a} and {@code b}, whose leading coefficient is one.
+		 */
+		@Override
+		public MultinomialX<T> gcd(MultinomialX<T> a, MultinomialX<T> b) {
+			if(a.degree < b.degree) {
+				MultinomialX<T> t = a;
+				a = b;
+				b = t;
+			}
+			while(b.degree > 0) {
+				MultinomialX<T> t = reminder(a, b);
+				a = b;
+				b = t;
+			}
+			return a.unit();
+		}
 
 
 		/*
@@ -659,18 +735,19 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		
 	}
 	
-//	public static void main(String[] args) {
-//		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
-//		MultinomialX<Integer> p1 = MultinomialX.valueOf(mc, 1,2,1);
-//		MultinomialX<Integer> p2 = MultinomialX.valueOf(mc, 1,1);
-//		MultinomialCalculator<Integer> mmc = getCalculator(mc);
-//		MultinomialX<Integer> re = mmc.add(p1, p2);
-//		print(p1);
-//		print(p2);
+	public static void main(String[] args) {
+		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
+		MultinomialX<Integer> p1 = MultinomialX.valueOf(mc, 6,7,1);
+		MultinomialX<Integer> p2 = MultinomialX.valueOf(mc, -6,-5,1);
+		MultinomialCalculator<Integer> mmc = getCalculator(mc);
+		MultinomialX<Integer> re = mmc.add(p1, p2);
+		print(p1);
+		print(p2);
 //		print(re);
 //		print(mmc.multiply(p1, p2));//x^3 + 3*x^2 + 3*x + 1
-//		print(mmc.divideAndReminder(p1, p2).getSecond());
+		print(mmc.divideAndReminder(p1, p2));
 //		print(mmc.pow(p2, 5));
 //		print(mmc.gcd(mmc.pow(p2, 5), mmc.pow(p2, 3)));
-//	}
+		print(mmc.gcd(p1, p2));
+	}
 }

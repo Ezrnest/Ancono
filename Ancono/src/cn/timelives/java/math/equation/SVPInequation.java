@@ -43,7 +43,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 	 * @see cn.timelives.java.math.Multinomial#getMaxPower()
 	 */
 	@Override
-	public int getMaxPower() {
+	public int getDegree() {
 		return mp;
 	}
 	/**
@@ -134,7 +134,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 		 * @param op
 		 */
 		protected FromFunction(MathCalculator<T> mc, Type op,AbstractSVPFunction<T> f) {
-			super(mc, op,f.getMaxPower());
+			super(mc, op,f.getDegree());
 			this.f = f;
 		}
 		/*

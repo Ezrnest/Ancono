@@ -195,6 +195,16 @@ public class Polynomial implements Comparable<Polynomial> {
 			fs.remove(Formula.ZERO);
 		}
 	}
+	/**
+	 * Calls this polynomial to regular its exponent, converting {@code 1.0} to {@code 1}.
+	 */
+	public Polynomial regularizeExponent() {
+		SortedAdditiveSet<Formula> set = new SortedAdditiveSet<>(fc);
+		for(Formula f : this.fs) {
+			set.add(f.regularizeExponent());
+		}
+		return new Polynomial(set);
+	}
 
 	public static MathCalculator<Polynomial> getCalculator() {
 		return PolyCalculator.DEFAULT_CALCULATOR;

@@ -36,7 +36,7 @@ public final class ExprFunctionHolder {
 		functions = new TreeSet<>((ExprFunction x,ExprFunction y)-> x.getName().compareTo(y.getName()));
 	}
 	
-	public void addExprFunction(ExprFunction f) {
+	void addExprFunction(ExprFunction f) {
 		functions.add(f);
 		int n = f.getParamNumber();
 		String name = f.getName();
@@ -112,10 +112,67 @@ public final class ExprFunctionHolder {
 		}
 	}
 	
+	private int hash;
 	
+	
+	/*
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		if (hash == 0) {
+			int result = 1;
+			result = prime * result + ((binaryFunctions == null) ? 0 : binaryFunctions.hashCode());
+			result = prime * result + ((functions == null) ? 0 : functions.hashCode());
+			result = prime * result + ((multiFunctions == null) ? 0 : multiFunctions.hashCode());
+			result = prime * result + ((singleFunctions == null) ? 0 : singleFunctions.hashCode());
+			hash = result;
+		}
+		return hash;
+	}
+
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof ExprFunctionHolder))
+			return false;
+		ExprFunctionHolder other = (ExprFunctionHolder) obj;
+		if (binaryFunctions == null) {
+			if (other.binaryFunctions != null)
+				return false;
+		} else if (!binaryFunctions.equals(other.binaryFunctions))
+			return false;
+		if (functions == null) {
+			if (other.functions != null)
+				return false;
+		} else if (!functions.equals(other.functions))
+			return false;
+		if (multiFunctions == null) {
+			if (other.multiFunctions != null)
+				return false;
+		} else if (!multiFunctions.equals(other.multiFunctions))
+			return false;
+		if (singleFunctions == null) {
+			if (other.singleFunctions != null)
+				return false;
+		} else if (!singleFunctions.equals(other.singleFunctions))
+			return false;
+		return true;
+	}
+
 	public static ExprFunctionHolder getDefaultKit(PolyCalculator pc) {
+		return createFunctionHolder(ExprFunction.createBasicCalculatorFunctions(pc));
+	}
+	
+	public static ExprFunctionHolder createFunctionHolder(List<ExprFunction> fs) {
 		ExprFunctionHolder holder = new ExprFunctionHolder();
-		List<ExprFunction> fs = ExprFunction.createBasicCalculatorFunctions(pc);
 		for(ExprFunction f : fs) {
 			holder.addExprFunction(f);
 		}

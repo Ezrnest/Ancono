@@ -38,7 +38,7 @@ public final class SimStraHolder {
 		tagged = new ArrayList<>();
 	}
 	
-	public void addStrategy(SimplificationStrategy ss) {
+	void addStrategy(SimplificationStrategy ss) {
 		if(ss instanceof SpecificStrategy) {
 			addSpecificStrategy((SpecificStrategy)ss);
 			return;
@@ -50,13 +50,13 @@ public final class SimStraHolder {
 		generalTypes.add(ss);
 	}
 	
-	public void addStrategy(List<? extends SimplificationStrategy> list) {
+	void addStrategy(List<? extends SimplificationStrategy> list) {
 		for(SimplificationStrategy ss : list) {
 			addStrategy(ss);
 		}
 	}
 	
-	public void addSpecificStrategy(SpecificStrategy ss) {
+	void addSpecificStrategy(SpecificStrategy ss) {
 		String name = ss.registerFunctionName();
 		if(name == null) {
 			for(Type ty : ss.registerTypes()) {
@@ -103,6 +103,9 @@ public final class SimStraHolder {
 	
 	
 	private void addAfterCheckTags(Set<String> tags,List<? extends SimplificationStrategy> slist,List<SimplificationStrategy> list) {
+		if(slist.isEmpty()) {
+			return;
+		}
 		for (SimplificationStrategy ss : slist) {
 			if (ss instanceof TaggedStrategy) {
 				TaggedStrategy ts = (TaggedStrategy) ss;
@@ -115,8 +118,59 @@ public final class SimStraHolder {
 		}
 	}
 	
-	private Node performAfterCheckTags(Set<String> tags,List<? extends SimplificationStrategy> slist,Node node,ExprCalculator mc) {
-		Node result = node;
+	private int hash;
+	
+	/*
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		if (hash == 0) {
+			int result = 1;
+			result = prime * result + ((generalTypes == null) ? 0 : generalTypes.hashCode());
+			result = prime * result + ((specifices == null) ? 0 : specifices.hashCode());
+			result = prime * result + ((tagged == null) ? 0 : tagged.hashCode());
+			hash = result;
+		}
+		return hash;
+	}
+
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof SimStraHolder))
+			return false;
+		SimStraHolder other = (SimStraHolder) obj;
+		if (generalTypes == null) {
+			if (other.generalTypes != null)
+				return false;
+		} else if (!generalTypes.equals(other.generalTypes))
+			return false;
+		if (specifices == null) {
+			if (other.specifices != null)
+				return false;
+		} else if (!specifices.equals(other.specifices))
+			return false;
+		if (tagged == null) {
+			if (other.tagged != null)
+				return false;
+		} else if (!tagged.equals(other.tagged))
+			return false;
+		return true;
+	}
+
+	private Node performAfterCheckTags(Set<String> tags,List<? extends SimplificationStrategy> slist,final Node node,ExprCalculator mc) {
+		if(slist.isEmpty()) {
+			return node;
+		}
+		
 		for (SimplificationStrategy ss : slist) {
 			if (ss instanceof TaggedStrategy) {
 				TaggedStrategy ts = (TaggedStrategy) ss;
@@ -124,15 +178,14 @@ public final class SimStraHolder {
 					continue;
 				}
 			}
-			result = ss.simplifyNode(result,mc);
-			if(result != node) {
+			Node result = ss.simplifyNode(node,mc);
+			if(result != null) {
 				//changed
 				return result;
 			}
 		}
-		return node;
+		return null;
 	}
-	
 	/**
 	 * Performs a single simplification.
 	 * @param n
@@ -148,22 +201,24 @@ public final class SimStraHolder {
 			List<SpecificStrategy> candidates = p.getSecond().get(name);
 			if (candidates != null) {
 				result = performAfterCheckTags(tags,candidates,result,mc);
-				if(result != node) {
+				if(result != null) {
 					return result;
 				}
 			}
 		}
 		result = performAfterCheckTags(tags,p.getFirst(),result,mc);
-		if(result != node) {
+		if(result != null) {
 			return result;
 		}
 		result = performAfterCheckTags(tags,tagged,result,mc);
-		if(result != node) {
+		if(result != null) {
 			return result;
 		}
 		result = performAfterCheckTags(tags,generalTypes,result,mc);
-		return result;
-		
+		if(result != null) {
+			return result;
+		}
+		return node;
 	}
 	
 	public static SimStraHolder getDefault() {
@@ -172,5 +227,15 @@ public final class SimStraHolder {
 		return ssh;
 	}
 	
+	/**
+	 * Create a new SimStraHolder with the list of {@link SimplificationStrategy}
+	 * @param list
+	 * @return
+	 */
+	public static SimStraHolder createHolder(List<SimplificationStrategy> list) {
+		SimStraHolder ssh = new SimStraHolder();
+		ssh.addStrategy(list);
+		return ssh;
+	}
 
 }

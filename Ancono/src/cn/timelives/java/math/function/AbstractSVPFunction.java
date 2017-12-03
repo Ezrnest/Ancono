@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Multinomial;
 import cn.timelives.java.math.Utils;
 import cn.timelives.java.math.calculus.Calculus;
@@ -41,7 +42,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	final int mp;
 	
 	@Override
-	public int getMaxPower() {
+	public int getDegree() {
 		return mp;
 	}
 	/**
@@ -88,7 +89,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		if(obj instanceof AbstractSVPFunction){
 			@SuppressWarnings("unchecked")
 			AbstractSVPFunction<T> as = (AbstractSVPFunction<T>) obj;
-			if(getMaxPower()!=as.getMaxPower()){
+			if(getDegree()!=as.getDegree()){
 				return false;
 			}
 			for(int i=0;i<mp;i++){
@@ -464,7 +465,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		if(m instanceof AbstractSVPFunction) {
 			return (AbstractSVPFunction<T>)m;
 		}
-		final int size = m.getMaxPower()+1;
+		final int size = m.getDegree()+1;
 		@SuppressWarnings("unchecked")
 		T[] list = (T[]) new Object[size];
 		for(int i=0;i<size;i++) {
@@ -472,16 +473,27 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		}
 		return new SVPFunctionImpl1<>(mc, size-1, list);
 	}
-	
+	/**
+	 * Returns a function from a multinomial which is also a {@link MathCalculatorHolder}.
+	 * @param m a {@link Multinomial}
+	 * @param mc a {@link MathCalculator}
+	 * @return an {@link AbstractSVPFunction}
+	 * @throws ClassCastException if {@code !(m instanceof MathCalculatorHolder)};
+	 */
+	public static <T> AbstractSVPFunction<T> fromMultinomial(Multinomial<T> m){
+		@SuppressWarnings("unchecked")
+		MathCalculatorHolder<T> holder = (MathCalculatorHolder<T>)m;
+		return fromMultinomial(m, holder.getMathCalculator());
+	}
 	
 	/**
-	 * Add two functions.
+	 * Adds two functions.
 	 * @param p1
 	 * @param p2
 	 * @return
 	 */
 	public static <T> AbstractSVPFunction<T> add(SVPFunction<T> p1,SVPFunction<T> p2){
-		int max = Math.max(p1.getMaxPower(), p2.getMaxPower());
+		int max = Math.max(p1.getDegree(), p2.getDegree());
 		@SuppressWarnings("unchecked")
 		T[] coes =  (T[]) new Object[max+1];
 		MathCalculator<T> mc = p1.getMathCalculator();
@@ -490,7 +502,22 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		}
 		return valueOf(mc, coes);
 	}
-	
+	/**
+	 * Subtracts two functions.
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
+	public static <T> AbstractSVPFunction<T> subtract(SVPFunction<T> p1,SVPFunction<T> p2){
+		int max = Math.max(p1.getDegree(), p2.getDegree());
+		@SuppressWarnings("unchecked")
+		T[] coes =  (T[]) new Object[max+1];
+		MathCalculator<T> mc = p1.getMathCalculator();
+		for(int i=0;i<=max;i++){
+			coes[i] = mc.subtract(p1.getCoefficient(i), p2.getCoefficient(i));
+		}
+		return valueOf(mc, coes);
+	}
 	private static final int MAX_ARRAY_THREHOLD = 128;
 	/**
 	 * Multiplies the two SVPFunction, returns a new function as the result.
@@ -499,7 +526,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 * @return
 	 */
 	public static <T> AbstractSVPFunction<T> multiply(SVPFunction<T> p1,SVPFunction<T> p2){
-		int max = p1.getMaxPower()+ p2.getMaxPower();
+		int max = p1.getDegree()+ p2.getDegree();
 		if(max < MAX_ARRAY_THREHOLD){
 			return multiplyToArr(p1, p2, max);
 		}else{
@@ -518,8 +545,8 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	private static <T> AbstractSVPFunction<T> multiplyToMap(SVPFunction<T> p1, SVPFunction<T> p2, int max) {
 		MathCalculator<T> mc = p1.getMathCalculator();
 		HashMap<Integer,T> map = new HashMap<>();
-		for(int i=0,max1 = p1.getMaxPower();i<=max1;i++){
-			for(int j=0,max2= p2.getMaxPower();j<=max2;j++){
+		for(int i=0,max1 = p1.getDegree();i<=max1;i++){
+			for(int j=0,max2= p2.getDegree();j<=max2;j++){
 				int t = i+j;
 				T coe = mc.multiply(p1.getCoefficient(i), p2.getCoefficient(j));
 				map.compute(t, (p,c)-> c== null ? coe : mc.add(c, coe));
@@ -530,9 +557,9 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	private static <T> AbstractSVPFunction<T> multiplyToArr(SVPFunction<T> p1,SVPFunction<T> p2,int max){
 		MathCalculator<T> mc = p1.getMathCalculator();
 		@SuppressWarnings("unchecked")
-		T[] arr = (T[]) new Object[max];
-		for(int i=0,max1 = p1.getMaxPower();i<=max1;i++){
-			for(int j=0,max2= p2.getMaxPower();j<=max2;j++){
+		T[] arr = (T[]) new Object[max+1];
+		for(int i=0,max1 = p1.getDegree();i<=max1;i++){
+			for(int j=0,max2= p2.getDegree();j<=max2;j++){
 				int t = i+j;
 				T coe = mc.multiply(p1.getCoefficient(i), p2.getCoefficient(j));
 				if(arr[t] == null){

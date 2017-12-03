@@ -11,6 +11,7 @@ import cn.timelives.java.math.numberModels.expression.Node.DFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Fraction;
 import cn.timelives.java.math.numberModels.expression.Node.MFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Multiply;
+import cn.timelives.java.math.numberModels.expression.Node.Poly;
 import cn.timelives.java.math.numberModels.expression.Node.SFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Type;
 
@@ -23,6 +24,17 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 	protected final Set<String> tags;
 	protected final Set<Node.Type> types;
 	protected final String fname;
+	protected final String description;
+	/**
+	 * 
+	 */
+	public SimStraImpl(Set<String> tags,Set<Node.Type> types,String fname,String description) {
+		this.tags = tags;
+		this.types = types;
+		this.fname = fname;
+		this.description = description == null ? "" : description;
+	}
+	
 	/**
 	 * 
 	 */
@@ -30,6 +42,7 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 		this.tags = tags;
 		this.types = types;
 		this.fname = fname;
+		this.description = "";
 	}
 	/*
 	 * @see cn.timelives.java.math.numberModels.expression.TaggedStrategy#isAcceptable(java.util.Set)
@@ -68,6 +81,14 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 		return tags;
 	}
 	
+	/**
+	 * Gets the description.
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
 	/*
 	 * @see cn.timelives.java.math.numberModels.expression.SimplificationStrategy#simplifyNode(cn.timelives.java.math.numberModels.expression.Node)
 	 */
@@ -84,22 +105,34 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 			return simplifyMultiply((Multiply)node,mc);
 		case FRACTION:
 			return simplifyFraction((Fraction)node,mc);
-		case M_FUNCTION:
-			return simplifyMFunction((MFunction)node,mc);
 		case S_FUNCTION:
 			return simplifySFunction((SFunction)node,mc);
 		case D_FUNCTION:
 			return simplifyDFunction((DFunction)node,mc);
+		case M_FUNCTION:
+			return simplifyMFunction((MFunction)node,mc);
+		case POLYNOMIAL:
+			return simplifyPolynomial((Poly)node,mc);
 		default:
 			break;
 		}
 		return node;
 	}
 	/**
+	 * Performs the simplification for a polynomial node. Ignore this method if this 
+	 * simplifier doesn't register the type.
+	 * @param node a node
+	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
+	 */
+	protected Node simplifyPolynomial(Poly node, ExprCalculator mc) {
+		return node;
+	}
+
+	/**
 	 * Performs the simplification for a node Add. Ignore this method if this 
 	 * simplifier doesn't register the type.
 	 * @param node a node
-	 * @return the node after simplification.
+	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
 	protected Node simplifyAdd(Add node,ExprCalculator mc) {
 		return node;
@@ -108,7 +141,7 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 	 * Performs the simplification for a node Multiply. Ignore this method if this 
 	 * simplifier doesn't register the type.
 	 * @param node a node
-	 * @return the node after simplification.
+	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
 	protected Node simplifyMultiply(Multiply node,ExprCalculator mc) {
 		return node;
@@ -117,7 +150,7 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 	 * Performs the simplification for a node Fraction. Ignore this method if this 
 	 * simplifier doesn't register the type.
 	 * @param node a node
-	 * @return the node after simplification.
+	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
 	protected Node simplifyFraction(Fraction node,ExprCalculator mc) {
 		return node;
@@ -126,7 +159,7 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 	 * Performs the simplification for a node SFunction. Ignore this method if this 
 	 * simplifier doesn't register the type.
 	 * @param node a node
-	 * @return the node after simplification.
+	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
 	protected Node simplifySFunction(SFunction node,ExprCalculator mc) {
 		return node;
@@ -135,7 +168,7 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 	 * Performs the simplification for a node DFunction. Ignore this method if this 
 	 * simplifier doesn't register the type.
 	 * @param node a node
-	 * @return the node after simplification.
+	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
 	protected Node simplifyDFunction(DFunction node,ExprCalculator mc) {
 		return node;
@@ -144,7 +177,7 @@ public abstract class SimStraImpl implements SpecificStrategy,TaggedStrategy{
 	 * Performs the simplification for a node MFunction. Ignore this method if this 
 	 * simplifier doesn't register the type.
 	 * @param node a node
-	 * @return the node after simplification.
+	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
 	protected Node simplifyMFunction(MFunction node,ExprCalculator mc) {
 		return node;

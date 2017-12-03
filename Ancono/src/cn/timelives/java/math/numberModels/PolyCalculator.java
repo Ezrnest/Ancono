@@ -612,7 +612,6 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		// reduce by two.
 		nume = nume.mod(deno);
 		arr[0] = nume;
-		arr[1] = deno;
 	}
 	
 	private void reduceByPi(BigInteger[] arr){
@@ -622,7 +621,6 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		// reduce by two.
 		nume = nume.mod(deno);
 		arr[0] = nume;
-		arr[1] = deno;
 	}
 	
 	private boolean reduceIntoPi(BigInteger[] nd,boolean nega){
@@ -679,9 +677,12 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			return Polynomial.ZERO;
 		}
 		if(f.haveSameChar(Formula.PI)){
+			if(f.getRadical().equals(BigInteger.ONE)==false) {
+				return null;
+			}
 			// ... pi
-			boolean nega = f.isPositive();
-			if(!nega)
+			boolean nega = !f.isPositive();
+			if(nega)
 				f=f.negate();
 			BigInteger[] nd = new BigInteger[]{f.getNumerator(),f.getDenominator()};
 			//now in [0,2Pi]
@@ -708,10 +709,15 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			return Polynomial.ONE;
 		}
 		if(f.haveSameChar(Formula.PI)){
+			if(f.getRadical().equals(BigInteger.ONE)==false) {
+				return null;
+			}
 			// ... pi
-			boolean nega = f.isPositive();
-			if(!nega)
-				f=f.negate();
+			boolean nega = false;
+			if(f.isPositive()==false) {
+				f = f.negate();
+			}
+			
 			BigInteger[] nd = new BigInteger[]{f.getNumerator(),f.getDenominator()};
 			//cos(x) = sin(pi/2+x)
 			//add 1/2 to nd
@@ -719,8 +725,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			reduceByTwoPi(nd);
 			//now in [0,2Pi]
 			nega = reduceIntoPi(nd,nega);
-			//cos(x) = -cos(pi-x)
-			nega = subtractToHalf(nd, nega);
+			//sin(x) = sin(pi-x)
+			subtractToHalf(nd, nega);
 			
 			Polynomial result = SIN_VALUE.get(Pair.of(nd));//cos(x) = sin(pi/2+x),in the first we added pi/2.
 			if(result != null){
@@ -785,8 +791,11 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			return Polynomial.ZERO;
 		}
 		if(f.haveSameChar(Formula.PI)){
-			boolean nega =f.isPositive();
-			if(!nega)
+			if(f.getRadical().equals(BigInteger.ONE)==false) {
+				return null;
+			}
+			boolean nega =!f.isPositive();
+			if(nega)
 				f=f.negate();
 			BigInteger[] nd = new BigInteger[]{f.getNumerator(),f.getDenominator()};
 			reduceByPi(nd);
@@ -797,7 +806,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			nega = subtractToHalf(nd, nega);
 			Polynomial result = TAN_VALUE.get(Pair.of(nd));
 			if(!(result==null)){
-				if(!nega)
+				if(nega)
 					result = negate(result);
 				return result;
 			}
@@ -943,7 +952,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 */
 	public Polynomial replace(String target,Polynomial p,Polynomial expr){
 		Polynomial temp,result=Polynomial.ZERO.clone();
-		Formula f;
+		
 		for(Formula f1: p.getFormulas()){
 			//System.out.println(f1.toString()); TODO
 			if(f1.getCharacterS().containsKey(target)){
@@ -951,22 +960,31 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 					//should be an int above zero
 				if(power.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO)==0){
 					int t=power.intValue();
+					Formula f;
 					f=f1.removeChar(target);
-					temp=new Polynomial(ca,f);// a * i^2 ,i=x+y --> a* (x+y) * (x+y)
+					temp=new Polynomial(ca,f);// a * b^2 ,b=x+y --> a* (x+y) * (x+y)
 					temp = multiply(temp, pow(expr, t));
 					
 					result = add(result, temp);
 				}
 				else{
-					
-					throw new UnsupportedCalculationException("Cannot calculate : ");
+					if(Polynomial.ONE.equals(expr)) {
+						result.addFormula(f1.removeChar(target));
+					} else if (Polynomial.ZERO.equals(expr)) {
+						// zero
+						result.getClass();
+					} else {
+						throw new UnsupportedCalculationException("Cannot calculate : Decimal exponent");
+					}
 				}
 			}
 			else{
 				result.addFormula(f1);
 			}
 		}
-		
+		if(result.toString().endsWith("8")) {
+			result.getClass();
+		}
 		return result;
 	}
 	public boolean containsChar(char c,Polynomial p){
@@ -1148,7 +1166,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				try {
 					p1 = DEFAULT_CALCULATOR.divide(p1, p2);
 					p2 = Polynomial.ONE;
-				} catch (UnsupportedOperationException ex) {
+				} catch (UnsupportedCalculationException ex) {
 
 				}
 			}
@@ -1162,11 +1180,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 //	public static void main(String[] args) {
 //		print("Debugging:");
-//		Polynomial p1 = Polynomial.valueOf("3x^2-3y^2"),
-//				p2 = Polynomial.valueOf("x+y");
+//		Polynomial p1 = Polynomial.valueOf("-6*x^2-36*x+18*x");
 //		print(p1);
-//		print(p2);
-//		print(Polynomial.getCalculator().divide(p1, p2));
+//		print(DEFAULT_CALCULATOR.multiply(p1, p1));
+//		print(DEFAULT_CALCULATOR.pow(Polynomial.valueOf("4+4"), Polynomial.valueOf("1/2")));
 //		/*
 //		Polynomial[] ps = new Polynomial[2];
 //		ps[0] = new Polynomial(DEFAULT_FORMULA_CALCULATOR, "1");
@@ -1192,6 +1209,11 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	public Polynomial valueOfLong(long l) {
 		return new Polynomial(ca, Formula.valueOf(l));
 	}
+	
+	public Polynomial valueOfBigInteger(BigInteger val) {
+		return new Polynomial(ca, Formula.valueOf(val));
+	}
+	
 	/**
 	 * Returns {@code 1/x}
 	 * @param l

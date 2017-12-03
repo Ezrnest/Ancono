@@ -52,8 +52,8 @@ public interface MathCalculator<T> {
 	/**
 	 * Compare the two numbers, return -1 if {@code para1 < para2 }, 0 if
 	 * {@code para1==para2} , or 1 if {@code para1 > para2}.This method is
-	 * recommended to be literally the same to the method {@code compareTo()} if
-	 * the object {@code T} is comparable.
+	 * recommended to be literally the same to the method {@code compareTo()} if the
+	 * object {@code T} is comparable.
 	 * 
 	 * @param para1
 	 *            a number
@@ -67,8 +67,8 @@ public interface MathCalculator<T> {
 	public int compare(T para1, T para2);
 
 	/**
-	 * Add two parameters,this add method is not required to be commuting,so is
-	 * it not required that {@code add(t1,t2)=add(t2,t1)}.
+	 * Add two parameters,this add method is not required to be commuting,so is it
+	 * not required that {@code add(t1,t2)=add(t2,t1)}.
 	 * 
 	 * @param para1
 	 *            a number
@@ -138,8 +138,8 @@ public interface MathCalculator<T> {
 	public T abs(T para);
 
 	/**
-	 * Returns the result of {@code para1-para2},this method should return the
-	 * same result with {@code add(para1,this.negate(para2))}.
+	 * Returns the result of {@code para1-para2},this method should return the same
+	 * result with {@code add(para1,this.negate(para2))}.
 	 * 
 	 * @param para1
 	 *            a number
@@ -154,8 +154,8 @@ public interface MathCalculator<T> {
 	public T subtract(T para1, T para2);
 
 	/**
-	 * Return the value zero in this kind of number type.The returned number
-	 * should be equal to {@code this.subtract(t,t)}.
+	 * Return the value zero in this kind of number type.The returned number should
+	 * be equal to {@code this.subtract(t,t)}.
 	 * 
 	 * @return 0
 	 * @throws UnsupportedCalculationException
@@ -164,8 +164,8 @@ public interface MathCalculator<T> {
 	public T getZero();
 
 	/**
-	 * Determines whether the given parameter is zero.This method is set because
-	 * the high frequency of testing whether the number is zero in most math
+	 * Determines whether the given parameter is zero.This method is set because the
+	 * high frequency of testing whether the number is zero in most math
 	 * calculations.
 	 * 
 	 * @return {@code true} if {@code para==zero}
@@ -234,8 +234,8 @@ public interface MathCalculator<T> {
 	public T divide(T para1, T para2);
 
 	/**
-	 * Return the value one in this kind of number type.The returned number
-	 * should be equal to {@code this.divide(t,t)}.
+	 * Return the value one in this kind of number type. The returned number should
+	 * be equal to {@code this.divide(t,t)}.
 	 * 
 	 * @return 1
 	 * @throws UnsupportedCalculationException
@@ -244,7 +244,7 @@ public interface MathCalculator<T> {
 	public T getOne();
 
 	/**
-	 * Return the value of {@code 1/p}.This method should be equal to
+	 * Return the value of {@code 1/p}. This method should be equal to
 	 * {@code this.divide(this.getOne,p)}.
 	 * 
 	 * @param p
@@ -258,14 +258,14 @@ public interface MathCalculator<T> {
 	public T reciprocal(T p);
 
 	/**
-	 * Return the result of {@code p * l}, this method is provided because this
-	 * is equals to {@code add(p,p)} for {@code l} times.This method expects a
-	 * better performance.
+	 * Return the result of {@code p * l}, this method is provided because this is
+	 * equals to {@code add(p,p)} for {@code l} times.This method expects a better
+	 * performance.
 	 * 
 	 * @param p
 	 *            a number
 	 * @param l
-	 *            another number of long 
+	 *            another number of long
 	 * @return {@code p*l}
 	 * @throws UnsupportedCalculationException
 	 *             if this operation can not be done.(optional)
@@ -290,8 +290,8 @@ public interface MathCalculator<T> {
 	public T divideLong(T p, long l);
 
 	/**
-	 * Return the square root of {@code p}. This method should return the
-	 * positive square of {@code p}.
+	 * Return the square root of {@code p}. This method should return the positive
+	 * square of {@code p}.
 	 * 
 	 * @param p
 	 *            a number
@@ -302,10 +302,10 @@ public interface MathCalculator<T> {
 	 *             if this operation causes an exceptional arithmetic condition.
 	 */
 	public T squareRoot(T p);
-	
+
 	/**
-	 * Return the n-th root of {@code x}. This method should return a positive number if 
-	 * {@code n} is even.
+	 * Return the n-th root of {@code x}. This method should return a positive
+	 * number if {@code n} is even.
 	 * 
 	 * @param x
 	 *            a number
@@ -313,17 +313,17 @@ public interface MathCalculator<T> {
 	 * @throws UnsupportedCalculationException
 	 *             if this operation can not be done.(optional)
 	 * @throws ArithmeticException
-	 *             if this operation causes an exceptional arithmetic condition.  
+	 *             if this operation causes an exceptional arithmetic condition.
 	 */
-	public T nroot(T x,long n);
-	
+	public T nroot(T x, long n);
+
 	/**
 	 * Return {@code p ^ exp}.This method should be equal to calling
 	 * {@code this.multiply(p,p)} for many times if {@code exp > 0} , or
-	 * {@code this.divide(p,p)} if {@code exp < 0 }, or return {@code getOne()}
-	 * if {@code exp == 0}.Notice that this calculator may not throw an
-	 * ArithmeticException if {@code p == 0 && exp <= 0},whether to throw
-	 * exception is determined by the implementation.
+	 * {@code this.divide(p,p)} if {@code exp < 0 }, or return {@code getOne()} if
+	 * {@code exp == 0}.Notice that this calculator may not throw an
+	 * ArithmeticException if {@code p == 0 && exp <= 0},whether to throw exception
+	 * is determined by the implementation.
 	 * 
 	 * @param p
 	 *            a number
@@ -347,11 +347,11 @@ public interface MathCalculator<T> {
 	public static final String STR_E = "e";
 
 	/**
-	 * Gets a constant value from the calculator, the constant value is got by
-	 * its name as a String. It is recommended that the string should be case
-	 * insensitive in case of mistake. The name of the constant value should be
-	 * specified both on the calculator and wherever the value is needed. <br>
-	 * Some usually used constants are list below:
+	 * Gets a constant value from the calculator, the constant value is got by its
+	 * name as a String. It is recommended that the string should be case
+	 * insensitive in case of spelling mistakes. The name of the constant value should be
+	 * specified wherever the value is needed. <br>
+	 * Some common constants are list below:
 	 * <ul>
 	 * <li><tt>PI</tt> :the ratio of the circumference of a circle to its
 	 * diameter.See:{@link Math#PI}
@@ -387,8 +387,8 @@ public interface MathCalculator<T> {
 	}
 
 	/**
-	 * Returns the result of {@code e^x}, where {@code e} is the base of the
-	 * natural logarithm.
+	 * Returns the result of {@code e^x}, where {@code e} is the base of the natural
+	 * logarithm.
 	 * 
 	 * @param x
 	 *            the exponent
@@ -445,7 +445,7 @@ public interface MathCalculator<T> {
 	 * 
 	 *         <pre>
 	 *         ln(x)
-	 * 		</pre>
+	 *         </pre>
 	 * 
 	 * @throws UnsupportedCalculationException
 	 *             if this operation can not be done.(optional)
@@ -470,8 +470,8 @@ public interface MathCalculator<T> {
 	/**
 	 * Returns the result of {@code cos(x)}. <br>
 	 * This method provides a default implement by computing:
-	 * {@code squareRoot(subtract(getOne(), multiply(x, x)))}. If a better
-	 * implement is available, subclasses should always override this method.
+	 * {@code squareRoot(subtract(getOne(), multiply(x, x)))}. If a better implement
+	 * is available, subclasses should always override this method.
 	 * 
 	 * @param x
 	 *            a number
@@ -521,8 +521,7 @@ public interface MathCalculator<T> {
 	 * Returns the result of {@code arccos(x)}. <br>
 	 * This method provides a default implement by computing:
 	 * {@code  subtract(divideLong(constantValue(STR_PI), 2l), arcsin(x))}. If a
-	 * better implement is available, subclasses should always override this
-	 * method.
+	 * better implement is available, subclasses should always override this method.
 	 * 
 	 * @param x
 	 *            a number
@@ -540,8 +539,7 @@ public interface MathCalculator<T> {
 	 * Returns the result of {@code arctan(x)}. <br>
 	 * This method provides a default implement by computing:
 	 * {@code arcsin(divide(x,squareRoot(add(getOne(), multiply(x, x)))))}. If a
-	 * better implement is available, subclasses should always override this
-	 * method.
+	 * better implement is available, subclasses should always override this method.
 	 * 
 	 * @param x
 	 *            a number
@@ -556,12 +554,10 @@ public interface MathCalculator<T> {
 	}
 
 	/**
-	 * Returns the class object of the number type operated by this
-	 * MathCalculator.
+	 * Returns the class object of the number type operated by this MathCalculator.
 	 * 
 	 * @return the class
 	 */
 	public Class<?> getNumberClass();
 
-	
 }

@@ -25,13 +25,13 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  */
 public interface Multinomial<T> extends Iterable<T>{
 	/**
-	 * Gets the max power of {@code x}.
-	 * @return the max power of {@code x}.
+	 * Gets the degree of this multinomial.
+	 * @return the degree of multinomial.
 	 */
-	int getMaxPower();
+	int getDegree();
 	/**
 	 * Gets the number of the corresponding index, throws {@link IndexOutOfBoundsException}
-	 * if {@code n<0 || n>getMaxPower()}. 
+	 * if {@code n<0 || n>getDegree()}. 
 	 * @param n the power of the variable.
 	 * @return
 	 */
@@ -52,10 +52,10 @@ public interface Multinomial<T> extends Iterable<T>{
 	 * @return
 	 */
 	public static <T,S> boolean isEqual(Multinomial<T> m1,Multinomial<S> m2,BiPredicate<T, S> equal) {
-		if(m1.getMaxPower() != m2.getMaxPower()) {
+		if(m1.getDegree() != m2.getDegree()) {
 			return false;
 		}
-		int mp =m1.getMaxPower();
+		int mp =m1.getDegree();
 		for(int i=0;i<=mp;i++) {
 			if(!equal.test(m1.getCoefficient(i), m2.getCoefficient(i))) {
 				return false;
@@ -71,10 +71,10 @@ public interface Multinomial<T> extends Iterable<T>{
 	 * @return
 	 */
 	public static boolean isEqual(Multinomial<?> m1,Multinomial<?> m2) {
-		if(m1.getMaxPower() != m2.getMaxPower()) {
+		if(m1.getDegree() != m2.getDegree()) {
 			return false;
 		}
-		int mp =m1.getMaxPower();
+		int mp =m1.getDegree();
 		for(int i=0;i<=mp;i++) {
 			if(!m1.getCoefficient(i).equals(m2.getCoefficient(i))) {
 				return false;
@@ -98,7 +98,7 @@ public interface Multinomial<T> extends Iterable<T>{
 	 */
 	public static int hashCodeOf(Multinomial<?> m) {
 		int hash = 0;
-		int mp =m.getMaxPower();
+		int mp =m.getDegree();
 		for(int i=0;i<=mp;i++) {
 			hash = hash *31 + m.getCoefficient(i).hashCode();
 		}
@@ -106,7 +106,7 @@ public interface Multinomial<T> extends Iterable<T>{
 	}
 	
 	public static <T> String stringOf(Multinomial<T> m,MathCalculator<T> mc,NumberFormatter<T> nf) {
-		int maxPower = m.getMaxPower();
+		int maxPower = m.getDegree();
 		if(maxPower== 0) {
 			return nf.format(m.getCoefficient(0), mc);
 		}
@@ -149,7 +149,7 @@ class It<T> implements ListIterator<T>{
 	 */
 	public It(Multinomial<T> f) {
 		this.f = f;
-		this.max = f.getMaxPower();
+		this.max = f.getDegree();
 	}
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()

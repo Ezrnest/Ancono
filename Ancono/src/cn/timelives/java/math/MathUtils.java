@@ -621,7 +621,13 @@ public class MathUtils {
 	 */
 	public static <T> List<T> solveEquation(T a,T b,T c,MathCalculator<T> mc){
 		//Calculate the delta
-		T delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));
+		T delta;
+		{//=mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));;
+			T t1 = mc.multiply(b, b);
+			T t2 = mc.multiply(a, c);
+			T t3 = mc.multiplyLong(t2, 4l);
+			delta = mc.subtract(t1, t3);
+		}
 		int compare = 1;
 		try{
 			compare = mc.compare(delta, mc.getZero());

@@ -157,15 +157,15 @@ public abstract class EHSection<T> extends ConicSection<T> {
 	}
 	
 	/**
-	 * Returns the point's distance to the left focus,which is calculated by the formula
-	 * {@code a-ex}.This point must be on the ellipse.
-	 * @param p a point
+	 * Returns the point's distance to the left focus. This point must be on the curve.
+	 * 
+	 * @param p
+	 *            a point
 	 * @return the distance
 	 */
 	public abstract T focusDL(Point<T> p);
 	/**
-	 * Returns the point's distance to the right focus,which is calculated by the formula
-	 * {@code a+ex}.This point must be on the ellipse.
+	 * Returns the point's distance to the right focus. This point must be on the curve.
 	 * @param p a point
 	 * @return the distance
 	 */

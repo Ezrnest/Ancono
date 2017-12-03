@@ -197,7 +197,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 * @see cn.timelives.java.math.function.SVPFunction#getMaxPower()
 	 */
 	@Override
-	public int getMaxPower() {
+	public int getDegree() {
 		return 2;
 	}
 	/**

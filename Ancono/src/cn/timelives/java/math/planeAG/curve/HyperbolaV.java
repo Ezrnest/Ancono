@@ -333,11 +333,11 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	}
 	
 	/**
-	 * Creates a hyperbolaV of 
+	 * Creates a hyperbola of 
 	 * <pre>x^2/a^2 - y^2/b^2 = +-1</pre>,
 	 * @param a coefficient a
 	 * @param b coefficient b
-	 * @param onX decides whether this Hyperbola should be on X . 
+	 * @param onX decides whether this Hyperbola should be on X axis. 
 	 * @param mc a {@link MathCalculator}
 	 * @return new HyperbolaV
 	 * @throws IllegalArgumentException if {@code a==b} or {@code a <= 0 || b <= 0}
@@ -349,6 +349,27 @@ public final class HyperbolaV<T> extends EHSection<T> {
 		T c = mc.squareRoot(c2);
 		return create0(a, b, c, a2, b2, c2, onX, mc);
 	}
-
+	
+	/**
+	 * Creates an hyperbolaV of 
+	 * <pre>x^2/a2 - y^2/b2 = 1</pre> if {@code onX==true} 
+	 * or <pre>y^2/a2 - x^2/b2 = 1</pre>
+	 * @param a2 coefficient a2
+	 * @param b2 coefficient b2
+	 * @param onX decides whether this Hyperbola should be on X axis. 
+	 * @param mc a {@link MathCalculator}
+	 * @return new hyperbola
+	 */
+	public static <T> HyperbolaV<T> standardEquationSqrt(T a2,T b2,boolean onX,MathCalculator<T> mc){
+		T c2 = mc.add(a2, b2);
+		T a = mc.squareRoot(a2);
+		T b = mc.squareRoot(b2);
+		T c = mc.squareRoot(c2);
+		if(onX){
+			return create0(a, b, c, a2, b2, c2, onX, mc);
+		}else{
+			return create0(b, a, c, b2, a2, c2, onX, mc);
+		}
+	}
 
 }

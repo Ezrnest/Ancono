@@ -33,7 +33,7 @@ public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, M
 	 * @return an integer number indicates the max power.
 	 * 
 	 */
-	int getMaxPower();
+	int getDegree();
 	
 	/**
 	 * Determines whether the two SVPFunctions are equal. The subclasses may 

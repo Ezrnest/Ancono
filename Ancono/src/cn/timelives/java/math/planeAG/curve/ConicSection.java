@@ -11,6 +11,7 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.LEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -260,7 +261,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * Create the equation of {@code x} from the line and this conic section.this method 
 	 * requires that {@code line} is not parallel to Y axis.<p>
 	 * This method will return either a {@link QEquation} or {@link LEquation},decided by 
-	 * whether the coefficient of x^2 is equal to zero,use {@link SVPEquation#getMaxPower()} to 
+	 * whether the coefficient of x^2 is equal to zero,use {@link SVPEquation#getDegree()} to 
 	 * identify it.
 	 * @param line a line.
 	 * @return an equation of {@code x} indicating the two intersect points of the line 
@@ -290,7 +291,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * Create the equation of {@code y} from the line and this conic section.this method 
 	 * requires that {@code line} is not parallel to X axis.<p>
 	 * This method will return either a {@link QEquation} or {@link LEquation},decided by 
-	 * whether the coefficient of y^2 is equal to zero,use {@link SVPEquation#getMaxPower()} to 
+	 * whether the coefficient of y^2 is equal to zero,use {@link SVPEquation#getDegree()} to 
 	 * identify it.
 	 * @param line a line.
 	 * @return an equation of {@code y} indicating the two intersect points of the line 
@@ -326,7 +327,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	public List<Point<T>> intersectPoints(Line<T> line) {
 		try{
 			SVPEquation<T> equa = createEquationX(line);
-			if(equa.getMaxPower()==1){
+			if(equa.getDegree()==1){
 				List<Point<T>> ps = new ArrayList<>(1);
 				T x = ((LEquation<T>)equa).solution();
 				T y = line.computeY(x);
@@ -335,7 +336,12 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 			}else{
 				
 				QEquation<T> eq = (QEquation<T>) equa;
-				int ren = eq.getNumberOfRoots();
+				int ren = 2;
+				try{
+					ren = eq.getNumberOfRoots();
+				}catch(UnsupportedCalculationException ece) {
+					
+				}
 				switch(ren){
 				case 0:
 					return Collections.emptyList();
@@ -356,7 +362,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 			}
 		}catch(IllegalArgumentException ar){
 			SVPEquation<T> equa = createEquationY(line);
-			if(equa.getMaxPower() == 1){
+			if(equa.getDegree() == 1){
 				List<Point<T>> ps = new ArrayList<>(1);
 				T y = ((LEquation<T>)equa).solution();
 				T x = line.computeX(y);
@@ -672,4 +678,5 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 //		print();
 //		print(p);
 //	}
+	
 }

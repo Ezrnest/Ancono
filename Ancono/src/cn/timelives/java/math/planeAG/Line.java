@@ -865,6 +865,30 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		return pointDirection(p.x,p.y,vx,vy,mc);
 	}
 	/**
+	 * Create a new line with the given point {@code p} and the direction vector {@code v}.The
+	 * returned line will have a equation like 
+	 * <pre>
+	 * (x - p.x) / vx = (y - p.y) / vy
+	 * </pre>
+	 * Which can be transfer to
+	 * <pre>
+	 * vy * x - vx * y + vx * p.y - vy * p.x = 0
+	 * </pre>
+	 * 
+	 * <b>This is the point-direction form of a line.</b>
+	 * <p>The MathCalculator of the line will be taken from the first argument of FlexibleMathObject.
+	 * @param p a point 
+	 * @param vx x coordinate of the vector
+	 * @param vy y coordinate of the vector
+	 * @param mc a math calculator
+	 * @return line {@code (x - p.x) / vx = (y - p.y) / vy}
+	 * @throws IllegalArgumentException if {@literal vx == vy == 0}
+	 */
+	public static <T> Line<T> pointDirection(Point<T> p,T vx,T vy){
+		return pointDirection(p.x,p.y,vx,vy,p.getMathCalculator());
+	}
+	
+	/**
 	 * Create a new line by the two points.The returned line will have a equation like 
 	 * <pre>
 	 * (x - p1.x) / (p1.x - p2.x) = (y - p2.y) / (p1.y - p2.y)
@@ -882,6 +906,26 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	public static <T> Line<T> twoPoint(Point<T> p1,Point<T> p2,MathCalculator<T> mc){
 		return twoPoint(p1.x,p1.y,p2.x,p2.y,mc);
 	}
+	
+	/**
+	 * Create a new line by the two points.The returned line will have a equation like 
+	 * <pre>
+	 * (x - p1.x) / (p1.x - p2.x) = (y - p2.y) / (p1.y - p2.y)
+	 * </pre>
+	 * Which can be transfer to
+	 * <pre>
+	 * (p1.y - p2.y)x + (p2.x - p1.x) y + p1.x * p2.y - p1.y * p2.x = 0
+	 * </pre>
+	 * <p>The MathCalculator of the line will be taken from the first argument of FlexibleMathObject.
+	 * @param p1 a point 
+	 * @param p2 another point 
+	 * @return line {@literal (x - p1.x) / (p1.x - p2.x) = (y - p2.y) / (p1.y - p2.y)}
+	 * @throws IllegalArgumentException if{@code p1 = p2}
+	 */
+	public static <T> Line<T> twoPoint(Point<T> p1,Point<T> p2){
+		return twoPoint(p1.x,p1.y,p2.x,p2.y,p1.getMathCalculator());
+	}
+	
 	/**
 	 * Create a new line by the two points.The returned line will have a equation like 
 	 * <pre>
@@ -946,6 +990,27 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	public static <T> Line<T> pointSlope(Point<T> p,T k,MathCalculator<T> mc){
 		return pointSlope(p.x,p.y,k,mc);
 	}
+	
+	/**
+	 * Create a new line by the given point and the slope of the line.The returned line will have a equation 
+	 * like <pre> 
+	 * k * (x - p.x) = y - p.y
+	 * </pre>
+	 * which will be transfered to
+	 * <pre>
+	 * kx - y + p.y - k*p.x = 0
+	 * </pre>
+	 * <b>This is the point-slope form of a line.</b>
+	 * <p>The MathCalculator of the line will be taken from the first argument of FlexibleMathObject.
+	 * @param p the point
+	 * @param k the slope of this line
+	 * @param mc a math calculator
+	 * @return line {@literal k * (x - p.x) = y - p.y}
+	 */
+	public static <T> Line<T> pointSlope(Point<T> p,T k){
+		return pointSlope(p.x,p.y,k,p.getMathCalculator());
+	}
+	
 	/**
 	 * Create a new line by the given slope and intercept of this line.The returned line 
 	 * will have a equation like 

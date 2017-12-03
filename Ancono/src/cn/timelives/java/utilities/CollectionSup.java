@@ -4,6 +4,7 @@
 package cn.timelives.java.utilities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -13,9 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import cn.timelives.java.math.MathUtils;
 
@@ -137,5 +140,100 @@ public final class CollectionSup {
 			set = EnumSet.of(ts[0], ts);
 		}
 		return Collections.unmodifiableSet(set);
+	}
+	
+	/**
+	 * Returns a comparator for list.
+	 * @param comp
+	 * @return
+	 */
+	public static <T> Comparator<List<T>> listComparator(Comparator<? super T> comp){
+		return (x,y)->{
+			int com = x.size() - y.size();
+			if(com !=0) {
+				return com;
+			}
+			Iterator<T> it1 = x.iterator(),
+					it2 = y.iterator();
+			while(it1.hasNext()) {
+				T xt = it1.next();
+				T yt = it2.next();
+				com = comp.compare(xt, yt);
+				if(com!=0) {
+					return com;
+				}
+			}
+			return 0;
+		};
+	}
+	
+	/**
+	 * Add the key-value to the map
+	 * @param map
+	 * @param key
+	 * @param value
+	 * @param generator
+	 */
+	public static <T,S,C extends Collection<S>> void accumulateMap(Map<T,C> map,T key, S value,Supplier<C> generator) {
+		map.compute(key, (k,coll)->{
+			if(coll == null) {
+				coll = generator.get();
+			}
+			coll.add(value);
+			return coll;
+		});
+	}
+	
+	/**
+	 * Determines whether the two collection is equal through {@code isEqual}.
+	 * In this method, the order of the elements returned by the iterator is considered, so
+	 * this method does NOT apply to collections such as HashSet and HashMap.
+	 * <p>This method provides a time of O(n).
+	 * @param coll1
+	 * @param coll2
+	 * @param isEqual
+	 * @return
+	 */
+	public static <T,S> boolean collectionEqualSorted(Collection<T> coll1,Collection<S> coll2,BiPredicate<? super T,? super S> isEqual) {
+		if(coll1.size() != coll2.size()) {
+			return false;
+		}
+		Iterator<T> it1 = coll1.iterator();
+		Iterator<S> it2 = coll2.iterator();
+		while(it1.hasNext()) {
+			T t = it1.next();
+			S s = it2.next();
+			if(!isEqual.test(t, s)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Determines whether the two collection is equal through {@code isEqual}.
+	 * In this method, the order of the elements returned by the iterator not considered.
+	 * @param coll1
+	 * @param coll2
+	 * @param isEqual
+	 * @return
+	 */
+	public static <T,S> boolean setEqual(Set<T> coll1,Set<S> coll2,BiPredicate<? super T,? super S> isEqual) {
+		if(coll1.size() != coll2.size()) {
+			return false;
+		}
+		for(T x : coll1) {
+			boolean contains = false;
+			for(S y : coll2) {
+				boolean equal = isEqual.test(x, y);
+				if(equal) {
+					contains = true;
+				}
+			}
+			if(!contains) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -41,7 +41,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 * @return an integer number indicates the max power.
 	 * 
 	 */
-	public int getMaxPower() {
+	public int getDegree() {
 		return mp;
 	}
 	/*
@@ -170,7 +170,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 		
 		@Override
-		public int getMaxPower() {
+		public int getDegree() {
 			return mp;
 		}
 		
@@ -239,7 +239,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		 * @param mc
 		 */
 		protected SVPFEquation(MathCalculator<T> mc,AbstractSVPFunction<T> f) {
-			super(mc,f.getMaxPower());
+			super(mc,f.getDegree());
 			this.f = f;
 		}
 		/*
@@ -260,8 +260,8 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		 * @see cn.timelives.java.math.SVPEquation#getMaxPower()
 		 */
 		@Override
-		public int getMaxPower() {
-			return f.getMaxPower();
+		public int getDegree() {
+			return f.getDegree();
 		}
 		/*
 		 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
@@ -433,7 +433,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 			return a;
 		}
 		@Override
-		public int getMaxPower() {
+		public int getDegree() {
 			return 2;
 		}
 		/**
@@ -667,7 +667,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public int getMaxPower() {
+		public int getDegree() {
 			return 1;
 		}
 		@Override

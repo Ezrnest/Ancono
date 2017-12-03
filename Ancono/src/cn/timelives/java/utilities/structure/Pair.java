@@ -56,5 +56,12 @@ public final class Pair<T,S> {
 		return false;
 	}
 	
+	/*
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "["+Objects.toString(first)+","+Objects.toString(second)+"]";
+	}
 	
 }

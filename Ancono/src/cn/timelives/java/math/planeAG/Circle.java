@@ -351,31 +351,32 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	@Override
 	public List<Point<T>> intersectPoints(Line<T> l){
-		if(mc.isZero(l.b)){
-			T x = l.getInterceptX();
-			T a = B;
-			T b = E;
-			T c = mc.add(square(x), mc.add(mc.multiply(D, x), F));
-			List<T> so = MathUtils.solveEquation(a, b, c, mc);
-			List<Point<T>> list = new ArrayList<Point<T>>(so.size());
-			for(T t : so){
-				list.add(new Point<>(mc,x,t));
-			}
-			return list;
-		}
-		T b0_2 = square(l.b);
-		T a = mc.add(square(l.a), b0_2);
-		T b = mc.add(mc.multiplyLong(mc.multiply(l.a, l.c), 2l), 
-				mc.subtract(mc.multiply(D, b0_2), 
-						mc.multiply(E, mc.multiply(l.a, l.b))));
-		T c = mc.add(square(l.c), 
-				mc.subtract(mc.multiply(F, b0_2), mc.multiply(E, mc.multiply(l.b, l.c))));
-		List<T> so = MathUtils.solveEquation(a, b, c, mc);
-		List<Point<T>> list = new ArrayList<Point<T>>(so.size());
-		for(T t : so){
-			list.add(new Point<>(mc,t,l.computeY(t)));
-		}
-		return list;
+//		if(mc.isZero(l.b)){
+//		//x = ?
+//			T x = l.getInterceptX();
+//			T a = B;
+//			T b = E;
+//			T c = mc.add(square(x), mc.add(mc.multiply(D, x), F));
+//			List<T> so = MathUtils.solveEquation(a, b, c, mc);
+//			List<Point<T>> list = new ArrayList<Point<T>>(so.size());
+//			for(T t : so){
+//				list.add(new Point<>(mc,x,t));
+//			}
+//			return list;
+//		}
+//		T b0_2 = square(l.b);
+//		T a = mc.add(square(l.a), b0_2);
+//		T b = mc.add(mc.multiplyLong(mc.multiply(l.a, l.c), 2l), 
+//				mc.subtract(mc.multiply(D, b0_2), 
+//						mc.multiply(E, mc.multiply(l.a, l.b))));
+//		T c = mc.add(square(l.c), 
+//				mc.subtract(mc.multiply(F, b0_2), mc.multiply(E, mc.multiply(l.b, l.c))));
+//		List<T> so = MathUtils.solveEquation(a, b, c, mc);
+//		List<Point<T>> list = new ArrayList<Point<T>>(so.size());
+//		for(T t : so){
+//			list.add(new Point<>(mc,t,l.computeY(t)));
+//		}
+		return super.intersectPoints(l);
 	}
 	/**
 	 * Returns the tangent lines of the point {@code p} to this circle.
@@ -728,6 +729,28 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 		T F =mc.subtract(mc.add(mc.multiply(o.x, o.x), mc.multiply(o.y, o.y)), r2);
 		return new Circle<T>(mc, o, r2, D, E, F, null);
 	}
+	
+	/**
+	 * Create a circle that cross the three points.The three points should not be in a line.
+	 * @param p1 a point 
+	 * @param p2 a point 
+	 * @param p3 a point 
+	 * @return a circle 
+	 * @throws IllegalArgumentException if {@code p1,p2,p3} is on the same line.
+	 */
+	public static <T> Circle<T> threePoints(Point<T> p1,Point<T> p2,Point<T> p3){
+		MathCalculator<T> mc = p1.getMathCalculator();
+		Triangle<T> tri = Triangle.fromVertex(mc,p1.x,p1.y
+											,p2.x,p2.y
+											,p3.x,p3.y);
+		Point<T> o = tri.centerO();
+		T r2 = o.distanceSq(p1);
+		T D = mc.multiplyLong(o.x, -2);
+		T E = mc.multiplyLong(o.y, -2);
+		T F =mc.subtract(mc.add(mc.multiply(o.x, o.x), mc.multiply(o.y, o.y)), r2);
+		return new Circle<T>(mc, o, r2, D, E, F, null);
+	}
+	
 	/**
 	 * Creates a circle whose diameter is the connecting line of point {@code p1} and {@code p2}.
 	 * The method will use the formula that:

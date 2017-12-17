@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.planeAG.PAffineTrans;
 import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;

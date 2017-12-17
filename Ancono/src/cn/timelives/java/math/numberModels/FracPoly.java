@@ -1,6 +1,5 @@
 package cn.timelives.java.math.numberModels;
 
-import static cn.timelives.java.utilities.Printer.print;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;

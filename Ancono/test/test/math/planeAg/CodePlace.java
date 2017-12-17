@@ -2,10 +2,17 @@ package test.math.planeAg;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.print_;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static test.math.TestUtils.isZero;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -19,6 +26,7 @@ import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.Progression;
 import cn.timelives.java.math.ProgressionSup;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
@@ -47,6 +55,7 @@ import cn.timelives.java.math.planeAG.Triangle;
 import cn.timelives.java.math.planeAG.curve.EllipseV;
 import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
 import cn.timelives.java.math.planeAG.curve.HyperbolaV;
+import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.EasyConsole;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.Printer;
@@ -120,13 +129,15 @@ public class CodePlace {
 		Point<Fraction> a2 = l2.symmetryPoint(a);
 		print(Line.twoPoint(a1, a2, mc));
 	}
-
-	void m5() {
+//	@Test
+	public void m5() {
 		Point<Fraction> a = new Point<>(mct, -7l, 1l).mapTo(Fraction::valueOf, mc);
-		Point<Fraction> b = new Point<>(mct, -5l, 2l).mapTo(Fraction::valueOf, mc);
+		Point<Fraction> b = new Point<>(mct, -5l, 5l).mapTo(Fraction::valueOf, mc);
 		Line<Fraction> l = Line.generalFormula(2l, -1l, -5l, mct).mapTo(Fraction::valueOf, mc);
-		// b = l.symmetryPoint(b);
-		print(l.intersectPoint(Line.twoPoint(a, b, mc)));
+		b = l.symmetryPoint(b);
+		print(b);
+		Line<Fraction> l2 = Line.twoPoint(a, b, mc);
+		print(l.intersectPoint(l2));
 	}
 
 	Point<Fraction> of(int a, int b) {
@@ -150,8 +161,8 @@ public class CodePlace {
 	 */
 	Point<Fraction> a, b, c, d, e, f, g, m, n, o, p;
 	Line<Fraction> l1, l2, l3, l4, l5, l6, l;
-
-	void m6() {
+	
+	public void m6() {
 		l1 = Line.parallelX(Fraction.ZERO, mc);
 		a = of(5, 2);
 		b = l1.symmetryPoint(a);
@@ -159,21 +170,19 @@ public class CodePlace {
 		c = l2.symmetryPoint(b);
 		print(of(10, 9).distanceSq(c));
 	}
-
-	void m7() {
-		l1 = of(1, 1, -2);
-		a = of(-1, 5);
-		b = of(0, -1);
-		c = l1.symmetryPoint(b);
-		print(Line.twoPoint(a, c, mc));
+//	@Test
+	public void m7() {
+		l1 = of(1,-2,-2);
+		l2 = of(2,-1,-4);
+		print(l1.symmetryLine(l2));
+		print(l2.symmetryPoint(of(2,0)));
+		print(l2.symmetryPoint(of(0,-1)));
 	}
-
-	void m8() {
-		a = of(8, -1);
-		b = of(1, 7);
-		l1 = of(3, 4, -12);
-		c = l1.symmetryPoint(a);
-		d = l1.intersectPoint(Line.twoPoint(b, c, mc));
+	
+	public void m8() {
+		l1 = of(1,-2,1);
+		l2 = of(1,0,-1);
+		print(l1.symmetryLine(l2));
 
 	}
 
@@ -356,7 +365,7 @@ public class CodePlace {
 		return fp.toString().replaceAll("d\\[(\\w+)]", "$1");
 	}
 
-	private String dealWith(Expression expr) {
+	String dealWith(Expression expr) {
 		expr = ec.simplify(expr);
 		return expr.toString().replaceAll("d\\[(\\w+)]", "$1");
 	}
@@ -835,36 +844,35 @@ public class CodePlace {
 		print("Sum = " + sum);
 	}
 
-//	void m38() {
-//		int d = 4;
-//		int len = d * (d + 2);
-//		pos = new Polynomial[len];
-//		fps = new FracPoly[len];
-//		for (int i = 0; i <= d + 1; i++) {
-//			for (int j = 0; j < d; j++) {
-//				pos[d * i + j] = Polynomial.valueOf("x[" + i + "," + (j + 1) + "]");
-//			}
-//		}
-//		compute();
-//		@SuppressWarnings("unchecked")
-//		Vector<FracPoly>[] vs = new Vector[d + 1];
-//		for (int i = 0; i <= d + 1; i++) {
-//			FracPoly[] fp = Arrays.copyOfRange(fps, d * i, d * i + d);
-//			vs[i] = Vector.createVector(mcfp, fp);
-//		}
-//		// input part
-//
-//		for (int i = 1; i <= d + 1; i++) {
-//			FracPoly[][] mat = new FracPoly[d + 1][d + 1];
-//			for (int a = 0; a <= d; a++) {
-//				for (int b = 0; b < d; b++) {
-//					// mat[a][b] =
-//					// TODO
-//				}
-//			}
-//			Matrix<FracPoly> matrix = Matrix.valueOf(mat, mcfp);
-//		}
-//	}
+	// void m38() {
+	// int d = 4;
+	// int len = d * (d + 2);
+	// pos = new Polynomial[len];
+	// fps = new FracPoly[len];
+	// for (int i = 0; i <= d + 1; i++) {
+	// for (int j = 0; j < d; j++) {
+	// pos[d * i + j] = Polynomial.valueOf("x[" + i + "," + (j + 1) + "]");
+	// }
+	// }
+	// compute();
+	// @SuppressWarnings("unchecked")
+	// Vector<FracPoly>[] vs = new Vector[d + 1];
+	// for (int i = 0; i <= d + 1; i++) {
+	// FracPoly[] fp = Arrays.copyOfRange(fps, d * i, d * i + d);
+	// vs[i] = Vector.createVector(mcfp, fp);
+	// }
+	// // input part
+	//
+	// for (int i = 1; i <= d + 1; i++) {
+	// FracPoly[][] mat = new FracPoly[d + 1][d + 1];
+	// for (int a = 0; a <= d; a++) {
+	// for (int b = 0; b < d; b++) {
+	// // mat[a][b] =
+	// }
+	// }
+	// Matrix<FracPoly> matrix = Matrix.valueOf(mat, mcfp);
+	// }
+	// }
 
 	void m39() {
 		long[][] mat = new long[][] { { 1, 3, 5, 7, 1 }, { 2, 4, 3, 0, 2 }, { -3, -7, 0, 6, 8 },
@@ -897,24 +905,25 @@ public class CodePlace {
 		FracPoly left = mcfp.multiply(a2, sinB2);
 		FracPoly right = mcfp.multiply(b2, sinA2);
 		FracPoly result = mcfp.subtract(right, left);
-//		print(dealWith(right));
-//		print(dealWith(result));
+		// print(dealWith(right));
+		// print(dealWith(result));
 		assertTrue(mcfp.isZero(result));
 
 	}
 
-//	// @Test
-//	public void m41() {
-//		inputExpression("k,-1/k,2");
-//		FracPoly k = fps[0];
-//		EllipseV<FracPoly> ell = EllipseV.standardEquationSqrt(fps[2], FracPoly.ONE, mcfp);
-//		print(ell);
-//		Line<FracPoly> AC = Line.slopeIntercept(k, FracPoly.ZERO, mcfp),
-//				BD = Line.slopeIntercept(fps[1], FracPoly.ZERO, mcfp);
-//
-//	}
+	// // @Test
+	// public void m41() {
+	// inputExpression("k,-1/k,2");
+	// FracPoly k = fps[0];
+	// EllipseV<FracPoly> ell = EllipseV.standardEquationSqrt(fps[2], FracPoly.ONE,
+	// mcfp);
+	// print(ell);
+	// Line<FracPoly> AC = Line.slopeIntercept(k, FracPoly.ZERO, mcfp),
+	// BD = Line.slopeIntercept(fps[1], FracPoly.ZERO, mcfp);
+	//
+	// }
 
-	@Test
+//	@Test
 	public void m42() {
 		Triangle<FracPoly> tri = generalTriangle();
 		Point<FracPoly> A = tri.vertexA(), B = tri.vertexB(), C = tri.vertexC(), O = tri.centerO(), H = tri.centerH();
@@ -942,7 +951,7 @@ public class CodePlace {
 		// +
 		// "6*x3y1^2*y2^2-3*x3y1^2*y2y3-3*x3y1^2*y3^2-3*x3y1y2^3-3*x3y1y2^2*y3+6*x3y1y2y3^2+3*x3y2^3*y3-3*x3y2^2*y3^2";
 		fps[0] = oh.x;
-//		MathCalculator<Polynomial> mcp = PolyCalculator.DEFAULT_CALCULATOR;
+		// MathCalculator<Polynomial> mcp = PolyCalculator.DEFAULT_CALCULATOR;
 		// print(dealWith(fps[0].getNume()));
 		fps[1] = v.x;
 		// MathCalculator<Polynomial> mcp = Polynomial.getCalculator();
@@ -950,10 +959,10 @@ public class CodePlace {
 		// print_();
 		// print(dealWith(mcp.multiply(fps[0].getNume(), fps[1].getDeno())));
 
-		assertEquals("1",dealWith(mcfp.divide(fps[0], fps[1])));
+		assertEquals("1", dealWith(mcfp.divide(fps[0], fps[1])));
 	}
 
-	@Test
+//	@Test
 	public void m42e() {
 		Triangle<Expression> tri = generalTriangleE();
 		Point<Expression> A = tri.vertexA(), B = tri.vertexB(), C = tri.vertexC(), O = tri.centerO(), H = tri.centerH();
@@ -965,7 +974,7 @@ public class CodePlace {
 		es[2] = ec.divide(es[0], es[1]);
 		// leave the step last
 		SimplificationStrategies.setCalRegularization(ec);
-		 es[2] = ec.simplify(es[2]);
+		es[2] = ec.simplify(es[2]);
 		// es[2] = ec.simplify(es[2]);
 		assertTrue(ec.isEqual(ec.getOne(), es[2]));
 	}
@@ -1016,7 +1025,7 @@ public class CodePlace {
 
 	public void m45() {
 		inputExpression("3,x");
-//		ParabolaV<Expression> M = ParabolaV.generalFormula(es[0], true, ec);
+		// ParabolaV<Expression> M = ParabolaV.generalFormula(es[0], true, ec);
 		Expression x = es[1], y = ec.squareRoot(ec.multiplyLong(x, 6));
 		Circle<Expression> C = Circle.centerAndRadius(Point.valueOf(es[0], ec.getZero(), ec), es[0], ec);
 		List<Line<Expression>> lines = C.tangentLines(Point.valueOf(x, y, ec));
@@ -1045,7 +1054,8 @@ public class CodePlace {
 		//
 		// print(f.apply(Formula.valueOf(12)));
 	}
-//	@Test
+
+	// @Test
 	public void m46() {
 		final double t = 0.5;
 		// any value for k is acceptable
@@ -1056,40 +1066,158 @@ public class CodePlace {
 		Point<Double> A = AB.get(0), B = AB.get(1);
 		Point<Double> C = Point.valueOf(t, A.y, mcd), D = Point.valueOf(t, B.y, mcd);
 		Line<Double> AD = Line.twoPoint(A, D), BC = Line.twoPoint(B, C);
-//		print(AD);
+		// print(AD);
 		Point<Double> p = AD.intersectPoint(BC);
-		assertTrue("Point is on the x axis", mcd.isZero(p.y));
+		assertThat("Point is on the x axis", p.y,isZero(mcd));
 
 	}
-	@Test
+
+//	@Test
 	public void m46e() {
 		inputExpression("1,3,t,k");
-		Expression k = es[3],
-				t = es[2];
+		Expression k = es[3], t = es[2];
 		HyperbolaV<Expression> L = HyperbolaV.standardEquationSqrt(es[0], es[1], true, ec);
-		//create hyperbola x^2 - y^2/3 = 1
+		// create hyperbola x^2 - y^2/3 = 1
 		Point<Expression> F = L.foci().get(1);
 		Line<Expression> line = Line.pointSlope(F, k);
 		// the line that passes through F
 		List<Point<Expression>> AB = L.intersectPoints(line);
-		//the list of A and B
-		Point<Expression> A = AB.get(0), 
-						B = AB.get(1);
+		// the list of A and B
+		Point<Expression> A = AB.get(0), B = AB.get(1);
 		// Point A and B
-		Point<Expression> C = Point.valueOf(t, A.y, ec), 
-						D = Point.valueOf(t, B.y, ec);
+		Point<Expression> C = Point.valueOf(t, A.y, ec), D = Point.valueOf(t, B.y, ec);
 		// Point C and D
-		Line<Expression> AD = Line.twoPoint(A, D), 
-				BC = Line.twoPoint(B, C);
-		//two lines AD and BC
+		Line<Expression> AD = Line.twoPoint(A, D), BC = Line.twoPoint(B, C);
+		// two lines AD and BC
 		Point<Expression> p = AD.intersectPoint(BC);
-		//the intersect point
-//		print("x = "+p.x);
-//		print("y = "+p.y);
-		//show the point p
+		// the intersect point
+		// print("x = "+p.x);
+		// print("y = "+p.y);
+		// show the point p
 		p = p.mapTo(x -> ec.substitute(x, "t", Polynomial.valueOf("1/2")), ec);
-		//substitute 1/2 for t
-		assertTrue("Point is on the x axis", ec.isZero(p.y));
-		
+		// substitute 1/2 for t
+		assertThat("Point is on the x axis", p.y,isZero(ec));
+	}
+//	@Test
+	public void m47() {
+		double[] xs = ArraySup.ranDoubleArr(4, 1);
+		xs[1] = -xs[1];
+		xs[2] = -xs[2];
+		ComputeExpression ce = ComputeExpression.compile("exp(1-exp($0,2),1/2)");
+		Point<Double> A, B, C, D, E, F, K, I, J, P;
+		A = Point.valueOf(xs[0], ce.compute( mcd,xs[0]), mcd);
+		B = Point.valueOf(xs[1], ce.compute( mcd,xs[1]), mcd);
+		C = Point.valueOf(xs[2], -ce.compute( mcd,xs[2]), mcd);
+		D = Point.valueOf(xs[3], -ce.compute( mcd,xs[3]), mcd);
+		Line<Double> AC = Line.twoPoint(A, C), BD = Line.twoPoint(B, D), AB = Line.twoPoint(A, B);
+		P = AC.intersectPoint(BD);
+		Circle<Double> ADP = Circle.threePoints(A, D, P), BCP = Circle.threePoints(B, C, P);
+		E = ADP.intersectPointAnother(A, AB);
+		F = BCP.intersectPointAnother(B, AB);
+		I = Triangle.fromVertex(A, D, E).centerI();
+		J = Triangle.fromVertex(B, C, F).centerI();
+		Line<Double> IJ = Line.twoPoint(I, J);
+		K = AC.intersectPoint(IJ);
+		Circle<Double> AEK = Circle.threePoints(A, E, K);
+		// print(dealWith(AEK));
+		double result = AEK.substitute(I);
+		if(mcd.isZero(result)) {
+			print(result);
+		}else {
+			print(result);
+		}
+	}
+//	@Test(timeout=1000*10)
+	public void m47e() throws IOException {
+		inputExpression("d[x1],d[x2],d[x3],d[x4],d[y1],d[y2],d[y3],d[y4]");
+		Point<Expression> A,B,C,D,E,F,K,I,J,P;
+		A = Point.valueOf(es[0], es[4], ec);
+		B = Point.valueOf(es[1], es[5], ec);
+		C = Point.valueOf(es[2], es[6], ec);
+		D = Point.valueOf(es[3], es[7], ec);
+		print("1");
+		Line<Expression> AC = Line.twoPoint(A, C),
+				BD = Line.twoPoint(B, D),
+				AB = Line.twoPoint(A, B);
+		P = AC.intersectPoint(BD);
+		Circle<Expression> ADP = Circle.threePoints(A, D, P),
+				BCP = Circle.threePoints(B, C, P);
+		print("2");
+		E = ADP.intersectPointAnother(A, AB);
+				F = BCP.intersectPointAnother(B, AB);
+		I = Triangle.fromVertex(A, D, E).centerI();
+		J = Triangle.fromVertex(B, C, F).centerI();
+		Line<Expression> IJ = Line.twoPoint(I, J);
+		K = AC.intersectPoint(IJ);
+		Circle<Expression> AEK = Circle.threePoints(A, E, K);
+		print("3");
+//		print(dealWith(AEK));
+//		Printer.reSet(Files.newOutputStream(
+//				new File("E:\\Temp\\result.txt").toPath(),
+//				StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.CREATE));
+//		
+//		AEK = AEK.mapTo(ec::simplify, ec);
+//		String str = dealWith(AEK.substitute(I));
+//		StringBuilder sb = new StringBuilder(str.length());
+//		for(int i=0;i<str.length();i+= 100) {
+//			if(i + 100 >= str.length()) {
+//				sb.append(str.substring(i));
+//			}else {
+//				sb.append(str.substring(i, i+100));
+//			}
+//			sb.append(System.lineSeparator());
+//		}
+//		print(sb.toString());
+//		SimplificationStrategies.setCalRegularization(ec);
+	}
+//	@Test
+	public void m48() {
+		inputExpression("2t^2,t^2,x");
+		Expression a = es[0], b = es[1], x = es[2];
+		// input some number
+		SimplificationStrategies.setCalRegularization(ec);
+		EllipseV<Expression> L = EllipseV.standardEquationSqrt(a, b, true, ec);
+		// create ellipse x^2/(2t^2) + y^2/t^2 = 1
+		Point<Expression> C, D, M, P;
+		C = L.vertices().get(0);
+		D = L.vertices().get(1);
+		// get vertices C and D
+		M = Point.valueOf(D.x, x, ec);
+		// get point M
+		Line<Expression> CM = Line.twoPoint(C, M);
+		P = L.intersectPointAnother(C, CM);
+		Expression product = M.getVector().innerProduct(P.getVector());
+		assertTrue("OM*OP = 2t^2",ec.isEqual(a, product));
+		Line<Expression> DP = Line.twoPoint(D, P), MQ = DP.perpendicular(M);
+		// compute point Q
+		assertThat(MQ.computeX(ec.getZero()), isZero(ec));
+	}
+//	@Test
+	public void m49() {
+		inputExpression("a,b,A,B,C");
+		HyperbolaV<Expression> H = HyperbolaV.standardEquation(es[0], es[1], true, ec);
+		Line<Expression> l1 = H.asymptote().get(0),
+				l2 = H.asymptote().get(1),
+				l = Line.generalFormula(es[2], es[3], es[4], ec);
+		Point<Expression> A,B,C,D;
+		List<Point<Expression>> interPoints = H.intersectPoints(l);
+		A = interPoints.get(0);
+		B = interPoints.get(1);
+		C = l.intersectPoint(l1);
+		D = l.intersectPoint(l2);
+		Expression d1_2 = A.distanceSq(C),
+				d2_2 = B.distanceSq(D);
+		Expression diff = ec.subtract(d1_2, d2_2);
+		SimplificationStrategies.setCalRegularization(ec);
+		diff = ec.simplify(diff);
+		assertThat(diff, isZero(ec));
+	}
+	@Test
+	public void m50() {
+		inputExpression("-3,-4,7");
+		Circle<Fraction> circle = Circle.generalFormula(-4L, -4L, 7L,mct).mapTo(Fraction::valueOf, mc);
+		for(Line<Fraction> l:circle.tangentLines(a)) {
+			print(l.simplify(Fraction.getFractionSimplifier()));
+		}
 	}
 }

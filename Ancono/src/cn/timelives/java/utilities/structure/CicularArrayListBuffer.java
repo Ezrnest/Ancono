@@ -5,10 +5,8 @@ package cn.timelives.java.utilities.structure;
 
 import static cn.timelives.java.utilities.Printer.print;
 
-import java.awt.List;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * A circular array list buffer uses an ArrayList to store data. It provide limited 

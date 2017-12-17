@@ -1,7 +1,5 @@
 ﻿package cn.timelives.java.math.numberModels;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;

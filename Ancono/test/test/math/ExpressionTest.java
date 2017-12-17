@@ -6,8 +6,9 @@ package test.math;
 import static cn.timelives.java.utilities.Printer.print;
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
 import java.util.List;
+
+import org.junit.Test;
 
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;

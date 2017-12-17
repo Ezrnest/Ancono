@@ -3,17 +3,11 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import cn.timelives.java.math.numberModels.Polynomial;
-import cn.timelives.java.math.numberModels.expression.Node.Type;
 import cn.timelives.java.utilities.Printer;
-import cn.timelives.java.utilities.Timer;
 
 /**
  * Expression is the most universal number model to show a number.

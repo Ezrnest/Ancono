@@ -4,15 +4,14 @@
 package cn.timelives.java.utilities.swingTools;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.JTextPane;
-import javax.swing.JScrollPane;
 
 /**
  * @author liyicheng

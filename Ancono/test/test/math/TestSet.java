@@ -6,12 +6,13 @@ package test.math;
 import static cn.timelives.java.utilities.Printer.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+
 import java.util.Arrays;
+
+import org.junit.Test;
 
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.set.IntersectableSet;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;

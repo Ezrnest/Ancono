@@ -10,9 +10,9 @@ import java.util.function.LongFunction;
 
 import cn.timelives.java.math.Progression;
 import cn.timelives.java.math.ProgressionSup;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalI;
 import cn.timelives.java.utilities.Printer;

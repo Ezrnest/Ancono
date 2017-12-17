@@ -545,7 +545,23 @@ public final class Triangle<T> extends FlexibleMathObject<T> {
 		}
 		return tri;
 	}
-	
+	/**
+	 * Returns a triangle using the calculator {@code mc} and its vertexes are  
+	 * the given points.The math calculator will be reset to the given calculator {@code mc}.
+	 * @param mc
+	 * @param A vertex <i>A</i>
+	 * @param B vertex <i>B</i>
+	 * @param C vertex <i>C</i>
+	 * @return a newly created triangle
+	 */
+	public static <T> Triangle<T> fromVertex(Point<T> A,Point<T> B,Point<T> C){
+		MathCalculator<T> mc = A.getMathCalculator();
+		Triangle<T> tri = new Triangle<>(mc, A, B, C);
+		if(mc.isZero(tri.areaPN())){
+			throw new IllegalArgumentException("Three points a line.");
+		}
+		return tri;
+	}
 	/**
 	 * Returns a triangle whose vertexes are the three intersect point of these three lines.If either 
 	 * there are two parallel line or three lines have the same intersect point,exception will be 

@@ -3,16 +3,12 @@
  */
 package cn.timelives.java.math.planeAG;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.function.Function;
 
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 

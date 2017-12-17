@@ -662,7 +662,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 			return simplifyNode(x);
 		}, depth);
 	}
-	
+	private static long count = 0;
 	/**
 	 * Simplify the single node, this method will only simplify only node and 
 	 * there will be no recursion. 
@@ -670,8 +670,11 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	 * @return
 	 */
 	private Node simplifyNode(Node node) {
-		if(showSimplifyProgress)
-			print("Simplify: "+node.getType()+" : "+node.hashCode());//TODO
+		if(debugEnabled) {
+			count ++ ;
+			if(count % 100 == 0)
+				print("Simplify: "+node.getType()+" : "+node.hashCode());//TODO
+		}
 		node = simplifyPolynomial(node,0);
 		doSort(node, 0);
 		node = simplifyWithStrategyNoRecur(node);
@@ -1042,5 +1045,5 @@ public class ExprCalculator implements MathCalculator<Expression> {
 		return new ExprCalculator();
 	}
 	
-	static boolean showSimplifyProgress = false;
+	static boolean debugEnabled = false;
 }

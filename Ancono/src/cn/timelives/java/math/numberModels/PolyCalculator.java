@@ -1,12 +1,10 @@
 package cn.timelives.java.math.numberModels;
 
 import static cn.timelives.java.math.numberModels.FormulaCalculator.DEFAULT_FORMULA_CALCULATOR;
-import static cn.timelives.java.utilities.Printer.print;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;

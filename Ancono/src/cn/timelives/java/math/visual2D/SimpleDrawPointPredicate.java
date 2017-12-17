@@ -3,8 +3,6 @@
  */
 package cn.timelives.java.math.visual2D;
 
-import java.awt.geom.Point2D;
-
 import cn.timelives.java.math.MathUtils;
 
 /**

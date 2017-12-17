@@ -325,8 +325,12 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * @return
 	 */
 	public List<Point<T>> intersectPoints(Line<T> line) {
-		try{
-			SVPEquation<T> equa = createEquationX(line);
+		SVPEquation<T> equa = null;
+		try {
+			equa = createEquationX(line);
+		}catch(IllegalArgumentException ex) {
+		}
+		if(equa!= null) {
 			if(equa.getDegree()==1){
 				List<Point<T>> ps = new ArrayList<>(1);
 				T x = ((LEquation<T>)equa).solution();
@@ -334,7 +338,6 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 				ps.add(new Point<>(mc,x,y));
 				return ps;
 			}else{
-				
 				QEquation<T> eq = (QEquation<T>) equa;
 				int ren = 2;
 				try{
@@ -360,8 +363,8 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 				}
 				}
 			}
-		}catch(IllegalArgumentException ar){
-			SVPEquation<T> equa = createEquationY(line);
+		}else {
+			equa = createEquationY(line);
 			if(equa.getDegree() == 1){
 				List<Point<T>> ps = new ArrayList<>(1);
 				T y = ((LEquation<T>)equa).solution();
@@ -393,6 +396,43 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		
 		
 	}
+	
+	/**
+	 * Returns the another intersect point of the line and this conic section. Returns null if 
+	 * there the line only intersect with this conic section at one point.
+	 * @param p
+	 * @param line
+	 * @return
+	 */
+	public Point<T> intersectPointAnother(Point<T> p,Line<T> line){
+		//TODO
+//		if((!line.contains(p)) || (! contains(p))) {
+//			throw new IllegalArgumentException();
+//		}
+		SVPEquation<T> equa = createEquationX(line);
+		if(equa.getDegree()==1){
+			return null;
+		}else{
+			QEquation<T> eq = (QEquation<T>) equa;
+			int ren = 2;
+			try{
+				ren = eq.getNumberOfRoots();
+			}catch(UnsupportedCalculationException ece) {
+			}
+			switch(ren){
+			case 0:
+			case 1:{
+				return null;
+			}
+			default:{
+				T x = mc.subtract(eq.rootsSum(), p.x);
+				T y = line.computeY(x);
+				return Point.valueOf(x, y, mc);
+			}
+			}
+		}
+	}
+	
 	/**
 	 * Performs transform:
 	 * <pre>

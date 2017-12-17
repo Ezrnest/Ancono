@@ -14,10 +14,8 @@ import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.SPoint;
-import cn.timelives.java.math.spaceAG.SPoint.SPointGenerator;
 import cn.timelives.java.utilities.Printer;;
 /**
  * @author liyicheng

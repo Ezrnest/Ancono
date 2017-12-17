@@ -7,8 +7,6 @@ import java.awt.geom.Point2D;
 import java.util.function.DoubleFunction;
 import java.util.function.ToDoubleFunction;
 
-import cn.timelives.java.math.numberModels.FracPoly;
-import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.planeAG.curve.SubstituableCurve;
 import cn.timelives.java.math.visual2D.SubstitutableCurve;
 

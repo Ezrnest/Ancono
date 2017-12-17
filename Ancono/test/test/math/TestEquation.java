@@ -4,12 +4,13 @@
 package test.math;
 
 import static cn.timelives.java.utilities.Printer.print;
+
 import org.junit.Test;
+
 import cn.timelives.java.math.equation.EquationSup;
 import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 /**
  * @author liyicheng
  * 2017-10-09 19:26

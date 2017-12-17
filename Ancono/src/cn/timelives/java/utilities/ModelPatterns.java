@@ -3,12 +3,8 @@
  */
 package cn.timelives.java.utilities;
 
-import static cn.timelives.java.utilities.Printer.print;
-
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 import java.util.function.LongToIntFunction;

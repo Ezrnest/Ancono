@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import cn.timelives.java.math.addableSet.AdditiveSet;
 import cn.timelives.java.math.addableSet.MathAddableSet;
 import cn.timelives.java.math.addableSet.MathAdder;
 import cn.timelives.java.math.addableSet.SortedAdditiveSet;

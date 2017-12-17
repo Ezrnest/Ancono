@@ -6,11 +6,9 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.planeAG.Triangle;
 import cn.timelives.java.math.spaceAG.Plane.PlaneCoordinateConverter;
 import cn.timelives.java.utilities.ArraySup;
-import cn.timelives.java.utilities.Printer;
 /**
  * Describes a triangle on the space
  * @author liyicheng

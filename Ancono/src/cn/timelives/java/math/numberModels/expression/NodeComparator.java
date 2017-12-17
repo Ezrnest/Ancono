@@ -5,12 +5,10 @@ package cn.timelives.java.math.numberModels.expression;
 
 import java.util.Comparator;
 
-import cn.timelives.java.math.numberModels.expression.Node.Add;
 import cn.timelives.java.math.numberModels.expression.Node.CombinedNode;
 import cn.timelives.java.math.numberModels.expression.Node.DFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Fraction;
 import cn.timelives.java.math.numberModels.expression.Node.MFunction;
-import cn.timelives.java.math.numberModels.expression.Node.Multiply;
 import cn.timelives.java.math.numberModels.expression.Node.Poly;
 import cn.timelives.java.math.numberModels.expression.Node.SFunction;
 import cn.timelives.java.math.numberModels.expression.Node.Type;

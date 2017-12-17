@@ -10,15 +10,12 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.DVector;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.planeAG.curve.AbstractPlaneCurve;
 import cn.timelives.java.math.planeAG.curve.SubstituableCurve;
-import cn.timelives.java.utilities.Printer;
 /**
  * Line is a straight line in the plane.The general equation {@literal ax + by + c = 0} is used by this class to 
  * indicate a line.
@@ -365,6 +362,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 								mc.multiply(a, x), 
 								mc.multiply(b, y)),
 						2));
+		cN = mc.negate(cN);
 		return new Line<T>(mc,a,b,cN);
 	}
 	/**
@@ -1139,6 +1137,29 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	public static <T> Line<T> yEkx(T k,MathCalculator<T> mc){
 		return new Line<T>(mc,k,mc.negate(mc.getOne()),mc.getZero());
+	}
+
+	/**
+	 * Create a new line with the given point {@code p} and the direction vector {@code v}.The
+	 * returned line will have a equation like 
+	 * <pre>
+	 * (x - p.x) / v.x = (y - p.y) / v.y
+	 * </pre>
+	 * Which can be transfer to
+	 * <pre>
+	 * v.y * x - v.x * y + v.x * p.y - v.y * p.x = 0
+	 * </pre>
+	 * 
+	 * <b>This is the point-direction form of a line.</b>
+	 * @param p a point 
+	 * @param v a 2-dimension vector,if the dimension of {@code v} is more than 2,than the remaining 
+	 * numbers will not be considered.
+	 * @param mc a math calculator
+	 * @return line {@code (x - p.x) / v.x = (y - p.y) / v.y}
+	 * @throws IllegalArgumentException if {@code |v| = 0}
+	 */
+	public static <T> Line<T> pointDirection(Point<T> p, PVector<T> v) {
+		return pointDirection(p, v, p.getMathCalculator());
 	}
 	
 	

@@ -3,7 +3,6 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 /**

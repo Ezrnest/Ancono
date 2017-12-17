@@ -1,7 +1,5 @@
 package cn.timelives.java.math.spaceAG;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -12,9 +10,7 @@ import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.utilities.ArraySup;

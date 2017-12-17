@@ -3,15 +3,12 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
-import cn.timelives.java.utilities.ArraySup;
 
 /**
  * An expression function describes a function that the calculator should

@@ -3,7 +3,6 @@
  */
 package cn.timelives.java.math.visual2D;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import cn.timelives.java.math.MathUtils;

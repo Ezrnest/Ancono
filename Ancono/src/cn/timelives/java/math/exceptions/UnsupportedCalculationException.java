@@ -59,12 +59,12 @@ public class UnsupportedCalculationException extends RuntimeException {
 		super(message, cause);
 	}
 	
-	/*
-	 * @see java.lang.Throwable#fillInStackTrace()
-	 */
-	@Override
-	public synchronized Throwable fillInStackTrace() {
-		return this;
-	}
+//	/*
+//	 * @see java.lang.Throwable#fillInStackTrace()
+//	 */
+//	@Override
+//	public synchronized Throwable fillInStackTrace() {
+//		return this;
+//	}
 
 }

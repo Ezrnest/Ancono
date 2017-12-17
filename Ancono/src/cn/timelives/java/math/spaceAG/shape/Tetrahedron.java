@@ -1,8 +1,6 @@
 
 package cn.timelives.java.math.spaceAG.shape;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -11,13 +9,10 @@ import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.exceptions.UnsatisfiedCalculationResultException;
-import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.Plane;
 import cn.timelives.java.math.spaceAG.SPoint;
-import cn.timelives.java.math.spaceAG.SPoint.SPointGenerator;
 import cn.timelives.java.math.spaceAG.STriangle;
 import cn.timelives.java.math.spaceAG.SVector;
 import cn.timelives.java.math.spaceAG.Segment;

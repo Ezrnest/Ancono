@@ -5,7 +5,6 @@ package cn.timelives.java.math.visual2D;
 
 import java.awt.Color;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.DoubleFunction;
 
 /**

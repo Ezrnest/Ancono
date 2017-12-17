@@ -12,7 +12,6 @@ import java.util.TreeSet;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.PolyCalculator;
 import cn.timelives.java.math.numberModels.Polynomial;
-import cn.timelives.java.math.numberModels.expression.Node.SingleNode;
 
 /**
  * @author liyicheng

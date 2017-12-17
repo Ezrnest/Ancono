@@ -3,36 +3,13 @@
  */
 package cn.timelives.java.math.visual2D;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.DoubleFunction;
-import java.util.function.ToDoubleFunction;
-
-import javax.imageio.ImageIO;
-
-import cn.timelives.java.math.MathUtils;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
-import cn.timelives.java.math.planeAG.PAffineTrans;
-import cn.timelives.java.math.planeAG.PVector;
-import cn.timelives.java.math.planeAG.Utilities;
-import cn.timelives.java.math.planeAG.curve.ConicSection;
-import cn.timelives.java.math.planeAG.curve.EllipseV;
-import cn.timelives.java.utilities.ImageSup;
-import cn.timelives.java.utilities.Timer;
 
 /**
  * @author liyicheng

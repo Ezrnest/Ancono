@@ -12,8 +12,8 @@ import java.util.function.Predicate;
  * 2017-10-08 11:22
  * @see Predicate
  */
-public interface SolutionPredicate<T> {
 	
+public interface SolutionPredicate<T> {
 	/**
 	 * Determines whether {@code x} is one of the solutions.
 	 * @param x the input argument

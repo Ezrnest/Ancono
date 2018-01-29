@@ -1076,6 +1076,28 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		return pointNormal(p.x,p.y ,v.x,v.y, mc);
 	}
 	/**
+	 * Create a new line by the given point and the normal vector of this line.
+	 * The line will have a equation like
+	 * <pre>
+	 * v.x * (x - p.x) + v.y * (y - p.y) = 0
+	 * </pre>
+	 * which will be transfered to 
+	 * <pre>
+	 * v.x * x + v.y * y - v.x * p.x - v.y * p.y = 0
+	 * </pre>
+	 * <b>This is the point-normal_vector form of a line.</b>
+	 * <p>The MathCalculator of the line will be taken from the first argument of FlexibleMathObject.
+	 * @param p a point
+	 * @param v a 2-dimension vector,if the dimension of {@code v} is more than 2,than the remaining 
+	 * numbers will not be considered.
+	 * @return line {@literal v.x * (x - p.x) + v.y * (y - p.y) = 0}
+	 * @throws IllegalArgumentException if {@code |v|==0}
+	 */
+	public static <T> Line<T> pointNormal(Point<T> p,PVector<T> v){
+		return pointNormal(p.x,p.y ,v.x,v.y,p.getMathCalculator());
+	}
+	
+	/**
 	 * Create a new line according to intercept of the line in x axis and y axis.The 
 	 * line will have a equation like
 	 * <pre>

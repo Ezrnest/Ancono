@@ -22,7 +22,6 @@ public class TestEquation {
 	 * 
 	 */
 	public TestEquation() {
-		// TODO Auto-generated constructor stub
 	}
 	MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 	

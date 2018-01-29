@@ -72,8 +72,8 @@ public class PlaneDrawer {
 	/**
 	 * 
 	 * @param rect
-	 * @param width
-	 * @param height
+	 * @param width the width of the image, in pixel
+	 * @param height the height of the image, in pixel
 	 * @return
 	 */
 	public BufferedImage draw(Rectangle2D.Double rect,int width,int height) {

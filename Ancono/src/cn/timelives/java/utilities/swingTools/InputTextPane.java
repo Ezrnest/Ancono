@@ -22,7 +22,6 @@ public class InputTextPane extends JTextPane {
 	 * 
 	 */
 	public InputTextPane() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -30,7 +29,6 @@ public class InputTextPane extends JTextPane {
 	 */
 	public InputTextPane(StyledDocument doc) {
 		super(doc);
-		// TODO Auto-generated constructor stub
 	}
 
 }

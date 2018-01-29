@@ -952,7 +952,6 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		Polynomial temp,result=Polynomial.ZERO.clone();
 		
 		for(Formula f1: p.getFormulas()){
-			//System.out.println(f1.toString()); TODO
 			if(f1.getCharacterS().containsKey(target)){
 				BigDecimal power = f1.getCharacter().get(target);
 					//should be an int above zero

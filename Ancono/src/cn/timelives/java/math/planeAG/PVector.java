@@ -306,13 +306,19 @@ public final class PVector<T> extends Vector<T> {
 		return mc.isZero(x) && mc.isZero(y);
 	}
 	/**
-	 * 
-	 * @param angle
-	 * @return
+	 * Rotate this vector by {@code angle} in the anti-clockwise direction. The result is:
+	 * <pre>
+	 * (cos x -sinx)( x )
+	 * (sin x cos x)( y )
+	 * </pre>
+	 * @param angle the rotation angle, in the anti-clockwise direction.
+	 * @return a new vector after rotation.
 	 */
 	public PVector<T> rotate(T angle){
-		//TODO
-		return null;
+		//The rotate matrix is 
+		//(cos x -sinx)
+		//(sin x cos x)
+		return TransMatrix.rotate(angle, mc).transform(this);
 	}
 	
 	@Override

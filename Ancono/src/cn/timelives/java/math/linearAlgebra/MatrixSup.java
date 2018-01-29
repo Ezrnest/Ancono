@@ -9,6 +9,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.timelives.java.math.equation.EquationSolver;
+import cn.timelives.java.math.equation.SVPEquation;
+import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.SolutionBuilder;
 import cn.timelives.java.math.linearAlgebra.Matrix.MatResult;
@@ -16,7 +19,7 @@ import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
- * 
+ * Provides some supportive methods for matrix.
  * @author lyc
  *
  */
@@ -208,10 +211,8 @@ public class MatrixSup {
 		}
 		//calculate the result by using vector.
 		T[] baseF = (T[]) new Object[len];
-//		print(baseColumns);
 		for(int i=0;i<rank;i++){
-//			baseF[baseColumns[i]] = mat[i][len];
-			baseF[i] = mat[i][len];//TODO check whether the change here is right.
+			baseF[i] = mat[i][len];
 		}
 		for(int i=rank;i<len;i++){
 			baseF[i] = mc.getZero();
@@ -275,5 +276,32 @@ public class MatrixSup {
 	
 	public static <T> T det2(T[][] mat,MathCalculator<T> mc){
 		return mc.subtract(mc.multiply(mat[0][0], mat[1][1]), mc.multiply(mat[0][1], mat[1][0]));
+	}
+	
+	/**
+	 * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
+	 * @param mat a matrix
+	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
+	 * the degree of the equation.
+	 * @return 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Matrix<T> similarDiag(Matrix<T> mat,EquationSolver<T,T,SVPEquation<T>> equationSolver){
+		SVPEquation<T> equation = mat.eigenvalueEquation();
+		List<T> eigenvalues = equationSolver.solve(equation);
+		return Matrix.diag((T[])eigenvalues.toArray(), mat.getMathCalculator());
+	}
+	/**
+	 * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
+	 * @param mat a matrix
+	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
+	 * the degree of the equation.
+	 * @return 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Matrix<T> similarDiag(Matrix<T> mat,MathFunction<SVPEquation<T>,List<T>> equationSolver){
+		SVPEquation<T> equation = mat.eigenvalueEquation();
+		List<T> eigenvalues = equationSolver.apply(equation);
+		return Matrix.diag((T[])eigenvalues.toArray(), mat.getMathCalculator());
 	}
 }

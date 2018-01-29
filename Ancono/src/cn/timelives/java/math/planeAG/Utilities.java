@@ -11,6 +11,7 @@ import cn.timelives.java.math.planeAG.curve.SubstituableCurve;
 import cn.timelives.java.math.visual2D.SubstitutableCurve;
 
 /**
+ * The utility class for planeAG.
  * @author liyicheng
  *
  */
@@ -49,6 +50,17 @@ public final class Utilities {
 			DoubleFunction<T> fromDouble,ToDoubleFunction<T> toDouble,
 			SubstituableCurve<T> curve){
 		return (x,y) -> toDouble.applyAsDouble(curve.substitute(fromDouble.apply(x), fromDouble.apply(y)));
+		
+	}
+	
+	/**
+	 * Returns a double-typed function which is adapted from a SubstituableCurve.
+	 * @param curve a curve
+	 * @return a function that accept {@link Point2D.Double} and returns double.
+	 */
+	public static SubstitutableCurve mapToDouble(
+			SubstituableCurve<Double> curve){
+		return (x,y) -> curve.substitute(x, y);
 		
 	}
 	

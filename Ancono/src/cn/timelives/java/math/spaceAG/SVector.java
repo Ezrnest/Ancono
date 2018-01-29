@@ -174,10 +174,10 @@ public final class SVector<T> extends Vector<T> {
 	/**
 	 * Returns the inner(scalar) product of {@code this} and {@code s}, which 
 	 * is equal to <pre>
-	 * this �� s
+	 * this · s
 	 * </pre>
 	 * @param s
-	 * @return this �� s
+	 * @return this · s
 	 */
 	public T innerProduct(SVector<T> s){
 		return mc.add(mc.add(mc.multiply(x, s.x), mc.multiply(y, s.y)), mc.multiply(z, s.z));
@@ -185,11 +185,11 @@ public final class SVector<T> extends Vector<T> {
 	
 	/**
 	 * Returns the outer product of {@code this} and {@code s}, which 
-	 * is equal to <pre>
-	 * this �� s
+	 * is the result of<pre>
+	 * this × s
 	 * </pre>
 	 * @param s
-	 * @return
+	 * @return this × s
 	 */
 	public SVector<T> outerProduct(SVector<T> s){
 		T nx = mc.subtract(mc.multiply(y, s.z), mc.multiply(s.y, z));

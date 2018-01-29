@@ -660,18 +660,18 @@ public abstract class Matrix {
 	}
 	
 	
-	public static void main(String[] args) {
-//		Matrix m1 = identityMatrix(10);
-//		Matrix m2 = identityMatrix(10);
-//		System.out.println(m1.equals(m2));
-		int[][] mat = new int[10][];
-		for(int i=0;i<mat.length;i++){
-			mat[i] = ArraySup.ranArr(10, 100);
-		}
-//		int[][] ma2 = new int[10][10];
-//		Matrix m = Matrix.valueOf(mat);
-//		Matrix m2 = m.subMatrix(2, 2, 7, 7);
-//		System.arraycopy(mat, 0, ma2, 0, 10);
-		printMatrix(mat);
-	}
+//	public static void main(String[] args) {
+////		Matrix m1 = identityMatrix(10);
+////		Matrix m2 = identityMatrix(10);
+////		System.out.println(m1.equals(m2));
+//		int[][] mat = new int[10][];
+//		for(int i=0;i<mat.length;i++){
+//			mat[i] = ArraySup.ranArr(10, 100);
+//		}
+////		int[][] ma2 = new int[10][10];
+////		Matrix m = Matrix.valueOf(mat);
+////		Matrix m2 = m.subMatrix(2, 2, 7, 7);
+////		System.arraycopy(mat, 0, ma2, 0, 10);
+//		printMatrix(mat);
+//	}
 }

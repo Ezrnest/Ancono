@@ -429,7 +429,7 @@ public class Formula implements Comparable<Formula> {
 				}
 			}
 		} else {
-			String num = getNumber().toEngineeringString();// TODO
+			String num = getNumber().toEngineeringString();
 			if (num.length() - 1 > MAX_SHOWN_DIGIT) {
 				result.append(DECIMAL_FORMAT.format(number));
 			} else {

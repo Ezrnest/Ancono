@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
+import cn.timelives.java.math.equation.EquationSolver;
+import cn.timelives.java.math.equation.SVPEquation;
+import cn.timelives.java.math.equation.SVPEquation.QEquation;
+import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -152,13 +156,23 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 		return k1;
 	}
 	private static final ComputeExpression expr_d3 = ComputeExpression.compile("$2^2+$3^2-($0+$1)*$4");
+		
+
+	@SuppressWarnings("unchecked")
+	protected Matrix<T> createQuadraticFormMatrix(){
+		T B_2 = mc.divideLong(B, 2L);
+		return Matrix.valueOf((T[][])new Object[][]{
+			{A,B_2},
+			{B_2,C},
+		}, mc);
+	}
 	
 	/**
 	 * @see cn.timelives.java.math.planeAG.curve.ConicSection#normalize()
 	 */
 	@Override
 	public ConicSection<T> normalize() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
@@ -167,7 +181,15 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	 */
 	@Override
 	public Pair<TransMatrix<T>, ConicSection<T>> normalizeAndTrans() {
-		// TODO Auto-generated method stub
+		Matrix<T> mat = createQuadraticFormMatrix();
+		Matrix<T> nmat = MatrixSup.similarDiag(mat, new EquationSolver<T, T, SVPEquation<T>>() {
+
+			@Override
+			public List<T> solve(SVPEquation<T> x) {
+				return ((QEquation<T>)x).solve();
+			}
+		});
+		
 		return null;
 	}
 	

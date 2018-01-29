@@ -219,8 +219,24 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 		return zero;
 	}
 	
+	/**
+	 * Returns the multinomial {@literal 1}。
+	 * @param mc
+	 * @return
+	 */
 	public static <T> MultinomialX<T> one(MathCalculator<T> mc){
 		return constant(mc,mc.getOne());
+	}
+	
+	/**
+	 * Returns the multinomial {@literal x}.
+	 * @param mc
+	 * @return
+	 */
+	public static <T> MultinomialX<T> oneX(MathCalculator<T> mc){
+		TreeMap<Integer,T> map = new TreeMap<>();
+		map.put(Integer.valueOf(1), mc.getOne());
+		return new MultinomialX<>(mc, map, 1);
 	}
 	
 	public static <T> MultinomialX<T> constant(MathCalculator<T> mc,T c){
@@ -414,7 +430,6 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 					Integer n = i;
 					T a = para1.getCoefficient0(n);
 					if(!mc.isZero(a)) {
-						a = mc.negate(a);
 						map.put(n,a);
 					}
 				}
@@ -424,8 +439,10 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 				for(int i=mp2;i>mp1;i--) {
 					Integer n = i;
 					T a = para2.getCoefficient0(n);
-					if(!mc.isZero(a))
+					if(!mc.isZero(a)) {
+						a = mc.negate(a);
 						map.put(n,a);
+					}
 				}
 				mp = mp2;
 			}

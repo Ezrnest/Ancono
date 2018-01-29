@@ -655,7 +655,7 @@ public class ArraySup {
 		return arr;
 	}
 	/**
-	 * Copies the given array, the array may ha
+	 * Copies the given array.
 	 * @param arr
 	 * @return
 	 */

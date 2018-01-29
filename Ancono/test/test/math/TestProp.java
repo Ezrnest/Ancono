@@ -21,7 +21,6 @@ public final class TestProp {
 	 * 
 	 */
 	public TestProp() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Test

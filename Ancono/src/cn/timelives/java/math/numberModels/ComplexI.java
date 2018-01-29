@@ -19,7 +19,7 @@ public final class ComplexI {
 	private static final double TWO_PI = 2*Math.PI;
 	
 	private final double a,b;
-	private static final double UNCALCULATED = Double.MIN_VALUE;
+	private static final double UNCALCULATED = Double.NaN;
 	private double m = UNCALCULATED,arg = UNCALCULATED;
 	public static final double ANGLE_UPPER_BOUND = Math.PI;
 	public static final double ANGLE_DOWNER_BOUND = -Math.PI;
@@ -414,7 +414,7 @@ public final class ComplexI {
 	 * <pre>
 	 * result = ln(|z|) + (arg(z)+2k*Pi)i
 	 * </pre>
-	 * and the main value is 
+	 * and the primary value is 
 	 * <pre> ln(|z|) + arg(z)i</pre>
 	 * The number of results is infinite,and 
 	 * the iterator of the ComplexResult will iterate from 

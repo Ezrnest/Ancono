@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Multinomial;
 import cn.timelives.java.math.Solveable;
 import cn.timelives.java.math.Utils;
@@ -293,7 +294,58 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 		return new DSVPEquation<>(mc,arr);
 	}
+	/**
+	 * Creates an equation with it coefficients. The coefficient of x^n is {@code coes[n]}.
+	 * @param mc a {@link MathCalculator}
+	 * @param coes an array of coefficients, if an element is {@code null}, 
+	 * then it will be considered as zero.
+	 * @return a SVPEquation
+	 */
+	@SafeVarargs
+	public static <T> SVPEquation<T> valueOf(MathCalculator<T> mc,T...coes){
+		for(int i=0;i<coes.length;i++){
+			if(coes[i]==null){
+				coes[i] = mc.getZero();
+			}
+		}
+		int max = coes.length-1;
+		while(mc.isZero(coes[max])){
+			max--;
+		}
+		coes = Arrays.copyOf(coes, max+1);
+		return new DSVPEquation<>(mc, coes);
+	}
 	
+	/**
+	 * Returns an equation from a multinomial.
+	 * @param m a {@link Multinomial}
+	 * @param mc a {@link MathCalculator}
+	 * @return a {@link SVPEquation}
+	 */
+	public static <T> SVPEquation<T> fromMultinomial(Multinomial<T> m,MathCalculator<T> mc){
+		if(m instanceof SVPEquation) {
+			return (SVPEquation<T>)m;
+		}
+		final int size = m.getDegree()+1;
+		@SuppressWarnings("unchecked")
+		T[] list = (T[]) new Object[size];
+		for(int i=0;i<size;i++) {
+			list[i] = m.getCoefficient(i);
+		}
+		return new DSVPEquation<>(mc, list);
+	}
+	/**
+	 * Returns an equation from a multinomial which is also a {@link MathCalculatorHolder}.
+	 * @param m a {@link Multinomial}
+	 * @param mc a {@link MathCalculator}
+	 * @return a {@link SVPEquation}
+	 * @throws ClassCastException if {@code !(m instanceof MathCalculatorHolder)};
+	 */
+	public static <T> SVPEquation<T> fromMultinomial(Multinomial<T> m){
+		@SuppressWarnings("unchecked")
+		MathCalculatorHolder<T> holder = (MathCalculatorHolder<T>)m;
+		return fromMultinomial(m, holder.getMathCalculator());
+	}
 	/**
 	 * Returns an equation that is equal to {@code (x-a)^p = 0},the roots are 
 	 * already available({@code x=a}).
@@ -306,6 +358,8 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		if(p<=0){
 			throw new IllegalArgumentException("p <= 0 ");
 		}
+		//
+		
 		//TODO
 		return null;
 	}
@@ -323,7 +377,6 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 //		 */
 //		protected RootEquation(MathCalculator<T> mc) {
 //			super(mc);
-//			// TODO Auto-generated constructor stub
 //		}
 //		
 //	}
@@ -593,7 +646,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 				QEquation<T> eq = (QEquation<T>) obj;
 				return mc.isEqual(a, eq.a)&&mc.isEqual(b, eq.b)&&mc.isEqual(c, eq.c);
 			}
-			return false;
+			return super.valueEquals(obj);
 			
 		}
 
@@ -605,7 +658,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 						&&mc.isEqual(b, mapper.apply(eq.b))
 						&&mc.isEqual(c, mapper.apply(eq.c));
 			}
-			return false;
+			return super.valueEquals(obj,mapper);
 		}
 
 
@@ -719,7 +772,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 				LEquation<T> leq = (LEquation<T>) obj;
 				return mc.isEqual(a, leq.a) && mc.isEqual(b, leq.b);
 			}
-			return false;
+			return super.valueEquals(obj);
 		}
 
 		@Override
@@ -728,7 +781,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 				LEquation<N> leq = (LEquation<N>) obj;
 				return mc.isEqual(a, mapper.apply(leq.a)) && mc.isEqual(b, mapper.apply(leq.b));
 			}
-			return false;
+			return super.valueEquals(obj,mapper);
 		}
 		
 	}

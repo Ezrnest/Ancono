@@ -1,6 +1,10 @@
 package cn.timelives.java.math.linearAlgebra;
 
+import static cn.timelives.java.utilities.Printer.print;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.function.MathFunction;
@@ -357,6 +361,62 @@ public abstract class Vector<T> extends Matrix<T> {
 		}
 		return new DVector<T>(re,false,mc);
 	}
+	
+	/**
+	 * A method similar to {@link #addVector(Vector, Vector)}, but subtract.
+	 * @return a column vector as result
+	 * @throws ArithmeticException if dimension doesn't match
+	 */
+	public static <T> Vector<T> subtractVector(Vector<T> v1 , Vector<T> v2){
+		v1.checkSameSize(v2);
+		final int size = v1.getSize();
+		@SuppressWarnings("unchecked")
+		T[] re = (T[]) new Object[size];
+		MathCalculator<T> mc = v1.mc;
+		for(int i=0;i<re.length;i++){
+			re[i] = mc.subtract(v1.getNumber(i), v2.getNumber(i));
+		}
+		return new DVector<T>(re,false,mc);
+	}
+	/**
+	 * Provides a better efficiency for adding several vectors without creating 
+	 * a new vector when adding each time. 
+	 * @return a column vector as result
+	 * @throws ArithmeticException if dimension doesn't match
+	 */
+	@SafeVarargs
+	public static <T> Vector<T> addVectors(Vector<T>...vecs){
+		return addVectors(vecs.length,vecs);
+	}
+	/**
+	 * Provides a better efficiency for adding several vectors without creating 
+	 * a new vector when adding each time. 
+	 * @param n the number of vectors to add
+	 * @return a column vector as result
+	 * @throws ArithmeticException if dimension doesn't match
+	 */
+	@SafeVarargs
+	public static <T> Vector<T> addVectors(int n,Vector<T>...vecs){
+		if(n>vecs.length) {
+			throw new IllegalArgumentException();
+		}
+		final int size = vecs[0].getSize();
+		@SuppressWarnings("unchecked")
+		T[] re = (T[]) vecs[0].toArray();
+		MathCalculator<T> mc = vecs[0].mc;
+		for(int j=1;j<n;j++) {
+			Vector<T> v = vecs[j];
+			if(v.getSize() != size) {
+				throw new IllegalArgumentException();
+			}
+			for(int i=0;i<size;i++){
+				re[i] = mc.add(re[i], vecs[j].getNumber(i));
+			}
+		}
+		return new DVector<T>(re,false,mc);
+	}
+	
+	
 	/**
 	 * Calculate the intersection angle of the two vector.Which is usually shown as {@literal <v1,v2>}.
 	 * 
@@ -366,7 +426,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return {@literal <v1,v2>}.
 	 * @throws ArithmeticException if one of the vectors is zero vector
 	 */
-	public static <T,R> R intersectionAngle(DVector<T> v1,DVector<T> v2,MathFunction<T,R> arccos){
+	public static <T,R> R intersectionAngle(Vector<T> v1,Vector<T> v2,MathFunction<T,R> arccos){
 		return arccos.apply(cosValueOfIntersectionAngle(v1, v2));
 	}
 	/**
@@ -379,7 +439,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return cos{@literal <v1,v2>}.
 	 * @throws ArithmeticException if one of the vectors is zero vector
 	 */
-	public static <T> T cosValueOfIntersectionAngle(DVector<T> v1,DVector<T> v2){
+	public static <T> T cosValueOfIntersectionAngle(Vector<T> v1,Vector<T> v2){
 		T re = v1.innerProduct(v2);
 		MathCalculator<T> mc = v1.mc;
 		T d1 = v1.calLength();
@@ -468,4 +528,84 @@ public abstract class Vector<T> extends Matrix<T> {
 		}
 		return new DVector<>(arr, true, mat.getMathCalculator());
 	}
+	/**
+	 * Orthogonalizes the given vectors by using Schmidt method.
+	 * 
+	 * @param vs an array of vectors
+	 * @return a new list of vectors
+	 */
+	@SafeVarargs
+	public static <T> List<Vector<T>> orthogonalize(Vector<T>... vs) {
+		//vs    : a1,a2,a3 ... an
+		//list  : b1,b2,b3 ... bn
+		//temp1 : -b1/b1^2 ... -bn/bn^2
+		//temp2 : used when adding
+		final int n = vs.length;
+		if(n<2) {
+			return Arrays.asList(vs);
+		}
+		final int size = vs[0].getSize();
+		//size check
+		for (int i = 1; i < n; i++) {
+			if (vs[i].getSize() != size) {
+				throw new IllegalArgumentException("vector's length=" + vs[i].getSize() + " != " + n);
+			}
+		}
+		
+		MathCalculator<T> mc = vs[0].getMathCalculator();
+		List<Vector<T>> list = new ArrayList<>(n);
+		
+		@SuppressWarnings("unchecked")
+		Vector<T>[] temp1 = new Vector[n-1],//temp1: b/b^2
+			temp2 = new Vector[n];
+		
+		list.add(vs[0]);
+		//b1 = a1
+		Vector<T> prev = vs[0];
+		for(int i=1;i<n;i++) {
+			temp1[i-1] = prev.multiplyNumber(mc.negate(
+					mc.reciprocal(prev.calLengthSq())));
+			
+			Vector<T> vec = vs[i];
+			for(int j=0;j<i;j++) {
+				temp2[j] = list.get(j).multiplyNumber(temp1[j].innerProduct(vec)); 
+			}
+			temp2[i] = vec;
+			Vector<T> result =  addVectors(i+1,temp2);
+			list.add(result);
+			prev = result;
+		}
+		return list;
+	}
+	
+	/**
+	 * Orthogonalizes the given vectors by using Schmidt method.
+	 * 
+	 * @param vs an array of vectors
+	 * @return a new list of vectors
+	 */
+	@SafeVarargs
+	public static <T> List<Vector<T>> orthogonalizeAndUnit(Vector<T>... vs) {
+		List<Vector<T>> list = orthogonalize(vs);
+		for(int i=0;i<list.size();i++) {
+			list.set(i, list.get(i).unitVector());
+		}
+		return list;
+	}
+	
+//	public static void main(String[] args) {
+//		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
+//		@SuppressWarnings("unchecked")
+//		Vector<Double>[] vecs = new Vector[3];
+//		vecs[0] = Vector.createVector(mc, 1d,1d,0d);
+//		vecs[1] = Vector.createVector(mc, 1d,0d,1d);
+//		vecs[2] = Vector.createVector(mc, -1d,0d,0d);
+////		print(addVectors(vecs));
+//		List<Vector<Double>> list = orthogonalize(vecs);
+//		print(list);
+//		vecs = list.toArray(vecs);
+//		print(vecs[0].innerProduct(vecs[1]));
+//		print(vecs[0].innerProduct(vecs[2]));
+//		print(vecs[2].innerProduct(vecs[1]));
+//	}
 }

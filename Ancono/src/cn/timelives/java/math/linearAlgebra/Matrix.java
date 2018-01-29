@@ -7,11 +7,15 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.equation.EquationSolver;
+import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.MultinomialX;
 import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.Printer;
 
 /**
@@ -457,7 +461,6 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 			turn = !turn;
 		}
 		return sum;
-		//TODO
 	}
 	/**
 	 * Return the cofactor of the element in row {@code r} and column {@code c}. 
@@ -736,9 +739,51 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 		return tr;
 	}
 	
+	/**
+	 * Creates the eigenvalue equation of this matrix. It is required that 
+	 * this matrix is a square matrix.
+	 * @param mat 
+	 * @return
+	 */
+	public SVPEquation<T> eigenvalueEquation(){
+		if(column != row){
+			throw new ArithmeticException("Not square");
+		}
+		//transform to a temporary matrix to compute the determinant
+		//in multinomial
+		MathCalculator<MultinomialX<T>> mct = MultinomialX.getCalculator(mc);
+		Matrix<MultinomialX<T>> tmat = this.mapTo(x -> MultinomialX.constant(mc, x), mct),
+				eigen = Matrix.diag(MultinomialX.oneX(mc),row, mct);
+		tmat = minusMatrix(eigen, tmat);
+		MultinomialX<T> expr = tmat.calDet();
+		return SVPEquation.fromMultinomial(expr);
+	}
+	/**
+	 * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
+	 * @param mat a matrix
+	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
+	 * the degree of the equation.
+	 * @return 
+	 */
+	@SuppressWarnings("unchecked")
+	public Matrix<T> similarDiag(EquationSolver<T,T,SVPEquation<T>> equationSolver){
+		List<T> eigenvalues = eigenvalues(equationSolver);
+		return Matrix.diag((T[])eigenvalues.toArray(),mc);
+	}
+	/**
+	 * Returns the eigenvalue equation of this matrix. It is required that 
+	 * this matrix is a square matrix.
+	 * @param mat 
+	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
+	 * the degree of the equation.
+	 * @return
+	 */
+	public List<T> eigenvalues(EquationSolver<T,T,SVPEquation<T>> equationSolver){
+		SVPEquation<T> equation = eigenvalueEquation();
+		return equationSolver.solve(equation);
+	}
 	
-	
-	
+	//TODO
 	
 	private static class Entry implements Comparable<Entry>{
 		private Entry(int key,int value){
@@ -1465,7 +1510,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	
 	
 	/**
-	 * Return a diagonal matrix containing the given numbers.M[i][i] = arr[i]
+	 * Return a diagonal matrix containing the given numbers. M[i][i] = arr[i]
 	 * 
 	 * @param arr
 	 * @return
@@ -1475,16 +1520,35 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 
 		int n = arr.length;
 		if (n < 1) {
-			throw new IllegalArgumentException("Illegal size:" + n + "��" + n);
+			throw new IllegalArgumentException("Illegal size:" + n);
 		}
 		@SuppressWarnings("unchecked")
 		T[][] mat = (T[][]) new Object[n][n];
+		fillData(mat,mc.getZero());
 		for (int i = 0; i < n; i++) {
 			mat[i][i] = arr[i];
 		}
 		return new DMatrix<T>(mat, n, n,mc);
 	}
-
+	/**
+	 * Return a diagonal matrix containing the given numbers. M[i][i] = x
+	 * 
+	 * @param arr
+	 * @return
+	 */
+	public static <T> Matrix<T> diag(T x,int n,MathCalculator<T> mc) {
+		Objects.requireNonNull(x);
+		if (n < 1) {
+			throw new IllegalArgumentException("Illegal size:" + n);
+		}
+		@SuppressWarnings("unchecked")
+		T[][] mat = (T[][]) new Object[n][n];
+		fillData(mat,mc.getZero());
+		for (int i = 0; i < n; i++) {
+			mat[i][i] = x;
+		}
+		return new DMatrix<T>(mat, n, n,mc);
+	}
 	/**
 	 * Return an identity matrix whose size is n��n
 	 * 
@@ -1493,7 +1557,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	 */
 	public static <T> Matrix<T> identityMatrix(int n,MathCalculator<T> mc) {
 		if (n < 1) {
-			throw new IllegalArgumentException("Illegal size:" + n + "��" + n);
+			throw new IllegalArgumentException("Illegal size:" + n);
 		}
 		@SuppressWarnings("unchecked")
 		T[][] mat = (T[][]) new Object[n][n];
@@ -1510,7 +1574,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	 */
 	public static <T> Matrix<T> zeroMatrix(int n,MathCalculator<T> mc) {
 		if (n < 1) {
-			throw new IllegalArgumentException("Illegal size:" + n + "��" + n);
+			throw new IllegalArgumentException("Illegal size:" + n );
 		}
 		@SuppressWarnings("unchecked")
 		T[][] mat = (T[][]) new Object[n][n];
@@ -1537,7 +1601,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	public static <T> Matrix<T> addMatrix(Matrix<T> m1, Matrix<T> m2) {
 		if (m1.row != m2.row || m1.column != m2.column) {
 			throw new IllegalArgumentException(
-					"Cannot add two matrix:" + m1.row + "��" + m1.column + " + " + m2.row + "��" + m2.column);
+					"Cannot add two matrix:" + m1.row + "*" + m1.column + " + " + m2.row + "*" + m2.column);
 		}
 		int row = m1.row;
 		int column = m1.column;
@@ -1579,7 +1643,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	public static <T> Matrix<T> minusMatrix(Matrix<T> m1, Matrix<T> m2) {
 		if (m1.row != m2.row || m1.column != m2.column) {
 			throw new IllegalArgumentException(
-					"Cannot minus two matrix:" + m1.row + "��" + m1.column + " - " + m2.row + "��" + m2.column);
+					"Cannot minus two matrix:" + m1.row + "*" + m1.column + " - " + m2.row + "*" + m2.column);
 		}
 		int row = m1.row;
 		int column = m1.column;
@@ -1622,7 +1686,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	public static <T> Matrix<T> multiplyMatrix(Matrix<T> m1, Matrix<T> m2) {
 		if (m1.column != m2.row) {
 			throw new IllegalArgumentException(
-					"Cannot multiply two matrix:" + m1.row + "��" + m1.column + " �� " + m2.row + "��" + m2.column);
+					"Cannot multiply two matrix:(" + m1.row + "*" + m1.column + ") * (" + m2.row + "*" + m2.column+")");
 		}
 		int n = m1.column;
 		int row = m1.row;
@@ -1673,7 +1737,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	public static <T> Matrix<T> matrixPower(Matrix<T> mat, int pow) {
 		// do range check
 		if (mat.row != mat.column)
-			throw new IllegalArgumentException("Cannot calculate" + mat.row + "��" + mat.column);
+			throw new IllegalArgumentException("Cannot calculate" + mat.row + "*" + mat.column);
 		if (pow == 0)
 			return identityMatrix(mat.row,mat.mc);
 		if (pow == 1)
@@ -1762,7 +1826,97 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 		return new VMatrix<>(arr, row, column, v.getMathCalculator(), isRow);
 	}
 	
+	public static <T> MatrixBuilder<T> getBuilder(int row,int column,MathCalculator<T> mc){
+		return new MatrixBuilder<>(row,column,mc);
+	}
 	
+	public static class MatrixBuilder<T> implements Cloneable{
+		final MathCalculator<T> mc;
+		final int row,column;
+		final Object[][] data;
+		boolean disposed = false;
+		/**
+		 * @param mc
+		 * @param row
+		 * @param column
+		 */
+		MatrixBuilder( int row, int column,MathCalculator<T> mc) {
+			super();
+			this.mc = mc;
+			this.row = row;
+			this.column = column;
+			data = new Object[row][column];
+			fillData(data,mc.getZero());
+		}
+		
+		/**
+		 * @param mc
+		 * @param row
+		 * @param column
+		 */
+		private MatrixBuilder( int row, int column,MathCalculator<T> mc,Object[][] data) {
+			super();
+			this.mc = mc;
+			this.row = row;
+			this.column = column;
+			this.data = data;
+		}
+		
+		protected void rowRangeCheck(int r){
+			if (r < 0 || r >= row) {
+				throw new IndexOutOfBoundsException("Row=" + row + ":" + r);
+			}
+		}
+		
+		protected void columnRangeCheck(int c) {
+			if (c < 0 || c >= column) {
+				throw new IndexOutOfBoundsException("Column=" + column + ":" + c);
+			}
+		}
+		
+		protected void checkDisposed() {
+			if(disposed) {
+				throw new IllegalStateException("The builder has already built!");
+			}
+		}
+		
+		public MatrixBuilder<T> set(T x,int i,int j){
+			checkDisposed();
+			rowRangeCheck(i);
+			columnRangeCheck(j);
+			data[i][j] = x;
+			return this;
+		}
+		
+		public MatrixBuilder<T> fillRow(T x,int row){
+			checkDisposed();
+			rowRangeCheck(row);
+			for(int j=0;j<column;j++) {
+				data[row][j] = x;
+			}
+			return this;
+		}
+		
+		public MatrixBuilder<T> fillColumn(T x,int column){
+			checkDisposed();
+			columnRangeCheck(column);
+			for(int i=0;i<row;i++) {
+				data[i][column] = x;
+			}
+			return this;
+		}
+		
+		public MatrixBuilder<T> clone(){
+			Object[][] ndata = ArraySup.deepCopy(data); 
+			return new MatrixBuilder<>(row, column, mc,ndata);
+		}
+		
+		public Matrix<T> build(){
+			checkDisposed();
+			disposed = true;
+			return new DMatrix<>(data, row, column, mc);
+		}
+	}
 	
 
 }

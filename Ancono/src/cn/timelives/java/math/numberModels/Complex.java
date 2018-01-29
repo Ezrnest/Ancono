@@ -537,16 +537,57 @@ public final class Complex<T> extends FlexibleMathObject<T> {
 		public Complex<T> pow(Complex<T> p, long exp) {
 			return p.pow(exp);
 		}
-
-		@Override
-		public Complex<T> constantValue(String name) {
-			return null;
-		}
+		
+		/**
+		 * The String representation of <i>i</i>, the square root of -1.
+		 */
+		public static final String STR_I = "i";
 		
 		@Override
+		public Complex<T> constantValue(String name) {
+			switch(name) {
+			case STR_I:{
+				return new Complex<>(mc,mc.getZero(),mc.getOne());
+			}
+			}
+			T x = mc.constantValue(name);
+			if(x == null) {
+				return null;
+			}
+			return new Complex<>(mc,x,mc.getZero());
+		}
+		
+		/**
+		 * Returns exp(x). Assuming that x = a+bi, the function returns a 
+		 * complex number whose modulus is equal to {@literal e^a} and 
+		 * argument is equal to {@literal b}. 
+		 */
+		@Override
+		public Complex<T> exp(Complex<T> x) {
+			return Complex.modArg(mc.exp(x.a), x.b, mc);
+		}
+		/**
+		 * Returns exp(a,b), which is equal to exp(ln(a)*b). 
+		 */
+		@Override
 		public Complex<T> exp(Complex<T> a, Complex<T> b) {
-			// TODO Auto-generated method stub
-			return null;
+			return exp(multiply(ln(a), b));
+		}
+
+		/**
+		 * Returns the primary value of ln(x), which is equal to
+		 * <pre>
+		 *  ln(|z|) + arg(z)i
+		 * </pre>
+		 */
+		@Override
+		public Complex<T> ln(Complex<T> x) {
+			T mod = x.modulus();
+			if(mc.isZero(mod)) {
+				throw new ArithmeticException("ln(0)");
+			}
+			T arg = x.arg();
+			return new Complex<>(mc,mod,arg);
 		}
 		
 		/* (non-Javadoc)

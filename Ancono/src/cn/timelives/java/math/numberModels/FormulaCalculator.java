@@ -91,10 +91,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		}
 		BigInteger[] ndr = new BigInteger[3];
 		if(this.state==0||f1.isDecimal()||f2.isDecimal()){
-			//������һ��ΪС����ʾ���߼�����ΪС��״̬�������С�����
-			throw new ArithmeticException(f1.toString()+"   "+f2.toString()+"---"+state);//TODO
-//			sum.setNumber(f1.getNumber().add(f2.getNumber()));
-//			sum.setDecimal(true);
+			throw new ArithmeticException(f1.toString()+"   "+f2.toString()+"---"+state);
 		}
 		else{
 			ndr[0]= ((f1.getSignum()>=0)?(f1.getNumerator()):(f1.getNumerator().negate())).multiply( f2.getDenominator() )
@@ -133,11 +130,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 		BigInteger[] ndr = new BigInteger[3];
 		
 		if(this.state==0||f1.isDecimal()||f2.isDecimal()){//������������С��״̬ʱ������С������
-//			sum.setPositive(true);
-//			sum.setNumber(f1.getNumber().multiply(f2.getNumber()));
-//			//sum.setLogarithm(f1.getLogarithm()+f2.getLogarithm());
-//			sum.setDecimal(true);
-			throw new ArithmeticException();//TODO
+			throw new ArithmeticException();
 		}
 		signum = f1.getSignum()*f2.getSignum();
 		if(signum==0){

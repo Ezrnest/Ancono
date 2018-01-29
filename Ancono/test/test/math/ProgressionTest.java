@@ -14,7 +14,6 @@ public final class ProgressionTest {
 	 * 
 	 */
 	public ProgressionTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 }

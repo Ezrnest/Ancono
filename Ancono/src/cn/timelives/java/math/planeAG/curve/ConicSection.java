@@ -405,32 +405,42 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * @return
 	 */
 	public Point<T> intersectPointAnother(Point<T> p,Line<T> line){
-		//TODO
-//		if((!line.contains(p)) || (! contains(p))) {
-//			throw new IllegalArgumentException();
-//		}
-		SVPEquation<T> equa = createEquationX(line);
-		if(equa.getDegree()==1){
-			return null;
-		}else{
-			QEquation<T> eq = (QEquation<T>) equa;
-			int ren = 2;
-			try{
-				ren = eq.getNumberOfRoots();
-			}catch(UnsupportedCalculationException ece) {
-			}
-			switch(ren){
-			case 0:
-			case 1:{
-				return null;
-			}
-			default:{
-				T x = mc.subtract(eq.rootsSum(), p.x);
-				T y = line.computeY(x);
-				return Point.valueOf(x, y, mc);
-			}
-			}
+		if((!line.contains(p)) || (! contains(p))) {
+			throw new IllegalArgumentException();
 		}
+		SVPEquation<T> equa = null;
+		boolean equationOfX;
+		//if line is Ax - C = 0, then the slope doesn't exist,
+		//so create the equation with y.
+		if(mc.isZero(line.getB())){
+			equationOfX = false;
+			equa= createEquationY(line);
+		}else {
+			equationOfX = true;
+			equa= createEquationX(line);
+		}
+		if (equa.getDegree() == 1) {
+			return null;
+		}
+		QEquation<T> eq = (QEquation<T>) equa;
+		int degree = 2;
+		try {
+			degree = eq.getNumberOfRoots();
+		} catch (UnsupportedCalculationException ece) {
+		}
+		if (degree < 2) {
+			return null;
+		}
+		T x, y;
+		if (equationOfX) {
+			x = mc.subtract(eq.rootsSum(), p.x);
+			y = line.computeY(x);
+		} else {
+			y = mc.subtract(eq.rootsSum(), p.y);
+			x = line.computeX(y);
+		}
+		return Point.valueOf(x, y, mc);
+		
 	}
 	
 	/**
@@ -444,14 +454,12 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * @return
 	 */
 	public ConicSection<T> transform(PVector<T> vx,PVector<T> vy){
-		//Assume 
 		T a = vx.getX(), b=vx.getY(),
 			c = vy.getX(),d = vy.getY();
 		return transform0(a, b, c, d);
 	}
 	
 	GeneralConicSection<T> transform0(T a,T b,T c,T d){
-		
 		T _A = mc.add(mc.add(mc.multiply(A, mc.multiply(a, a)), mc.multiply(B, mc.multiply(a, c))), mc.multiply(C, mc.multiply(c, c)));
 		T _C = mc.add(mc.add(mc.multiply(A, mc.multiply(b, b)), mc.multiply(B, mc.multiply(b, d))), mc.multiply(C, mc.multiply(d, d)));
 		T _B = mc.add(mc.add(mc.multiply(mc.multiply(B, a), d), mc.multiply(B, mc.multiply(b, c))), 
@@ -547,7 +555,8 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	public abstract Pair<TransMatrix<T>,ConicSection<T>> normalizeAndTrans();
 	
 	/**
-	 * Transform this conic section to standard form, 
+	 * Transform this conic section to standard form:
+	 * <pre>Ax^2+Cy^2+F=0</pre>
 	 * @return
 	 */
 	public ConicSection<T> toStandardForm(){
@@ -555,6 +564,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	}
 	/**
 	 * Transform this conic section to standard form, and returns the transformation performed and the standard form.
+	 * <pre>Ax^2+Cy^2+F=0</pre>
 	 * @return
 	 */
 	public abstract Pair<PAffineTrans<T>,ConicSection<T>> toStandardFormAndTrans();

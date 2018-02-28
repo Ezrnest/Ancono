@@ -79,56 +79,9 @@ class Test {
 		
 		
 	}
-	static void t1(){
-		ImageSup loader = ImageSup.getInstance();
-		BufferedImage ima = loader.getBufferedImage(
-				new File("E:\\liyicheng\\document\\images\\testImage1.bmp"));
-		print(ima.getWidth()+"::"+ima.getHeight());
-		int[] arr = ima.getRGB(0, 0, 512, 512, null, 0, 512);
-		for(int i=512*16;i<512*17-256;i++){
-			print(Integer.toHexString(arr[i]));
-		}
-//		int[] arr2 = ArraySup.fillArr(512*512, 0xff808080);
-//		BufferedImage bim = new BufferedImage(512,512,BufferedImage.TYPE_INT_ARGB);
-//		bim.setRGB(0, 0, 512, 512, arr2, 0, 512);
-//		loader.saveImage(bim, new File("E:\\liyicheng\\document\\images\\testImage3.png"), ".png");
-		int[][][] rgb = ImageSup.sparateRGB(arr, 512);
-//		print(rgb[0][16]);
-//		print(rgb[1][16]);
-//		print(rgb[2][16]);
-		print_();
-		arr = ImageSup.getRGBs(rgb, 512, 512);
-		for(int i=512*16;i<512*17-256;i++){
-			print(Integer.toHexString(arr[i]));
-		}
-	}
 	
-	static void t0() throws Exception{
-//		inverstTest3();
-//		detTest2();
-		File path = new File("C:\\Users\\lyc\\Documents\\Screenshots\\IMG_0178.PNG");
-		ImageLoader loader = PNGImageLoaderFactory.getInstance().createImageLoader(new 
-				FileInputStream("C:\\Users\\lyc\\Documents\\Screenshots\\IMG_0178.PNG"));
-		FileImageInputStream iis = new FileImageInputStream(path);
-		PNGImageReaderSpi sp = new PNGImageReaderSpi();
-		PNGImageReader iis1 = new PNGImageReader(sp);
-		iis1.setInput(iis);
-		BufferedImage ima = iis1.read(0);
-		print(ima.getHeight()+"::"+ima.getWidth());
-		Raster r = ima.getData();
-//		print(r.getPixels(500, 250, 10, 10, (int[])null));
-		int[] arr = ima.getRGB(500, 250, 10, 10, null, 0, 10);
-		
-		for(int i=0;i<arr.length;i++){
-			StringBuilder sb = new StringBuilder();
-			int b = Math.min(i+10, arr.length);
-			for(;i<b;i++){
-				sb.append(Integer.toHexString(arr[i])).append(' ');
-			}
-			printnb(sb.toString());
-		}
-	}
-	/*
+	
+	
 	 * Identify the given expression
 	 /
 	private static final Pattern p = Pattern.compile(" *([\\+\\-]?\\d+(\\/\\d+)?) *");

@@ -26,7 +26,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 */
 	protected final boolean isRow;
 	protected Vector(int length,boolean isRow ,MathCalculator<T> mc) {
-		super(isRow ? length : 1, isRow ? 1 : length, mc);
+		super(isRow ? 1:length, isRow ?  length : 1, mc);
 		this.isRow = isRow;
 	}
 	/**
@@ -410,12 +410,34 @@ public abstract class Vector<T> extends Matrix<T> {
 				throw new IllegalArgumentException();
 			}
 			for(int i=0;i<size;i++){
-				re[i] = mc.add(re[i], vecs[j].getNumber(i));
+				re[i] = mc.add(re[i], v.getNumber(i));
 			}
 		}
 		return new DVector<T>(re,false,mc);
 	}
-	
+	/**
+	 * Provides a better efficiency for adding several vectors without creating 
+	 * a new vector when adding each time. 
+	 * @return a column vector as result
+	 * @throws ArithmeticException if dimension doesn't match
+	 */
+	@SafeVarargs
+	public static <T> Vector<T> addVectors(Vector<T> v,Vector<T>...vecs){
+		final int size = v.getSize();
+		@SuppressWarnings("unchecked")
+		T[] re = (T[]) v.toArray();
+		MathCalculator<T> mc = vecs[0].mc;
+		for(int j=0;j<vecs.length;j++) {
+			Vector<T> vt = vecs[j];
+			if(vt.getSize() != size) {
+				throw new IllegalArgumentException();
+			}
+			for(int i=0;i<size;i++){
+				re[i] = mc.add(re[i], vt.getNumber(i));
+			}
+		}
+		return new DVector<T>(re,false,mc);
+	}
 	
 	/**
 	 * Calculate the intersection angle of the two vector.Which is usually shown as {@literal <v1,v2>}.

@@ -256,6 +256,102 @@ public class MatrixSup {
 			return sb.build();
 		}
 	}
+	
+	/**
+	 * Solves the linear equation 
+	 * <pre><b>A</b><b>X</b> = 0</pre>
+	 * where <b>A</b> is the given {@code coefficientMatrix}.
+	 * @param coefficientMatrix
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> LinearEquationSolution<T> solveHomogeneousLinearEquation(Matrix<T> coefficientMatrix){
+		Matrix<T> cm = coefficientMatrix;
+		MathCalculator<T> mc = coefficientMatrix.getMathCalculator();
+		final int n = cm.column;
+		//shorten the name
+		DMatrix<T> step = (DMatrix<T>) cm.toStepMatrix().result;
+		T[][] mat = (T[][]) step.data;
+		cm = null;
+		int rank = 0;
+		int[] baseColumns = new int[n];
+//		printMatrix(mat);
+		for(int i=0;i<step.row;i++){
+			//column-1 avoid the constant
+			for(int j=0;j<n;j++){
+				if(!mc.isZero(mat[i][j])){
+					baseColumns[rank++] = j;
+					break;
+				}
+			}
+		}
+		
+		
+		if(rank==n) {
+			return LinearEquationSolution.zeroSolution(n, null, coefficientMatrix.getMathCalculator());
+		}
+		SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
+		Vector<T> base = Vector.zeroVector(n, mc);
+		sb.setBase(base);
+		final int numberOfKSolution = n - rank;
+		sb.setSituation(Situation.UNBOUNDED_SOLUTION);
+		DVector<T>[] vs = new DVector[numberOfKSolution];
+		int searchPos = 0;
+		int curCol = 0;
+		T netagiveOne = mc.negate(mc.getOne());
+		T zero = mc.getZero();
+		for (int s = 0; s < numberOfKSolution; s++) {
+			// find the next column
+			while (baseColumns[searchPos] == curCol) {
+				searchPos++;
+				curCol++;
+			}
+			// x for current column is one.
+			T[] solution = (T[]) new Object[n];
+			int sPos = 0;
+			for (int i = 0; i < n; i++) {
+				if (i == baseColumns[sPos]) {
+					solution[i] = mat[sPos][curCol];
+					sPos++;
+				} else {
+					solution[i] = zero;
+				}
+			}
+			solution[curCol] = netagiveOne;
+			vs[s] = new DVector<T>(solution, false, mc);
+			curCol++;
+		}
+		sb.setVariableSolution(vs);
+		return sb.build();
+//		sb.setSituation(Situation.UNBOUNDED_SOLUTION);
+//		
+//		Vector<T>[] vs = new Vector[numberOfKSolution];
+//		
+//		for(int i=0;i<numberOfKSolution;i++) {
+//			T[] solution = (T[]) new Object[n];
+//			int column = i+ rank;
+//			for(int j=0;j<rank;j++) {
+//				solution[j] =(T) step.data[j][column];
+//			}
+//			for(int j=rank;j<n;j++) {
+//				if(j==column) {
+//					solution[j]= netagiveOne;
+//				}else {
+//					solution[j] = zero;
+//				}
+//			}
+//			vs[i] = new DVector<T>(solution, false, mc);
+//		}
+//		sb.setVariableSolution(vs);
+//		return sb.build();
+		
+		
+	}
+	
+	
+	
+	
+	
 	/**
 	 * Computes the determinant of a 3*3 matrix given as an array, make sure the 
 	 * array contains right type of element.
@@ -286,7 +382,7 @@ public class MatrixSup {
 	 * @return 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Matrix<T> similarDiag(Matrix<T> mat,EquationSolver<T,T,SVPEquation<T>> equationSolver){
+	public static <T> Matrix<T> similarDiag(Matrix<T> mat,EquationSolver<T,SVPEquation<T>> equationSolver){
 		SVPEquation<T> equation = mat.eigenvalueEquation();
 		List<T> eigenvalues = equationSolver.solve(equation);
 		return Matrix.diag((T[])eigenvalues.toArray(), mat.getMathCalculator());

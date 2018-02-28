@@ -2,6 +2,8 @@ package cn.timelives.java.math.linearAlgebra;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.printnb;
+
+import cn.timelives.java.math.numberModels.MathCalculator;
 /**
  * A wrapper for the solution of a linear equation.This class objects are often 
  * returned by {@link MatrixSup#solveLinearEquation(Matrix)}.
@@ -21,10 +23,10 @@ public class LinearEquationSolution<T> {
 	private final Situation sit ;
 	
 	
-	private final DVector<T> base ;
-	private final DVector<T>[] solution;
+	private final Vector<T> base ;
+	private final Vector<T>[] solution;
 	
-	LinearEquationSolution(Matrix<T> equ,Situation sit,DVector<T> base,DVector<T>[] solution){
+	LinearEquationSolution(Matrix<T> equ,Situation sit,Vector<T> base,Vector<T>[] solution){
 		equation = equ;
 		this.sit = sit;
 		this.base = base;
@@ -32,12 +34,24 @@ public class LinearEquationSolution<T> {
 	}
 	
 	/**
-	 * Return a solution that represent no solution
+	 * Return a LinearEquationSolution that represent no solution
 	 * @return
 	 */
 	public static <T> LinearEquationSolution<T> noSolution(Matrix<T> equ){
 		return new LinearEquationSolution<T>(equ,Situation.NO_SOLUTION,null,null);
 	}
+	
+	/**
+	 * Returns a LinearEquationSolution representing the only solution is all zero.
+	 * @param n the number of variables.
+	 * @param equation
+	 * @return
+	 */
+	public static <T> LinearEquationSolution<T> zeroSolution(int n,Matrix<T> equation,MathCalculator<T> mc){
+		LinearEquationSolution<T> so = new LinearEquationSolution<T>(equation,Situation.SINGLE_SOLUTION,Vector.zeroVector(n, mc),null);
+		return so;
+	}
+	
 	
 	public Situation getSolutionSituation(){
 		return sit;
@@ -48,7 +62,9 @@ public class LinearEquationSolution<T> {
 	}
 	
 	/**
-	 * @return the equation
+	 * Returns the expanded matrix of the original linear equation, or {@code null} if 
+	 * it is not supported.
+	 * @return the equation or {@code null}.
 	 */
 	public Matrix<T> getEquation() {
 		return equation;
@@ -57,7 +73,7 @@ public class LinearEquationSolution<T> {
 	/**
 	 * @return the base
 	 */
-	public DVector<T> getBase() {
+	public Vector<T> getBase() {
 		return base;
 	}
 
@@ -65,7 +81,7 @@ public class LinearEquationSolution<T> {
 	 * Get the part of k*vector
 	 * @return the solution
 	 */
-	public DVector<T>[] getSolution() {
+	public Vector<T>[] getSolution() {
 		return solution;
 	}
 	/**
@@ -98,6 +114,8 @@ public class LinearEquationSolution<T> {
 		}
 	}
 	
+	
+	
 
 	public static class SolutionBuilder<T>{
 		private boolean isBuilding = true;
@@ -106,8 +124,8 @@ public class LinearEquationSolution<T> {
 		}
 		private Matrix<T> equation;
 		private Situation situation ;
-		private DVector<T> base ;
-		private DVector<T>[] ss;
+		private Vector<T> base ;
+		private Vector<T>[] ss;
 		/**
 		 * @param equation the equation to set
 		 */
@@ -129,7 +147,7 @@ public class LinearEquationSolution<T> {
 		/**
 		 * @param base the base to set
 		 */
-		public void setBase(DVector<T> base) {
+		public void setBase(Vector<T> base) {
 			if(base.isRow()){
 				this.base = base.transportMatrix();
 			}else{
@@ -137,7 +155,7 @@ public class LinearEquationSolution<T> {
 			}
 		}
 		
-		public void setVariableSolution(DVector<T>[] ss){
+		public void setVariableSolution(Vector<T>[] ss){
 			for(int i=0;i<ss.length;i++){
 				if(ss[i].isRow()){
 					ss[i] = ss[i].transportMatrix();
@@ -148,7 +166,7 @@ public class LinearEquationSolution<T> {
 		
 		
 		public LinearEquationSolution<T> build(){
-			if(equation!=null&&situation!=null){
+			if(situation!=null){
 				boolean pass = false;
 				switch(situation){
 				case NO_SOLUTION:

@@ -10,7 +10,7 @@ import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.utilities.ArraySup;
 
 /**
- * @author lql
+ * @author lyc
  *
  */
 final class VMatrix<T> extends Matrix<T> {

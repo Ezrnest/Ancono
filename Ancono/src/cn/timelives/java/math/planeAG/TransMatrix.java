@@ -351,6 +351,21 @@ public final class TransMatrix<T> extends Matrix<T>{
 		return valueOf(o,z,z,mc.negate(o),mc);
 	}
 	/**
+	 * Creates a TransformMatrix:
+	 * <pre>
+	 * (-1 0)
+	 * (0 -1)
+	 * </pre>
+	 * @param mc
+	 * @return
+	 */
+	public static <T> TransMatrix<T> centralSymmetry(MathCalculator<T> mc){
+		T z = mc.getZero();
+		T o = mc.negate(mc.getOne());
+		return valueOf(o,z,z,o,mc);
+	}
+	
+	/**
 	 * Creates a TransformMatrix that performs a rotate operation.The returned matrix(mat)
 	 * will fit the following result:
 	 * <pre>mat * (x,y)<sup>T</sup> = (x',y')<sup>T</sup></pre>

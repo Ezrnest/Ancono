@@ -1,0 +1,84 @@
+/**
+ * 2018-02-27
+ */
+package test.math.abstractAlgebra;
+
+import static cn.timelives.java.utilities.Printer.print;
+import static cn.timelives.java.utilities.Printer.printMatrix;
+import static cn.timelives.java.utilities.Printer.printnb;
+
+import java.util.Arrays;
+import java.util.function.Function;
+
+import org.junit.Test;
+
+import cn.timelives.java.math.abstractAlgebra.calculator.GroupCalculator;
+import cn.timelives.java.math.abstractAlgebra.structure.LimitedGroup;
+import cn.timelives.java.math.abstractAlgebra.structure.LimitedGroups;
+import cn.timelives.java.math.numberModels.Calculators;
+import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.planeAG.PAffineTrans;
+import cn.timelives.java.math.planeAG.TransMatrix;
+import cn.timelives.java.utilities.ArraySup;
+
+/**
+ * @author liyicheng
+ * 2018-02-27 19:16
+ *
+ */
+public class TestLimitedGroup {
+
+	/**
+	 * 
+	 */
+	public TestLimitedGroup() {
+	}
+	
+	
+	@Test
+	public void test1() {
+		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
+		GroupCalculator<TransMatrix<Integer>> matmc = new GroupCalculator<TransMatrix<Integer>>() {
+			@Override
+			public boolean isEqual(TransMatrix<Integer> x, TransMatrix<Integer> y) {
+				return x.valueEquals(y);
+			}
+			
+			@Override
+			public TransMatrix<Integer> apply(TransMatrix<Integer> x, TransMatrix<Integer> y) {
+				return y.andThen(x);
+			}
+			
+			@Override
+			public TransMatrix<Integer> getIdentity() {
+				return TransMatrix.identityTrans(mc);
+			}
+			
+			@Override
+			public TransMatrix<Integer> inverse(TransMatrix<Integer> x) {
+				return x.inverse();
+			}
+		}; 
+		LimitedGroup<TransMatrix<Integer>> g = LimitedGroups.createGroup(matmc, 
+				TransMatrix.flipX(mc),
+				TransMatrix.flipY(mc),
+				TransMatrix.centralSymmetry(mc),
+				TransMatrix.flipXY(mc));
+		TransMatrix<Integer>[][] table = LimitedGroups.generateGroupTable(g);
+		String names = "eabcmpqn";
+		Function<TransMatrix<Integer>,String> namer = x -> {
+			for(int i=1;i<table.length;i++) {
+				if(matmc.isEqual(table[0][i],x)) {
+					return names.substring(i-1, i);
+				}
+			}
+			return "-";
+		};
+		String[][] str = ArraySup.mapTo2(table, namer,String.class);
+		printMatrix(str);
+		for(int i=0;i<str.length-1;i++) {
+			print(names.charAt(i)+":");
+			table[0][i+1].printMatrix();
+		}
+	}
+}

@@ -1,20 +1,29 @@
 package cn.timelives.java.math.planeAG.curve;
 
+import static cn.timelives.java.utilities.Printer.print;
+
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
 import cn.timelives.java.math.equation.EquationSolver;
+import cn.timelives.java.math.equation.EquationSup;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.planeAG.PAffineTrans;
+import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.TransMatrix;
+import cn.timelives.java.utilities.SNFSupport;
 import cn.timelives.java.utilities.structure.Pair;
 /**
  * A final subclass for conic section.
@@ -107,9 +116,9 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	 */
 	protected T computeI3(){
 		if(inv0==null){
-			T A2 = mc.multiplyLong(B, 2l),
-					C2 = mc.multiplyLong(D, 2l),
-					F2 = mc.multiplyLong(E, 2l);
+			T A2 = mc.multiplyLong(A, 2l),
+					C2 = mc.multiplyLong(C, 2l),
+					F2 = mc.multiplyLong(F, 2l);
 			inv0 = MatrixSup.det3(new Object[][]{
 				{A2,B,D},
 				{B,C2,E},
@@ -128,8 +137,8 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	 */
 	protected T computeI2(){
 		if(inv1==null){
-			T A2 = mc.multiplyLong(B, 2l),
-					C2 = mc.multiplyLong(D, 2l);
+			T A2 = mc.multiplyLong(A, 2l),
+					C2 = mc.multiplyLong(C, 2l);
 			inv1 = mc.subtract(mc.multiply(A2, C2), mc.multiply(B, B));
 		}
 		return inv1;
@@ -172,8 +181,7 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	 */
 	@Override
 	public ConicSection<T> normalize() {
-		
-		return null;
+		return normalizeAndTrans().getSecond();
 	}
 	
 	/**
@@ -182,15 +190,17 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	@Override
 	public Pair<TransMatrix<T>, ConicSection<T>> normalizeAndTrans() {
 		Matrix<T> mat = createQuadraticFormMatrix();
-		Matrix<T> nmat = MatrixSup.similarDiag(mat, new EquationSolver<T, T, SVPEquation<T>>() {
-
-			@Override
-			public List<T> solve(SVPEquation<T> x) {
-				return ((QEquation<T>)x).solve();
-			}
-		});
-		
-		return null;
+		List<Pair<T,Vector<T>>> eigenvaluesAndVectors =  mat.eigenvaluesAndVectors(
+				EquationSup::solveUsingFormula);
+		Vector<T> v1 = eigenvaluesAndVectors.get(0).getSecond(),
+				v2 = eigenvaluesAndVectors.get(1).getSecond();
+		List<Vector<T>> list = Vector.orthogonalizeAndUnit(v1,v2);
+		v1 = list.get(0);
+		v2 = list.get(1);
+		TransMatrix<T> matrix = 
+				TransMatrix.valueOf(v1.getNumber(0), v2.getNumber(0), v1.getNumber(1), v2.getNumber(1), mc);
+		ConicSection<T> cs = this.transform(matrix.inverse());
+		return new Pair<>(matrix,cs);
 	}
 	
 	/**
@@ -198,8 +208,7 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	 */
 	@Override
 	public ConicSection<T> toStandardForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return toStandardFormAndTrans().getSecond();
 	}
 	
 	/**
@@ -207,8 +216,15 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	 */
 	@Override
 	public Pair<PAffineTrans<T>, ConicSection<T>> toStandardFormAndTrans() {
-		// TODO Auto-generated method stub
-		return null;
+		Pair<TransMatrix<T>, ConicSection<T>> p1 = normalizeAndTrans();
+		TransMatrix<T> trans = p1.getFirst();
+		ConicSection<T> cs = p1.getSecond();
+		T vx = mc.divideLong(mc.divide(cs.D, cs.A), 2L),
+				vy = mc.divideLong(mc.divide(cs.E, cs.C), 2L);
+		PAffineTrans<T> atrans = PAffineTrans.ofTranslation(PVector.valueOf(vx, vy, mc));
+		cs = cs.transform(atrans);
+		atrans = PAffineTrans.valueOf(trans, atrans.getVector());
+		return new Pair<>(atrans,cs);
 	}
 	
 	
@@ -346,12 +362,4 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	
 	
 	
-//	public static void main(String[] args) {
-//		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDoubleDev();
-//		GeneralConicSection<Double> cs = generalFormula(mc, 4d,null,1d);
-//		print(cs.transform(Matrix.valueOf(new double[][]{
-//			{0,1d},
-//			{1d,0d}
-//		})));
-//	}
 }

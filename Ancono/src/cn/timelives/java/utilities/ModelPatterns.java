@@ -209,9 +209,6 @@ public final class ModelPatterns {
 	/**
 	 * Performs an operation like computing {@code exp(x,p)}.
 	 * @param p a non-negative number
-	 * @param initVal
-	 * @param square
-	 * @param multiply
 	 * @return
 	 */
 	public static <T> T binaryReduce(long p,T unit,T x,BinaryOperator<T> multiply) {
@@ -230,6 +227,19 @@ public final class ModelPatterns {
 		}
 		return re;
 	}
+	/**
+	 * Performs an operation like computing {@code exp(x,p)}.
+	 * @param p a positive number
+	 * @param multiply
+	 * @return
+	 */
+	public static <T> T binaryReduce(long p,T x,BinaryOperator<T> multiply) {
+		if(p<=0){
+			throw new IllegalArgumentException("p<=0");
+		}
+		return binaryReduce(p-1, x, x, multiply);
+	}
+	
 //	public static void main(String[] args) {
 //		DoubleUnaryOperator f = d -> d*d-d;
 //		print(binarySolve(0.5d, 3d, (a,b)->(a+b)/2,x-> {

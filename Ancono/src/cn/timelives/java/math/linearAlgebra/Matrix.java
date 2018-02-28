@@ -1,5 +1,6 @@
 package cn.timelives.java.math.linearAlgebra;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,9 @@ import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.MultinomialX;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.Printer;
+import cn.timelives.java.utilities.structure.Pair;
 
 /**
  * A matrix is like a two dimension array,but the number in the matrix
@@ -760,30 +763,68 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	}
 	/**
 	 * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
-	 * @param mat a matrix
 	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
 	 * the degree of the equation.
 	 * @return 
 	 */
-	@SuppressWarnings("unchecked")
-	public Matrix<T> similarDiag(EquationSolver<T,T,SVPEquation<T>> equationSolver){
+	
+	public Matrix<T> similarDiag(EquationSolver<T,SVPEquation<T>> equationSolver){
 		List<T> eigenvalues = eigenvalues(equationSolver);
-		return Matrix.diag((T[])eigenvalues.toArray(),mc);
+		@SuppressWarnings("unchecked")
+		T[] arr = (T[])eigenvalues.toArray();
+		return Matrix.diag(arr,mc);
 	}
 	/**
-	 * Returns the eigenvalue equation of this matrix. It is required that 
-	 * this matrix is a square matrix.
-	 * @param mat 
+	 * Computes the eigenvalues of this matrix.
+	 * <p>For example, assume {@code this} = 
+	 * <pre>(1 0)
+	 *(0,1)</pre>
+	 * then this method will return a list of {@code [1,1]}
 	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
 	 * the degree of the equation.
 	 * @return
 	 */
-	public List<T> eigenvalues(EquationSolver<T,T,SVPEquation<T>> equationSolver){
+	public List<T> eigenvalues(EquationSolver<T,SVPEquation<T>> equationSolver){
 		SVPEquation<T> equation = eigenvalueEquation();
 		return equationSolver.solve(equation);
 	}
-	
-	//TODO
+	/**
+	 * Computes the eigenvalues of this matrix and their corresponding vectors.
+	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
+	 * the degree of the equation.
+	 * @return
+	 */
+	public List<Pair<T,Vector<T>>> eigenvaluesAndVectors(EquationSolver<T,SVPEquation<T>> equationSolver){
+		List<T> eigenvalues = eigenvalues(equationSolver);
+		//vectors
+		List<Pair<T,Vector<T>>> result = new ArrayList<>(eigenvalues.size());
+		int size = eigenvalues.size();
+		for(int i=0;i<size;) {
+			T x = eigenvalues.get(i);
+			int times = 1;
+			while(++i<size) {
+				T y = eigenvalues.get(i);
+				if(mc.isEqual(x, y)) {
+					times++;
+				}else {
+					break;
+				}
+			}
+			Matrix<T> A = minusMatrix(this, Matrix.diag(x, row, mc));
+			LinearEquationSolution<T> solution = MatrixSup.solveHomogeneousLinearEquation(A);
+			Vector<T>[] ks = solution.getSolution();
+			for (int k = 0; k < ks.length; k++) {
+				result.add(new Pair<>(x, ks[k]));
+			}
+			if (times > ks.length) {
+				for(int k=ks.length;k<times;k++) {
+					result.add(new Pair<>(x, ks[0]));
+				}
+			}
+		}
+		
+		return result;
+	}
 	
 	private static class Entry implements Comparable<Entry>{
 		private Entry(int key,int value){

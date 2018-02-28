@@ -591,7 +591,24 @@ public class ArraySup {
 		}
 		return re;
 	}
-	
+	/**
+	 * Return an array of the mapped elements, creates a new array.
+	 * @param arr
+	 * @param mapper
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <N,T> N[][] mapTo2(T[][] arr,Function<T,N> mapper,Class<N> clazz){
+		Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
+		N[][] re = (N[][]) Array.newInstance(narrayType, arr.length);
+		for(int i=0;i<arr.length;i++){
+			re[i] =(N[])Array.newInstance(clazz,arr[i].length);
+			for(int j=0;j<re[i].length;j++) {
+				re[i][j] = mapper.apply(arr[i][j]);
+			}
+		}
+		return re;
+	}
 	
 	/**
 	 * Creates a set from the array, uses HashSet by default.
@@ -733,6 +750,19 @@ public class ArraySup {
 		}
 		arr[index] = x;
 		return arr;
+	}
+	
+	/**
+	 * Cast the number {@code n} to an integer as the length of an array, checking 
+	 * whether it exceeds. Throws an exception if {@code n<0 || n> MAX_ARRAY_SIZE}
+	 * @param n
+	 * @return
+	 */
+	public static int castToArrayLength(long n) {
+		if(n <0 || n>MAX_ARRAY_SIZE) {
+			throw new IllegalArgumentException("Size exceeds: "+n);
+		}
+		return (int)n;
 	}
 	
 //	public static void main(String[] args) {

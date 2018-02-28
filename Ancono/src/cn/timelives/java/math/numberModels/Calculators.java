@@ -1504,6 +1504,9 @@ public final class Calculators {
 		@Override
 		public boolean isEqual(Double para1, Double para2) {
 			double d = Math.abs(para1-para2);
+			if(d < dev) {
+				return true;
+			}
 			double p1 = Math.abs(para1);
 			double p2 = Math.abs(para2);
 			return Math.max(p1, p2)* dev >= d;

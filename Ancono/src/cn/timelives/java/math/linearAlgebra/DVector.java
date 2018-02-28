@@ -51,10 +51,10 @@ public final class DVector<T> extends Vector<T> {
 	@Override
 	public T getNumber(int i){
 		if(isRow){
-			super.rowRangeCheck(i);
+			super.columnRangeCheck(i);
 			return vec[i];
 		}else{
-			super.columnRangeCheck(i);
+			super.rowRangeCheck(i);
 			return vec[i];
 		}
 	}

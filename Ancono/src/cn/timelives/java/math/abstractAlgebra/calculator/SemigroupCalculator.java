@@ -3,6 +3,10 @@
  */
 package cn.timelives.java.math.abstractAlgebra.calculator;
 
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+
+import cn.timelives.java.math.function.MathBinaryOperator;
 import cn.timelives.java.utilities.ModelPatterns;
 
 /**
@@ -11,7 +15,7 @@ import cn.timelives.java.utilities.ModelPatterns;
  * 2018-02-27 17:31
  *
  */
-public interface SemigroupCalculator<T> {
+public interface SemigroupCalculator<T> extends EqualPredicate<T>,MathBinaryOperator<T>{
 	
 	
 	/**

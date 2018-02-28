@@ -1,12 +1,12 @@
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.abstractAlgebra.calculator.FieldCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 /**
  * Describe a calculator that can calculator the basic operations for
- * number,this interface is create to give some math-based objects full
- * flexibility to all kind of numbers.This interface is very like the interface
- * {@link java.util.function.Function}.
+ * number, this interface is create to give some math-based objects full
+ * flexibility to all kind of numbers. 
  * <P>
  * All methods in a math calculator should be consistent.No change should be
  * done to the number when any method is called.
@@ -23,15 +23,18 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
  * as Triangle,may contain other FlexibleMathObject,and some calculation is not
  * strongly made sure that only the calculator from the Triangle itself is
  * used(which means the calculator in Point may be used), so there may be
- * potential safety problems. Therefore,in a multiply-number-type task, you
+ * potential safety problems. Therefore, in a multiple-number-type task, you
  * should always be careful with the math calculator.
- * 
+ * <p>
+ * A MathCalculator naturally deals with numbers, so it is a subclass of {@link FieldCalculator}.
+ * However, it is not strictly required all the operations(addition, multiplication..)
+ * must return a number and throwing exceptions is acceptable.  
  * @author lyc
  *
  * @param <T>
  *            the type of number to deal with
  */
-public interface MathCalculator<T> {
+public interface MathCalculator<T> extends FieldCalculator<T>{
 
 	/**
 	 * Compare the two numbers and determines whether these two numbers are the
@@ -67,8 +70,8 @@ public interface MathCalculator<T> {
 	public int compare(T para1, T para2);
 
 	/**
-	 * Add two parameters,this add method is not required to be commuting,so is it
-	 * not required that {@code add(t1,t2)=add(t2,t1)}.
+	 * Add two parameters, this method is required to be commutative, so is it
+	 * required that {@code add(t1,t2)=add(t2,t1)}.
 	 * 
 	 * @param para1
 	 *            a number
@@ -258,8 +261,8 @@ public interface MathCalculator<T> {
 	public T reciprocal(T p);
 
 	/**
-	 * Return the result of {@code p * l}, this method is provided because this is
-	 * equals to {@code add(p,p)} for {@code l} times.This method expects a better
+	 * Return the result of {@code l*p}, this method is provided because this is
+	 * equals to {@code add(p,p)} for {@code l} times. This method expects a better
 	 * performance.
 	 * 
 	 * @param p
@@ -272,7 +275,9 @@ public interface MathCalculator<T> {
 	 * @throws ArithmeticException
 	 *             if this operation causes an exceptional arithmetic condition.
 	 */
-	public T multiplyLong(T p, long l);
+	public default T multiplyLong(T p, long l) {
+		return FieldCalculator.super.multiplyLong(p, l);
+	}
 
 	/**
 	 * Return the result of {@code p / l} , throws exception if necessary.

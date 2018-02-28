@@ -29,12 +29,6 @@ public interface Semigroup<T> {
 	public MathSet<T> getSet();
 	
 	/**
-	 * Gets the operation of this semigroup.
-	 * @return a MathBinaryOperator
-	 */
-	public MathBinaryOperator<T> getOperation();
-	
-	/**
 	 * Gets the calculator of this semigroup.
 	 * @return
 	 */

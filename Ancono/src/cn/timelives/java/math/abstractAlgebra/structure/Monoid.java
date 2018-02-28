@@ -19,6 +19,9 @@ public interface Monoid<T> extends Semigroup<T> {
 	 */
 	public T identity();
 	
+	/**
+	 * Gets the calculator of this Monoid.
+	 */
 	@Override
 	MonoidCalculator<T> getCalculator();
 	

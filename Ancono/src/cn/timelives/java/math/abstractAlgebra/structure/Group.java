@@ -12,7 +12,7 @@ import cn.timelives.java.math.abstractAlgebra.calculator.MonoidCalculator;
  * <ul>
  * <li>It is <i>associative</i>: {@code (a*b)*c = a*(b*c)}
  * <li>There exist an identity element e: {@code e*a = a*e = a}
- * <li>For every element a, it inverse element  <text>a<sup>-1</sup></text> exists, and 
+ * <li>For every element a, its inverse element  <text>a<sup>-1</sup></text> exists, and 
  *  	<text> a*a<sup>-1</sup> = a<sup>-1</sup>*a = e</text>
  * </ul>
  * @author liyicheng

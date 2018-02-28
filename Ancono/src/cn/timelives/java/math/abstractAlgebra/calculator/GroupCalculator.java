@@ -16,13 +16,19 @@ public interface GroupCalculator<T> extends MonoidCalculator<T> {
 	
 	/**
 	 * Returns the inverse of the element x.
-	 * @param x
+	 * @param x an element
 	 * @return
 	 */
 	public T inverse(T x);
 	
-	
-	/*
+	/**
+	 * Returns {@code x^n}, which is well defined.
+	 * <p>
+	 * <ul>
+	 * <li>If {@code n=0}, returns the identity element.
+	 * <li>If {@code n>0}, returns the same result as defined in semigroup.
+	 * <lI>If {@code n<0}, returns {@code inverse(gpow(x,-n))}.
+	 * <ul>
 	 */
 	@Override
 	default T gpow(T x, long n) {

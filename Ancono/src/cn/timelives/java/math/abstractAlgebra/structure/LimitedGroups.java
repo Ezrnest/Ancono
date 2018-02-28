@@ -56,13 +56,6 @@ public final class LimitedGroups {
 			return gc.getIdentity();
 		}
 
-		/*
-		 * @see cn.timelives.java.math.abstractAlgebra.structure.Semigroup#getOperation()
-		 */
-		@Override
-		public MathBinaryOperator<T> getOperation() {
-			return gc::apply;
-		}
 
 		/*
 		 * @see cn.timelives.java.math.abstractAlgebra.structure.LimitedGroup#getSet()
@@ -97,7 +90,7 @@ public final class LimitedGroups {
 	public static <T> T[][] generateGroupTable(LimitedGroup<T> g) {
 		LimitedSet<T> set = g.getSet();
 		int size = ArraySup.castToArrayLength(set.size() + 1);
-		MathBinaryOperator<T> f = g.getOperation();
+		MathBinaryOperator<T> f = g.getCalculator();
 		@SuppressWarnings("unchecked")
 		T[][] arr = (T[][]) Array.newInstance(g.identity().getClass(), size, size);
 		{

@@ -2,7 +2,7 @@ package cn.timelives.java.math.spaceAG.shape;
 
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.spaceAG.SPoint;
 /**
@@ -56,13 +56,13 @@ public final class Cylinder<T> extends SpaceObject<T> {
 	}
 
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		// TODO Auto-generated method stub
 		return false;
 	}

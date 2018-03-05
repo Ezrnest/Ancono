@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
@@ -368,7 +368,7 @@ public final class PVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		
 		if(obj instanceof PVector){
 			PVector<N> s = (PVector<N>) obj;
@@ -379,7 +379,7 @@ public final class PVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(this==obj){
 			return true;
 		}
@@ -456,7 +456,7 @@ public final class PVector<T> extends Vector<T> {
 	 * __
 	 * AB
 	 * </pre>
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param A point A
 	 * @param B point B
 	 * @return a new vector

@@ -1,7 +1,5 @@
 package cn.timelives.java.utilities;
 
-import static cn.timelives.java.utilities.Printer.printMatrix;
-
 import java.util.Arrays;
 import java.util.Objects;
 /**

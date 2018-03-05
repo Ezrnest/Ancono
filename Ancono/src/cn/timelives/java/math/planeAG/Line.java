@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.DVector;
@@ -730,7 +730,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Line){
 			//we just map the line to a new line type T
 			Line<N> l = (Line<N>) obj;
@@ -740,7 +740,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		return false;
 	}
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}

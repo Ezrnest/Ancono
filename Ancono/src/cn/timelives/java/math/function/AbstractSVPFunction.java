@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Multinomial;
 import cn.timelives.java.math.Utils;
@@ -108,7 +108,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 * they are equal
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(!(obj instanceof SVPFunction)){
 			return false;
 		}
@@ -124,7 +124,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(!(obj instanceof SVPFunction)){
 			return false;
 		}
@@ -331,7 +331,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(!(obj instanceof ConstantFunction)) {
 				return false;
 			}

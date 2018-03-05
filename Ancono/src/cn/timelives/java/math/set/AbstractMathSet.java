@@ -5,16 +5,16 @@ package cn.timelives.java.math.set;
 
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
- * An abstract class for math sets, which extends the super class {@link FlexibleMathObject}.
+ * An abstract class for math sets, which extends the super class {@link FieldMathObject}.
  * @author liyicheng
  * 2017-09-09 20:26
  *
  */
-public abstract class AbstractMathSet<T> extends FlexibleMathObject<T> implements MathSet<T> {
+public abstract class AbstractMathSet<T> extends FieldMathObject<T> implements MathSet<T> {
 
 	/**
 	 * @param mc

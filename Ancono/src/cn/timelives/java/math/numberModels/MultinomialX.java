@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Multinomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
@@ -33,7 +33,7 @@ import cn.timelives.java.utilities.structure.WithInt;
  * 2017-11-21 17:10
  *
  */
-public final class MultinomialX<T> extends FlexibleMathObject<T> implements Multinomial<T>,Comparable<MultinomialX<T>> {
+public final class MultinomialX<T> extends FieldMathObject<T> implements Multinomial<T>,Comparable<MultinomialX<T>> {
 	/**
 	 * A map.
 	 */
@@ -127,7 +127,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(!(obj instanceof MultinomialX)) {
 			return false;
 		}
@@ -139,7 +139,7 @@ public final class MultinomialX<T> extends FlexibleMathObject<T> implements Mult
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if (!(obj instanceof MultinomialX)) {
 			return false;
 		}

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
@@ -441,7 +441,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#equals(java.lang.Object)
+	 * @see cn.timelives.java.math.FieldMathObject#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -452,10 +452,10 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return CollectionSup.listEqual(is, in.is, (obj1,obj2)->obj1.equals(obj2));
 	}
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(!(obj instanceof IntervalUnion)) {
 			return false;
 		}
@@ -464,10 +464,10 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
+	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(!(obj instanceof IntervalUnion)) {
 			return false;
 		}
@@ -475,7 +475,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return CollectionSup.listEqual(is, in.is, (v1,v2)->v1.valueEquals(v2,mapper));
 	}
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see cn.timelives.java.math.FieldMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {

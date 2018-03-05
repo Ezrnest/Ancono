@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
@@ -42,7 +42,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.set.LimitedSet#get(java.math.BigInteger)
+	 * @see cn.timelives.java.math.set.FiniteSet#get(java.math.BigInteger)
 	 */
 	@Override
 	public T get(BigInteger index) {
@@ -78,7 +78,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.FieldMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 	 */
 	@Override
 	public <N> CollectionSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -90,11 +90,11 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj == this){
 			return true;
 		}
@@ -110,11 +110,11 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
+	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject, java.util.function.Function)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj == this){
 			return true;
 		}
@@ -131,7 +131,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see cn.timelives.java.math.FieldMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {

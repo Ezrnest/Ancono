@@ -11,11 +11,11 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  * @author liyicheng
  *
  */
-public interface MathCalculatorHolder<T> {
+public interface MathCalculatorHolder<T> extends CalculatorHolder<T, MathCalculator<T>> {
 	
 	/**
-	 * Return the MathCalculator this object is using.
-	 * @return a MathCalculator
+	 * Return the calculator this object is using.
+	 * @return a calculator
 	 */
 	public MathCalculator<T> getMathCalculator();
 	

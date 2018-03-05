@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -252,7 +252,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof HyperbolaV){
 			HyperbolaV<N> ev = (HyperbolaV<N>) obj;
 			if(ev.onX == onX){
@@ -264,7 +264,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof HyperbolaV){
 			HyperbolaV<T> ev = (HyperbolaV<T>) obj;
 			if(ev.onX == onX){

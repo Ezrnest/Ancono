@@ -3,7 +3,7 @@ package cn.timelives.java.math.spaceAG;
 import java.lang.reflect.Array;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 /**
@@ -174,7 +174,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof SPoint){
 			SPoint<N> s = (SPoint<N>) obj;
 			return mc.isEqual(x, mapper.apply(s.x)) &&
@@ -185,7 +185,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof SPoint){
 			SPoint<T> s = (SPoint<T>) obj;
 			return mc.isEqual(x, s.x) &&
@@ -265,7 +265,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		return new SPoint<T>(mc,xm, ym, zm);
 	}
 	
-	public static class SPointGenerator<T> extends FlexibleMathObject<T>{
+	public static class SPointGenerator<T> extends FieldMathObject<T>{
 
 		/**
 		 * @param mc
@@ -315,7 +315,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			return equals(obj);
 		}
 
@@ -323,7 +323,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			return equals(obj);
 		}
 		

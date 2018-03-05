@@ -1,7 +1,7 @@
 ﻿/**
  * 
  */
-package cn.timelives.java.math.prob;
+package cn.timelives.java.math.combination;
 
 import static cn.timelives.java.math.MathUtils.degFactorial;
 
@@ -12,11 +12,12 @@ import cn.timelives.java.math.Primes;
 import cn.timelives.java.math.exceptions.NumberValueException;
 import cn.timelives.java.utilities.ArraySup;
 /**
+ * A utility class providing some functions in combination mathematics.
  * @author liyicheng
  *
  */
-public final class PFunctions {
-	private PFunctions(){}
+public final class CFunctions {
+	private CFunctions(){}
 	private static final int MAX_FAC = 19,
 			MAX_SUBFAC = 20;
 	
@@ -314,7 +315,7 @@ public final class PFunctions {
 	 * @param n the power: (x+1)^n
 	 * @param k the power of x whose coefficient is required.
 	 * @return
-	 * @see PFunctions#binomial(int, int)
+	 * @see CFunctions#binomial(int, int)
 	 */
 	public static BigInteger binomialB(int n,int k){
 		if(n<0){
@@ -331,7 +332,7 @@ public final class PFunctions {
 	 * @param α 
 	 * @param k
 	 * @return
-	 * @see PFunctions#binomial(int, int)
+	 * @see CFunctions#binomial(int, int)
 	 */
 	public static double binomialD(double α,int k){
 		double re = α;
@@ -488,29 +489,102 @@ public final class PFunctions {
 		return re/n;
 	}
 	
-	
-	
-	public static void main(String[] args) {
-//		final int n = 20;
-//		long sum = 0,t = n;
-//		long f = MathFunctions.power(-1, n);
-//		sum += f;
-//		for(int i=n-1;i>=0;i--){
-//			f = -f;
-//			sum += f*t;
-//			t *= i;
-//		}
-//		Timer t = new Timer();
-//		t.start();
-//		BigInteger re = BigInteger.ONE;
-//		for(long i=1;i<1000000;i++){
-//			re = re.multiply(BigInteger.valueOf(i));
-//		}
-//		print("MUL "+t.end());
-//		NumberFormat nf = SNFSupport.dfByDigit(4);
-//		for(int i=0;i<20;i++){
-//			print(nf.format(distributionBinomialB(i,20,0.5d).doubleValue()));
-//		}
-		
+	/**
+	 * Returns the number of partitions of the number {@code n}. A partition is a set of integers
+	 * and their sum is equal to {@code n}. <p>
+	 * For example, {@literal 4=4=1+3=2+2=1+1+2=1+1+1+1}, so there are 5 different partitions and 
+	 * {@code integerPartition(4)=5}. By convenience, 
+	 * if {@code n==0}, this method will return {@code 1} and if {@code n<0}, {@code 0} will be returned. 
+	 * 
+	 * @param n an integer
+	 * @return the number of partitions
+	 */
+	public static long integerPartition(long n) {
+		return integerPartition(n, n);
 	}
+	/**
+	 * Returns the number of partitions of the number {@code n}, in which the biggest number is {@code m}.
+	 * A partition is a set of integers
+	 * and their sum is equal to {@code n}. <p>
+	 * For example, {@literal 4=4=1+3=2+2=1+1+2=1+1+1+1}, so there are 5 different partitions and 
+	 * {@code integerPartition(4,3)=1} and {@code integerPartition(4,2)=2}. 
+	 * By convenience, 
+	 * if {@code n==0}, this method will return {@code 1}. If {@code n<0}, {@code 0} will be returned. 
+	 * If {@code m<1}, {@code 0} will be returned.
+	 * @param n an integer
+	 * @param m a positive integer
+	 * @return the number of partitions
+	 */
+	public static long integerPartition(long n,long m) {
+		if(n==0) {
+			return 1;
+		}
+		if(n<0) {
+			return 0;
+		}
+		if(m<1) {
+			return 0;
+		}
+		if(m>n) {
+			m=n;
+		}
+//		if(m>PARTITION_RECUR_THREHOLD) {
+//			return integerPartitionDp(n, m);
+//		}
+		return integerPartitionRecur(n, m);
+	}
+//	static final long PARTITION_RECUR_THREHOLD = 100; 
+	/**
+	 * 
+	 * @param n
+	 * @param m
+	 * @return
+	 */
+	static long integerPartitionRecur(long n,long m) {
+		if(n<=0||m<=0) {
+			return 0;
+		}
+		if(n==1 || m == 1) {
+			return 1;
+		}
+		if(m==2) {
+			return n/2+1;
+		}
+		if(n<m) {
+			return integerPartitionRecur(n, n);
+		}
+		if(n==m) {
+			return integerPartitionRecur(n, m-1)+1;
+		}
+		return integerPartitionRecur(n, m-1)+
+				integerPartitionRecur(n-m, m);
+	}
+//	static long integerPartitionDp(long n,long m) {
+//		
+//	}
+	
+	
+//	public static void main(String[] args) {
+////		final int n = 20;
+////		long sum = 0,t = n;
+////		long f = MathFunctions.power(-1, n);
+////		sum += f;
+////		for(int i=n-1;i>=0;i--){
+////			f = -f;
+////			sum += f*t;
+////			t *= i;
+////		}
+////		Timer t = new Timer();
+////		t.start();
+////		BigInteger re = BigInteger.ONE;
+////		for(long i=1;i<1000000;i++){
+////			re = re.multiply(BigInteger.valueOf(i));
+////		}
+////		print("MUL "+t.end());
+////		NumberFormat nf = SNFSupport.dfByDigit(4);
+////		for(int i=0;i<20;i++){
+////			print(nf.format(distributionBinomialB(i,20,0.5d).doubleValue()));
+////		}
+//		
+//	}
 }

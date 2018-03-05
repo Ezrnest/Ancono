@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.ListIterator;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
@@ -28,7 +28,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 		this.element = ele;
 	}
 	/**
-	 * @see cn.timelives.java.math.set.LimitedSet#get(long)
+	 * @see cn.timelives.java.math.set.FiniteSet#get(long)
 	 */
 	@Override
 	public T get(long index) {
@@ -38,7 +38,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 		throw new IndexOutOfBoundsException("Index="+index+",size=1");
 	}
 	/**
-	 * @see cn.timelives.java.math.set.LimitedSet#get(java.math.BigInteger)
+	 * @see cn.timelives.java.math.set.FiniteSet#get(java.math.BigInteger)
 	 */
 	@Override
 	public T get(BigInteger index) {
@@ -49,7 +49,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	}
 
 	/**
-	 * @see cn.timelives.java.math.set.LimitedSet#listIterator()
+	 * @see cn.timelives.java.math.set.FiniteSet#listIterator()
 	 */
 	@Override
 	public ListIterator<T> listIterator() {
@@ -57,7 +57,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	}
 
 	/**
-	 * @see cn.timelives.java.math.set.LimitedSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.set.FiniteSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 	 */
 	@Override
 	public <N> SingletonSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -87,7 +87,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 		return mc.isEqual(element, t);
 	}
 	/**
-	 * @see cn.timelives.java.math.set.LimitedSet#add(java.lang.Object)
+	 * @see cn.timelives.java.math.set.FiniteSet#add(java.lang.Object)
 	 */
 	@Override
 	public AbstractLimitedSet<T> add(T element) {
@@ -107,10 +107,10 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}
@@ -122,7 +122,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	}
 
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see cn.timelives.java.math.FieldMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {

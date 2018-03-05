@@ -6,7 +6,7 @@ package cn.timelives.java.math.function;
 import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.calculus.Derivable;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -83,7 +83,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(!(obj instanceof Add)) {
 				return false;
 			}
@@ -175,7 +175,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(!(obj instanceof Subtract)) {
 				return false;
 			}
@@ -266,7 +266,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(!(obj instanceof Multiply)) {
 				return false;
 			}
@@ -361,7 +361,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(!(obj instanceof Divide)) {
 				return false;
 			}
@@ -460,7 +460,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(!(obj instanceof Combine)) {
 				return false;
 			}

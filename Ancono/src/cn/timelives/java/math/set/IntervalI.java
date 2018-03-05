@@ -2,10 +2,10 @@ package cn.timelives.java.math.set;
 
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-public class IntervalI<T> extends Interval<T>{
+public final class IntervalI<T> extends Interval<T>{
 
 	/**
 	 * decide the type of this interval
@@ -362,7 +362,7 @@ public class IntervalI<T> extends Interval<T>{
 
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Interval){
 			Interval<N> iv = (Interval<N>) obj;
 			if(isDownerBoundInclusive()== iv.isDownerBoundInclusive() 
@@ -401,7 +401,7 @@ public class IntervalI<T> extends Interval<T>{
 	}
 
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Interval){
 			Interval<T> iv = (Interval<T>) obj;
 			if(isDownerBoundInclusive()== iv.isDownerBoundInclusive() 

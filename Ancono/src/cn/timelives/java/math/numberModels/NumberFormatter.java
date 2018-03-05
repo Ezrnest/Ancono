@@ -5,12 +5,12 @@ package cn.timelives.java.math.numberModels;
 
 import java.text.NumberFormat;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.utilities.SNFSupport;
 
 /**
  * The formatter for a type of number. This is use by the output of 
- * {@link FlexibleMathObject#toString}
+ * {@link FieldMathObject#toString}
  * @author liyicheng
  *
  */

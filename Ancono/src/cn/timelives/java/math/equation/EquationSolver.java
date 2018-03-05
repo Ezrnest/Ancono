@@ -3,8 +3,6 @@
  */
 package cn.timelives.java.math.equation;
 
-import java.util.List;
-
 /**
  * @author liyicheng
  * 2018-01-29 13:42

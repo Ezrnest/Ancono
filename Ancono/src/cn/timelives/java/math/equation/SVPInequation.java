@@ -6,7 +6,7 @@ package cn.timelives.java.math.equation;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.Multinomial;
 import cn.timelives.java.math.Solveable;
@@ -56,7 +56,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 	 * 
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj == this) {
 			return true;
 		}
@@ -71,7 +71,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj == this) {
 			return true;
 		}

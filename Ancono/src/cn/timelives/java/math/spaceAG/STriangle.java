@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.planeAG.Triangle;
 import cn.timelives.java.math.spaceAG.Plane.PlaneCoordinateConverter;
@@ -416,7 +416,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	}
 
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof STriangle){
 			if(this==obj){
 				return true;
@@ -428,7 +428,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	}
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof STriangle){
 			STriangle<N> s = (STriangle<N>) obj;
 			return A.valueEquals(s.A,mapper) && B.valueEquals(s.B,mapper) && C.valueEquals(s.C,mapper);
@@ -460,7 +460,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	
 	/**
 	 * Creates a new STriangle.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param A 
 	 * @param B
 	 * @param C
@@ -532,7 +532,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 * The order of the triangles is specified, as well as the vertexes. Assume the points in {@code points} are 
 	 * named <tt>P0,P1,P2,...</tt>, then the first triangle returned will be <tt>P0-P-P1</tt>, which the vertexA of this 
 	 * triangle will be <tt>P0</tt>
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param p
 	 * @param points
 	 * @param mc

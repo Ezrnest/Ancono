@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.Invertible;
 import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.function.MathFunction;
@@ -17,7 +18,6 @@ import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.MultinomialX;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
-import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.structure.Pair;
 
@@ -46,7 +46,7 @@ import cn.timelives.java.utilities.structure.Pair;
  *
 
  */
-public abstract class Matrix<T> extends FlexibleMathObject<T>{
+public abstract class Matrix<T> extends FieldMathObject<T> implements Invertible<Matrix<T>>{
 
 	/**
 	 * Row count
@@ -879,7 +879,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 		return 0;
 	}
 	/**
-	 * Return the matrix {@code mat} that {@code mat��this = E}. If there is not such 
+	 * Return the matrix {@code mat} that {@code mat•this = E}. If there is not such 
 	 * a matrix, then exception will be thrown.
 	 * @return the inverse of this.
 	 * @throws ArithmeticException if this method failed
@@ -1092,7 +1092,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 		
 	}
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Matrix){
 			Matrix<N> m = (Matrix<N>)obj;
 			if(m.row == this.row && m.column == this.column){
@@ -1111,7 +1111,7 @@ public abstract class Matrix<T> extends FlexibleMathObject<T>{
 	}
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Matrix){
 			Matrix<T> m = (Matrix<T>)obj;
 			if(m.row == this.row && m.column == this.column){

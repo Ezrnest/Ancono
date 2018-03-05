@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
@@ -485,7 +485,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof EllipseV){
 			EllipseV<N> ev = (EllipseV<N>) obj;
 			if(ev.onX == onX){
@@ -497,7 +497,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	}
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof EllipseV){
 			EllipseV<T> ev = (EllipseV<T>) obj;
 			if(ev.onX == onX){

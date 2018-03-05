@@ -9,6 +9,6 @@ package cn.timelives.java.math.abstractAlgebra.structure;
  * 2018-02-28 17:47
  *
  */
-public interface AbelianGroup<T> extends AbelianSemigroup<T>, Group<T> {
+public interface AbelianGroup<T,G extends AbelianGroup<T, G>> extends AbelianSemigroup<T>, Group<T,G> {
 
 }

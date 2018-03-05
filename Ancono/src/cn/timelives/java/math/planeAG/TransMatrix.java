@@ -5,6 +5,7 @@ package cn.timelives.java.math.planeAG;
 
 import java.util.function.Function;
 
+import cn.timelives.java.math.Composable;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
@@ -17,7 +18,7 @@ import cn.timelives.java.utilities.ArraySup;
  * @author liyicheng
  *
  */
-public final class TransMatrix<T> extends Matrix<T>{
+public final class TransMatrix<T> extends Matrix<T> implements Composable<TransMatrix<T>>{
 	
 	
 	private final T[][] data;
@@ -273,6 +274,15 @@ public final class TransMatrix<T> extends Matrix<T>{
 	public TransMatrix<T> andThen(TransMatrix<T> after){
 		return after.multiply0(this);
 	}
+	
+	/*
+	 * @see cn.timelives.java.math.Composable#compose(cn.timelives.java.math.Composable)
+	 */
+	@Override
+	public TransMatrix<T> compose(TransMatrix<T> before) {
+		return this.multiply0(before);
+	}
+	
 	/**
 	 * Creates a new TransfromMatrix, which is 
 	 * <pre> (x.x  x.y)

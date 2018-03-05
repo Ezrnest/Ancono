@@ -12,9 +12,10 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
+import cn.timelives.java.math.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.abstractAlgebra.calculator.GroupCalculator;
-import cn.timelives.java.math.abstractAlgebra.structure.LimitedGroup;
-import cn.timelives.java.math.abstractAlgebra.structure.LimitedGroups;
+import cn.timelives.java.math.abstractAlgebra.group.finite.AbstractFiniteGroup;
+import cn.timelives.java.math.abstractAlgebra.structure.finite.FiniteGroup;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.planeAG.PAffineTrans;
@@ -59,12 +60,12 @@ public class TestLimitedGroup {
 				return x.inverse();
 			}
 		}; 
-		LimitedGroup<TransMatrix<Integer>> g = LimitedGroups.createGroup(matmc, 
+		AbstractFiniteGroup<TransMatrix<Integer>> g = FiniteGroups.createGroup(matmc, 
 				TransMatrix.flipX(mc),
 				TransMatrix.flipY(mc),
 				TransMatrix.centralSymmetry(mc),
 				TransMatrix.flipXY(mc));
-		TransMatrix<Integer>[][] table = LimitedGroups.generateGroupTable(g);
+		TransMatrix<Integer>[][] table = FiniteGroups.generateGroupTable(g);
 		String names = "eabcmpqn";
 		Function<TransMatrix<Integer>,String> namer = x -> {
 			for(int i=1;i<table.length;i++) {

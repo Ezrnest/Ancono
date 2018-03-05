@@ -9,6 +9,6 @@ package cn.timelives.java.math.abstractAlgebra.structure;
  * 2018-02-28 18:42
  *
  */
-public interface IntegralDomain<T> extends CommutativeRing<T>, Domain<T> {
+public interface IntegralDomain<T,R extends IntegralDomain<T, R>> extends CommutativeRing<T,R>, Domain<T,R> {
 
 }

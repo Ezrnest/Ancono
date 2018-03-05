@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.calculus.Derivable;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -21,7 +21,7 @@ import cn.timelives.java.math.set.IntervalUnion;
  * 2017-10-06 10:02
  * 
  */
-public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implements SVFunction<T>{
+public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implements SVFunction<T>{
 
 	/**
 	 * @param mc
@@ -96,7 +96,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof Log) {
 					if(mc.isEqual(((Log<T>)obj).a, mc.constantValue(MathCalculator.STR_E))) {
 						return true;
@@ -174,7 +174,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof Ln) {
 				return ((Ln<T>)obj).valueEquals(this);
 			}
@@ -341,7 +341,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(!(obj instanceof Power)) {
 				return false;
 			}
@@ -433,7 +433,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof Ex) {
 				return ((Ex<T>)obj).valueEquals(this);
 			}
@@ -493,7 +493,7 @@ public abstract class AbstractSVFunction<T> extends FlexibleMathObject<T> implem
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof Exp) {
 				Exp<T> exp = (Exp<T>)obj;
 				return mc.isEqual(mc.getOne(), exp.c) && mc.isEqual(mc.constantValue(MathCalculator.STR_E), exp.a);

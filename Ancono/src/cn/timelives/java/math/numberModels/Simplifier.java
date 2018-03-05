@@ -2,7 +2,7 @@ package cn.timelives.java.math.numberModels;
 
 import java.util.List;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 
 /**
  * A simplifier is used for simplify a number or a set of numbers. 
@@ -37,7 +37,7 @@ public interface Simplifier<T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T,S extends FlexibleMathObject<T>> S singleSimplify(Simplifier<T> s, S x){
+	public static <T,S extends FieldMathObject<T>> S singleSimplify(Simplifier<T> s, S x){
 		return (S) x.mapTo(s::simplify,x.getMathCalculator());
 	}
 

@@ -10,6 +10,7 @@ import java.util.Random;
 
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.ModelPatterns;
 
 
@@ -838,6 +839,30 @@ public class MathUtils {
 	}
 	
 	/**
+	 * Returns the distance of (x1,y2) and (x2,y2) defined in space Lp, whihc is equal to
+	 * <pre>(abs(x1-x2)^p+abs(y1-y2)^p)^(1/p)</pre>
+	 * If {@code p==Double.Positive}
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param p
+	 * @return
+	 */
+	public static double distanceP(double x1,double y1,double x2,double y2,double p) {
+		if(p==Double.POSITIVE_INFINITY) {
+			return tschebyscheffDistance(x1, y1, x2, y2);
+		}
+		if(p<=0) {
+			throw new IllegalArgumentException("p<=0");
+		}
+		double dx = Math.abs(x1-x2),
+				dy = Math.abs(y1-y2);
+		return Math.pow(Math.pow(dx, p)+Math.pow(dy, p),1/p);
+		
+	}
+	
+	/**
 	 * Returns the biggest number n that meets the requirements that:
 	 * {@code n = k*p} where {@code k} is an integer,  
 	 * {@code n <= x}.
@@ -885,12 +910,46 @@ public class MathUtils {
 		}
 		return d;
 	}
+	/**
+	 * Returns the number of factors of the integer.
+	 * @return a positive integer
+	 */
+	public static long factorCount(long n) {
+		long[][] factors = factorReduce(n);
+		long num = 1;
+		for(int i=0;i<factors.length;i++) {
+			num*= factors[i][1]+1;
+		}
+		return num;
+	}
 	
-//	public static void main(String[] args) {
-//		print(maxBelowK(12,2.5));
-////		MathCalculator<Long> mc = MathCalculatorAdapter.getCalculatorLong();
-////		List<Long> list = solveEquation(1l, -4l, 3l, mc);
-////		print(list);
-//	}
+	/**
+	 * Returns a two-dimension array representing the 
+	 * number's prime factors and the corresponding times.
+	 * <P>For example, <text> factorReduce(6)={{2,1},{3,1}} </text>
+	 * @param n
+	 * @return
+	 */
+	public static long[][] factorReduce(long n) {
+		Primes pr = Primes.getInstance();
+		long[] primes = pr.getPrimesBelow(n/2+1);
+		long[][] factors = new long[primes.length/4+1][];
+		int count=0;
+		for(long p : primes) {
+			if(n % p == 0) {
+				long[] pair = new long[] {p,0};
+				factors = ArraySup.ensureCapacityAndAdd(factors, pair,count);
+				do {
+					pair[1]++;
+					n = n/p;
+				}while(n%p==0);
+				count++;
+			}
+		}
+		if(factors.length>count) {
+			factors = Arrays.copyOf(factors, count);
+		}
+		return factors;
+	}
 	
 }

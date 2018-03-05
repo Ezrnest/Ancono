@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.Progression;
 import cn.timelives.java.math.ProgressionSup;
@@ -152,7 +152,7 @@ public class CodePlace {
 		return LineSup.simplify(l, Fraction.getFractionSimplifier());
 	}
 
-	FlexibleMathObject<Fraction> map(FlexibleMathObject<Long> obj) {
+	FieldMathObject<Fraction> map(FieldMathObject<Long> obj) {
 		return obj.mapTo(Fraction::valueOf, mc);
 	}
 

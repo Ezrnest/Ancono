@@ -5,7 +5,7 @@ package cn.timelives.java.math.planeAG.curve;
 
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.planeAG.PAffineTrans;
@@ -80,7 +80,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}
@@ -94,7 +94,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(!(obj instanceof TransformedCurve)){
 			return false;
 		}

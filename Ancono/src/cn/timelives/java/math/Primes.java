@@ -3,14 +3,12 @@
  */
 package cn.timelives.java.math;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.Arrays;
 
 /**
  * The class for getting prime numbers, this class supports  
  * long as prime number result to give out, and 
- * caches the result. Alert, the 
+ * caches the result.
  * @author liyicheng
  *
  */
@@ -191,6 +189,21 @@ public final class Primes {
 		return Arrays.copyOf(par, length);
 	}
 	/**
+	 * Gets an array of primes smaller or ethan {@code bound}. 
+	 * @param bound
+	 * @return
+	 */
+	public long[] getPrimesBelow(long bound) {
+		enlargePrime(bound);
+		int index = Arrays.binarySearch(par, bound);
+		if(index < 0) {
+			index = -index-1;
+		}
+		return Arrays.copyOf(par, index);
+	}
+	
+	
+	/**
 	 * Returns the number of prime numbers that is smaller than or equal to {@code bound}.
 	 * @param bound
 	 * @return
@@ -217,10 +230,10 @@ public final class Primes {
 		return Arrays.binarySearch(par, p);
 	}
 	
-	public static void main(String[] args) {
-		Primes pr = getInstance();
-//		print(pr.getArray(100));
-		print(pr.getPrime(500000));
-	}
+//	public static void main(String[] args) {
+//		Primes pr = getInstance();
+////		print(pr.getArray(100));
+//		print(pr.getPrime(500000));
+//	}
 	
 }

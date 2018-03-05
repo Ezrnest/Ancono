@@ -1,18 +1,17 @@
 /**
  * 2018-02-27
  */
-package cn.timelives.java.math.abstractAlgebra.structure;
+package cn.timelives.java.math.abstractAlgebra;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.timelives.java.math.abstractAlgebra.calculator.GroupCalculator;
-import cn.timelives.java.math.abstractAlgebra.calculator.SemigroupCalculator;
+import cn.timelives.java.math.abstractAlgebra.group.finite.AbstractFiniteGroup;
+import cn.timelives.java.math.abstractAlgebra.structure.finite.FiniteGroup;
 import cn.timelives.java.math.function.MathBinaryOperator;
-import cn.timelives.java.math.set.AbstractLimitedSet;
-import cn.timelives.java.math.set.CollectionSet;
-import cn.timelives.java.math.set.LimitedSet;
+import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.utilities.ArraySup;
 
@@ -22,58 +21,72 @@ import cn.timelives.java.utilities.ArraySup;
  * 2018-02-27 17:52
  *
  */
-public final class LimitedGroups {
+public final class FiniteGroups {
 
 	/**
 	 * 
 	 */
-	private LimitedGroups() {
+	private FiniteGroups() {
 	}
 	
-	static class LimitedGroupImpl<T> implements LimitedGroup<T>{
+	static class FiniteGroupImpl<T> extends AbstractFiniteGroup<T>{
 		
-		private final GroupCalculator<T> gc;
-		
-		private final LimitedSet<T> set;
+		private final FiniteSet<T> set;
 		
 		/**
 		 * @param gc
 		 */
-		public LimitedGroupImpl(GroupCalculator<T> gc,LimitedSet<T> set) {
-			super();
-			this.gc = gc;
+		public FiniteGroupImpl(GroupCalculator<T> gc,FiniteSet<T> set) {
+			super(gc);
 			this.set = set;
 		}
 
 		
 		
-		
-		/*
-		 * @see cn.timelives.java.math.abstractAlgebra.structure.Monoid#identity()
-		 */
-		@Override
-		public T identity() {
-			return gc.getIdentity();
-		}
 
 
 		/*
 		 * @see cn.timelives.java.math.abstractAlgebra.structure.LimitedGroup#getSet()
 		 */
 		@Override
-		public LimitedSet<T> getSet() {
+		public FiniteSet<T> getSet() {
 			return set;
 		}
 
 
 
 
+
 		/*
-		 * @see cn.timelives.java.math.abstractAlgebra.structure.Semigroup#getCalculator()
+		 * @see cn.timelives.java.math.abstractAlgebra.structure.finite.FiniteGroup#getSubgroups()
 		 */
 		@Override
-		public GroupCalculator<T> getCalculator() {
-			return gc;
+		public FiniteSet<AbstractFiniteGroup<T>> getSubgroups() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+
+
+		/*
+		 * @see cn.timelives.java.math.abstractAlgebra.structure.Group#index()
+		 */
+		@Override
+		public long index() {
+			return set.size();
+		}
+
+
+
+
+		/*
+		 * @see cn.timelives.java.math.abstractAlgebra.structure.Group#isSubgroup(cn.timelives.java.math.abstractAlgebra.structure.Group)
+		 */
+		@Override
+		public boolean isSubgroup(AbstractFiniteGroup<T> g) {
+			// TODO Auto-generated method stub
+			return false;
 		}
 		
 	}
@@ -87,8 +100,8 @@ public final class LimitedGroups {
 	 * 
 	 * @return
 	 */
-	public static <T> T[][] generateGroupTable(LimitedGroup<T> g) {
-		LimitedSet<T> set = g.getSet();
+	public static <T> T[][] generateGroupTable(FiniteGroup<T,?> g) {
+		FiniteSet<T> set = g.getSet();
 		int size = ArraySup.castToArrayLength(set.size() + 1);
 		MathBinaryOperator<T> f = g.getCalculator();
 		@SuppressWarnings("unchecked")
@@ -112,7 +125,7 @@ public final class LimitedGroups {
 	
 	
 	@SafeVarargs
-	public static <T> LimitedGroup<T> createGroup(GroupCalculator<T> f,T...elements){
+	public static <T> AbstractFiniteGroup<T> createGroup(GroupCalculator<T> f,T...elements){
 		List<T> list = new ArrayList<>(elements.length+1);
 		list.add(f.getIdentity());
 		for(T x : elements) {
@@ -138,7 +151,7 @@ public final class LimitedGroups {
 				
 			}
 		}
-		LimitedSet<T> set = MathSets.fromCollection(list,GroupCalculator.toMathCalculatorAdd(f));
-		return new LimitedGroupImpl<>(f, set);
+		FiniteSet<T> set = MathSets.fromCollection(list,GroupCalculators.toMathCalculatorAdd(f));
+		return new FiniteGroupImpl<>(f, set);
 	}
 }

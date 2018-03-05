@@ -5,6 +5,8 @@ package cn.timelives.java.math.abstractAlgebra;
 
 import java.util.function.BiPredicate;
 
+import cn.timelives.java.math.abstractAlgebra.calculator.EqualPredicate;
+
 /**
  * EqualRelation describes the equivalent relation between two non-null objects.
  * <ul>
@@ -55,5 +57,12 @@ public interface EqualRelation<T> extends BiPredicate<T, T>{
 	@Override
 	boolean test(T x, T y);
 	
-
+	/**
+	 * Returns an EqualRelation based on the EqualPredicate.
+	 * @param p
+	 * @return
+	 */
+	public static <T> EqualRelation<T> fromEqualPredicate(EqualPredicate<T> p){
+		return p::isEqual;
+	}
 }

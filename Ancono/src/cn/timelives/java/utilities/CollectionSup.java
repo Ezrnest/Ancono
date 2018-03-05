@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
@@ -232,5 +233,14 @@ public final class CollectionSup {
 			}
 		}
 		return true;
+	}
+	
+	public static <T> boolean contains(Collection<T> coll,Predicate<T> pre) {
+		for(T t : coll) {
+			if(pre.test(t)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

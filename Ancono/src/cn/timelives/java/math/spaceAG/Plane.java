@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.Matrix;
@@ -527,7 +526,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	 *
 	 * @param <T>
 	 */
-	public static class PlaneCoordinateConverter<T> extends FlexibleMathObject<T>{
+	public static class PlaneCoordinateConverter<T> extends FieldMathObject<T>{
 		final T D ,unit;
 		final SVector<T> x,y;
 		final SPoint<T> O;
@@ -630,7 +629,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 		}
 
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof PlaneCoordinateConverter){
 				PlaneCoordinateConverter<T> pcc = (PlaneCoordinateConverter<T>) obj;
 				return mc.isEqual(D, pcc.D) && mc.isEqual(unit, pcc.unit) && 
@@ -640,7 +639,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 		}
 
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof PlaneCoordinateConverter){
 				PlaneCoordinateConverter<N> pcc = (PlaneCoordinateConverter<N>) obj;
 				return mc.isEqual(D, mapper.apply(pcc.D)) && mc.isEqual(unit, mapper.apply(pcc.unit)) && 
@@ -689,7 +688,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Line){
 			return this == obj || relationWith((Plane<T>)obj) == Relation.COINCIDE;
 		}
@@ -697,7 +696,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Line){
 			//just map the plane to a new line type T
 			Plane<N> l = (Plane<N>) obj;
@@ -783,7 +782,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 	/**
 	 * Create a plane that contains {@code p} and has normal vector {@code nv}.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param p a point
 	 * @param nv a vector, not zero
 	 * @return
@@ -802,7 +801,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	
 	/**
 	 * Create a plane through a line and a point outside the line.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param l a line
 	 * @param p a point
 	 * @return a new plane
@@ -818,7 +817,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	
 	/**
 	 * Create a plane through two lines.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param l1 a line
 	 * @param l2 another line
 	 * @return a new plane
@@ -839,7 +838,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	
 	/**
 	 * Create a plane through three points.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @return a new plane
 	 */
 	public static <T> Plane<T> threePoints(SPoint<T> p1,SPoint<T> p2,SPoint<T> p3){
@@ -895,7 +894,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	
 	/**
 	 * Create a plane with two vector and a point. The two vector must not be parallel. 
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param v1
 	 * @param v2
 	 * @param p

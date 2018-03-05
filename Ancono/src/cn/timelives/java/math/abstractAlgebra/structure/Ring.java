@@ -4,7 +4,6 @@
 package cn.timelives.java.math.abstractAlgebra.structure;
 
 import cn.timelives.java.math.abstractAlgebra.calculator.RingCalculator;
-import cn.timelives.java.math.abstractAlgebra.calculator.SemigroupCalculator;
 
 /**
  * <h3>Definition</h3>
@@ -14,28 +13,24 @@ import cn.timelives.java.math.abstractAlgebra.calculator.SemigroupCalculator;
  * identity element.
  * <p>
  * Assume R is a ring, and the operation of the abelian group is "add"("+") and
- * the other one is "multiply"("*"), the following is required:
+ * the other one is "multiply"("·" or "*"), the following is required:
+ * 
  * <ul>
  * 1.
- * 
- * R is an abelian group under addition, meaning that:
+ * R is an abelian group under addition, then
  * <ul>
- * <li>{@code (a + b) + c = a + (b + c)} for all a, b, c in R (that is, + is
- * associative).
- * <li>{@code a + b = b + a} for all a, b in R (that is, + is commutative).
- * <li>There is an element 0 in R such that a + 0 = a for all a in R (that is, 0
- * is the additive identity).
- * <li>For each a in R there exists −a in R such that {@code a + (−a) = 0} (that is, −a
- * is the additive inverse of a).
+ * <li>"+" is associative {@code (a + b) + c = a + (b + c)} for all a, b, c in R.
+ * <li>"+" is commutative{@code a + b = b + a} for all a, b in R.
+ * <li>There is an additive identity element 0 in R such that a + 0 = a for all a in R.
+ * <li>For each a in R there exists additive inverse(−a) in R such that {@code a + (−a) = 0}.
  * </ul>
  * 2.
  * R is a monoid under multiplication, meaning that:
  * <ul>
  * 
- * <li>{@code (a · b) · c = a · (b · c)} for all a, b, c in R (that is, · is
- * associative).
- * <li>There is an element 1 in R such that {@code a · 1 = a} and {@code 1 · a = a} for all a in
- * R (that is, 1 is the multiplicative identity).
+ * <li>"·" is associative{@code (a · b) · c = a · (b · c)} for all a, b, c in R (that is, ).
+ * <li>There is an multiplicative identity element 1 in R such that 
+ * {@code a · 1 = a} and {@code 1 · a = a} for all a in R.
  * </ul>
  * 3.
  * Multiplication is distributive with respect to addition:
@@ -52,9 +47,10 @@ import cn.timelives.java.math.abstractAlgebra.calculator.SemigroupCalculator;
  * returns the identity element of addition, namely {@code 0}. <p>  
  * The calculator returned by method {@link #getCalculator()} is a {@link RingCalculator}.
  * @author liyicheng 2018-02-28 17:40
+ * @see <a href="https://en.wikipedia.org/wiki/Ring_(mathematics)">Ring</a>
  *
  */
-public interface Ring<T> extends AbelianGroup<T> {
+public interface Ring<T,R extends Ring<T,R>> extends AbelianGroup<T,R> {
 	/**
 	 * Returns the calculator of this ring.
 	 */

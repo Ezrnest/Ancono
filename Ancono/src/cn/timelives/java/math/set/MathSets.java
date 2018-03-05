@@ -115,10 +115,10 @@ public final class MathSets {
 		}
 	}
 	
-	static final class Empty<T> implements LimitedSet<T>{
+	static final class Empty<T> implements FiniteSet<T>{
 
 		/**
-		 * @see cn.timelives.java.math.set.LimitedSet#get(long)
+		 * @see cn.timelives.java.math.set.FiniteSet#get(long)
 		 */
 		@Override
 		public T get(long index) {
@@ -126,7 +126,7 @@ public final class MathSets {
 		}
 
 		/**
-		 * @see cn.timelives.java.math.set.LimitedSet#get(java.math.BigInteger)
+		 * @see cn.timelives.java.math.set.FiniteSet#get(java.math.BigInteger)
 		 */
 		@Override
 		public T get(BigInteger index) {
@@ -134,7 +134,7 @@ public final class MathSets {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.set.LimitedSet#listIterator()
+		 * @see cn.timelives.java.math.set.FiniteSet#listIterator()
 		 */
 		@Override
 		public ListIterator<T> listIterator() {

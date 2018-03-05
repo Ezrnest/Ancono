@@ -4,9 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
@@ -335,7 +334,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Line){
 			Line<T> line = (Line<T>) obj;
 			return isParallel(line) && line.contains(p0);
@@ -344,7 +343,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Line){
 			return valueEquals(((Line<N>)obj).mapTo(mapper, mc));
 		}
@@ -459,7 +458,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	/**
 	 * Create a line that contains the point p and its direct vector is vec, the 
 	 * direct vector cannot be zero vector.<p>
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param p a point
 	 * @param vec the direct vector
 	 * @return a new line
@@ -487,7 +486,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	/**
 	 * Create a line passing through the two points, throws an exception if the two 
 	 * points are the same.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param p1
 	 * @param p2
 	 * @return a new line

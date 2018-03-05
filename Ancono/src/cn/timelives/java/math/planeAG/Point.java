@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 /**
@@ -13,7 +13,7 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
  *
  * @param <T> the type of number 
  */
-public final class Point<T> extends FlexibleMathObject<T> {
+public final class Point<T> extends FieldMathObject<T> {
 	
 	public final T x,y;
 	
@@ -131,7 +131,7 @@ public final class Point<T> extends FlexibleMathObject<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Point){
 			Point<N> p = (Point<N>) obj;
 			return mc.isEqual(x,mapper.apply(p.x)) && mc.isEqual(y, mapper.apply(p.y));
@@ -139,7 +139,7 @@ public final class Point<T> extends FlexibleMathObject<T> {
 		return false;
 	}
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj ==this){
 			return true;
 		}

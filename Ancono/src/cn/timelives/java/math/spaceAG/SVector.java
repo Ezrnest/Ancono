@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
@@ -424,7 +424,7 @@ public final class SVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof SVector){
 			SVector<N> s = (SVector<N>) obj;
 			return mc.isEqual(x, mapper.apply(s.x)) &&
@@ -435,7 +435,7 @@ public final class SVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof SVector){
 			SVector<T> s = (SVector<T>) obj;
 			return mc.isEqual(x, s.x) &&
@@ -532,7 +532,7 @@ public final class SVector<T> extends Vector<T> {
 	 * __
 	 * AB
 	 * </pre>
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param A point A
 	 * @param B point B
 	 * @return a new vector
@@ -688,7 +688,7 @@ public final class SVector<T> extends Vector<T> {
 	 *
 	 * @param <T>
 	 */
-	public static final class SVectorBase<T> extends FlexibleMathObject<T>{
+	public static final class SVectorBase<T> extends FieldMathObject<T>{
 		private final SVector<T> x,y,z;
 		public SVectorBase(SVector<T> x,SVector<T> y,SVector<T> z,T[][] mat,T D,
 				MathCalculator<T> mc) {
@@ -745,7 +745,7 @@ public final class SVector<T> extends Vector<T> {
 			return hash*37 + z.hashCode();
 		}
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof SVectorBase){
 				SVectorBase<T> svb = (SVectorBase<T>) obj;
 				return x.valueEquals(svb.x) && y.valueEquals(svb.y) && z.valueEquals(svb.z);
@@ -753,7 +753,7 @@ public final class SVector<T> extends Vector<T> {
 			return false;
 		}
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof SVectorBase){
 				SVectorBase<N> svb = (SVectorBase<N>) obj;
 				return x.valueEquals(svb.x,mapper) && y.valueEquals(svb.y,mapper) && z.valueEquals(svb.z,mapper);
@@ -770,7 +770,7 @@ public final class SVector<T> extends Vector<T> {
 		
 		/**
 		 * Create a new vector base, the three SVector must not be parallel.
-		 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+		 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 		 * @param x
 		 * @param y
 		 * @param z
@@ -786,7 +786,7 @@ public final class SVector<T> extends Vector<T> {
 			return new SVectorBase<>(x, y, z, mat,d,mc);
 		}
 	}
-	public static class SVectorGenerator<T> extends FlexibleMathObject<T>{
+	public static class SVectorGenerator<T> extends FieldMathObject<T>{
 
 		/**
 		 * @param mc
@@ -836,7 +836,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			return equals(obj);
 		}
 
@@ -844,7 +844,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			return equals(obj);
 		}
 		

@@ -3,8 +3,6 @@
  */
 package cn.timelives.java.math.numberModels;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,8 +10,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import cn.timelives.java.utilities.ArraySup;
-import cn.timelives.java.utilities.EasyConsole;
-import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.structure.Pair;
 
 /**

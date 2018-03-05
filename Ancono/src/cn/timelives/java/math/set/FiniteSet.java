@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * @author liyicheng 2017-09-10 14:38
  *
  */
-public interface LimitedSet<T> extends CountableSet<T>{
+public interface FiniteSet<T> extends CountableSet<T>{
 	/**
 	 * Gets an elements from this set. The method should always returns the same
 	 * value.

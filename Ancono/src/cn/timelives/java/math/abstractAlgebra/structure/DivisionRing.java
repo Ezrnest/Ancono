@@ -4,7 +4,6 @@
 package cn.timelives.java.math.abstractAlgebra.structure;
 
 import cn.timelives.java.math.abstractAlgebra.calculator.DivisionRingCalculator;
-import cn.timelives.java.math.abstractAlgebra.calculator.FieldCalculator;
 
 /**
  * A division ring is a ring in which division is possible, and 
@@ -17,7 +16,7 @@ import cn.timelives.java.math.abstractAlgebra.calculator.FieldCalculator;
  * 2018-02-28 18:57
  *
  */
-public interface DivisionRing<T> extends UnitRing<T> {
+public interface DivisionRing<T,R extends DivisionRing<T, R>> extends UnitRing<T,R> {
 	/**
 	 * Returns the division ring's calculator.
 	 */

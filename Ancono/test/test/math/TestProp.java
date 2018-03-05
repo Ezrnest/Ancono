@@ -8,7 +8,7 @@ import static cn.timelives.java.utilities.Printer.printnb;
 
 import org.junit.Test;
 
-import cn.timelives.java.math.prob.Enumer;
+import cn.timelives.java.math.combination.Enumer;
 
 /**
  * @author liyicheng

@@ -28,7 +28,7 @@ import cn.timelives.java.utilities.ArraySup;
  * @author lyc
  * @param T the type of number returned as the number in the progression
  */
-public abstract class Progression<T> extends FlexibleMathObject<T> implements Iterable<T>{
+public abstract class Progression<T> extends FieldMathObject<T> implements Iterable<T>{
 	/**
 	 * The length of this progression, set it as UNLIMITED to indicate this progression is 
 	 * unlimited.
@@ -307,7 +307,7 @@ public abstract class Progression<T> extends FlexibleMathObject<T> implements It
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Progression){
 			Progression<N> pro = (Progression<N>) obj;
 			if(this.isLimited()&& this.getLength() == pro.getLength()){
@@ -325,7 +325,7 @@ public abstract class Progression<T> extends FlexibleMathObject<T> implements It
 		return false;
 	}
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Progression){
 			Progression<T> pro = (Progression<T>) obj;
 			if(this.isLimited()&& length == pro.length){

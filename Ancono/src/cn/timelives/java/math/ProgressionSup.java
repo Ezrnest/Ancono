@@ -177,7 +177,7 @@ public final class ProgressionSup {
 			return new ArithmeticProgression<>(mapper.apply(k),mapper.apply(b),length,newCalculator);
 		}
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj,
+		public <N> boolean valueEquals(FieldMathObject<N> obj,
 				Function<N, T> mapper) {
 			if(obj instanceof ArithmeticProgression){
 				ArithmeticProgression<N> ap = (ArithmeticProgression<N>) obj; 

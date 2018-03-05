@@ -1,7 +1,5 @@
 package cn.timelives.java.math.linearAlgebra;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -3,7 +3,6 @@
  */
 package cn.timelives.java.math.abstractAlgebra.calculator;
 
-import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.utilities.ModelPatterns;
 
 /**

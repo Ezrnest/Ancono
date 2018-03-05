@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.LEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
@@ -571,7 +571,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof ConicSection){
 			ConicSection<T> cs = (ConicSection<T>) obj;
 			T p ;
@@ -596,7 +596,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof ConicSection){
 			ConicSection<N> cs = (ConicSection<N>) obj;
 			T p ;

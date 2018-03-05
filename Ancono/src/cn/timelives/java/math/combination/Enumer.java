@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.timelives.java.math.prob;
+package cn.timelives.java.math.combination;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,7 +60,7 @@ public abstract class Enumer implements Iterable<int[]>{
 		public LEnumer(int n,int m) {
 			super(m);
 			toSelect = n;
-			total = PFunctions.permutation(n, m);
+			total = CFunctions.permutation(n, m);
 			filter = (a)->true;
 		}
 		/**
@@ -69,7 +69,7 @@ public abstract class Enumer implements Iterable<int[]>{
 		public LEnumer(int n,int m,Predicate<int[]> filter) {
 			super(m);
 			toSelect = n;
-			total = PFunctions.permutation(n, m);
+			total = CFunctions.permutation(n, m);
 			this.filter = filter;
 		}
 		

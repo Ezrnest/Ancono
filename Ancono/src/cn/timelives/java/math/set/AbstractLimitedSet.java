@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
@@ -23,7 +23,7 @@ import cn.timelives.java.math.numberModels.MathCalculator;
  * 2017-09-08 15:48
  *
  */
-public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> implements LimitedSet<T> {
+public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> implements FiniteSet<T> {
 	
 	/**
 	 * @param mc
@@ -87,18 +87,18 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 	
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		return false;
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
+	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		return super.valueEquals(obj, mapper);
 	}
 }

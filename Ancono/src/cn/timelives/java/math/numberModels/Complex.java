@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.planeAG.PVector;
@@ -32,7 +32,7 @@ import cn.timelives.java.math.planeAG.Point;
  *
  * @param <T>
  */
-public final class Complex<T> extends FlexibleMathObject<T> {
+public final class Complex<T> extends FieldMathObject<T> {
 	private final T a,b;
 	
 	protected Complex(MathCalculator<T> mc,T a,T b) {
@@ -332,7 +332,7 @@ public final class Complex<T> extends FlexibleMathObject<T> {
 		}
 	}
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Complex){
 			Complex<T> com = (Complex<T>) obj;
 			return mc.isEqual(a, com.a) && mc.isEqual(b, com.b);
@@ -341,7 +341,7 @@ public final class Complex<T> extends FlexibleMathObject<T> {
 	}
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Complex){
 			Complex<N> com = (Complex<N>) obj;
 			return mc.isEqual(a, mapper.apply(com.a)) && mc.isEqual(b, mapper.apply(com.b));

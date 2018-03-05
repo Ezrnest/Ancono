@@ -5,14 +5,18 @@ package cn.timelives.java.math.set;
 
 import java.math.BigInteger;
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A countable set is a set that is iterable, but it contains either 
  * infinite or finite elements. For example, the set of all the integers or
- * {x|x=2k,k��Z} are both countable set with infinite elements.
+ * {x|x=2k,k in Z} are both countable set with infinite elements.
  * @author liyicheng
- * @see LimitedSet
+ * @see FiniteSet
  *
  */
 public interface CountableSet<T> extends MathSet<T> ,Iterable<T>{
@@ -30,7 +34,22 @@ public interface CountableSet<T> extends MathSet<T> ,Iterable<T>{
 	 * Returns this countable set's elements as a stream.
 	 * @return
 	 */
-	Stream<T> stream();
+	default Stream<T> stream(){
+		if(isFinite()){
+			long size = size();
+			//limited
+			Spliterator<T> spl = Spliterators.spliterator(iterator(), size, Spliterator.IMMUTABLE | Spliterator.SIZED);
+	        return StreamSupport.stream(spl, false);
+		}else{
+			return Stream.generate(new Supplier<T>(){
+				final Iterator<T> it = iterator();
+				@Override
+				public T get() {
+					return it.next();
+				}
+			});
+		}
+	}
 	
 	/**
 	 * Gets the size of this countable set, returns {@code -1} if 
@@ -39,14 +58,14 @@ public interface CountableSet<T> extends MathSet<T> ,Iterable<T>{
 	 * @return the size of this set
 	 * @throws UnsupportedOperationException if the size exceeds long.
 	 */
-	public abstract long size();
+	long size();
 	
 	/**
 	 * Gets the size of this countable set, returns {@code -1} if 
 	 * this set contains infinite elements.
 	 * @return the size of this set
 	 */
-	public BigInteger sizeAsBigInteger();
+	BigInteger sizeAsBigInteger();
 	
 	/**
 	 * Determines whether this CountableSet contains finite elements.

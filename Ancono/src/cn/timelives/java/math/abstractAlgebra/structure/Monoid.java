@@ -4,7 +4,6 @@
 package cn.timelives.java.math.abstractAlgebra.structure;
 
 import cn.timelives.java.math.abstractAlgebra.calculator.MonoidCalculator;
-import cn.timelives.java.math.abstractAlgebra.calculator.SemigroupCalculator;
 
 /**
  * Monoid is a semigroup with an identity element.

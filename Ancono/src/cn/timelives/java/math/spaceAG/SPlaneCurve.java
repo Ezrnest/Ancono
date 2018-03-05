@@ -5,7 +5,7 @@ package cn.timelives.java.math.spaceAG;
 
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.planeAG.curve.AbstractPlaneCurve;
 import cn.timelives.java.math.spaceAG.Plane.PlaneCoordinateConverter;
@@ -69,7 +69,7 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof SPlaneCurve){
 			SPlaneCurve<T> spc = (SPlaneCurve<T>) obj;
 			return pc.valueEquals(spc.pc) && pcc.valueEquals(spc.pcc);
@@ -81,7 +81,7 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof SPlaneCurve){
 			SPlaneCurve<N> spc = (SPlaneCurve<N>) obj;
 			return pc.valueEquals(spc.pc,mapper) && pcc.valueEquals(spc.pcc,mapper);

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Multinomial;
 import cn.timelives.java.math.Solveable;
@@ -75,7 +75,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 * 
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if (!(obj instanceof SVPEquation)) {
 			return false;
 		}
@@ -87,7 +87,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if (!(obj instanceof SVPEquation)) {
 			return false;
 		}
@@ -208,7 +208,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		
 
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof SVPEquation){
 				DSVPEquation<N> sv = (DSVPEquation<N>) obj;
 				if(sv.mp == this.mp){
@@ -641,7 +641,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof QEquation){
 				QEquation<T> eq = (QEquation<T>) obj;
 				return mc.isEqual(a, eq.a)&&mc.isEqual(b, eq.b)&&mc.isEqual(c, eq.c);
@@ -651,7 +651,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof QEquation){
 				QEquation<N> eq = (QEquation<N>) obj;
 				return mc.isEqual(a, mapper.apply(eq.a))
@@ -767,7 +767,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof LEquation){
 				LEquation<T> leq = (LEquation<T>) obj;
 				return mc.isEqual(a, leq.a) && mc.isEqual(b, leq.b);
@@ -776,7 +776,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof LEquation){
 				LEquation<N> leq = (LEquation<N>) obj;
 				return mc.isEqual(a, mapper.apply(leq.a)) && mc.isEqual(b, mapper.apply(leq.b));

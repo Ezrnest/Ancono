@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.set.InfiniteSet;
@@ -26,7 +26,7 @@ import cn.timelives.java.utilities.ArraySup;
  * @param <T>
  * @param <S>
  */
-public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements MathSet<SPoint<T>>{
+public abstract class SpacePointSet<T> extends FieldMathObject<T> implements MathSet<SPoint<T>>{
 
 	protected SpacePointSet(MathCalculator<T> mc) {
 		super(mc);
@@ -129,7 +129,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 	private static final Map<MathCalculator<?>,EmptyPointSet<?>> esets = new HashMap<>();
 	/**
 	 * Returns a new intersect set of the two sets.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}.
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}.
 	 * @param s1 a space point set.
 	 * @param s2 another space point set.
 	 * @return the intersect set
@@ -145,7 +145,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 	}
 	/**
 	 * Returns a new intersect set of the sets.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}.
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}.
 	 * @param sets
 	 * @return an intersect set
 	 */
@@ -164,7 +164,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 	
 	/**
 	 * Returns a new union set of the two sets.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}.
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}.
 	 * @param s1 a space point set.
 	 * @param s2 another space point set.
 	 * @return the union set
@@ -180,7 +180,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 	}
 	/**
 	 * Returns a new union set of the sets.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}.
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}.
 	 * @param sets
 	 * @return an union set
 	 */
@@ -251,7 +251,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof UniversePointSet){
 				return true;
 			}
@@ -262,7 +262,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof UniversePointSet){
 				return true;
 			}
@@ -340,7 +340,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof EmptyPointSet){
 				return true;
 			}
@@ -351,7 +351,7 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof EmptyPointSet){
 				return true;
 			}
@@ -461,12 +461,12 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public boolean valueEquals(FlexibleMathObject<T> obj) {
+		public boolean valueEquals(FieldMathObject<T> obj) {
 			if(obj instanceof CombinedSpacePointSet){
 				CombinedSpacePointSet<T> isp = (CombinedSpacePointSet<T>) obj;
 				return this.flag == isp.flag &&ArraySup.arrayEqualNoOrder(
 						list.toArray(), isp.list.toArray(), (e1,e2)-> e1 == e2 || 
-						((FlexibleMathObject<T>)e1).valueEquals((FlexibleMathObject<T>)e2));
+						((FieldMathObject<T>)e1).valueEquals((FieldMathObject<T>)e2));
 			}
 			return false;
 		}
@@ -478,12 +478,12 @@ public abstract class SpacePointSet<T> extends FlexibleMathObject<T> implements 
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof CombinedSpacePointSet){
 				CombinedSpacePointSet<N> isp = (CombinedSpacePointSet<N>) obj;
 				return this.flag == isp.flag &&ArraySup.arrayEqualNoOrder(
 						list.toArray(), isp.list.toArray(), (e1,e2)-> e1 == e2 || 
-						((FlexibleMathObject<T>)e1).valueEquals((FlexibleMathObject<N>)e2,mapper));
+						((FieldMathObject<T>)e1).valueEquals((FieldMathObject<N>)e2,mapper));
 			}
 			return false;
 		}

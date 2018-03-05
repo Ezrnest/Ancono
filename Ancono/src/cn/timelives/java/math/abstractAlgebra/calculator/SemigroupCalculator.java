@@ -3,9 +3,6 @@
  */
 package cn.timelives.java.math.abstractAlgebra.calculator;
 
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-
 import cn.timelives.java.math.function.MathBinaryOperator;
 import cn.timelives.java.utilities.ModelPatterns;
 

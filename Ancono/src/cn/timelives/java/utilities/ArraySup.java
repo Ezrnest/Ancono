@@ -386,7 +386,7 @@ public class ArraySup {
 	
 	/**
 	 * Reverse the array.For example,input {@code reverse("123456789",3)}
-	 * returns a result {@code "456789123"}.This method would only use constant storage.
+	 * returns a result {@code "456789123"}. This method will only use constant storage.
 	 * @param arr
 	 * @param len
 	 * @return
@@ -397,6 +397,20 @@ public class ArraySup {
 		}
 		reverse0(arr,len);
 	}
+	
+	/**
+	 * Reverse the array. For example,input {@code reverse(123456789,3)}
+	 * returns a result {@code 456789123}. This method will only use constant storage.
+	 * @param arr
+	 * @param len
+	 */
+	public static void reverse(int[] arr,int len) {
+		if(len>arr.length){
+			throw new IllegalArgumentException();
+		}
+		reverse0(arr,len);
+	}
+	
 	/**
 	 * Flip the array in the given range. For example, {@code flip(ABCDEFG,2,6)}
 	 *  returns {@code ABFEDCG}.
@@ -480,6 +494,42 @@ public class ArraySup {
 			
 		}
 	}
+	
+	private static void reverse0(int[] arr,int flipLen){
+		int length = arr.length;
+		int start = 0;
+		int exchangeSize ;
+		boolean bigger;
+		int t;
+		while(flipLen>0){
+			int re = length - flipLen;
+			int place ;
+			
+			if( flipLen<re){
+				bigger = false;
+				exchangeSize = flipLen;
+				place = re;
+			}else{
+				bigger = true;
+				exchangeSize = re;
+				place = flipLen; 
+			}
+			for(int i=start;i<start+exchangeSize;i++){
+				t = arr[place+i];
+				arr[place+i] = arr[i];
+				arr[i] = t;
+			}
+			length -= exchangeSize;
+			if(bigger){
+				start += exchangeSize;
+				flipLen = place-exchangeSize;
+			}else{
+				flipLen = exchangeSize;
+			}
+			
+		}
+	}
+	
 	/**
 	 * Determines whether the two array is equal, this method will ignore the order of 
 	 * specific element. The length of the two array should be the same.
@@ -679,7 +729,7 @@ public class ArraySup {
 	@SuppressWarnings("unchecked")
 	public static <T> T[] deepCopy(T[] arr){
 		if(arr.length == 0){
-			return Arrays.copyOf(arr, arr.length);
+			return arr.clone();
 		}
 		return (T[]) deepCopy0(arr);
 	}
@@ -692,28 +742,28 @@ public class ArraySup {
 				result[i] = deepCopy0((Object[]) arr[i]);
 			else if (element instanceof byte[]) {
 				byte[] t = (byte[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else if (element instanceof short[]) {
 				short[] t = (short[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else if (element instanceof int[]) {
 				int[] t = (int[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else if (element instanceof long[]) {
 				long[] t = (long[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else if (element instanceof char[]) {
 				char[] t = (char[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else if (element instanceof float[]) {
 				float[] t = (float[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else if (element instanceof double[]) {
 				double[] t = (double[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else if (element instanceof boolean[]) {
 				boolean[] t = (boolean[]) arr[i];
-				result[i] = Arrays.copyOf(t, t.length);
+				result[i] = t.clone();
 			} else {
 				result[i] = arr[i];
 			}
@@ -751,7 +801,20 @@ public class ArraySup {
 		arr[index] = x;
 		return arr;
 	}
-	
+	/**
+	 * Set the given index to {@code x}, lengthen the array by 1.5x when needed.
+	 * @param arr
+	 * @param x
+	 * @param index
+	 * @return
+	 */
+	public static <T> T[] ensureCapacityAndAdd(T[] arr,T x,int index) {
+		if(arr.length<= index) {
+			arr = Arrays.copyOf(arr, Math.max(arr.length*3/2, index+1));
+		}
+		arr[index] = x;
+		return arr;
+	}
 	/**
 	 * Cast the number {@code n} to an integer as the length of an array, checking 
 	 * whether it exceeds. Throws an exception if {@code n<0 || n> MAX_ARRAY_SIZE}
@@ -763,6 +826,61 @@ public class ArraySup {
 			throw new IllegalArgumentException("Size exceeds: "+n);
 		}
 		return (int)n;
+	}
+	
+	/**
+	 * Applies the permutation to the array.
+	 * @param arr
+	 * @param parr
+	 * @return
+	 */
+	public static <T> T[] applyPermutation(T[] arr,int[] parr) {
+		T[] copy = Arrays.copyOf(arr, arr.length);
+		for(int i=0;i<arr.length;i++) {
+			arr[parr[i]] = copy[i]; 
+		}
+		return arr;
+	}
+	
+	public static void swap(Object[] arr,int i,int j) {
+		Object t = arr[i];
+		arr[i] = arr[j];
+		arr[j] = t;
+	}
+	public static void swap(int[] arr,int i,int j) {
+		int t = arr[i];
+		arr[i] = arr[j];
+		arr[j] = t;
+	}
+	public static void swap(boolean[] arr,int i,int j) {
+		boolean t = arr[i];
+		arr[i] = arr[j];
+		arr[j] = t;
+	}
+	public static void swap(long[] arr,int i,int j) {
+		long t = arr[i];
+		arr[i] = arr[j];
+		arr[j] = t;
+	}
+	public static void swap(double[] arr,int i,int j) {
+		double t = arr[i];
+		arr[i] = arr[j];
+		arr[j] = t;
+	}
+	public static void swap(float[] arr,int i,int j) {
+		float t = arr[i];
+		arr[i] = arr[j];
+		arr[j] = t;
+	}
+	
+	
+	public static int firstIndexOf(int x,int[] arr) {
+		for(int i=0;i<arr.length;i++) {
+			if(arr[i]==x) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 //	public static void main(String[] args) {

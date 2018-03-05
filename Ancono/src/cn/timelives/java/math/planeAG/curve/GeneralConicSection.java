@@ -1,29 +1,20 @@
 package cn.timelives.java.math.planeAG.curve;
 
-import static cn.timelives.java.utilities.Printer.print;
-
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.EquationSup;
-import cn.timelives.java.math.equation.SVPEquation;
-import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.linearAlgebra.Vector;
-import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.planeAG.PAffineTrans;
 import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.TransMatrix;
-import cn.timelives.java.utilities.SNFSupport;
 import cn.timelives.java.utilities.structure.Pair;
 /**
  * A final subclass for conic section.

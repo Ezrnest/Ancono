@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
@@ -611,7 +611,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	
 	
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Circle){
 			Circle<T> c = (Circle<T>) obj;
 			return o.valueEquals(c.o) && 
@@ -622,7 +622,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	}
 
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Circle){
 			Circle<N> c = (Circle<N>) obj;
 			return o.valueEquals(c.o, mapper) &&

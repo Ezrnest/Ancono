@@ -3,9 +3,9 @@
  */
 package cn.timelives.java.math.prob;
 
-import static cn.timelives.java.math.prob.PFunctions.combination;
-import static cn.timelives.java.math.prob.PFunctions.combinationB;
-import static cn.timelives.java.math.prob.PFunctions.factorial;
+import static cn.timelives.java.math.combination.CFunctions.combination;
+import static cn.timelives.java.math.combination.CFunctions.combinationB;
+import static cn.timelives.java.math.combination.CFunctions.factorial;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

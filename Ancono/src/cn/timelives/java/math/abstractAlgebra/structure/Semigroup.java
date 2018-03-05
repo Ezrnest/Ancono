@@ -4,7 +4,6 @@
 package cn.timelives.java.math.abstractAlgebra.structure;
 
 import cn.timelives.java.math.abstractAlgebra.calculator.SemigroupCalculator;
-import cn.timelives.java.math.function.MathBinaryOperator;
 import cn.timelives.java.math.set.MathSet;
 
 /**

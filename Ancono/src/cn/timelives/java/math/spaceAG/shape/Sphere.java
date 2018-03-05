@@ -7,12 +7,12 @@ import static cn.timelives.java.math.numberModels.MathCalculator.STR_PI;
 
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.spaceAG.Line;
 import cn.timelives.java.math.spaceAG.SPoint;
@@ -320,7 +320,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FlexibleMathObject<T> obj) {
+	public boolean valueEquals(FieldMathObject<T> obj) {
 		if(obj instanceof Sphere){
 			Sphere<T> sp = (Sphere<T>) obj;
 			return o.valueEquals(sp.o) && mc.isEqual(r2,sp.r2);
@@ -332,7 +332,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FlexibleMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Sphere){
 			Sphere<N> sp = (Sphere<N>) obj;
 			return o.valueEquals(sp.o,mapper) && mc.isEqual(r2,mapper.apply(sp.r2));
@@ -363,7 +363,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	}
 	/**
 	 * Creates a sphere with its center point and its radius.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param p a point 
 	 * @param r the radius, must be positive.
 	 * @return a new sphere
@@ -377,7 +377,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	}
 	/**
 	 * Creates a sphere with its center point and its radius' square.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param p a point 
 	 * @param r square of the radius, must be positive.
 	 * @return a new sphere
@@ -391,7 +391,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	}
 	/**
 	 * Creates a sphere with four points, they must not be on the same plane.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FlexibleMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
 	 * @param a
 	 * @param b
 	 * @param c

@@ -7,7 +7,7 @@ package cn.timelives.java.math.planeAG.curve;
  
 import java.util.function.Function;
 
-import cn.timelives.java.math.FlexibleMathObject;
+import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.planeAG.PAffineTrans;
 import cn.timelives.java.math.planeAG.PlanePointSet;
@@ -19,7 +19,7 @@ import cn.timelives.java.math.planeAG.Point;
  * @param <T>
  * @param <S>
  */
-public abstract class AbstractPlaneCurve<T> extends FlexibleMathObject<T> implements PlanePointSet<T>{
+public abstract class AbstractPlaneCurve<T> extends FieldMathObject<T> implements PlanePointSet<T>{
 
 	protected AbstractPlaneCurve(MathCalculator<T> mc) {
 		super(mc);

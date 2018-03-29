@@ -13,11 +13,13 @@ import java.util.Scanner;
  * @author rw185035
  *
  */
+
 public class NameGenerator implements ContentGenerator<Name> {
 	/**
 	 * first names
 	 * @deprecated
 	 */
+	@Deprecated
 	public static List<String> FN = new ArrayList<String>(16);
 	static {
 		FN.add("Sam");

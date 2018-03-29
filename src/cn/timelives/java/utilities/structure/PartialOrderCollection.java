@@ -1,4 +1,4 @@
-﻿package cn.timelives.java.utilities.structure;
+package cn.timelives.java.utilities.structure;
 
 import java.util.AbstractCollection;
 /**

@@ -10,6 +10,7 @@ import java.util.Objects;
  * @author lyc
  * @deprecated this class is replaced by {@link cn.timelives.java.math.linearAlgebra.Matrix}
  */
+@Deprecated
 public abstract class Matrix {
 	
 	

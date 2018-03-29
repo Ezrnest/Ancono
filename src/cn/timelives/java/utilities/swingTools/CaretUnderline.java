@@ -43,7 +43,8 @@ public class CaretUnderline extends DefaultCaret {
 	private int calculateYshifted(int y,int height){
 		return y + height - caret_height;
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	@Override
 	public void paint(Graphics g) {
 		JTextComponent component = getComponent();

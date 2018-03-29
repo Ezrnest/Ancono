@@ -1,6 +1,3 @@
-﻿/**
- * 2017-09-09
- */
 package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.FieldMathObject;

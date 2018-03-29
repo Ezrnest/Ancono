@@ -1,4 +1,4 @@
-﻿package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.utilities.CollectionSup;
 

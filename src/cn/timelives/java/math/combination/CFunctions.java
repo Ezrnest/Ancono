@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 
  */
 package cn.timelives.java.math.combination;

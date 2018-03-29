@@ -1,4 +1,4 @@
-﻿package cn.timelives.java.utilities;
+package cn.timelives.java.utilities;
 
 import cn.timelives.java.math.linearAlgebra.Matrix;
 import cn.timelives.java.math.numberModels.Fraction;

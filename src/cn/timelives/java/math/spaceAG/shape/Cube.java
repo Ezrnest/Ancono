@@ -178,6 +178,9 @@ public final class Cube<T> extends RightPrism<T> {
 
 	@Override
 	public boolean isOnSurface(SPoint<T> p) {
+		for(Plane<T> plane : surface){
+
+		}
 		return false;
 	}
 

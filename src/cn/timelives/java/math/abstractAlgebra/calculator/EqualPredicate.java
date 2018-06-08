@@ -6,8 +6,8 @@ package cn.timelives.java.math.abstractAlgebra.calculator;
 import cn.timelives.java.math.abstractAlgebra.EqualRelation;
 
 /**
- * A predicate that tests whether two objects are equal. EqaulPredicate
- * is the same with {@link EqualRelation} but the method's name is "isEqaul".
+ * A predicate that tests whether two objects are equal. EqualPredicate
+ * is the same with {@link EqualRelation} but the method's name is "isEqual".
  * @author liyicheng
  * 2018-02-28 17:33
  *

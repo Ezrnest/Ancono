@@ -4,8 +4,8 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Multinomial;
+import cn.timelives.java.math.numberModels.MultinomialCalculator;
 import cn.timelives.java.math.numberModels.expression.Node.*;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
@@ -56,9 +56,6 @@ public final class SimplificationStrategies {
 	public static abstract class SimplifyPoly extends SimpleStrategy {
 		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.POLYNOMIAL));
 		/**
-		 * @param tags
-		 * @param types
-		 * @param fname
 		 * @param description
 		 */
 		public SimplifyPoly(String description) {
@@ -70,9 +67,7 @@ public final class SimplificationStrategies {
 	public static abstract class Merge extends SimpleStrategy {
 
 		/**
-		 * @param tags
 		 * @param types
-		 * @param fname
 		 */
 		public Merge(Set<Type> types) {
 			super(TAG_ALGEBRA_SET, types, null);
@@ -98,9 +93,6 @@ public final class SimplificationStrategies {
 		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.ADD));
 
 		/**
-		 * @param tags
-		 * @param types
-		 * @param rname
 		 */
 		public Collect() {
 			super(TAG_ALGEBRA_SET, types, null,"Collect expressions which have a common factor,"
@@ -117,9 +109,6 @@ public final class SimplificationStrategies {
 		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.ADD,Type.FRACTION,Type.MULTIPLY));
 
 		/**
-		 * @param tags
-		 * @param types
-		 * @param fname
 		 */
 		SimplifyFraction() {
 			super(TAG_ALGEBRA_SET, types, null,"Simplifies fraction:Add, multiply and fraction.");
@@ -222,14 +211,14 @@ public final class SimplificationStrategies {
 			if(!((t1 == Type.MULTIPLY || t1 == Type.POLYNOMIAL) && (t2 == Type.MULTIPLY || t2==Type.POLYNOMIAL))) {
 				return null;
 			}
-			Polynomial pnume = Node.getPolynomialPart(c1, mc),
+			Multinomial pnume = Node.getPolynomialPart(c1, mc),
 					pdeno = Node.getPolynomialPart(c2, mc);
 			boolean sim = false;
 			if(t1 == Type.MULTIPLY && t2 == Type.MULTIPLY) {
 				sim = simplifyDivideNode((Multiply)c1,(Multiply)c2,mc);
 			}
 			
-			List<Polynomial> list = Arrays.asList(pnume,pdeno);
+			List<Multinomial> list = Arrays.asList(pnume,pdeno);
 			list = mc.ps.simplify(list);
 			if(!sim && mc.pc.isEqual(pnume, list.get(0))){
 				//nothing is changed.
@@ -277,9 +266,6 @@ public final class SimplificationStrategies {
 	public static class Expand extends SimpleStrategy{
 		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.MULTIPLY));
 		/**
-		 * @param tags
-		 * @param types
-		 * @param fname
 		 */
 		public Expand() {
 			super(TAG_ALGEBRA_SET, types, null);
@@ -361,7 +347,6 @@ public final class SimplificationStrategies {
 		
 		/**
 		 * @param tags
-		 * @param types
 		 * @param fname
 		 * @param description
 		 */
@@ -543,17 +528,17 @@ public final class SimplificationStrategies {
 	}
 	
 	
-	public static void addRegularization(List<SimpleStrategy> list) {
-		list.add(new SimplifyPoly("Regularization") {
-			/*
-			 * @see cn.timelives.java.math.numberModels.expression.SimpleStrategy#simplifyPolynomial(cn.timelives.java.math.numberModels.expression.Node.Poly, cn.timelives.java.math.numberModels.expression.ExprCalculator)
-			 */
-			@Override
-			protected Node simplifyPolynomial(Poly node, ExprCalculator mc) {
-				return Node.newPolyNode(node.p.regularizeExponent(), node.parent);
-			}
-		});
-	}
+//	public static void addRegularization(List<SimpleStrategy> list) {
+//		list.add(new SimplifyPoly("Regularization") {
+//			/*
+//			 * @see cn.timelives.java.math.numberModels.expression.SimpleStrategy#simplifyPolynomial(cn.timelives.java.math.numberModels.expression.Node.Poly, cn.timelives.java.math.numberModels.expression.ExprCalculator)
+//			 */
+//			@Override
+//			protected Node simplifyPolynomial(Poly node, ExprCalculator mc) {
+//				return Node.newPolyNode(node.p, node.parent);
+//			}
+//		});
+//	}
 	
 	public static void addBasicAlgebra(List<SimpleStrategy> list) {
 		list.add(new Merge(CollectionSup.unmodifiableEnumSet(Type.ADD, Type.MULTIPLY, Type.FRACTION)) {
@@ -577,8 +562,8 @@ public final class SimplificationStrategies {
 					return null;
 				}
 				List<Node> nChildren = new ArrayList<>(add);
-				Polynomial p = Node.getPolynomialOrDefault(node, mc);
-				PolyCalculator pc = mc.pc;
+				Multinomial p = Node.getPolynomialOrDefault(node, mc);
+				MultinomialCalculator pc = mc.pc;
 				for (Node n : children) {
 					if (n.getType() == Type.ADD) {
 						Add sub = (Add) n;
@@ -614,8 +599,8 @@ public final class SimplificationStrategies {
 					return null;
 				}
 				List<Node> nChildren = new ArrayList<>(num);
-				Polynomial p = Node.getPolynomialOrDefault(node, mc);
-				PolyCalculator pc = mc.pc;
+				Multinomial p = Node.getPolynomialOrDefault(node, mc);
+				MultinomialCalculator pc = mc.pc;
 				for (Node n : children) {
 					if (n.getType() == Type.MULTIPLY) {
 						Multiply sub = (Multiply) n;
@@ -669,14 +654,14 @@ public final class SimplificationStrategies {
 					return null;
 				}
 				List<Node> children = node.children;
-				TreeMap<List<Node>, Polynomial> map = new TreeMap<>(CollectionSup.listComparator(mc.nc));
+				TreeMap<List<Node>, Multinomial> map = new TreeMap<>(CollectionSup.collectionComparator(mc.nc));
 				boolean collected = false;
-				PolyCalculator pc = mc.pc;
-				Polynomial pOne = mc.pOne;
+				MultinomialCalculator pc = mc.pc;
+				Multinomial pOne = mc.pOne;
 				// separate to
 				for (Node n : children) {
-					Pair<Polynomial, List<Node>> p = Node.unwrapMultiplyList(n, mc);
-					Polynomial pn = pOne;
+					Pair<Multinomial, List<Node>> p = Node.unwrapMultiplyList(n, mc);
+					Multinomial pn = pOne;
 					List<Node> list;
 					if (p != null) {
 						pn = p.getFirst();
@@ -684,7 +669,7 @@ public final class SimplificationStrategies {
 					}else {
 						list = Collections.singletonList(n);
 					}
-					Polynomial poly = map.get(list);
+					Multinomial poly = map.get(list);
 					if (poly != null) {
 						collected = true;
 						map.put(list, pc.add(poly, pn));
@@ -696,8 +681,8 @@ public final class SimplificationStrategies {
 					return null;
 				}
 				children.clear();
-				for (Entry<List<Node>, Polynomial> en : map.entrySet()) {
-					Polynomial p = en.getValue();
+				for (Entry<List<Node>, Multinomial> en : map.entrySet()) {
+					Multinomial p = en.getValue();
 					if (pc.isZero(p)) {
 						continue;
 					}
@@ -875,14 +860,14 @@ public final class SimplificationStrategies {
 					List<Pair<Node,BigInteger>> powers = en.getValue();
 					if(powers.size() == 1) {
 						Pair<Node,BigInteger> p = powers.get(0);
-						Node exponent = Node.wrapNodeMultiply(p.getFirst(), ec.pc.valueOfBigInteger(p.getSecond()));
+						Node exponent = Node.wrapNodeMultiply(p.getFirst(), Multinomial.valueOf(p.getSecond()));
 						Pair<Node, BigInteger> result = new Pair<>(Node.wrapNodeDF("exp", down, exponent),
 								BigInteger.ONE);
 						nlist.add(result);
 					}else {
 						List<Node> adds = new ArrayList<>(powers.size());
 						for(Pair<Node,BigInteger> pair : powers) {
-							Node exponent = Node.wrapNodeMultiply(pair.getFirst(), ec.pc.valueOfBigInteger(pair.getSecond()));
+							Node exponent = Node.wrapNodeMultiply(pair.getFirst(), Multinomial.valueOf(pair.getSecond()));
 							adds.add(exponent);
 						}
 						Node expo = Node.wrapNodeAM(true, adds);
@@ -926,7 +911,7 @@ public final class SimplificationStrategies {
 
 	public static List<SimpleStrategy> getDefaultStrategies() {
 		List<SimpleStrategy> list = new ArrayList<>();
-		addRegularization(list);
+//		addRegularization(list);
 		addBasicAlgebra(list);
 		addSqrStrategies(list);
 		addExpStrategies(list);

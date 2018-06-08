@@ -56,19 +56,7 @@ public final class CollectionSup {
 	 * @return {@code true} if the two lists are equal.
 	 */
 	public static <T,S> boolean listEqual(List<T> list1,List<S> list2,BiPredicate<T, S> isEqual) {
-		if(list1.size()!=list2.size()) {
-			return false;
-		}
-		Iterator<T> it1 = list1.iterator();
-		Iterator<S> it2 = list2.iterator();
-		while(it1.hasNext()) {
-			T t = it1.next();
-			S s = it2.next();
-			if(!isEqual.test(t, s)) {
-				return false;
-			}
-		}
-		return true;
+		return collectionEqualSorted(list1,list2,isEqual);
 	}
 	/**
 	 * Applies the function to all the entries in the map.
@@ -81,12 +69,12 @@ public final class CollectionSup {
 		}
 	}
 	
-	public static <T> int compareList(List<T> list1,List<T> list2,Comparator<T> comp) {
+	public static <T> int compareCollection(Collection<? extends T> list1,Collection<? extends T> list2,Comparator<T> comp) {
 		int com = list1.size() - list2.size();
 		if(com != 0) {
 			return com;
 		}
-		Iterator<T> it1 = list1.iterator(),
+		Iterator<? extends T> it1 = list1.iterator(),
 				it2 = list2.iterator();
 		while(it1.hasNext()) {
 			T a = it1.next();
@@ -132,24 +120,8 @@ public final class CollectionSup {
 	 * @param comp
 	 * @return
 	 */
-	public static <T> Comparator<List<T>> listComparator(Comparator<? super T> comp){
-		return (x,y)->{
-			int com = x.size() - y.size();
-			if(com !=0) {
-				return com;
-			}
-			Iterator<T> it1 = x.iterator(),
-					it2 = y.iterator();
-			while(it1.hasNext()) {
-				T xt = it1.next();
-				T yt = it2.next();
-				com = comp.compare(xt, yt);
-				if(com!=0) {
-					return com;
-				}
-			}
-			return 0;
-		};
+	public static <T,U extends Collection<T>> Comparator<U> collectionComparator(Comparator<? super T> comp){
+		return (x,y)-> compareCollection(x,y,comp);
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package cn.timelives.java.math;
 
+import cn.timelives.java.math.function.BiMathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
@@ -20,7 +21,7 @@ import java.util.stream.StreamSupport;
  * {@code true} even if the two progression is actually the same.But this method is required return {@code false} if the 
  * progression if the two progression is not the same.
  * @author lyc
- * @param T the type of number returned as the number in the progression
+ * @param <T> the type of number returned as the number in the progression
  */
 public abstract class Progression<T> extends FieldMathObject<T> implements Iterable<T>{
 	/**
@@ -755,62 +756,59 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 			return new GeneralFormulaProgression<N>(newCalculator, length, l -> mapper.apply(f.apply(l)));
 		}
 	}
-	
-	static class IterateProgression<T> extends Progression<T>{
+	static class FillingCachedProgression<T> extends Progression<T>{
 		/**
 		 * The recursive formula for this progression
 		 */
-		private final Function<T,T> rf ;
+		private final BiMathFunction<Progression<T>,Long,T> rf ;
 		/**
 		 * the index of the last element computed in this progression
 		 */
 		private int maxKnownIndex = 0;
 		/**
-		 * the first element in this progression
+		 * the storage for elements, increase by two times.
 		 */
-		private final T first;
-		/**
-		 * the storage for elements, increase by two times. 
-		 */
-		 T[] storage;
+		T[] storage;
 		/**
 		 * The size of the array at first
 		 */
 		private static final int arraySize = 16;
-		/**
-		 * exclusive
-		 */
-		private int arrEnd;
-		
+
 		@SuppressWarnings("unchecked")
-		protected IterateProgression(MathCalculator<T> mc, long length,Function<T,T> recursiveFormula,T firstElement) {
+		protected FillingCachedProgression(MathCalculator<T> mc, long length,BiMathFunction<Progression<T>,Long,T> recursiveFormula,T[] firstSeveral) {
 			super(mc, length);
 			this.rf = recursiveFormula;
-			first = firstElement;
+			storage = (T[]) new Object[Math.max(arraySize,firstSeveral.length)];
+			for(int i=0;i<firstSeveral.length;i++){
+				storage[i] = firstSeveral[i];
+			}
+			maxKnownIndex = firstSeveral.length-1;
+		}
+		@SuppressWarnings("unchecked")
+		protected FillingCachedProgression(MathCalculator<T> mc, long length,BiMathFunction<Progression<T>,Long,T> recursiveFormula,T first) {
+			super(mc, length);
+			this.rf = recursiveFormula;
 			storage = (T[]) new Object[arraySize];
 			storage[0] = first;
-			arrEnd = arraySize;
+			maxKnownIndex = 0;
 		}
-		
-		private IterateProgression(MathCalculator<T> mc, long length,Function<T,T> recursiveFormula,T firstElement,T[] arr,int maxKnown){
+		private FillingCachedProgression(MathCalculator<T> mc, long length,BiMathFunction<Progression<T>,Long,T> recursiveFormula,T[] arr,int maxKnown){
 			super(mc,length);
 			rf = recursiveFormula;
-			first = firstElement;
 			storage = arr;
-			arrEnd = storage.length;
 			maxKnownIndex = maxKnown;
 		}
-		
-		
+
+
 		private T fillArrayTo(int pos){
 			T t = storage[maxKnownIndex];
 			for(int i=maxKnownIndex+1;i< pos+1;i++){
-				storage[i] = (t = rf.apply(t));
+				storage[i] = (t = rf.apply(this,Long.valueOf(i)));
 			}
 			maxKnownIndex = pos;
 			return t;
 		}
-		
+
 		private void expandArray(int expectLength){
 			int len = storage.length;
 			int nlen = len + len << 1;
@@ -819,16 +817,10 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 				nlen = expectLength < ArraySup.MAX_ARRAY_SIZE ? expectLength : ArraySup.MAX_ARRAY_SIZE;
 			}
 			storage = Arrays.copyOf(storage, nlen);
-			arrEnd = nlen;
 		}
-		
-		private T iterateTo(long times,T last){
-			for(long i=0;i<times;i++){
-				last = rf.apply(last);
-			}
-			return last;
-		}
-		
+
+
+
 		@Override
 		public T[] toArray() {
 			if(length == UNLIMITED || length >  ArraySup.MAX_ARRAY_SIZE){
@@ -839,45 +831,48 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 			fillArrayTo(len);
 			return Arrays.copyOf(storage, len);
 		}
-		
+
 		@Override
 		public T get(long index) {
 			if(! inRange(index)){
 				throw new IndexOutOfBoundsException("for index:"+index);
 			}
-			if(index == 0){
-				return first;
-			}
 			if(index < ArraySup.MAX_ARRAY_SIZE){
 				int pos = (int) index;
 				if(pos<= maxKnownIndex){
 					return storage[pos];
-				}else if(pos < arrEnd){
+				}else if(pos < storage.length){
 					return fillArrayTo(pos);
 				}
 				expandArray(pos+1);
 				return fillArrayTo(pos);
 			}
 			expandArray(ArraySup.MAX_ARRAY_SIZE);
-			T te = fillArrayTo(ArraySup.MAX_ARRAY_SIZE-1);
-			return iterateTo(index - ArraySup.MAX_ARRAY_SIZE+1,te);
+			fillArrayTo(ArraySup.MAX_ARRAY_SIZE-1);
+			return get0(index);
 		}
-		
-		
+
+		private T get0(long index){
+			if(index < maxKnownIndex){
+				return storage[(int)index];
+			}
+			return rf.apply(this,index);
+		}
+
+
 		@Override
 		public Progression<T> limit(long limit) {
 			if(limit > 0 && (length == UNLIMITED || limit <= length)){
-				return new IterateProgression<>(mc, limit, rf, first,storage,maxKnownIndex);
+				return new FillingCachedProgression<>(mc, limit, rf,storage,maxKnownIndex);
 			}
 			throw new IndexOutOfBoundsException("for index:"+limit);
 		}
-		
+
 		@Override
 		public <N> Progression<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
 			return super.mapTo(mapper, newCalculator);
 		}
 	}
-	
 	static class CycleProgression<T> extends Progression<T>{
 		
 		private final T[] loop;
@@ -957,7 +952,7 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 	 * @return a newly created progression.
 	 */
 	public static <T> Progression<T> createProgression(LongFunction<T> formula,long length,MathCalculator<T> mc){
-		return new GeneralFormulaProgression<T>(mc,length < 0 ? UNLIMITED : length,formula);
+		return new GeneralFormulaProgression<>(mc, length < 0 ? UNLIMITED : length, formula);
 	}
 	/**
 	 * Create a new progression whose recursive formula is {@code recursiveFormula}.The first element of this progression is 
@@ -969,9 +964,41 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 	 * @param mc a math calculator
 	 * @return a newly created progression.
 	 */
-	public static <T> Progression<T> createProgression(Function<T,T> recursiveFormula,T first,long length,MathCalculator<T> mc){
-		return new IterateProgression<>(mc, length, recursiveFormula, first);
+	public static <T> Progression<T> createProgressionRecur1(Function<T,T> recursiveFormula,T first,long length,MathCalculator<T> mc){
+		return new FillingCachedProgression<>(mc, length, (progression,index)-> recursiveFormula.apply(progression.get(index-1)), first);
 	}
+
+	/**
+	 * Create a new progression whose recursive formula is {@code recursiveFormula}.The first two elements of this progression are
+	 * also needed. This progression fits that {@code a_n+1 = recursiveFormula.apply(a_(n-1),a_n) | (n >= 0 )}.This kind of progression
+	 * will store the computed elements in temporary.
+	 * @param recursiveFormula the recursive formula of this progression
+	 * @param first the first element
+	 * @param length the length of this progression, or {@value #UNLIMITED} to indicate this progression is unlimited.
+	 * @param mc a math calculator
+	 * @return a newly created progression.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Progression<T> createProgressionRecur2(BiMathFunction<T,T,T> recursiveFormula,T first,T second,long length,MathCalculator<T> mc){
+		return new FillingCachedProgression<>(mc, length,
+				(progression,index)-> recursiveFormula.apply(progression.get(index-2),progression.get(index-1)),
+				(T[])new Object[]{first,second});
+	}
+	/**
+	 * Create a new progression whose recursive formula is {@code recur}. The recursive formula accepts the progression itself and
+	 * the index of the required element.
+	 * @param recur the recursive formula of this progression
+	 * @param firstSeveral the first several elements
+	 * @param length the length of this progression, or {@value #UNLIMITED} to indicate this progression is unlimited.
+	 * @param mc a math calculator
+	 * @return a newly created progression.
+	 */
+	public static <T> Progression<T> createProgressionRecur(BiMathFunction<Progression<T>,Long, T> recur, long length, MathCalculator<T> mc, T...firstSeveral){
+		return new FillingCachedProgression<>(mc,length,recur,firstSeveral);
+	}
+
+
+
 	/**
 	 * Create a new periodic that the first few elements are the elements in the array. 
 	 * @param array an array containing elements.
@@ -1087,5 +1114,6 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 		}
 		return cp;
 	}
+
 }
 

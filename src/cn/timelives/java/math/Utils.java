@@ -5,11 +5,12 @@ package cn.timelives.java.math;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
 
+import java.util.Comparator;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 /**
- * Contains some utilities.
+ * Contains some utilities for MathCalculator
  * @author liyicheng
  * 2017-10-07 15:19
  *
@@ -33,5 +34,12 @@ public final class Utils {
 		return (x,y)->mc.isEqual(x, mapper.apply(y));
 	}
 	
-
+	public static <T> T max(T a,T b,Comparator<T> mc){
+		int comp = mc.compare(a,b);
+		return comp>0? a : b;
+	}
+	public static <T> T min(T a,T b,Comparator<T> mc){
+		int comp = mc.compare(a,b);
+		return comp<0? a : b;
+	}
 }

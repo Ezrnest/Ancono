@@ -146,7 +146,7 @@ public class SortedAdditiveSet<E> extends MathAddableSet<E>
 //				+ " -1/16*d[y2]^2*d[y3]p, +1/16*d[y1]^3*d[y2]^2*p^-1, -1/16*d[y1]^3*d[y2]^2*p^-1";
 //		str = str.replaceAll(Pattern.quote(","), "").replaceAll(" +", "");
 //		print(str);
-//		Polynomial p = Polynomial.valueOf(str);
+//		PolynomialOld p = PolynomialOld.valueOf(str);
 //		print(p);//0
 //	}
 

@@ -39,10 +39,9 @@ import static test.math.TestUtils.isZero;
 
 public class CodePlace {
 
-	// public static void main(String[] args) {
-	// CodePlace cp = new CodePlace();
-	// cp.m39();
-	// }
+//	 public static void main(String[] args) {
+//	 	CodePlace cp = new CodePlace();
+//	 }
 
 	public void m1() {
 		MathCalculator<Fraction> mc = Fraction.getCalculator();
@@ -250,14 +249,14 @@ public class CodePlace {
 
 	void m14() {
 		FormulaCalculator fc = FormulaCalculator.getCalculator();
-		// MathCalculator<Polynomial> mcp = Polynomial
-		Polynomial[] pos = new Polynomial[6];
-		pos[0] = new Polynomial(fc, Formula.valueOf("d[x1]"));
-		pos[1] = new Polynomial(fc, Formula.valueOf("d[x2]"));
-		pos[2] = new Polynomial(fc, Formula.valueOf("d[x3]"));
-		pos[3] = new Polynomial(fc, Formula.valueOf("d[y1]"));
-		pos[4] = new Polynomial(fc, Formula.valueOf("d[y2]"));
-		pos[5] = new Polynomial(fc, Formula.valueOf("d[y3]"));
+		// MathCalculator<PolynomialOld> mcp = PolynomialOld
+		PolynomialOld[] pos = new PolynomialOld[6];
+		pos[0] = new PolynomialOld(fc, Formula.valueOf("d[x1]"));
+		pos[1] = new PolynomialOld(fc, Formula.valueOf("d[x2]"));
+		pos[2] = new PolynomialOld(fc, Formula.valueOf("d[x3]"));
+		pos[3] = new PolynomialOld(fc, Formula.valueOf("d[y1]"));
+		pos[4] = new PolynomialOld(fc, Formula.valueOf("d[y2]"));
+		pos[5] = new PolynomialOld(fc, Formula.valueOf("d[y3]"));
 		FracPoly[] fps = new FracPoly[6];
 		for (int i = 0; i < 6; i++) {
 			fps[i] = FracPoly.valueOf(pos[i]);
@@ -276,11 +275,11 @@ public class CodePlace {
 	}
 
 	FormulaCalculator fc = FormulaCalculator.getCalculator();
-	MathCalculator<Polynomial> fcp = Polynomial.getCalculator();
+	MathCalculator<PolynomialOld> fcp = PolynomialOld.getCalculator();
 	MathCalculator<FracPoly> mcfp = FracPoly.getCalculator(false);
 
 	final int def_size = 32;
-	Polynomial[] pos = new Polynomial[def_size];
+	PolynomialOld[] pos = new PolynomialOld[def_size];
 	FracPoly[] fps = new FracPoly[def_size];
 	Expression[] es = new Expression[def_size];
 	@SuppressWarnings("unchecked")
@@ -293,26 +292,26 @@ public class CodePlace {
 		}
 	}
 
-	void computeExpression() {
-		for (int i = 0; i < pos.length; i++) {
-			if (pos[i] != null) {
-				es[i] = Expression.fromPolynomial(pos[i]);
-			}
-		}
-	}
+//	void computeExpression() {
+//		for (int i = 0; i < pos.length; i++) {
+//			if (pos[i] != null) {
+//				es[i] = Expression.fromMultinomial(pos[i]);
+//			}
+//		}
+//	}
 
 	void m15() {
 
-		// Polynomial[] pos = new Polynomial[10];
-		pos[0] = new Polynomial(fc, Formula.ZERO);
-		pos[1] = new Polynomial(fc, Formula.ONE);
-		pos[2] = new Polynomial(fc, Formula.valueOf("0.5"));
-		pos[3] = new Polynomial(fc, Formula.valueOf("a"));
-		pos[4] = new Polynomial(fc, Formula.valueOf("aa"));
-		pos[5] = new Polynomial(fc, Formula.valueOf("k"));
-		pos[7] = new Polynomial(fc, "a/3+1/3");
+		// PolynomialOld[] pos = new PolynomialOld[10];
+		pos[0] = new PolynomialOld(fc, Formula.ZERO);
+		pos[1] = new PolynomialOld(fc, Formula.ONE);
+		pos[2] = new PolynomialOld(fc, Formula.valueOf("0.5"));
+		pos[3] = new PolynomialOld(fc, Formula.valueOf("a"));
+		pos[4] = new PolynomialOld(fc, Formula.valueOf("aa"));
+		pos[5] = new PolynomialOld(fc, Formula.valueOf("k"));
+		pos[7] = new PolynomialOld(fc, "a/3+1/3");
 		print(pos[7]);
-		pos[8] = new Polynomial(fc, "a^2/3");
+		pos[8] = new PolynomialOld(fc, "a^2/3");
 		compute();
 		fps[6] = mcfp.subtract(FracPoly.ONE, fps[5]);
 		Point<FracPoly> A = new Point<>(mcfp, fps[1], fps[1]);
@@ -358,7 +357,7 @@ public class CodePlace {
 
 	void inputPoly(String... data) {
 		for (int i = 0; i < data.length; i++) {
-			pos[i] = new Polynomial(fc, data[i]);
+			pos[i] = new PolynomialOld(fc, data[i]);
 		}
 		compute();
 	}
@@ -368,11 +367,11 @@ public class CodePlace {
 		inputPoly(ss);
 	}
 
-	void inputExpression(String datas) {
-		String[] ss = datas.split(",");
-		inputPoly(ss);
-		computeExpression();
-	}
+//	void inputExpression(String datas) {
+//		String[] ss = datas.split(",");
+//		inputPoly(ss);
+//		computeExpression();
+//	}
 
 	void m17() {
 		inputPoly("0", "3", "b", "b+8");
@@ -460,7 +459,7 @@ public class CodePlace {
 	}
 
 	private static FracPoly mapperFF(Fraction f) {
-		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFAULT_CALCULATOR.getCal(), f.toString()));
+		return FracPoly.valueOf(new PolynomialOld(PolyCalculator.DEFAULT_CALCULATOR.getCal(), f.toString()));
 	}
 
 	private static Fraction mapperPF(FracPoly fp) {
@@ -469,16 +468,16 @@ public class CodePlace {
 		return n.divide(d);
 	}
 
-	private static Fraction getFraction(Polynomial fp) {
+	private static Fraction getFraction(PolynomialOld fp) {
 		return Fraction.valueOf(getLongN(fp), getLongD(fp));
 	}
 
-	private static long getLongN(Polynomial p) {
+	private static long getLongN(PolynomialOld p) {
 		Formula f = p.getFormulaList().get(0);
 		return f.getSignum() * f.getNumerator().longValueExact();
 	}
 
-	private static long getLongD(Polynomial p) {
+	private static long getLongD(PolynomialOld p) {
 		return p.getFormulaList().get(0).getDenominator().longValueExact();
 	}
 
@@ -585,7 +584,7 @@ public class CodePlace {
 		// FractionalPoly re = mcfp.multiply(fps[6], q.rootsMul());
 		// re = mcfp.add(re, mcfp.multiply(fps[7], q.rootsSum()));
 		// re = mcfp.add(re, fps[8]);
-		// Polynomial p = re.getNume();
+		// PolynomialOld p = re.getNume();
 		// List<Formula>[] times = new List[5];
 		// Formula[] tis = new Formula[4];
 		// tis[0] = Formula.valueOf("k");
@@ -676,7 +675,7 @@ public class CodePlace {
 	}
 
 	static FracPoly mapperFF2(Formula f) {
-		return FracPoly.valueOf(new Polynomial(PolyCalculator.DEFAULT_CALCULATOR.getCal(), f));
+		return FracPoly.valueOf(new PolynomialOld(PolyCalculator.DEFAULT_CALCULATOR.getCal(), f));
 	}
 
 	void m35() {
@@ -750,18 +749,18 @@ public class CodePlace {
 		return GT;
 	}
 
-	/**
-	 * Returns a general triangle: A(d[x1],d[y1])...
-	 * 
-	 * @return
-	 */
-	public Triangle<Expression> generalTriangleE() {
-		if (GT == null) {
-			inputExpression("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3]");
-			GTE = Triangle.fromVertex(ec, es[0], es[3], es[1], es[4], es[2], es[5]);
-		}
-		return GTE;
-	}
+//	/**
+//	 * Returns a general triangle: A(d[x1],d[y1])...
+//	 *
+//	 * @return
+//	 */
+//	public Triangle<Expression> generalTriangleE() {
+//		if (GT == null) {
+//			inputExpression("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3]");
+//			GTE = Triangle.fromVertex(ec, es[0], es[3], es[1], es[4], es[2], es[5]);
+//		}
+//		return GTE;
+//	}
 
 	public void m36() {
 		Triangle<FracPoly> tri = generalTriangle();
@@ -778,25 +777,25 @@ public class CodePlace {
 		print(dealWith(v3));
 		print(PVector.sum(v1, v2, v3));
 	}
-
-	public void m36e() {
-		inputExpression("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3],x,y");
-		Triangle<Expression> tri = generalTriangleE();
-		Point<Expression> i = Point.valueOf(es[6], es[7], ec);
-		@SuppressWarnings("unchecked")
-		Point<Expression>[] ps = new Point[3];
-		ps[0] = tri.vertexA();
-		ps[1] = tri.vertexB();
-		ps[2] = tri.vertexC();
-		PVector<Expression> v1, v2, v3;
-		v1 = PVector.vector(ps[0], i).multiplyNumber(Triangle.fromVertex(ec, i, ps[1], ps[2]).areaPN());
-		v2 = PVector.vector(ps[1], i).multiplyNumber(Triangle.fromVertex(ec, i, ps[2], ps[0]).areaPN());
-		v3 = PVector.vector(ps[2], i).multiplyNumber(Triangle.fromVertex(ec, i, ps[0], ps[1]).areaPN());
-		print(dealWith(v1));
-		print(dealWith(v2));
-		print(dealWith(v3));
-		print(PVector.sum(v1, v2, v3));
-	}
+//
+//	public void m36e() {
+//		inputExpression("d[x1],d[x2],d[x3],d[y1],d[y2],d[y3],x,y");
+//		Triangle<Expression> tri = generalTriangleE();
+//		Point<Expression> i = Point.valueOf(es[6], es[7], ec);
+//		@SuppressWarnings("unchecked")
+//		Point<Expression>[] ps = new Point[3];
+//		ps[0] = tri.vertexA();
+//		ps[1] = tri.vertexB();
+//		ps[2] = tri.vertexC();
+//		PVector<Expression> v1, v2, v3;
+//		v1 = PVector.vector(ps[0], i).multiplyNumber(Triangle.fromVertex(ec, i, ps[1], ps[2]).areaPN());
+//		v2 = PVector.vector(ps[1], i).multiplyNumber(Triangle.fromVertex(ec, i, ps[2], ps[0]).areaPN());
+//		v3 = PVector.vector(ps[2], i).multiplyNumber(Triangle.fromVertex(ec, i, ps[0], ps[1]).areaPN());
+//		print(dealWith(v1));
+//		print(dealWith(v2));
+//		print(dealWith(v3));
+//		print(PVector.sum(v1, v2, v3));
+//	}
 
 	void m37() {
 		Fraction[][] mat = new Fraction[5][6];
@@ -824,11 +823,11 @@ public class CodePlace {
 	// void m38() {
 	// int d = 4;
 	// int len = d * (d + 2);
-	// pos = new Polynomial[len];
+	// pos = new PolynomialOld[len];
 	// fps = new FracPoly[len];
 	// for (int i = 0; i <= d + 1; i++) {
 	// for (int j = 0; j < d; j++) {
-	// pos[d * i + j] = Polynomial.valueOf("x[" + i + "," + (j + 1) + "]");
+	// pos[d * i + j] = PolynomialOld.valueOf("x[" + i + "," + (j + 1) + "]");
 	// }
 	// }
 	// compute();
@@ -928,10 +927,10 @@ public class CodePlace {
 		// +
 		// "6*x3y1^2*y2^2-3*x3y1^2*y2y3-3*x3y1^2*y3^2-3*x3y1y2^3-3*x3y1y2^2*y3+6*x3y1y2y3^2+3*x3y2^3*y3-3*x3y2^2*y3^2";
 		fps[0] = oh.x;
-		// MathCalculator<Polynomial> mcp = PolyCalculator.DEFAULT_CALCULATOR;
+		// MathCalculator<PolynomialOld> mcp = PolyCalculator.DEFAULT_CALCULATOR;
 		// print(dealWith(fps[0].getNume()));
 		fps[1] = v.x;
-		// MathCalculator<Polynomial> mcp = Polynomial.getCalculator();
+		// MathCalculator<PolynomialOld> mcp = PolynomialOld.getCalculator();
 		// print(dealWith(mcp.multiply(fps[0].getNume(), fps[1].getDeno())));
 		// print_();
 		// print(dealWith(mcp.multiply(fps[0].getNume(), fps[1].getDeno())));
@@ -940,21 +939,21 @@ public class CodePlace {
 	}
 
 //	@Test
-	public void m42e() {
-		Triangle<Expression> tri = generalTriangleE();
-		Point<Expression> A = tri.vertexA(), B = tri.vertexB(), C = tri.vertexC(), O = tri.centerO(), H = tri.centerH();
-		PVector<Expression> v1 = PVector.vector(O, A), v2 = PVector.vector(O, B), v3 = PVector.vector(O, C),
-				v = v1.add(v2).add(v3), oh = PVector.vector(O, H);
-		// print(dealWith(oh));
-		es[0] = oh.x;
-		es[1] = v.x;
-		es[2] = ec.divide(es[0], es[1]);
-		// leave the step last
-		SimplificationStrategies.setCalRegularization(ec);
-		es[2] = ec.simplify(es[2]);
-		// es[2] = ec.simplify(es[2]);
-		assertTrue(ec.isEqual(ec.getOne(), es[2]));
-	}
+//	public void m42e() {
+//		Triangle<Expression> tri = generalTriangleE();
+//		Point<Expression> A = tri.vertexA(), B = tri.vertexB(), C = tri.vertexC(), O = tri.centerO(), H = tri.centerH();
+//		PVector<Expression> v1 = PVector.vector(O, A), v2 = PVector.vector(O, B), v3 = PVector.vector(O, C),
+//				v = v1.add(v2).add(v3), oh = PVector.vector(O, H);
+//		// print(dealWith(oh));
+//		es[0] = oh.x;
+//		es[1] = v.x;
+//		es[2] = ec.divide(es[0], es[1]);
+//		// leave the step last
+//		SimplificationStrategies.setCalRegularization(ec);
+//		es[2] = ec.simplify(es[2]);
+//		// es[2] = ec.simplify(es[2]);
+//		assertTrue(ec.isEqual(ec.getOne(), es[2]));
+//	}
 
 	public void m43() {
 		Random rd = new Random();
@@ -1000,201 +999,228 @@ public class CodePlace {
 
 	private static final ExprCalculator ec = new ExprCalculator();
 
-	public void m45() {
-		inputExpression("3,x");
-		// ParabolaV<Expression> M = ParabolaV.generalFormula(es[0], true, ec);
-		Expression x = es[1], y = ec.squareRoot(ec.multiplyLong(x, 6));
-		Circle<Expression> C = Circle.centerAndRadius(Point.valueOf(es[0], ec.getZero(), ec), es[0], ec);
-		List<Line<Expression>> lines = C.tangentLines(Point.valueOf(x, y, ec));
-		Line<Expression> l1 = lines.get(0), l2 = lines.get(1);
-		Expression a = l1.computeY(ec.getZero()), b = l2.computeY(ec.getZero());
-		Expression s = ec.subtract(a, b);
-		s = ec.multiply(x, s);
-		s = ec.divideLong(s, 2);
-		SimplificationStrategies.setCalRegularization(ec);
-		s = ec.simplify(s);
-		// print(s);
-		Node.Fraction n = (Node.Fraction) s.getRoot();
-		MultinomialX<Formula> nume = MultinomialX.fromPolynomial(Node.getPolynomialPart(n.getC1(), null), "x");
-		MultinomialX<Formula> deno = MultinomialX.fromPolynomial(Node.getPolynomialPart(n.getC2(), null), "x");
-		Formula f12 = Formula.valueOf(12);
-		Formula result = fc.divide(nume.compute(f12), deno.compute(f12));
-		assertTrue("Result is 72", Formula.valueOf(72).absEquals(result));
-		// MultinomialCalculator<Formula> muc =
-		// MultinomialX.getCalculator(Formula.getCalculator());
-		// print(muc.divideAndReminder(nume,deno));
-		// AbstractSVPFunction<Formula> f1 = AbstractSVPFunction.fromMultinomial(nume),
-		// f2 = AbstractSVPFunction.fromMultinomial(deno);
-		// AbstractSVPFunction<Formula> f =
-		// AbstractSVPFunction.subtract(AbstractSVPFunction.multiply(f1,
-		// f2.derive()),AbstractSVPFunction.multiply(f1.derive(), f2));
-		//
-		// print(f.apply(Formula.valueOf(12)));
-	}
-
-	// @Test
-	public void m46() {
-		final double t = 0.5;
-		// any value for k is acceptable
-		final double k = 1;
-		HyperbolaV<Double> L = HyperbolaV.standardEquationSqrt(1d, 3d, true, mcd);
-		Line<Double> line = Line.pointSlope(L.foci().get(1), k, mcd);
-		List<Point<Double>> AB = L.intersectPoints(line);
-		Point<Double> A = AB.get(0), B = AB.get(1);
-		Point<Double> C = Point.valueOf(t, A.y, mcd), D = Point.valueOf(t, B.y, mcd);
-		Line<Double> AD = Line.twoPoint(A, D), BC = Line.twoPoint(B, C);
-		// print(AD);
-		Point<Double> p = AD.intersectPoint(BC);
-		assertThat("Point is on the x axis", p.y,isZero(mcd));
-
-	}
-
-//	@Test
-	public void m46e() {
-		inputExpression("1,3,t,k");
-		Expression k = es[3], t = es[2];
-		HyperbolaV<Expression> L = HyperbolaV.standardEquationSqrt(es[0], es[1], true, ec);
-		// create hyperbola x^2 - y^2/3 = 1
-		Point<Expression> F = L.foci().get(1);
-		Line<Expression> line = Line.pointSlope(F, k);
-		// the line that passes through F
-		List<Point<Expression>> AB = L.intersectPoints(line);
-		// the list of A and B
-		Point<Expression> A = AB.get(0), B = AB.get(1);
-		// Point A and B
-		Point<Expression> C = Point.valueOf(t, A.y, ec), D = Point.valueOf(t, B.y, ec);
-		// Point C and D
-		Line<Expression> AD = Line.twoPoint(A, D), BC = Line.twoPoint(B, C);
-		// two lines AD and BC
-		Point<Expression> p = AD.intersectPoint(BC);
-		// the intersect point
-		// print("x = "+p.x);
-		// print("y = "+p.y);
-		// show the point p
-		p = p.mapTo(x -> ec.substitute(x, "t", Polynomial.valueOf("1/2")), ec);
-		// substitute 1/2 for t
-		assertThat("Point is on the x axis", p.y,isZero(ec));
-	}
-//	@Test
-	public void m47() {
-		double[] xs = ArraySup.ranDoubleArr(4, 1);
-		xs[1] = -xs[1];
-		xs[2] = -xs[2];
-		ComputeExpression ce = ComputeExpression.compile("exp(1-exp($0,2),1/2)");
-		Point<Double> A, B, C, D, E, F, K, I, J, P;
-		A = Point.valueOf(xs[0], ce.compute( mcd,xs[0]), mcd);
-		B = Point.valueOf(xs[1], ce.compute( mcd,xs[1]), mcd);
-		C = Point.valueOf(xs[2], -ce.compute( mcd,xs[2]), mcd);
-		D = Point.valueOf(xs[3], -ce.compute( mcd,xs[3]), mcd);
-		Line<Double> AC = Line.twoPoint(A, C), BD = Line.twoPoint(B, D), AB = Line.twoPoint(A, B);
-		P = AC.intersectPoint(BD);
-		Circle<Double> ADP = Circle.threePoints(A, D, P), BCP = Circle.threePoints(B, C, P);
-		E = ADP.intersectPointAnother(A, AB);
-		F = BCP.intersectPointAnother(B, AB);
-		I = Triangle.fromVertex(A, D, E).centerI();
-		J = Triangle.fromVertex(B, C, F).centerI();
-		Line<Double> IJ = Line.twoPoint(I, J);
-		K = AC.intersectPoint(IJ);
-		Circle<Double> AEK = Circle.threePoints(A, E, K);
-		// print(dealWith(AEK));
-		double result = AEK.substitute(I);
-		if(mcd.isZero(result)) {
-			print(result);
-		}else {
-			print(result);
-		}
-	}
-//	@Test(timeout=1000*10)
-	public void m47e() throws IOException {
-		inputExpression("d[x1],d[x2],d[x3],d[x4],d[y1],d[y2],d[y3],d[y4]");
-		Point<Expression> A,B,C,D,E,F,K,I,J,P;
-		A = Point.valueOf(es[0], es[4], ec);
-		B = Point.valueOf(es[1], es[5], ec);
-		C = Point.valueOf(es[2], es[6], ec);
-		D = Point.valueOf(es[3], es[7], ec);
-		print("1");
-		Line<Expression> AC = Line.twoPoint(A, C),
-				BD = Line.twoPoint(B, D),
-				AB = Line.twoPoint(A, B);
-		P = AC.intersectPoint(BD);
-		Circle<Expression> ADP = Circle.threePoints(A, D, P),
-				BCP = Circle.threePoints(B, C, P);
-		print("2");
-		E = ADP.intersectPointAnother(A, AB);
-				F = BCP.intersectPointAnother(B, AB);
-		I = Triangle.fromVertex(A, D, E).centerI();
-		J = Triangle.fromVertex(B, C, F).centerI();
-		Line<Expression> IJ = Line.twoPoint(I, J);
-		K = AC.intersectPoint(IJ);
-		Circle<Expression> AEK = Circle.threePoints(A, E, K);
-		print("3");
-//		print(dealWith(AEK));
-//		Printer.reSet(Files.newOutputStream(
-//				new File("E:\\Temp\\result.txt").toPath(),
-//				StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.CREATE));
-//		
-//		AEK = AEK.mapTo(ec::simplify, ec);
-//		String str = dealWith(AEK.substitute(I));
-//		StringBuilder sb = new StringBuilder(str.length());
-//		for(int i=0;i<str.length();i+= 100) {
-//			if(i + 100 >= str.length()) {
-//				sb.append(str.substring(i));
-//			}else {
-//				sb.append(str.substring(i, i+100));
-//			}
-//			sb.append(System.lineSeparator());
-//		}
-//		print(sb.toString());
+//	public void m45() {
+//		inputExpression("3,x");
+//		// ParabolaV<Expression> M = ParabolaV.generalFormula(es[0], true, ec);
+//		Expression x = es[1], y = ec.squareRoot(ec.multiplyLong(x, 6));
+//		Circle<Expression> C = Circle.centerAndRadius(Point.valueOf(es[0], ec.getZero(), ec), es[0], ec);
+//		List<Line<Expression>> lines = C.tangentLines(Point.valueOf(x, y, ec));
+//		Line<Expression> l1 = lines.get(0), l2 = lines.get(1);
+//		Expression a = l1.computeY(ec.getZero()), b = l2.computeY(ec.getZero());
+//		Expression s = ec.subtract(a, b);
+//		s = ec.multiply(x, s);
+//		s = ec.divideLong(s, 2);
 //		SimplificationStrategies.setCalRegularization(ec);
-	}
+//		s = ec.simplify(s);
+//		// print(s);
+//		Node.Fraction n = (Node.Fraction) s.getRoot();
+//		PolynomialX<PolynomialOld> nume = PolynomialX.fromMultinomial(Node.getPolynomialPart(n.getC1(), null), "x");
+//		PolynomialX<PolynomialOld> deno = PolynomialX.fromMultinomial(Node.getPolynomialPart(n.getC2(), null), "x");
+//		PolynomialOld f12 = PolynomialOld.fromFormula(Formula.valueOf(12));
+//		PolynomialOld result = PolyCalculator.DEFAULT_CALCULATOR.divide(nume.compute(f12), deno.compute(f12));
+//		assertTrue("Result is 72", Formula.valueOf(72).absEquals(result.getFormulaList().get(0)));
+//		// MultinomialCalculator<Formula> muc =
+//		// PolynomialX.getCalculator(Formula.getCalculator());
+//		// print(muc.divideAndReminder(nume,deno));
+//		// AbstractSVPFunction<Formula> f1 = AbstractSVPFunction.fromMultinomial(nume),
+//		// f2 = AbstractSVPFunction.fromMultinomial(deno);
+//		// AbstractSVPFunction<Formula> f =
+//		// AbstractSVPFunction.subtract(AbstractSVPFunction.multiply(f1,
+//		// f2.derive()),AbstractSVPFunction.multiply(f1.derive(), f2));
+//		//
+//		// print(f.apply(Formula.valueOf(12)));
+//	}
+//
+//	// @Test
+//	public void m46() {
+//		final double t = 0.5;
+//		// any value for k is acceptable
+//		final double k = 1;
+//		HyperbolaV<Double> L = HyperbolaV.standardEquationSqrt(1d, 3d, true, mcd);
+//		Line<Double> line = Line.pointSlope(L.foci().get(1), k, mcd);
+//		List<Point<Double>> AB = L.intersectPoints(line);
+//		Point<Double> A = AB.get(0), B = AB.get(1);
+//		Point<Double> C = Point.valueOf(t, A.y, mcd), D = Point.valueOf(t, B.y, mcd);
+//		Line<Double> AD = Line.twoPoint(A, D), BC = Line.twoPoint(B, C);
+//		// print(AD);
+//		Point<Double> p = AD.intersectPoint(BC);
+//		assertThat("Point is on the x axis", p.y,isZero(mcd));
+//
+//	}
+//
+////	@Test
+//	public void m46e() {
+//		inputExpression("1,3,t,k");
+//		Expression k = es[3], t = es[2];
+//		HyperbolaV<Expression> L = HyperbolaV.standardEquationSqrt(es[0], es[1], true, ec);
+//		// create hyperbola x^2 - y^2/3 = 1
+//		Point<Expression> F = L.foci().get(1);
+//		Line<Expression> line = Line.pointSlope(F, k);
+//		// the line that passes through F
+//		List<Point<Expression>> AB = L.intersectPoints(line);
+//		// the list of A and B
+//		Point<Expression> A = AB.get(0), B = AB.get(1);
+//		// Point A and B
+//		Point<Expression> C = Point.valueOf(t, A.y, ec), D = Point.valueOf(t, B.y, ec);
+//		// Point C and D
+//		Line<Expression> AD = Line.twoPoint(A, D), BC = Line.twoPoint(B, C);
+//		// two lines AD and BC
+//		Point<Expression> p = AD.intersectPoint(BC);
+//		// the intersect point
+//		// print("x = "+p.x);
+//		// print("y = "+p.y);
+//		// show the point p
+//		p = p.mapTo(x -> ec.substitute(x, "t", PolynomialOld.valueOf("1/2")), ec);
+//		// substitute 1/2 for t
+//		assertThat("Point is on the x axis", p.y,isZero(ec));
+//	}
+////	@Test
+//	public void m47() {
+//		double[] xs = ArraySup.ranDoubleArr(4, 1);
+//		xs[1] = -xs[1];
+//		xs[2] = -xs[2];
+//		ComputeExpression ce = ComputeExpression.compile("exp(1-exp($0,2),1/2)");
+//		Point<Double> A, B, C, D, E, F, K, I, J, P;
+//		A = Point.valueOf(xs[0], ce.compute( mcd,xs[0]), mcd);
+//		B = Point.valueOf(xs[1], ce.compute( mcd,xs[1]), mcd);
+//		C = Point.valueOf(xs[2], -ce.compute( mcd,xs[2]), mcd);
+//		D = Point.valueOf(xs[3], -ce.compute( mcd,xs[3]), mcd);
+//		Line<Double> AC = Line.twoPoint(A, C), BD = Line.twoPoint(B, D), AB = Line.twoPoint(A, B);
+//		P = AC.intersectPoint(BD);
+//		Circle<Double> ADP = Circle.threePoints(A, D, P), BCP = Circle.threePoints(B, C, P);
+//		E = ADP.intersectPointAnother(A, AB);
+//		F = BCP.intersectPointAnother(B, AB);
+//		I = Triangle.fromVertex(A, D, E).centerI();
+//		J = Triangle.fromVertex(B, C, F).centerI();
+//		Line<Double> IJ = Line.twoPoint(I, J);
+//		K = AC.intersectPoint(IJ);
+//		Circle<Double> AEK = Circle.threePoints(A, E, K);
+//		// print(dealWith(AEK));
+//		double result = AEK.substitute(I);
+//		if(mcd.isZero(result)) {
+//			print(result);
+//		}else {
+//			print(result);
+//		}
+//	}
+////	@Test(timeout=1000*10)
+//	public void m47e() throws IOException {
+//		inputExpression("d[x1],d[x2],d[x3],d[x4],d[y1],d[y2],d[y3],d[y4]");
+//		Point<Expression> A,B,C,D,E,F,K,I,J,P;
+//		A = Point.valueOf(es[0], es[4], ec);
+//		B = Point.valueOf(es[1], es[5], ec);
+//		C = Point.valueOf(es[2], es[6], ec);
+//		D = Point.valueOf(es[3], es[7], ec);
+//		print("1");
+//		Line<Expression> AC = Line.twoPoint(A, C),
+//				BD = Line.twoPoint(B, D),
+//				AB = Line.twoPoint(A, B);
+//		P = AC.intersectPoint(BD);
+//		Circle<Expression> ADP = Circle.threePoints(A, D, P),
+//				BCP = Circle.threePoints(B, C, P);
+//		print("2");
+//		E = ADP.intersectPointAnother(A, AB);
+//				F = BCP.intersectPointAnother(B, AB);
+//		I = Triangle.fromVertex(A, D, E).centerI();
+//		J = Triangle.fromVertex(B, C, F).centerI();
+//		Line<Expression> IJ = Line.twoPoint(I, J);
+//		K = AC.intersectPoint(IJ);
+//		Circle<Expression> AEK = Circle.threePoints(A, E, K);
+//		print("3");
+////		print(dealWith(AEK));
+////		Printer.reSet(Files.newOutputStream(
+////				new File("E:\\Temp\\result.txt").toPath(),
+////				StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.CREATE));
+////
+////		AEK = AEK.mapTo(ec::simplify, ec);
+////		String str = dealWith(AEK.substitute(I));
+////		StringBuilder sb = new StringBuilder(str.length());
+////		for(int i=0;i<str.length();i+= 100) {
+////			if(i + 100 >= str.length()) {
+////				sb.append(str.substring(i));
+////			}else {
+////				sb.append(str.substring(i, i+100));
+////			}
+////			sb.append(System.lineSeparator());
+////		}
+////		print(sb.toString());
+////		SimplificationStrategies.setCalRegularization(ec);
+//	}
+////	@Test
+//	public void m48() {
+//		inputExpression("2t^2,t^2,x");
+//		Expression a = es[0], b = es[1], x = es[2];
+//		// input some number
+//		SimplificationStrategies.setCalRegularization(ec);
+//		EllipseV<Expression> L = EllipseV.standardEquationSqrt(a, b, true, ec);
+//		// create ellipse x^2/(2t^2) + y^2/t^2 = 1
+//		Point<Expression> C, D, M, P;
+//		C = L.vertices().get(0);
+//		D = L.vertices().get(1);
+//		// get vertices C and D
+//		M = Point.valueOf(D.x, x, ec);
+//		// get point M
+//		Line<Expression> CM = Line.twoPoint(C, M);
+//		P = L.intersectPointAnother(C, CM);
+//		Expression product = M.getVector().innerProduct(P.getVector());
+//		assertTrue("OM*OP = 2t^2",ec.isEqual(a, product));
+//		Line<Expression> DP = Line.twoPoint(D, P), MQ = DP.perpendicular(M);
+//		// compute point Q
+//		assertThat(MQ.computeX(ec.getZero()), isZero(ec));
+//	}
+////	@Test
+//	public void m49() {
+//		inputExpression("a,b,A,B,C");
+//		HyperbolaV<Expression> H = HyperbolaV.standardEquation(es[0], es[1], true, ec);
+//		Line<Expression> l1 = H.asymptote().get(0),
+//				l2 = H.asymptote().get(1),
+//				l = Line.generalFormula(es[2], es[3], es[4], ec);
+//		Point<Expression> A,B,C,D;
+//		List<Point<Expression>> interPoints = H.intersectPoints(l);
+//		A = interPoints.get(0);
+//		B = interPoints.get(1);
+//		C = l.intersectPoint(l1);
+//		D = l.intersectPoint(l2);
+//		Expression d1_2 = A.distanceSq(C),
+//				d2_2 = B.distanceSq(D);
+//		Expression diff = ec.subtract(d1_2, d2_2);
+//		SimplificationStrategies.setCalRegularization(ec);
+//		diff = ec.simplify(diff);
+//		assertThat(diff, isZero(ec));
+//	}
+////	@Test
+//	public void m50() {
+//		inputExpression("-3,-4,7");
+//		Circle<Fraction> circle = Circle.generalFormula(-4L, -4L, 7L,mct).mapTo(Fraction::valueOf, mc);
+//		for(Line<Fraction> l:circle.tangentLines(a)) {
+//			print(l.simplify(Fraction.getFractionSimplifier()));
+//		}
+//	}
+//
 //	@Test
-	public void m48() {
-		inputExpression("2t^2,t^2,x");
-		Expression a = es[0], b = es[1], x = es[2];
-		// input some number
-		SimplificationStrategies.setCalRegularization(ec);
-		EllipseV<Expression> L = EllipseV.standardEquationSqrt(a, b, true, ec);
-		// create ellipse x^2/(2t^2) + y^2/t^2 = 1
-		Point<Expression> C, D, M, P;
-		C = L.vertices().get(0);
-		D = L.vertices().get(1);
-		// get vertices C and D
-		M = Point.valueOf(D.x, x, ec);
-		// get point M
-		Line<Expression> CM = Line.twoPoint(C, M);
-		P = L.intersectPointAnother(C, CM);
-		Expression product = M.getVector().innerProduct(P.getVector());
-		assertTrue("OM*OP = 2t^2",ec.isEqual(a, product));
-		Line<Expression> DP = Line.twoPoint(D, P), MQ = DP.perpendicular(M);
-		// compute point Q
-		assertThat(MQ.computeX(ec.getZero()), isZero(ec));
-	}
-//	@Test
-	public void m49() {
-		inputExpression("a,b,A,B,C");
-		HyperbolaV<Expression> H = HyperbolaV.standardEquation(es[0], es[1], true, ec);
-		Line<Expression> l1 = H.asymptote().get(0),
-				l2 = H.asymptote().get(1),
-				l = Line.generalFormula(es[2], es[3], es[4], ec);
-		Point<Expression> A,B,C,D;
-		List<Point<Expression>> interPoints = H.intersectPoints(l);
-		A = interPoints.get(0);
-		B = interPoints.get(1);
-		C = l.intersectPoint(l1);
-		D = l.intersectPoint(l2);
-		Expression d1_2 = A.distanceSq(C),
-				d2_2 = B.distanceSq(D);
-		Expression diff = ec.subtract(d1_2, d2_2);
-		SimplificationStrategies.setCalRegularization(ec);
-		diff = ec.simplify(diff);
-		assertThat(diff, isZero(ec));
-	}
-	@Test
-	public void m50() {
-		inputExpression("-3,-4,7");
-		Circle<Fraction> circle = Circle.generalFormula(-4L, -4L, 7L,mct).mapTo(Fraction::valueOf, mc);
-		for(Line<Fraction> l:circle.tangentLines(a)) {
-			print(l.simplify(Fraction.getFractionSimplifier()));
-		}
-	}
+//	public void m51(){
+//		inputExpression("a^2,b^2,k");
+//		EllipseV<Expression> ell = EllipseV.standardEquation(es[0],es[1],true,ec);
+//		SimplificationStrategies.setCalRegularization(ec);
+//		List<Point<Expression>> list = ell.vertices();
+//		Point<Expression> A = list.get(1),
+//				B = list.get(0),
+//				D = list.get(2);
+//		Line<Expression> BP = Line.pointSlope(B,es[2]);
+//		Point<Expression> P = ell.intersectPointAnother(B,BP);
+//		Line<Expression> DP = Line.twoPoint(D,P),
+//				AD = Line.twoPoint(A,D);
+//		Point<Expression> M = AD.intersectPoint(BP),
+//				N = DP.getInterceptPointX();
+//		Line<Expression> MN = Line.twoPoint(M,N);
+//		Expression result = ec.subtract(ec.multiplyLong(MN.slope(),2),BP.slope());
+//		print(result);
+//
+//	}
+//
+//	public void m52(){
+//		inputExpression("a^2,b^2,k");
+//		EllipseV<Expression> ell = EllipseV.standardEquation(es[0],es[1],true,ec);
+//	}
+
 }

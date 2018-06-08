@@ -3,9 +3,10 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
+import cn.timelives.java.math.numberModels.Multinomial;
+import cn.timelives.java.math.numberModels.MultinomialCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Term;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
 
@@ -31,7 +32,7 @@ import static cn.timelives.java.utilities.Printer.*;
  *
  */
 public abstract class Node {
-	private static final PolyCalculator POLY_CALCULATOR = PolyCalculator.DEFAULT_CALCULATOR;
+	private static final MultinomialCalculator POLY_CALCULATOR = Multinomial.getCalculator();
 	NodeWithChildren parent;
 	int simIdentifier;
 	/**
@@ -96,7 +97,7 @@ public abstract class Node {
 	 * @param n
 	 * @return
 	 */
-	public abstract boolean equalNode(Node n,PolyCalculator pc);
+	public abstract boolean equalNode(Node n,MultinomialCalculator pc);
 	
 	public abstract Type getType();
 	
@@ -129,7 +130,7 @@ public abstract class Node {
 	/*
 	 * @see java.lang.Object#toString()
 	 */
-	protected abstract void toString(StringBuilder sb,NumberFormatter<Polynomial> nf,boolean braketRecommended);
+	protected abstract void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended);
 	
 	/**
 	 * List this node and all it sub-nodes.
@@ -153,11 +154,11 @@ public abstract class Node {
 	 * @param b
 	 * @return
 	 */
-	public static boolean nodeEquals(Node a,Node b,PolyCalculator pc) {
+	public static boolean nodeEquals(Node a,Node b,MultinomialCalculator pc) {
 		 return (a == b) || (a != null && a.equalNode(b,pc));
 	}
 	
-	static boolean polyEquals(Polynomial a,Polynomial b,PolyCalculator pc) {
+	static boolean polyEquals(Multinomial a, Multinomial b, MultinomialCalculator pc) {
 		return (a == b) || (a != null && pc.isEqual(a, b));
 	}
 	/**
@@ -340,27 +341,27 @@ public abstract class Node {
 	}
 	
 	/**
-	 * A MulNode contains a Polynomial and several sub-nodes.
+	 * A MulNode contains a Multinomial and several sub-nodes.
 	 * @author liyicheng
 	 * 2017-11-24 17:39
 	 *
 	 */
 	public static abstract class CombinedNode extends ChildrenNode{
-		Polynomial p;
+		Multinomial p;
 		/**
 		 * @param parent
 		 */
-		CombinedNode(NodeWithChildren parent,Polynomial p,List<Node> children) {
+		CombinedNode(NodeWithChildren parent, Multinomial p, List<Node> children) {
 			super(parent,children,true);
 			this.p = p;
 		}
 		
 		
 		/**
-		 * Gets the Polynomial
-		 * @return the Polynomial
+		 * Gets the Multinomial
+		 * @return the Multinomial
 		 */
-		public Polynomial getPolynomial() {
+		public Multinomial getPolynomial() {
 			return p;
 		}
 		
@@ -368,7 +369,7 @@ public abstract class Node {
 		 * Sets the p.
 		 * @param p the p to set
 		 */
-		void setPolynomial(Polynomial p) {
+		void setPolynomial(Multinomial p) {
 			this.p = p;
 		}
 		
@@ -650,8 +651,8 @@ public abstract class Node {
 	 *
 	 */
 	public static final class Poly extends Node{
-		final Polynomial p;
-		Poly(NodeWithChildren parent,Polynomial p) {
+		final Multinomial p;
+		Poly(NodeWithChildren parent,Multinomial p) {
 			super(parent);
 			this.p = Objects.requireNonNull(p); 
 		}
@@ -659,7 +660,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,PolyCalculator pc) {
+		public boolean equalNode(Node n,MultinomialCalculator pc) {
 			if(!(n instanceof Poly)) {
 				return false;
 			}
@@ -675,10 +676,10 @@ public abstract class Node {
 		}
 		
 		/**
-		 * Gets the Polynomial.
-		 * @return the Polynomial
+		 * Gets the Multinomial.
+		 * @return the Multinomial
 		 */
-		public Polynomial getPolynomial() {
+		public Multinomial getPolynomial() {
 			return p;
 		}
 		
@@ -715,7 +716,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter)
 		 */
 		@Override
-		public void toString(StringBuilder sb, NumberFormatter<Polynomial> nf,boolean braketRecommended) {
+		public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
 			String str = nf.format(p, POLY_CALCULATOR);
 			if(str.length() == 1) {
 				braketRecommended = false;
@@ -741,7 +742,7 @@ public abstract class Node {
 		 * @param p
 		 * @param children
 		 */
-		Add(NodeWithChildren parent, Polynomial p, List<Node> children) {
+		Add(NodeWithChildren parent, Multinomial p, List<Node> children) {
 			super(parent, p, children);
 		}
 		
@@ -757,7 +758,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,PolyCalculator pc) {
+		public boolean equalNode(Node n,MultinomialCalculator pc) {
 			if(!(n instanceof Add)) {
 				return false;
 			}
@@ -783,12 +784,12 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter)
 		 */
 		@Override
-		public void toString(StringBuilder sb, NumberFormatter<Polynomial> nf,boolean braketRecommended) {
+		public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
 			if(braketRecommended) {
 				sb.append('(');
 			}
 			if(p != null) {
-//				if(p.equals(Polynomial.ZERO)) {
+//				if(p.equals(Multinomial.ZERO)) {
 //					//should be simplified by the tree to set the polynomial to null
 //				}
 				sb.append(nf.format(p, POLY_CALCULATOR));
@@ -810,7 +811,7 @@ public abstract class Node {
 		 * @param p
 		 * @param children
 		 */
-		Multiply(NodeWithChildren parent, Polynomial p, List<Node> children) {
+		Multiply(NodeWithChildren parent, Multinomial p, List<Node> children) {
 			super(parent, p, children);
 		}
 		
@@ -826,7 +827,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,PolyCalculator pc) {
+		public boolean equalNode(Node n,MultinomialCalculator pc) {
 			if(!(n instanceof Multiply)) {
 				return false;
 			}
@@ -851,15 +852,15 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
 		 */
 		@Override
-		public void toString(StringBuilder sb, NumberFormatter<Polynomial> nf, boolean braketRecommended) {
+		public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
 			if(braketRecommended) {
 				sb.append('(');
 			}
 			if(p != null) {
-				if(!p.equals(Polynomial.ONE)) {
+				if(!p.equals(Multinomial.ONE)) {
 					//should be simplified by the tree to set the polynomial to null
 				}
-				if (p.equals(Polynomial.NEGATIVE_ONE)) {
+				if (p.equals(Multinomial.NEGATIVE_ONE)) {
 					sb.append('-');
 				} else {
 					sb.append('(');
@@ -916,7 +917,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,PolyCalculator pc) {
+		public boolean equalNode(Node n,MultinomialCalculator pc) {
 			if(!(n instanceof SFunction)) {
 				return false;
 			}
@@ -949,7 +950,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
 		 */
 		@Override
-		protected void toString(StringBuilder sb, NumberFormatter<Polynomial> nf, boolean braketRecommended) {
+		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
 			sb.append(functionName).append('(');
 			child.toString(sb, nf, false);
 			sb.append(')');
@@ -983,7 +984,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,PolyCalculator pc) {
+		public boolean equalNode(Node n,MultinomialCalculator pc) {
 			if(!(n instanceof DFunction)) {
 				return false;
 			}
@@ -1019,7 +1020,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
 		 */
 		@Override
-		protected void toString(StringBuilder sb, NumberFormatter<Polynomial> nf, boolean braketRecommended) {
+		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
 			sb.append(functionName).append('(');
 			c1.toString(sb, nf, false);
 			sb.append(',');
@@ -1053,7 +1054,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,PolyCalculator pc) {
+		public boolean equalNode(Node n,MultinomialCalculator pc) {
 			if(!(n instanceof MFunction)) {
 				return false;
 			}
@@ -1082,7 +1083,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
 		 */
 		@Override
-		protected void toString(StringBuilder sb, NumberFormatter<Polynomial> nf, boolean braketRecommended) {
+		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
 			sb.append(functionName).append('(');
 			for(Node n : children) {
 				n.toString(sb, nf, false);
@@ -1106,7 +1107,6 @@ public abstract class Node {
 		 * @param parent
 		 * @param c1
 		 * @param c2
-		 * @param sortable
 		 */
 		Fraction(NodeWithChildren parent, Node c1, Node c2) {
 			super(parent, c1, c2, false);
@@ -1122,7 +1122,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,PolyCalculator pc) {
+		public boolean equalNode(Node n,MultinomialCalculator pc) {
 			if(!(n instanceof Fraction)) {
 				return false;
 			}
@@ -1148,7 +1148,7 @@ public abstract class Node {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
 		 */
 		@Override
-		protected void toString(StringBuilder sb, NumberFormatter<Polynomial> nf, boolean braketRecommended) {
+		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
 			if(braketRecommended) {
 				sb.append('(');
 			}
@@ -1161,7 +1161,7 @@ public abstract class Node {
 		}
 	}
 	
-	public static Poly newPolyNode(Polynomial p,NodeWithChildren parent) {
+	public static Poly newPolyNode(Multinomial p, NodeWithChildren parent) {
 		return new Poly(parent, p);
 	}
 	
@@ -1176,7 +1176,6 @@ public abstract class Node {
 	/**
 	 * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
 	 * @param isAdd
-	 * @param n
 	 * @return
 	 */
 	public static Node wrapCloneNodeAM(boolean isAdd, Node n1,Node n2) {
@@ -1197,7 +1196,7 @@ public abstract class Node {
 	/**
 	 * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
 	 * @param isAdd
-	 * @param n
+	 * @param ns
 	 * @return
 	 */
 	public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns) {
@@ -1216,7 +1215,7 @@ public abstract class Node {
 	/**
 	 * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
 	 * @param isAdd
-	 * @param n
+	 * @param ns
 	 * @return
 	 */
 	static Node wrapNodeAM(boolean isAdd, List<Node> ns) {
@@ -1235,10 +1234,10 @@ public abstract class Node {
 	/**
 	 * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
 	 * @param isAdd
-	 * @param n
+	 * @param ns
 	 * @return
 	 */
-	static CombinedNode wrapNodeAM(boolean isAdd, List<Node> ns,Polynomial p) {
+	static CombinedNode wrapNodeAM(boolean isAdd, List<Node> ns,Multinomial p) {
 		CombinedNode root;
 		if(isAdd) {
 			root = new Add(null, null, ns);
@@ -1256,7 +1255,8 @@ public abstract class Node {
 	 * Wraps the nodes' with either Add or Multiply. The newly created node has no parent node.
 	 * This method will try to clean the nodes original link to their parent node 
 	 * @param isAdd
-	 * @param n
+	 * @param n1
+	 * @param n2
 	 * @return
 	 */
 	static CombinedNode wrapNodeAM(boolean isAdd, Node n1,Node n2) {
@@ -1280,7 +1280,7 @@ public abstract class Node {
 	 * @param x
 	 * @return
 	 */
-	public static Multiply wrapCloneNodeMultiply(Node n,Polynomial x) {
+	public static Multiply wrapCloneNodeMultiply(Node n,Multinomial x) {
 		List<Node> list = new ArrayList<>(1);
 		Multiply nroot = new Multiply(null, x, list);
 		Node rt = n.cloneNode(nroot);
@@ -1296,7 +1296,7 @@ public abstract class Node {
 	 * @param x
 	 * @return
 	 */
-	static Multiply wrapNodeMultiply(Node n,Polynomial x) {
+	static Multiply wrapNodeMultiply(Node n,Multinomial x) {
 		n.removeFromParent();
 		List<Node> list = new ArrayList<>(1);
 		Multiply nroot = new Multiply(null, x, list);
@@ -1311,7 +1311,7 @@ public abstract class Node {
 	 * @param x
 	 * @return
 	 */
-	public static Add wrapCloneNodeAdd(Node n,Polynomial x) {
+	public static Add wrapCloneNodeAdd(Node n,Multinomial x) {
 		List<Node> list = new ArrayList<>(1);
 		Add nroot = new Add(null, x, list);
 		Node rt = n.cloneNode(nroot);
@@ -1364,7 +1364,7 @@ public abstract class Node {
 		return n.getType() == Type.POLYNOMIAL;
 	}
 	
-	public static boolean isPolynomial(Node n,Polynomial p,ExprCalculator ec) {
+	public static boolean isPolynomial(Node n, Multinomial p, ExprCalculator ec) {
 		if(n.getType() != Type.POLYNOMIAL) {
 			return false;
 		}
@@ -1376,8 +1376,8 @@ public abstract class Node {
 		return (Poly)n;
 	}
 	
-	public static Polynomial getPolynomialOrDefault(CombinedNode node,ExprCalculator ec) {
-		Polynomial p = node.p;
+	public static Multinomial getPolynomialOrDefault(CombinedNode node, ExprCalculator ec) {
+		Multinomial p = node.p;
 		if(p == null) {
 			return node.getType() == Type.ADD ? ec.pZero : ec.pOne;
 		}
@@ -1390,7 +1390,7 @@ public abstract class Node {
 	 * @param mc
 	 * @return
 	 */
-	public static Polynomial getPolynomialPart(Node node,ExprCalculator mc) {
+	public static Multinomial getPolynomialPart(Node node, ExprCalculator mc) {
 		if(node instanceof CombinedNode) {
 			CombinedNode cn = (CombinedNode) node;
 			return getPolynomialOrDefault(cn, mc);
@@ -1404,10 +1404,10 @@ public abstract class Node {
 	/**
 	 * Gets the polynomial part in the node, returns {@code null} if there is 
 	 * @param node
-	 * @param mc
+	 * @param p
 	 * @return
 	 */
-	static Node setPolynomialPart(Node node,Polynomial p) {
+	static Node setPolynomialPart(Node node,Multinomial p) {
 		if(node instanceof CombinedNode) {
 			CombinedNode cn = (CombinedNode) node;
 			cn.p = p;
@@ -1469,26 +1469,26 @@ public abstract class Node {
 		return root;
 	}
 	
-	public static Pair<Polynomial,Node> unwrapMultiply(Node node,ExprCalculator ec){
+	public static Pair<Multinomial,Node> unwrapMultiply(Node node, ExprCalculator ec){
 		if(node.getType() != Type.MULTIPLY) {
 			return null;
 		}
 		Multiply m = (Multiply) node;
 		if(m.getNumberOfChildren()==1) {
-			Polynomial p = m.p;
+			Multinomial p = m.p;
 			if(p==null) {
 				p = ec.pOne;
 			}
-			return new Pair<Polynomial, Node>(p, m.getChildren(0));
+			return new Pair<Multinomial, Node>(p, m.getChildren(0));
 		}
 		return null;
 	}
-	static Pair<Polynomial,List<Node>> unwrapMultiplyList(Node node,ExprCalculator ec){
+	static Pair<Multinomial,List<Node>> unwrapMultiplyList(Node node, ExprCalculator ec){
 		if(node.getType() != Type.MULTIPLY) {
 			return null;
 		}
 		Multiply m = (Multiply) node;
-		Polynomial p = m.p;
+		Multinomial p = m.p;
 		if (p == null) {
 			p = ec.pOne;
 		}
@@ -1506,7 +1506,7 @@ public abstract class Node {
 		if(df.c2.getType() != Type.POLYNOMIAL) {
 			return null;
 		}
-		BigInteger pow = Polynomial.asBigInteger(((Poly)df.c2).p);
+		BigInteger pow = Multinomial.asBigInteger(((Poly)df.c2).p);
 		if(pow==null) {
 			return null;
 		}
@@ -1520,7 +1520,7 @@ public abstract class Node {
 		}else if(pow.equals(BigInteger.ZERO)) {
 			return newPolyNode(ec.pOne, null);
 		}
-		Poly p = newPolyNode(ec.pc.valueOfBigInteger(pow), null);
+		Poly p = newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null);
 		DFunction sf = new DFunction(null, n, p, "exp", false);
 		p.parent = sf;
 		n.parent = sf;

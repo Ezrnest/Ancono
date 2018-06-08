@@ -4,7 +4,6 @@ package cn.timelives.java.math.planeAG;
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.linearAlgebra.DVector;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;
@@ -28,7 +27,7 @@ import java.util.function.Function;
  * {@link #twoPoint(Point, Point, MathCalculator)},<p>
  * {@link #twoPoint(Object, Object, Object, Object, MathCalculator)}
  * </ul><li>Point Direction:Create a line that passes through the point and has such a direction vector.<p> <ul>
- * {@link #pointDirection(Point, DVector, MathCalculator)},<p>
+ * {@link #pointDirection(Point, PVector)},<p>
  * {@link #pointDirection(Point, Object, Object, MathCalculator)},<p>
  * {@link #pointDirection(Object, Object, Object, Object, MathCalculator)}<p>
  * </ul><li>Point Slope:Create a line that passes through the point and has such a slope<p>
@@ -38,7 +37,7 @@ import java.util.function.Function;
  * </ul>
  * <li>Point Normal Vector:Create a line with the normal vector that passes through the point.<p>
  * <ul>
- *  {@link #pointNormal(Point, DVector, MathCalculator)},<p>
+ *  {@link #pointNormal(Point, PVector)},<p>
  *  {@link #pointNormal(Object, Object, Object, Object, MathCalculator)}
  * </ul>
  * <li>Two Intercept:Use intercept in x axis and y axis to create a line.<p>
@@ -426,7 +425,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	public T tensorSq(){
 		T sum = mc.add(mc.multiply(a, a), mc.multiply(b, b));
-		return mc.squareRoot(sum);
+		return sum;
 	}
 	
 	/**
@@ -495,15 +494,16 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Return the distance of this line to the point p.
 	 * @param p a point
-	 * @return |a*p.x+b*p.y+c|/��(a^2+b^2)
+	 * @return |a*p.x+b*p.y+c|/Sqrt(a^2+b^2)
 	 */
 	public T distance(Point<T> p){
 		return distance(p.x,p.y);
 	}
 	/**
 	 * Return the distance of this line to the point p.
-	 * @param p a point
-	 * @return |a*p.x+b*p.y+c|/��(a^2+b^2)
+	 * @param x x coordinate of the point
+	 * @param y y coordinate of the point
+	 * @return |a*p.x+b*p.y+c|/Sqrt(a^2+b^2)
 	 */
 	public T distance(T x,T y){
 		T sub = mc.abs(substitute(x, y));
@@ -625,6 +625,33 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		}
 		return mc.negate(mc.divide(c, b));
 	}
+
+	/**
+	 * Returns the intercept point in x axis:
+	 * <pre>(getInterceptX(),0)</pre>
+	 * @return
+	 */
+	public Point<T> getInterceptPointX(){
+		T t = getInterceptX();
+		if(t == null){
+			return null;
+		}
+		return Point.valueOf(t,mc.getZero(),mc);
+	}
+
+	/**
+	 * Returns the intercept point in y axis:
+	 * <pre>(0,getInterceptY())</pre>
+	 * @return
+	 */
+	public Point<T> getInterceptPointY(){
+		T t = getInterceptY();
+		if(t == null){
+			return null;
+		}
+		return Point.valueOf(mc.getZero(),t,mc);
+	}
+
 	/**
 	 * Compute the tan value of the intersect angle.The value will be in [0,+INF).
 	 * If these two line is perpendicular,{@code null} will be returned.
@@ -665,10 +692,35 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	public <N> N intersectAngle(Line<T> l,MathFunction<T,N> arctan){
 		return arctan.apply(intersectTan(l));
 	}
-	
+
+	/**
+	 * Returns the projection of the point to this line, which is the intersect point
+	 * of a perpendicular line that passes through {@code p} and {@code this}.
+	 * @param p a point
+	 * @return the projection of {@code p}
+	 */
+	public Point<T> projection(Point<T> p){
+		//( (B^2*x-ABy-AC)/(A^2+B^2) , (A^2*y-ABx-BC)/(A^2+B^2) )
+		T a2 = mc.multiply(a,a);
+		T b2 = mc.multiply(b,b);
+		T tensor = mc.add(a2,b2);
+		T ab = mc.multiply(a,b);
+		T corx = mc.subtract(mc.multiply(b2,p.x),
+					mc.add(mc.multiply(ab,p.y),
+							mc.multiply(a,c)));
+		T cory = mc.subtract(mc.multiply(a2,p.y),
+				mc.add(mc.multiply(ab,p.x),
+						mc.multiply(b,c)));
+		corx = mc.divide(corx,tensor);
+		cory = mc.divide(cory,tensor);
+		return Point.valueOf(corx,cory,mc);
+	}
+
+
+
 	@Override
 	public <N> Line<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
-		return new Line<N>(newCalculator,mapper.apply(a),mapper.apply(b),mapper.apply(c));
+		return new Line<>(newCalculator,mapper.apply(a),mapper.apply(b),mapper.apply(c));
 	}
 	
 	
@@ -878,7 +930,6 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @param p a point 
 	 * @param vx x coordinate of the vector
 	 * @param vy y coordinate of the vector
-	 * @param mc a math calculator
 	 * @return line {@code (x - p.x) / vx = (y - p.y) / vy}
 	 * @throws IllegalArgumentException if {@literal vx == vy == 0}
 	 */
@@ -1002,7 +1053,6 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * <p>The MathCalculator of the line will be taken from the first argument of FlexibleMathObject.
 	 * @param p the point
 	 * @param k the slope of this line
-	 * @param mc a math calculator
 	 * @return line {@literal k * (x - p.x) = y - p.y}
 	 */
 	public static <T> Line<T> pointSlope(Point<T> p,T k){
@@ -1131,7 +1181,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * 
 	 */
 	public static <T> Line<T> parallelY(T x0,MathCalculator<T> mc){
-		return new Line<T>(mc,mc.getOne(),mc.getZero(),x0);
+		return new Line<T>(mc,mc.getOne(),mc.getZero(),mc.negate(x0));
 	}
 	/**
 	 * Create a new line that is parallel to y axis and passes through point (y0,0).
@@ -1146,7 +1196,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * <b>This is provided for convenience.</b>
 	 */
 	public static <T> Line<T> parallelX(T y0,MathCalculator<T> mc){
-		return new Line<T>(mc,mc.getZero(),mc.getOne(),y0);
+		return new Line<T>(mc,mc.getZero(),mc.getOne(),mc.negate(y0));
 	}
 	/**
 	 * Return a new line of 
@@ -1176,7 +1226,6 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @param p a point 
 	 * @param v a 2-dimension vector,if the dimension of {@code v} is more than 2,than the remaining 
 	 * numbers will not be considered.
-	 * @param mc a math calculator
 	 * @return line {@code (x - p.x) / v.x = (y - p.y) / v.y}
 	 * @throws IllegalArgumentException if {@code |v| = 0}
 	 */

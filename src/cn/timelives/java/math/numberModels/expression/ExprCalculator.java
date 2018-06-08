@@ -4,11 +4,9 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.expression.Node.*;
+import cn.timelives.java.math.numberModels.expression.Node.Fraction;
 
 import java.util.*;
 import java.util.function.Function;
@@ -56,7 +54,7 @@ import static cn.timelives.java.utilities.Printer.print;
  * expression cannot be simplified. Therefore, a suitable level should be set
  * according to the task. The following is some basic levels:
  * <ul>
- * <li>level = 0 : Polynomial
+ * <li>level = 0 : Multinomial
  * <p>
  * In this level the calculator will try to
  * <li>level = 100 : Merge
@@ -72,31 +70,31 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	/**
 	 * The polynomial calculator of this calculator
 	 */
-	final PolyCalculator pc;
-	final Simplifier<Polynomial> ps;
+	final MultinomialCalculator pc;
+	final Simplifier<Multinomial> ps;
 	final Comparator<Node> nc;
 	final ExprFunctionHolder fs;
 	final SimStraHolder ss;
 	final Set<String> enabledTags;
 	final Map<String,String> properties;
 	// some constants here
-	final Polynomial pOne, pZero, pMinusOne;
+	final Multinomial pOne, pZero, pMinusOne;
 
 	final Expression zero, one;
 	
 	private int simplificationIdentifier;
 	
-	private static final PolyCalculator DEFAULT_CALCULATOR = PolyCalculator.DEFAULT_CALCULATOR;
+	private static final MultinomialCalculator DEFAULT_CALCULATOR = Multinomial.getCalculator();
 
 	private static final ExprFunctionHolder DEFAULT_FUNCTIONS = ExprFunctionHolder
-			.getDefaultKit(PolyCalculator.DEFAULT_CALCULATOR);
+			.getDefaultKit(Multinomial.getCalculator());
 
 
 	/**
 	 * 
 	 */
-	public ExprCalculator(PolyCalculator pc, Comparator<Node> nc, Simplifier<Polynomial> ps, ExprFunctionHolder holder,
-			SimStraHolder ss) {
+	public ExprCalculator(MultinomialCalculator pc, Comparator<Node> nc, Simplifier<Multinomial> ps, ExprFunctionHolder holder,
+                          SimStraHolder ss) {
 		this.pc = pc;
 		this.nc = nc;
 		this.ps = ps;
@@ -107,8 +105,8 @@ public class ExprCalculator implements MathCalculator<Expression> {
 		pOne = pc.getOne();
 		pZero = pc.getZero();
 		pMinusOne = pc.negate(pOne);
-		zero = Expression.fromPolynomial(pZero);
-		one = Expression.fromPolynomial(pOne);
+		zero = Expression.fromMultinomial(pZero);
+		one = Expression.fromMultinomial(pOne);
 		updateSimplificationIdentifier();
 	}
 
@@ -116,7 +114,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	 * 
 	 */
 	public ExprCalculator() {
-		this(DEFAULT_CALCULATOR, NodeComparator.DEFAULT, PolyCalculator.getSimplifier(), DEFAULT_FUNCTIONS,
+		this(DEFAULT_CALCULATOR, NodeComparator.DEFAULT, Multinomial.getSimplifier(), DEFAULT_FUNCTIONS,
 				SimStraHolder.getDefault());
 	}
 	
@@ -155,7 +153,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	 * 
 	 * @return the pc
 	 */
-	public PolyCalculator getPolyCalculator() {
+	public MultinomialCalculator getMultinomialCalculator() {
 		return pc;
 	}
 
@@ -164,7 +162,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	 * 
 	 * @return the ps
 	 */
-	public Simplifier<Polynomial> getPolynomialSimplifier() {
+	public Simplifier<Multinomial> getPolynomialSimplifier() {
 		return ps;
 	}
 
@@ -203,6 +201,12 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	public Set<String> getEnabledTags() {
 		return new HashSet<>(enabledTags);
 	}
+
+	@Override
+	public boolean isComparable() {
+		return false;
+	}
+
 
 	/**
 	 * @param o
@@ -290,8 +294,8 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	public Expression add(Expression para1, Expression para2) {
 		// special case for both polynomial:
 		if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
-			Polynomial p1 = toPolynomial(para1.root).p;
-			Polynomial p2 = toPolynomial(para2.root).p;
+			Multinomial p1 = toPolynomial(para1.root).p;
+			Multinomial p2 = toPolynomial(para2.root).p;
 			return new Expression(Node.newPolyNode(pc.add(p1, p2), null));
 		}
 		List<Node> list = new ArrayList<>(2);
@@ -336,8 +340,8 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	@Override
 	public Expression subtract(Expression para1, Expression para2) {
 		if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
-			Polynomial p1 = toPolynomial(para1.root).p;
-			Polynomial p2 = toPolynomial(para2.root).p;
+			Multinomial p1 = toPolynomial(para1.root).p;
+			Multinomial p2 = toPolynomial(para2.root).p;
 			return new Expression(Node.newPolyNode(pc.subtract(p1, p2), null));
 		}
 		// para1 + (-1)*para2
@@ -373,8 +377,8 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	public Expression multiply(Expression para1, Expression para2) {
 		// special case for both polynomial:
 		if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
-			Polynomial p1 = toPolynomial(para1.root).p;
-			Polynomial p2 = toPolynomial(para2.root).p;
+			Multinomial p1 = toPolynomial(para1.root).p;
+			Multinomial p2 = toPolynomial(para2.root).p;
 			return new Expression(Node.newPolyNode(pc.multiply(p1, p2), null));
 		}
 		Node root = Node.wrapCloneNodeAM(false, para1.root, para2.root);
@@ -422,10 +426,10 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	public Expression multiplyLong(Expression p, long l) {
 		// special case for both polynomial:
 		if (isPolynomial(p.root)) {
-			Polynomial p1 = toPolynomial(p.root).p;
+			Multinomial p1 = toPolynomial(p.root).p;
 			return new Expression(Node.newPolyNode(pc.multiplyLong(p1, l), null));
 		}
-		Node root = wrapCloneNodeMultiply(p.root, pc.valueOfLong(l));
+		Node root = wrapCloneNodeMultiply(p.root, Multinomial.valueOf(l));
 		root = simplify(root);
 		return new Expression(root);
 	}
@@ -437,10 +441,10 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	@Override
 	public Expression divideLong(Expression p, long l) {
 		if (isPolynomial(p.root)) {
-			Polynomial p1 = toPolynomial(p.root).p;
+			Multinomial p1 = toPolynomial(p.root).p;
 			return new Expression(Node.newPolyNode(pc.divideLong(p1, l), null));
 		}
-		Node root = wrapCloneNodeMultiply(p.root, pc.valueOfRecipLong(l));
+		Node root = wrapCloneNodeMultiply(p.root, Multinomial.monomial(Term.valueOfRecip(l)));
 		root = simplify(root);
 		return new Expression(root);
 	}
@@ -461,7 +465,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	 */
 	@Override
 	public Expression nroot(Expression x, long n) {
-		Node root = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(pc.valueOfRecipLong(n), null));
+		Node root = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(Multinomial.monomial(Term.valueOfRecip(n)), null));
 		root = simplify(root);
 		return new Expression(root);
 	}
@@ -472,7 +476,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	 */
 	@Override
 	public Expression pow(Expression p, long exp) {
-		Node root = wrapNodeDF("exp", p.root.cloneNode(null), newPolyNode(pc.valueOfLong(exp), null));
+		Node root = wrapNodeDF("exp", p.root.cloneNode(null), newPolyNode(Multinomial.valueOf(exp), null));
 		root = simplify(root);
 		return new Expression(root);
 	}
@@ -485,8 +489,8 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	@Override
 	public Expression constantValue(String name) {
 		try {
-			Polynomial p = pc.constantValue(name);
-			return Expression.fromPolynomial(p);
+			Multinomial p = pc.constantValue(name);
+			return Expression.fromMultinomial(p);
 		}catch(UnsupportedCalculationException uce) {
 			throw uce;
 		}
@@ -608,7 +612,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	/**
 	 * Performs simplify to the Expression
 	 * 
-	 * @param expr
+	 * @param root
 	 * @return
 	 */
 	Node simplify(Node root) {
@@ -659,7 +663,8 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	/**
 	 * Try to merge polynomials in the expression as well as possible. For example,
 	 * 
-	 * @param x
+	 * @param node
+	 * @param depth
 	 * @return
 	 */
 	Node simplifyPolynomial(Node node, int depth) {
@@ -705,7 +710,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	Node polySimplifyAdd(Add node, int depth) {
-		Polynomial p = node.p;
+		Multinomial p = node.p;
 		if (p == null) {
 			p = pc.getZero();
 		}
@@ -739,7 +744,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	Node polySimplifyMultiply(Multiply node, int depth) {
-		Polynomial p = node.p;
+		Multinomial p = node.p;
 		if (p == null) {
 			p = pc.getOne();
 		}
@@ -787,19 +792,19 @@ public class ExprCalculator implements MathCalculator<Expression> {
 			if (deno.getType() == Type.POLYNOMIAL) {
 				Poly pdeno = (Poly) deno;
 				try {
-					Polynomial quotient = pc.divide(pnume.p, pdeno.p);
+					Multinomial quotient = pc.divide(pnume.p, pdeno.p);
 					return Node.newPolyNode(quotient, node.parent);
 				} catch (UnsupportedCalculationException ex) {
 					// cannot compute
 				}
-				List<Polynomial> list = ps.simplify(Arrays.asList(pnume.p, pdeno.p));
+				List<Multinomial> list = ps.simplify(Arrays.asList(pnume.p, pdeno.p));
 				nume = Node.newPolyNode(list.get(0), node);
 				deno = Node.newPolyNode(list.get(1), node);
 			}
 		} else if (deno.getType() == Type.POLYNOMIAL) {
 			Poly pdeno = (Poly) deno;
 			try {
-				Polynomial _p = pc.reciprocal(pdeno.p);
+				Multinomial _p = pc.reciprocal(pdeno.p);
 				nume.parent = null;
 				if (pc.isEqual(pOne, _p)) {
 					nume.parent = node.parent;
@@ -823,7 +828,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 		Node c = depth > 0 ? simplifyPolynomial(node.child, depth - 1) : node.child;
 		if (c.getType() == Type.POLYNOMIAL) {
 			Poly p = (Poly) c;
-			Polynomial result = fs.computeSingle(node.functionName, p.p);
+			Multinomial result = fs.computeSingle(node.functionName, p.p);
 			if (result != null) {
 				return Node.newPolyNode(result, node.parent);
 			}
@@ -838,7 +843,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 		if (c1.getType() == Type.POLYNOMIAL && c2.getType() == Type.POLYNOMIAL) {
 			Poly p1 = (Poly) c1;
 			Poly p2 = (Poly) c2;
-			Polynomial result = fs.computeDouble(node.functionName, p1.p, p2.p);
+			Multinomial result = fs.computeDouble(node.functionName, p1.p, p2.p);
 			if (result != null) {
 				return Node.newPolyNode(result, node.parent);
 			}
@@ -862,12 +867,12 @@ public class ExprCalculator implements MathCalculator<Expression> {
 			}
 		}
 		if (allPoly) {
-			Polynomial[] ps = new Polynomial[children.size()];
+			Multinomial[] ps = new Multinomial[children.size()];
 			int i = 0;
 			for (Node n : children) {
 				ps[i++] = ((Poly) n).p;
 			}
-			Polynomial result = fs.computeMultiple(node.functionName, ps);
+			Multinomial result = fs.computeMultiple(node.functionName, ps);
 			if (result != null) {
 				return Node.newPolyNode(result, node.parent);
 			}
@@ -993,12 +998,12 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 	
 	
-	public Expression substitute(Expression expr,String sub,Polynomial val) {
+	public Expression substitute(Expression expr,String sub,Multinomial val) {
 		Node root = expr.root.cloneNode(null);
 		root = recurApply(root, x -> {
-			Polynomial p = Node.getPolynomialPart(x, this);
+			Multinomial p = Node.getPolynomialPart(x, this);
 			if(p!=null) {
-				p = pc.replace(sub, Node.getPolynomialPart(x, this), val);
+				p = Node.getPolynomialPart(x, this).replace(sub,val);
 				Node n = Node.setPolynomialPart(x, p);
 				if(n.parent == null) {
 					n.getClass();

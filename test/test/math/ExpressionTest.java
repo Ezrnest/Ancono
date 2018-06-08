@@ -5,7 +5,7 @@ package test.math;
 
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.expression.ExprCalculator;
 import cn.timelives.java.math.numberModels.expression.Expression;
 import cn.timelives.java.math.numberModels.expression.SimplificationStrategies;
@@ -23,11 +23,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExpressionTest {
 	ExprCalculator mc = new ExprCalculator();
-	Expression cos = mc.cos(Expression.fromPolynomial(Polynomial.valueOf("x"))),
-			sin = mc.sin(Expression.fromPolynomial(Polynomial.valueOf("x")));
-	Expression a = Expression.fromPolynomial(Polynomial.valueOf("a")),
-			b = Expression.fromPolynomial(Polynomial.valueOf("b")),
-			c = Expression.fromPolynomial(Polynomial.valueOf("c")),
+	Expression cos = mc.cos(Expression.fromMultinomial(Multinomial.valueOf("x"))),
+			sin = mc.sin(Expression.fromMultinomial(Multinomial.valueOf("x")));
+	Expression a = Expression.fromMultinomial(Multinomial.valueOf("a")),
+			b = Expression.fromMultinomial(Multinomial.valueOf("b")),
+			c = Expression.fromMultinomial(Multinomial.valueOf("c")),
 			x,y,z,w,
 			sum = mc.add(a, b);
 	/**
@@ -42,9 +42,9 @@ public class ExpressionTest {
 	}
 //	@Test
 	public void testFractionSimplify1() {
-		Expression x = Expression.fromPolynomial(Polynomial.valueOf("a+b")),
-				y = Expression.fromPolynomial(Polynomial.valueOf("a")),
-				z = Expression.fromPolynomial(Polynomial.valueOf("b"));
+		Expression x = Expression.fromMultinomial(Multinomial.valueOf("a+b")),
+				y = Expression.fromMultinomial(Multinomial.valueOf("a")),
+				z = Expression.fromMultinomial(Multinomial.valueOf("b"));
 		y = mc.multiply(sin, y);
 		z = mc.multiply(sin, z);
 		y = mc.divide(y, x);

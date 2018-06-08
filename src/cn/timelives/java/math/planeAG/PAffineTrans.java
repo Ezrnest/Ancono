@@ -4,6 +4,7 @@
 package cn.timelives.java.math.planeAG;
 
 import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.Invertible;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -24,7 +25,7 @@ import java.util.function.Function;
  * @author liyicheng
  *
  */
-public final class PAffineTrans<T> extends FieldMathObject<T> implements PointTrans<T> {
+public final class PAffineTrans<T> extends FieldMathObject<T> implements PointTrans<T>,Invertible<PAffineTrans<T>> {
 	/*
 	 * Describes the transformation matrix as:
 	 * a1 b1
@@ -148,6 +149,17 @@ public final class PAffineTrans<T> extends FieldMathObject<T> implements PointTr
 			inversed.inversed = this;
 		}
 		return inversed;
+	}
+
+	/**
+	 * Determines whether this transformation is invertible.
+	 * @return
+	 */
+	public boolean isInvertible(){
+		if(inversed!=null){
+			return true;
+		}
+		return !mc.isZero(mat.calDet());
 	}
 
 	/* (non-Javadoc)

@@ -54,6 +54,22 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	}
 
 	/**
+	 * Determines whether this fraction is an integer.
+	 * @return
+	 */
+	public boolean isInteger(){
+		return denominator == 1L;
+	}
+
+	public boolean isNegative(){
+		return signum<0;
+	}
+	public boolean isPositive(){
+		return signum>0;
+	}
+
+	public boolean isZero(){return signum==0;}
+	/**
 	 * The sign number of this fraction,1 for positive,
 	 * 0 for and only for zero,and -1 for negative.
 	 */
@@ -166,7 +182,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		}
 		
 		
-		//to prevent potential overflow,simplify num and den
+		//to prevent potential overflow, simplify num and den
 		long[] nAn = gcdNumAndDen(numerator,num);
 		long nDen = nAn[1] * denominator;
 		//new numerator
@@ -287,7 +303,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		}else{
 			signum = 1;
 		}
-		long den = this.denominator * frac.denominator;
+		long den = MathUtils.lcm(denominator,frac.denominator);
 		long[] nAd = gcdNumAndDen(num, den);
 		return new Fraction(nAd[0],nAd[1],signum);
 	}
@@ -431,6 +447,48 @@ public class Fraction extends Number implements Comparable<Fraction>{
 				denominator*denominator,1);
 	}
 	/**
+	 * Returns a {@code Fraction} whose value is the integer part
+	 * of the quotient {@code (this / divisor)} rounded down.
+	 *
+	 * @param  divisor value by which this {@code Fraction} is to be divided.
+	 * @return The integer part of {@code this / divisor}.
+	 * @throws ArithmeticException if {@code divisor==0}
+	 */
+	public Fraction divideToIntegralValue(Fraction divisor){
+		if(signum==0){
+			return ZERO;
+		}
+		Fraction re = this.divide(divisor);
+		return Fraction.valueOf(re.longValue());
+
+	}
+
+	public Fraction[] divideAndRemainder(Fraction divisor){
+		Fraction[] result = new Fraction[2];
+
+		result[0] = this.divideToIntegralValue(divisor);
+		result[1] = this.minus(result[0].multiply(divisor));
+		return result;
+	}
+
+	/**
+	 * Returns a {@code Fraction} whose value is {@code (this % divisor)}.
+	 *
+	 * <p>The remainder is given by
+	 * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}.
+	 * Note that this is <em>not</em> the modulo operation (the result can be
+	 * negative).
+	 *
+	 * @param  divisor value by which this {@code Fraction} is to be divided.
+	 * @return {@code this % divisor}.
+	 * @throws ArithmeticException if {@code divisor==0}
+	 */
+	public Fraction remainder(Fraction divisor) {
+		Fraction divrem[] = this.divideAndRemainder(divisor);
+		return divrem[1];
+	}
+
+	/**
 	 * Return the String expression of this fraction.
 	 */
 	@Override
@@ -448,6 +506,29 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		sb.append(numerator).append('/').append(denominator);
 		return sb.toString();
 	}
+
+	/**
+	 * Returns a String representation of this fraction, adds brackets if this
+	 * fraction is not an integer. This method can be used to eliminate confusion
+	 * when this fraction is a part of an expression.
+	 * @return a string
+	 */
+	public String toStringWithBracket(){
+		if(signum==0){
+			return "0";
+		}
+		if(isInteger()){
+			return signum < 0 ? "-"+Long.toString(numerator)
+					:  Long.toString(numerator);
+		}
+		StringBuilder sb = new StringBuilder('(');
+		if(signum<0)
+			sb.append('-');
+		sb.append(numerator).append('/').append(denominator);
+		sb.append(')');
+		return sb.toString();
+	}
+
 	@Override
 	public int hashCode() {
 		long hash = signum * denominator;
@@ -557,7 +638,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	/**
 	 * Returns the best approximate fraction of the double number. The numerator and 
 	 * the denominator of the fraction are both smaller than {@code bound}.
-	 * @param d a number
+	 * @param x a number
 	 * @param bound the bound of the fraction, must be at least one.
 	 * @return
 	 */
@@ -625,7 +706,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	/**
 	 * Return a fraction representing the value of the given expression.The text given should be like :
 	 * {@code "[\\+\\-]?\\d+(\\/\\d+)?"} as regular expression
-	 * @param exp
+	 * @param expr the expression
 	 * @return
 	 */
 	public static Fraction valueOf(String expr){
@@ -641,7 +722,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 				return valueOf(l1);
 			}
 		}
-		throw new IllegalArgumentException("Illegal Fraction:"+expr);
+		throw new NumberFormatException("Illegal Fraction:"+expr);
 		
 	}
 	
@@ -709,6 +790,11 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		@Override
 		public int compare(Fraction para1, Fraction para2) {
 			return para1.compareTo(para2);
+		}
+
+		@Override
+		public boolean isComparable() {
+			return true;
 		}
 
 		@Override

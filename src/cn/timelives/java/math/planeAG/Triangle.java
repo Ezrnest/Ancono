@@ -1,7 +1,9 @@
 package cn.timelives.java.math.planeAG;
 
 import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
@@ -41,7 +43,7 @@ public final class Triangle<T> extends FieldMathObject<T> {
 	 */
 	private final Point<T> A,B,C;
 	/**
-	 * The three side's line,temperate storages.
+	 * The three side's line,temperate storage.
 	 */
 	private Line<T> a,b,c;
 	
@@ -417,7 +419,37 @@ public final class Triangle<T> extends FieldMathObject<T> {
 	void assignLenC(T len){
 		lenC = len;
 	}
-	
+
+
+	/**
+	 * Determines whether the given point is inside or on the edge of this triangle.
+	 * @param p
+	 * @return
+	 */
+	public boolean contains(Point<T> p){
+		PVector<T> v = A.directVector(p);
+		PVector<T> AB = A.directVector(B),
+				AC = A.directVector(C);
+		PVector<T> xy = v.reduce(AB,AC);
+		T zero = mc.getZero(),one = mc.getOne();
+		return MathUtils.oppositeSide(zero,one,xy.x,mc) && Calculators.between(zero,one,xy.y,mc);
+	}
+
+
+	/**
+	 * Transforms this triangle, the transformation must be invertible.
+	 * @param trans
+	 * @return
+	 */
+	public Triangle<T> transform(PAffineTrans<T> trans){
+		if(!trans.isInvertible()){
+			throw new IllegalArgumentException("Trans isn't invertible.");
+		}
+		Point<T> nA = trans.apply(A),
+				nB = trans.apply(B),
+				nC = trans.apply(C);
+		return new Triangle<>(mc,nA,nB,nC);
+	}
 
 	@Override
 	public <N> Triangle<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -548,7 +580,6 @@ public final class Triangle<T> extends FieldMathObject<T> {
 	/**
 	 * Returns a triangle using the calculator {@code mc} and its vertexes are  
 	 * the given points.The math calculator will be reset to the given calculator {@code mc}.
-	 * @param mc
 	 * @param A vertex <i>A</i>
 	 * @param B vertex <i>B</i>
 	 * @param C vertex <i>C</i>

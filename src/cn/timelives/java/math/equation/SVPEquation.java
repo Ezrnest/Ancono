@@ -1,6 +1,7 @@
 package cn.timelives.java.math.equation;
 
 import cn.timelives.java.math.*;
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -22,7 +23,7 @@ import java.util.function.Function;
  * @param <T>
  */
 public abstract class SVPEquation<T> extends SVEquation<T> 
-implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
+implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 	protected final int mp;
 	protected SVPEquation(MathCalculator<T> mc,int mp) {
 		super(mc);
@@ -75,7 +76,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 			return true;
 		}
 		SVPEquation<T> sv = (SVPEquation<T>) obj;
-		return Multinomial.isEqual(this,sv, mc::isEqual);
+		return Polynomial.isEqual(this,sv, mc::isEqual);
 	}
 	
 	@Override
@@ -87,7 +88,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 			return true;
 		}
 		SVPEquation<N> sv = (SVPEquation<N>) obj;
-		return Multinomial.isEqual(this,sv,Utils.mappedIsEqual(mc, mapper));
+		return Polynomial.isEqual(this,sv,Utils.mappedIsEqual(mc, mapper));
 	}
 	
 	/* (non-Javadoc)
@@ -95,7 +96,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		StringBuilder sb = new StringBuilder(Multinomial.stringOf(this, mc, nf));
+		StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, mc, nf));
 		sb.append(" = 0");
 		return sb.toString();
 		
@@ -113,7 +114,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 			return false;
 		}
 		SVPEquation<?> sv = (SVPEquation<?>)obj;
-		return Multinomial.isEqual(this, sv);
+		return Polynomial.isEqual(this, sv);
 	}
 	
 	/*
@@ -121,7 +122,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 */
 	@Override
 	public int hashCode() {
-		return op.hashCode()*31 + Multinomial.hashCodeOf(this);
+		return op.hashCode()*31 + Polynomial.hashCodeOf(this);
 	}
 	
 	/*
@@ -310,11 +311,11 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	
 	/**
 	 * Returns an equation from a multinomial.
-	 * @param m a {@link Multinomial}
+	 * @param m a {@link Polynomial}
 	 * @param mc a {@link MathCalculator}
 	 * @return a {@link SVPEquation}
 	 */
-	public static <T> SVPEquation<T> fromMultinomial(Multinomial<T> m,MathCalculator<T> mc){
+	public static <T> SVPEquation<T> fromMultinomial(Polynomial<T> m, MathCalculator<T> mc){
 		if(m instanceof SVPEquation) {
 			return (SVPEquation<T>)m;
 		}
@@ -328,12 +329,11 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	}
 	/**
 	 * Returns an equation from a multinomial which is also a {@link MathCalculatorHolder}.
-	 * @param m a {@link Multinomial}
-	 * @param mc a {@link MathCalculator}
+	 * @param m a {@link Polynomial}
 	 * @return a {@link SVPEquation}
 	 * @throws ClassCastException if {@code !(m instanceof MathCalculatorHolder)};
 	 */
-	public static <T> SVPEquation<T> fromMultinomial(Multinomial<T> m){
+	public static <T> SVPEquation<T> fromMultinomial(Polynomial<T> m){
 		@SuppressWarnings("unchecked")
 		MathCalculatorHolder<T> holder = (MathCalculatorHolder<T>)m;
 		return fromMultinomial(m, holder.getMathCalculator());
@@ -404,7 +404,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 	/**
 	 * Returns an equation that 
 	 * <pre>(x-d)^2 = 0</pre>
-	 * @param a an coefficient
+	 * @param d an coefficient
 	 * @param mc a {@link MathCalculator}
 	 * @return an equation
 	 */
@@ -414,7 +414,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		T c = mc.multiply(d, d);
 		T delta = mc.getZero();
 		int t = QEquation.ONE_IN_R;
-		return new QEquation<T>(mc, a, b, c, d, d, delta, t);
+		return new QEquation<>(mc, a, b, c, d, d, delta, t);
 	}
 	
 	/**
@@ -516,7 +516,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 		/**
 		 * Returns the number of roots in the real number field according to 
-		 * the delta vlaue.
+		 * the delta value.
 		 * @return the number or roots.
 		 */
 		public int getNumberOfRoots(){
@@ -544,7 +544,11 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 		 */
 		public List<T> solveR(){
 			if(d == UNKNOWN){
-				getNumberOfRoots();
+				try {
+					getNumberOfRoots();
+				}catch(UnsupportedCalculationException uoe){
+					return solve();
+				}
 			}
 			if(d == NONE_IN_R){
 				return Collections.emptyList();
@@ -558,17 +562,7 @@ implements Multinomial<T>,Simplifiable<T, SVPEquation<T>>{
 				list.add(x1);
 				return list;
 			}else{
-				if(x1==null){
-					//solve it.
-					T delta = mc.squareRoot(delta());
-					T a2 = mc.multiplyLong(a, 2);
-					x1 = mc.divide(mc.subtract(delta, b), a2);
-					x2 = mc.negate(mc.divide(mc.add(b, delta), a2));
-				}
-				List<T> so = new ArrayList<>(2);
-				so.add(x1);
-				so.add(x2);
-				return so;
+                return solve();
 			}
 		}
 		/**

@@ -496,9 +496,8 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	/**
 	 * Performs a translation operation,(moves the conic section toward).
 	 * If point A(x,y) is on this conic section, after this operation, 
-	 * point A'(x+v.x,y+v.y) will be on this conic section. 
-	 * @param d
-	 * @param doX
+	 * point A'(x+v.x,y+v.y) will be on this conic section.
+	 * @param v
 	 * @return
 	 */
 	public ConicSection<T> translate(PVector<T> v){
@@ -689,11 +688,11 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		return sb.toString();
 	}
 //	public static void main(String[] args) {
-//		Polynomial p = new Polynomial(FormulaCalculator.getCalculator(),
+//		PolynomialOld p = new PolynomialOld(FormulaCalculator.getCalculator(),
 //				"Ax^2+Bxy+Cy^2+Dx+Ey+F");
 //		PolyCalculator pc = PolyCalculator.DEFALUT_CALCULATOR;
-//		p = pc.replace("x", p, Polynomial.valueOf("x-a"));
-//		p = pc.replace("y", p, Polynomial.valueOf("y-b"));
+//		p = pc.replace("x", p, PolynomialOld.valueOf("x-a"));
+//		p = pc.replace("y", p, PolynomialOld.valueOf("y-b"));
 //		print(p);
 //		//x^2
 //		BigDecimal TWO = BigDecimal.valueOf(2l),

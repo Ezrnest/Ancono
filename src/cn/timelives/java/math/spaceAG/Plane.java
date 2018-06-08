@@ -29,7 +29,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	 * The relation between two planes or a plane or a line.
 	 * @author lyc
 	 */
-	public static enum Relation{
+	public enum Relation{
 		/**
 		 * Parallel
 		 */

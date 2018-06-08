@@ -4,7 +4,7 @@
 package test.math.numberModels;
 
 import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.PolynomialOld;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -14,20 +14,20 @@ import static org.junit.Assert.assertTrue;
  * 2017-12-03 11:46
  *
  */
-public final class PolynomialTest {
+public final class PolynomialOldTest {
 
 	/**
 	 * 
 	 */
-	public PolynomialTest() {
+	public PolynomialOldTest() {
 	}
 
 	private final PolyCalculator pc = PolyCalculator.DEFAULT_CALCULATOR;
-	Polynomial x,y,z,a,b,c;
+	PolynomialOld x,y,z,a,b,c;
 	@Test
 	public void test1() {
-		Polynomial p1 = Polynomial.valueOf("a+b+c"),
-				p2 = Polynomial.valueOf("a+b+c");
+		PolynomialOld p1 = PolynomialOld.valueOf("a+b+c"),
+				p2 = PolynomialOld.valueOf("a+b+c");
 		x = pc.add(p1, p2);
 		y = pc.multiply(p1, p2);
 		z = pc.divideLong(pc.multiply(x, x), 4L);

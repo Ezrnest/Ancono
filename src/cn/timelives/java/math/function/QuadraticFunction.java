@@ -86,8 +86,8 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 		return c;
 	}
 	/**
-	 * Returns the tangent line of passes the point.
-	 * @param p a point, must be on this function
+	 * Returns the tangent line of passes the point (x,f(x))
+	 * @param x x coordinate of the point
 	 * @return
 	 */
 	public Line<T> tangentLine(T x){

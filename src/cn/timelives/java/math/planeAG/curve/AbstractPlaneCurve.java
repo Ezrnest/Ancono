@@ -17,7 +17,6 @@ import java.util.function.Function;
  * @author liyicheng
  *
  * @param <T>
- * @param <S>
  */
 public abstract class AbstractPlaneCurve<T> extends FieldMathObject<T> implements PlanePointSet<T>{
 

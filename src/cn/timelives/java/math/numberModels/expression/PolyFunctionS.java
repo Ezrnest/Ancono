@@ -4,7 +4,7 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Multinomial;
 
 import java.util.function.UnaryOperator;
 
@@ -14,12 +14,12 @@ import java.util.function.UnaryOperator;
  * 2017-11-25 19:08
  *
  */
-public interface PolyFunctionS extends UnaryOperator<Polynomial>{
+public interface PolyFunctionS extends UnaryOperator<Multinomial>{
 	/**
 	 * Returns the result of applying the function, or throws UnsupportedCalculationException if the result cannot be 
-	 * returned as a Polynomial. 
-	 * @param p a Polynomial
+	 * returned as a Multinomial.
+	 * @param p a Multinomial
 	 * @return the result of applying the function
 	 */
-	public Polynomial apply(Polynomial p) throws UnsupportedCalculationException;
+	public Multinomial apply(Multinomial p) throws UnsupportedCalculationException;
 }

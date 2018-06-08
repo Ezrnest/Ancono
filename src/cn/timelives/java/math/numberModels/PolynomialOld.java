@@ -21,7 +21,7 @@ import java.util.List;
  * @author lyc
  *
  */
-public class Polynomial implements Comparable<Polynomial> {
+public class PolynomialOld implements Comparable<PolynomialOld> {
 	/**
 	 * fs 是用于储存多项式内容的SortedAdditiveSet
 	 */
@@ -33,16 +33,16 @@ public class Polynomial implements Comparable<Polynomial> {
 	/**
 	 * Special constant values.
 	 */
-	public static final Polynomial ONE = new Polynomial(fc, Formula.ONE),
-			ZERO = new Polynomial(fc, Formula.ZERO),
-			NEGATIVE_ONE = new Polynomial(fc, Formula.ONE.negate());
+	public static final PolynomialOld ONE = new PolynomialOld(fc, Formula.ONE),
+			ZERO = new PolynomialOld(fc, Formula.ZERO),
+			NEGATIVE_ONE = new PolynomialOld(fc, Formula.ONE.negate());
 
 	/**
 	 * 要建立Polynomial对象，必须指定一个计算器对象
 	 * 
 	 * @param ma
 	 */
-	public Polynomial(MathAdder<Formula> ma, Formula[] fs) {
+	public PolynomialOld(MathAdder<Formula> ma, Formula[] fs) {
 		this.fs = new SortedAdditiveSet<Formula>(ma);
 		for (Formula f : fs) {
 			this.fs.add(f);
@@ -50,17 +50,17 @@ public class Polynomial implements Comparable<Polynomial> {
 		this.fs.add(Formula.ZERO);
 	}
 
-	public Polynomial(MathAdder<Formula> ma, Formula f) {
+	public PolynomialOld(MathAdder<Formula> ma, Formula f) {
 		this.fs = new SortedAdditiveSet<Formula>(ma);
 		this.fs.add(f);
 	}
 
-	public Polynomial(MathAdder<Formula> ma) {
+	public PolynomialOld(MathAdder<Formula> ma) {
 		this.fs = new SortedAdditiveSet<Formula>(ma);
 		this.fs.add(Formula.ZERO);
 	}
 
-	public Polynomial(MathAddableSet<Formula> fs) {
+	public PolynomialOld(MathAddableSet<Formula> fs) {
 		this.fs = new SortedAdditiveSet<Formula>(fs.getAdder());
 		for (Formula f : fs) {
 			this.fs.add(f);
@@ -74,7 +74,7 @@ public class Polynomial implements Comparable<Polynomial> {
 	 * @param ma
 	 * @param str
 	 */
-	public Polynomial(MathAdder<Formula> ma, String expression) {
+	public PolynomialOld(MathAdder<Formula> ma, String expression) {
 		this.fs = new SortedAdditiveSet<Formula>(ma);
 		if (expression.trim().isEmpty()) {
 			return;
@@ -99,7 +99,7 @@ public class Polynomial implements Comparable<Polynomial> {
 		this.fs.add(Formula.ZERO);
 	}
 
-	public Polynomial(MathAdder<Formula> ma, int value) {
+	public PolynomialOld(MathAdder<Formula> ma, int value) {
 		this(ma, Formula.valueOf(BigInteger.valueOf(value)));
 	}
 
@@ -150,11 +150,11 @@ public class Polynomial implements Comparable<Polynomial> {
 	}
 
 	@Override
-	public Polynomial clone() {
-		return new Polynomial(fs);
+	public PolynomialOld clone() {
+		return new PolynomialOld(fs);
 	}
 
-	public boolean equals(Polynomial p) {
+	public boolean equals(PolynomialOld p) {
 		return this.fs.equals(p.fs);
 	}
 
@@ -173,7 +173,7 @@ public class Polynomial implements Comparable<Polynomial> {
 	}
 
 	@Override
-	public int compareTo(Polynomial o) {
+	public int compareTo(PolynomialOld o) {
 		SortedAdditiveSet<Formula> sas1 = this.fs;
 		SortedAdditiveSet<Formula> sas2 = o.fs;
 		int re = sas1.size() - sas2.size();
@@ -197,34 +197,34 @@ public class Polynomial implements Comparable<Polynomial> {
 	/**
 	 * Calls this polynomial to regular its exponent, converting {@code 1.0} to {@code 1}.
 	 */
-	public Polynomial regularizeExponent() {
+	public PolynomialOld regularizeExponent() {
 		SortedAdditiveSet<Formula> set = new SortedAdditiveSet<>(fc);
 		for(Formula f : this.fs) {
 			set.add(f.regularizeExponent());
 		}
-		return new Polynomial(set);
+		return new PolynomialOld(set);
 	}
 
-	public static MathCalculator<Polynomial> getCalculator() {
+	public static MathCalculator<PolynomialOld> getCalculator() {
 		return PolyCalculator.DEFAULT_CALCULATOR;
 	}
 
 	/**
-	 * Creates a new Polynomial using the default formula calculator.
+	 * Creates a new PolynomialOld using the default formula calculator.
 	 * 
 	 * @param expr
 	 * @return
 	 */
-	public static Polynomial valueOf(String expr) {
-		return new Polynomial(fc, expr);
+	public static PolynomialOld valueOf(String expr) {
+		return new PolynomialOld(fc, expr);
 	}
 	
 	/**
-	 * Returns a formula if the {@link Polynomial} can be convert to a formula, or null
+	 * Returns a formula if the {@link PolynomialOld} can be convert to a formula, or null
 	 * @param p
 	 * @return
 	 */
-	public static Formula asSingleFormula(Polynomial p) {
+	public static Formula asSingleFormula(PolynomialOld p) {
 		if(p.getNumOfFormula() == 1) {
 			return p.getFormulas().getFirst();
 		}
@@ -232,16 +232,20 @@ public class Polynomial implements Comparable<Polynomial> {
 	}
 	
 	/**
-	 * Returns a big integer if the {@link Polynomial} can be convert to an integer, or null
+	 * Returns a big integer if the {@link PolynomialOld} can be convert to an integer, or null
 	 * @param p
 	 * @return
 	 */
-	public static BigInteger asBigInteger(Polynomial p) {
+	public static BigInteger asBigInteger(PolynomialOld p) {
 		Formula f = asSingleFormula(p);
 		if(f == null) {
 			return null;
 		}
 		BigInteger x = Formula.asInteger(f);
 		return x;
+	}
+
+	public static PolynomialOld fromFormula(Formula f){
+		return new PolynomialOld(FormulaCalculator.DEFAULT_FORMULA_CALCULATOR,f);
 	}
 }

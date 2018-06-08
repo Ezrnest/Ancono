@@ -350,7 +350,20 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 			return new GeneralConicSection<T>(mc,mc.getOne(),z,z,z,mc.multiplyLong(p, -2l),z);
 		}
 	}
-	
-	
-	
+
+	/**
+	 * Returns the conic section representing the quadratic function y = ax^2+bx+c
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @param mc
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> GeneralConicSection<T> quadraticFunction(T a, T b, T c, MathCalculator<T> mc){
+		T o = mc.getZero();
+		return new GeneralConicSection<>(mc,a,o,o,b,mc.negate(mc.getOne()),c);
+	}
+
+
 }

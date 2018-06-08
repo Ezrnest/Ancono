@@ -4,7 +4,7 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Multinomial;
 
 import java.util.function.Function;
 
@@ -13,13 +13,13 @@ import java.util.function.Function;
  * 2017-11-25 19:13
  *
  */
-public interface PolyFunctionM extends Function<Polynomial[],Polynomial>{
+public interface PolyFunctionM extends Function<Multinomial[],Multinomial>{
 	/**
 	 * Returns the result of applying the function, or throws UnsupportedCalculationException if the result cannot be 
-	 * returned as a Polynomial. 
-	 * @param ps an array of Polynomial as parameters.
+	 * returned as a Multinomial.
+	 * @param ps an array of Multinomial as parameters.
 	 * @return the result of applying the function
 	 */
 	@Override
-	Polynomial apply(Polynomial[] ps)throws UnsupportedCalculationException;
+    Multinomial apply(Multinomial[] ps)throws UnsupportedCalculationException;
 }

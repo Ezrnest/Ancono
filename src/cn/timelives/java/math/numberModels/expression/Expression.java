@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.utilities.Printer;
 
 import java.io.PrintWriter;
@@ -57,7 +57,12 @@ public final class Expression {
 		return root;
 	}
 
-	public static Expression fromPolynomial(Polynomial p) {
+	/**
+	 * Creates an expression from a multinomial.
+	 * @param p
+	 * @return
+	 */
+	public static Expression fromMultinomial(Multinomial p) {
 		return new Expression(Node.newPolyNode(p, null));
 	}
 

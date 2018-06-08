@@ -65,17 +65,17 @@ public class SpaceAGTest {
 	
 	public void test3(){
 		FormulaCalculator fc = FormulaCalculator.getCalculator();
-		// MathCalculator<Polynomial> mcp = Polynomial
-		Polynomial[] pos = new Polynomial[9];
-		pos[0] = new Polynomial(fc, Formula.valueOf("d[x1]"));
-		pos[1] = new Polynomial(fc, Formula.valueOf("d[x2]"));
-		pos[2] = new Polynomial(fc, Formula.valueOf("d[x3]"));
-		pos[3] = new Polynomial(fc, Formula.valueOf("d[y1]"));
-		pos[4] = new Polynomial(fc, Formula.valueOf("d[y2]"));
-		pos[5] = new Polynomial(fc, Formula.valueOf("d[y3]"));
-		pos[6] = new Polynomial(fc, Formula.valueOf("d[z1]"));
-		pos[7] = new Polynomial(fc, Formula.valueOf("d[z2]"));
-		pos[8] = new Polynomial(fc, Formula.valueOf("d[z3]"));
+		// MathCalculator<PolynomialOld> mcp = PolynomialOld
+		PolynomialOld[] pos = new PolynomialOld[9];
+		pos[0] = new PolynomialOld(fc, Formula.valueOf("d[x1]"));
+		pos[1] = new PolynomialOld(fc, Formula.valueOf("d[x2]"));
+		pos[2] = new PolynomialOld(fc, Formula.valueOf("d[x3]"));
+		pos[3] = new PolynomialOld(fc, Formula.valueOf("d[y1]"));
+		pos[4] = new PolynomialOld(fc, Formula.valueOf("d[y2]"));
+		pos[5] = new PolynomialOld(fc, Formula.valueOf("d[y3]"));
+		pos[6] = new PolynomialOld(fc, Formula.valueOf("d[z1]"));
+		pos[7] = new PolynomialOld(fc, Formula.valueOf("d[z2]"));
+		pos[8] = new PolynomialOld(fc, Formula.valueOf("d[z3]"));
 		FracPoly[] fps = new FracPoly[9];
 		for (int i = 0; i < 9; i++) {
 			fps[i] = FracPoly.valueOf(pos[i]);
@@ -140,20 +140,20 @@ public class SpaceAGTest {
 	public void proveCenterI(){
 		//failed ... 
 		FormulaCalculator fc = FormulaCalculator.getCalculator();
-		// MathCalculator<Polynomial> mcp = Polynomial
-		Polynomial[] pos = new Polynomial[12];
-		pos[0] = new Polynomial(fc, Formula.valueOf("d[x1]"));
-		pos[1] = new Polynomial(fc, Formula.valueOf("d[x2]"));
-		pos[2] = new Polynomial(fc, Formula.valueOf("d[x3]"));
-		pos[3] = new Polynomial(fc, Formula.valueOf("d[y1]"));
-		pos[4] = new Polynomial(fc, Formula.valueOf("d[y2]"));
-		pos[5] = new Polynomial(fc, Formula.valueOf("d[y3]"));
-		pos[6] = new Polynomial(fc, Formula.valueOf("d[z1]"));
-		pos[7] = new Polynomial(fc, Formula.valueOf("d[z2]"));
-		pos[8] = new Polynomial(fc, Formula.valueOf("d[z3]"));
-		pos[9] = new Polynomial(fc, Formula.valueOf("d[x4]"));
-		pos[10] = new Polynomial(fc, Formula.valueOf("d[y4]"));
-		pos[11] = new Polynomial(fc, Formula.valueOf("d[z4]"));
+		// MathCalculator<PolynomialOld> mcp = PolynomialOld
+		PolynomialOld[] pos = new PolynomialOld[12];
+		pos[0] = new PolynomialOld(fc, Formula.valueOf("d[x1]"));
+		pos[1] = new PolynomialOld(fc, Formula.valueOf("d[x2]"));
+		pos[2] = new PolynomialOld(fc, Formula.valueOf("d[x3]"));
+		pos[3] = new PolynomialOld(fc, Formula.valueOf("d[y1]"));
+		pos[4] = new PolynomialOld(fc, Formula.valueOf("d[y2]"));
+		pos[5] = new PolynomialOld(fc, Formula.valueOf("d[y3]"));
+		pos[6] = new PolynomialOld(fc, Formula.valueOf("d[z1]"));
+		pos[7] = new PolynomialOld(fc, Formula.valueOf("d[z2]"));
+		pos[8] = new PolynomialOld(fc, Formula.valueOf("d[z3]"));
+		pos[9] = new PolynomialOld(fc, Formula.valueOf("d[x4]"));
+		pos[10] = new PolynomialOld(fc, Formula.valueOf("d[y4]"));
+		pos[11] = new PolynomialOld(fc, Formula.valueOf("d[z4]"));
 		FracPoly[] fps = new FracPoly[pos.length];
 		for (int i = 0; i < fps.length; i++) {
 			fps[i] = FracPoly.valueOf(pos[i]);

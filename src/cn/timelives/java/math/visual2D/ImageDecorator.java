@@ -20,6 +20,6 @@ public interface ImageDecorator {
 	 * @param rect the rectangle in the actual coordinate system. 
 	 * @return
 	 */
-	public BufferedImage process(BufferedImage image,Graphics2D g,Rectangle2D.Double rect);
+	BufferedImage process(BufferedImage image,Graphics2D g,Rectangle2D.Double rect);
 	
 }

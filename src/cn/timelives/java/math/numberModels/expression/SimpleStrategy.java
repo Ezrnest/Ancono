@@ -3,8 +3,8 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Multinomial;
+import cn.timelives.java.math.numberModels.MultinomialCalculator;
 import cn.timelives.java.math.numberModels.expression.Node.*;
 
 import java.util.List;
@@ -62,7 +62,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param n
 	 * @param p
 	 */
-	protected final void setPolynomial(Node n,Polynomial p) {
+	protected final void setPolynomial(Node n,Multinomial p) {
 		Node.setPolynomialPart(n, p);
 	}
 	/**
@@ -87,7 +87,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param p a polynomial, or null.
 	 * @return a node, either of type Add or Multiply.
 	 */
-	protected final CombinedNode wrapNodeAM(boolean isAdd,List<Node> nodes,Polynomial p) {
+	protected final CombinedNode wrapNodeAM(boolean isAdd,List<Node> nodes,Multinomial p) {
 		return Node.wrapNodeAM(isAdd, nodes, p);
 	}
 	/**
@@ -138,7 +138,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 		return Node.wrapNodeMF(fname, nodes, sortable);
 	}
 	
-	protected final PolyCalculator getPolyCalculator(ExprCalculator mc) {
+	protected final MultinomialCalculator getMultiCalculator(ExprCalculator mc) {
 		return mc.pc;
 	}
 	

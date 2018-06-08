@@ -14,25 +14,13 @@ import static cn.timelives.java.math.numberModels.FormulaCalculator.DEFAULT_FORM
 
 ;
 /**
- * polyCalculator �����ڼ������ʽ�ļ�����
- * <p>�����У�
- * <ul>
- * <li>�Ӽ�
- * <li>��
- * <li>��
- * <li>�����γ˷�
- * <li>�����ο���
- * <li>���Ǽ���
- * <li>ָ��,��������
- * <li>......
- * </ul>
- * <p><b>ע�⣺</b>�������������������ԣ����ܸ�������ʽ�𰸣����׳��쳣
+ *
  * 
  * 
  * @author lyc
  *
  */
-public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
+public class PolyCalculator extends MathCalculatorAdapter<PolynomialOld>
 {
 	private FormulaCalculator ca;
 	
@@ -71,54 +59,54 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	private static void initValue(){
 //		try {
-//			PolyCalculator.class.getClassLoader().loadClass(Polynomial.class.getName());
+//			PolyCalculator.class.getClassLoader().loadClass(PolynomialOld.class.getName());
 //		} catch (ClassNotFoundException e1) {
 //			e1.printStackTrace();
 //		}
 		
-		SIN_VALUE.put(ofVal(0l,1l),Polynomial.ZERO);
+		SIN_VALUE.put(ofVal(0l,1l),PolynomialOld.ZERO);
 		// sin(0) = 0
-		SIN_VALUE.put(ofVal(1l,6l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,
+		SIN_VALUE.put(ofVal(1l,6l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,
 				Formula.asFraction(1,2,1)));
 		//sin(Pi/6) = 1 / 2
-		SIN_VALUE.put(ofVal(1l,4l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,
+		SIN_VALUE.put(ofVal(1l,4l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,
 				Formula.asFraction(1,2,2)));
 		//sin(Pi/4) =sqr(2)/2
-		SIN_VALUE.put(ofVal(1l,3l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,
+		SIN_VALUE.put(ofVal(1l,3l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,
 				Formula.asFraction(1,2,3)));
 		//sin(Pi/3) = sqr(3) / 2
-		SIN_VALUE.put(ofVal(1l,2l),Polynomial.ONE);
+		SIN_VALUE.put(ofVal(1l,2l),PolynomialOld.ONE);
 		//sin(Pi/2) = 1
 		
-		SIN_VALUE.put(ofVal(1l,12l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,"Sqr6/4-Sqr2/4"));
+		SIN_VALUE.put(ofVal(1l,12l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,"Sqr6/4-Sqr2/4"));
 		//sin(Pi/12) = sqr6/4-sqr2/4
 		
-		SIN_VALUE.put(ofVal(5l,12l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,"Sqr6/4+Sqr2/4"));
+		SIN_VALUE.put(ofVal(5l,12l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,"Sqr6/4+Sqr2/4"));
 		//sin(Pi/12) = sqr6/4-sqr2/4
 		
-		TAN_VALUE.put(ofVal(0l,1l),Polynomial.ZERO);
+		TAN_VALUE.put(ofVal(0l,1l),PolynomialOld.ZERO);
 		// tan(0) = 0
-		TAN_VALUE.put(ofVal(1l,6l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,
+		TAN_VALUE.put(ofVal(1l,6l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,
 				Formula.asFraction(1,3,3)));
 		//tan(Pi/6) = Sqr(3)/3
-		TAN_VALUE.put(ofVal(1l,4l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,Formula.ONE));
+		TAN_VALUE.put(ofVal(1l,4l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,Formula.ONE));
 		//tan(Pi/4) = 1
-		TAN_VALUE.put(ofVal(1l,3l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,
+		TAN_VALUE.put(ofVal(1l,3l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,
 				Formula.asFraction(1,1,3)));
 		//tan(Pi/3) = Sqr(3)
 		
-		TAN_VALUE.put(ofVal(1l,12l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,"2-Sqr3"));
+		TAN_VALUE.put(ofVal(1l,12l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,"2-Sqr3"));
 		//tan(Pi/12) = 2-Sqr3
-		TAN_VALUE.put(ofVal(5l,12l),new Polynomial(DEFAULT_FORMULA_CALCULATOR,"2+Sqr3"));
+		TAN_VALUE.put(ofVal(5l,12l),new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,"2+Sqr3"));
 		//tan(Pi/12) = 2+Sqr3 
 		
-		for(Entry<Pair,Polynomial> e : SIN_VALUE.entrySet()){
+		for(Entry<Pair,PolynomialOld> e : SIN_VALUE.entrySet()){
 			Pair p = e.getKey();
-			ARCSIN_VALUE.put(e.getValue(), new Polynomial(DEFAULT_FORMULA_CALCULATOR,Formula.asFraction(p.n, p.d, BigInteger.ONE)));
+			ARCSIN_VALUE.put(e.getValue(), new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,Formula.asFraction(p.n, p.d, BigInteger.ONE)));
 		}
-		for(Entry<Pair,Polynomial> e : TAN_VALUE.entrySet()){
+		for(Entry<Pair,PolynomialOld> e : TAN_VALUE.entrySet()){
 			Pair p = e.getKey();
-			ARCTAN_VALUE.put(e.getValue(), new Polynomial(DEFAULT_FORMULA_CALCULATOR,Formula.asFraction(p.n, p.d, BigInteger.ONE)));
+			ARCTAN_VALUE.put(e.getValue(), new PolynomialOld(DEFAULT_FORMULA_CALCULATOR,Formula.asFraction(p.n, p.d, BigInteger.ONE)));
 		}
 	}
 	
@@ -129,20 +117,20 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 *  
 	 *  
 	 */
-	public static final Map<Pair,Polynomial> SIN_VALUE=new HashMap<>();
+	public static final Map<Pair,PolynomialOld> SIN_VALUE=new HashMap<>();
 	
-	public static final Map<Pair,Polynomial> TAN_VALUE=new HashMap<>();
+	public static final Map<Pair,PolynomialOld> TAN_VALUE=new HashMap<>();
 	
 	/**
 	 * this Map contains arcsin values 
 	 * @see SIN_VALUE 
 	 */
-	public static final Map<Polynomial,Polynomial> ARCSIN_VALUE=new TreeMap<Polynomial,Polynomial>();
+	public static final Map<PolynomialOld,PolynomialOld> ARCSIN_VALUE=new TreeMap<PolynomialOld,PolynomialOld>();
 	/**
 	 * this Map contains arctan values 
 	 * @see TAN_VALUE 
 	 */
-	public static final Map<Polynomial,Polynomial> ARCTAN_VALUE=new TreeMap<Polynomial,Polynomial>();
+	public static final Map<PolynomialOld,PolynomialOld> ARCTAN_VALUE=new TreeMap<PolynomialOld,PolynomialOld>();
 	
 	private static boolean hasInit= false;
 	
@@ -153,8 +141,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 */
 	public static final PolyCalculator DEFAULT_CALCULATOR = new PolyCalculator(1);
 	
-	private final Polynomial PI ;
-	private final Polynomial E ;
+	private final PolynomialOld PI ;
+	private final PolynomialOld E ;
 	
 	PolyCalculator(int state){
 		synchronized (PolyCalculator.class) {
@@ -168,8 +156,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		}else{
 			ca= new FormulaCalculator(state);
 		}
-		PI = new Polynomial(ca, ca.constantValue(MathCalculator.STR_PI));
-		E = new Polynomial(ca, ca.constantValue(MathCalculator.STR_E));
+		PI = new PolynomialOld(ca, ca.constantValue(MathCalculator.STR_PI));
+		E = new PolynomialOld(ca, ca.constantValue(MathCalculator.STR_E));
 	}
 	
 	public PolyCalculator(){
@@ -184,8 +172,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @return p1+p2
 	 */
 	@Override
-	public Polynomial add(Polynomial p1,Polynomial p2){
-		Polynomial result=new Polynomial(ca);
+	public PolynomialOld add(PolynomialOld p1, PolynomialOld p2){
+		PolynomialOld result=new PolynomialOld(ca);
 		for(Formula f:p1.getFormulas()){
 			result.addFormula(f);
 		}
@@ -203,8 +191,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @return p1-p2
 	 */
 	@Override
-	public Polynomial subtract(Polynomial p1,Polynomial p2){
-		Polynomial result=new Polynomial(ca);
+	public PolynomialOld subtract(PolynomialOld p1, PolynomialOld p2){
+		PolynomialOld result=new PolynomialOld(ca);
 		for(Formula f:p1.getFormulas()){
 			result.addFormula(f);
 		}
@@ -221,8 +209,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @return -p
 	 */
 	@Override
-	public Polynomial negate(Polynomial p){
-		Polynomial result=new Polynomial(ca);
+	public PolynomialOld negate(PolynomialOld p){
+		PolynomialOld result=new PolynomialOld(ca);
 		for(Formula f:p.getFormulas()){
 			result.addFormula(f.negate());
 		}
@@ -237,8 +225,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @return p1*p2
 	 */
 	@Override
-	public Polynomial multiply(Polynomial p1,Polynomial p2){
-		Polynomial result=new Polynomial(ca);
+	public PolynomialOld multiply(PolynomialOld p1, PolynomialOld p2){
+		PolynomialOld result=new PolynomialOld(ca);
 		for(Formula f1:p1.getFormulas()){
 			for(Formula f2:p2.getFormulas()){
 				Formula f = ca.multiply(f1, f2);
@@ -252,8 +240,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		return result;
 	}
 	
-	public Polynomial multiply(Polynomial p, Formula f) {
-		Polynomial result = new Polynomial(ca);
+	public PolynomialOld multiply(PolynomialOld p, Formula f) {
+		PolynomialOld result = new PolynomialOld(ca);
 		for (Formula f1 : p.getFormulas()) {
 			Formula fr = ca.multiply(f1, f);
 			if (fr != Formula.ZERO) {
@@ -264,8 +252,8 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		return result;
 	}
 	
-	public Polynomial divide(Polynomial p1, Formula devisor) {
-		Polynomial result=new Polynomial(ca);
+	public PolynomialOld divide(PolynomialOld p1, Formula devisor) {
+		PolynomialOld result=new PolynomialOld(ca);
 		for(Formula f : p1.getFormulas()){
 			result.addFormula(ca.divide(f,devisor));
 		}
@@ -281,7 +269,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @throws UnsupportedCalculationException if cannot calculate it
 	 */
 	@Override
-	public Polynomial divide(Polynomial p1,Polynomial p2){
+	public PolynomialOld divide(PolynomialOld p1, PolynomialOld p2){
 		int num = p2.getNumOfFormula();
 		if(num==1){
 			return divide(p1,p2.getFormulas().getFirst());
@@ -303,15 +291,15 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				return handleComplexDivision(p1, p2);
 			}else{
 				Formula d = p2.getFormulas().getFirst();; 
-				Polynomial mul = subtract(p2, new Polynomial(ca,ca.addEle(d, d)));
+				PolynomialOld mul = subtract(p2, new PolynomialOld(ca,ca.addEle(d, d)));
 				return divide(multiply(p1, mul),this.multiply(mul, p2));
 			}
 		}
 	}
-	private Polynomial handleComplexDivision(Polynomial p1,Polynomial p2){
+	private PolynomialOld handleComplexDivision(PolynomialOld p1, PolynomialOld p2){
 		//Only to solve forms like: k*p1 = p2 where k is a Formula.
 		//simplify first an try to find corresponding ,
-		Polynomial result = null;
+		PolynomialOld result = null;
 		
 		Formula[] f2 = new Formula[0];
 		Formula[] f1 = p1.getFormulas().toArray(f2);
@@ -333,7 +321,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @param p2
 	 * @return
 	 */
-	private Polynomial divide2(Formula[] p1, Formula[] p2) {
+	private PolynomialOld divide2(Formula[] p1, Formula[] p2) {
 		//look for a^2-b^2 form:
 		if(p1.length != 2 || p2.length!=2){
 			return null;
@@ -384,10 +372,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		p2[toChange] = p2[toChange].negate();
 		p2[0] = ca.multiply(k, p2[0]);
 		p2[1] = ca.multiply(k, p2[1]);
-		return new Polynomial(ca, p2);
+		return new PolynomialOld(ca, p2);
 	}
 
-	private Polynomial divide1(Formula[] f1,Formula[] f2){
+	private PolynomialOld divide1(Formula[] f1, Formula[] f2){
 		if(f1.length!=f2.length){
 			return null;
 		}
@@ -411,7 +399,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		if(!found){
 			return null;
 		}
-		return new Polynomial(ca, kf.reciprocal());
+		return new PolynomialOld(ca, kf.reciprocal());
 	}
 	
 	
@@ -446,8 +434,6 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	/**
 	 * 
-	 * @param p1
-	 * @param p2
 	 * @return
 	 */
 	
@@ -458,15 +444,15 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	/**
 	 * this method will calculate p^power only if power is an integer greater or equals 0
 	 * <p> While using this method , it should be noticed that power should lager than 0 or equals 0
-	 * @param pd : the down part of the exp
+	 * @param p : the down part of the exp
 	 * @param power : the up part of the exp 
-	 * @return a Polynomial that equals to p^power or , in other way , exp(p,powerP) while powerP= new Polynomial(new Formula(power)) 
+	 * @return a PolynomialOld that equals to p^power or , in other way , exp(p,powerP) while powerP= new PolynomialOld(new Formula(power))
 	 * 			which means the value of powerP is power  
 	 * @throws CannotCalculateException
 	 * @throws FormulaCalculationException
 	 */
 	@Override
-	public Polynomial pow(Polynomial p,long power){
+	public PolynomialOld pow(PolynomialOld p, long power){
 		p.removeZero();
 		if(power<0){
 			if(p.getNumOfFormula()==1){
@@ -475,17 +461,17 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				for(int i = 0 ; i > power ; i--){
 					fr=ca.divide(fr, f);
 				}
-				return new Polynomial(ca,fr);
+				return new PolynomialOld(ca,fr);
 			}
 			throw new UnsupportedCalculationException("This Method Cannot Calculate while Power is less than 0");
 		}
 		if(power==0){
-			if(Polynomial.ZERO.equals(p))
+			if(PolynomialOld.ZERO.equals(p))
 				throw new UnsupportedCalculationException("0^0 has not been Defined");
 			else 
-				return Polynomial.ONE;
+				return PolynomialOld.ONE;
 		}
-		Polynomial result = Polynomial.ONE;
+		PolynomialOld result = PolynomialOld.ONE;
 		for(long i=0;i<power ;i++){
 			result= multiply(result, p);
 		}
@@ -502,7 +488,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @throws CannotCalculateException  if it can't calculate
 	 */
 	@Override
-	public Polynomial log(Polynomial pd , Polynomial pu){
+	public PolynomialOld log(PolynomialOld pd , PolynomialOld pu){
 		pd.removeZero();
 		pu.removeZero();
 		if(pd.getNumOfFormula()<=pu.getNumOfFormula()){
@@ -518,7 +504,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @return exp(pd,pu)
 	 * @throws CannotCalculateException  if it can't calculate
 	 */
-	public Polynomial pow(Polynomial pd,Polynomial pu){
+	public PolynomialOld pow(PolynomialOld pd, PolynomialOld pu){
 		pd.removeZero();
 		int[] intValue = this.intValue(pu);
 		if(intValue[0]==1){
@@ -528,7 +514,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	
 	@Override
-	public Polynomial abs(Polynomial p){
+	public PolynomialOld abs(PolynomialOld p){
 		p.removeZero();
 		BigDecimal result = BigDecimal.ZERO;
 		for(Formula f : p.getFormulas()){
@@ -544,7 +530,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			return p;
 		}
 		else{
-			return subtract(Polynomial.ZERO, p);
+			return subtract(PolynomialOld.ZERO, p);
 		}
 		
 	}
@@ -555,7 +541,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @see cn.timelives.java.math.numberModels.MathCalculator#exp(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public Polynomial exp(Polynomial a, Polynomial b) {
+	public PolynomialOld exp(PolynomialOld a, PolynomialOld b) {
 		return pow(a, b);
 	}
 	
@@ -563,18 +549,18 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#ln(java.lang.Object)
 	 */
 	@Override
-	public Polynomial ln(Polynomial x) {
-		Formula f = Polynomial.asSingleFormula(x);
+	public PolynomialOld ln(PolynomialOld x) {
+		Formula f = PolynomialOld.asSingleFormula(x);
 		if(f == null) {
 			throw new UnsupportedCalculationException();
 		}
 		if(ca.isEqual(f, Formula.ONE)) {
 			//ln(1) = 0
-			return Polynomial.ZERO;
+			return PolynomialOld.ZERO;
 		}
 		Map<String,BigDecimal> map = f.getCharacterS();
 		if(map.size() == 1 && map.containsKey(STR_E)) {
-			return new Polynomial(ca, Formula.valueOf(map.get(STR_E)));
+			return new PolynomialOld(ca, Formula.valueOf(map.get(STR_E)));
 		}
 		throw new UnsupportedCalculationException();
 		
@@ -584,19 +570,19 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#exp(java.lang.Object)
 	 */
 	@Override
-	public Polynomial exp(Polynomial x) {
+	public PolynomialOld exp(PolynomialOld x) {
 		//if x is an integer, then it can be computed
-		BigInteger p = Polynomial.asBigInteger(x);
+		BigInteger p = PolynomialOld.asBigInteger(x);
 		if(p == null) {
 			throw new UnsupportedCalculationException();
 		}
-		return new Polynomial(ca, Formula.characterPower(STR_E, new BigDecimal(p)));
+		return new PolynomialOld(ca, Formula.characterPower(STR_E, new BigDecimal(p)));
 	}
 	
 	
 	
 	/**
-	 * @param f
+	 * @param arr
 	 * @return
 	 */
 	private void reduceByTwoPi(BigInteger[] arr){
@@ -649,16 +635,16 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	/**
 	 * the sin method will calculate sin(p) according to sinValue
-	 * @param p -the Polynomial to calculate 
-	 * @return the Polynomial that equals sin(p)
+	 * @param p -the PolynomialOld to calculate
+	 * @return the PolynomialOld that equals sin(p)
 	 * @throws CannotCalculateException  if it can't calculate
 	 */
 	@Override
-	public Polynomial sin(Polynomial p){
+	public PolynomialOld sin(PolynomialOld p){
 		p.removeZero();
 		if(p.getNumOfFormula()==1){
 			Formula f=p.getFormulas().getFirst();
-			Polynomial re = sinf(f);
+			PolynomialOld re = sinf(f);
 			if(re != null){
 				return re;
 			}
@@ -666,10 +652,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		throw new UnsupportedCalculationException("Can't calculate sin");
 	}
 	
-	private Polynomial sinf(Formula f){
+	private PolynomialOld sinf(Formula f){
 		if(f.getSignum() == 0) {
 			//sin(0) = 1
-			return Polynomial.ZERO;
+			return PolynomialOld.ZERO;
 		}
 		if(f.haveSameChar(Formula.PI)){
 			if(f.getRadical().equals(BigInteger.ONE)==false) {
@@ -688,7 +674,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			subtractToHalf(nd,true);
 			
 //			f = Formula.c
-			Polynomial result = SIN_VALUE.get(Pair.of(nd));
+			PolynomialOld result = SIN_VALUE.get(Pair.of(nd));
 			if(result != null){
 				if(nega){
 					result = negate(result);
@@ -698,10 +684,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		}
 		return null;
 	}
-	private Polynomial cosf(Formula f){
+	private PolynomialOld cosf(Formula f){
 		if(f.getSignum() == 0) {
 			//cos(0) = 1
-			return Polynomial.ONE;
+			return PolynomialOld.ONE;
 		}
 		if(f.haveSameChar(Formula.PI)){
 			if(f.getRadical().equals(BigInteger.ONE)==false) {
@@ -723,7 +709,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			//sin(x) = sin(pi-x)
 			subtractToHalf(nd, nega);
 			
-			Polynomial result = SIN_VALUE.get(Pair.of(nd));//cos(x) = sin(pi/2+x),in the first we added pi/2.
+			PolynomialOld result = SIN_VALUE.get(Pair.of(nd));//cos(x) = sin(pi/2+x),in the first we added pi/2.
 			if(result != null){
 				if(nega){
 					result = negate(result);
@@ -737,17 +723,17 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	/**
 	 * the cos method will calculate the cos value of p by using cos(p) = sin(Pi/2 - P)
 	 * <p>
-	 * @param p -the Polynomial to calculate 
+	 * @param p -the PolynomialOld to calculate
 	 * @return cos(p)
 	 * @throws CannotCalculateException  if it can't calculate
 	 */
 	@Override
-	public Polynomial cos(Polynomial p){	
+	public PolynomialOld cos(PolynomialOld p){
 		try{
 			p.removeZero();
 			if(p.getNumOfFormula()==1){
 				Formula f=p.getFormulas().getFirst();
-				Polynomial re = cosf(f);
+				PolynomialOld re = cosf(f);
 				if(re != null){
 					return re;
 				}
@@ -760,19 +746,19 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	/**
 	 * this method will calculate the tan value of p
-	 * @param p -the Polynomial to calculate 
+	 * @param p -the PolynomialOld to calculate
 	 * @return tan(p)
 	 * @throws FormulaCalculationException  if p = Pi/2 + k Pi , k in Z
 	 * @throws CannotCalculateException     if it can't calculate
 	 */
 	@Override
-	public Polynomial tan(Polynomial p){
+	public PolynomialOld tan(PolynomialOld p){
 		
 		p.removeZero();
 		if(p.getNumOfFormula()==1){
 			Formula f=p.getFormulas().getFirst();
 			
-			Polynomial re = tanf(f);
+			PolynomialOld re = tanf(f);
 			if(re!=null){
 				return re;
 			}
@@ -780,10 +766,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		throw new UnsupportedCalculationException("Can't calculate tan : "+p.toString());
 	}
 	
-	private Polynomial tanf(Formula f){
+	private PolynomialOld tanf(Formula f){
 		if(f.getSignum() == 0) {
 			//tan(0) = 0
-			return Polynomial.ZERO;
+			return PolynomialOld.ZERO;
 		}
 		if(f.haveSameChar(Formula.PI)){
 			if(f.getRadical().equals(BigInteger.ONE)==false) {
@@ -799,7 +785,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				throw new ArithmeticException("tan(Pi/2)");
 			}
 			nega = subtractToHalf(nd, nega);
-			Polynomial result = TAN_VALUE.get(Pair.of(nd));
+			PolynomialOld result = TAN_VALUE.get(Pair.of(nd));
 			if(!(result==null)){
 				if(nega)
 					result = negate(result);
@@ -810,7 +796,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		
 	}
 	
-	private Polynomial cotf(Formula f){
+	private PolynomialOld cotf(Formula f){
 		if(f.haveSameChar(Formula.PI)){
 			boolean nega =f.isPositive();
 			if(!nega)
@@ -824,7 +810,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				throw new ArithmeticException("cot(0)");
 			}
 			nega = subtractToHalf(nd, nega);
-			Polynomial result = TAN_VALUE.get(Pair.of(nd));
+			PolynomialOld result = TAN_VALUE.get(Pair.of(nd));
 			if(!(result==null)){
 				if(!nega)
 					result = negate(result);
@@ -837,17 +823,17 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	/**
 	 * this method will calculate the tan value of p
-	 * @param p -the Polynomial to calculate 
+	 * @param p -the PolynomialOld to calculate
 	 * @return cot(p)
 	 * @throws FormulaCalculationException  if {@code p = k*Pi , k = Z}
 	 * @throws CannotCalculateException     if it can't calculate
 	 */
-	public Polynomial cot(Polynomial p){
+	public PolynomialOld cot(PolynomialOld p){
 		try{
 			p.removeZero();
 			if(p.getNumOfFormula()==1){
 				Formula f=p.getFormulas().getFirst();
-				Polynomial re = cotf(f);
+				PolynomialOld re = cotf(f);
 				if(re!=null){
 					return re;
 				}
@@ -862,15 +848,15 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	/**
 	 * this method will calculate the arcsin value of p 
-	 * @param p -the Polynomial to calculate 
+	 * @param p -the PolynomialOld to calculate
 	 * @return arcsin(p) whose value is larger than (or equal to) {@code -Pi/2} and less than (or equal to) {@code Pi/2}
 	 * @throws CannotCalculateException     if it can't calculate
 	 * @throws FormulaCalculationException  if {@code p < -1 or p > 1}
 	 */
 	@Override
-	public Polynomial arcsin(Polynomial p){
+	public PolynomialOld arcsin(PolynomialOld p){
 		p.removeZero();
-		Polynomial  result = ARCSIN_VALUE.get(p);
+		PolynomialOld result = ARCSIN_VALUE.get(p);
 		if(result!= null)
 			return result;
 		result = ARCSIN_VALUE.get(negate(p));
@@ -893,16 +879,16 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	/**
 	 * this method will calculate the arccos value of p 
-	 * @param p -the Polynomial to calculate 
+	 * @param p -the PolynomialOld to calculate
 	 * @return arccos(p) whose value is larger than (or equal to) {@code 0} and less than (or equal to) {@code Pi}
 	 * @throws CannotCalculateException     if it can't calculate
 	 * @throws FormulaCalculationException  if {@code p < -1 or p > 1}
 	 */
 	@Override
-	public Polynomial arccos(Polynomial p){
+	public PolynomialOld arccos(PolynomialOld p){
 		//arccos(x) + arcsin(x) = Pi/2 --> arccos(x) = Pi/2 - arcsin(x)
 		try{
-			return subtract(new Polynomial(ca,Formula.valueOf("Pi/2")),arcsin(p));
+			return subtract(new PolynomialOld(ca,Formula.valueOf("Pi/2")),arcsin(p));
 		}
 		catch(UnsupportedCalculationException e){
 			throw new UnsupportedCalculationException("Cannot calculate arccos  :  "+p.toString());
@@ -911,14 +897,14 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	/**
 	 * this method will calculate the arctan value of p 
-	 * @param p -the Polynomial to calculate 
+	 * @param p -the PolynomialOld to calculate
 	 * @return arctan(p) whose value is larger than (or equal to) {@code -Pi/2} and less than (or equal to) {@code Pi/2}
 	 * @throws CannotCalculateException     if it can't calculate
 	 */
 	@Override
-	public Polynomial arctan(Polynomial p){
+	public PolynomialOld arctan(PolynomialOld p){
 		p.removeZero();
-		Polynomial  result = ARCTAN_VALUE.get(p);
+		PolynomialOld result = ARCTAN_VALUE.get(p);
 		if(result!= null)
 			return result;
 		result = ARCTAN_VALUE.get(negate(p));
@@ -929,24 +915,24 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	
 	/**
-	 * this method will replace a single character in p by given Polynomial expr
+	 * this method will replace a single character in p by given PolynomialOld expr
 	 * @param c
 	 * @param p
 	 * @return
 	 * @throws CannotCalculateException if the power of the given char is not an int above zero
 	 */
-	public Polynomial replaceChar(char c,Polynomial p,Polynomial expr){
+	public PolynomialOld replaceChar(char c, PolynomialOld p, PolynomialOld expr){
 		return replace(""+c, p, expr);
 	}
 	/**
-	 * this method will replace a single character in p by given Polynomial expr
-	 * @param c
+	 * this method will replace a single character in p by given PolynomialOld expr
+	 * @param target
 	 * @param p
 	 * @return
 	 * @throws CannotCalculateException if the power of the given char is not an int above zero
 	 */
-	public Polynomial replace(String target,Polynomial p,Polynomial expr){
-		Polynomial temp,result=Polynomial.ZERO.clone();
+	public PolynomialOld replace(String target, PolynomialOld p, PolynomialOld expr){
+		PolynomialOld temp,result=PolynomialOld.ZERO.clone();
 		
 		for(Formula f1: p.getFormulas()){
 			if(f1.getCharacterS().containsKey(target)){
@@ -956,15 +942,15 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 					int t=power.intValue();
 					Formula f;
 					f=f1.removeChar(target);
-					temp=new Polynomial(ca,f);// a * b^2 ,b=x+y --> a* (x+y) * (x+y)
+					temp=new PolynomialOld(ca,f);// a * b^2 ,b=x+y --> a* (x+y) * (x+y)
 					temp = multiply(temp, pow(expr, t));
 					
 					result = add(result, temp);
 				}
 				else{
-					if(Polynomial.ONE.equals(expr)) {
+					if(PolynomialOld.ONE.equals(expr)) {
 						result.addFormula(f1.removeChar(target));
-					} else if (Polynomial.ZERO.equals(expr)) {
+					} else if (PolynomialOld.ZERO.equals(expr)) {
 						// zero
 						result.getClass();
 					} else {
@@ -981,10 +967,10 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		}
 		return result;
 	}
-	public boolean containsChar(char c,Polynomial p){
+	public boolean containsChar(char c,PolynomialOld p){
 		return containsChar(""+c, p);
 	}
-	public boolean containsChar(String target,Polynomial p){
+	public boolean containsChar(String target,PolynomialOld p){
 		for(Formula f: p.getFormulas()){
 			if(f.getCharacterS().containsKey(target)){
 				return true;
@@ -999,7 +985,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * and at this time the second of it is the integer value of the polynomial
 	 * the first of it is 0 if the formula cannot be converted to an integer
 	 */
-	public int[] intValue(Polynomial p){
+	public int[] intValue(PolynomialOld p){
 		int[] result = {0,0};
 		if(p.getNumOfFormula()==1){
 			Formula f =p.getFormulas().getFirst();
@@ -1014,33 +1000,33 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 		return result;
 	}
 	@Override
-	public boolean isEqual(Polynomial para1, Polynomial para2) {
+	public boolean isEqual(PolynomialOld para1, PolynomialOld para2) {
 		if(para1==para2)
 			return true;
 		return para1.equals(para2);
 	}
 	@Override
-	public int compare(Polynomial para1, Polynomial para2) {
+	public int compare(PolynomialOld para1, PolynomialOld para2) {
 		if(para1==para2)
 			return 0;
 		return para1.compareTo(para2);
 	}
 	@Override
-	public Polynomial getZero() {
-		return Polynomial.ZERO;
+	public PolynomialOld getZero() {
+		return PolynomialOld.ZERO;
 	}
 	@Override
-	public Polynomial getOne() {
-		return Polynomial.ONE;
+	public PolynomialOld getOne() {
+		return PolynomialOld.ONE;
 	}
 	@Override
-	public Polynomial reciprocal(Polynomial p) {
-		return divide(Polynomial.ONE,p);
+	public PolynomialOld reciprocal(PolynomialOld p) {
+		return divide(PolynomialOld.ONE,p);
 	}
 	@Override
-	public Polynomial multiplyLong(Polynomial p, long l) {
+	public PolynomialOld multiplyLong(PolynomialOld p, long l) {
 		if(l==0) {
-			return Polynomial.ZERO;
+			return PolynomialOld.ZERO;
 		}
 		if(l==1) {
 			return p;
@@ -1052,7 +1038,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				Formula.valueOf(BigInteger.valueOf(l)));
 	}
 	@Override
-	public Polynomial divideLong(Polynomial p, long l) {
+	public PolynomialOld divideLong(PolynomialOld p, long l) {
 		if(l == 0) {
 			throw new ArithmeticException("Divide by zero");
 		}
@@ -1067,7 +1053,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	
 	@Override
-	public Polynomial squareRoot(Polynomial p) {
+	public PolynomialOld squareRoot(PolynomialOld p) {
 		//This method is a very complex one.We should first check whether this is a number
 		if(p.getNumOfFormula()==1){
 			//only one formula
@@ -1075,7 +1061,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			Formula f = as.getFirst();
 			FormulaCalculator fc = (FormulaCalculator)as.getAdder();
 //			Printer.print(p);
-			return new Polynomial(fc, fc.squareRoot(f));
+			return new PolynomialOld(fc, fc.squareRoot(f));
 		}
 		//try some easy case ? No
 		
@@ -1088,7 +1074,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 	
 	@Override
-	public Polynomial constantValue(String name) {
+	public PolynomialOld constantValue(String name) {
 		if(name.equalsIgnoreCase(STR_PI)){
 			return PI;
 		}
@@ -1099,17 +1085,17 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	}
 	private static final SimplifierP sp = new SimplifierP();
 	
-	public static final Simplifier<Polynomial> getSimplifier(){
+	public static final Simplifier<PolynomialOld> getSimplifier(){
 		return sp;
 	}
 	
-	static class SimplifierP implements Simplifier<Polynomial>{
+	static class SimplifierP implements Simplifier<PolynomialOld>{
 		
 		private SimplifierP(){
 		}
 		
 		@Override
-		public List<Polynomial> simplify(List<Polynomial> numbers) {
+		public List<PolynomialOld> simplify(List<PolynomialOld> numbers) {
 			
 			
 			int len = numbers.size();
@@ -1117,7 +1103,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			int[] indexes = new int[len];
 			int i = 0;
 			int pos = 0;
-			for(Polynomial p : numbers){
+			for(PolynomialOld p : numbers){
 				for(Formula f : p.getFormulas()){
 					list.add(f);
 					i++;
@@ -1125,11 +1111,11 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				indexes[pos++] = i;
 			}
 			List<Formula> reF = FormulaCalculator.getSimplifier().simplify(list);
-			List<Polynomial> re = new ArrayList<>(len);
+			List<PolynomialOld> re = new ArrayList<>(len);
 			i=0;
 			pos = 0;
 			Iterator<Formula> it = reF.iterator();
-			for(Polynomial p : numbers){
+			for(PolynomialOld p : numbers){
 				int size ;
 				if(pos==0){
 					size = indexes[0];
@@ -1140,7 +1126,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 				for(;i<indexes[pos];i++){
 					as.add(it.next());
 				}
-				Polynomial po = new Polynomial(as);
+				PolynomialOld po = new PolynomialOld(as);
 				re.add(po);
 				pos++;
 			}
@@ -1150,16 +1136,16 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 			return re;
 		}
 		
-		public List<Polynomial> simplifyFraction(List<Polynomial> list) {
-			Polynomial p1 = list.get(0),
+		public List<PolynomialOld> simplifyFraction(List<PolynomialOld> list) {
+			PolynomialOld p1 = list.get(0),
 					p2 = list.get(1);
 			if(p1.getNumOfFormula() != p2.getNumOfFormula()) {
 				return list;
 			}
-			if (DEFAULT_CALCULATOR.isEqual(Polynomial.ZERO, p2) == false) {
+			if (DEFAULT_CALCULATOR.isEqual(PolynomialOld.ZERO, p2) == false) {
 				try {
 					p1 = DEFAULT_CALCULATOR.divide(p1, p2);
-					p2 = Polynomial.ONE;
+					p2 = PolynomialOld.ONE;
 				} catch (UnsupportedCalculationException ex) {
 
 				}
@@ -1174,14 +1160,14 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	
 //	public static void main(String[] args) {
 //		print("Debugging:");
-//		Polynomial p1 = Polynomial.valueOf("-6*x^2-36*x+18*x");
+//		PolynomialOld p1 = PolynomialOld.valueOf("-6*x^2-36*x+18*x");
 //		print(p1);
 //		print(DEFAULT_CALCULATOR.multiply(p1, p1));
-//		print(DEFAULT_CALCULATOR.pow(Polynomial.valueOf("4+4"), Polynomial.valueOf("1/2")));
+//		print(DEFAULT_CALCULATOR.pow(PolynomialOld.valueOf("4+4"), PolynomialOld.valueOf("1/2")));
 //		/*
-//		Polynomial[] ps = new Polynomial[2];
-//		ps[0] = new Polynomial(DEFAULT_FORMULA_CALCULATOR, "1");
-//		ps[1] = new Polynomial(DEFAULT_FORMULA_CALCULATOR, "2");
+//		PolynomialOld[] ps = new PolynomialOld[2];
+//		ps[0] = new PolynomialOld(DEFAULT_FORMULA_CALCULATOR, "1");
+//		ps[1] = new PolynomialOld(DEFAULT_FORMULA_CALCULATOR, "2");
 //		PolyCalculator pc = new PolyCalculator();
 //		print(pc.compare(ps[0], ps[1]));
 //		Formula f1 = Formula.valueOf("1");
@@ -1195,17 +1181,17 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @see cn.timelives.java.utilities.math.MathCalculator#getNumberClass()
 	 */
 	@Override
-	public Class<Polynomial> getNumberClass() {
-		return Polynomial.class;
+	public Class<PolynomialOld> getNumberClass() {
+		return PolynomialOld.class;
 	}
 	
 	
-	public Polynomial valueOfLong(long l) {
-		return new Polynomial(ca, Formula.valueOf(l));
+	public PolynomialOld valueOfLong(long l) {
+		return new PolynomialOld(ca, Formula.valueOf(l));
 	}
 	
-	public Polynomial valueOfBigInteger(BigInteger val) {
-		return new Polynomial(ca, Formula.valueOf(val));
+	public PolynomialOld valueOfBigInteger(BigInteger val) {
+		return new PolynomialOld(ca, Formula.valueOf(val));
 	}
 	
 	/**
@@ -1213,7 +1199,7 @@ public class PolyCalculator extends MathCalculatorAdapter<Polynomial>
 	 * @param l
 	 * @return
 	 */
-	public Polynomial valueOfRecipLong(long x) {
-		return new Polynomial(ca, Formula.asFraction(1, x, 1));
+	public PolynomialOld valueOfRecipLong(long x) {
+		return new PolynomialOld(ca, Formula.asFraction(1, x, 1));
 	}
 }

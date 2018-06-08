@@ -32,6 +32,11 @@ public abstract class MathCalculatorAdapter<T> implements MathCalculator<T> {
 	}
 
 	@Override
+	public boolean isComparable() {
+		return false;
+	}
+
+	@Override
 	public T add(T para1, T para2) {
 		throwFor();
 		return null;

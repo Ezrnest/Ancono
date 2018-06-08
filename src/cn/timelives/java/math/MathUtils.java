@@ -5,6 +5,7 @@ import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.ModelPatterns;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import static cn.timelives.java.utilities.Printer.print;
@@ -108,6 +109,12 @@ public class MathUtils {
 		}
 		return lcm;
 	}
+
+	public static BigInteger lcm(BigInteger n1,BigInteger n2){
+		BigInteger gcd = n1.gcd(n2);
+		return n1.divide(gcd).multiply(n2);
+	}
+
 	/**
 	 * Returns the max number k that {@code |b|%|a|^k==0} while {@code |b|%|a|^(k+1)!=0}.
 	 * @param a a number except {@code 0,1,-1}.
@@ -795,6 +802,15 @@ public class MathUtils {
 	 */
 	public static boolean oppositeSide(double x,double y,double a) {
 		return (x >= a && y <= a) || (x <= a && y >= a);
+	}
+	/**
+	 * Returns {@code (x-a)(y-a)<=0}
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static <T> boolean oppositeSide(T x,T y,T a,MathCalculator<T> mc){
+		return mc.compare(x,a) *  mc.compare(y,a) <=0;
 	}
 	
 	public static boolean sameSignum(int x,int y) {

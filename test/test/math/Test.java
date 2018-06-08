@@ -431,7 +431,7 @@ class Test {
 	
 	static void progressionTest5(){
 		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
-		Progression<Double> ps = Progression.createProgression(d -> (d * (3.5d - d)),0.7d,-1, mc);
+		Progression<Double> ps = Progression.createProgressionRecur1(d -> (d * (3.5d - d)),0.7d,-1, mc);
 		ps.stream().limit(30).forEach(Printer::print);
 	}
 	

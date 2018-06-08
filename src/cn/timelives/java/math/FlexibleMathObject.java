@@ -36,7 +36,6 @@ public abstract class FlexibleMathObject<T, S extends EqualPredicate<T>> impleme
 
 	/**
 	 * The equals method describes the equivalence in program of two math objects instead of the equal in math. 
-	 * However
 	 * If the type of number is different, then {@code false} will be returned.
 	 */
 	@Override
@@ -64,7 +63,6 @@ public abstract class FlexibleMathObject<T, S extends EqualPredicate<T>> impleme
 	 * Returns a String representing this object, it is recommended that 
 	 * the output of the number model should be formatted 
 	 * through {@link NumberFormatter#format(Object, MathCalculator)}.
-	 * @param nf
 	 * @return
 	 */
 	@Override

@@ -51,7 +51,20 @@ public final class Calculators {
 	public static <T> boolean isNegative(T x,MathCalculator<T> mc){
 		return signum(x,mc) < 0;
 	}
-	
+
+    /**
+     * Determines whether a<x<b or b<x<a.
+     * @param x
+     * @param a
+     * @param b
+     * @param mc
+     * @param <T>
+     * @return
+     */
+	public static <T> boolean between(T x,T a,T b,MathCalculator<T> mc){
+	    return mc.compare(a,x) * mc.compare(x,b) > 0;
+    }
+
 	public static <T> T square(T x,MathCalculator<T> mc){
 		return mc.multiply(x, x);
 	}
@@ -74,8 +87,16 @@ public final class Calculators {
 	public static <T> T minus1(T x,MathCalculator<T> mc){
 		return mc.add(x, mc.getOne());
 	}
-	
-	
+
+    public static <T> T pi(MathCalculator<T> mc){
+	    return mc.constantValue(MathCalculator.STR_PI);
+    }
+
+    public static <T> T hypot(T a,T b,MathCalculator<T> mc){
+		return mc.squareRoot(mc.add(square(a,mc),square(b,mc)));
+	}
+
+
 	
 	private static void throwFor() throws UnsupportedCalculationException{
 		throw new UnsupportedCalculationException("Adapter");
@@ -297,6 +318,11 @@ public final class Calculators {
 		@Override
 		public int compare(Integer para1, Integer para2) {
 			return para1.compareTo(para2);
+		}
+
+		@Override
+		public boolean isComparable() {
+			return true;
 		}
 
 		@Override
@@ -726,7 +752,10 @@ public final class Calculators {
 		public int compare(Long para1, Long para2) {
 			return para1.compareTo(para2);
 		}
-
+		@Override
+		public boolean isComparable() {
+			return true;
+		}
 		@Override
 		public Long add(Long para1, Long para2) {
 			return para1+para2;
@@ -963,6 +992,11 @@ public final class Calculators {
 		}
 
 		@Override
+        public boolean isComparable() {
+            return true;
+        }
+
+		@Override
 		public BigInteger add(BigInteger para1, BigInteger para2) {
 			return para1.add(para2);
 		}
@@ -1177,6 +1211,11 @@ public final class Calculators {
 		}
 
 		@Override
+        public boolean isComparable() {
+            return true;
+        }
+
+		@Override
 		public BigDecimal add(BigDecimal para1, BigDecimal para2) {
 			return para1.add(para2);
 		}
@@ -1301,6 +1340,11 @@ public final class Calculators {
 		}
 
 		@Override
+        public boolean isComparable() {
+            return true;
+        }
+
+		@Override
 		public Double add(Double para1, Double para2) {
 			return para1 + para2;
 		}
@@ -1320,8 +1364,8 @@ public final class Calculators {
 			return para1 - para2 ;
 		}
 		
-		private static final Double ZERO = Double.valueOf(0.0d);
-		private static final Double ONE = Double.valueOf(1.0d);
+		private static final Double ZERO = 0.0d;
+		private static final Double ONE = 1.0d;
 		
 		@Override
 		public Double getZero() {
@@ -1386,8 +1430,8 @@ public final class Calculators {
 			return sum;
 		}
 		
-		private static final Double pi = Double.valueOf(Math.PI);
-		private static final Double e = Double.valueOf(Math.E);
+		private static final Double pi = Math.PI;
+		private static final Double e = Math.E;
 		
 		@Override
 		public Double constantValue(String name) {

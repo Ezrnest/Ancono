@@ -21,6 +21,14 @@ import cn.timelives.java.utilities.structure.Pair;
  */
 public interface NTCalculator<T> extends MathCalculator<T> {
 
+	/**
+	 * The number model used for number theory should be comparable.
+	 * @return
+	 */
+	@Override
+	default boolean isComparable(){
+		return true;
+	}
 	// methods that is often used as a number theory calculator.
 	/**
 	 * Determines whether the number is positive.

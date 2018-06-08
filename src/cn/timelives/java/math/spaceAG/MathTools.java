@@ -36,7 +36,7 @@ public final class MathTools {
 		return null;
 	}
 	/**
-	 * Compares the two parallel vector(if they are not parallel, then the result is unspecified). Considering {@code v1} is 
+	 * Compares the two parallel vector(if they are not parallel, then the result is {@code -1}). Considering {@code v1} is
 	 * the direct toward which is positive, compares the two vector of their length. Returns {@code -1} if {@code v1<v2}, 
 	 * {@code 0} if {@code v1==v2}, and {@code 1} if {@code v1>v2}. If the two vectors are of different direction, then 
 	 *  {@code -1} will always be returned.

@@ -18,7 +18,7 @@ import java.util.function.Function;
  * @author liyicheng
  *
  */
-public final class TransMatrix<T> extends Matrix<T> implements Composable<TransMatrix<T>>{
+public final class TransMatrix<T> extends Matrix<T> implements Composable<TransMatrix<T>> {
 	
 	
 	private final T[][] data;
@@ -391,6 +391,24 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 		T sin = mc.sin(angle);
 		return valueOf(cos,mc.negate(sin),sin,cos,mc);
 	}
+
+	/**
+	 * Returns a TransMatrix that rotates the vector parallel to the positive direction of x axis(such as (1,0))
+	 * to the given vector. The vector must be non-zero.
+	 * @param v
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> TransMatrix<T> rotateXAxisTo(PVector<T> v){
+		if(v.isZeroVector()){
+			throw new IllegalArgumentException("zero vector.");
+		}
+		v = v.unitVector();
+		T cos = v.x, sin = v.y;
+		MathCalculator<T> mc = v.getMathCalculator();
+		return valueOf(cos,mc.negate(sin),sin,cos,mc);
+	}
+
 	/**
 	 * Returns a TransformMatrix that performs multiplication.
 	 * <pre>

@@ -3,6 +3,8 @@ package cn.timelives.java.math.numberModels;
 import cn.timelives.java.math.abstractAlgebra.calculator.FieldCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
+import java.util.Comparator;
+
 /**
  * Describe a calculator that can calculator the basic operations for
  * number, this interface is create to give some math-based objects full
@@ -34,7 +36,7 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
  * @param <T>
  *            the type of number to deal with
  */
-public interface MathCalculator<T> extends FieldCalculator<T>{
+public interface MathCalculator<T> extends FieldCalculator<T>,Comparator<T> {
 
 	/**
 	 * Compare the two numbers and determines whether these two numbers are the
@@ -67,7 +69,13 @@ public interface MathCalculator<T> extends FieldCalculator<T>{
 	 * @throws UnsupportedCalculationException
 	 *             if this operation can not be done.(optional)
 	 */
-	public int compare(T para1, T para2);
+	int compare(T para1, T para2);
+
+	/**
+	 * Determines whether this calculator supports {@code compare()} method.
+	 * @return {@code true} if compare method is available.
+	 */
+	boolean isComparable();
 
 	/**
 	 * Add two parameters, this method is required to be commutative, so is it
@@ -345,12 +353,16 @@ public interface MathCalculator<T> extends FieldCalculator<T>{
 	/**
 	 * The string representation of pi.
 	 */
-	public static final String STR_PI = "Pi";
+	String STR_PI = "Pi";
 	/**
 	 * The string representation of e.
 	 */
-	public static final String STR_E = "e";
-
+	String STR_E = "e";
+	/**
+	 * The string representation of i, the square root of -1.
+	 * This constant value may not be available.
+	 */
+	String STR_I = "i";
 	/**
 	 * Gets a constant value from the calculator, the constant value is got by its
 	 * name as a String. It is recommended that the string should be case
@@ -358,15 +370,15 @@ public interface MathCalculator<T> extends FieldCalculator<T>{
 	 * specified wherever the value is needed. <br>
 	 * Some common constants are list below:
 	 * <ul>
-	 * <li><tt>PI</tt> :the ratio of the circumference of a circle to its
+	 * <li><tt>Pi</tt> :the ratio of the circumference of a circle to its
 	 * diameter.See:{@link Math#PI}
-	 * <li><tt>E</tt> :the base of the natural logarithms.See:{@link Math#E}
-	 * <li><tt>I</tt> :the square root of {@code -1}.
+	 * <li><tt>e</tt> :the base of the natural logarithms.See:{@link Math#E}
+	 * <li><tt>i</tt> :the square root of {@code -1}.
 	 * </ul>
 	 * 
 	 * @param name
 	 *            the name of the constant value,case insensitive
-	 * @return a number that represent the constant value.
+	 * @return a number that represents the constant value.
 	 * @throws UnsupportedCalculationException
 	 *             if this operation can not be done.(optional)
 	 */

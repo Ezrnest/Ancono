@@ -5,8 +5,9 @@ package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.Multinomial;
+import cn.timelives.java.math.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.structure.Pair;
@@ -17,16 +18,15 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import static cn.timelives.java.utilities.Printer.print;
 
 /**
- * A multinomialX is an implement for multinomial.
+ * An implement for polynomial.
  * @author liyicheng
- * @see Multinomial
+ * @see Polynomial
  * 2017-11-21 17:10
  *
  */
-public final class MultinomialX<T> extends FieldMathObject<T> implements Multinomial<T>,Comparable<MultinomialX<T>> {
+public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomial<T>,Comparable<PolynomialX<T>> {
 	/**
 	 * A map.
 	 */
@@ -39,7 +39,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	 * @param calculator
 	 * @param degree
 	 */
-	MultinomialX(MathCalculator<T> calculator,NavigableMap<Integer,T> map,int degree) {
+	PolynomialX(MathCalculator<T> calculator, NavigableMap<Integer,T> map, int degree) {
 		super(calculator);
 		this.map = Objects.requireNonNull(map);
 		this.degree = degree;
@@ -48,7 +48,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	
 
 	/*
-	 * @see cn.timelives.java.math.Multinomial#getMaxPower()
+	 * @see cn.timelives.java.math.Polynomial#getMaxPower()
 	 */
 	@Override
 	public int getDegree() {
@@ -64,7 +64,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.Multinomial#getCoefficient(int)
+	 * @see cn.timelives.java.math.Polynomial#getCoefficient(int)
 	 */
 	@Override
 	public T getCoefficient(int n) {
@@ -73,9 +73,13 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		}
 		return getCoefficient0(n);
 	}
-	
+
+	public Vector<T> coefficientVector(){
+		return Polynomial.coefficientVector(this,getMathCalculator());
+	}
+
 	/**
-	 * Returns the value of this multinomial
+	 * Returns the value of this polynomial
 	 * @param x
 	 * @return
 	 */
@@ -89,10 +93,10 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	}
 	
 	/**
-	 * Divides this multinomial by a number to get a new multinomial whose leading coefficient is one.
+	 * Divides this polynomial by a number to get a new polynomial whose leading coefficient is one.
 	 * @return
 	 */
-	public MultinomialX<T> unit(){
+	public PolynomialX<T> unit(){
 		if(mc.isEqual(mc.getOne(), getCoefficient(degree))) {
 			return this;
 		}
@@ -101,19 +105,19 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		for(Entry<Integer,T> en : nmap.entrySet()) {
 			en.setValue(mc.divide(en.getValue(),k));
 		}
-		return new MultinomialX<>(mc, nmap, degree);
+		return new PolynomialX<>(mc, nmap, degree);
 	}
 
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 	 */
 	@Override
-	public <N> MultinomialX<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+	public <N> PolynomialX<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
 		TreeMap<Integer,N> nmap = new TreeMap<>();
 		for(Entry<Integer,T> en : map.entrySet()) {
 			nmap.put(en.getKey(),mapper.apply(en.getValue()));
 		}
-		return new MultinomialX<>(newCalculator, nmap, degree);
+		return new PolynomialX<>(newCalculator, nmap, degree);
 	}
 
 	/*
@@ -121,10 +125,10 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	 */
 	@Override
 	public boolean valueEquals(FieldMathObject<T> obj) {
-		if(!(obj instanceof MultinomialX)) {
+		if(!(obj instanceof PolynomialX)) {
 			return false;
 		}
-		return Multinomial.isEqual(this, (MultinomialX<T>)obj, mc::isEqual);
+		return Polynomial.isEqual(this, (PolynomialX<T>)obj, mc::isEqual);
 	}
 	
 	
@@ -133,24 +137,24 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	 */
 	@Override
 	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
-		if (!(obj instanceof MultinomialX)) {
+		if (!(obj instanceof PolynomialX)) {
 			return false;
 		}
-		return Multinomial.isEqual(this, (MultinomialX<N>) obj, (x,y)->mc.isEqual(x, mapper.apply(y)));
+		return Polynomial.isEqual(this, (PolynomialX<N>) obj, (x, y)->mc.isEqual(x, mapper.apply(y)));
 	}
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		 return Multinomial.stringOf(this, mc, nf);
+		 return Polynomial.stringOf(this, mc, nf);
 	}
 	
 	/*
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(MultinomialX<T> o) {
+	public int compareTo(PolynomialX<T> o) {
 		int mp = o.degree;
 		if(mp > degree) {
 			return -1;
@@ -192,7 +196,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		}
 	}
 	
-	private static final Map<MathCalculator<?>,MultinomialX<?>> zeros = new HashMap<>();
+	private static final Map<MathCalculator<?>,PolynomialX<?>> zeros = new HashMap<>();
 	
 	
 	/**
@@ -200,11 +204,11 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	 * @param mc
 	 * @return
 	 */
-	public static <T> MultinomialX<T> zero(MathCalculator<T> mc){
+	public static <T> PolynomialX<T> zero(MathCalculator<T> mc){
 		@SuppressWarnings("unchecked")
-		MultinomialX<T> zero = (MultinomialX<T>) zeros.get(mc);
+		PolynomialX<T> zero = (PolynomialX<T>) zeros.get(mc);
 		if(zero == null) {
-			zero = new MultinomialX<>(mc, Collections.emptyNavigableMap(), 0);
+			zero = new PolynomialX<>(mc, Collections.emptyNavigableMap(), 0);
 			synchronized (zeros) {
 				zeros.put(mc, zero);
 			}
@@ -213,42 +217,42 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 	}
 	
 	/**
-	 * Returns the multinomial {@literal 1}。
+	 * Returns the polynomial {@literal 1}。
 	 * @param mc
 	 * @return
 	 */
-	public static <T> MultinomialX<T> one(MathCalculator<T> mc){
+	public static <T> PolynomialX<T> one(MathCalculator<T> mc){
 		return constant(mc,mc.getOne());
 	}
 	
 	/**
-	 * Returns the multinomial {@literal x}.
+	 * Returns the polynomial {@literal x}.
 	 * @param mc
 	 * @return
 	 */
-	public static <T> MultinomialX<T> oneX(MathCalculator<T> mc){
+	public static <T> PolynomialX<T> oneX(MathCalculator<T> mc){
 		TreeMap<Integer,T> map = new TreeMap<>();
 		map.put(Integer.valueOf(1), mc.getOne());
-		return new MultinomialX<>(mc, map, 1);
+		return new PolynomialX<>(mc, map, 1);
 	}
 	
-	public static <T> MultinomialX<T> constant(MathCalculator<T> mc,T c){
+	public static <T> PolynomialX<T> constant(MathCalculator<T> mc, T c){
 		NavigableMap<Integer,T> map = new TreeMap<>();
 		if(mc.isZero(c)) {
 			return zero(mc);
 		}
 		map.put(0,c);
-		return new MultinomialX<>(mc, map, 0);
+		return new PolynomialX<>(mc, map, 0);
 	}
 	
 	/**
-	 * Returns a multinomial
+	 * Returns a polynomial
 	 * @param mc
-	 * @param ts
+	 * @param coes
 	 * @return
 	 */
 	@SafeVarargs
-	public static <T> MultinomialX<T> valueOf(MathCalculator<T> mc,T...coes){
+	public static <T> PolynomialX<T> valueOf(MathCalculator<T> mc, T...coes){
 		if(coes.length==0) {
 			return zero(mc);
 		}
@@ -268,22 +272,22 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		if(map.isEmpty()) {
 			return zero(mc);
 		}
-		return new MultinomialX<>(mc, map, max);
+		return new PolynomialX<>(mc, map, max);
 	}
-	public static MultinomialX<Formula> fromPolynomial(Polynomial p,String ch){
-		return fromPolynomial(p, ch,Formula.getCalculator());
-	}
+
+
+
 	/**
-	 * Converts the given polynomial to a multinomial of the given character {@code ch}.
+	 * Converts the given polynomial to a polynomial of the given character {@code ch}.
 	 * @param p
 	 * @param ch
-	 * @param calculator
 	 * @return
 	 * @throws ArithmeticException if the polynomial has a fraction power or a negative power for the character
 	 * (such as x^0.5 or x^(-2)).
 	 */
-	public static MultinomialX<Formula> fromPolynomial(Polynomial p,String ch,MathCalculator<Formula> mc){
-		TreeMap<Integer,Formula> map = new TreeMap<>();
+	public static PolynomialX<PolynomialOld> fromPolynomial(PolynomialOld p, String ch){
+		TreeMap<Integer,PolynomialOld> map = new TreeMap<>();
+		MathCalculator<PolynomialOld> pc = PolynomialOld.getCalculator();
 		int max = 0;
 		for(Formula f : p.getFormulas()) {
 			BigDecimal bd = f.getCharacterPower(ch);
@@ -294,30 +298,36 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 			if(pow > max) {
 				max = pow;
 			}
-			Formula coe = f.removeChar(ch);
-			map.put(pow, coe);
+			PolynomialOld coe = PolynomialOld.fromFormula(f.removeChar(ch));
+			map.compute(pow,(x,y)-> {
+				if(y == null){
+					return coe;
+				}else{
+					return pc.add(y,coe);
+				}
+			});
 		}
-		return new MultinomialX<>(mc, map, max);
+		return new PolynomialX<>(pc, map, max);
 		
 	}
 	
 	/**
-	 * Gets a calculator of the specific type of MultinomialX
+	 * Gets a calculator of the specific type of PolynomialX
 	 * @param mc
 	 * @return
 	 */
-	public static <T> MultinomialCalculator<T> getCalculator(MathCalculator<T> mc){
-		return new MultinomialCalculator<>(mc);
+	public static <T> polynomialCalculator<T> getCalculator(MathCalculator<T> mc){
+		return new polynomialCalculator<>(mc);
 	}
 	
-	public static class MultinomialCalculator<T> extends MathCalculatorAdapter<MultinomialX<T>> 
-	implements MathCalculatorHolder<T>,NTCalculator<MultinomialX<T>>{
+	public static class polynomialCalculator<T> extends MathCalculatorAdapter<PolynomialX<T>> 
+	implements MathCalculatorHolder<T>,NTCalculator<PolynomialX<T>>{
 		private final MathCalculator<T> mc;
-		private final MultinomialX<T> zero,one;
+		private final PolynomialX<T> zero,one;
 		/**
 		 * 
 		 */
-		MultinomialCalculator(MathCalculator<T> mc) {
+		polynomialCalculator(MathCalculator<T> mc) {
 			this.mc = mc;
 			zero = zero(mc);
 			one = one(mc);
@@ -333,15 +343,15 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public boolean isEqual(MultinomialX<T> para1, MultinomialX<T> para2) {
-			return Multinomial.isEqual(para1,para2, mc::isEqual);
+		public boolean isEqual(PolynomialX<T> para1, PolynomialX<T> para2) {
+			return Polynomial.isEqual(para1,para2, mc::isEqual);
 		}
 
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public int compare(MultinomialX<T> para1, MultinomialX<T> para2) {
+		public int compare(PolynomialX<T> para1, PolynomialX<T> para2) {
 			return para1.compareTo(para2);
 		}
 
@@ -349,7 +359,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#add(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> add(MultinomialX<T> para1, MultinomialX<T> para2) {
+		public PolynomialX<T> add(PolynomialX<T> para1, PolynomialX<T> para2) {
 			TreeMap<Integer,T> map = new TreeMap<>();
 			int mp1 = para1.getDegree();
 			int mp2 = para2.getDegree();
@@ -388,14 +398,14 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 			if(mp == -1) {
 				return zero;
 			}
-			return new MultinomialX<>(mc, map, mp);
+			return new PolynomialX<>(mc, map, mp);
 		}
 
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#negate(java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> negate(MultinomialX<T> para) {
+		public PolynomialX<T> negate(PolynomialX<T> para) {
 			if(para == zero) {
 				return zero;
 			}
@@ -403,7 +413,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 			for(Entry<Integer,T> en : nmap.entrySet()) {
 				en.setValue(mc.negate(en.getValue()));
 			}
-			return new MultinomialX<>(mc, nmap, para.degree);
+			return new PolynomialX<>(mc, nmap, para.degree);
 		}
 
 		
@@ -412,7 +422,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#subtract(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> subtract(MultinomialX<T> para1, MultinomialX<T> para2) {
+		public PolynomialX<T> subtract(PolynomialX<T> para1, PolynomialX<T> para2) {
 			TreeMap<Integer,T> map = new TreeMap<>();
 			int mp1 = para1.getDegree();
 			int mp2 = para2.getDegree();
@@ -454,21 +464,21 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 			if(mp == -1) {
 				return zero;
 			}
-			return new MultinomialX<>(mc, map, mp);
+			return new PolynomialX<>(mc, map, mp);
 		}
 
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#getZero()
 		 */
 		@Override
-		public MultinomialX<T> getZero() {
+		public PolynomialX<T> getZero() {
 			return zero;
 		}
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#isZero(java.lang.Object)
 		 */
 		@Override
-		public boolean isZero(MultinomialX<T> para) {
+		public boolean isZero(PolynomialX<T> para) {
 			return isEqual(zero,para);
 		}
 
@@ -476,7 +486,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#multiply(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> multiply(MultinomialX<T> para1, MultinomialX<T> para2) {
+		public PolynomialX<T> multiply(PolynomialX<T> para1, PolynomialX<T> para2) {
 			NavigableMap<Integer,T> map = multiplyToMap(para1.map, para2.map);
 			if(map.isEmpty()) {
 				return zero;
@@ -488,15 +498,15 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 //					map.compute(t, (p,c)-> c== null ? coe : mc.add(c, coe));
 //				}
 //			}
-			return new MultinomialX<>(mc, map, para1.degree+para2.degree);
+			return new PolynomialX<>(mc, map, para1.degree+para2.degree);
 		}
 
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#divide(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> divide(MultinomialX<T> para1, MultinomialX<T> para2) {
-			Pair<MultinomialX<T>,MultinomialX<T>> p = divideAndReminder(para1, para2);
+		public PolynomialX<T> divide(PolynomialX<T> para1, PolynomialX<T> para2) {
+			Pair<PolynomialX<T>,PolynomialX<T>> p = divideAndReminder(para1, para2);
 			if(!isZero(p.getSecond())) {
 				throw new UnsupportedCalculationException("Reminder!= 0, see divideAndReminder");
 			}
@@ -504,13 +514,13 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		}
 		
 		/**
-		 * Returns a pair of quotient and the reminder of the division of two MultinomialX.
+		 * Returns a pair of quotient and the reminder of the division of two PolynomialX.
 		 * <pre>p1 = k*p2 + r</pre> The degree of {@code r} is smaller than {@code p2}.
 		 * @param p1
 		 * @param p2
 		 * @return a pair of the quotient and the reminder.
 		 */
-		public Pair<MultinomialX<T>,MultinomialX<T>> divideAndReminder(MultinomialX<T> p1,MultinomialX<T> p2){
+		public Pair<PolynomialX<T>,PolynomialX<T>> divideAndReminder(PolynomialX<T> p1, PolynomialX<T> p2){
 			if(isZero(p2)) {
 				throw new ArithmeticException("divide by zero!");
 			}
@@ -555,16 +565,16 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 					});
 				}
 			}
-			MultinomialX<T> qm = new MultinomialX<>(mc, quotient, mp1-mp2);
-			MultinomialX<T> rm = remains.isEmpty() ? zero : new MultinomialX<>(mc, remains, remains.lastKey());
-			return new Pair<MultinomialX<T>, MultinomialX<T>>(qm, rm);
+			PolynomialX<T> qm = new PolynomialX<>(mc, quotient, mp1-mp2);
+			PolynomialX<T> rm = remains.isEmpty() ? zero : new PolynomialX<>(mc, remains, remains.lastKey());
+			return new Pair<PolynomialX<T>, PolynomialX<T>>(qm, rm);
 		}
 		
 		/**
 		 * Returns the reminder of the two polynomials.
 		 */
 		@Override
-		public MultinomialX<T> reminder(MultinomialX<T> a, MultinomialX<T> b) {
+		public PolynomialX<T> reminder(PolynomialX<T> a, PolynomialX<T> b) {
 			return divideAndReminder(a, b).getSecond();
 		}
 
@@ -572,7 +582,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#getOne()
 		 */
 		@Override
-		public MultinomialX<T> getOne() {
+		public PolynomialX<T> getOne() {
 			return one;
 		}
 
@@ -581,7 +591,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#multiplyLong(java.lang.Object, long)
 		 */
 		@Override
-		public MultinomialX<T> multiplyLong(MultinomialX<T> p, long l) {
+		public PolynomialX<T> multiplyLong(PolynomialX<T> p, long l) {
 			if(l==1) {
 				return p;
 			}
@@ -593,14 +603,14 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 			}
 			NavigableMap<Integer, T> nmap = p.getCoefficientMap();
 			CollectionSup.modifyMap(nmap, (x,y)->mc.multiplyLong(y, l));
-			return new MultinomialX<>(mc, nmap, p.degree);
+			return new PolynomialX<>(mc, nmap, p.degree);
 		}
 
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#divideLong(java.lang.Object, long)
 		 */
 		@Override
-		public MultinomialX<T> divideLong(MultinomialX<T> p, long l) {
+		public PolynomialX<T> divideLong(PolynomialX<T> p, long l) {
 			if(l == 0) {
 				throw new ArithmeticException("Divide by zero");
 			}
@@ -612,14 +622,14 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 			}
 			NavigableMap<Integer, T> nmap = p.getCoefficientMap();
 			CollectionSup.modifyMap(nmap, (x,y)->mc.divideLong(y, l));
-			return new MultinomialX<>(mc, nmap, p.degree);
+			return new PolynomialX<>(mc, nmap, p.degree);
 		}
 
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#squareRoot(java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> squareRoot(MultinomialX<T> p) {
+		public PolynomialX<T> squareRoot(PolynomialX<T> p) {
 			throw new UnsupportedCalculationException();
 		}
 
@@ -627,7 +637,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#nroot(java.lang.Object, long)
 		 */
 		@Override
-		public MultinomialX<T> nroot(MultinomialX<T> x, long n) {
+		public PolynomialX<T> nroot(PolynomialX<T> x, long n) {
 			throw new UnsupportedCalculationException();
 		}
 		
@@ -648,7 +658,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#pow(java.lang.Object, long)
 		 */
 		@Override
-		public MultinomialX<T> pow(MultinomialX<T> p, long exp) {
+		public PolynomialX<T> pow(PolynomialX<T> p, long exp) {
 			if(exp == 1) {
 				return p;
 			}
@@ -661,14 +671,14 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 				throw new ArithmeticException("Too big for exp="+exp);
 			}
 			NavigableMap<Integer, T> map = ModelPatterns.binaryReduce(exp, one.map, p.map, this::multiplyToMap);
-			return new MultinomialX<>(mc, map, (int)mp);
+			return new PolynomialX<>(mc, map, (int)mp);
 		}
 
 		/*
 		 * @see cn.timelives.java.math.numberModels.MathCalculator#constantValue(java.lang.String)
 		 */
 		@Override
-		public MultinomialX<T> constantValue(String name) {
+		public PolynomialX<T> constantValue(String name) {
 			return constant(mc, mc.constantValue(name));
 		}
 
@@ -676,7 +686,7 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#abs(java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> abs(MultinomialX<T> para) {
+		public PolynomialX<T> abs(PolynomialX<T> para) {
 			if(mc.compare(para.getCoefficient(para.degree), mc.getZero())<0) {
 				return negate(para);
 			}
@@ -690,14 +700,14 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 * @return the  greatest common divisor of {@code a} and {@code b}, whose leading coefficient is one.
 		 */
 		@Override
-		public MultinomialX<T> gcd(MultinomialX<T> a, MultinomialX<T> b) {
+		public PolynomialX<T> gcd(PolynomialX<T> a, PolynomialX<T> b) {
 			if(a.degree < b.degree) {
-				MultinomialX<T> t = a;
+				PolynomialX<T> t = a;
 				a = b;
 				b = t;
 			}
 			while(b.degree > 0) {
-				MultinomialX<T> t = reminder(a, b);
+				PolynomialX<T> t = reminder(a, b);
 				a = b;
 				b = t;
 			}
@@ -710,34 +720,34 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		 */
 		@Override
 		public Class<?> getNumberClass() {
-			return MultinomialX.class;
+			return PolynomialX.class;
 		}
 		/*
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isInteger(java.lang.Object)
 		 */
 		@Override
-		public boolean isInteger(MultinomialX<T> x) {
+		public boolean isInteger(PolynomialX<T> x) {
 			throw new UnsupportedCalculationException();
 		}
 		/*
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isQuotient(java.lang.Object)
 		 */
 		@Override
-		public boolean isQuotient(MultinomialX<T> x) {
+		public boolean isQuotient(PolynomialX<T> x) {
 			throw new UnsupportedCalculationException();
 		}
 		/*
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#mod(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> mod(MultinomialX<T> a, MultinomialX<T> b) {
+		public PolynomialX<T> mod(PolynomialX<T> a, PolynomialX<T> b) {
 			return divideAndReminder(a, b).getSecond();
 		}
 		/*
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#divideToInteger(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public MultinomialX<T> divideToInteger(MultinomialX<T> a, MultinomialX<T> b) {
+		public PolynomialX<T> divideToInteger(PolynomialX<T> a, PolynomialX<T> b) {
 			return divideAndReminder(a, b).getFirst();
 		}
 		
@@ -745,19 +755,21 @@ public final class MultinomialX<T> extends FieldMathObject<T> implements Multino
 		
 	}
 	
-	public static void main(String[] args) {
-		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
-		MultinomialX<Integer> p1 = MultinomialX.valueOf(mc, 6,7,1);
-		MultinomialX<Integer> p2 = MultinomialX.valueOf(mc, -6,-5,1);
-		MultinomialCalculator<Integer> mmc = getCalculator(mc);
-		MultinomialX<Integer> re = mmc.add(p1, p2);
-		print(p1);
-		print(p2);
-//		print(re);
-//		print(mmc.multiply(p1, p2));//x^3 + 3*x^2 + 3*x + 1
-		print(mmc.divideAndReminder(p1, p2));
-//		print(mmc.pow(p2, 5));
-//		print(mmc.gcd(mmc.pow(p2, 5), mmc.pow(p2, 3)));
-		print(mmc.gcd(p1, p2));
-	}
+//	public static void main(String[] args) {
+//		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
+//		PolynomialX<Integer> p1 = PolynomialX.valueOf(mc, 6,7,1);
+//		PolynomialX<Integer> p2 = PolynomialX.valueOf(mc, -6,-5,1);
+//		polynomialCalculator<Integer> mmc = getCalculator(mc);
+//		PolynomialX<Integer> re = mmc.add(p1, p2);
+//		print(p1);
+//		print(p2);
+////		print(re);
+////		print(mmc.multiply(p1, p2));//x^3 + 3*x^2 + 3*x + 1
+//		print(mmc.divideAndReminder(p1, p2));
+////		print(mmc.pow(p2, 5));
+////		print(mmc.gcd(mmc.pow(p2, 5), mmc.pow(p2, 3)));
+//		print(mmc.gcd(p1, p2));
+//	}
+
+
 }

@@ -392,12 +392,11 @@ public final class PVector<T> extends Vector<T> {
 	}
 	/**
 	 * Returns the reduce of the vector, try to reduce {@code this} 
-	 * into <pre>ax + by + cz</pre>
+	 * into <pre>ax + by </pre>
 	 * This three vector must not be parallel.
 	 * @param x
 	 * @param y
-	 * @param z
-	 * @return a SVector of (a,b,c)
+	 * @return a PVector of (a,b)
 	 * @see
 	 */
 	public PVector<T> reduce(PVector<T> x,PVector<T> y){

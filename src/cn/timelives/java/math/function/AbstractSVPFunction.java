@@ -5,7 +5,7 @@ package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.Multinomial;
+import cn.timelives.java.math.Polynomial;
 import cn.timelives.java.math.Utils;
 import cn.timelives.java.math.calculus.Calculus;
 import cn.timelives.java.math.calculus.Derivable;
@@ -129,7 +129,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		}
 		@SuppressWarnings("unchecked")
 		SVPFunction<N> f = (SVPFunction<N>) obj;
-		return Multinomial.isEqual(this,f, Utils.mappedIsEqual(mc, mapper));
+		return Polynomial.isEqual(this,f, Utils.mappedIsEqual(mc, mapper));
 	}
 	
 	/* (non-Javadoc)
@@ -137,7 +137,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		return Multinomial.stringOf(this, mc, nf);
+		return Polynomial.stringOf(this, mc, nf);
 	}
 	
 	static class SVPFunctionImpl1<T> extends AbstractSVPFunction<T>{
@@ -453,11 +453,11 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	
 	/**
 	 * Returns a function from a multinomial.
-	 * @param m a {@link Multinomial}
+	 * @param m a {@link Polynomial}
 	 * @param mc a {@link MathCalculator}
 	 * @return an {@link AbstractSVPFunction}
 	 */
-	public static <T> AbstractSVPFunction<T> fromMultinomial(Multinomial<T> m,MathCalculator<T> mc){
+	public static <T> AbstractSVPFunction<T> fromMultinomial(Polynomial<T> m, MathCalculator<T> mc){
 		if(m instanceof AbstractSVPFunction) {
 			return (AbstractSVPFunction<T>)m;
 		}
@@ -471,12 +471,12 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	}
 	/**
 	 * Returns a function from a multinomial which is also a {@link MathCalculatorHolder}.
-	 * @param m a {@link Multinomial}
+	 * @param m a {@link Polynomial}
 	 * @param mc a {@link MathCalculator}
 	 * @return an {@link AbstractSVPFunction}
 	 * @throws ClassCastException if {@code !(m instanceof MathCalculatorHolder)};
 	 */
-	public static <T> AbstractSVPFunction<T> fromMultinomial(Multinomial<T> m){
+	public static <T> AbstractSVPFunction<T> fromMultinomial(Polynomial<T> m){
 		@SuppressWarnings("unchecked")
 		MathCalculatorHolder<T> holder = (MathCalculatorHolder<T>)m;
 		return fromMultinomial(m, holder.getMathCalculator());

@@ -52,7 +52,7 @@ public final class NodeComparator implements Comparator<Node> {
 			if (comp != 0) {
 				return comp;
 			}
-			return CollectionSup.compareList(a.children, b.children, this);
+			return CollectionSup.compareCollection(a.children, b.children, this);
 		}
 		case D_FUNCTION: {
 			DFunction a = (DFunction) n1, b = (DFunction) n2;
@@ -84,7 +84,7 @@ public final class NodeComparator implements Comparator<Node> {
 			if (comp != 0) {
 				return comp;
 			}
-			return CollectionSup.compareList(a.children, b.children, this);
+			return CollectionSup.compareCollection(a.children, b.children, this);
 		}
 		case POLYNOMIAL: {
 			Poly a = (Poly) n1, b = (Poly) n2;

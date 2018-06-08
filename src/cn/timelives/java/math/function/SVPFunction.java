@@ -5,7 +5,8 @@ package cn.timelives.java.math.function;
 
 
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.Multinomial;
+import cn.timelives.java.math.Polynomial;
+import cn.timelives.java.math.linearAlgebra.Vector;
 
 import java.util.function.BiPredicate;
 
@@ -16,7 +17,7 @@ import java.util.function.BiPredicate;
  * @author liyicheng
  *
  */
-public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, Multinomial<T>{
+public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, Polynomial<T> {
 	
 	/**
 	 * Returns the coefficient {@code x^n},if {@code n==0} then the 
@@ -34,7 +35,11 @@ public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, M
 	 * 
 	 */
 	int getDegree();
-	
+
+	public default Vector<T> coefficientVector(){
+		return Polynomial.coefficientVector(this,getMathCalculator());
+	}
+
 	/**
 	 * Determines whether the two SVPFunctions are equal. The subclasses may 
 	 * use this method to test whether the two objects are equal.
@@ -44,6 +49,6 @@ public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, M
 	 * @return
 	 */
 	public static <T,S> boolean isEqual(SVPFunction<T> f1,SVPFunction<S> f2,BiPredicate<T, S> equal) {
-		return Multinomial.isEqual(f1, f2, equal);
+		return Polynomial.isEqual(f1, f2, equal);
 	}
 }

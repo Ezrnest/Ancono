@@ -13,7 +13,7 @@ import java.util.function.Function;
  * <p>
  * @author lyc
  * @param <T> the kind of object used, usually a subclass of number
- * @see {@linkplain MathCalculator}
+ * @see MathCalculator
  */
 public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalculator<T>>{
 	/**

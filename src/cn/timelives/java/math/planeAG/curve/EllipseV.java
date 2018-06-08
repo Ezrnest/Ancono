@@ -242,7 +242,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 				return Collections.emptyList();
 			}
 		}
-		
+
 		List<T> sol = createEquation0(line).solveR();
 		List<Point<T>> re = new ArrayList<>(sol.size());
 		for(T t: sol){

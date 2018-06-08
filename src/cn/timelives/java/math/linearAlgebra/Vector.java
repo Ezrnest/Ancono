@@ -8,6 +8,7 @@ import cn.timelives.java.math.numberModels.NumberFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -102,8 +103,8 @@ public abstract class Vector<T> extends Matrix<T> {
 	
 	/**
 	 * Calculate the square of |this|,which has full precision and use T as the 
-	 * returning result.The result is equal to use {@link #scalarProduct(Vector, Vector)} as 
-	 * {@code scalarProduct(this,this)} but this method will have a better performance.
+	 * returning result.The result is equal to use {@link #innerProduct(Vector)} as
+	 * {@code innerProduct(this)} but this method will have a better performance.
 	 * @return |this|^2
 	 */
 	public T calLengthSq(){
@@ -152,7 +153,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	/**
 	 * Returns the angle of {@code this} and {@code v}.
 	 * <pre> arccos(this · v / (|this| |v|))</pre>
-	 * @param s
+	 * @param v
 	 * @return <pre> arccos(this · v / (|this| |v|))</pre>
 	 */
 	public T angle(Vector<T> v) {
@@ -161,7 +162,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	/**
 	 * Returns the cos value of the angle of {@code this} and {@code v}.
 	 * <pre>this · v / (|this| |v|)</pre>
-	 * @param s
+	 * @param v
 	 * @return <pre>this · v / (|this| |v|)</pre>
 	 */
 	public T angleCos(Vector<T> v) {
@@ -279,13 +280,13 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * Create a new Matrix with the given fraction array.A boolean representing whether the 
 	 * vector should be a row-vector or column-vector is necessary.The {@link Matrix} returned by 
 	 * this method generally has a better performance in contrast to the matrix return by simply call 
-	 * {@link Matrix#valueOf(T[][])} using a two-dimension array as parameter.
+	 * {@link Matrix#valueOf(Object[][], MathCalculator)} using a two-dimension array as parameter.
 	 * <p>For example , assume {@code fs} is 
 	 * an array contains following values:[1,3,4,5],then {@code createVector(true,fs} will return a 
 	 * matrix whose row count is one and column count is 4, while {@code createVector(false,fs} will 
 	 * return a matrix with 4 rows and 1 column.
 	 * @param isRow decides whether the vector return is a row-vector
-	 * @param fs the numbers,null values will be considered as {@value T#ZERO}
+	 * @param fs the numbers,null values will be considered as ZERO
 	 * @return a newly created vector 
 	 * @see DVector#createVector(boolean, long[])
 	 */
@@ -296,13 +297,13 @@ public abstract class Vector<T> extends Matrix<T> {
 		for(int i=0;i<vec.length;i++){
 			vec[i] = fs[i] == null ? mc.getZero() : fs[i];
 		}
-		return new DVector<T>(vec,isRow,mc);
+		return new DVector<>(vec,isRow,mc);
 	}
 	/**
 	 * Create a new Matrix with the given fraction array.A boolean representing whether the 
 	 * vector should be a row-vector or column-vector is necessary.The {@link Matrix} returned by 
 	 * this method generally has a better performance in contrast to the matrix return by simply call 
-	 * {@link Matrix#valueOf(T[][])} using a two-dimension array as parameter.
+	 * {@link Matrix#valueOf(Object[][], MathCalculator)} using a two-dimension array as parameter.
 	 * <p>For example , assume {@code ns} is 
 	 * an array contains following values:[1,3,4,5],then {@code createVector(true,ns} will return a 
 	 * matrix whose row count is one and column count is 4, while {@code createVector(false,ns} will 
@@ -310,21 +311,21 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @param isRow decides whether the vector return is a row-vector
 	 * @param ns the numbers
 	 * @return a newly created vector 
-	 * @see DVector#createVector(boolean, T[])
+	 * @see DVector#valueOf(Object[][], MathCalculator)
 	 */
 	public static Vector<Long> createVector(boolean isRow,long[] ns){
 		Long[] vec = new Long[ns.length];
 		for(int i=0;i<vec.length;i++){
 			vec[i] = Long.valueOf(ns[i]);
 		}
-		return new DVector<Long>(vec,isRow,Calculators.getCalculatorLong());
+		return new DVector<>(vec,isRow,Calculators.getCalculatorLong());
 	}
 	/**
 	 * Create a new column vector according to the array of fraction given.Null values will be considered 
 	 * as {@link MathCalculator#getZero()}
 	 * @param fs the numbers
 	 * @return a newly created column vector 
-	 * @see #createVector(boolean, T[])
+	 * @see #createVector(MathCalculator, boolean, Object[])
 	 */
 	@SafeVarargs
 	public static <T> Vector<T> createVector(MathCalculator<T> mc,T...fs){
@@ -333,7 +334,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	
 	/**
 	 * Create a new column vector according to the array of fraction given.
-	 * @param fs the numbers
+	 * @param arr the numbers
 	 * @return a newly created vector 
 	 * @see #createVector(boolean, long[])
 	 */
@@ -425,12 +426,11 @@ public abstract class Vector<T> extends Matrix<T> {
 		@SuppressWarnings("unchecked")
 		T[] re = (T[]) v.toArray();
 		MathCalculator<T> mc = vecs[0].mc;
-		for(int j=0;j<vecs.length;j++) {
-			Vector<T> vt = vecs[j];
-			if(vt.getSize() != size) {
+		for (Vector<T> vt : vecs) {
+			if (vt.getSize() != size) {
 				throw new IllegalArgumentException();
 			}
-			for(int i=0;i<size;i++){
+			for (int i = 0; i < size; i++) {
 				re[i] = mc.add(re[i], vt.getNumber(i));
 			}
 		}
@@ -611,6 +611,28 @@ public abstract class Vector<T> extends Matrix<T> {
 			list.set(i, list.get(i).unitVector());
 		}
 		return list;
+	}
+
+	/**
+	 * Returns a column vector whose n-th element is map.get(n)(0 for null), 0<= n <=length-1
+	 * @param map
+	 * @param length
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> Vector<T> fromIndexMap(Map<Integer,T> map,int length,MathCalculator<T> mc){
+		@SuppressWarnings("unchecked")
+		T[] arr = (T[]) new Object[length];
+		T z = mc.getZero();
+		for(int i=0;i<length;i++){
+			T t = map.get(i);
+			if(t == null){
+				arr[i] = z;
+			}else{
+				arr[i] = t;
+			}
+		}
+		return new DVector<>(arr,false,mc);
 	}
 	
 //	public static void main(String[] args) {

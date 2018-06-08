@@ -4,8 +4,8 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.Polynomial;
+import cn.timelives.java.math.numberModels.Multinomial;
+import cn.timelives.java.math.numberModels.MultinomialCalculator;
 
 import java.util.*;
 
@@ -58,7 +58,7 @@ public final class ExprFunctionHolder {
 	 * @param x
 	 * @return
 	 */
-	public Polynomial computeSingle(String fname,Polynomial x) {
+	public Multinomial computeSingle(String fname, Multinomial x) {
 		PolyFunctionS f = singleFunctions.get(fname);
 		if(f == null) {
 			return null;
@@ -77,7 +77,7 @@ public final class ExprFunctionHolder {
 	 * @param x
 	 * @return
 	 */
-	public Polynomial computeDouble(String fname,Polynomial x,Polynomial y) {
+	public Multinomial computeDouble(String fname, Multinomial x, Multinomial y) {
 		PolyFunctionB f = binaryFunctions.get(fname);
 		if(f == null) {
 			return null;
@@ -92,10 +92,10 @@ public final class ExprFunctionHolder {
 	 * Returns the result of applying the multiple function, returns {@code null} if there 
 	 * is no such function or the function cannot perform calculation.
 	 * @param fname
-	 * @param x
+	 * @param xs
 	 * @return
 	 */
-	public Polynomial computeMultiple(String fname,Polynomial[] xs) {
+	public Multinomial computeMultiple(String fname, Multinomial[] xs) {
 		PolyFunctionM f = multiFunctions.get(fname);
 		if(f == null) {
 			return null;
@@ -162,7 +162,7 @@ public final class ExprFunctionHolder {
 		return true;
 	}
 
-	public static ExprFunctionHolder getDefaultKit(PolyCalculator pc) {
+	public static ExprFunctionHolder getDefaultKit(MultinomialCalculator pc) {
 		return createFunctionHolder(ExprFunction.createBasicCalculatorFunctions(pc));
 	}
 	

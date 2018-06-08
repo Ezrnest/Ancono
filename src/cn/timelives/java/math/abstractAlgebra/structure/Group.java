@@ -79,4 +79,6 @@ public interface Group<T,G extends Group<T,G>> extends Monoid<T> {
 	 * @return
 	 */
 	Coset<T,G> getCoset(T x,G subGroup,boolean isLeft);
+
+
 }

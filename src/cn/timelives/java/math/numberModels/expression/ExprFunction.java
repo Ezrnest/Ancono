@@ -4,7 +4,7 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.PolyCalculator;
+import cn.timelives.java.math.numberModels.MultinomialCalculator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,12 +16,12 @@ import java.util.Objects;
  * a combined class of the function's details(name, number of parameters...) and
  * also the polynomial function in program(optional).
  * <p>
- * Polynomial functions in program is responsible for calculating the function
+ * PolynomialOld functions in program is responsible for calculating the function
  * directly to a polynomial result. Generally, a function can be 'computed' via
  * directly applying the function or {@link SimplificationStrategy}.
  * Simplification strategy is more flexible and can apply to more situations
  * when the parameter is not a polynomial. However, it is vital to use
- * polynomial function to simplify the expression to a plain Polynomial, which
+ * polynomial function to simplify the expression to a plain PolynomialOld, which
  * is the most efficient form of an expression and this calculation can be done
  * in the first phase of simplification. So if a function can be calculated to a
  * polynomial result for some parameters, it is recommended to implement a
@@ -46,10 +46,11 @@ public class ExprFunction {
 
 	/**
 	 * @param name
-	 * @param paramOrdered
 	 * @param paramNumber
-	 * @param paramDetails
-	 *            an object(or null) to indicate the details of each parameter
+	 * @param paramOrdered
+	 * @param description
+	 *            a string(or null) to indicate the details of each parameter
+	 * @param polyFunction
 	 */
 	ExprFunction(String name, int paramNumber, boolean paramOrdered, String description, Object polyFunction) {
 		super();
@@ -108,7 +109,7 @@ public class ExprFunction {
 	 * 
 	 * @param name
 	 * @param function
-	 * @param detail
+	 * @param description
 	 * @return
 	 */
 	public static ExprFunction createSingle(String name, PolyFunctionS function, String description) {
@@ -130,7 +131,7 @@ public class ExprFunction {
 	 * @param pc
 	 * @return
 	 */
-	public static List<ExprFunction> createBasicCalculatorFunctions(PolyCalculator pc) {
+	public static List<ExprFunction> createBasicCalculatorFunctions(MultinomialCalculator pc) {
 		final int number = 15;
 		ExprFunction[] fs = new ExprFunction[number];
 		fs[0] = createSingle("abs", pc::abs, "Returns the absolute value of the polynomial:|x|");

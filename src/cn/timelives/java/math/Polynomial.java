@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.math;
 
+import cn.timelives.java.math.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
@@ -13,8 +14,8 @@ import java.util.function.BiPredicate;
 
 
 /**
- * A multinomial is an math expression of a variable, usually called {@code x}, with 
- * defined operations <i>add</i> and <i>multiply</i>. Generally, a multinomial can be shown as 
+ * A polynomial is an math expression of a variable, usually called {@code x}, with 
+ * defined operations <i>add</i> and <i>multiply</i>. Generally, a polynomial can be shown as 
  * <pre>a_n*x^n + ... + a_1*x + a0 , (a_n!=0,n>=0)</pre> The operator {@literal x^n} represents 
  * for multiply {@code x} for {@code n} times. {@code n} is called the power of {@code x} and 
  * {@code a_n} is called the coefficient.
@@ -22,10 +23,10 @@ import java.util.function.BiPredicate;
  * 2017-10-06 16:51
  *
  */
-public interface Multinomial<T> extends Iterable<T>{
+public interface Polynomial<T> extends Iterable<T>{
 	/**
-	 * Gets the degree of this multinomial.
-	 * @return the degree of multinomial.
+	 * Gets the degree of this polynomial, which is the biggest power of x.
+	 * @return the degree of polynomial.
 	 */
 	int getDegree();
 	/**
@@ -43,14 +44,17 @@ public interface Multinomial<T> extends Iterable<T>{
 	public default Iterator<T> iterator() {
 		return new It<>(this);
 	}
+
+
+
 	/**
-	 * Determines whether the two multinomial are equal.
+	 * Determines whether the two polynomial are equal.
 	 * @param m1 
 	 * @param m2
 	 * @param equal
 	 * @return
 	 */
-	public static <T,S> boolean isEqual(Multinomial<T> m1,Multinomial<S> m2,BiPredicate<T, S> equal) {
+	public static <T,S> boolean isEqual(Polynomial<T> m1, Polynomial<S> m2, BiPredicate<T, S> equal) {
 		if(m1.getDegree() != m2.getDegree()) {
 			return false;
 		}
@@ -63,13 +67,13 @@ public interface Multinomial<T> extends Iterable<T>{
 		return true;
 	}
 	/**
-	 * Determines whether the two multinomial are equal, using the 
+	 * Determines whether the two polynomial are equal, using the 
 	 * equals() method in object.
 	 * @param m1 
 	 * @param m2
 	 * @return
 	 */
-	public static boolean isEqual(Multinomial<?> m1,Multinomial<?> m2) {
+	public static boolean isEqual(Polynomial<?> m1, Polynomial<?> m2) {
 		if(m1.getDegree() != m2.getDegree()) {
 			return false;
 		}
@@ -92,10 +96,10 @@ public interface Multinomial<T> extends Iterable<T>{
 	 *	return hash;</code>
 	 * 
 	 * @param m
-	 *            a Multinomial
+	 *            a Polynomial
 	 * @return
 	 */
-	public static int hashCodeOf(Multinomial<?> m) {
+	public static int hashCodeOf(Polynomial<?> m) {
 		int hash = 0;
 		int mp =m.getDegree();
 		for(int i=0;i<=mp;i++) {
@@ -104,7 +108,7 @@ public interface Multinomial<T> extends Iterable<T>{
 		return hash;
 	}
 	
-	public static <T> String stringOf(Multinomial<T> m,MathCalculator<T> mc,NumberFormatter<T> nf) {
+	public static <T> String stringOf(Polynomial<T> m, MathCalculator<T> mc, NumberFormatter<T> nf) {
 		int maxPower = m.getDegree();
 		if(maxPower== 0) {
 			return nf.format(m.getCoefficient(0), mc);
@@ -138,15 +142,30 @@ public interface Multinomial<T> extends Iterable<T>{
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * Returns a vector whose n-th element is the coefficient of x^n.
+	 * @return
+	 */
+	public static <T> Vector<T> coefficientVector(Polynomial<T> fx, MathCalculator<T> mc){
+		int length = fx.getDegree()+1;
+		@SuppressWarnings("unchecked")
+		T[] arr = (T[]) new Object[length];
+		for(int i=0;i<length;i++){
+			arr[i] = fx.getCoefficient(i);
+		}
+		return Vector.createVector(mc,arr);
+	}
+
 }
 class It<T> implements ListIterator<T>{
-	private final Multinomial<T> f;
+	private final Polynomial<T> f;
 	private final int max;
 	private int n;
 	/**
 	 * 
 	 */
-	public It(Multinomial<T> f) {
+	public It(Polynomial<T> f) {
 		this.f = f;
 		this.max = f.getDegree();
 	}

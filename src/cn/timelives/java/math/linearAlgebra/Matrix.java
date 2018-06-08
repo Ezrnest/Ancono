@@ -746,11 +746,11 @@ public abstract class Matrix<T> extends FieldMathObject<T> implements Invertible
 		}
 		//transform to a temporary matrix to compute the determinant
 		//in multinomial
-		MathCalculator<MultinomialX<T>> mct = MultinomialX.getCalculator(mc);
-		Matrix<MultinomialX<T>> tmat = this.mapTo(x -> MultinomialX.constant(mc, x), mct),
-				eigen = Matrix.diag(MultinomialX.oneX(mc),row, mct);
+		MathCalculator<PolynomialX<T>> mct = PolynomialX.getCalculator(mc);
+		Matrix<PolynomialX<T>> tmat = this.mapTo(x -> PolynomialX.constant(mc, x), mct),
+				eigen = Matrix.diag(PolynomialX.oneX(mc),row, mct);
 		tmat = minusMatrix(eigen, tmat);
-		MultinomialX<T> expr = tmat.calDet();
+		PolynomialX<T> expr = tmat.calDet();
 		return SVPEquation.fromMultinomial(expr);
 	}
 	/**

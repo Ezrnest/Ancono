@@ -6,11 +6,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,7 +53,7 @@ import java.util.regex.Pattern;
  * 1.3:将Formula变为不可变对象
  * 
  * @author lyc
- * @see Polynomial ExpressionTree Calculator
+ * @see PolynomialOld ExpressionTree Calculator
  */
 public class Formula implements Comparable<Formula> {
 	/**
@@ -126,6 +123,132 @@ public class Formula implements Comparable<Formula> {
 		HashMap<String, BigDecimal> h = new HashMap<String, BigDecimal>();
 		h.put(PI_STR, BigDecimal.ONE);
 		PI = new Formula(1, BigInteger.ONE, BigInteger.ONE, BigInteger.ONE, h);
+	}
+
+	public static Comparator<Formula> getNormalOrder(){
+		return normalOrder;
+	}
+
+	private static final Comparator<Formula> normalOrder = getNormalOrder0();
+	static Comparator<Formula> getNormalOrder0(){
+		return (fA,formula)->{
+			int result = 0;// the result will be 0 at first and waited to be check by following ways
+			TreeSet<String> aChar = new TreeSet<String>(fA.character.keySet());
+			TreeSet<String> bChar = new TreeSet<String>(formula.character.keySet());
+			aChar.remove(E_STR);
+			aChar.remove(I_STR);
+			aChar.remove(PI_STR);
+			bChar.remove(E_STR);
+			bChar.remove(I_STR);
+			bChar.remove(PI_STR);
+			if (aChar.size() == 0) {
+				if (bChar.size() != 0) {
+					return 1;// fA is the case that A doesn't have any other character while B does.A
+					// should be in front of B
+				}
+				result = 0;// the situation will be considered after the part dealing with character
+			} else if (bChar.size() == 0 && aChar.size() != 0) {
+				return -1;// fA is the case that B doesn't have any other character while A does.B
+				// should be in front of A
+			} else {
+				// fA is the situation that both A and B have character except i,e,Pi
+				Iterator<String> ia = aChar.iterator();
+				Iterator<String> ib = bChar.iterator();
+				while (ia.hasNext()) {
+					// deal with A first
+					if (ib.hasNext()) {
+						String ta = ia.next();
+						String tb = ib.next();
+						result = ta.compareTo(tb);// compare the character in the first or second
+						if (result == 0) {
+							result = formula.character.get(tb).compareTo(fA.character.get(ta));// fA step will compare
+							// the character
+							if (result != 0) {
+								return result;
+							}
+						} else {
+							return result;
+						}
+					} else {
+						// result=-1;it is the situation that A has character while B doesn't.See the
+						// Third rule.
+						return -1;
+					}
+				}
+				if (ib.hasNext()) {
+					return 1;// result=1;it is the situation that B has character while A doesn't.See the
+					// Third rule
+				}
+			}
+			// now let's deal with i,e,Pi
+			if (fA.character.containsKey(I_STR)) {
+				if (false == formula.character.containsKey(I_STR)) {
+					return 1;// fA is the situation that A has "i" while B doesn't
+				}
+			} else if (formula.character.containsKey(I_STR)) {
+				if (false == fA.character.containsKey(I_STR)) {
+					return -1;// fA is the situation that B has "i" while A doesn't
+				}
+			}
+			if (fA.character.containsKey(E_STR)) {
+				if (formula.character.containsKey(E_STR)) {
+					result = formula.character.get(E_STR).compareTo(fA.character.get(E_STR));
+					if (result != 0) {
+						return result;
+					}
+				} else {
+					return -1;// fA is the situation that A has "e" while B doesn't
+				}
+			} else if (formula.character.containsKey(E_STR)) {
+				if (false == fA.character.containsKey(E_STR)) {
+					return 1;// fA is the situation that B has "e" while A doesn't
+				}
+			}
+			if (fA.character.containsKey(PI_STR)) {
+				if (formula.character.containsKey(PI_STR)) {
+					result = formula.character.get(PI_STR).compareTo(fA.character.get(PI_STR));
+					if (result != 0) {
+						return result;
+					}
+				} else {
+					return -1;// fA is the situation that A has "Pi" while B doesn't
+				}
+			} else if (formula.character.containsKey(PI_STR)) {
+				if (false == fA.character.containsKey(PI_STR)) {
+					return 1;// fA is the situation that B has "Pi" while A doesn't
+				}
+			}
+			// finally,let's deal with the number part
+			if (fA.decimal) {
+				if (formula.decimal) {
+					return fA.getNumber().compareTo(formula.getNumber());// compare the number if both of them are decimal
+				} else {
+					return 1;// fA is the situation that A is decimal while B isn't.A should be after B
+				}
+			} else {
+				if (formula.decimal) {
+					return -1;// fA is the situation that B is decimal while A isn't.A should be in front of
+					// B
+				}
+			}
+			// both of them are not decimal
+			result = fA.radical.compareTo(formula.radical);
+			if (result == 0) {
+				result = fA.getNumber().compareTo(formula.getNumber());
+				if (result == 0) {// fA shouldn't happen because the two formula strictly can be added
+					if (fA.signum > 0) {
+						if (formula.signum < 0) {
+							return 1;
+						}
+					} else {
+						if (formula.signum > 0) {
+							return -1;
+						}
+					}
+				}
+			}
+			return result;// fA is rarely possible.....
+		};
 	}
 
 	private Formula(int signum, BigInteger[] ndr, HashMap<String, BigDecimal> character) {
@@ -534,124 +657,24 @@ public class Formula implements Comparable<Formula> {
 	@Override
 	public int compareTo(Formula formula) {
 		// System.out.println(times++);
-		int result = 0;// the result will be 0 at first and waited to be check by following ways
-		TreeSet<String> aChar = new TreeSet<String>(this.character.keySet());
-		TreeSet<String> bChar = new TreeSet<String>(formula.character.keySet());
-		aChar.remove(E_STR);
-		aChar.remove(I_STR);
-		aChar.remove(PI_STR);
-		bChar.remove(E_STR);
-		bChar.remove(I_STR);
-		bChar.remove(PI_STR);
-		if (aChar.size() == 0) {
-			if (bChar.size() != 0) {
-				return 1;// this is the case that A doesn't have any other character while B does.A
-							// should be in front of B
-			}
-			result = 0;// the situation will be considered after the part dealing with character
-		} else if (bChar.size() == 0 && aChar.size() != 0) {
-			return -1;// this is the case that B doesn't have any other character while A does.B
-						// should be in front of A
-		} else {
-			// this is the situation that both A and B have character except i,e,Pi
-			Iterator<String> ia = aChar.iterator();
-			Iterator<String> ib = bChar.iterator();
-			while (ia.hasNext()) {
-				// deal with A first
-				if (ib.hasNext()) {
-					String ta = ia.next();
-					String tb = ib.next();
-					result = ta.compareTo(tb);// compare the character in the first or second
-					if (result == 0) {
-						result = formula.character.get(tb).compareTo(this.character.get(ta));// this step will compare
-																								// the character
-						if (result != 0) {
-							return result;
-						}
-					} else {
-						return result;
-					}
-				} else {
-					// result=-1;it is the situation that A has character while B doesn't.See the
-					// Third rule.
-					return -1;
-				}
-			}
-			if (ib.hasNext()) {
-				return 1;// result=1;it is the situation that B has character while A doesn't.See the
-							// Third rule
-			}
-		}
-		// now let's deal with i,e,Pi
-		if (this.character.containsKey(I_STR)) {
-			if (false == formula.character.containsKey(I_STR)) {
-				return 1;// this is the situation that A has "i" while B doesn't
-			}
-		} else if (formula.character.containsKey(I_STR)) {
-			if (false == this.character.containsKey(I_STR)) {
-				return -1;// this is the situation that B has "i" while A doesn't
-			}
-		}
-		if (this.character.containsKey(E_STR)) {
-			if (formula.character.containsKey(E_STR)) {
-				result = formula.character.get(E_STR).compareTo(this.character.get(E_STR));
-				if (result != 0) {
-					return result;
-				}
-			} else {
-				return -1;// this is the situation that A has "e" while B doesn't
-			}
-		} else if (formula.character.containsKey(E_STR)) {
-			if (false == this.character.containsKey(E_STR)) {
-				return 1;// this is the situation that B has "e" while A doesn't
-			}
-		}
-		if (this.character.containsKey(PI_STR)) {
-			if (formula.character.containsKey(PI_STR)) {
-				result = formula.character.get(PI_STR).compareTo(this.character.get(PI_STR));
-				if (result != 0) {
-					return result;
-				}
-			} else {
-				return -1;// this is the situation that A has "Pi" while B doesn't
-			}
-		} else if (formula.character.containsKey(PI_STR)) {
-			if (false == this.character.containsKey(PI_STR)) {
-				return 1;// this is the situation that B has "Pi" while A doesn't
-			}
-		}
-		// finally,let's deal with the number part
-		if (this.decimal) {
-			if (formula.decimal) {
-				return this.getNumber().compareTo(formula.getNumber());// compare the number if both of them are decimal
-			} else {
-				return 1;// this is the situation that A is decimal while B isn't.A should be after B
-			}
-		} else {
-			if (formula.decimal) {
-				return -1;// this is the situation that B is decimal while A isn't.A should be in front of
-							// B
-			}
-		}
-		// both of them are not decimal
-		result = this.radical.compareTo(formula.radical);
-		if (result == 0) {
-			result = this.getNumber().compareTo(formula.getNumber());
-			if (result == 0) {// this shouldn't happen because the two formula strictly can be added
-				if (this.signum > 0) {
-					if (formula.signum < 0) {
-						return 1;
-					}
-				} else {
-					if (formula.signum > 0) {
-						return -1;
-					}
-				}
-			}
-		}
-		return result;// this is rarely possible.....
+		return normalOrder.compare(this,formula);
 	}
 
+	/**
+	 * Returns the power of all the characters' sum.
+	 * @return
+	 */
+	public BigDecimal getPower(){
+		BigDecimal sum = BigDecimal.ZERO;
+		for (BigDecimal p : character.values()) {
+			sum = sum.add(p);
+		}
+		return sum;
+	}
+
+
+	
+	
 	/**
 	 * it will return a result that whether this one and another one have the same
 	 * character
@@ -684,8 +707,8 @@ public class Formula implements Comparable<Formula> {
 	 * notice that the i part of the formula will be calculate for example : 1/i =
 	 * i^-1 = -i
 	 * 
-	 * @return
-	 * @throws FormulaCalculationException
+	 * @return a formula
+	 * @throws ArithmeticException
 	 *             if this==ZERO
 	 */
 	public Formula reciprocal() {
@@ -1032,14 +1055,7 @@ public class Formula implements Comparable<Formula> {
 	}
 
 	static BigInteger[] toFraction(BigDecimal n) {
-		BigInteger[] uad = new BigInteger[2];
-		uad[0] = n.movePointRight(n.scale()).toBigIntegerExact();
-		uad[1] = BigDecimal.ONE.movePointRight(n.scale()).toBigIntegerExact();
-		BigInteger temp = uad[0].gcd(uad[1]);
-		uad[0] = uad[0].divide(temp);
-		uad[1] = uad[1].divide(temp);
-		return uad;
-
+		return Term.toFraction(n);
 	}
 
 	/**
@@ -1049,24 +1065,7 @@ public class Formula implements Comparable<Formula> {
 	 * @return
 	 */
 	static void sortRad(BigInteger[] i) {
-		if (i[0].compareTo(BigInteger.valueOf(4)) < 0) {
-			return;
-		}
-		BigInteger temp;
-		while (true) {
-			temp = i[2].pow(2);
-			if (temp.compareTo(i[0]) > 0) {
-				break;
-			}
-			if (i[0].mod(temp).compareTo(BigInteger.ZERO) == 0) {
-				i[0] = i[0].divide(temp);
-				i[1] = i[1].multiply(i[2]);
-				continue;
-			}
-			i[2] = i[2].add(BigInteger.ONE);
-			// temp = i.pow(2);
-		}
-		return;
+		Term.sortRad(i);
 	}
 
 	/**
@@ -1075,7 +1074,6 @@ public class Formula implements Comparable<Formula> {
 	 * than zero , the method will turn them to positive and change the signum
 	 * 
 	 * @param signum
-	 * @param ndr
 	 * @param character
 	 * @return
 	 */

@@ -200,9 +200,9 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	 * 		--fΪ������ʾ�Ҳ������ű��ʽ���������ֵ
 	 */
 	
-	@SuppressWarnings("unused")
-	private Formula sprtFormula0(Formula f){
-		Formula result=Formula.ONE;
+//	@SuppressWarnings("unused")
+//	private Formula sprtFormula0(Formula f){
+//		Formula result=Formula.ONE;
 //		switch (this.state){
 //		case 0:{
 ////			BigDecimal[] characterT=f.getCharacterT().clone();		
@@ -248,8 +248,8 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 //			break;
 //		}
 //		}
-		return result;
-	}
+//		return result;
+//	}
 	
 
 	
@@ -434,6 +434,8 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	public int compare(Formula para1, Formula para2) {
 		if(para1==para2)
 			return 0;
+
+
 		return para1.compareTo(para2);
 	}
 	@Override
@@ -576,7 +578,7 @@ public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements
 	///////////////////////////////////////////////////////
 	//test area
 //	public static void main(String[] args) {
-////		FractionalPoly fp = FractionalPoly.valueOf(, Polynomial.valueOf("-d[y1]p+d[y3]p"));
+////		FractionalPoly fp = FractionalPoly.valueOf(, PolynomialOld.valueOf("-d[y1]p+d[y3]p"));
 //		
 //		Formula f1  = Formula.valueOf("-1/16*x^2*y");
 //		Formula f2  = Formula.valueOf("1/16*x^2*y");

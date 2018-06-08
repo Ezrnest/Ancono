@@ -17,13 +17,13 @@ import static java.util.Objects.requireNonNull;
  */
 public class FracPoly {
 	
-	private final Polynomial nume,deno;
+	private final PolynomialOld nume,deno;
 	
-	public static final FracPoly ZERO = new FracPoly(Polynomial.ZERO, Polynomial.ONE);
-	public static final FracPoly ONE = new FracPoly(Polynomial.ONE, Polynomial.ONE);
+	public static final FracPoly ZERO = new FracPoly(PolynomialOld.ZERO, PolynomialOld.ONE);
+	public static final FracPoly ONE = new FracPoly(PolynomialOld.ONE, PolynomialOld.ONE);
 	
 	
-	FracPoly(Polynomial nume,Polynomial deno){
+	FracPoly(PolynomialOld nume, PolynomialOld deno){
 		this.nume = nume;
 		this.deno = deno;
 	}
@@ -50,10 +50,10 @@ public class FracPoly {
 	
 	@Override
 	public String toString(){
-		if(deno.equals(Polynomial.ONE)){
+		if(deno.equals(PolynomialOld.ONE)){
 			return nume.toString();
 		}
-		if(nume.equals(Polynomial.ZERO)){
+		if(nume.equals(PolynomialOld.ZERO)){
 			return "0";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -64,10 +64,10 @@ public class FracPoly {
 		return sb.toString();
 	}
 	
-	public Polynomial getNume(){
+	public PolynomialOld getNume(){
 		return nume;
 	}
-	public Polynomial getDeno(){
+	public PolynomialOld getDeno(){
 		return deno;
 	}
 	
@@ -77,15 +77,15 @@ public class FracPoly {
 	 * @param deno!=0
 	 * @return
 	 */
-	public static FracPoly valueOf(Polynomial nume,Polynomial deno){
-		if(Polynomial.ZERO.equals(deno)){
+	public static FracPoly valueOf(PolynomialOld nume, PolynomialOld deno){
+		if(PolynomialOld.ZERO.equals(deno)){
 			throw new ArithmeticException("Deno = 0");
 		}
 		return new FracPoly(requireNonNull(nume).clone(), requireNonNull(deno).clone());
 	}
 	
-	public static FracPoly valueOf(Polynomial p){
-		return new FracPoly(requireNonNull(p),Polynomial.ONE);
+	public static FracPoly valueOf(PolynomialOld p){
+		return new FracPoly(requireNonNull(p),PolynomialOld.ONE);
 	}
 	
 	private static final FPCalculator cal = new FPCalculator();
@@ -128,7 +128,7 @@ public class FracPoly {
 		 */
 		@Override
 		public boolean isZero(FracPoly para) {
-			return pc.isEqual(para.nume, Polynomial.ZERO);
+			return pc.isEqual(para.nume, PolynomialOld.ZERO);
 		}
 		
 		
@@ -140,22 +140,22 @@ public class FracPoly {
 		@Override
 		public int compare(FracPoly para1, FracPoly para2) {
 //			throw new UnsupportedCalculationException("Cannot compare polynomial");
-			Polynomial p1 = pc.multiply(para1.nume, para2.deno);
-			Polynomial p2 = pc.multiply(para2.nume, para1.deno);
+			PolynomialOld p1 = pc.multiply(para1.nume, para2.deno);
+			PolynomialOld p2 = pc.multiply(para2.nume, para1.deno);
 			return pc.compare(p1, p2);
 		}
 		
-		private FracPoly createPoly(Polynomial re1,Polynomial re2){
-			if(re1.equals(Polynomial.ZERO)){
-				re2 = Polynomial.ONE;
+		private FracPoly createPoly(PolynomialOld re1, PolynomialOld re2){
+			if(re1.equals(PolynomialOld.ZERO)){
+				re2 = PolynomialOld.ONE;
 			}else if(re2.getNumOfFormula()==1){
 				re1 = pc.divide(re1, re2);
-				re2 = Polynomial.ONE;
+				re2 = PolynomialOld.ONE;
 			}else {
 				//try divide
 				try {
 					re1 = pc.divide(re1, re2);
-					re2 = Polynomial.ONE;
+					re2 = PolynomialOld.ONE;
 				}catch(UnsupportedCalculationException ex) {}
 			}
 			return new FracPoly(re1, re2); 
@@ -164,8 +164,8 @@ public class FracPoly {
 		
 		@Override
 		public FracPoly add(FracPoly para1, FracPoly para2) {
-			Polynomial re1 = pc.add(pc.multiply(para1.nume, para2.deno), pc.multiply(para1.deno, para2.nume));
-			Polynomial re2 = pc.multiply(para1.deno, para2.deno);
+			PolynomialOld re1 = pc.add(pc.multiply(para1.nume, para2.deno), pc.multiply(para1.deno, para2.nume));
+			PolynomialOld re2 = pc.multiply(para1.deno, para2.deno);
 			return createPoly(re1, re2);
 		}
 
@@ -181,8 +181,8 @@ public class FracPoly {
 
 		@Override
 		public FracPoly subtract(FracPoly para1, FracPoly para2) {
-			Polynomial re1 = pc.subtract(pc.multiply(para1.nume, para2.deno), pc.multiply(para1.deno, para2.nume));
-			Polynomial re2 = pc.multiply(para1.deno, para2.deno);
+			PolynomialOld re1 = pc.subtract(pc.multiply(para1.nume, para2.deno), pc.multiply(para1.deno, para2.nume));
+			PolynomialOld re2 = pc.multiply(para1.deno, para2.deno);
 			return createPoly(re1, re2);
 		}
 
@@ -193,48 +193,48 @@ public class FracPoly {
 
 		@Override
 		public FracPoly multiply(FracPoly para1, FracPoly para2) {
-			Polynomial p1n = para1.nume;
-			Polynomial p1d = para1.deno;
-			Polynomial p2n = para2.nume;
-			Polynomial p2d = para2.deno;
+			PolynomialOld p1n = para1.nume;
+			PolynomialOld p1d = para1.deno;
+			PolynomialOld p2n = para2.nume;
+			PolynomialOld p2d = para2.deno;
 			try{
 				p1n = pc.divide(p1n, p2d);
-				p2d = Polynomial.ONE;
+				p2d = PolynomialOld.ONE;
 			}catch(UnsupportedCalculationException ex){
 			}
 			try{
 				p2n = pc.divide(p2n, p1d);
-				p1d = Polynomial.ONE;
+				p1d = PolynomialOld.ONE;
 			}catch(UnsupportedCalculationException ex){
 			}
 			
-			Polynomial re1 = pc.multiply(p1n, p2n);
-			Polynomial re2 = pc.multiply(p1d, p2d);
+			PolynomialOld re1 = pc.multiply(p1n, p2n);
+			PolynomialOld re2 = pc.multiply(p1d, p2d);
 			return createPoly(re1, re2);
 		}
 
 		@Override
 		public FracPoly divide(FracPoly para1, FracPoly para2) {
-			if(para2.nume.equals(Polynomial.ZERO)){
+			if(para2.nume.equals(PolynomialOld.ZERO)){
 				throw new ArithmeticException("Divide by zero: /0");
 			}
-			Polynomial p1n = para1.nume;
-			Polynomial p1d = para1.deno;
-			Polynomial p2n = para2.deno;
-			Polynomial p2d = para2.nume;
+			PolynomialOld p1n = para1.nume;
+			PolynomialOld p1d = para1.deno;
+			PolynomialOld p2n = para2.deno;
+			PolynomialOld p2d = para2.nume;
 			try{
 				p1n = pc.divide(p1n, p2d);
-				p2d = Polynomial.ONE;
+				p2d = PolynomialOld.ONE;
 			}catch(UnsupportedCalculationException ex){
 			}
 			try{
 				p2n = pc.divide(p2n, p1d);
-				p1d = Polynomial.ONE;
+				p1d = PolynomialOld.ONE;
 			}catch(UnsupportedCalculationException ex){
 			}
 			
-			Polynomial re1 = pc.multiply(p1n, p2n);
-			Polynomial re2 = pc.multiply(p1d, p2d);
+			PolynomialOld re1 = pc.multiply(p1n, p2n);
+			PolynomialOld re2 = pc.multiply(p1d, p2d);
 			
 			return createPoly(re1, re2);
 			
@@ -248,7 +248,7 @@ public class FracPoly {
 		@Override
 		public FracPoly reciprocal(FracPoly p) {
 //			pc.reciprocal(p);
-			Polynomial re1 = p.deno,re2 = p.nume;
+			PolynomialOld re1 = p.deno,re2 = p.nume;
 			return createPoly(re1, re2);
 		}
 
@@ -317,7 +317,7 @@ public class FracPoly {
 	
 	static class SimplifierFP implements Simplifier<FracPoly>{
 		
-		private final Simplifier<Polynomial> simp = PolyCalculator.getSimplifier();
+		private final Simplifier<PolynomialOld> simp = PolyCalculator.getSimplifier();
 		
 		@Override
 		public List<FracPoly> simplify(List<FracPoly> numbers) {
@@ -325,8 +325,8 @@ public class FracPoly {
 			FracPoly[] fps = numbers.toArray(new FracPoly[]{}); 
 			
 			simplifyFraction(fps);
-			List<Polynomial> pns = new ArrayList<>(fps.length);
-			List<Polynomial> pds = new ArrayList<>(fps.length);
+			List<PolynomialOld> pns = new ArrayList<>(fps.length);
+			List<PolynomialOld> pds = new ArrayList<>(fps.length);
 			for(FracPoly fp : fps){
 				pns.add(fp.nume);
 				pds.add(fp.deno);
@@ -334,19 +334,19 @@ public class FracPoly {
 			pns = simp.simplify(pns);
 			pds = simp.simplify(pds);
 			
-			Polynomial ds = Polynomial.ONE;
+			PolynomialOld ds = PolynomialOld.ONE;
 			PolyCalculator pc = PolyCalculator.DEFAULT_CALCULATOR;
-			for(Polynomial p : pds){
+			for(PolynomialOld p : pds){
 				ds = pc.multiply(ds, p);
 			}
 			
 			for(int i=0;i<fps.length;i++){
-				Polynomial n = pns.get(i);
-				Polynomial m ;
+				PolynomialOld n = pns.get(i);
+				PolynomialOld m ;
 				try{
 					m = pc.divide(ds, pds.get(i));
 				}catch(UnsupportedCalculationException uoe){
-					m = Polynomial.ONE;
+					m = PolynomialOld.ONE;
 					for(int j=0;j<fps.length;j++){
 						if(j==i)
 							continue;
@@ -355,7 +355,7 @@ public class FracPoly {
 				}
 				n = pc.multiply(n, m);
 				pns.set(i, n);
-				pds.set(i, Polynomial.ONE);
+				pds.set(i, PolynomialOld.ONE);
 			}
 			pns = simp.simplify(pns);
 			
@@ -372,19 +372,19 @@ public class FracPoly {
 		 */
 		@Override
 		public FracPoly simplify(FracPoly x) {
-			List<Polynomial> nd = Arrays.asList(x.nume,x.deno);
+			List<PolynomialOld> nd = Arrays.asList(x.nume,x.deno);
 			nd = PolyCalculator.getSimplifier().simplify(nd);
 			return new FracPoly(nd.get(0), nd.get(1));
 		}
 		
 		private void simplifyFraction(FracPoly[] fps){
-			List<Polynomial> list = new ArrayList<>(2);
+			List<PolynomialOld> list = new ArrayList<>(2);
 			list.add(null);
 			list.add(null);
 			for(int i =0 ;i < fps.length;i++){
 				list.set(0, fps[i].nume);
 				list.set(1, fps[i].deno);
-				List<Polynomial> re = simp.simplify(list);
+				List<PolynomialOld> re = simp.simplify(list);
 				fps[i] = FracPoly.valueOf(re.get(0), re.get(1));
 			}
 			return;

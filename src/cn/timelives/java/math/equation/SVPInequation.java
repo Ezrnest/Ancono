@@ -24,7 +24,7 @@ import java.util.function.Function;
  * 2017-10-06 09:33
  *
  */
-public abstract class SVPInequation<T> extends SVInquation<T> implements Multinomial<T>{
+public abstract class SVPInequation<T> extends SVInquation<T> implements Polynomial<T> {
 	protected final int mp;
 	
 	/**
@@ -36,7 +36,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 		this.mp = mp;
 	}
 	/*
-	 * @see cn.timelives.java.math.Multinomial#getMaxPower()
+	 * @see cn.timelives.java.math.Polynomial#getMaxPower()
 	 */
 	@Override
 	public int getDegree() {
@@ -60,7 +60,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 			return false;
 		}
 		SVPInequation<T> sv = (SVPInequation<T>) obj;
-		return op == sv.op && Multinomial.isEqual(this,sv, mc::isEqual);
+		return op == sv.op && Polynomial.isEqual(this,sv, mc::isEqual);
 	}
 	
 	/*
@@ -75,7 +75,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 			return false;
 		}
 		SVPInequation<N> sv = (SVPInequation<N>) obj;
-		return op == sv.op && Multinomial.isEqual(this,sv, Utils.mappedIsEqual(mc, mapper));
+		return op == sv.op && Polynomial.isEqual(this,sv, Utils.mappedIsEqual(mc, mapper));
 	}
 	
 	/*
@@ -90,7 +90,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 			return false;
 		}
 		SVPInequation<?> sv = (SVPInequation<?>)obj;
-		return op == sv.op && Multinomial.isEqual(this, sv);
+		return op == sv.op && Polynomial.isEqual(this, sv);
 	}
 	
 	/*
@@ -98,7 +98,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 	 */
 	@Override
 	public int hashCode() {
-		return op.hashCode()*31 + Multinomial.hashCodeOf(this);
+		return op.hashCode()*31 + Polynomial.hashCodeOf(this);
 	}
 	
 	
@@ -107,7 +107,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {
-		StringBuilder sb = new StringBuilder(Multinomial.stringOf(this, mc, nf));
+		StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, mc, nf));
 		sb.append(' ').append(op.toString());
 		sb.append(" 0");
 		return sb.toString();
@@ -134,7 +134,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 			this.f = f;
 		}
 		/*
-		 * @see cn.timelives.java.math.Multinomial#getCoefficient(int)
+		 * @see cn.timelives.java.math.Polynomial#getCoefficient(int)
 		 */
 		@Override
 		public T getCoefficient(int n) {
@@ -179,7 +179,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.Multinomial#getCoefficient(int)
+		 * @see cn.timelives.java.math.Polynomial#getCoefficient(int)
 		 */
 		@Override
 		public T getCoefficient(int n) {
@@ -276,7 +276,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Multino
 		}
 
 		/*
-		 * @see cn.timelives.java.math.Multinomial#getCoefficient(int)
+		 * @see cn.timelives.java.math.Polynomial#getCoefficient(int)
 		 */
 		@Override
 		public T getCoefficient(int n) {

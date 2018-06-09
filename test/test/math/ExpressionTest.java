@@ -3,6 +3,7 @@
  */
 package test.math;
 
+import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.Multinomial;
@@ -40,7 +41,7 @@ public class ExpressionTest {
 		x.listNode();
 		print(x);
 	}
-//	@Test
+	@Test
 	public void testFractionSimplify1() {
 		Expression x = Expression.fromMultinomial(Multinomial.valueOf("a+b")),
 				y = Expression.fromMultinomial(Multinomial.valueOf("a")),
@@ -52,34 +53,12 @@ public class ExpressionTest {
 		x = mc.add(y, z);
 		assertEquals("((a)*sin(x))/(a+b)+((b)*sin(x))/(a+b) = sin(x)" , x.toString(), "sin(x)");
 	}
-//	@Test
+	@Test
 	public void testFractionSimplify2() {
 		Expression x = mc.divide(sin, cos),
 				y = mc.divide(cos, sin);
 		x = mc.multiply(x, y);
 		assertEquals("sinx/cosx * cosx/sinx = 1" , x.toString(), "1");
-	}
-	
-	public void testFractionSimplify3() {
-		Expression x = mc.divide(a, sum),
-				y = mc.divide(b, mc.add(sum, a));
-		x = mc.add(x, y);
-		printAndList(x);
-		mc.setProperty(SimplificationStrategies.PROP_MERGE_FRACTION, "true");
-		x = mc.simplify(x);
-		printAndList(x);
-		
-	}
-	public void testFractionSimplify4() {
-		Expression x = mc.divide(a, sum),
-				y = mc.divide(b, mc.add(sum, a));
-//		x = mc.add(x, y);
-		x = mc.add(x, a);
-		printAndList(x);
-		mc.setProperty(SimplificationStrategies.PROP_MERGE_FRACTION, "true");
-		x = mc.simplify(x);
-		printAndList(x);
-		
 	}
 	@Test
 	public void testSqr() {
@@ -93,11 +72,35 @@ public class ExpressionTest {
 		print(z);
 		print(w);
 	}
-//	@Test
+	@Test
 	public void testExp1() {
 		SimplificationStrategies.setCalRegularization(mc);
 		x = mc.exp(mc.reciprocal(sum));
 		y = mc.exp(x, sum);
-		printAndList(y);
+		assertEquals(y.toString(),"e");
 	}
+
+	@Test
+    public void testMerge(){
+        SimplificationStrategies.setCalRegularization(mc);
+        Expression x = mc.squareRoot(Expression.fromMultinomial(Multinomial.valueOf("a+b"))),
+                y = Expression.fromMultinomial(Multinomial.valueOf("a")),
+                z = Expression.fromMultinomial(Multinomial.valueOf("b"));
+        printAndList(mc.add(mc.multiply(x,y),mc.multiply(x,z)));
+    }
+
+    @Test
+    public void test1(){
+        SimplificationStrategies.setCalRegularization(mc);
+        print(MathUtils.solveEquation(a,b,c,mc));
+    }
+
+    @Test
+    public void test2(){
+        Expression x = mc.squareRoot(Expression.fromMultinomial(Multinomial.valueOf("a+b"))),
+                y = Expression.fromMultinomial(Multinomial.valueOf("a"));
+        print(mc.negate(mc.multiply(x,y)));
+    }
+
+
 }

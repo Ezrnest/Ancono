@@ -166,7 +166,8 @@ public final class CollectionSup {
 		}
 		return true;
 	}
-	
+
+
 	/**
 	 * Determines whether the two collection is equal through {@code isEqual}.
 	 * In this method, the order of the elements returned by the iterator not considered.

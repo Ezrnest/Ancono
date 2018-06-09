@@ -579,6 +579,32 @@ public class MultinomialCalculator implements MathCalculator<Multinomial>,NTCalc
     }
 
     @Override
+    public boolean isPositive(Multinomial x) {
+        return !x.equals(ZERO);
+    }
+
+    @Override
+    public boolean isNegative(Multinomial x) {
+        return false;
+    }
+
+    @Override
+    public Multinomial gcd(Multinomial a, Multinomial b) {
+        if(ZERO.equals(a)){
+            return b;
+        }
+        while(!ZERO.equals(b)){
+            Multinomial t = b;
+            b = mod(a,b);
+            if(a.equals(b)){
+                return ONE;
+            }
+            a = t;
+        }
+        return a;
+    }
+
+    @Override
     public cn.timelives.java.utilities.structure.Pair<Multinomial, Multinomial> divideAndReminder(Multinomial a, Multinomial b) {
         var arr =  a.divideAndRemainder(b);
         return new cn.timelives.java.utilities.structure.Pair<>(arr[0],arr[1]);
@@ -594,7 +620,7 @@ public class MultinomialCalculator implements MathCalculator<Multinomial>,NTCalc
         @Override
         public List<Multinomial> simplify(List<Multinomial> numbers) {
             numbers = Multinomial.reduceGcd(numbers);
-            return null;
+            return numbers;
         }
 
         @Override

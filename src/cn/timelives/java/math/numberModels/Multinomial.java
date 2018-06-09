@@ -1,5 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
@@ -7,6 +8,8 @@ import cn.timelives.java.utilities.ModelPatterns;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
+
+import static cn.timelives.java.utilities.Printer.print;
 
 /**
  * An improved class for multinomial.
@@ -168,7 +171,8 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         if(! (obj instanceof Multinomial)){
             return false;
         }
-        return terms.equals(((Multinomial)obj).terms);
+        //use the equals() method
+        return CollectionSup.collectionEqualSorted(terms,((Multinomial)obj).terms,(x,y)->x.equals(y));
     }
 
     private int hashCode = 0;
@@ -192,6 +196,9 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         }
         return CollectionSup.compareCollection(terms,o.terms, Comparator.naturalOrder());
     }
+
+
+
     public Multinomial multiply(Term t) {
         if(t.isZero()){
             return ZERO;
@@ -317,20 +324,36 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
      */
     private static void multinomialDivision(NavigableSet<Term> m,NavigableSet<Term> divisor,NavigableSet<Term> quotient){
         //multinomial division
-//        Set<String> remainChars = getCharacters(m);
+        Set<String> remainChars = getCharacters(m);
         Term divisorHead = divisor.first();
-//        Set<String> divisorChars = getCharacters(divisor);
-        while(true){
+        Set<String> divisorChars = getCharacters(divisor);
+        List<Term> extraRemainders = new ArrayList<>(2);
+        //while(true){
+        while(remainChars.containsAll(divisorChars)){
+            if(m.isEmpty()){
+                throw new RuntimeException();
+                //TODO
+            }
             Term head = m.first();
+
             if(head.compareChar(divisorHead)>0){
                 //can't divide
                 break;
             }
             Term q = head.divide(divisorHead);
+//            if(q.containNegativePower()){
+//                extraRemainders.add(head);
+//                m.pollFirst();
+//                if(m.isEmpty()){
+//                    break;
+//                }
+//                continue;
+//            }
             mergingAdd(quotient,q);
             mergingAddAll(m,multiplyToSet(divisor,q.negate()));
-//            remainChars = getCharacters(m);
+            remainChars = getCharacters(m);
         }
+        mergingAddAll(m,extraRemainders);
     }
     private static void reduceGcd(NavigableSet<Term> m1,NavigableSet<Term> m2){
         int size1 = m1.size(),
@@ -342,7 +365,7 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         m1.clear();
         m1.addAll(list.subList(0,size1));
         m2.clear();
-        m2.addAll(list.subList(size1,size2));
+        m2.addAll(list.subList(size1,list.size()));
     }
 
     /**
@@ -510,7 +533,7 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         Multinomial gcd = null;
         for(int j=0;j<len;j++){
             NavigableSet<Term> set = getSet();
-            for(;i<indexes[pos];i++){
+            for(;i<indexes[j];i++){
                 set.add(it.next());
             }
             Multinomial po = new Multinomial(set);
@@ -523,7 +546,7 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         }
         if(!gcd.equals(Multinomial.ONE)){
             for(int j=0;j<len;j++){
-                re.set(j,re.get(j).divide(gcd));
+                re.set(j, re.get(j).divide(gcd));
             }
         }
 
@@ -615,8 +638,14 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
     }
 
     public static void main(String[] args) {
-//        Multinomial m1 = valueOf("x^2-4y^2-3xy"),
+        print(cal.gcd(valueOf("a"),valueOf("a+b")));
+//        Multinomial m1 = valueOf("x"),
 //                m2 = valueOf("x-4y");
+//        print(m1.add(m2));
+//        print(m1.subtract(m2));
+//        print(m1.multiply(m2));
+//        print(m1.negate());
+//        print(m1.multiply(Multinomial.ONE.negate()));
 //        print(m1);
 //        print(m2);
 //        print(m1.divideAndRemainder(m2));

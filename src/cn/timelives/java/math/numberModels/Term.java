@@ -249,6 +249,19 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
     }
 
     /**
+     * Determines whether the term contains negative power such as a^-1.
+     * @return
+     */
+    public boolean containNegativePower(){
+        for(Fraction p : character.values()){
+            if(p.isNegative()){
+                return  true;
+            }
+        }
+        return  false;
+    }
+
+    /**
      * Determines whether the powers of characters in this
      * term is bigger (or equal) than that in another correspondingly.
      * The powers of characters that do not appear in a term are
@@ -1558,28 +1571,30 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
 
 
     public static void main(String[] args) {
-        int times = 100000;
-		Term tt = Term.valueOf("3aasdadxxcqSqr3/2");
-		print(tt);
-		Term tsum = Term.ZERO;
-        Timer t = new Timer(TimeUnit.MILLISECONDS);
-        t.start();
-        for(int i=0;i<times;i++){
-            tsum = tsum.add(tt);
-//            tt = Term.valueOf(10);
-        }
-        print(t.end());
-        print(tsum);
-
-        Formula tf = Formula.valueOf("3aasdadxxcqSqr3/2");
-        Formula fsum = Formula.ZERO;
-        FormulaCalculator fc = FormulaCalculator.getCalculator();
-        t.start();
-        for(int i=0;i<times;i++){
-            fsum = fc.add(fsum,tf);
-//            tf = Formula.valueOf(10);
-        }
-        print(t.end());
-        print(fsum);
+        print(ONE.equals(ONE.negate()));
+        print(ONE.compareTo(ONE.negate()));
+//        int times = 100000;
+//		Term tt = Term.valueOf("3aasdadxxcqSqr3/2");
+//		print(tt);
+//		Term tsum = Term.ZERO;
+//        Timer t = new Timer(TimeUnit.MILLISECONDS);
+//        t.start();
+//        for(int i=0;i<times;i++){
+//            tsum = tsum.add(tt);
+////            tt = Term.valueOf(10);
+//        }
+//        print(t.end());
+//        print(tsum);
+//
+//        Formula tf = Formula.valueOf("3aasdadxxcqSqr3/2");
+//        Formula fsum = Formula.ZERO;
+//        FormulaCalculator fc = FormulaCalculator.getCalculator();
+//        t.start();
+//        for(int i=0;i<times;i++){
+//            fsum = fc.add(fsum,tf);
+////            tf = Formula.valueOf(10);
+//        }
+//        print(t.end());
+//        print(fsum);
     }
 }

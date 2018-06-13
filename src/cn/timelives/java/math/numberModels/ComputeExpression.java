@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static cn.timelives.java.math.numberModels.ParserUtils.*;
+
 /**
  * A class for a math calculator to perform a series of operation.
  * @author liyicheng
@@ -513,7 +515,7 @@ public class ComputeExpression{
 		 */
 		Node partAdd(String str,int offset){
 			//split first:
-			List<Pair<String,Boolean>> list = splitByAdd(str,offset);
+			List<Pair<String,Boolean>> list = ParserUtils.splitByAdd(str,offset);
 			if(list.size()<=0){
 				throwFor("Empty: ",offset);
 			}
@@ -846,144 +848,14 @@ public class ComputeExpression{
 			}
 			return list;
 		}
-		/**
-		 * 
-		 * @param str
-		 * @param start the starting position in str
-		 * @param length the length of str
-		 * @param offset the offset in the whole expression, used for exception message.
-		 * @return
-		 */
-		Node parseOp1(String str,int start,int length,int offset){
-			return null;
-		}
-		Node parseOp2(String str,int start,int length,int offset){
-			
-			return null;
-		}
-		/**
-		 * finds the ending of the integer, returns the index of the first  non-digit character.
-		 * @param str
-		 * @param start
-		 * @return exclusive
-		 */
-		static int findIntEnd(String str,int start){
-			for(int i=start;i<str.length();i++){
-				if(!isDigit(str.charAt(i))){
-					return i;
-				}
-			}
-			return str.length();
-		}
-		/**
-		 * Returns the index of the matching bracket, start should be 
-		 * (1+<i>the index of the bracket to match</i>)
-		 * @param str
-		 * @param start
-		 * @return inclusive for ).
-		 */
-		static int findMatchBrac(String str,int start){
-			int bra = 1;
-			for(int i=start;i<str.length();i++){
-				char c = str.charAt(i);
-				if(c == '('){
-					bra++;
-				}else if(c == ')'){
-					bra--;
-				}
-				if(bra==0){
-					return i;
-				}
-			}
-			return str.length();
-		}
-		static int findQuoteChar(String str,int start,char ch){
-			int bra = 0;
-			for(int i=start;i<str.length();i++){
-				char c = str.charAt(i);
-				if(c == '('){
-					bra++;
-				}else if(c == ')'){
-					bra--;
-				}
-				if(bra==0 && c == ch){
-					return i;
-				}
-			}
-			return str.length();
-		}
+
+
 		
-		
-		
-		
-		static boolean isDigit(char c){
-			return c >='0' && c<='9';
-		}
-		
-		
-		
-		
-		List<Pair<String,Boolean>> splitByAdd(String expr,final int offset){
-			if(expr.isEmpty()){
-				throwFor("Empty: ",offset);
-			}
-			List<Pair<String,Boolean>> list = new LinkedList<>();
-			int i=0;
-			int end = expr.length()-1;
-			while(expr.charAt(i)==' '){
-				i++;
-			}
-			boolean first = true;
-			int prev = i;
-			int brac = 0;
-			Boolean positive = !Boolean.valueOf(expr.charAt(i)=='-');
-			for(;i<=end;i++){
-				char c = expr.charAt(i);
-				if(brac == 0){
-					if(c =='+' || c=='-'){
-						if(!first){
-							if(prev!= 0 && i == prev+1){
-								throwFor(offset+i);
-							}
-							String part = expr.substring(prev, i);
-							Pair<String,Boolean> p = new Pair<String, Boolean>(part, positive);
-							list.add(p);
-						}
-						prev = i+1;
-						positive = Boolean.valueOf(c == '+');
-						
-						first = false;
-						continue;
-					}
-				}
-				if (c == '(') {
-					brac++;
-				} else if (c == ')') {
-					brac--;
-					if(brac <0){
-						throwFor("Missing left bracket: ",offset+i);
-					}
-				}
-				first = false;
-				
-			}
-			//deal with the last one
-			if(prev > end){
-				throwFor(offset+end);
-			}else if(brac!=0){
-				throwFor("Missing right bracket: ",offset+end);
-			}else{
-				String part = expr.substring(prev,end+1);
-				Pair<String,Boolean> p = new Pair<String, Boolean>(part, positive);
-				list.add(p);
-			}
-			return list;
-		}
+
 		
 		
 		void throwFor(String msg,int index){
-			throw new ComputeExpressionParseException(System.lineSeparator()+msg+expr+System.lineSeparator()+
-					String.valueOf(ArraySup.fillArr(index+msg.length(), ' '))+'^');
+			ParserUtils.throwFor(expr,msg,index);
 		}
 		void throwFor(int index){
 			throwFor("Wrong format: ",index);
@@ -1110,7 +982,7 @@ public class ComputeExpression{
 	 * <h3>Special cases</h3>
 	 * If the expression is empty, then "0" will be returned.
 	 * @param expr
-	 * @param mc
+	 * @param flags
 	 * @return
 	 */
 	public static ComputeExpression compile(String expr,int flags){
@@ -1123,7 +995,7 @@ public class ComputeExpression{
 	 * <P>
 	 * 
 	 * @param expr
-	 * @param flag
+	 * @param flags
 	 * @return
 	 */
 	public static <T> TypeComputeExpression<T> compileTyped(String expr,int flags,T[] cons,MathCalculator<T> mc){

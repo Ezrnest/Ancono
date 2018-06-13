@@ -6,6 +6,7 @@ import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.structure.PolynomialX;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.structure.Pair;

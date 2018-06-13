@@ -33,10 +33,10 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	
 	/**
 	 * Directly gets the children of the node, without getting a copy.
-	 * @param n a ChildrenNode
+	 * @param n a ListChildNode
 	 * @return the children
 	 */
-	protected final List<Node> getChildren(ChildrenNode n){
+	protected final List<Node> getChildren(ListChildNode n){
 		return n.children;
 	}
 	/**
@@ -44,7 +44,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param n
 	 * @param children
 	 */
-	protected final void setChildren(ChildrenNode n,List<Node> children) {
+	protected final void setChildren(ListChildNode n, List<Node> children) {
 		n.children = children;
 	}
 	/**

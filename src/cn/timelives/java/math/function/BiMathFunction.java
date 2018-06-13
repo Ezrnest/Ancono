@@ -17,7 +17,7 @@ import java.util.function.BiFunction;
  * @author lyc
  *
  * @param <P1> parameter type 1
- * @param <p2> parameter type 2
+ * @param <P2> parameter type 2
  * @param <R> result type
  */
 public interface BiMathFunction<P1,P2,R> extends BiFunction<P1, P2, R> {

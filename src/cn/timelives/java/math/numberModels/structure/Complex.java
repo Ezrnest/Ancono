@@ -1,8 +1,12 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.structure;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.numberModels.ComplexI;
+import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.planeAG.PVector;
 import cn.timelives.java.math.planeAG.Point;
 
@@ -35,7 +39,7 @@ import java.util.function.Function;
 public final class Complex<T> extends FieldMathObject<T> {
 	private final T a,b;
 	
-	protected Complex(MathCalculator<T> mc,T a,T b) {
+	protected Complex(MathCalculator<T> mc, T a, T b) {
 		super(mc);
 		this.a = Objects.requireNonNull(a);
 		this.b = Objects.requireNonNull(b);
@@ -420,7 +424,7 @@ public final class Complex<T> extends FieldMathObject<T> {
 	}
 	
 	
-	public static class ComplexCalculator<T> extends MathCalculatorAdapter<Complex<T>>{
+	public static class ComplexCalculator<T> extends MathCalculatorAdapter<Complex<T>> {
 		private final MathCalculator<T> mc;
 		public ComplexCalculator(MathCalculator<T> mc) {
 			this.mc = mc;

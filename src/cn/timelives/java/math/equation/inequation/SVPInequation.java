@@ -1,14 +1,16 @@
 /**
  * 2017-10-06
  */
-package cn.timelives.java.math.equation;
+package cn.timelives.java.math.equation.inequation;
 
 import cn.timelives.java.math.*;
+import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.function.AbstractSVPFunction.LinearFunction;
 import cn.timelives.java.math.function.QuadraticFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.Utils;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;
 
@@ -31,7 +33,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 * @param mc
 	 * @param op
 	 */
-	protected SVPInequation(MathCalculator<T> mc, Type op,int mp) {
+	protected SVPInequation(MathCalculator<T> mc, Type op, int mp) {
 		super(mc, op);
 		this.mp = mp;
 	}
@@ -142,7 +144,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.equation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 		 */
 		@Override
 		public <N> SVPInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -171,7 +173,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		/**
 		 * @param mc
 		 * @param op
-		 * @param mp
+		 * @param f
 		 */
 		LinearInequation(MathCalculator<T> mc, Type op,AbstractSVPFunction.LinearFunction<T> f) {
 			super(mc, op, 1);
@@ -203,7 +205,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		}
 
 		/*
-		 * @see cn.timelives.java.math.equation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 		 */
 		@Override
 		public <N> LinearInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -268,7 +270,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		/**
 		 * @param mc
 		 * @param op
-		 * @param mp
+		 * @param f
 		 */
 		QuadraticInequation(MathCalculator<T> mc, Type op,QuadraticFunction<T> f) {
 			super(mc, op, 2);
@@ -372,7 +374,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		}
 
 		/*
-		 * @see cn.timelives.java.math.equation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
 		 */
 		@Override
 		public <N> QuadraticInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {

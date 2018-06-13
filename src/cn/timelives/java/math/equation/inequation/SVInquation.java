@@ -1,8 +1,10 @@
 /**
  * 2017-10-06
  */
-package cn.timelives.java.math.equation;
+package cn.timelives.java.math.equation.inequation;
 
+import cn.timelives.java.math.equation.SVCompareStructure;
+import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 import java.util.function.Function;

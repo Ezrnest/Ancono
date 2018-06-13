@@ -3,15 +3,17 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.numberModels.Multinomial;
-import cn.timelives.java.math.numberModels.MultinomialCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.numberModels.Term;
+import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
+import java.util.function.UnaryOperator;
 
 import static cn.timelives.java.utilities.Printer.*;
 
@@ -31,10 +33,13 @@ import static cn.timelives.java.utilities.Printer.*;
  * 2017-11-24 17:32
  *
  */
-public abstract class Node {
+public abstract class Node implements Computable,Serializable {
 	private static final MultinomialCalculator POLY_CALCULATOR = Multinomial.getCalculator();
 	NodeWithChildren parent;
-	int simIdentifier;
+	/**
+	 * An identifier indicating the simplifier used previously.
+	 */
+	transient int simIdentifier;
 	/**
 	 * 
 	 */
@@ -93,7 +98,7 @@ public abstract class Node {
 	
 	/**
 	 * Determines whether this node is equal to the other node in terms of it content it stores. Notice that this method 
-	 * is not the same to {@code equals()}
+	 * is not the same to {@code equals()}.
 	 * @param n
 	 * @return
 	 */
@@ -137,7 +142,30 @@ public abstract class Node {
 	 * @param level
 	 */
 	public abstract void listNode(int level);
-	
+
+
+    /**
+     * Applies the recursion operation to the node, this method can possibly modify
+     * the node structure instead of creating a copy and is designed for calculator
+     * performing operations such as simplification.
+     * <p>
+     * The function will be recursively applied to all the child nodes of the node in
+     * deep-first order, and then be applied to the node itself.
+     * <p></p>
+     * For example, {@code node.recurApply(x -> {print(x);return x},Integer.MAX_VALUE)}
+     * lists all the nodes.
+     * <P></P>
+     *
+     * The method should return a Node that will be the replacement of the original node.
+     * @param f the function that should be applied to the node
+     * @param depth the depth of the recursion
+     * @return the replacement of this node.
+     */
+	public abstract Node recurApply(Function<Node, Node> f, int depth);
+
+//	public abstract T recurApply(Function<Node,T> f)
+
+
 	/*
 	 * @see java.lang.Object#toString()
 	 */
@@ -149,7 +177,7 @@ public abstract class Node {
 	}
 	
 	/**
-	 * Determines whether two node are equal using {@link Node#equalNode(Node)}, or they are both {@code null}.
+	 * Determines whether two node are equal using {@link Node#equalNode(Node, MultinomialCalculator)}, or they are both {@code null}.
 	 * @param a
 	 * @param b
 	 * @return
@@ -221,17 +249,16 @@ public abstract class Node {
 	
 	
 	
-//	public abstract boolean equalStructure(Node n);
 	/**
 	 * A children node is a node which children as a list.
 	 * @author liyicheng
 	 * 2017-12-01 19:10
 	 *
 	 */
-	public static abstract class ChildrenNode extends NodeWithChildren{
+	public static abstract class ListChildNode extends NodeWithChildren{
 		List<Node> children;
 		boolean sortable;
-		ChildrenNode(NodeWithChildren parent,List<Node> children,boolean sortable) {
+		ListChildNode(NodeWithChildren parent, List<Node> children, boolean sortable) {
 			super(parent);
 			this.children = Objects.requireNonNull(children);
 			this.sortable = sortable;
@@ -338,7 +365,23 @@ public abstract class Node {
 				n.listNode(level+1);
 			}
 		}
-	}
+
+        @Override
+        public Node recurApply(Function<Node, Node> f, int depth) {
+            List<Node> children = this.children;
+            if (depth > 0) {
+                depth--;
+                for (ListIterator<Node> lit = children.listIterator(); lit.hasNext();) {
+                    Node t = lit.next();
+                    Node nt = t.recurApply(f, depth);
+                    if (nt != t) {
+                        lit.set(nt);
+                    }
+                }
+            }
+            return f.apply(this);
+        }
+    }
 	
 	/**
 	 * A MulNode contains a Multinomial and several sub-nodes.
@@ -346,7 +389,7 @@ public abstract class Node {
 	 * 2017-11-24 17:39
 	 *
 	 */
-	public static abstract class CombinedNode extends ChildrenNode{
+	public static abstract class CombinedNode extends ListChildNode {
 		Multinomial p;
 		/**
 		 * @param parent
@@ -415,8 +458,16 @@ public abstract class Node {
 		public Node getChild() {
 			return child;
 		}
-		
-		/*
+
+        @Override
+        public Node recurApply(Function<Node, Node> f, int depth) {
+            if (depth > 0) {
+                child = child.recurApply(f, depth - 1);
+            }
+            return f.apply(this);
+        }
+
+        /*
 		 * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#contains(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
@@ -531,8 +582,17 @@ public abstract class Node {
 		public Node getC2() {
 			return c2;
 		}
-		
-		void setBoth(Node n1,Node n2) {
+
+        @Override
+        public Node recurApply(Function<Node, Node> f, int depth) {
+            if (depth > 0) {
+                c1 = c1.recurApply(f, depth - 1);
+                c2 = c2.recurApply(f, depth - 1);
+            }
+            return f.apply(this);
+        }
+
+        void setBoth(Node n1, Node n2) {
 			c1 = n1;
 			c2 = n2;
 			n1.parent = this;
@@ -682,8 +742,13 @@ public abstract class Node {
 		public Multinomial getPolynomial() {
 			return p;
 		}
-		
-		/*
+
+        @Override
+        public Node recurApply(Function<Node, Node> f, int depth) {
+            return depth >= 0 ? f.apply(this) : this;
+        }
+
+        /*
 		 * @see cn.timelives.java.math.numberModels.expression.Node#clone()
 		 */
 		@Override
@@ -728,6 +793,16 @@ public abstract class Node {
 			if(braketRecommended) {
 				sb.append(')');
 			}
+		}
+
+		@Override
+		public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+			return p.compute(valueMap,mc);
+		}
+
+		@Override
+		public double computeDouble(ToDoubleFunction<String> valueMap) {
+			return p.computeDouble(valueMap);
 		}
 	}
 	/**
@@ -804,7 +879,27 @@ public abstract class Node {
 				sb.append(')');
 			}
 		}
-	}
+
+		@Override
+		public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+		    T re = p.compute(valueMap,mc);
+		    for(Node n : children){
+		        re = mc.add(re,n.compute(valueMap,mc));
+            }
+			return re;
+		}
+
+        @Override
+        public double computeDouble(ToDoubleFunction<String> valueMap) {
+            double re = p.computeDouble(valueMap);
+            for(Node n : children){
+                re += n.computeDouble(valueMap);
+            }
+            return re;
+        }
+    }
+
+
 	public static final class Multiply extends CombinedNode{
 		/**
 		 * @param parent
@@ -880,9 +975,27 @@ public abstract class Node {
 			}
 			
 		}
+
+        @Override
+        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+            T re = p.compute(valueMap,mc);
+            for(Node n : children){
+                re = mc.multiply(re,n.compute(valueMap,mc));
+            }
+            return re;
+        }
+
+        @Override
+        public double computeDouble(ToDoubleFunction<String> valueMap) {
+            double re = p.computeDouble(valueMap);
+            for(Node n : children){
+                re *= n.computeDouble(valueMap);
+            }
+            return re;
+        }
 		
 	}
-	static interface FunctionNode{
+	public interface FunctionNode{
 		String getFunctionName();
 	}
 	/**
@@ -892,7 +1005,6 @@ public abstract class Node {
 	 *
 	 */
 	public static final class SFunction extends SingleNode implements FunctionNode{
-		
 
 		final String functionName;
 		
@@ -955,8 +1067,19 @@ public abstract class Node {
 			child.toString(sb, nf, false);
 			sb.append(')');
 		}
-		
-	}
+
+        @Override
+        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+		    T x = child.compute(valueMap,mc);
+            return ExprFunction.findFunctionAndApply(mc,functionName,x);
+        }
+
+        @Override
+        public double computeDouble(ToDoubleFunction<String> valueMap) {
+            double x = child.computeDouble(valueMap);
+            return ExprFunction.findFunctionAndApply(Calculators.getCalculatorDoubleDev(),functionName,x);
+        }
+    }
 	
 	public static final class DFunction extends BiNode implements FunctionNode{
 
@@ -1027,10 +1150,24 @@ public abstract class Node {
 			c2.toString(sb, nf, false);
 			sb.append(')');
 		}
+
+        @Override
+        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+            T p1 = c1.compute(valueMap,mc);
+            T p2 = c2.compute(valueMap, mc);
+            return ExprFunction.findFunctionAndApply(mc,functionName,p1,p2);
+        }
+
+        @Override
+        public double computeDouble(ToDoubleFunction<String> valueMap) {
+            double p1 = c1.computeDouble(valueMap);
+            double p2 = c2.computeDouble(valueMap);
+            return ExprFunction.findFunctionAndApply(Calculators.getCalculatorDoubleDev(),functionName,p1,p2);
+        }
 		
 	}
 	
-	public static final class MFunction extends ChildrenNode implements FunctionNode{
+	public static final class MFunction extends ListChildNode implements FunctionNode{
 		final String functionName;
 		/**
 		 * @param parent
@@ -1099,6 +1236,19 @@ public abstract class Node {
 		public String getFunctionName() {
 			return functionName;
 		}
+
+        @Override
+        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+		    @SuppressWarnings("unchecked")
+            T[] paras = (T[]) new Object[children.size()];
+		    int pos = 0;
+		    for(Node n : children){
+		        paras[pos] = n.compute(valueMap, mc);
+		        pos++;
+            }
+            return ExprFunction.findFunctionAndApply(mc,functionName,paras);
+        }
+
 	}
 	
 	public static final class Fraction extends BiNode{
@@ -1159,7 +1309,22 @@ public abstract class Node {
 				sb.append(')');
 			}
 		}
-	}
+        @Override
+        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+		    T nu = c1.compute(valueMap, mc);
+		    T de = c2.compute(valueMap, mc);
+		    return mc.divide(nu,de);
+        }
+
+        @Override
+        public double computeDouble(ToDoubleFunction<String> valueMap) {
+            double nu = c1.computeDouble(valueMap);
+            double de = c2.computeDouble(valueMap);
+            return nu / de;
+        }
+
+
+    }
 	
 	public static Poly newPolyNode(Multinomial p, NodeWithChildren parent) {
 		return new Poly(parent, p);

@@ -1,5 +1,5 @@
 package cn.timelives.java.math.numberModels;
-
+@Deprecated
 public class FormulaFormatException extends IllegalArgumentException
 {
 	final String formula;

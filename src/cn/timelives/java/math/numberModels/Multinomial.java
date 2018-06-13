@@ -2,12 +2,16 @@ package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 import static cn.timelives.java.utilities.Printer.print;
 
@@ -17,7 +21,7 @@ import static cn.timelives.java.utilities.Printer.print;
  *
  * @see Term
  */
-public class Multinomial implements Comparable<Multinomial>,Serializable {
+public class Multinomial implements Comparable<Multinomial>,Computable,Serializable {
     final NavigableSet<Term> terms;
 
     static boolean mergingAdd(NavigableSet<Term> base,Term e) {
@@ -159,6 +163,31 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
      */
     public Term getLast(){
         return terms.last();
+    }
+
+
+    /**
+     * Remove all the terms that matches the predicate.
+     * @param predicate
+     * @return
+     */
+    public Multinomial removeAll(Predicate<Term> predicate){
+        return retainAll(predicate.negate());
+    }
+
+    /**
+     * Retains all the terms that matches the predicate.
+     * @param predicate
+     * @return
+     */
+    public Multinomial retainAll(Predicate<Term> predicate){
+        NavigableSet<Term> set = getSet();
+        for(Term t : terms){
+            if(predicate.test(t)){
+                set.add(t);
+            }
+        }
+        return new Multinomial(set);
     }
 
 
@@ -330,10 +359,6 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         List<Term> extraRemainders = new ArrayList<>(2);
         //while(true){
         while(remainChars.containsAll(divisorChars)){
-            if(m.isEmpty()){
-                throw new RuntimeException();
-                //TODO
-            }
             Term head = m.first();
 
             if(head.compareChar(divisorHead)>0){
@@ -390,9 +415,6 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         return quotient;
     }
 
-//    static NavigableSet<Term> divide0(NavigableSet<Term> nume,NavigableSet<Term> deno){
-//
-//    }
 
     public Multinomial pow(int pow){
         if(pow<0){
@@ -426,6 +448,28 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         return false;
     }
 
+    /**
+     * Returns the count of the terms that have the character of {@code targer}.
+     * @param target
+     * @return
+     */
+    public int containsCharCount(String target){
+        int count = 0;
+        for(Term x: terms){
+            if(x.containsChar(target)){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Replace the character {@code target} with the given Multinomial. This method
+     * will throw an Exception is the power of the character is not a positive integer.
+     * @param target the character to replace
+     * @param expr a Multinomial
+     * @return the result
+     */
     public Multinomial replace(String target, Multinomial expr){
         NavigableSet<Term> result = getSet();
 
@@ -461,15 +505,37 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
     }
 
 
+    @Override
+    public double computeDouble(ToDoubleFunction<String> valueMap) {
+        double re = 0d;
+        for(Term t : terms){
+            re+=t.computeDouble(valueMap);
+        }
+        return re;
+    }
+
+    @Override
+    public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        T re = mc.getZero();
+        for(Term t : terms){
+            re = mc.add(re,t.compute(valueMap,mc));
+        }
+        return re;
+    }
 
 
-
-
-
+    /**
+     * Creates a multinomial from a string expression, which should consist of a series
+     * of string representing terms connected by '+' and '-'.
+     * <P>Examples:
+     * <pre>abc + 2x^2</pre>
+     * @param expr a string representing the multinomial
+     * @return a new multinomial.
+     */
     public static Multinomial valueOf(String expr){
         expr = expr.trim();
         if (expr.isEmpty()) {
-            throw new IllegalArgumentException("Empty!");
+            throw new NumberFormatException("Empty!");
         }
         NavigableSet<Term> terms = getSet();
         char c;
@@ -489,13 +555,23 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
             temp += c;
         }
         mergingAdd(terms,Term.valueOf(temp));
-        return new Multinomial( terms);
+        return new Multinomial(terms);
     }
 
+    /**
+     * Creates a multinomial from a BigInteger.
+     * @param val a BigInteger
+     * @return a Multinomial
+     */
     public static Multinomial valueOf(BigInteger val){
         return monomial(Term.valueOf(val));
     }
 
+    /**
+     * Returns a Multinomial that only contains the given term.
+     * @param t a term
+     * @return a new Multinomial
+     */
     public static Multinomial monomial(Term t){
         if(t.isZero()){
             return ZERO;
@@ -509,6 +585,12 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         return new Multinomial(set);
     }
 
+
+    /**
+     * Reduces the greatest common divisor of all the Multinomials given.
+     * @param numbers a list of Multinomial
+     * @return a list containing the result
+     */
     public static List<Multinomial> reduceGcd(List<Multinomial> numbers){
 
         int len = numbers.size();
@@ -544,7 +626,7 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
             }
             re.add(po);
         }
-        if(!gcd.equals(Multinomial.ONE)){
+        if(!gcd.isMonomial()){
             for(int j=0;j<len;j++){
                 re.set(j, re.get(j).divide(gcd));
             }
@@ -556,9 +638,9 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
     /**
      * Simplifies the two multinomial as if they are a fraction, finding the gcd and dividing by it
      * respectively.
-     * @param m1
-     * @param m2
-     * @return
+     * @param m1 a Multinomial
+     * @param m2 another Multinomial
+     * @return an array containing the Multinomials after simplification correspondingly
      */
     public static Multinomial[] simplifyFraction(Multinomial m1,Multinomial m2){
         var set1 = getSet(m1.terms);
@@ -582,8 +664,9 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
     }
     /**
      * Adds all the multinomials, providing better performance than adding one by one.
-     * @param ms
-     * @return
+     * Returns ZERO if the given array is empty.
+     * @param ms an array of Multinomial
+     * @return the result after addition
      */
     public static Multinomial addAll(Multinomial...ms){
         if(ms.length==0){
@@ -596,6 +679,12 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         return new Multinomial(result);
     }
 
+    /**
+     * Multiplies all the multinomials, providing better performance than multiplying
+     * them one by one. Returns ONE if the given array is empty.
+     * @param ms an array of Multinomial
+     * @return the result after multiplication
+     */
     public static Multinomial multiplyAll(Multinomial...ms){
         if(ms.length == 0){
             return ONE;
@@ -608,9 +697,9 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
     }
 
     /**
-     * Returns a term if the {@link Multinomial} can be convert to a term, or null
-     * @param p
-     * @return
+     * Returns a term if the {@link Multinomial} can be convert to a term, or null if it cannot.
+     * @param p a multinomial
+     * @return a term or null/
      */
     public static Term asSingleTerm(Multinomial p) {
         if(p.isMonomial()){
@@ -633,12 +722,18 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
         return x;
     }
 
+    /**
+     * Creates a Multinomial from a long.
+     * @param n a long
+     * @return
+     */
     public static Multinomial valueOf(long n){
         return monomial(Term.valueOf(n));
     }
 
     public static void main(String[] args) {
-        print(cal.gcd(valueOf("a"),valueOf("a+b")));
+        print(cal.gcd(valueOf("a-b"), valueOf("a+b")));
+    }
 //        Multinomial m1 = valueOf("x"),
 //                m2 = valueOf("x-4y");
 //        print(m1.add(m2));
@@ -660,5 +755,5 @@ public class Multinomial implements Comparable<Multinomial>,Serializable {
 //        t.start();
 //        pc.pow(p,100);
 //        print(t.end());
-    }
+//    }
 }

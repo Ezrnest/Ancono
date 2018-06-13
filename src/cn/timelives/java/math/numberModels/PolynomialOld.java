@@ -21,6 +21,7 @@ import java.util.List;
  * @author lyc
  *
  */
+@Deprecated
 public class PolynomialOld implements Comparable<PolynomialOld> {
 	/**
 	 * fs 是用于储存多项式内容的SortedAdditiveSet

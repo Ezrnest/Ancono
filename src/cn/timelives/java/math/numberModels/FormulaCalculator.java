@@ -16,6 +16,7 @@ import java.util.Map.Entry;
  * @author lyc
  *
  */
+@Deprecated
 public class FormulaCalculator extends MathCalculatorAdapter<Formula> implements  MathAdder<Formula>
 {
 	

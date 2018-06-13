@@ -1,7 +1,10 @@
 package cn.timelives.java.math;
 
+import cn.timelives.java.math.equation.Type;
+import cn.timelives.java.math.equation.inequation.SVPInequation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.set.IntervalUnion;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.ModelPatterns;
 
@@ -689,6 +692,20 @@ public class MathUtils {
 		re = mc.negate(mc.divide(mc.add(b, delta), a2));
 		so.add(re);
 		return so;
+	}
+
+	/**
+	 * Solves an inequation of
+     * <pre>ax^2 + bx + c = 0</pre>
+	 * @param a the coefficient of x^2.
+     * @param b the coefficient of x.
+     * @param c the constant coefficient
+     * @param mc a MathCalculator
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> IntervalUnion<T> solveInequation(T a, T b, T c, Type op, MathCalculator<T> mc){
+        return SVPInequation.quadratic(a,b,c,op,mc).getSolution();
 	}
 	/**
 	 * Reduce the number to an array representing each digit of the radix. The 

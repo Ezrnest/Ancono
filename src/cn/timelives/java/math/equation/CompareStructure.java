@@ -5,11 +5,12 @@ package cn.timelives.java.math.equation;
 
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.SolutionPredicate;
+import cn.timelives.java.math.equation.inequation.Inequation;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 /**
- * A CompareStructure is the super class of {@link Equation} and {@link Inequation}, which 
+ * A CompareStructure is the super class of {@link Equation} and {@link Inequation}, which
  * is composed of a function and an operator : <pre>f(x) <i>op</i> 0</pre> where 
  * the operation is one of the {@link Type}
  * @author liyicheng

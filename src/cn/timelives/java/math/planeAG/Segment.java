@@ -2,7 +2,7 @@ package cn.timelives.java.math.planeAG;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathUtils;
-import cn.timelives.java.math.Utils;
+import cn.timelives.java.math.numberModels.Utils;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;

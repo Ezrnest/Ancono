@@ -1,8 +1,10 @@
 /**
  * 2017-10-06
  */
-package cn.timelives.java.math.equation;
+package cn.timelives.java.math.equation.inequation;
 
+import cn.timelives.java.math.equation.AbstractCompareStructure;
+import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.numberModels.MathCalculator;
 
 import java.util.Collections;
@@ -18,7 +20,7 @@ import java.util.Set;
  */
 public abstract class Inequation<T,S> extends AbstractCompareStructure<T,S> {
 	
-	private static final Set<Type> inoperation = 
+	private static final Set<Type> inoperation =
 			Collections.unmodifiableSet(
 					EnumSet.of(Type.GREATER, Type.GREATER_OR_EQUAL, Type.LESS, Type.LESS_OR_EQUAL));
 	

@@ -6,7 +6,7 @@ package cn.timelives.java.math.function;
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Polynomial;
-import cn.timelives.java.math.Utils;
+import cn.timelives.java.math.numberModels.Utils;
 import cn.timelives.java.math.calculus.Calculus;
 import cn.timelives.java.math.calculus.Derivable;
 import cn.timelives.java.math.calculus.Integrable;

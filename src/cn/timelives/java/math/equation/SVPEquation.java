@@ -3,10 +3,7 @@ package cn.timelives.java.math.equation;
 import cn.timelives.java.math.*;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.AbstractSVPFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.numberModels.Simplifiable;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.math.set.SingletonSet;
 

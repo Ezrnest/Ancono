@@ -632,7 +632,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 			//special case: avoid recursion.
 			return simplifyNode(root);
 		}
-		return recurApply(root, x ->{
+		return root.recurApply(x ->{
 			if(simplificationIdentifier == x.simIdentifier) {
 				//simplified
 				return x;
@@ -880,89 +880,17 @@ public class ExprCalculator implements MathCalculator<Expression> {
 		return node;
 	}
 
-	Node recurApply(Node node, Function<Node, Node> f, int depth) {
-		if (depth < 0) {
-			return node;
-		}
-		switch (node.getType()) {
-		case POLYNOMIAL: {
-			return depth >= 0 ? f.apply(node) : node;
-		}
-		case S_FUNCTION: {
-			node = recursionSNode((SingleNode) node, f, depth);
-			break;
-		}
 
-		case D_FUNCTION:
-		case FRACTION: {
-			node = recursionBiNode((BiNode) node, f, depth);
-			break;
-		}
 
-		case ADD:
-		case MULTIPLY:
-		case M_FUNCTION: {
-			node = recursionChildren((ChildrenNode) node, f, depth);
-			break;
-		}
 
-		}
-		return node;
-	}
 
-	/**
-	 * @param node
-	 * @param f
-	 * @param depth
-	 * @return
-	 */
-	private Node recursionChildren(ChildrenNode node, Function<Node, Node> f, int depth) {
-		List<Node> children = node.children;
-		if (depth > 0) {
-			depth--;
-			for (ListIterator<Node> lit = children.listIterator(); lit.hasNext();) {
-				Node t = lit.next();
-				Node nt = recurApply(t, f, depth);
-				if (nt != t) {
-					lit.set(nt);
-				}
-			}
-		}
-		return f.apply(node);
-	}
 
-	/**
-	 * @param node
-	 * @param f
-	 * @param depth
-	 * @return
-	 */
-	private Node recursionSNode(SingleNode node, Function<Node, Node> f, int depth) {
-		if (depth > 0) {
-			node.child = recurApply(node.child, f, depth - 1);
-		}
-		return f.apply(node);
-	}
-
-	/**
-	 * @param node
-	 * @param f
-	 * @param depth
-	 * @return
-	 */
-	private Node recursionBiNode(BiNode node, Function<Node, Node> f, int depth) {
-		if (depth > 0) {
-			node.c1 = recurApply(node.c1, f, depth - 1);
-			node.c2 = recurApply(node.c2, f, depth - 1);
-		}
-		return f.apply(node);
-	}
 
 	Node simplifyWithStrategy(Node node, int depth) {
 		if(depth == 0) {
 			return ss.performSimplification(node, enabledTags, this);
 		}
-		return recurApply(node, x -> ss.performSimplification(x, enabledTags, this), depth);
+		return node.recurApply(x -> ss.performSimplification(x, enabledTags, this), depth);
 	}
 	
 	Node simplifyWithStrategyNoRecur(Node node) {
@@ -971,7 +899,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	
 
 	Node doSort(Node node, int depth) {
-		return recurApply(node, x -> {
+		return node.recurApply(x -> {
 			if (x instanceof NodeWithChildren) {
 				NodeWithChildren nwc = (NodeWithChildren) x;
 				nwc.doSort(nc);
@@ -987,7 +915,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 	
 	public void checkValidTree(Node n) {
-		recurApply(n, x -> {
+		n.recurApply(x -> {
 			if(x != n) {
 				if(x.parent == null) {
 					throw new AssertionError("For node: "+x.toString());
@@ -996,24 +924,96 @@ public class ExprCalculator implements MathCalculator<Expression> {
 			return x;
 		}, Integer.MAX_VALUE);
 	}
-	
-	
-	public Expression substitute(Expression expr,String sub,Multinomial val) {
+
+
+    /**
+     * Substitutes the multinomial for the given character to the expression. This method only supports
+     * integral exponent for the character.
+     * @param expr
+     * @param ch
+     * @param val
+     * @return
+     */
+	public Expression substitute(Expression expr,String ch,Multinomial val) {
 		Node root = expr.root.cloneNode(null);
-		root = recurApply(root, x -> {
+		root = root.recurApply(x -> {
 			Multinomial p = Node.getPolynomialPart(x, this);
 			if(p!=null) {
-				p = Node.getPolynomialPart(x, this).replace(sub,val);
+				p = p.replace(ch,val);
 				Node n = Node.setPolynomialPart(x, p);
-				if(n.parent == null) {
-					n.getClass();
-				}
+//				if(n.parent == null) {
+//					n.getClass();
+//				}
 				return n;
 			}
 			return x;
 		}, Integer.MAX_VALUE);
 		root = simplify(root);
 		return new Expression(root);
+	}
+
+    /**
+     * Substitutes the give expression {@code sub} for the character to the expression.
+     * @param expr
+     * @param ch
+     * @param sub
+     * @return
+     */
+	public Expression substitute(Expression expr,String ch,Expression sub){
+	    Node root = expr.root.cloneNode(null);
+	    root = root.recurApply(x -> {
+            Multinomial p = Node.getPolynomialPart(x, this);
+            if(p==null) {
+                return x;
+            }
+            Node afterSub = replaceMultinomial(p,ch,sub);
+            if(afterSub == null){
+                //not changed
+                return x;
+            }
+            if(x.getType() == Type.POLYNOMIAL){
+                //replace the whole
+                afterSub.parent = x.parent;
+                return afterSub;
+            }
+            CombinedNode comb = (CombinedNode)x;
+            comb.addChild(afterSub);
+            comb.setPolynomial(pOne);
+            return comb;
+        },Integer.MAX_VALUE);
+//	    root.listNode(0);
+        root = simplify(root);
+        return new Expression(root);
+    }
+
+    static Node replaceMultinomial(Multinomial mul,String ch,Expression sub){
+	    int count = mul.containsCharCount(ch);
+	    if(count == 0){
+	        return null;
+        }
+        List<Node> nodes = new ArrayList<>(count);
+	    Multinomial remains = mul.removeAll(x -> x.containsChar(ch));
+	    for(Term t : mul.getTerms()){
+	        if(!t.containsChar(ch)){
+	            continue;
+            }
+            var pow = t.getCharacterPower(ch);
+	        Term re = t.removeChar(ch);
+	        DFunction nodeExp = Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP,
+                    sub.root.cloneNode(null),
+                    Node.newPolyNode(Multinomial.monomial(Term.valueOf(pow)),null));
+	        Multiply nodeMul = Node.wrapNodeMultiply(nodeExp,Multinomial.monomial(re));
+	        nodes.add(nodeMul);
+        }
+        return Node.wrapNodeAM(true,nodes,remains);
+    }
+
+
+
+
+	public Expression parseExpr(String expr){
+		Expression expression = Expression.valueOf(expr);
+		return simplify(expression);
 	}
 	
 	/**

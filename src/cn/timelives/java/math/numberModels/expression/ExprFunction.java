@@ -3,25 +3,30 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static cn.timelives.java.utilities.Printer.print;
+
 /**
  * An expression function describes a function that the calculator should
- * recognize and calculator when simplifying an expression. The ExprFunction is
+ * recognize and calculate when simplifying an expression. The ExprFunction is
  * a combined class of the function's details(name, number of parameters...) and
  * also the polynomial function in program(optional).
  * <p>
- * PolynomialOld functions in program is responsible for calculating the function
+ * Polynomial functions in program is responsible for calculating the function
  * directly to a polynomial result. Generally, a function can be 'computed' via
  * directly applying the function or {@link SimplificationStrategy}.
  * Simplification strategy is more flexible and can apply to more situations
  * when the parameter is not a polynomial. However, it is vital to use
- * polynomial function to simplify the expression to a plain PolynomialOld, which
+ * polynomial function to simplify the expression to a plain polynomial, which
  * is the most efficient form of an expression and this calculation can be done
  * in the first phase of simplification. So if a function can be calculated to a
  * polynomial result for some parameters, it is recommended to implement a
@@ -124,7 +129,26 @@ public class ExprFunction {
 			String description) {
 		return new ExprFunction(name, paramNumber, sortable, description, function);
 	}
-	
+
+
+
+
+
+	public static final String FUNCTION_NAME_ABS = "abs";
+	public static final String FUNCTION_NAME_ARCCOS = "arccos";
+	public static final String FUNCTION_NAME_ARCSIN = "arcsin";
+	public static final String FUNCTION_NAME_ARCTAN = "arctan";
+	public static final String FUNCTION_NAME_COS = "cos";
+	public static final String FUNCTION_NAME_COT = "cot";
+	public static final String FUNCTION_NAME_NEGATE = "negate";
+	public static final String FUNCTION_NAME_RECIPROCAL = "reciprocal";
+	public static final String FUNCTION_NAME_SIN = "sin";
+	public static final String FUNCTION_NAME_SQR = "sqr";
+	public static final String FUNCTION_NAME_TAN = "tan";
+	public static final String FUNCTION_NAME_EXP = "exp";
+	public static final String FUNCTION_NAME_LN = "ln";
+	public static final String FUNCTION_NAME_LOG = "log";
+
 	/**
 	 * Returns the basic calculator functions.
 	 * 
@@ -151,6 +175,40 @@ public class ExprFunction {
 		fs[13] = createDouble("exp", false, pc::exp, "Returns exp(x,y) = x^y");
 		fs[14] = createDouble("log", false, pc::log, "Returns log(x,y). (exp(x,log(x,y)) = y) ");
 		return Arrays.asList(fs);
+	}
+
+	private static final Class<?>[][] TEMP = new Class[3][];
+	static{
+		TEMP[0] = new Class[0];
+		TEMP[1] = new Class[]{Object.class};
+		TEMP[2] = new Class[]{Object.class,Object.class};
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T findFunctionAndApply(MathCalculator<T> mc,String name,T... args){
+		Class<?>[] argClass;
+		if(args.length<TEMP.length){
+			argClass = TEMP[args.length];
+		}else{
+		 	argClass = new Class<?>[args.length];
+		 	Arrays.fill(argClass,Object.class);
+		}
+		try {
+			Method md = mc.getClass().getMethod(name,argClass);
+            md.setAccessible(true);
+			return (T) md.invoke(mc,args);
+		} catch (Exception e) {
+			throw new UnsupportedCalculationException("Failed to invoke method",e);
+		}
+	}
+
+
+	public static void main(String[] args){
+		var list = createBasicCalculatorFunctions(Multinomial.getCalculator());
+		for(var f : list){
+			String name = f.getName();
+			print("public static final String FUNCTION_NAME_"+name.toUpperCase()+" = "+"\""+name+"\";");
+		}
 	}
 
 }

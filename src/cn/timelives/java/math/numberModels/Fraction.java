@@ -115,23 +115,32 @@ public class Fraction extends Number implements Comparable<Fraction>{
 
 	@Override
 	public long longValue() {
+        if(signum == 0){
+            return 0L;
+        }
 		long value = numerator /  denominator;
-		return signum > 0 ? value : 
-				signum == 0 ? 0L : -value;
+		return signum > 0 ? value :
+                -value;
 	}
 
 	@Override
 	public float floatValue() {
+        if(signum == 0){
+            return 0f;
+        }
 		float value = (float)numerator / (float) denominator;
-		return signum > 0 ? value : 
-				signum == 0 ? 0f : -value;
+		return signum > 0 ? value :
+                -value;
 	}
 
 	@Override
 	public double doubleValue() {
+		if(signum == 0){
+			return 0d;
+		}
 		double value = (double)numerator / (double) denominator;
-		return signum > 0 ? value : 
-				signum == 0 ? 0d : -value;
+		return signum > 0 ? value :
+				-value;
 	}
 	
 	

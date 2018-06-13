@@ -1,19 +1,19 @@
 /**
  * 2017-11-21
  */
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.structure;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.structure.Pair;
 import cn.timelives.java.utilities.structure.WithInt;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -285,29 +285,28 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 	 * @throws ArithmeticException if the polynomial has a fraction power or a negative power for the character
 	 * (such as x^0.5 or x^(-2)).
 	 */
-	public static PolynomialX<PolynomialOld> fromPolynomial(PolynomialOld p, String ch){
-		TreeMap<Integer,PolynomialOld> map = new TreeMap<>();
-		MathCalculator<PolynomialOld> pc = PolynomialOld.getCalculator();
+	public static PolynomialX<Multinomial> fromMultinomial(Multinomial p, String ch){
+		TreeMap<Integer,Multinomial> map = new TreeMap<>();
 		int max = 0;
-		for(Formula f : p.getFormulas()) {
-			BigDecimal bd = f.getCharacterPower(ch);
-			int pow = bd.intValueExact();
-			if(pow < 0) {
-				throw new ArithmeticException("Negative exponent for:["+ch+"] in "+f.toString());
+		for(Term f : p.getTerms()) {
+			Fraction powf = f.getCharacterPower(ch);
+			if(powf.isNegative() || !powf.isInteger()){
+				throw new ArithmeticException("Unsupported exponent for:["+ch+"] in "+f.toString());
 			}
+			int pow = powf.intValue();
 			if(pow > max) {
 				max = pow;
 			}
-			PolynomialOld coe = PolynomialOld.fromFormula(f.removeChar(ch));
+			Multinomial coe = Multinomial.monomial(f.removeChar(ch));
 			map.compute(pow,(x,y)-> {
 				if(y == null){
 					return coe;
 				}else{
-					return pc.add(y,coe);
+					return y.add(coe);
 				}
 			});
 		}
-		return new PolynomialX<>(pc, map, max);
+		return new PolynomialX<>(Multinomial.getCalculator(), map, max);
 		
 	}
 	
@@ -316,18 +315,18 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 	 * @param mc
 	 * @return
 	 */
-	public static <T> polynomialCalculator<T> getCalculator(MathCalculator<T> mc){
-		return new polynomialCalculator<>(mc);
+	public static <T> PolynomialCalculator<T> getCalculator(MathCalculator<T> mc){
+		return new PolynomialCalculator<>(mc);
 	}
 	
-	public static class polynomialCalculator<T> extends MathCalculatorAdapter<PolynomialX<T>> 
+	public static class PolynomialCalculator<T> extends MathCalculatorAdapter<PolynomialX<T>>
 	implements MathCalculatorHolder<T>,NTCalculator<PolynomialX<T>>{
 		private final MathCalculator<T> mc;
 		private final PolynomialX<T> zero,one;
 		/**
 		 * 
 		 */
-		polynomialCalculator(MathCalculator<T> mc) {
+		PolynomialCalculator(MathCalculator<T> mc) {
 			this.mc = mc;
 			zero = zero(mc);
 			one = one(mc);
@@ -759,7 +758,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 //		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
 //		PolynomialX<Integer> p1 = PolynomialX.valueOf(mc, 6,7,1);
 //		PolynomialX<Integer> p2 = PolynomialX.valueOf(mc, -6,-5,1);
-//		polynomialCalculator<Integer> mmc = getCalculator(mc);
+//		PolynomialCalculator<Integer> mmc = getCalculator(mc);
 //		PolynomialX<Integer> re = mmc.add(p1, p2);
 //		print(p1);
 //		print(p2);

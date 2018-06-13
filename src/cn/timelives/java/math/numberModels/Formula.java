@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
  * @author lyc
  * @see PolynomialOld ExpressionTree Calculator
  */
+@Deprecated
 public class Formula implements Comparable<Formula> {
 	/**
 	 * positive 表示表达式的正负 decimal 表示表达式是否为分数

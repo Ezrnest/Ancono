@@ -6,8 +6,11 @@ package test.math;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 import java.util.function.Predicate;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author liyicheng
@@ -66,5 +69,9 @@ public final class TestUtils {
 			}
 		};
 	}
-	
+
+
+	public static <T> void assertMathEquals(T x,T y, MathCalculator<T> mc){
+		assertTrue(mc.isEqual(x,y));
+	}
 }

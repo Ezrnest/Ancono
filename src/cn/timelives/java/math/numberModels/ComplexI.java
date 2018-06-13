@@ -441,15 +441,17 @@ public final class ComplexI {
 
 		@Override
 		public Iterator<ComplexI> iterator() {
-			return new Iterator<ComplexI>() {
+			return new Iterator<>() {
 				long index = 0;
+
 				@Override
 				public boolean hasNext() {
 					return true;
 				}
+
 				@Override
 				public ComplexI next() {
-					return new ComplexI(x,arg+TWO_PI*index++);
+					return new ComplexI(x, arg + TWO_PI * index++);
 				}
 			};
 		}

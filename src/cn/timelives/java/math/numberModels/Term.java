@@ -4,6 +4,7 @@ import cn.timelives.java.math.Mergeable;
 import cn.timelives.java.math.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.addableSet.MathAdder;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.utilities.Timer;
 
 import java.io.Serializable;
@@ -11,6 +12,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.LongFunction;
+import java.util.function.ToDoubleFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,11 +26,11 @@ import static cn.timelives.java.utilities.Printer.print;
  * <pre>p/q*sqrt(r)*<i>(character and power)</i></pre>, where p,q,r are integers.
  * The power of a character in a term must be a rational number whose numerator and denominator can be
  * presented as long.
- *
+ * <h3></h3>
  *
  *
  */
-public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable {
+public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,Serializable {
     /*
      * The signum of this term, signum == 0 <=> this == 0
      */
@@ -48,34 +52,65 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
 
 
     //constants:
+    /**
+     * Describes the character constant value Pi
+     * @see MathCalculator#STR_PI
+     */
     public static final String PI_STR = MathCalculator.STR_PI;
+    /**
+     * Describes the character constant value e
+     * @see MathCalculator#STR_E
+     */
     public static final String E_STR = MathCalculator.STR_E;
+    /**
+     * Describes the character constant value i
+     * @see MathCalculator#STR_I
+     */
     public static final String I_STR = MathCalculator.STR_I;
 
+    /**
+     * Describes the operation of square root in a term.
+     */
     public static String SQR_STR = "Sqr";
 
     public static String PI_SHOW = "π";
     public static String SQR_SHOW = "Sqr";// √
 
-    /* Some terms that are commonly used.
-     */
     /**
-     *
+     * The Term constant 0
      */
     public static final Term ZERO = new Term(0,BigInteger.ZERO);
-
+    /**
+     * The Term constant 1
+     */
     public static final Term ONE = new Term(1,BigInteger.ONE);
-    //negative
+    /**
+     * The Term constant -1
+     */
     public static final Term NEGATIVE_ONE = new Term(-1,BigInteger.ONE);
 
     /**
-     *
+     * The Term constant 10
+     */
+    public static final Term TEN = new Term(1,BigInteger.TEN);
+
+    /**
+     * The Term constant 2
+     */
+    public static final Term TWO = new Term(1,BigInteger.TWO);
+
+    /**
+     * The Term constant Pi
      */
     public static final Term PI = singleCharacter(PI_STR);
 
-
+    /**
+     * The Term constant e
+     */
     public static final Term E = singleCharacter(E_STR);
-
+    /**
+     * The Term constant i
+     */
     public static final Term I = singleCharacter(I_STR);
 
 
@@ -137,18 +172,32 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
     }
 
     /**
-     * Returns signum>0
+     * Returns signum > 0
      * @return
      */
     public boolean isPositive() {
         return signum > 0;
     }
 
+    /**
+     * Determines whether this term is zero.
+     * @return
+     */
     public boolean isZero(){
         return signum == 0;
     }
+    /**
+     * Returns signum < 0
+     * @return
+     */
+    public boolean isNegative(){
+        return signum<0;
+    }
 
-
+    /**
+     * Determines whether this term contains no character.
+     * @return
+     */
     public boolean hasNoChar(){
         return character.isEmpty();
     }
@@ -202,9 +251,14 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
         return pow;
     }
 
+    /**
+     * Gets a set of character's name in this term.
+     * @return
+     */
     public Set<String> getCharacterName(){
         return getCharacter().keySet();
     }
+
 
     Set<String> getCharacterNameNoCopy(){
         return character.keySet();
@@ -229,7 +283,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
 
     /**
      * Gets the sum of all the powers of this term.
-     * @return
+     * @return a Fraction
      */
     public Fraction getPowerTotal(){
         Fraction sum = Fraction.ZERO;
@@ -241,7 +295,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
 
     /**
      * Determines whether this term contains the character.
-     * @param ch
+     * @param ch the name of the character
      * @return
      */
     public boolean containsChar(String ch){
@@ -839,6 +893,82 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
         return new Term(sign,nume,deno,rad,character);
     }
 
+    /**
+     * Computes the value of this term using the math calculator mc according to the value assigned for the
+     * characters. Characters that the value map doesn't contain will be considered as one.
+     * @param valueMap
+     * @param mc
+     * @param valueOf converting a BigInteger to the type T
+     * @param <T>
+     * @return
+     */
+    public <T> T compute(Function<String,T> valueMap, MathCalculator<T> mc, Function<BigInteger,T> valueOf){
+        if(isZero()){
+            return mc.getZero();
+        }
+        T re = valueOf.apply(numerator);
+        if(!denominator.equals(BigInteger.ONE)){
+            re = mc.divide(re,valueOf.apply(denominator));
+        }
+        if(!radical.equals(BigInteger.ONE)){
+            re = mc.multiply(re,mc.squareRoot(valueOf.apply(radical)));
+        }
+        for(var en : character.entrySet()){
+            String ch = en.getKey();
+            Fraction f = en.getValue();
+            T exp = Utils.valueOfFraction(f,mc);
+            T val = valueMap.apply(ch);
+            if(val == null){
+                val = mc.getOne();
+            }
+            re = mc.multiply(re,mc.exp(val,exp));
+        }
+        if(signum<0){
+            re = mc.negate(re);
+        }
+        return re;
+    }
+    /**
+     * Computes the value of this term using the math calculator mc according to the value assigned for the
+     * characters. Characters that the value map doesn't contain will be considered as one.
+     * @param valueMap
+     * @param mc
+     * @param <T>
+     * @return
+     */
+    public <T> T compute(Function<String,T> valueMap, MathCalculator<T> mc){
+        return compute(valueMap,mc, Utils.parserBigInteger(mc));
+    }
+
+    /**
+     * Computes the double value of the term.
+     * @param values
+     * @return
+     */
+    public double computeDouble(ToDoubleFunction<String> values){
+        if(isZero()){
+            return 0d;
+        }
+        double re = numerator.doubleValue();
+        if(!denominator.equals(BigInteger.ONE)){
+            re = re / denominator.doubleValue();
+        }
+        if(!radical.equals(BigInteger.ONE)){
+            re = re * Math.sqrt(radical.doubleValue());
+        }
+        for(var en : character.entrySet()){
+            String ch = en.getKey();
+            Fraction f = en.getValue();
+            double exp = f.doubleValue();
+            double val = values.applyAsDouble(ch);
+            re = re * Math.pow(val,exp);
+        }
+        if(signum<0){
+            re = -re;
+        }
+        return re;
+    }
+
     private static void simplifiedMultiply(BigInteger[] nd1,BigInteger[] nd2){
         simplifyND(nd1);
         simplifyND(nd2);
@@ -938,15 +1068,27 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
 
     /**
      * Creates a term with the expression given.
-     *
-     *
-     * @param str
+     * <h3>Expression</h3>
+     * An expression consists of numbers, operations('*','/','Sqr') and single characters(except Pi).
+     * The multiplication operation can be omitted between number and character(such as 2a). Everything
+     * after a division operation will be considered as denominator until there is a multiplication operation.
+     * Number directly following a character is not valid.
+     * <h3>Numbers(rational part)</h3>
+     * Numbers, both integers and decimal numbers, are acceptable. The will be converted to a
+     * fraction with full precision.
+     * <h3>Radical</h3>
+     * A term supports radical part which can be represented as the square root of an integer. To input
+     * a radical part, use Sqr(x) (bracket is optional). For example, Sqr3 represents the square root
+     * of 3.
+     * <h3>Character</h3>
+     * The power of a character can only be an integer in the string representation.
+     * @param str a string representing the term
      * @return
      */
     public static Term valueOf(String str) {
         str = str.trim();
         if (str.isEmpty()) {
-            throw new FormulaFormatException("Nothing");
+            throw new NumberFormatException("Empty");
         }
         if (str.equals("1"))
             return ONE;
@@ -989,14 +1131,10 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
             c = str.charAt(pos);
             if (nm.lookingAt()) {//
                 if (hasChar) {
-                    throw new FormulaFormatException("Number after char:", str, pos);
+                    throw new NumberFormatException("Number after char");
                 }
-                try {
-                    BigDecimal tempNum = new BigDecimal(nm.group());
-                    uad = toFraction(tempNum);
-                } catch (NumberFormatException e) {
-                    throw new FormulaFormatException("Number Format is wrong", str, pos);
-                }
+                BigDecimal tempNum = new BigDecimal(nm.group());
+                uad = toFraction(tempNum);
                 switch (state) {
                     case 0: {
                         ndr[0] = ndr[0].multiply(uad[0]);
@@ -1026,13 +1164,13 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
             if (c == '*' || c == '/' || c == 'S') {
                 if (c == '*') {
                     if (hasOpe) {
-                        throw new FormulaFormatException("Muliple operation * :", str, pos);
+                        throw new NumberFormatException("Muliple operation *");
                     }
                     state = 0;
                     hasOpe = true;
                 } else if (c == '/') {
                     if (hasOpe) {
-                        throw new FormulaFormatException("Muliple operation / :", str, pos);
+                        throw new NumberFormatException("Muliple operation /");
                     }
                     state = 2;
                     hasOpe = true;
@@ -1058,14 +1196,10 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
                 if (tpos < str.length() && str.charAt(tpos) == '^') {
                     nm.region(tpos + 1, end);
                     if (nm.lookingAt()) {
-                        try {
-                            time = Fraction.valueOf(nm.group());
-                            tpos = nm.end();
-                        } catch (NumberFormatException e) {
-                            throw new FormulaFormatException("Number Format is Wrong", str, tpos);
-                        }
+                        time = Fraction.valueOf(nm.group());
+                        tpos = nm.end();
                     } else {
-                        throw new FormulaFormatException("Illgeal Formula Expression using ^", str, tpos);
+                        throw new NumberFormatException("Illgeal Expression using ^");
                     }
                 } else {
                     time = Fraction.ONE;
@@ -1090,7 +1224,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
                 pos = tpos;
                 continue;
             } else {
-                throw new FormulaFormatException("Unspported Character", str, pos);
+                throw new NumberFormatException("Unspported Character");
             }
 
         }
@@ -1450,6 +1584,12 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
                 ,BigInteger.valueOf(f.denominator),BigInteger.ONE);
     }
 
+    public static Term singleChar(String ch){
+        NavigableMap<String,Fraction> map = new TreeMap<>();
+        map.put(ch,Fraction.ONE);
+        return ONE.sameNumber0(map);
+    }
+
     public static Term valueOfRecip(long l){
         if(l == 0){
             throw new ArithmeticException();
@@ -1469,6 +1609,8 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
                                       Map<String, Fraction> character) {
         return newInstanceP(signum, numerator, denominator, radical, new TreeMap<>(character));
     }
+
+
     static class TermCalculator implements GroupCalculator<Term>,MathAdder<Term> {
         @Override
         public Term inverse(Term x) {
@@ -1573,6 +1715,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Serializable
     public static void main(String[] args) {
         print(ONE.equals(ONE.negate()));
         print(ONE.compareTo(ONE.negate()));
+        print(Term.valueOf("x^-1"));
 //        int times = 100000;
 //		Term tt = Term.valueOf("3aasdadxxcqSqr3/2");
 //		print(tt);

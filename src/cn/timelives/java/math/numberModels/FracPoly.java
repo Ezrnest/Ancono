@@ -15,6 +15,7 @@ import static java.util.Objects.requireNonNull;
  * @author lyc
  *
  */
+@Deprecated
 public class FracPoly {
 	
 	private final PolynomialOld nume,deno;

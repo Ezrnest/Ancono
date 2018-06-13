@@ -69,4 +69,6 @@ public abstract class FlexibleMathObject<T, S extends EqualPredicate<T>> impleme
 	public String toString() {
 		return toString(NumberFormatter.getToStringFormatter());
 	}
+
+
 }

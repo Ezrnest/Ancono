@@ -2,29 +2,24 @@ package test.math.planeAg;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathUtils;
-import cn.timelives.java.math.Progression;
-import cn.timelives.java.math.ProgressionSup;
+import cn.timelives.java.math.algebra.Progression;
+import cn.timelives.java.math.algebra.ProgressionSup;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
-import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
-import cn.timelives.java.math.linearAlgebra.Matrix;
-import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
+import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
+import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.expression.ExprCalculator;
 import cn.timelives.java.math.numberModels.expression.Expression;
-import cn.timelives.java.math.numberModels.expression.Node;
-import cn.timelives.java.math.numberModels.expression.SimplificationStrategies;
-import cn.timelives.java.math.planeAG.*;
-import cn.timelives.java.math.planeAG.curve.EllipseV;
-import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
-import cn.timelives.java.math.planeAG.curve.HyperbolaV;
-import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.math.geometry.analytic.planeAG.*;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.EllipseV;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.HyperbolaV;
 import cn.timelives.java.utilities.EasyConsole;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.Printer;
-import org.junit.Test;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -35,8 +30,8 @@ import java.util.regex.Pattern;
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.print_;
 import static org.junit.Assert.*;
-import static test.math.TestUtils.isZero;
 
+@Deprecated
 public class CodePlace {
 
 //	 public static void main(String[] args) {

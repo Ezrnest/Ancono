@@ -1,15 +1,16 @@
 package test.math;
 
-import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
-import cn.timelives.java.math.linearAlgebra.Matrix;
-import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
+import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
+import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.algebra.linearAlgebra.Vector;
+import cn.timelives.java.math.geometry.analytic.spaceAG.*;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.spaceAG.*;
-import cn.timelives.java.math.spaceAG.SPoint.SPointGenerator;
-import cn.timelives.java.math.spaceAG.SVector.SVectorGenerator;
-import cn.timelives.java.math.spaceAG.shape.Cube;
-import cn.timelives.java.math.spaceAG.shape.Tetrahedron;
+import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
+import cn.timelives.java.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;
+import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Cube;
+import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Tetrahedron;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.List;

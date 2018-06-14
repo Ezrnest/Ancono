@@ -1,19 +1,16 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.Mergeable;
-import cn.timelives.java.math.abstractAlgebra.calculator.GroupCalculator;
-import cn.timelives.java.math.addableSet.MathAdder;
+import cn.timelives.java.math.property.Mergeable;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
+import cn.timelives.java.math.numberModels.addableSet.MathAdder;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.api.Computable;
-import cn.timelives.java.utilities.Timer;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.function.LongFunction;
 import java.util.function.ToDoubleFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

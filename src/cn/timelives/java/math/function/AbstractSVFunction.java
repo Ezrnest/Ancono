@@ -4,7 +4,7 @@
 package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.calculus.Derivable;
+import cn.timelives.java.math.algebra.calculus.Derivable;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
@@ -69,7 +69,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 		}
 
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Power<T> derive() {
@@ -142,7 +142,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return mc.log(a, x);
 		}
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Power<T> derive() {
@@ -247,7 +247,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return mc.multiply(a, t);
 		}
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Power<T> derive() {
@@ -380,7 +380,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return mc.multiply(c,mc.exp(a, x));
 		}
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Exp<T> derive() {
@@ -469,7 +469,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return mc.exp(x);
 		}
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Ex<T> derive() {

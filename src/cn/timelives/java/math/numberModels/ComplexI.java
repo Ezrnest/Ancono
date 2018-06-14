@@ -1,7 +1,7 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.planeAG.PVector;
-import cn.timelives.java.math.planeAG.Point;
+import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
+import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.utilities.SNFSupport;
 
 import java.text.DecimalFormat;

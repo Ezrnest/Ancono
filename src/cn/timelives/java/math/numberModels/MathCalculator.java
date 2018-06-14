@@ -1,6 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.abstractAlgebra.calculator.FieldCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 import java.util.Comparator;

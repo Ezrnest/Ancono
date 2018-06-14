@@ -3,11 +3,12 @@
  */
 package cn.timelives.java.math;
 
-import cn.timelives.java.math.abstractAlgebra.calculator.EqualPredicate;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author liyicheng
@@ -51,6 +52,7 @@ public abstract class FlexibleMathObject<T, S extends EqualPredicate<T>> impleme
 	public int hashCode(){
 		return super.hashCode();
 	}
+
 	/**
 	 * Returns a String representing this object, the {@link NumberFormatter} should 
 	 * be used whenever a number is presented.
@@ -58,7 +60,7 @@ public abstract class FlexibleMathObject<T, S extends EqualPredicate<T>> impleme
 	 * @return
 	 */
 	public abstract String toString(NumberFormatter<T> nf);
-	
+
 	/**
 	 * Returns a String representing this object, it is recommended that 
 	 * the output of the number model should be formatted 

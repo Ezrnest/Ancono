@@ -1,9 +1,11 @@
 package cn.timelives.java.math.equation;
 
 import cn.timelives.java.math.*;
+import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.property.Solveable;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.math.set.SingletonSet;
 
@@ -676,7 +678,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 *
 	 * @param <T>
 	 */
-	public static final class LEquation<T> extends SVPEquation<T> implements Solveable<T>{
+	public static final class LEquation<T> extends SVPEquation<T> implements Solveable<T> {
 		
 		private final T a,b;
 		private final T sol;
@@ -723,7 +725,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.Solveable#getSolution()
+		 * @see cn.timelives.java.math.property.Solveable#getSolution()
 		 */
 		@Override
 		public SingletonSet<T> getSolution() {

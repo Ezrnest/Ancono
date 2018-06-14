@@ -3,12 +3,12 @@
  */
 package test.math.abstractAlgebra;
 
-import cn.timelives.java.math.abstractAlgebra.FiniteGroups;
-import cn.timelives.java.math.abstractAlgebra.calculator.GroupCalculator;
-import cn.timelives.java.math.abstractAlgebra.group.finite.AbstractFiniteGroup;
+import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.planeAG.TransMatrix;
+import cn.timelives.java.math.geometry.analytic.planeAG.TransMatrix;
 import cn.timelives.java.utilities.ArraySup;
 import org.junit.Test;
 

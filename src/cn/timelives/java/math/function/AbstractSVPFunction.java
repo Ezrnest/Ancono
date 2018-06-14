@@ -5,11 +5,11 @@ package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.Polynomial;
+import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.numberModels.Utils;
-import cn.timelives.java.math.calculus.Calculus;
-import cn.timelives.java.math.calculus.Derivable;
-import cn.timelives.java.math.calculus.Integrable;
+import cn.timelives.java.math.algebra.calculus.Calculus;
+import cn.timelives.java.math.algebra.calculus.Derivable;
+import cn.timelives.java.math.algebra.calculus.Integrable;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
@@ -64,7 +64,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.calculus.Integrable#integrate()
+	 * @see cn.timelives.java.math.algebra.calculus.Integrable#integrate()
 	 */
 	@Override
 	public AbstractSVPFunction<T> integrate() {
@@ -174,7 +174,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		 */
 		@Override
 		public <N> SVPFunctionImpl1<N> mapTo(Function<T, N> mapper,
-				MathCalculator<N> newCalculator) {
+											 MathCalculator<N> newCalculator) {
 			return new SVPFunctionImpl1<>(newCalculator, mp, ArraySup.mapTo(coes, mapper));
 		}
 		private int hash;
@@ -222,7 +222,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		 */
 		@Override
 		public <N> SVPFunctionImpl2<N> mapTo(Function<T, N> mapper,
-				MathCalculator<N> newCalculator) {
+											 MathCalculator<N> newCalculator) {
 			HashMap<Integer,N> nmap = new HashMap<>(map.size());
 			for(Entry<Integer,T> en : map.entrySet()){
 				nmap.put(en.getKey(), mapper.apply(en.getValue()));

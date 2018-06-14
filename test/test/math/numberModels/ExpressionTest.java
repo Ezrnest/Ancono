@@ -11,9 +11,9 @@ import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.expression.ExprCalculator;
 import cn.timelives.java.math.numberModels.expression.Expression;
 import cn.timelives.java.math.numberModels.expression.SimplificationStrategies;
-import cn.timelives.java.math.planeAG.Line;
-import cn.timelives.java.math.planeAG.Point;
-import cn.timelives.java.math.planeAG.curve.EllipseV;
+import cn.timelives.java.math.geometry.analytic.planeAG.Line;
+import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.EllipseV;
 import org.junit.Test;
 
 import java.util.List;

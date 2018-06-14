@@ -5,9 +5,9 @@ package cn.timelives.java.math.numberModels.structure;
 
 import cn.timelives.java.math.FieldMathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.Polynomial;
+import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
@@ -48,7 +48,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 	
 
 	/*
-	 * @see cn.timelives.java.math.Polynomial#getMaxPower()
+	 * @see cn.timelives.java.math.algebra.Polynomial#getMaxPower()
 	 */
 	@Override
 	public int getDegree() {
@@ -64,7 +64,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.Polynomial#getCoefficient(int)
+	 * @see cn.timelives.java.math.algebra.Polynomial#getCoefficient(int)
 	 */
 	@Override
 	public T getCoefficient(int n) {

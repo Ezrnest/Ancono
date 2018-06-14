@@ -1,6 +1,6 @@
 package cn.timelives.java.utilities;
 
-import cn.timelives.java.math.linearAlgebra.Matrix;
+import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.numberModels.Fraction;
 
 import java.io.OutputStream;

@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.set;
 
-import cn.timelives.java.math.Intersectable;
+import cn.timelives.java.math.property.Intersectable;
 
 /**
  * A set that is "intersectable". The implementor must ensure that 

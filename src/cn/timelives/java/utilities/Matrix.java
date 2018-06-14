@@ -8,7 +8,7 @@ import java.util.Objects;
  * <p>To create a Matrix , you can either use a two-dimension array as parameter or directly call  
  * some prepared method.
  * @author lyc
- * @deprecated this class is replaced by {@link cn.timelives.java.math.linearAlgebra.Matrix}
+ * @deprecated this class is replaced by {@link cn.timelives.java.math.algebra.linearAlgebra.Matrix}
  */
 @Deprecated
 public abstract class Matrix {

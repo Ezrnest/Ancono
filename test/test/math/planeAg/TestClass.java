@@ -5,11 +5,11 @@ package test.math.planeAg;
 
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.planeAG.PAffineTrans;
-import cn.timelives.java.math.planeAG.PVector;
-import cn.timelives.java.math.planeAG.Point;
-import cn.timelives.java.math.planeAG.curve.ConicSection;
-import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
+import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
+import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
+import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.ConicSection;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
 import org.junit.Test;
 
 import static cn.timelives.java.utilities.Printer.print;

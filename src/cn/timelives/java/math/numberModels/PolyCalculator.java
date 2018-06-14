@@ -1,7 +1,7 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.addableSet.AdditiveSet;
-import cn.timelives.java.math.addableSet.SortedAdditiveSet;
+import cn.timelives.java.math.numberModels.addableSet.AdditiveSet;
+import cn.timelives.java.math.numberModels.addableSet.SortedAdditiveSet;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.utilities.ArraySup;
 

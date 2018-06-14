@@ -4,7 +4,7 @@
 package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.calculus.Derivable;
+import cn.timelives.java.math.algebra.calculus.Derivable;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
@@ -108,7 +108,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Add<T> derive() {
@@ -200,7 +200,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Subtract<T> derive() {
@@ -291,7 +291,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Add<T> derive() {
@@ -386,7 +386,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Divide<T> derive() {
@@ -485,7 +485,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-		 * @see cn.timelives.java.math.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
 		@Override
 		public Multiply<T> derive() {

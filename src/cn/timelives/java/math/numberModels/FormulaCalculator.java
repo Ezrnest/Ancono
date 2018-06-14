@@ -1,6 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.addableSet.MathAdder;
+import cn.timelives.java.math.numberModels.addableSet.MathAdder;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 import java.math.BigDecimal;

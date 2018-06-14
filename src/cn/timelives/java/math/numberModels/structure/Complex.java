@@ -7,8 +7,8 @@ import cn.timelives.java.math.numberModels.ComplexI;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.planeAG.PVector;
-import cn.timelives.java.math.planeAG.Point;
+import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
+import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 
 import java.util.ArrayList;
 import java.util.List;

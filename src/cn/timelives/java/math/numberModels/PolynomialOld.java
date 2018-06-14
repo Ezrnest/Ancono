@@ -1,8 +1,8 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.addableSet.MathAddableSet;
-import cn.timelives.java.math.addableSet.MathAdder;
-import cn.timelives.java.math.addableSet.SortedAdditiveSet;
+import cn.timelives.java.math.numberModels.addableSet.MathAddableSet;
+import cn.timelives.java.math.numberModels.addableSet.MathAdder;
+import cn.timelives.java.math.numberModels.addableSet.SortedAdditiveSet;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

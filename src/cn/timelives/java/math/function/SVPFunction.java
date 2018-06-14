@@ -5,8 +5,8 @@ package cn.timelives.java.math.function;
 
 
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.Polynomial;
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.algebra.Polynomial;
+import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 
 import java.util.function.BiPredicate;
 

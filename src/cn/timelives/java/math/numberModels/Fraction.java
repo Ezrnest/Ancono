@@ -2,7 +2,7 @@ package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.linearAlgebra.Matrix;
+import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.ArrayList;

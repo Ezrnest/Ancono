@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.set;
 
-import cn.timelives.java.math.Unionable;
+import cn.timelives.java.math.property.Unionable;
 
 /**
  * A set that is "unionable". The implementor must ensure that 

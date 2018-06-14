@@ -1,7 +1,7 @@
 package test.math;
 
-import cn.timelives.java.math.Progression;
-import cn.timelives.java.math.ProgressionSup;
+import cn.timelives.java.math.algebra.Progression;
+import cn.timelives.java.math.algebra.ProgressionSup;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.MathCalculator;
@@ -459,7 +459,7 @@ class Test {
 		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		Progression<Double> ps = Progression.
 				createProgression(l -> Math.sqrt(l), -1, mc);
-//		Progression<Long> p2 = ps.mapTo(d -> Math.round(d), 
+//		Progression<Long> p2 = ps.mapTo(d -> Math.round(d),
 //				Calculators.getCalculatorLong());
 //		p2.limit(100).forEach(Printer::print);
 		Interval<Double> iv = new IntervalI<Double>(mc,4d,7d,true,true);

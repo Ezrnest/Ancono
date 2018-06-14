@@ -5,7 +5,7 @@ import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.planeAG.*;
+import cn.timelives.java.math.geometry.analytic.planeAG.*;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.ArrayList;

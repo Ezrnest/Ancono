@@ -32,7 +32,9 @@ public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalcu
 	public MathCalculator<T> getMathCalculator() {
 		return mc;
 	}
-	
+
+
+
 	/**
 	 * Map this object using the number type {@code T} to a new object using the number type {@code N}. This 
 	 * method is a core method of {@link FieldMathObject}. The subclasses can always changes the return 
@@ -42,7 +44,7 @@ public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalcu
 	 * @param <N> the new number type.
 	 * @return a new FlexibleMathObject of type N
 	 */
-	public abstract <N> FieldMathObject<N> mapTo(Function<T,N> mapper,MathCalculator<N> newCalculator);
+	public abstract <N> FieldMathObject<N> mapTo(Function<T,N> mapper, MathCalculator<N> newCalculator);
 	/**
 	 * The equals method describes the equivalence in program of two math objects instead of the equal in math. 
 	 * However
@@ -103,7 +105,6 @@ public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalcu
 	 * Returns a String representing this object, it is recommended that 
 	 * the output of the number model should be formatted 
 	 * through {@link NumberFormatter#format(Object, MathCalculator)}.
-	 * @param nf
 	 * @return
 	 */
 	@Override

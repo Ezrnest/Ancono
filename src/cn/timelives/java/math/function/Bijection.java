@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.function;
 
-import cn.timelives.java.math.Invertible;
+import cn.timelives.java.math.property.Invertible;
 
 /**
  * A bijection function is a function between the elements of two sets, 
@@ -28,7 +28,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
 	
 	
 	/*
-	 * @see cn.timelives.java.math.Invertible#inverse()
+	 * @see cn.timelives.java.math.property.Invertible#inverse()
 	 */
 	@Override
 	default Bijection<R, P> inverse() {

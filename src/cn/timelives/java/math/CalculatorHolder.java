@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math;
 
-import cn.timelives.java.math.abstractAlgebra.calculator.EqualPredicate;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 
 /**
  * @author liyicheng

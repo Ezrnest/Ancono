@@ -4,6 +4,7 @@ import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.equation.inequation.SVPInequation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.numberTheory.Primes;
 import cn.timelives.java.math.set.IntervalUnion;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.ModelPatterns;

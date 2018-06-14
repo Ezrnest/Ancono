@@ -3,8 +3,8 @@
  */
 package test.math;
 
-import cn.timelives.java.math.combination.Permutation;
-import cn.timelives.java.math.combination.Permutations;
+import cn.timelives.java.math.numberTheory.combination.Permutation;
+import cn.timelives.java.math.numberTheory.combination.Permutations;
 import cn.timelives.java.utilities.ArraySup;
 import org.junit.Test;
 

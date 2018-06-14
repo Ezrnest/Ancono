@@ -6,7 +6,7 @@ package cn.timelives.java.math.prob;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import static cn.timelives.java.math.combination.CFunctions.*;
+import static cn.timelives.java.math.numberTheory.combination.CFunctions.*;
 /**
  * A class provides basic distributions.
  * @author liyicheng

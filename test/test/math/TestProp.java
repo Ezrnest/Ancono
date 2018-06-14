@@ -3,7 +3,7 @@
  */
 package test.math;
 
-import cn.timelives.java.math.combination.Enumer;
+import cn.timelives.java.math.numberTheory.combination.Enumer;
 import org.junit.Test;
 
 import static cn.timelives.java.utilities.Printer.print;

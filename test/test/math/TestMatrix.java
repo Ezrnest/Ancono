@@ -4,14 +4,14 @@
 package test.math;
 
 import cn.timelives.java.math.equation.SVPEquation;
-import cn.timelives.java.math.linearAlgebra.LinearEquationSolution;
-import cn.timelives.java.math.linearAlgebra.Matrix;
-import cn.timelives.java.math.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.linearAlgebra.Vector;
+import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
+import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
+import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
+import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.MathCalculator;
-import cn.timelives.java.math.planeAG.curve.ConicSection;
-import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.ConicSection;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.structure.Pair;
 import org.junit.Test;

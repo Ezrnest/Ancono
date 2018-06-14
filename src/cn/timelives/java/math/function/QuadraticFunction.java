@@ -10,11 +10,11 @@ import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.planeAG.Line;
-import cn.timelives.java.math.planeAG.Point;
-import cn.timelives.java.math.planeAG.curve.AbstractPlaneFunction;
-import cn.timelives.java.math.planeAG.curve.ConicSection;
-import cn.timelives.java.math.planeAG.curve.GeneralConicSection;
+import cn.timelives.java.math.geometry.analytic.planeAG.Line;
+import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneFunction;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.ConicSection;
+import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
 
 import java.util.function.Function;
 
@@ -40,7 +40,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	
 	private static final ComputeExpression EXPR_APPLY = ComputeExpression.compile("($1$0+$2)$0+$3");
 	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.planeAG.curve.PlaneFunction#apply(java.lang.Object)
+	 * @see cn.timelives.java.math.geometry.analytic.planeAG.curve.PlaneFunction#apply(java.lang.Object)
 	 */
 	@Override
 	public T apply(T x) {

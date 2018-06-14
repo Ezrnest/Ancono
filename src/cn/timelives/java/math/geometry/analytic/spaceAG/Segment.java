@@ -1,7 +1,7 @@
 package cn.timelives.java.math.geometry.analytic.spaceAG;
 
-import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Line.Relation;
 
 import java.util.function.Function;
@@ -286,7 +286,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	}
 
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof Segment){
 			Segment<T> seg = (Segment<T>) obj;
 			return l.valueEquals(seg.l) && ((p1.valueEquals(seg.p1) && p2.valueEquals(seg.p2))
@@ -296,7 +296,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	}
 
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Segment){
 			Segment<N> seg = (Segment<N>) obj;
 			return l.valueEquals(seg.l,mapper) && ((p1.valueEquals(seg.p1,mapper) && p2.valueEquals(seg.p2,mapper))
@@ -319,7 +319,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	/**
 	 * Create a Segment passing through the two points, throws an exception if the two 
 	 * points are the same.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p1
 	 * @param p2
 	 * @return a new segment
@@ -349,7 +349,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	
 	/**
 	 * Create a Segment with a point and a vector,the vector's length will be the line's.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p
 	 * @param v
 	 * @return a new segment

@@ -7,7 +7,7 @@ import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.property.SolutionPredicate;
 import cn.timelives.java.math.equation.inequation.Inequation;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * A CompareStructure is the super class of {@link Equation} and {@link Inequation}, which

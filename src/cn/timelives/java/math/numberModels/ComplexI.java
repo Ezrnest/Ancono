@@ -1,5 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.utilities.SNFSupport;

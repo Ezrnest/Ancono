@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.equation;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * An enumeration that describes all the types of a compare structure.

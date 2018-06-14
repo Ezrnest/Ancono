@@ -1,12 +1,12 @@
 package cn.timelives.java.math.geometry.analytic.spaceAG;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.utilities.ArraySup;
@@ -334,7 +334,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof Line){
 			Line<T> line = (Line<T>) obj;
 			return isParallel(line) && line.contains(p0);
@@ -343,7 +343,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Line){
 			return valueEquals(((Line<N>)obj).mapTo(mapper, mc));
 		}
@@ -458,7 +458,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	/**
 	 * Create a line that contains the point p and its direct vector is vec, the 
 	 * direct vector cannot be zero vector.<p>
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p a point
 	 * @param vec the direct vector
 	 * @return a new line
@@ -486,7 +486,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	/**
 	 * Create a line passing through the two points, throws an exception if the two 
 	 * points are the same.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p1
 	 * @param p2
 	 * @return a new line

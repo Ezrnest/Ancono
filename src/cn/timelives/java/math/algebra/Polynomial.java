@@ -4,7 +4,7 @@
 package cn.timelives.java.math.algebra;
 
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Iterator;

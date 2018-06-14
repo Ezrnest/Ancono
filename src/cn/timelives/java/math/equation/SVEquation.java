@@ -1,6 +1,6 @@
 package cn.timelives.java.math.equation;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 import java.util.function.Function;
 

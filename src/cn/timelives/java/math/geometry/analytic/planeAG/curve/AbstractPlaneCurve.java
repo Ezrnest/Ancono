@@ -5,8 +5,8 @@ package cn.timelives.java.math.geometry.analytic.planeAG.curve;
  *
  */
 
-import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
 import cn.timelives.java.math.geometry.analytic.planeAG.PlanePointSet;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
@@ -18,7 +18,7 @@ import java.util.function.Function;
  *
  * @param <T>
  */
-public abstract class AbstractPlaneCurve<T> extends FieldMathObject<T> implements PlanePointSet<T>{
+public abstract class AbstractPlaneCurve<T> extends MathObject<T> implements PlanePointSet<T>{
 
 	protected AbstractPlaneCurve(MathCalculator<T> mc) {
 		super(mc);

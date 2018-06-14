@@ -3,14 +3,14 @@
  */
 package cn.timelives.java.math.function;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.numberModels.Utils;
 import cn.timelives.java.math.algebra.calculus.Calculus;
 import cn.timelives.java.math.algebra.calculus.Derivable;
 import cn.timelives.java.math.algebra.calculus.Integrable;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
@@ -104,7 +104,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 * they are equal
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(!(obj instanceof SVPFunction)){
 			return false;
 		}
@@ -120,7 +120,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(!(obj instanceof SVPFunction)){
 			return false;
 		}
@@ -276,7 +276,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 			throw new IndexOutOfBoundsException();
 		}
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> LinearFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -315,7 +315,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 
 
 		/*
-		 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> ConstantFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -327,7 +327,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(!(obj instanceof ConstantFunction)) {
 				return false;
 			}

@@ -1,10 +1,10 @@
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.ClosedCurve;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.ConicSection;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.RectifiableCurve;
@@ -611,7 +611,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	
 	
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof Circle){
 			Circle<T> c = (Circle<T>) obj;
 			return o.valueEquals(c.o) && 
@@ -622,7 +622,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	}
 
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Circle){
 			Circle<N> c = (Circle<N>) obj;
 			return o.valueEquals(c.o, mapper) &&

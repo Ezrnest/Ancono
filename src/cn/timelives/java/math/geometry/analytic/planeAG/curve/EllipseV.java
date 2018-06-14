@@ -1,11 +1,11 @@
 package cn.timelives.java.math.geometry.analytic.planeAG.curve;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Line;
 import cn.timelives.java.math.geometry.analytic.planeAG.LineSup;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
@@ -485,7 +485,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof EllipseV){
 			EllipseV<N> ev = (EllipseV<N>) obj;
 			if(ev.onX == onX){
@@ -497,7 +497,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	}
 	
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof EllipseV){
 			EllipseV<T> ev = (EllipseV<T>) obj;
 			if(ev.onX == onX){

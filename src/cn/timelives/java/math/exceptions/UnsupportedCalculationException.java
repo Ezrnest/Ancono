@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.exceptions;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * Exception to throw when a {@link MathCalculator} cannot do such calculation to the

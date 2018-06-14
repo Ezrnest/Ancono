@@ -4,7 +4,7 @@ import cn.timelives.java.math.algebra.Progression;
 import cn.timelives.java.math.algebra.ProgressionSup;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Fraction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalI;
 import cn.timelives.java.utilities.Printer;

@@ -64,7 +64,7 @@ public interface RingCalculator<T> extends GroupCalculator<T> {
 	
 	/**
 	 * Return the result of {@code n * p}, which is equal to applying addition to 
-	 * {@code x} for {@code n} times.
+	 * {@code x} for {@code n} times. This method can be implemented for better performance.
 	 * @param x
 	 * @param n a long 
 	 * @return

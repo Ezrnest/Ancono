@@ -1,6 +1,7 @@
 package cn.timelives.java.math.geometry.analytic.planeAG.curve;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.LEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
@@ -92,7 +93,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * @param E
 	 * @param F
 	 */
-	protected ConicSection(MathCalculator<T> mc,T A,T B,T C,T D,T E,T F) {
+	protected ConicSection(MathCalculator<T> mc, T A, T B, T C, T D, T E, T F) {
 		super(mc);
 		if(mc.isZero(A)&&mc.isZero(C)&&mc.isZero(B)){
 			throw new IllegalArgumentException("A=B=C=0 for conic section");
@@ -561,7 +562,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	
 	
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof ConicSection){
 			ConicSection<T> cs = (ConicSection<T>) obj;
 			T p ;
@@ -586,7 +587,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof ConicSection){
 			ConicSection<N> cs = (ConicSection<N>) obj;
 			T p ;

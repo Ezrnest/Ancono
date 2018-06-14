@@ -3,10 +3,9 @@
  */
 package test.math;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 
 import java.util.function.Predicate;
 

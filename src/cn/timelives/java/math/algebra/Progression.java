@@ -1,8 +1,8 @@
 package cn.timelives.java.math.algebra;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.function.BiMathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
@@ -24,7 +24,7 @@ import java.util.stream.StreamSupport;
  * @author lyc
  * @param <T> the type of number returned as the number in the progression
  */
-public abstract class Progression<T> extends FieldMathObject<T> implements Iterable<T>{
+public abstract class Progression<T> extends MathObject<T> implements Iterable<T>{
 	/**
 	 * The length of this progression, set it as UNLIMITED to indicate this progression is 
 	 * unlimited.
@@ -303,7 +303,7 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Progression){
 			Progression<N> pro = (Progression<N>) obj;
 			if(this.isLimited()&& this.getLength() == pro.getLength()){
@@ -321,7 +321,7 @@ public abstract class Progression<T> extends FieldMathObject<T> implements Itera
 		return false;
 	}
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof Progression){
 			Progression<T> pro = (Progression<T>) obj;
 			if(this.isLimited()&& length == pro.length){

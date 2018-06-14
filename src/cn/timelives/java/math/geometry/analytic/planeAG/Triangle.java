@@ -1,10 +1,10 @@
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Objects;
@@ -36,7 +36,7 @@ import java.util.function.Function;
  *
  * @param <T>
  */
-public final class Triangle<T> extends FieldMathObject<T> {
+public final class Triangle<T> extends MathObject<T> {
 	
 	/**
 	 * The three vertexes of this triangle.
@@ -496,7 +496,7 @@ public final class Triangle<T> extends FieldMathObject<T> {
 		return "Triangle: A:"+A.toString(nf)+" B:"+B.toString(nf)+" C:"+C.toString(nf);
 	}
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Triangle){
 			Triangle<N> tri = (Triangle<N>)obj;
 			T x = mapper.apply(tri.A.x);
@@ -520,7 +520,7 @@ public final class Triangle<T> extends FieldMathObject<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj == this){
 			return true;
 		}

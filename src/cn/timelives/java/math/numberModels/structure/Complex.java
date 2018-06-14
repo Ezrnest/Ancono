@@ -1,10 +1,10 @@
 package cn.timelives.java.math.numberModels.structure;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.ComplexI;
-import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
@@ -36,10 +36,10 @@ import java.util.function.Function;
  *
  * @param <T>
  */
-public final class Complex<T> extends FieldMathObject<T> {
+public final class Complex<T> extends MathObject<T> {
 	private final T a,b;
 	
-	protected Complex(MathCalculator<T> mc, T a, T b) {
+	Complex(MathCalculator<T> mc, T a, T b) {
 		super(mc);
 		this.a = Objects.requireNonNull(a);
 		this.b = Objects.requireNonNull(b);
@@ -336,7 +336,7 @@ public final class Complex<T> extends FieldMathObject<T> {
 		}
 	}
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof Complex){
 			Complex<T> com = (Complex<T>) obj;
 			return mc.isEqual(a, com.a) && mc.isEqual(b, com.b);
@@ -345,7 +345,7 @@ public final class Complex<T> extends FieldMathObject<T> {
 	}
 
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Complex){
 			Complex<N> com = (Complex<N>) obj;
 			return mc.isEqual(a, mapper.apply(com.a)) && mc.isEqual(b, mapper.apply(com.b));
@@ -524,7 +524,7 @@ public final class Complex<T> extends FieldMathObject<T> {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#root(java.lang.Object, long)
+		 * @see MathCalculator#root(java.lang.Object, long)
 		 */
 		@Override
 		public Complex<T> nroot(Complex<T> x, long n) {

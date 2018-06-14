@@ -1,6 +1,8 @@
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.utilities.structure.Pair;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -626,6 +628,12 @@ public class MultinomialCalculator implements MathCalculator<Multinomial>,NTCalc
         @Override
         public Multinomial simplify(Multinomial x) {
             return x;
+        }
+
+        @Override
+        public cn.timelives.java.utilities.structure.Pair<Multinomial, Multinomial> simplify(Multinomial a, Multinomial b) {
+            var arr = Multinomial.simplifyFraction(a,b);
+            return new cn.timelives.java.utilities.structure.Pair<>(arr[0],arr[1]);
         }
     }
 

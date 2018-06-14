@@ -3,7 +3,7 @@ package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Plane;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Segment;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Line;
 
 import java.util.Set;

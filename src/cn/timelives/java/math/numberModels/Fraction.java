@@ -1,9 +1,11 @@
 package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathUtils;
+import cn.timelives.java.math.exceptions.ExceptionUtil;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.structure.Pair;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -244,7 +246,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	 */
 	public Fraction divide(Fraction fra){
 		if(fra.signum==0){
-			throw new IllegalArgumentException("Divide by zero :  / 0");
+			ExceptionUtil.divideByZero();
+			return null;
 		}
 		if(this.signum == 0){
 			return ZERO;
@@ -352,7 +355,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	public Fraction pow(int n){
 		if(signum==0){
 			if(n==0){
-				throw new ArithmeticException("0^0");
+				ExceptionUtil.zeroExponent();
+				return null;
 			}else{
 				return Fraction.ZERO;
 			}
@@ -391,7 +395,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		
 		if(exp.signum==0){
 			if(this.signum==0){
-				throw new ArithmeticException("0^0");
+                ExceptionUtil.zeroExponent();
+                return null;
 			}
 			return Fraction.ONE;
 			
@@ -404,7 +409,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 				return Fraction.ONE;
 			}else{
 				if(exp.denominator%2 == 0){
-					throw new ArithmeticException("Negative in Square");
+				    ExceptionUtil.negativeSquare();
+				    return null;
 				}
 				return Fraction.NEGATIVE_ONE;
 			}
@@ -412,7 +418,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		int signum = 1;
 		if(this.signum< 0 ){
 			if(exp.denominator % 2 ==0)
-				throw new ArithmeticException("Negative in Square");
+                ExceptionUtil.negativeSquare();
 			signum = -1;
 		}
 		
@@ -1028,5 +1034,6 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			}
 			return list;
 		}
-	}
+
+    }
 }

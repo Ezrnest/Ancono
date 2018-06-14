@@ -3,13 +3,13 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.expression.Node.*;
 import cn.timelives.java.math.numberModels.expression.Node.Fraction;
 
 import java.util.*;
-import java.util.function.Function;
 
 import static cn.timelives.java.math.numberModels.expression.Node.*;
 import static cn.timelives.java.utilities.Printer.print;
@@ -267,7 +267,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#isEqual(java.lang.Object,
+	 * cn.timelives.java.math.MathCalculator#isEqual(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -277,7 +277,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#compare(java.lang.Object,
+	 * cn.timelives.java.math.MathCalculator#compare(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -287,7 +287,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#add(java.lang.Object,
+	 * @see cn.timelives.java.math.MathCalculator#add(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -310,7 +310,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#negate(java.lang.Object)
+	 * cn.timelives.java.math.MathCalculator#negate(java.lang.Object)
 	 */
 	@Override
 	public Expression negate(Expression para) {
@@ -323,7 +323,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#abs(java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#abs(java.lang.Object)
 	 */
 	@Override
 	public Expression abs(Expression para) {
@@ -334,7 +334,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#subtract(java.lang.Object,
+	 * cn.timelives.java.math.MathCalculator#subtract(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -353,7 +353,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#getZero()
+	 * @see cn.timelives.java.math.MathCalculator#getZero()
 	 */
 	@Override
 	public Expression getZero() {
@@ -361,7 +361,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#isZero(java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#isZero(java.lang.Object)
 	 */
 	@Override
 	public boolean isZero(Expression para) {
@@ -370,7 +370,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#multiply(java.lang.Object,
+	 * cn.timelives.java.math.MathCalculator#multiply(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -388,7 +388,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#divide(java.lang.Object,
+	 * cn.timelives.java.math.MathCalculator#divide(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -399,7 +399,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#getOne()
+	 * @see cn.timelives.java.math.MathCalculator#getOne()
 	 */
 	@Override
 	public Expression getOne() {
@@ -407,7 +407,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#reciprocal(java.lang.
+	 * @see cn.timelives.java.math.MathCalculator#reciprocal(java.lang.
 	 * Object)
 	 */
 	@Override
@@ -419,7 +419,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#multiplyLong(java.lang.
+	 * cn.timelives.java.math.MathCalculator#multiplyLong(java.lang.
 	 * Object, long)
 	 */
 	@Override
@@ -435,7 +435,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#divideLong(java.lang.
+	 * @see cn.timelives.java.math.MathCalculator#divideLong(java.lang.
 	 * Object, long)
 	 */
 	@Override
@@ -450,7 +450,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#squareRoot(java.lang.
+	 * @see cn.timelives.java.math.MathCalculator#squareRoot(java.lang.
 	 * Object)
 	 */
 	@Override
@@ -460,7 +460,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#nroot(java.lang.Object,
+	 * cn.timelives.java.math.MathCalculator#nroot(java.lang.Object,
 	 * long)
 	 */
 	@Override
@@ -471,7 +471,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#pow(java.lang.Object,
+	 * @see cn.timelives.java.math.MathCalculator#pow(java.lang.Object,
 	 * long)
 	 */
 	@Override
@@ -483,7 +483,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#constantValue(java.lang.
+	 * cn.timelives.java.math.MathCalculator#constantValue(java.lang.
 	 * String)
 	 */
 	@Override
@@ -510,7 +510,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#exp(java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#exp(java.lang.Object)
 	 */
 	@Override
 	public Expression exp(Expression x) {
@@ -518,7 +518,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#ln(java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#ln(java.lang.Object)
 	 */
 	@Override
 	public Expression ln(Expression x) {
@@ -526,7 +526,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#sin(java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#sin(java.lang.Object)
 	 */
 	@Override
 	public Expression sin(Expression x) {
@@ -535,7 +535,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#arcsin(java.lang.Object)
+	 * cn.timelives.java.math.MathCalculator#arcsin(java.lang.Object)
 	 */
 	@Override
 	public Expression arcsin(Expression x) {
@@ -544,7 +544,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#arccos(java.lang.Object)
+	 * cn.timelives.java.math.MathCalculator#arccos(java.lang.Object)
 	 */
 	@Override
 	public Expression arccos(Expression x) {
@@ -553,7 +553,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 
 	/*
 	 * @see
-	 * cn.timelives.java.math.numberModels.MathCalculator#arctan(java.lang.Object)
+	 * cn.timelives.java.math.MathCalculator#arctan(java.lang.Object)
 	 */
 	@Override
 	public Expression arctan(Expression x) {
@@ -561,7 +561,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#cos(java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#cos(java.lang.Object)
 	 */
 	@Override
 	public Expression cos(Expression x) {
@@ -569,7 +569,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#exp(java.lang.Object,
+	 * @see cn.timelives.java.math.MathCalculator#exp(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -578,7 +578,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#log(java.lang.Object,
+	 * @see cn.timelives.java.math.MathCalculator#log(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@Override
@@ -587,7 +587,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#tan(java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#tan(java.lang.Object)
 	 */
 	@Override
 	public Expression tan(Expression x) {
@@ -595,7 +595,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#getNumberClass()
+	 * @see cn.timelives.java.math.MathCalculator#getNumberClass()
 	 */
 	@Override
 	public Class<?> getNumberClass() {

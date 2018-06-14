@@ -4,7 +4,7 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
 

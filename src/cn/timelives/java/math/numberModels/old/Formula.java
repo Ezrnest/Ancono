@@ -1,5 +1,6 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.old;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.utilities.CollectionSup;
 
 import java.math.BigDecimal;
@@ -1056,7 +1057,13 @@ public class Formula implements Comparable<Formula> {
 	}
 
 	static BigInteger[] toFraction(BigDecimal n) {
-		return Term.toFraction(n);
+		BigInteger[] uad = new BigInteger[2];
+		uad[0] = n.movePointRight(n.scale()).toBigIntegerExact();
+		uad[1] = BigDecimal.ONE.movePointRight(n.scale()).toBigIntegerExact();
+		BigInteger temp = uad[0].gcd(uad[1]);
+		uad[0] = uad[0].divide(temp);
+		uad[1] = uad[1].divide(temp);
+		return uad;
 	}
 
 	/**
@@ -1066,7 +1073,24 @@ public class Formula implements Comparable<Formula> {
 	 * @return
 	 */
 	static void sortRad(BigInteger[] i) {
-		Term.sortRad(i);
+		if (i[0].compareTo(BigInteger.valueOf(4)) < 0) {
+			return;
+		}
+		BigInteger temp;
+		while (true) {
+			temp = i[2].pow(2);
+			if (temp.compareTo(i[0]) > 0) {
+				break;
+			}
+			if (i[0].mod(temp).compareTo(BigInteger.ZERO) == 0) {
+				i[0] = i[0].divide(temp);
+				i[1] = i[1].multiply(i[2]);
+				continue;
+			}
+			i[2] = i[2].add(BigInteger.ONE);
+			// temp = i.pow(2);
+		}
+		return;
 	}
 
 	/**

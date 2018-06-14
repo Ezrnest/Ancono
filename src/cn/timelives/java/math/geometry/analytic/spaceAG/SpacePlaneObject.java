@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.geometry.analytic.spaceAG;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * Describes an object that is on a plane in the space.

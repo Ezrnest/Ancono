@@ -1,9 +1,9 @@
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.numberModels.Utils;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
@@ -42,7 +42,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public boolean valueEquals(FieldMathObject<T> obj) {
+    public boolean valueEquals(MathObject<T> obj) {
         if(!(obj instanceof Segment)){
             return false;
         }
@@ -51,7 +51,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
         if(!(obj instanceof Segment)){
             return false;
         }

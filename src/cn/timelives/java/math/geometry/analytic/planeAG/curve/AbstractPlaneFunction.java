@@ -5,7 +5,7 @@ package cn.timelives.java.math.geometry.analytic.planeAG.curve;
 
 import cn.timelives.java.math.function.AbstractSVFunction;
 import cn.timelives.java.math.function.SVFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.PlanePointSet;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 
@@ -41,7 +41,7 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
 	public abstract <N> AbstractPlaneFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);

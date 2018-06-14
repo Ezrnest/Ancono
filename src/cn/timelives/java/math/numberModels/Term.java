@@ -1,5 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.property.Mergeable;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.numberModels.addableSet.MathAdder;

@@ -5,7 +5,7 @@ package cn.timelives.java.math.equation.inequation;
 
 import cn.timelives.java.math.equation.AbstractCompareStructure;
 import cn.timelives.java.math.equation.Type;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 import java.util.Collections;
 import java.util.EnumSet;

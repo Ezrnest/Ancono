@@ -4,7 +4,7 @@
 package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.function.AbstractSVPFunction.ConstantFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * @author liyicheng

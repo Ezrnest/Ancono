@@ -1,11 +1,16 @@
 package test.math;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
 import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.old.Formula;
+import cn.timelives.java.math.numberModels.old.FormulaCalculator;
+import cn.timelives.java.math.numberModels.old.FracPoly;
+import cn.timelives.java.math.numberModels.old.PolynomialOld;
 import cn.timelives.java.math.spaceAG.*;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;

@@ -6,7 +6,7 @@ package cn.timelives.java.math.equation;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.equation.inequation.Inequation;
 import cn.timelives.java.math.equation.inequation.SVPInequation;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;
 

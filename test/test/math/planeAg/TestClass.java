@@ -4,7 +4,7 @@
 package test.math.planeAg;
 
 import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;

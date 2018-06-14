@@ -7,7 +7,7 @@ import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup;
 import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.TransMatrix;
 import cn.timelives.java.utilities.ArraySup;
 import org.junit.Test;

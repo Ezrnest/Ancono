@@ -3,10 +3,10 @@
  */
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.property.Invertible;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.function.Function;
  * @author liyicheng
  *
  */
-public final class PAffineTrans<T> extends FieldMathObject<T> implements PointTrans<T>,Invertible<PAffineTrans<T>> {
+public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T>,Invertible<PAffineTrans<T>> {
 	/*
 	 * Describes the transformation matrix as:
 	 * a1 b1
@@ -204,7 +204,7 @@ public final class PAffineTrans<T> extends FieldMathObject<T> implements PointTr
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(this==obj){
 			return true;
 		}
@@ -219,7 +219,7 @@ public final class PAffineTrans<T> extends FieldMathObject<T> implements PointTr
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(!(obj instanceof PAffineTrans)){
 			return false;
 		}

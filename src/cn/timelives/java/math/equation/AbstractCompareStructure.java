@@ -3,15 +3,15 @@
  */
 package cn.timelives.java.math.equation;
 
-import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * @author liyicheng
  * 2017-10-08 11:34
  *
  */
-public abstract class AbstractCompareStructure<T,S> extends FieldMathObject<T> 
+public abstract class AbstractCompareStructure<T,S> extends MathObject<T>
 implements CompareStructure<T, S>{
 	/**
 	 * The type of operation.

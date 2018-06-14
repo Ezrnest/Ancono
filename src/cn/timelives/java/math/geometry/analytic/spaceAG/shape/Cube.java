@@ -1,10 +1,10 @@
 package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Plane;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Segment;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Line;
 
 import java.util.Arrays;
@@ -211,13 +211,13 @@ public final class Cube<T> extends RightPrism<T> {
 	}
 
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		// TODO Auto-generated method stub
 		return false;
 	}

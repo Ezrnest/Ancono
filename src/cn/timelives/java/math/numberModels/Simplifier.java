@@ -1,7 +1,9 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
+import cn.timelives.java.utilities.structure.Pair;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,20 +26,32 @@ public interface Simplifier<T> {
 	 * @param numbers arguments, the content may be changed.
 	 * @return a list of numbers.
 	 */
-	public List<T> simplify(List<T> numbers);
+	List<T> simplify(List<T> numbers);
 	
 	/**
-	 * Simplifies a single number. This simplify operation is optional so 
+	 * Simplifies a single number. This simplification operation is optional so
 	 * a default implement is applied.
 	 * @param x a number
 	 * @return the result
 	 */
-	public default T simplify(T x){
+	default T simplify(T x){
 		return x;
 	}
-	
+
+    /**
+     * Simplifies two numbers. This simplification operation is optional so
+     * a default implement is applied.
+     * @param a a number
+     * @param b another number
+     * @return the result as a pair of numbers
+     */
+	default Pair<T,T> simplify(T a, T b){
+		var list = simplify(Arrays.asList(a,b));
+		return new Pair<>(list.get(0),list.get(1));
+	}
+
 	@SuppressWarnings("unchecked")
-	public static <T,S extends FieldMathObject<T>> S singleSimplify(Simplifier<T> s, S x){
+	public static <T,S extends MathObject<T>> S singleSimplify(Simplifier<T> s, S x){
 		return (S) x.mapTo(s::simplify,x.getMathCalculator());
 	}
 

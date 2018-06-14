@@ -1,6 +1,6 @@
 package cn.timelives.java.math.set;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Map;
@@ -184,7 +184,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	
 	
 	/**
-	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@Override
 	public abstract <N> Interval<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);

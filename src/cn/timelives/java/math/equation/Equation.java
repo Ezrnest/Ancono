@@ -1,6 +1,6 @@
 package cn.timelives.java.math.equation;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * Equation is an abstract class for equations in math. 

@@ -3,10 +3,8 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.function.SVFunction;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.ParserUtils;
 import cn.timelives.java.math.numberModels.api.Computable;

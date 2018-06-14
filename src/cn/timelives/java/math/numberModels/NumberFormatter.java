@@ -3,18 +3,19 @@
  */
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.utilities.SNFSupport;
 
 import java.text.NumberFormat;
 
 /**
  * The formatter for a type of number. This is use by the output of 
- * {@link FieldMathObject#toString}
+ * {@link MathObject#toString}
  * @author liyicheng
  *
  */
-public interface NumberFormatter<T> {
+public interface NumberFormatter<T> extends FlexibleNumberFormatter<T,MathCalculator<T>>{
 	/**
 	 * Formats the given number, using a {@link MathCalculator}.
 	 * @param number
@@ -27,19 +28,11 @@ public interface NumberFormatter<T> {
 	 * @param digit the digit to show.
 	 * @return
 	 */
-	public static NumberFormatter<Double> decimalFormatter(int digit){
+	static NumberFormatter<Double> decimalFormatter(int digit){
 		NumberFormat nf = SNFSupport.dfByDigit(digit);
 		return (n,mc)-> nf.format(n);
 	}
 	
 	
-	public static final NumberFormatter<?> toString = (n,mc) -> n.toString();
-	/**
-	 * Returns a number formatter that simply calls toString().
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> NumberFormatter<T> getToStringFormatter() {
-		return (NumberFormatter<T>) toString;
-	}
+
 }

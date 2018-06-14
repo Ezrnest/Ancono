@@ -16,7 +16,7 @@ public interface MonoidCalculator<T> extends SemigroupCalculator<T> {
 	 * Returns the identity element of the semigroup.
 	 * @return
 	 */
-	public T getIdentity();
+	T getIdentity();
 	
 	
 	/**

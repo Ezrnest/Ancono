@@ -1,6 +1,6 @@
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.Simplifier;
 
 import java.util.ArrayList;

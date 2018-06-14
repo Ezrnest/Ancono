@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.structure.Pair;
 

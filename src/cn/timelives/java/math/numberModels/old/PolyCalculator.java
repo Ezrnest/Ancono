@@ -1,5 +1,8 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.old;
 
+import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.numberModels.addableSet.AdditiveSet;
 import cn.timelives.java.math.numberModels.addableSet.SortedAdditiveSet;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
@@ -10,7 +13,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static cn.timelives.java.math.numberModels.FormulaCalculator.DEFAULT_FORMULA_CALCULATOR;
+import static cn.timelives.java.math.numberModels.old.FormulaCalculator.DEFAULT_FORMULA_CALCULATOR;
 
 ;
 /**
@@ -20,6 +23,7 @@ import static cn.timelives.java.math.numberModels.FormulaCalculator.DEFAULT_FORM
  * @author lyc
  *
  */
+@Deprecated
 public class PolyCalculator extends MathCalculatorAdapter<PolynomialOld>
 {
 	private FormulaCalculator ca;
@@ -538,7 +542,7 @@ public class PolyCalculator extends MathCalculatorAdapter<PolynomialOld>
 	
 	
 	/*
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#exp(java.lang.Object, java.lang.Object)
+	 * @see cn.timelives.java.math.MathCalculator#exp(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public PolynomialOld exp(PolynomialOld a, PolynomialOld b) {

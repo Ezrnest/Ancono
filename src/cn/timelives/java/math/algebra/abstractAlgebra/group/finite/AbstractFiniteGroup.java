@@ -6,7 +6,7 @@ package cn.timelives.java.math.algebra.abstractAlgebra.group.finite;
 import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.structure.finite.FiniteGroup;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSet;
 import cn.timelives.java.math.set.MathSets;

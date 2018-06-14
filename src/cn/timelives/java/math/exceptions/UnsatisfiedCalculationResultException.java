@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.exceptions;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 /**
  * Throws when the calculation of a math calculator is not satisfied.For example,

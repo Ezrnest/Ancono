@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.geometry.analytic.planeAG.curve;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Line;
 import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;

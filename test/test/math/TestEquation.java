@@ -6,7 +6,7 @@ package test.math;
 import cn.timelives.java.math.equation.EquationSup;
 import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import org.junit.Test;
 
 import static cn.timelives.java.utilities.Printer.print;

@@ -3,9 +3,9 @@
  */
 package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.spaceAG.*;
 
 import java.util.function.Function;
@@ -76,7 +76,7 @@ public class MovedShape<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -85,7 +85,7 @@ public class MovedShape<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -4,11 +4,10 @@
 package cn.timelives.java.math;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.numberModels.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * @author liyicheng
@@ -59,7 +58,7 @@ public abstract class FlexibleMathObject<T, S extends EqualPredicate<T>> impleme
 	 * @param nf
 	 * @return
 	 */
-	public abstract String toString(NumberFormatter<T> nf);
+	public abstract String toString(FlexibleNumberFormatter<T,S> nf);
 
 	/**
 	 * Returns a String representing this object, it is recommended that 
@@ -69,7 +68,7 @@ public abstract class FlexibleMathObject<T, S extends EqualPredicate<T>> impleme
 	 */
 	@Override
 	public String toString() {
-		return toString(NumberFormatter.getToStringFormatter());
+		return toString(FlexibleNumberFormatter.getToStringFormatter());
 	}
 
 

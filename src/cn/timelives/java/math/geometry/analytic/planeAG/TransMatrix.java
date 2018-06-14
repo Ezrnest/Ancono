@@ -7,7 +7,7 @@ import cn.timelives.java.math.property.Composable;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 

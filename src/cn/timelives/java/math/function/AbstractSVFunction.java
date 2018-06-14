@@ -3,10 +3,10 @@
  */
 package cn.timelives.java.math.function;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.algebra.calculus.Derivable;
 import cn.timelives.java.math.numberModels.Fraction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;
@@ -21,7 +21,7 @@ import java.util.function.Function;
  * 2017-10-06 10:02
  * 
  */
-public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implements SVFunction<T>{
+public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVFunction<T>{
 
 	/**
 	 * @param mc
@@ -39,7 +39,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 	
 	
 	/*
-	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
 	public abstract <N> AbstractSVFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
@@ -85,7 +85,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 		}
 
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Ln<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -96,7 +96,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(obj instanceof Log) {
 					if(mc.isEqual(((Log<T>)obj).a, mc.constantValue(MathCalculator.STR_E))) {
 						return true;
@@ -164,7 +164,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return "log("+nf.format(a, mc)+",x)";
 		}
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Log<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -174,7 +174,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(obj instanceof Ln) {
 				return ((Ln<T>)obj).valueEquals(this);
 			}
@@ -331,7 +331,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return null;
 		}
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Power<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -341,7 +341,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(!(obj instanceof Power)) {
 				return false;
 			}
@@ -423,7 +423,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return sb.toString();
 		}
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Exp<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -433,7 +433,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(obj instanceof Ex) {
 				return ((Ex<T>)obj).valueEquals(this);
 			}
@@ -483,7 +483,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 			return "e^x";
 		}
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Ex<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -493,7 +493,7 @@ public abstract class AbstractSVFunction<T> extends FieldMathObject<T> implement
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(obj instanceof Exp) {
 				Exp<T> exp = (Exp<T>)obj;
 				return mc.isEqual(mc.getOne(), exp.c) && mc.isEqual(mc.constantValue(MathCalculator.STR_E), exp.a);

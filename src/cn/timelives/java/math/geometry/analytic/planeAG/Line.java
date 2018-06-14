@@ -1,10 +1,10 @@
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.numberModels.Simplifiable;
 import cn.timelives.java.math.numberModels.Simplifier;
@@ -782,7 +782,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Line){
 			//we just map the line to a new line type T
 			Line<N> l = (Line<N>) obj;
@@ -792,7 +792,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		return false;
 	}
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}

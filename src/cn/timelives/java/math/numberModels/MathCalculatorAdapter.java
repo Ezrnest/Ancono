@@ -1,5 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 
 
@@ -115,7 +116,7 @@ public abstract class MathCalculatorAdapter<T> implements MathCalculator<T> {
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.numberModels.MathCalculator#nroot(java.lang.Object, long)
+	 * @see MathCalculator#nroot(java.lang.Object, long)
 	 */
 	@Override
 	public T nroot(T x, long n) {

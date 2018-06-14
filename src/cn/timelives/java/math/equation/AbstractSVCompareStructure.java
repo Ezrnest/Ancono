@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.equation;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 import java.util.function.Function;
 
@@ -37,7 +37,7 @@ implements SVCompareStructure<T>{
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.equation.AbstractCompareStructure#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.equation.AbstractCompareStructure#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
 	public abstract <N> AbstractSVCompareStructure<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);

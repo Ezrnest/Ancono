@@ -1,7 +1,7 @@
 package cn.timelives.java.math.algebra;
 
-import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
@@ -178,7 +178,7 @@ public final class ProgressionSup {
 			return new ArithmeticProgression<>(mapper.apply(k),mapper.apply(b),length,newCalculator);
 		}
 		@Override
-		public <N> boolean valueEquals(FieldMathObject<N> obj,
+		public <N> boolean valueEquals(MathObject<N> obj,
 				Function<N, T> mapper) {
 			if(obj instanceof ArithmeticProgression){
 				ArithmeticProgression<N> ap = (ArithmeticProgression<N>) obj; 

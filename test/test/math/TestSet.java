@@ -4,7 +4,7 @@
 package test.math;
 
 import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.set.IntersectableSet;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;

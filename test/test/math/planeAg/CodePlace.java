@@ -1,6 +1,7 @@
 package test.math.planeAg;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.algebra.Progression;
 import cn.timelives.java.math.algebra.ProgressionSup;
@@ -16,6 +17,7 @@ import cn.timelives.java.math.geometry.analytic.planeAG.*;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.EllipseV;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.HyperbolaV;
+import cn.timelives.java.math.numberModels.old.*;
 import cn.timelives.java.utilities.EasyConsole;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.Printer;
@@ -123,7 +125,7 @@ public class CodePlace {
 		return LineSup.simplify(l, Fraction.getFractionSimplifier());
 	}
 
-	FieldMathObject<Fraction> map(FieldMathObject<Long> obj) {
+	MathObject<Fraction> map(MathObject<Long> obj) {
 		return obj.mapTo(Fraction::valueOf, mc);
 	}
 

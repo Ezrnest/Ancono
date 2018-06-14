@@ -1,4 +1,4 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.old;
 @Deprecated
 public class FormulaFormatException extends IllegalArgumentException
 {

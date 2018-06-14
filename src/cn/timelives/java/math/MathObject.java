@@ -1,6 +1,5 @@
 package cn.timelives.java.math;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.function.Function;
@@ -15,13 +14,13 @@ import java.util.function.Function;
  * @param <T> the kind of object used, usually a subclass of number
  * @see MathCalculator
  */
-public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalculator<T>>{
+public abstract class MathObject<T> extends FlexibleMathObject<T, MathCalculator<T>>{
 	/**
 	 * Create a flexible math object with the given MathCalculator,the MathCalculator should not 
 	 * be null.
 	 * @param mc
 	 */
-	protected FieldMathObject(MathCalculator<T> mc){
+	protected MathObject(MathCalculator<T> mc){
 		super(mc);
 	}
 	
@@ -37,14 +36,14 @@ public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalcu
 
 	/**
 	 * Map this object using the number type {@code T} to a new object using the number type {@code N}. This 
-	 * method is a core method of {@link FieldMathObject}. The subclasses can always changes the return 
+	 * method is a core method of {@link MathObject}. The subclasses can always changes the return
 	 * type to it instead of just returning a FlexibleMathObject. 
 	 * @param newCalculator a new calculator of type {@code N}
 	 * @param mapper the function used in mapping.
 	 * @param <N> the new number type.
 	 * @return a new FlexibleMathObject of type N
 	 */
-	public abstract <N> FieldMathObject<N> mapTo(Function<T,N> mapper, MathCalculator<N> newCalculator);
+	public abstract <N> MathObject<N> mapTo(Function<T,N> mapper, MathCalculator<N> newCalculator);
 	/**
 	 * The equals method describes the equivalence in program of two math objects instead of the equal in math. 
 	 * However
@@ -68,14 +67,14 @@ public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalcu
 	/**
 	 * Determines whether the two objects using the same number type is the same. In this method,
 	 * {@link MathCalculator#isEqual(Object, Object)} is used instead of {@code Object.equals()} method.
-	 * This method is basically equal to {@link #valueEquals(FieldMathObject, Function)} as 
+	 * This method is basically equal to {@link #valueEquals(MathObject, Function)} as
 	 * {@code this.valueEquals(obj,x -> x)}
 	 * 
 	 * @param obj another FlexibleMathObject
 	 * @return {@code true} if this is equal to obj , else {@code false}.
 	 * @throws ClassCastException if {@code obj} is not using number type {@code T}
 	 */
-	public abstract boolean valueEquals(FieldMathObject<T> obj);
+	public abstract boolean valueEquals(MathObject<T> obj);
 	
 	
 	
@@ -90,7 +89,7 @@ public abstract class FieldMathObject<T> extends FlexibleMathObject<T, MathCalcu
 	 * @return {@code true} if this is equal to obj , else {@code false}.
 	 * @throws ClassCastException if {@code obj} is not using number type {@code N}
 	 */
-	public <N> boolean valueEquals(FieldMathObject<N> obj,Function<N,T> mapper){
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N,T> mapper){
 		return valueEquals(obj.mapTo(mapper, mc));
 	}
 	/**

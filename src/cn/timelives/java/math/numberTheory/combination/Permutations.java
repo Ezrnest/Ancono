@@ -5,7 +5,7 @@ package cn.timelives.java.math.numberTheory.combination;
 
 import cn.timelives.java.math.numberTheory.combination.Permutation.Cycle;
 import cn.timelives.java.math.numberTheory.combination.Permutation.Transposition;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;

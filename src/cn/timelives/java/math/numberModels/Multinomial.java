@@ -1,6 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.MathUtils;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.utilities.CollectionSup;
@@ -731,9 +731,9 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
         return monomial(Term.valueOf(n));
     }
 
-    public static void main(String[] args) {
-        print(cal.gcd(valueOf("a-b"), valueOf("a+b")));
-    }
+//    public static void main(String[] args) {
+//        print(cal.gcd(valueOf("a-b"), valueOf("a+b")));
+//    }
 //        Multinomial m1 = valueOf("x"),
 //                m2 = valueOf("x-4y");
 //        print(m1.add(m2));

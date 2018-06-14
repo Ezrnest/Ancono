@@ -3,7 +3,7 @@
  */
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 import java.math.BigInteger;
 import java.util.Comparator;

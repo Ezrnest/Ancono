@@ -3,8 +3,8 @@
  */
 package test.math.numberModels;
 
-import cn.timelives.java.math.numberModels.PolyCalculator;
-import cn.timelives.java.math.numberModels.PolynomialOld;
+import cn.timelives.java.math.numberModels.old.PolyCalculator;
+import cn.timelives.java.math.numberModels.old.PolynomialOld;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

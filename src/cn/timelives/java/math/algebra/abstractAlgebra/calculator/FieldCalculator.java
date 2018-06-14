@@ -4,7 +4,7 @@
 package cn.timelives.java.math.algebra.abstractAlgebra.calculator;
 
 /**
- * A field calculator is 
+ * A calculator for a field.
  * @author liyicheng
  * 2018-02-28 19:29
  *

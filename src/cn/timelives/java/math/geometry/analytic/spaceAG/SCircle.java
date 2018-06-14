@@ -3,9 +3,9 @@
  */
 package cn.timelives.java.math.geometry.analytic.spaceAG;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Circle;
 
 import java.util.function.Function;
@@ -229,7 +229,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof SCircle){
 			SCircle<T> sp = (SCircle<T>) obj;
 			return pl.valueEquals(sp.pl) && 
@@ -243,7 +243,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof SCircle){
 			SCircle<N> sp = (SCircle<N>) obj;
 			return pl.valueEquals(sp.pl,mapper) && 

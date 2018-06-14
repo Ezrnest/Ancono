@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.utilities.CollectionSup;
@@ -13,7 +14,6 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
-import java.util.function.UnaryOperator;
 
 import static cn.timelives.java.utilities.Printer.*;
 

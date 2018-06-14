@@ -1,5 +1,6 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.old;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.addableSet.MathAddableSet;
 import cn.timelives.java.math.numberModels.addableSet.MathAdder;
 import cn.timelives.java.math.numberModels.addableSet.SortedAdditiveSet;

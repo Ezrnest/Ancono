@@ -1,7 +1,7 @@
 package cn.timelives.java.math.set;
 
-import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
@@ -424,7 +424,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	
 	
 	/**
-	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@Override
 	public <N> IntervalUnion<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -432,7 +432,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#equals(java.lang.Object)
+	 * @see MathObject#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -443,10 +443,10 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return CollectionSup.listEqual(is, in.is, (obj1,obj2)->obj1.equals(obj2));
 	}
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject)
+	 * @see MathObject#valueEquals(MathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(!(obj instanceof IntervalUnion)) {
 			return false;
 		}
@@ -455,10 +455,10 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject, java.util.function.Function)
+	 * @see MathObject#valueEquals(MathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(!(obj instanceof IntervalUnion)) {
 			return false;
 		}
@@ -466,7 +466,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return CollectionSup.listEqual(is, in.is, (v1,v2)->v1.valueEquals(v2,mapper));
 	}
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see MathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {

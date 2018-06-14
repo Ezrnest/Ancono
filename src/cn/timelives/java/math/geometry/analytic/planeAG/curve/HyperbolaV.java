@@ -1,9 +1,9 @@
 package cn.timelives.java.math.geometry.analytic.planeAG.curve;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Line;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 
@@ -252,7 +252,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	
 
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof HyperbolaV){
 			HyperbolaV<N> ev = (HyperbolaV<N>) obj;
 			if(ev.onX == onX){
@@ -264,7 +264,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof HyperbolaV){
 			HyperbolaV<T> ev = (HyperbolaV<T>) obj;
 			if(ev.onX == onX){

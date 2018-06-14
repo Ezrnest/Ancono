@@ -1,5 +1,7 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.old;
 
+import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
+import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.numberModels.addableSet.MathAdder;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 

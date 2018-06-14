@@ -3,13 +3,12 @@
  */
 package cn.timelives.java.math.algebra.abstractAlgebra;
 
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.*;
+import cn.timelives.java.math.algebra.abstractAlgebra.structure.DivisionRing;
 import cn.timelives.java.math.property.Composable;
 import cn.timelives.java.math.property.Invertible;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.SemigroupCalculator;
 import cn.timelives.java.math.function.Bijection;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 
 /**
@@ -128,7 +127,7 @@ public final class GroupCalculators {
 	 * @return
 	 */
 	public static <T> MathCalculator<T> toMathCalculatorAdd(GroupCalculator<T> gc){
-		return new MathCalculatorAdapter<T>() {
+		return new MathCalculatorAdapter<>() {
 			/*
 			 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#isEqual(java.lang.Object, java.lang.Object)
 			 */
@@ -171,7 +170,7 @@ public final class GroupCalculators {
 		};
 	}
 	/**
-	 * Returns a {@link MathCalculator} from the GroupCalculator, which only supports {@code isEqual(Object,Object)} method.
+	 * Returns a {@link MathCalculator} from the SemigroupCalculator, which only supports {@code isEqual(Object,Object)} method.
 	 * @param gc
 	 * @return
 	 */
@@ -186,9 +185,127 @@ public final class GroupCalculators {
 			}
 		};
 	}
-	
-	
-	
+
+    /**
+     * Returns a {@link MathCalculator} from the RingCalculator, mapping add, subtract, multiply.
+     * @param rc
+     * @param <T>
+     * @return
+     */
+	public static <T> MathCalculator<T> toMathCalculatorRing(RingCalculator<T> rc){
+	    return new MathCalculatorAdapter<>() {
+            @Override
+            public boolean isEqual(T para1, T para2) {
+                return rc.isEqual(para1, para2);
+            }
+
+            @Override
+            public T add(T para1, T para2) {
+                return rc.add(para1, para2);
+            }
+
+            @Override
+            public T negate(T para) {
+                return rc.negate(para);
+            }
+
+            @Override
+            public T subtract(T para1, T para2) {
+                return rc.subtract(para1, para2);
+            }
+
+            @Override
+            public T multiply(T para1, T para2) {
+                return rc.multiply(para1, para2);
+            }
+
+            @Override
+            public T multiplyLong(T p, long l) {
+                return rc.multiplyLong(p, l);
+            }
+
+            @Override
+            public T getZero() {
+                return rc.getZero();
+            }
+
+            @Override
+            public T pow(T p, long exp) {
+                return rc.pow(p,exp);
+            }
+        };
+    }
+
+    /**
+     * Returns a {@link MathCalculator} from the RingCalculator, mapping add, subtract, multiply.
+     * @param fc
+     * @param <T>
+     * @return
+     */
+    public static <T> MathCalculator<T> toMathCalculatorDR(DivisionRingCalculator<T> fc){
+        return new MathCalculatorAdapter<>() {
+            @Override
+            public boolean isEqual(T para1, T para2) {
+                return fc.isEqual(para1, para2);
+            }
+
+            @Override
+            public T add(T para1, T para2) {
+                return fc.add(para1, para2);
+            }
+
+            @Override
+            public T negate(T para) {
+                return fc.negate(para);
+            }
+
+            @Override
+            public T subtract(T para1, T para2) {
+                return fc.subtract(para1, para2);
+            }
+
+            @Override
+            public T multiply(T para1, T para2) {
+                return fc.multiply(para1, para2);
+            }
+
+            @Override
+            public T divide(T para1, T para2) {
+                return fc.divide(para1, para2);
+            }
+
+            @Override
+            public T divideLong(T p, long l) {
+                return fc.divideLong(p,l);
+            }
+
+            @Override
+            public T multiplyLong(T p, long l) {
+                return fc.multiplyLong(p, l);
+            }
+
+            @Override
+            public T getOne() {
+                return fc.getOne();
+            }
+
+            @Override
+            public T getZero() {
+                return fc.getZero();
+            }
+
+            @Override
+            public T reciprocal(T p) {
+                return fc.reciprocal(p);
+            }
+
+            @Override
+            public T pow(T p, long exp) {
+                return fc.pow(p, exp);
+            }
+        };
+    }
+    
 	/**
 	 * Returns a isomorphism calculator of the original calculator through bijection {@code f}.
 	 * @param gc

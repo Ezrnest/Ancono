@@ -3,7 +3,8 @@
  */
 package cn.timelives.java.math.numberModels.structure;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
@@ -26,7 +27,7 @@ import java.util.function.Function;
  * 2017-11-21 17:10
  *
  */
-public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomial<T>,Comparable<PolynomialX<T>> {
+public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>,Comparable<PolynomialX<T>> {
 	/**
 	 * A map.
 	 */
@@ -109,7 +110,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 	}
 
 	/*
-	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
 	public <N> PolynomialX<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -124,7 +125,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(!(obj instanceof PolynomialX)) {
 			return false;
 		}
@@ -136,7 +137,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if (!(obj instanceof PolynomialX)) {
 			return false;
 		}
@@ -339,7 +340,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 			return mc;
 		}
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public boolean isEqual(PolynomialX<T> para1, PolynomialX<T> para2) {
@@ -347,7 +348,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#compare(java.lang.Object, java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public int compare(PolynomialX<T> para1, PolynomialX<T> para2) {
@@ -355,7 +356,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#add(java.lang.Object, java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#add(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public PolynomialX<T> add(PolynomialX<T> para1, PolynomialX<T> para2) {
@@ -401,7 +402,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#negate(java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#negate(java.lang.Object)
 		 */
 		@Override
 		public PolynomialX<T> negate(PolynomialX<T> para) {
@@ -418,7 +419,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#subtract(java.lang.Object, java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#subtract(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public PolynomialX<T> subtract(PolynomialX<T> para1, PolynomialX<T> para2) {
@@ -467,14 +468,14 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#getZero()
+		 * @see cn.timelives.java.math.MathCalculator#getZero()
 		 */
 		@Override
 		public PolynomialX<T> getZero() {
 			return zero;
 		}
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#isZero(java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#isZero(java.lang.Object)
 		 */
 		@Override
 		public boolean isZero(PolynomialX<T> para) {
@@ -482,7 +483,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#multiply(java.lang.Object, java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#multiply(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public PolynomialX<T> multiply(PolynomialX<T> para1, PolynomialX<T> para2) {
@@ -501,7 +502,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#divide(java.lang.Object, java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#divide(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public PolynomialX<T> divide(PolynomialX<T> para1, PolynomialX<T> para2) {
@@ -578,7 +579,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#getOne()
+		 * @see cn.timelives.java.math.MathCalculator#getOne()
 		 */
 		@Override
 		public PolynomialX<T> getOne() {
@@ -587,7 +588,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#multiplyLong(java.lang.Object, long)
+		 * @see cn.timelives.java.math.MathCalculator#multiplyLong(java.lang.Object, long)
 		 */
 		@Override
 		public PolynomialX<T> multiplyLong(PolynomialX<T> p, long l) {
@@ -606,7 +607,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#divideLong(java.lang.Object, long)
+		 * @see cn.timelives.java.math.MathCalculator#divideLong(java.lang.Object, long)
 		 */
 		@Override
 		public PolynomialX<T> divideLong(PolynomialX<T> p, long l) {
@@ -625,7 +626,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#squareRoot(java.lang.Object)
+		 * @see cn.timelives.java.math.MathCalculator#squareRoot(java.lang.Object)
 		 */
 		@Override
 		public PolynomialX<T> squareRoot(PolynomialX<T> p) {
@@ -633,7 +634,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#nroot(java.lang.Object, long)
+		 * @see cn.timelives.java.math.MathCalculator#nroot(java.lang.Object, long)
 		 */
 		@Override
 		public PolynomialX<T> nroot(PolynomialX<T> x, long n) {
@@ -654,7 +655,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#pow(java.lang.Object, long)
+		 * @see cn.timelives.java.math.MathCalculator#pow(java.lang.Object, long)
 		 */
 		@Override
 		public PolynomialX<T> pow(PolynomialX<T> p, long exp) {
@@ -674,7 +675,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 		}
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#constantValue(java.lang.String)
+		 * @see cn.timelives.java.math.MathCalculator#constantValue(java.lang.String)
 		 */
 		@Override
 		public PolynomialX<T> constantValue(String name) {
@@ -715,7 +716,7 @@ public final class PolynomialX<T> extends FieldMathObject<T> implements Polynomi
 
 
 		/*
-		 * @see cn.timelives.java.math.numberModels.MathCalculator#getNumberClass()
+		 * @see cn.timelives.java.math.MathCalculator#getNumberClass()
 		 */
 		@Override
 		public Class<?> getNumberClass() {

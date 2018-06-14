@@ -3,14 +3,14 @@
  */
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.lang.reflect.Array;
@@ -368,7 +368,7 @@ public final class PVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		
 		if(obj instanceof PVector){
 			PVector<N> s = (PVector<N>) obj;
@@ -379,7 +379,7 @@ public final class PVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(this==obj){
 			return true;
 		}
@@ -455,7 +455,7 @@ public final class PVector<T> extends Vector<T> {
 	 * __
 	 * AB
 	 * </pre>
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param A point A
 	 * @param B point B
 	 * @return a new vector

@@ -67,7 +67,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 * 
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if (!(obj instanceof SVPEquation)) {
 			return false;
 		}
@@ -79,7 +79,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 	}
 	
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if (!(obj instanceof SVPEquation)) {
 			return false;
 		}
@@ -125,7 +125,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
 	public abstract <N> SVPEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
@@ -200,7 +200,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 		
 
 		@Override
-		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof SVPEquation){
 				DSVPEquation<N> sv = (DSVPEquation<N>) obj;
 				if(sv.mp == this.mp){
@@ -257,7 +257,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 			return f.getDegree();
 		}
 		/*
-		 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> SVPEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -626,7 +626,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(obj instanceof QEquation){
 				QEquation<T> eq = (QEquation<T>) obj;
 				return mc.isEqual(a, eq.a)&&mc.isEqual(b, eq.b)&&mc.isEqual(c, eq.c);
@@ -636,7 +636,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof QEquation){
 				QEquation<N> eq = (QEquation<N>) obj;
 				return mc.isEqual(a, mapper.apply(eq.a))
@@ -752,7 +752,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(obj instanceof LEquation){
 				LEquation<T> leq = (LEquation<T>) obj;
 				return mc.isEqual(a, leq.a) && mc.isEqual(b, leq.b);
@@ -761,7 +761,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 		}
 
 		@Override
-		public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 			if(obj instanceof LEquation){
 				LEquation<N> leq = (LEquation<N>) obj;
 				return mc.isEqual(a, mapper.apply(leq.a)) && mc.isEqual(b, mapper.apply(leq.b));

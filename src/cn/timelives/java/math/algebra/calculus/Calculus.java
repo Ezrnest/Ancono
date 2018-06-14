@@ -5,7 +5,7 @@ package cn.timelives.java.math.algebra.calculus;
 
 import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.function.SVPFunction;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 
 import java.util.function.DoubleUnaryOperator;
 

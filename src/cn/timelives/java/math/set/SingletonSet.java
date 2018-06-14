@@ -3,8 +3,8 @@
  */
 package cn.timelives.java.math.set;
 
-import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.math.BigInteger;
@@ -57,7 +57,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	}
 
 	/**
-	 * @see cn.timelives.java.math.set.FiniteSet#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.set.FiniteSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@Override
 	public <N> SingletonSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -107,10 +107,10 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	
 	
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject)
+	 * @see MathObject#valueEquals(MathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}
@@ -122,7 +122,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	}
 
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see MathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
 	 */
 	@Override
 	public String toString(NumberFormatter<T> nf) {

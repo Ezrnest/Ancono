@@ -1,9 +1,9 @@
 package cn.timelives.java.math.geometry;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.ComputeExpression;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.geometry.analytic.planeAG.*;
 import cn.timelives.java.utilities.ArraySup;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 /**
  * A geometric triangle
  */
-public class GTriangle<T> extends FieldMathObject<T> {
+public class GTriangle<T> extends MathObject<T> {
     /**
      * sides
      */
@@ -231,7 +231,7 @@ public class GTriangle<T> extends FieldMathObject<T> {
 
 
     @Override
-    public <N> FieldMathObject<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> MathObject<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
         GTriangle<N> tri =  new GTriangle<>(newCalculator,
                 mapper.apply(a),
                 mapper.apply(b),
@@ -290,7 +290,7 @@ public class GTriangle<T> extends FieldMathObject<T> {
     }
 
     @Override
-    public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
         if(!(obj instanceof GTriangle)){
             return false;
         }
@@ -301,7 +301,7 @@ public class GTriangle<T> extends FieldMathObject<T> {
     }
 
     @Override
-    public boolean valueEquals(FieldMathObject<T> obj) {
+    public boolean valueEquals(MathObject<T> obj) {
         if(!(obj instanceof GTriangle)){
             return false;
         }

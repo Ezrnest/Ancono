@@ -3,9 +3,9 @@
  */
 package cn.timelives.java.math.function;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.algebra.calculus.Derivable;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Objects;
@@ -32,7 +32,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 	
 	
 	/*
-	 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+	 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
 	public abstract <N> CombinedFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
@@ -64,7 +64,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Add<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -83,7 +83,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(!(obj instanceof Add)) {
 				return false;
 			}
@@ -156,7 +156,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Subtract<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -175,7 +175,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(!(obj instanceof Subtract)) {
 				return false;
 			}
@@ -247,7 +247,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Multiply<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -266,7 +266,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(!(obj instanceof Multiply)) {
 				return false;
 			}
@@ -342,7 +342,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Divide<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -361,7 +361,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(!(obj instanceof Divide)) {
 				return false;
 			}
@@ -441,7 +441,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.numberModels.MathCalculator)
+		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
 		public <N> Combine<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -460,7 +460,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(FieldMathObject<T> obj) {
+		public boolean valueEquals(MathObject<T> obj) {
 			if(!(obj instanceof Combine)) {
 				return false;
 			}

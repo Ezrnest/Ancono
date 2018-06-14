@@ -1,10 +1,10 @@
 
 package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 
-import cn.timelives.java.math.FieldMathObject;
+import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.exceptions.UnsatisfiedCalculationResultException;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.spaceAG.*;
 import cn.timelives.java.utilities.ArraySup;
 
@@ -384,7 +384,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		if(obj instanceof Tetrahedron){
 			Tetrahedron<T> tr = (Tetrahedron<T>) obj;
 			return ArraySup.arrayEqualNoOrder(ps, tr.ps, (p1,p2)->p1.valueEquals(p2));
@@ -396,7 +396,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		if(obj instanceof Tetrahedron){
 			Tetrahedron<N> tr = (Tetrahedron<N>) obj;
 			SPoint<T>[] ar = ArraySup.mapTo(tr.ps, p -> p.mapTo(mapper, mc));
@@ -423,7 +423,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	
 	/**
 	 * Create a tetrahedron by four points.
-	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link FieldMathObject}
+	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p
 	 * @param A
 	 * @param B

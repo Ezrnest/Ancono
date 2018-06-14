@@ -3,8 +3,8 @@
  */
 package cn.timelives.java.math.set;
 
-import cn.timelives.java.math.FieldMathObject;
-import cn.timelives.java.math.numberModels.MathCalculator;
+import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.MathCalculator;
 
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -87,18 +87,18 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 	
 	
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject)
+	 * @see MathObject#valueEquals(MathObject)
 	 */
 	@Override
-	public boolean valueEquals(FieldMathObject<T> obj) {
+	public boolean valueEquals(MathObject<T> obj) {
 		return false;
 	}
 	
 	/**
-	 * @see cn.timelives.java.math.FieldMathObject#valueEquals(cn.timelives.java.math.FieldMathObject, java.util.function.Function)
+	 * @see MathObject#valueEquals(MathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(FieldMathObject<N> obj, Function<N, T> mapper) {
+	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
 		return super.valueEquals(obj, mapper);
 	}
 }

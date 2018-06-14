@@ -29,7 +29,6 @@ public class RingFraction<T> extends FlexibleMathObject<T,RingCalculator<T>>{
 
     final T nume,deno;
 
-
     RingFraction(T nume,T deno,RingCalculator<T> mc){
         super(mc);
         this.nume = nume;

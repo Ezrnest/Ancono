@@ -5,7 +5,8 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.math.BigInteger;
@@ -131,10 +132,10 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	}
 	
 	/**
-	 * @see MathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see MathObject#toString(NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('{');
 		for(T t : list){

@@ -5,7 +5,6 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.exceptions.UnsatisfiedCalculationResultException;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.spaceAG.*;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.Arrays;

@@ -7,8 +7,8 @@ import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.Simplifiable;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.api.Simplifiable;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.Arrays;

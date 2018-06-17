@@ -12,6 +12,9 @@ import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.geometry.analytic.planeAG.Circle;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.geometry.analytic.planeAG.Triangle;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.Simplifiable;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +27,7 @@ import static cn.timelives.java.utilities.Printer.print;
  *
  * @param <T>
  */
-public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, Plane<T>>{
+public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, Plane<T>> {
 	
 	/**
 	 * The relation between two planes or a plane or a line.
@@ -656,7 +659,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "PlaneCoordinateConverter";
 		}
 	}

@@ -1,7 +1,7 @@
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 
 import java.util.ArrayList;
 import java.util.List;

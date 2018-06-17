@@ -4,10 +4,10 @@
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
 import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.property.Invertible;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 
 import java.util.Map;
 import java.util.Objects;
@@ -231,7 +231,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Affine Transformation: x'=");
 		append(sb,nf,0);
@@ -240,7 +240,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 		
 		return sb.toString();
 	}
-	private void append(StringBuilder sb,NumberFormatter<T> nf,int n){
+	private void append(StringBuilder sb,FlexibleNumberFormatter<T,MathCalculator<T>> nf,int n){
 		boolean appended = false;
 		if(!mc.isZero(mat.getNumber(n, 0))){
 			appended = true;

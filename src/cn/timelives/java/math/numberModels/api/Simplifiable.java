@@ -1,4 +1,4 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.api;
 /**
  * Simplifiable object is object that can be simplified.Usually,some FlexibleMathObject are 
  * simplifiable,and because the {@code simplify} method may cost a long time and in following 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.api;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathObject;
@@ -32,7 +32,10 @@ public interface NumberFormatter<T> extends FlexibleNumberFormatter<T,MathCalcul
 		NumberFormat nf = SNFSupport.dfByDigit(digit);
 		return (n,mc)-> nf.format(n);
 	}
-	
-	
+	static final NumberFormatter<?> toString = (x,mc) -> x.toString();
+	@SuppressWarnings("unchecked")
+	public static <T> NumberFormatter<T> getToStringFormatter(){
+		return (NumberFormatter<T>)toString;
+	}
 
 }

@@ -5,7 +5,7 @@ package cn.timelives.java.math.algebra;
 
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -108,7 +108,7 @@ public interface Polynomial<T> extends Iterable<T>{
 		return hash;
 	}
 	
-	public static <T> String stringOf(Polynomial<T> m, MathCalculator<T> mc, NumberFormatter<T> nf) {
+	public static <T> String stringOf(Polynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		int maxPower = m.getDegree();
 		if(maxPower== 0) {
 			return nf.format(m.getCoefficient(0), mc);

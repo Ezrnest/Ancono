@@ -5,6 +5,9 @@ import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.Simplifiable;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.property.Solveable;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.math.set.SingletonSet;
@@ -22,7 +25,7 @@ import java.util.function.Function;
  * @param <T>
  */
 public abstract class SVPEquation<T> extends SVEquation<T> 
-implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
+implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	protected final int mp;
 	protected SVPEquation(MathCalculator<T> mc,int mp) {
 		super(mc);
@@ -38,14 +41,14 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 		return mp;
 	}
 	/*
-	 * @see cn.timelives.java.math.numberModels.Simplifiable#simplify()
+	 * @see cn.timelives.java.math.numberModels.api.Simplifiable#simplify()
 	 */
 	@Override
 	public SVPEquation<T> simplify() {
 		return this;
 	}
 	/*
-	 * @see cn.timelives.java.math.numberModels.Simplifiable#simplify(cn.timelives.java.math.numberModels.Simplifier)
+	 * @see cn.timelives.java.math.numberModels.api.Simplifiable#simplify(cn.timelives.java.math.numberModels.api.Simplifier)
 	 */
 	@Override
 	public SVPEquation<T> simplify(Simplifier<T> sim) {
@@ -94,7 +97,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>>{
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, mc, nf));
 		sb.append(" = 0");
 		return sb.toString();

@@ -2,6 +2,7 @@ package cn.timelives.java.math.algebra.linearAlgebra;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.property.Invertible;
 import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.SVPEquation;
@@ -1127,7 +1128,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		return "Matrix:row="+row+",column="+column;
 	}
 	

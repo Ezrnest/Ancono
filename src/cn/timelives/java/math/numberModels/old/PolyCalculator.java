@@ -2,7 +2,7 @@ package cn.timelives.java.math.numberModels.old;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.numberModels.addableSet.AdditiveSet;
 import cn.timelives.java.math.numberModels.addableSet.SortedAdditiveSet;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;

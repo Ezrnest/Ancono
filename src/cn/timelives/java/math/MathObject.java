@@ -1,6 +1,7 @@
 package cn.timelives.java.math;
 
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.NumberFormatter;
 
 import java.util.function.Function;
 
@@ -98,7 +99,7 @@ public abstract class MathObject<T> extends FlexibleMathObject<T, MathCalculator
 	 * @param nf
 	 * @return
 	 */
-	public abstract String toString(NumberFormatter<T> nf);
+	public abstract String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf);
 	
 	/**
 	 * Returns a String representing this object, it is recommended that 
@@ -108,7 +109,7 @@ public abstract class MathObject<T> extends FlexibleMathObject<T, MathCalculator
 	 */
 	@Override
 	public String toString() {
-		return toString(NumberFormatter.getToStringFormatter());
+		return toString(FlexibleNumberFormatter.getToStringFormatter());
 	}
 	
 	

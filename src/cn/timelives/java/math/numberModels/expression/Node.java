@@ -6,6 +6,7 @@ package cn.timelives.java.math.numberModels.expression;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.api.Computable;
+import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
 
@@ -778,7 +779,7 @@ public abstract class Node implements Computable,Serializable {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
 		public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
@@ -856,7 +857,7 @@ public abstract class Node implements Computable,Serializable {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
 		public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
@@ -944,7 +945,7 @@ public abstract class Node implements Computable,Serializable {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
+		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
 		 */
 		@Override
 		public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
@@ -1059,7 +1060,7 @@ public abstract class Node implements Computable,Serializable {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
+		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
 		 */
 		@Override
 		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
@@ -1140,7 +1141,7 @@ public abstract class Node implements Computable,Serializable {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
+		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
 		 */
 		@Override
 		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
@@ -1217,7 +1218,7 @@ public abstract class Node implements Computable,Serializable {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
+		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
 		 */
 		@Override
 		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
@@ -1295,7 +1296,7 @@ public abstract class Node implements Computable,Serializable {
 			return clone;
 		}
 		/*
-		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.NumberFormatter, boolean)
+		 * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
 		 */
 		@Override
 		protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {

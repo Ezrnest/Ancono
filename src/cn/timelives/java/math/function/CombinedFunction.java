@@ -6,7 +6,7 @@ package cn.timelives.java.math.function;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.algebra.calculus.Derivable;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -72,10 +72,10 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return f.toString(nf)+" + "+g.toString(nf);
 		}
 		
@@ -164,10 +164,10 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return f.toString(nf)+" - "+g.toString(nf);
 		}
 		
@@ -255,10 +255,10 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "("+f.toString(nf)+")*("+g.toString(nf)+")";
 		}
 		
@@ -350,10 +350,10 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "("+f.toString(nf)+")/("+g.toString(nf)+")";
 		}
 		
@@ -449,10 +449,10 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "("+f.toString(nf)+")/("+g.toString(nf)+")";
 		}
 		

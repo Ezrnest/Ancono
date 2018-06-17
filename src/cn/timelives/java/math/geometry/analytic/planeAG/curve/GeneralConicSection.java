@@ -6,7 +6,7 @@ import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
 import cn.timelives.java.math.geometry.analytic.planeAG.TransMatrix;

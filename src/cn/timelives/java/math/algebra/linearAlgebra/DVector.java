@@ -2,7 +2,7 @@ package cn.timelives.java.math.algebra.linearAlgebra;
 
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.Arrays;
@@ -354,10 +354,10 @@ public final class DVector<T> extends Vector<T> {
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Vector#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Vector#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		for(int i=0,size= getSize();i<size;i++) {

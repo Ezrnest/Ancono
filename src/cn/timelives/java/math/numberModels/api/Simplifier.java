@@ -1,4 +1,4 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.api;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.utilities.structure.Pair;

@@ -6,6 +6,7 @@ package cn.timelives.java.math.numberModels.expression;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.numberModels.expression.Node.*;
 import cn.timelives.java.math.numberModels.expression.Node.Fraction;
 

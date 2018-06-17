@@ -4,6 +4,7 @@
 package cn.timelives.java.math.exceptions;
 
 /**
+ * An exception to indicate the value exceeds the capacity of a number model.
  * @author liyicheng
  *
  */

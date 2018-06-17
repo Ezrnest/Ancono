@@ -5,9 +5,9 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.numberModels.Simplifiable;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.Simplifiable;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.SubstituableCurve;
 
@@ -750,7 +750,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	}
 	
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Line: ");
 		T z = mc.getZero();

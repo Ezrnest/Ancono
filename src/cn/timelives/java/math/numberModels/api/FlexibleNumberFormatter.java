@@ -1,4 +1,4 @@
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberModels.api;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
@@ -12,7 +12,12 @@ public interface FlexibleNumberFormatter<T,S extends EqualPredicate<T>> {
      */
     String format(T number, S mc);
 
-    FlexibleNumberFormatter<?,?> toString = (n,mc) -> n.toString();
+    FlexibleNumberFormatter<?,?> toString = new FlexibleNumberFormatter<Object, EqualPredicate<Object>>() {
+        @Override
+        public String format(Object number, EqualPredicate mc) {
+            return number.toString();
+        }
+    };
     /**
      * Returns a number formatter that simply calls toString().
      * @return

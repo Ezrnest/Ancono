@@ -356,6 +356,15 @@ public final class CodePlace {
 		var F = BP2.intersectPoint(l2);
 		var result = mc.multiply(mc.subtract(E.y,M.y),mc.subtract(F.y,M.y));
 		print(result);
+		print(result.computeDouble( ch -> {
+		    switch (ch){
+                case "a" : return 2d;
+                case "b" : return 1d;
+                case "k" : return 1.666d;
+                case "d" : return 0.328d;
+            }
+            return 1d;
+        }));
 
 	}
 

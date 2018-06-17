@@ -1,6 +1,7 @@
 package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.property.Mergeable;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.numberModels.addableSet.MathAdder;
@@ -1663,7 +1664,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
 
 
-    static class TermSimplifier implements Simplifier<Term>{
+    static class TermSimplifier implements Simplifier<Term> {
 
         @Override
         public List<Term> simplify(List<Term> numbers) {

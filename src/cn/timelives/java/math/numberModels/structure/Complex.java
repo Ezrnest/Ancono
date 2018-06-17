@@ -5,8 +5,8 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.ComplexI;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 
@@ -317,7 +317,7 @@ public final class Complex<T> extends MathObject<T> {
 	 * @return
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		if(mc.isZero(a)){
 			if (mc.isZero(b)) {
 				return "0";

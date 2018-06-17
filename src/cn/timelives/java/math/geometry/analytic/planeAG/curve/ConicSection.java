@@ -8,6 +8,9 @@ import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.geometry.analytic.planeAG.*;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.Simplifiable;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.utilities.structure.Pair;
 
 import java.util.ArrayList;
@@ -662,7 +665,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * Returns the general formula.
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		final String str = " + ";
 		sb.append("ConicSection : ");

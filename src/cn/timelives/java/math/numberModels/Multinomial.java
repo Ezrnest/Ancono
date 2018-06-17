@@ -1,8 +1,10 @@
 package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.api.Computable;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 
@@ -227,26 +229,45 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
     }
 
 
+    /**
+     * Compare the value of this and x, assigning one to all the characters.
+     * @param x another multinomial
+     * @return {@code -1} if this<x, 0 if this = x, 1 if this > x.
+     */
+    public int compareValueTo(Multinomial x){
+        return Double.compare(computeDouble(Computable.ASSIGN_ONE) ,x.computeDouble(Computable.ASSIGN_ONE));
+    }
 
+    /**
+     * Returns the result of {@code this*t}.
+     * @return {@code this*t}
+     */
     public Multinomial multiply(Term t) {
         if(t.isZero()){
             return ZERO;
         }
         return new Multinomial(multiplyToSet(terms,t));
     }
-
-    public Multinomial divide(Term devisor) {
-        if(devisor.isZero()){
+    /**
+     * Returns the result of {@code this / t}.
+     * @return {@code this/t}
+     */
+    public Multinomial divide(Term divisor) {
+        if(divisor.isZero()){
             throw new ArithmeticException("Divide by zero!");
         }
         NavigableSet<Term> nset = getSet();
         for (Term x : terms) {
-            Term re = x.divide(devisor);
+            Term re = x.divide(divisor);
             nset.add(re);
         }
         return new Multinomial(nset);
     }
 
+    /**
+     * Returns {@code -this}
+     * @return {@code -this}
+     */
     public Multinomial negate(){
         if(ZERO.equals(this)){
             return ZERO;

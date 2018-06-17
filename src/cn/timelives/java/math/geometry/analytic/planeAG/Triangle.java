@@ -5,7 +5,7 @@ import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -492,7 +492,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		return "Triangle: A:"+A.toString(nf)+" B:"+B.toString(nf)+" C:"+C.toString(nf);
 	}
 	@Override

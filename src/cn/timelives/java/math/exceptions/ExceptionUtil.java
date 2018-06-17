@@ -33,6 +33,7 @@ public final class ExceptionUtil {
         throw new ArithmeticException("Negative log: log(-x)");
     }
 
+    public static void valueTooBig(){throw new NumberValueException("Too big.");}
 
-
+    public static void valueTooBig(String expr){ throw new NumberValueException("Too big.",expr);}
 }

@@ -6,7 +6,6 @@ package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.spaceAG.*;
 
 import java.util.function.Function;
 

@@ -3,7 +3,7 @@ package cn.timelives.java.math.numberModels.old;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;

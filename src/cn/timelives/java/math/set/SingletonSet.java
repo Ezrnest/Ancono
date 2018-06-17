@@ -5,7 +5,8 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.NumberFormatter;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -57,7 +58,6 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	}
 
 	/**
-	 * @see cn.timelives.java.math.set.FiniteSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@Override
 	public <N> SingletonSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
@@ -87,7 +87,6 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 		return mc.isEqual(element, t);
 	}
 	/**
-	 * @see cn.timelives.java.math.set.FiniteSet#add(java.lang.Object)
 	 */
 	@Override
 	public AbstractLimitedSet<T> add(T element) {
@@ -122,10 +121,10 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	}
 
 	/**
-	 * @see MathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see MathObject#toString(NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		return "{"+nf.format(element, mc)+"}";
 	}
 

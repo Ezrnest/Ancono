@@ -2,7 +2,7 @@ package cn.timelives.java.math.geometry.analytic.planeAG;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -159,7 +159,7 @@ public final class Point<T> extends MathObject<T> {
 	 */
 	@Override
 	public String toString() {
-		return toString(NumberFormatter.getToStringFormatter());
+		return toString(FlexibleNumberFormatter.getToStringFormatter());
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public final class Point<T> extends MathObject<T> {
 	 *</pre>
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("( ");
 		sb.append(nf.format(x, mc)).append(" , ").append(nf.format(y, mc)).append(" )");

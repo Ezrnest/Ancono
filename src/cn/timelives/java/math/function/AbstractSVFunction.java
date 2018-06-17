@@ -5,9 +5,9 @@ package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.algebra.calculus.Derivable;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;
 
@@ -35,7 +35,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	 * should not be included.
 	 */
 	@Override
-	public abstract String toString(NumberFormatter<T> nf);
+	public abstract String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf);
 	
 	
 	/*
@@ -110,10 +110,10 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		}
 
 		/*
-		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "ln(x)";
 		}
 	}
@@ -157,10 +157,10 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "log("+nf.format(a, mc)+",x)";
 		}
 		/*
@@ -307,10 +307,10 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			if(mc.isZero(a)) {
 				return "0";
 			}else if(n.getSignum()==0) {
@@ -404,10 +404,10 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			StringBuilder sb = new StringBuilder();
 			if(!mc.isEqual(mc.getOne(), a)) {
 				sb.append(nf.format(a, mc));
@@ -476,10 +476,10 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 			return this;
 		}
 		/*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "e^x";
 		}
 		/*

@@ -1,7 +1,7 @@
 package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 
 import java.util.Map;
 import java.util.Objects;
@@ -201,7 +201,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return a String representing this interval.
 	 */
 	@Override
-	public abstract String toString(NumberFormatter<T> nf);
+	public abstract String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf);
 	
 	
 	/**

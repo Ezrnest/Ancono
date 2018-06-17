@@ -6,12 +6,12 @@ package cn.timelives.java.math.function;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.algebra.Polynomial;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.Utils;
 import cn.timelives.java.math.algebra.calculus.Calculus;
 import cn.timelives.java.math.algebra.calculus.Derivable;
 import cn.timelives.java.math.algebra.calculus.Integrable;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.*;
@@ -136,7 +136,7 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		return Polynomial.stringOf(this, mc, nf);
 	}
 	
@@ -335,10 +335,10 @@ implements SVPFunction<T>,Derivable<T,AbstractSVPFunction<T>>,Integrable<T>{
 		}
 
 		/*
-		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return nf.format(r, mc);
 		}
 

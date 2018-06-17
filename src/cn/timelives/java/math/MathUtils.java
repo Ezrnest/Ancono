@@ -841,7 +841,11 @@ public class MathUtils {
 	}
 	
 	public static int signum(int x) {
-		return x < 0 ? -1 : x == 0 ? 0 : 1;
+		return Integer.compare(x, 0);
+	}
+
+	public static int signum(double x){
+		return Double.compare(x,0);
 	}
 	
 	/**

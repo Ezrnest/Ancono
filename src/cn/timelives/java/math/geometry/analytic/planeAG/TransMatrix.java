@@ -3,12 +3,12 @@
  */
 package cn.timelives.java.math.geometry.analytic.planeAG;
 
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.property.Composable;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.util.function.Function;
@@ -218,7 +218,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[[");
 		sb.append(nf.format(data[0][0], mc)).append(",");

@@ -9,7 +9,7 @@ import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.geometry.analytic.planeAG.Line;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneFunction;
@@ -216,7 +216,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		for(int i=2;i>0;i--){
 			if(mc.isZero(getCoefficient(i)))

@@ -35,4 +35,9 @@ public interface Computable {
     default double computeDouble(ToDoubleFunction<String> valueMap){
         return compute(valueMap::applyAsDouble,Calculators.getCalculatorDoubleDev());
     }
+
+    ToDoubleFunction<String> ASSIGN_ONE = ch -> 1d;
+
+
+
 }

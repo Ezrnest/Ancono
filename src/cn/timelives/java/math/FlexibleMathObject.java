@@ -4,8 +4,8 @@
 package cn.timelives.java.math;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
-import cn.timelives.java.math.numberModels.FlexibleNumberFormatter;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.NumberFormatter;
 
 import java.util.Objects;
 

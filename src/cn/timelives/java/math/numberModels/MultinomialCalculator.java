@@ -2,7 +2,7 @@ package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.utilities.structure.Pair;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -617,7 +617,7 @@ public class MultinomialCalculator implements MathCalculator<Multinomial>,NTCalc
         return Multinomial.class;
     }
 
-    static class MSimplifier implements Simplifier<Multinomial>{
+    static class MSimplifier implements Simplifier<Multinomial> {
 
         @Override
         public List<Multinomial> simplify(List<Multinomial> numbers) {

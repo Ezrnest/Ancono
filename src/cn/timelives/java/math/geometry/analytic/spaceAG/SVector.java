@@ -9,7 +9,7 @@ import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 
 import java.lang.reflect.Array;
@@ -764,7 +764,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "SVectorBase";
 		}
 		
@@ -852,7 +852,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(NumberFormatter<T> nf) {
+		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 			return "SVectorGenerator";
 		}
 	}

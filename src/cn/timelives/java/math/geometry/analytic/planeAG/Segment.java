@@ -2,13 +2,13 @@ package cn.timelives.java.math.geometry.analytic.planeAG;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathUtils;
-import cn.timelives.java.math.numberModels.Utils;
+import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
-import cn.timelives.java.math.numberModels.Simplifiable;
-import cn.timelives.java.math.numberModels.Simplifier;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.SubstituableCurve;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.Simplifiable;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -62,7 +62,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public String toString(NumberFormatter<T> nf) {
+    public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
         return "Segment:A"+A.toString(nf)+"-B"+B.toString(nf);
     }
 

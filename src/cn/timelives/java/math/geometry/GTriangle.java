@@ -4,7 +4,7 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.ComputeExpression;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.geometry.analytic.planeAG.*;
 import cn.timelives.java.utilities.ArraySup;
 
@@ -312,7 +312,7 @@ public class GTriangle<T> extends MathObject<T> {
     }
 
     @Override
-    public String toString(NumberFormatter<T> nf) {
+    public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
         StringBuilder sb = new StringBuilder("Triangle:a=");
         sb.append(nf.format(a,mc));
         sb.append(",b=").append(nf.format(b,mc));

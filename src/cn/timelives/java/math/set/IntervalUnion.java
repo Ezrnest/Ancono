@@ -2,7 +2,8 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathObject;
-import cn.timelives.java.math.numberModels.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 
@@ -466,10 +467,10 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return CollectionSup.listEqual(is, in.is, (v1,v2)->v1.valueEquals(v2,mapper));
 	}
 	/**
-	 * @see MathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see MathObject#toString(NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		if(is.isEmpty()) {
 			return "∅";
 		}else {

@@ -10,6 +10,7 @@ import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.structure.Pair;
@@ -144,10 +145,10 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 		return Polynomial.isEqual(this, (PolynomialX<N>) obj, (x, y)->mc.isEqual(x, mapper.apply(y)));
 	}
 	/*
-	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.NumberFormatter)
+	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 	 */
 	@Override
-	public String toString(NumberFormatter<T> nf) {
+	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
 		 return Polynomial.stringOf(this, mc, nf);
 	}
 	

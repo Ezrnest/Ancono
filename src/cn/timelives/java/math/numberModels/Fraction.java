@@ -4,8 +4,8 @@ import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.ExceptionUtil;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.utilities.ArraySup;
-import cn.timelives.java.utilities.structure.Pair;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,7 +57,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 
 	/**
 	 * Determines whether this fraction is an integer.
-	 * @return
+	 * @return {@code true} if the fraction is an integer.
 	 */
 	public boolean isInteger(){
 		return denominator == 1L;
@@ -348,8 +348,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	 * Return the value of this^n while n is an integer.This method is generally faster 
 	 * than using {@link #multiply(Fraction)} because no GCD calculation will be done.
 	 * <p><b>Attention:</b> this method does NOT check underflow or overflow , so please notice the range of {@code n}
-	 * @param n
-	 * @return
+	 * @param n the power
+	 * @return {@code this^n}
 	 * @throws ArithmeticException if this == 0 and n <=0
 	 */
 	public Fraction pow(int n){
@@ -536,7 +536,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			return signum < 0 ? "-"+Long.toString(numerator)
 					:  Long.toString(numerator);
 		}
-		StringBuilder sb = new StringBuilder('(');
+		StringBuilder sb = new StringBuilder("(");
 		if(signum<0)
 			sb.append('-');
 		sb.append(numerator).append('/').append(denominator);
@@ -594,12 +594,11 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	/**
 	 * Return a fraction representing the value of numerator/denominator,proper reduction
 	 *  will be done.
-	 * @param numerator
-	 * @param denominator
-	 * @return
+	 * @param numerator the numerator of the fraction
+	 * @param denominator the denominator of the fraction, non-zero
+	 * @return a new fraction
 	 */
 	public static Fraction valueOf(long numerator,long denominator){
-		
 		if(numerator==0){
 			return ZERO;
 		}
@@ -640,9 +639,8 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			d = -d;
 		}
 		long deno = MathUtils.power(10L, precision-1);
-		double bound = deno;
-//		deno*= 10L;
-		while(d < bound){
+		//		deno*= 10L;
+		while(d < (double) deno){
 			d *= 10d;
 		}
 		long nume = (long) d;
@@ -655,7 +653,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	 * the denominator of the fraction are both smaller than {@code bound}.
 	 * @param x a number
 	 * @param bound the bound of the fraction, must be at least one.
-	 * @return
+	 * @return a fraction that is the best approximate
 	 */
 	public static Fraction bestApproximate(double x,long bound) {
 		if(bound < 1) {
@@ -687,7 +685,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			}
 			m = t;
 			es = ArraySup.ensureCapacityAndAdd(es, l, i);
-			long[] ft = computeContinousFraction(es, i);
+			long[] ft = computeContinuousFraction(es, i);
 			if(Math.max(ft[0], ft[1]) > bound || ft[0]< 0 || ft[1] <0) {
 				break;
 			}
@@ -700,7 +698,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 		return new Fraction(f[0],f[1],signum);
 	}
 	
-	private static long[] computeContinousFraction(long[] array,int index) {
+	private static long[] computeContinuousFraction(long[] array,int index) {
 		long nume = array[index];
 		long deno = 1;
 		
@@ -769,7 +767,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	
 	
 //	public static void main(String[] args) {
-////		print(computeContinousFraction(new long[] {2,3,3,11,2}, 4));
+////		print(computeContinuousFraction(new long[] {2,3,3,11,2}, 4));
 ////		Fraction f = bestApproximate(M,10);
 //		print(f);
 ////		print((double)f.numerator/f.denominator);
@@ -778,7 +776,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	/**
 	 * Get the calculator of the class Fraction,the calculator ignores overflow.
 	 * <p>The calculator does not have any constant values.
-	 * @return
+	 * @return a fraction calculator
 	 */
 	public static FractionCalculator getCalculator(){
 		return FractionCalculator.cal;
@@ -963,7 +961,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 			}
 			//we first check whether the Fraction b has a denominator
 			if(b.numerator>Integer.MAX_VALUE || b.denominator > Integer.MAX_VALUE){
-				throw new UnsupportedCalculationException("Too big in exp");
+				ExceptionUtil.valueTooBig("exp");
 			}
 			int bn = (int)b.numerator;
 			int bd = (int)b.denominator;
@@ -998,7 +996,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
 	
 	static final FractionSimplifier fs = new FractionSimplifier();
 	
-	static class FractionSimplifier implements Simplifier<Fraction>{
+	static class FractionSimplifier implements Simplifier<Fraction> {
 		private FractionSimplifier() {
 		}
 		

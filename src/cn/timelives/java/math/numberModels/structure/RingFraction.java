@@ -5,8 +5,8 @@ import cn.timelives.java.math.FlexibleMathObject;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.RingCalculator;
 import cn.timelives.java.math.exceptions.ExceptionUtil;
-import cn.timelives.java.math.numberModels.FlexibleNumberFormatter;
-import cn.timelives.java.math.numberModels.Simplifier;
+import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -31,8 +31,8 @@ public class RingFraction<T> extends FlexibleMathObject<T,RingCalculator<T>>{
 
     RingFraction(T nume,T deno,RingCalculator<T> mc){
         super(mc);
-        this.nume = nume;
-        this.deno = deno;
+        this.nume = Objects.requireNonNull(nume);
+        this.deno = Objects.requireNonNull(deno);
     }
 
     /**
@@ -85,6 +85,13 @@ public class RingFraction<T> extends FlexibleMathObject<T,RingCalculator<T>>{
      */
     public static <T> RFCalculator<T> getCalculator(RingCalculator<T> ringCalculator,Simplifier<T> simplifier,T noneZero){
         return new RFCalculator<>(ringCalculator,simplifier,noneZero);
+    }
+
+    public static <T> RingFraction<T> valueOf(T nume,T deno,RingCalculator<T> mc){
+        if(mc.isEqual(deno,mc.getZero())){
+            ExceptionUtil.divideByZero();
+        }
+        return new RingFraction<>(nume,deno,mc);
     }
 
     public static class RFCalculator<T> implements FieldCalculator<RingFraction<T>>{

@@ -25,5 +25,4 @@ public interface MathSet<T>{
 	 */
 	boolean contains(T t);
 	
-	
 }

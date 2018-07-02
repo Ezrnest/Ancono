@@ -11,7 +11,6 @@ import cn.timelives.java.math.numberModels.old.Formula;
 import cn.timelives.java.math.numberModels.old.FormulaCalculator;
 import cn.timelives.java.math.numberModels.old.FracPoly;
 import cn.timelives.java.math.numberModels.old.PolynomialOld;
-import cn.timelives.java.math.spaceAG.*;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Cube;
@@ -23,6 +22,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import static cn.timelives.java.utilities.Printer.print;
+@Deprecated
 public class SpaceAGTest {
 	private static final MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 //	private Map<String,Point<Double>> cube = new HashMap<>();

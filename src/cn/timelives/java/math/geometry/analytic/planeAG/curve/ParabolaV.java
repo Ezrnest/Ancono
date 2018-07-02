@@ -102,7 +102,7 @@ public final class ParabolaV<T> extends ConicSection<T> {
 	 */
 	@Override
 	public <N> ParabolaV<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
-		return new ParabolaV<N>(newCalculator, mapper.apply(A), mapper.apply(B),
+		return new ParabolaV<>(newCalculator, mapper.apply(A), mapper.apply(B),
 				mapper.apply(C), mapper.apply(D), mapper.apply(E), mapper.apply(F), mapper.apply(p), onX);
 	}
 	
@@ -127,7 +127,7 @@ public final class ParabolaV<T> extends ConicSection<T> {
 		T C = onX ? one : zero;
 		T D = onX ? mc.multiplyLong(p, -2l) : zero;
 		T E = onX ?  zero:mc.multiplyLong(p, -2l);
-		return new ParabolaV<T>(mc, A, zero, C, D, E, zero,p,onX);
+		return new ParabolaV<>(mc, A, zero, C, D, E, zero,p,onX);
 	}
 	/**
 	 * Returns a parabola: {@code y^2 - 2px = 0} if {@code onX}

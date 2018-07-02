@@ -61,7 +61,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * The relation between two lines.
 	 * @author lyc
 	 */
-	public static enum Relation{
+	public enum Relation{
 		/**
 		 * Parallel
 		 */

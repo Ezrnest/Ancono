@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.math.algebra.abstractAlgebra.group.finite;
 
+import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.numberTheory.combination.Permutation;
@@ -11,6 +12,8 @@ import cn.timelives.java.math.set.FiniteSet;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static cn.timelives.java.utilities.Printer.print;
 
 /**
  * @author liyicheng
@@ -36,10 +39,19 @@ public class PermutationGroup extends AbstractFiniteGroup<Permutation> {
 	public int getPermutationSize() {
 		return permutationSize;
 	}
-	
-	
-	
-	/*
+
+    @Override
+    public PermutationGroup regularRepresent(boolean isRight) {
+        return this;
+    }
+
+    @Override
+    public PermutationGroup regularRepresent() {
+        return this;
+    }
+
+
+    /*
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.structure.finite.FiniteGroup#getSet()
 	 */
 	@Override
@@ -85,15 +97,25 @@ public class PermutationGroup extends AbstractFiniteGroup<Permutation> {
 	 * @param n
 	 * @return
 	 */
-	public static PermutationGroup universe(int n) {
+	public static PermutationGroup symmetricGroups(int n) {
 		if(n <= 0 || n > 12) {
 			throw new IllegalArgumentException("Invalid n="+n);
 		}
 		FiniteSet<Permutation> set = Permutations.universe(n);
 		return new PermutationGroup(n, set);
 	}
-	
-	/**
+
+    /**
+     * Returns a permutation group that contains all the n-size even permutations.
+     * @param n a positive integer
+     * @return
+     */
+	public static PermutationGroup alternatingGroups(int n){
+        FiniteSet<Permutation> set = Permutations.even(n);
+        return new PermutationGroup(n, set);
+    }
+
+    /**
 	 * Returns a permutation without checking whether the set is closed to the composing of 
 	 * permutations for better efficiency.
 	 * @param set
@@ -103,7 +125,5 @@ public class PermutationGroup extends AbstractFiniteGroup<Permutation> {
 		int n = set.get(0).size();
 		return new PermutationGroup(n, set);
 	}
-	
-	
-	
+
 }

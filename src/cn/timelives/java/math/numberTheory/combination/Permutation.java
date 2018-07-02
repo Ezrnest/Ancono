@@ -42,7 +42,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	 * It is ensured that {@code inverse(apply(n))==n}.
 	 * <P> 
 	 * For example, if the permutation is (1,0,2), then {@code inverse(1)} returns 0.
-	 * @param x
+	 * @param y
 	 * @return
 	 */
 	int inverse(int y);
@@ -112,7 +112,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	 * @return
 	 */
 	default boolean isEven() {
-		return inverseCount()%4 <=1;
+		return inverseCount() %2 == 0;
 	}
 	
 	/**
@@ -151,7 +151,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
      * its input, and then applies the {@code after} permutation to the result.
      * 
      */
-    Permutation andThen(Permutation before);
+    Permutation andThen(Permutation after);
 	
 	/**
 	 * Gets a copy of array representing this permutation. For each index n in the range, 
@@ -178,7 +178,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		}
 		T[] copy = array.clone();
 		for(int i=0;i<array.length;i++) {
-			array[apply(i)] = copy[i]; 
+			array[i] = copy[apply(i)];
 		}
 		return array;
 	}
@@ -193,7 +193,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		}
 		int[] copy = array.clone();
 		for(int i=0;i<array.length;i++) {
-			array[apply(i)] = copy[i]; 
+			array[i] = copy[apply(i)];
 		}
 		return array;
 	}
@@ -209,7 +209,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		}
 		double[] copy = array.clone();
 		for (int i = 0; i < array.length; i++) {
-			array[apply(i)] = copy[i];
+			array[i] = copy[apply(i)];
 		}
 		return array;
 	}
@@ -224,7 +224,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		}
 		boolean[] copy = array.clone();
 		for (int i = 0; i < array.length; i++) {
-			array[apply(i)] = copy[i];
+			array[i] = copy[apply(i)];
 		}
 		return array;
 	}
@@ -240,7 +240,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		}
 		long[] copy = array.clone();
 		for (int i = 0; i < array.length; i++) {
-			array[apply(i)] = copy[i];
+			array[i] = copy[apply(i)];
 		}
 		return array;
 	}
@@ -252,7 +252,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	 * 2018-03-02 20:47
 	 *
 	 */
-	public static interface Transposition extends Cycle{
+	interface Transposition extends Cycle{
 		/**
 		 * Gets the index of the first element of the swapping, which has 
 		 * a smaller index. 
@@ -401,7 +401,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	 * 2018-03-03 15:44
 	 *
 	 */
-	public static interface Cycle extends Permutation{
+	interface Cycle extends Permutation{
 		
 		/**
 		 * Gets an array that contains all the elements that 
@@ -468,11 +468,11 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 				return array;
 			}
 			int[] earr = getElements();
-			int t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
+			var t = array[earr[0]];
+			for(int i=0;i<earr.length-1;i++) {
+				array[earr[i]] = array[earr[i+1]];
 			}
-			array[earr[0]] = t;
+			array[earr[earr.length-1]] = t;
 			return array;
 		}
 		
@@ -485,11 +485,11 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 				return array;
 			}
 			int[] earr = getElements();
-			boolean t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
+			boolean t = array[earr[0]];
+			for(int i=0;i<earr.length-1;i++) {
+				array[earr[i]] = array[earr[i+1]];
 			}
-			array[earr[0]] = t;
+			array[earr[earr.length-1]] = t;
 			return array;
 		}
 		
@@ -502,11 +502,11 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 				return array;
 			}
 			int[] earr = getElements();
-			double t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
+			double t = array[earr[0]];
+			for(int i=0;i<earr.length-1;i++) {
+				array[earr[i]] = array[earr[i+1]];
 			}
-			array[earr[0]] = t;
+			array[earr[earr.length-1]] = t;
 			return array;
 		}
 		/*
@@ -518,11 +518,11 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 				return array;
 			}
 			int[] earr = getElements();
-			long t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
+			long t = array[earr[0]];
+			for(int i=0;i<earr.length-1;i++) {
+				array[earr[i]] = array[earr[i+1]];
 			}
-			array[earr[0]] = t;
+			array[earr[earr.length-1]] = t;
 			return array;
 		}
 		/*
@@ -534,11 +534,11 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 				return array;
 			}
 			int[] earr = getElements();
-			T t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
+			T t = array[earr[0]];
+			for(int i=0;i<earr.length-1;i++) {
+				array[earr[i]] = array[earr[i+1]];
 			}
-			array[earr[0]] = t;
+			array[earr[earr.length-1]] = t;
 			return array;
 		}
 	}

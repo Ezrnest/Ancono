@@ -36,7 +36,7 @@ public interface FiniteSet<T> extends CountableSet<T>{
 	 * 
 	 * @return a list iterator
 	 */
-	public abstract ListIterator<T> listIterator();
+	ListIterator<T> listIterator();
 	
 	/**
 	 * @see cn.timelives.java.math.set.CountableSet#isFinite()

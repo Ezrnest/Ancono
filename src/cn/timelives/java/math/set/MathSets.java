@@ -4,6 +4,9 @@
 package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
+import cn.timelives.java.math.numberModels.Calculators;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -24,11 +27,12 @@ public final class MathSets {
 	}
 	
 	
-	public static <T> SingletonSet<T> singleton(T t,MathCalculator<T> mc){
-		return new SingletonSet<T>(mc, t);
+	public static <T> SingletonSet<T> singleton(T t,EqualPredicate<T> mc){
+		return new SingletonSet<>(GroupCalculators.toMathCalculatorEqual(mc), t);
 	}
+
 	@SafeVarargs
-	public static <T> CollectionSet<T> asSet(MathCalculator<T> mc,T...ts){
+	public static <T> CollectionSet<T> asSet(EqualPredicate<T> mc, T...ts){
 		List<T> list = new ArrayList<>(ts.length);
 		for(T t : ts){
 			for(T t0 : list) {
@@ -39,8 +43,10 @@ public final class MathSets {
 			}
 			list.add(t);
 		}
-		return new CollectionSet<>(mc, list);
+		return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(mc), list);
 	}
+
+
 	/**
 	 * Returns a CollectionSet created from the given Collection.
 	 * A copy of {@code coll} will be created. 
@@ -48,7 +54,7 @@ public final class MathSets {
 	 * @param mc
 	 * @return
 	 */
-	public static <T> CollectionSet<T> fromCollection(Collection<T> coll,MathCalculator<T> mc){
+	public static <T> CollectionSet<T> fromCollection(Collection<T> coll,EqualPredicate<T> mc){
 		List<T> list = new ArrayList<>(coll.size());
 		for(T t : coll){
 			for(T t0 : list) {
@@ -59,12 +65,12 @@ public final class MathSets {
 			}
 			list.add(t);
 		}
-		return new CollectionSet<>(mc, coll);
+		return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(mc), coll);
 	}
 	/**
-	 * Returns the universe set in math, which contains all the elements. The set will
+	 * Returns the symmetricGroups set in math, which contains all the elements. The set will
 	 * returns "Ω" when toString() is called, which indicates is an
-	 * universe set in math.
+	 * symmetricGroups set in math.
 	 * @return Ω
 	 */
 	@SuppressWarnings("unchecked")
@@ -86,10 +92,10 @@ public final class MathSets {
 	
 	private static final Universe<?> UNIVERSE= new Universe<>();
 	private static final Empty<?> EMPTY = new Empty<>();
-	static final class Universe<T> implements MathSet<T>{
-		/**
-		 * @param mc
-		 */
+
+
+
+    static final class Universe<T> implements MathSet<T>{
 		private Universe() {
 		}
 		@Override
@@ -101,7 +107,7 @@ public final class MathSets {
 
 		/**
 		 * Returns "Ω", which indicates this is an
-		 * universe set in math.
+		 * symmetricGroups set in math.
 		 */
 		@Override
 		public String toString() {
@@ -192,5 +198,21 @@ public final class MathSets {
 		}
 		
 	}
-	
+
+
+    /**
+     * Determines whether the set contains all the elements in s2.
+     * @param set
+     * @param s2
+     * @param <T>
+     * @return
+     */
+	public static <T> boolean containsAll(MathSet<T> set, FiniteSet<T> s2) {
+	    for(T t : s2){
+	        if(!set.contains(t)){
+	            return false;
+            }
+        }
+        return true;
+	}
 }

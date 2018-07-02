@@ -11,6 +11,7 @@ import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.numberModels.expression.ExprCalculator;
 import cn.timelives.java.math.numberModels.expression.Expression;
 import cn.timelives.java.math.geometry.analytic.planeAG.*;

@@ -200,7 +200,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		final int size = getSize();
 		int not0 = 0;
 		while (mc.isZero(getNumber(not0))) {
-			if (mc.isZero(v.getNumber(not0)) == false) {
+			if (!mc.isZero(v.getNumber(not0))) {
 				return false;
 			}
 			not0++;
@@ -211,7 +211,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		T t1 = getNumber(not0);
 		T t2 = v.getNumber(not0);
 		for (int i = not0 + 1; i < size; i++) {
-			if (mc.isEqual(mc.multiply(t1, v.getNumber(i)), mc.multiply(t2, getNumber(i))) == false) {
+			if (!mc.isEqual(mc.multiply(t1, v.getNumber(i)), mc.multiply(t2, getNumber(i)))) {
 				return false;
 			}
 		}
@@ -316,7 +316,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	public static Vector<Long> createVector(boolean isRow,long[] ns){
 		Long[] vec = new Long[ns.length];
 		for(int i=0;i<vec.length;i++){
-			vec[i] = Long.valueOf(ns[i]);
+			vec[i] = ns[i];
 		}
 		return new DVector<>(vec,isRow,Calculators.getCalculatorLong());
 	}

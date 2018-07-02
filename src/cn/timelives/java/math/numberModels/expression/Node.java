@@ -1151,7 +1151,7 @@ public abstract class Node implements Computable,Serializable {
 			c2.toString(sb, nf, false);
 			sb.append(')');
 		}
-
+		@SuppressWarnings("unchecked")
         @Override
         public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
             T p1 = c1.compute(valueMap,mc);

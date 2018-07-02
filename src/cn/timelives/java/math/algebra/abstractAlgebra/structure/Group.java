@@ -35,7 +35,7 @@ public interface Group<T,G extends Group<T,G>> extends Monoid<T> {
 	 * @return
 	 */
 	long index();
-	
+
 	/**
 	 * Returns a set of subgroups.
 	 * @return

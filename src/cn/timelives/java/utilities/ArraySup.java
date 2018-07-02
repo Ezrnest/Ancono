@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 public class ArraySup {
 	/**
@@ -877,6 +878,15 @@ public class ArraySup {
 	public static int firstIndexOf(int x,int[] arr) {
 		for(int i=0;i<arr.length;i++) {
 			if(arr[i]==x) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public static <T> int firstIndexOf(T[] arr, Predicate<T> matcher){
+		for(int i=0;i<arr.length;i++){
+			if(matcher.test(arr[i])){
 				return i;
 			}
 		}

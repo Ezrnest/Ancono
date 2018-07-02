@@ -3,17 +3,31 @@
  */
 package cn.timelives.java.math.algebra.abstractAlgebra.group.finite;
 
+import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.structure.finite.FiniteGroup;
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.function.Bijection;
+import cn.timelives.java.math.numberModels.Calculators;
+import cn.timelives.java.math.numberTheory.combination.Permutation;
+import cn.timelives.java.math.numberTheory.combination.Permutations;
+import cn.timelives.java.math.set.CollectionSet;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSet;
 import cn.timelives.java.math.set.MathSets;
+import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.CollectionSup;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.IntFunction;
+import java.util.function.ToIntFunction;
+
+import static cn.timelives.java.utilities.Printer.print;
 
 /**
  * @author liyicheng
@@ -53,16 +67,45 @@ public abstract class AbstractFiniteGroup<T> implements FiniteGroup<T, AbstractF
 	public T identity() {
 		return gc.getIdentity();
 	}
-	
-	
-	
+
+	@Override
+	public int[][] groupTable() {
+		//mapping first
+		var set = getSet();
+		int size = Math.toIntExact(set.size());
+		@SuppressWarnings("unchecked")
+		T[] arr = (T[]) CollectionSup.iteratorToArray(set.iterator(),size);
+//		IntFunction<T> to = x -> arr[x];
+		ToIntFunction<T> from = x -> ArraySup.firstIndexOf(arr,y -> gc.isEqual(x,y));
+		int[][] result = new int[size][size];
+		for(int i = 0;i<size;i++){
+			for (int j = 0; j < size; j++) {
+                T a = arr[i];
+                T b = arr[j];
+                T c = gc.apply(a,b);
+				result[i][j] = from.applyAsInt(c);
+				int t = result[i][j];
+				if(t == -1){
+//                    T c = gc.apply(a,b);
+//                    print(a);
+//                    print(b);
+//                    print(c);
+					throw new AssertionError();
+				}
+			}
+		}
+		return result;
+	}
 
 	/*
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.structure.Group#isSubgroup(cn.timelives.java.math.algebra.abstractAlgebra.structure.Group)
 	 */
 	@Override
 	public boolean isSubgroup(AbstractFiniteGroup<T> g) {
-		throw new UnsupportedOperationException();
+		if(g.gc != gc){
+		    return false;
+        }
+	    return MathSets.containsAll(getSet(),g.getSet());
 	}
 
 	/*
@@ -111,18 +154,40 @@ public abstract class AbstractFiniteGroup<T> implements FiniteGroup<T, AbstractF
 	 * @return
 	 */
 	public PermutationGroup regularRepresent(boolean isRight) {
-		//TODO
-		return null;
+	    int size = Math.toIntExact(index());
+		List<Permutation> ps = new ArrayList<>(size);
+		@SuppressWarnings("unchecked")
+		T[] eleArr = (T[]) new Object[size];
+		var eleSet = getSet();
+		int i=0;
+		for(T a : eleSet){
+		    eleArr[i++] = a;
+        }
+
+        for(i=0;i<size;i++){
+		    T a = eleArr[i];
+		    int[] permutation = new int[size];
+		    for(int j = 0;j<size;j++){
+		        T b = eleArr[j];
+                T re ;
+                if(isRight){
+                	//a * a_i
+                    re = gc.apply(b,a);
+                }else{
+                	//a_i^-1 * a
+                    re = gc.apply(gc.inverse(a),b);
+                }
+                int index = ArraySup.firstIndexOf(eleArr,x -> gc.isEqual(x,re));
+                permutation[j] = index;
+            }
+            ps.add(Permutations.valueOf(permutation));
+        }
+
+		return PermutationGroup.groupOfChecked(MathSets.fromCollection(ps,Permutations.getMathCalculator()));
 	}
 	
-	/**
-	 * Returns {@code regularRepresent(true)}
-	 * @return
-	 */
-	public PermutationGroup regularRepresent() {
-		return regularRepresent(true);
-	}
-	
+
+
 	
 
 	/*
@@ -130,7 +195,7 @@ public abstract class AbstractFiniteGroup<T> implements FiniteGroup<T, AbstractF
 	 */
 	@Override
 	public FiniteSet<AbstractFiniteGroup<T>> getSubgroups() {
-		throw new UnsupportedOperationException();
+		return MathSets.asSet(EqualPredicate.naturalEqual(),this,FiniteGroups.identityGroup(gc));
 	}
 	
 	/*

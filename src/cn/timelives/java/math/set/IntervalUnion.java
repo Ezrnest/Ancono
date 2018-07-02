@@ -700,7 +700,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	}
 	/**
 	 * Creates an IntervalUnion that only contains one interval:(-∞,+∞). This 
-	 * is equal to create an universe.
+	 * is equal to create an symmetricGroups.
 	 * @param interval an interval
 	 * @return {@literal (-∞,+∞)}
 	 */

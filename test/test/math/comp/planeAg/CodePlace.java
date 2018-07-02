@@ -211,7 +211,7 @@ public final class CodePlace {
 		print(l1.intersectPoint(l2));
 	}
 
-//	@Run
+	@Run
 	public void m8(){
 		/*
 		high school entrance exam real exercise:
@@ -335,7 +335,7 @@ public final class CodePlace {
 
 	}
 
-	@Run
+//	@Run
 	public void m11(){
 		input("k=k|d=d|x=x");
 		enableSimplify();
@@ -346,14 +346,18 @@ public final class CodePlace {
 		var list = ell.intersectPoints(l1);
 		var A = list.get(0);
 		var B = list.get(1);
+		print(A);
 		var M = A.middle(B);
 		var l2 = Line.parallelY(M.x,mc);
 		var P1 = Point.valueOf(x,ell.computeY(x),mc);
+		print(P1);
 		var P2 = Point.valueOf(P1.x,mc.negate(P1.y),mc);
 		var AP1 = Line.twoPoint(A,P1);
 		var BP2 = Line.twoPoint(B,P2);
+		print(AP1);
 		var E = AP1.intersectPoint(l2);
 		var F = BP2.intersectPoint(l2);
+		print(E);
 		var result = mc.multiply(mc.subtract(E.y,M.y),mc.subtract(F.y,M.y));
 		print(result);
 		print(result.computeDouble( ch -> {

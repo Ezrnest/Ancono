@@ -203,4 +203,12 @@ public final class CollectionSup {
 		}
 		return false;
 	}
+
+	public static Object[] iteratorToArray(Iterator<?> it,int length){
+		Object[] arr = new Object[length];
+		for(int i=0;i<length;i++){
+			arr[i] = it.next();
+		}
+		return arr;
+	}
 }

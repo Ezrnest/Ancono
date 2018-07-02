@@ -32,7 +32,7 @@ public final class GroupCalculators {
 	 * @return
 	 */
 	public static <T extends Composable<T>&Invertible<T>> GroupCalculator<T> createComposing(T id,EqualPredicate<T> equalPredicate){
-		return new GroupCalculator<T>() {
+		return new GroupCalculator<>() {
 			@Override
 			public T getIdentity() {
 				return id;
@@ -61,7 +61,7 @@ public final class GroupCalculators {
 	 * @return
 	 */
 	public static <T extends Composable<T>&Invertible<T>> GroupCalculator<T> createComposing(T id){
-		return new GroupCalculator<T>() {
+		return new GroupCalculator<>() {
 			@Override
 			public T getIdentity() {
 				return id;
@@ -170,12 +170,15 @@ public final class GroupCalculators {
 		};
 	}
 	/**
-	 * Returns a {@link MathCalculator} from the SemigroupCalculator, which only supports {@code isEqual(Object,Object)} method.
+	 * Returns a {@link MathCalculator} from the EqualPredicate, which only supports {@code isEqual(Object,Object)} method.
 	 * @param gc
 	 * @return
 	 */
-	public static <T> MathCalculator<T> toMathCalculatorEqual(SemigroupCalculator<T> gc){
-		return new MathCalculatorAdapter<T>() {
+	public static <T> MathCalculator<T> toMathCalculatorEqual(EqualPredicate<T> gc){
+		if(gc instanceof MathCalculator){
+			return (MathCalculator<T>)gc;
+		}
+		return new MathCalculatorAdapter<>() {
 			/*
 			 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#isEqual(java.lang.Object, java.lang.Object)
 			 */

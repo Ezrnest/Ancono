@@ -3,6 +3,8 @@
  */
 package cn.timelives.java.math.numberTheory.combination;
 
+import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
+import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
 import cn.timelives.java.math.numberTheory.combination.Permutation.Cycle;
 import cn.timelives.java.math.numberTheory.combination.Permutation.Transposition;
 import cn.timelives.java.math.MathCalculator;
@@ -10,6 +12,12 @@ import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.Printer;
+
+import java.util.List;
+
+import static cn.timelives.java.utilities.Printer.print;
+import static cn.timelives.java.utilities.Printer.print_;
 
 /**
  * @author liyicheng 2018-03-02 20:26
@@ -106,7 +114,7 @@ public final class Permutations {
 			}
 			int[] copy = array.clone();
 			for (int i = 0; i < size; i++) {
-				array[parr[i]] = copy[i];
+				array[i] = copy[parr[i]];
 			}
 			return array;
 		}
@@ -127,8 +135,8 @@ public final class Permutations {
 		 * java.math.combination.Permutation)
 		 */
 		@Override
-		public Permutation andThen(Permutation before) {
-			return new ArrPermutation(before.apply(getArray()));
+		public Permutation andThen(Permutation after) {
+			return new ArrPermutation(after.apply(getArray()));
 		}
 	}
 
@@ -335,8 +343,8 @@ public final class Permutations {
 		 * java.math.combination.Permutation)
 		 */
 		@Override
-		public Permutation andThen(Permutation before) {
-			return before;
+		public Permutation andThen(Permutation after) {
+			return after;
 		}
 
 		/*
@@ -414,7 +422,7 @@ public final class Permutations {
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#inverse(int)
 		 */
 		@Override
-		public int inverse(int y) {
+		public int apply(int y) {
 			if(!containsElement(y)) {
 				return y;
 			}
@@ -470,7 +478,7 @@ public final class Permutations {
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int)
 		 */
 		@Override
-		public int apply(int x) {
+		public int inverse(int x) {
 			if(!containsElement(x)) {
 				return x;
 			}
@@ -495,11 +503,11 @@ public final class Permutations {
 				return array;
 			}
 			int[] earr = this.elements;
-			int t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
-			}
-			array[earr[0]] = t;
+			int t = array[earr[0]];
+            for(int i=0;i<earr.length-1;i++) {
+                array[earr[i]] = array[earr[i+1]];
+            }
+			array[earr[earr.length-1]] = t;
 			return array;
 		}
 		
@@ -508,65 +516,64 @@ public final class Permutations {
 		 */
 		@Override
 		public boolean[] apply(boolean[] array) {
-			if(elements.length==1) {
-				return array;
-			}
-			int[] earr = this.elements;
-			boolean t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
-			}
-			array[earr[0]] = t;
-			return array;
+            if(elements.length==1) {
+                return array;
+            }
+            int[] earr = this.elements;
+            boolean t = array[earr[0]];
+            for(int i=0;i<earr.length-1;i++) {
+                array[earr[i]] = array[earr[i+1]];
+            }
+            array[earr[earr.length-1]] = t;
+            return array;
 		}
-		
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(double[])
 		 */
 		@Override
 		public double[] apply(double[] array) {
-			if(elements.length==1) {
-				return array;
-			}
-			int[] earr = this.elements;
-			double t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
-			}
-			array[earr[0]] = t;
-			return array;
+            if(elements.length==1) {
+                return array;
+            }
+            int[] earr = this.elements;
+            double t = array[earr[0]];
+            for(int i=0;i<earr.length-1;i++) {
+                array[earr[i]] = array[earr[i+1]];
+            }
+            array[earr[earr.length-1]] = t;
+            return array;
 		}
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(long[])
 		 */
 		@Override
 		public long[] apply(long[] array) {
-			if(elements.length==1) {
-				return array;
-			}
-			int[] earr = this.elements;
-			long t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
-			}
-			array[earr[0]] = t;
-			return array;
+            if(elements.length==1) {
+                return array;
+            }
+            int[] earr = this.elements;
+            long t = array[earr[0]];
+            for(int i=0;i<earr.length-1;i++) {
+                array[earr[i]] = array[earr[i+1]];
+            }
+            array[earr[earr.length-1]] = t;
+            return array;
 		}
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(java.lang.Object[])
 		 */
 		@Override
 		public <T> T[] apply(T[] array) {
-			if(elements.length==1) {
-				return array;
-			}
-			int[] earr = this.elements;
-			T t = array[earr[earr.length-1]];
-			for(int i=1;i<earr.length;i++) {
-				array[earr[i]] = array[earr[i-1]];
-			}
-			array[earr[0]] = t;
-			return array;
+            if(elements.length==1) {
+                return array;
+            }
+            int[] earr = this.elements;
+            T t = array[earr[0]];
+            for(int i=0;i<earr.length-1;i++) {
+                array[earr[i]] = array[earr[i+1]];
+            }
+            array[earr[earr.length-1]] = t;
+            return array;
 		}
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.AbstractPermutation#toString()
@@ -582,7 +589,8 @@ public final class Permutations {
 			sb.append(')');
 			return sb.toString();
 		}
-	}
+
+    }
 	
 	static void sizeCheck(int size) {
 		if (size <= 0) {
@@ -642,7 +650,7 @@ public final class Permutations {
 	 * Returns a new permutation that reverse the order of the array, which can be
 	 * written as {@code (n-1,n-2,...2,1,0)}
 	 * 
-	 * @param size
+	 * @param n
 	 * @return
 	 */
 	public static Permutation flipAll(int n) {
@@ -670,7 +678,7 @@ public final class Permutations {
 	 * written as {@code (n-shift,n-shift-1,...n-1,0,1,2,...n-shift-n)}. For
 	 * example, {@code rotate(5,2)=(3,4,0,1,2)}
 	 * 
-	 * @param size
+	 * @param n
 	 * @return
 	 */
 	public static Permutation rotateAll(int n, int shift) {
@@ -742,7 +750,13 @@ public final class Permutations {
 		}
 		return new ArrPermutation(arr);
 	}
-	
+
+    /**
+     * Determines whether the two permutation is equal.
+     * @param p1 a permutation
+     * @param p2 another permutation
+     * @return {@true} if they are equal
+     */
 	public static boolean isEqual(Permutation p1, Permutation p2) {
 		if (p1.size() != p2.size()) {
 			return false;
@@ -765,7 +779,9 @@ public final class Permutations {
 		}
 	};
 	
-	
+	public static MathCalculator<Permutation> getMathCalculator(){
+	    return mc;
+    }
 	
 	
 	/**
@@ -785,5 +801,57 @@ public final class Permutations {
 		}
 		return MathSets.asSet(mc, list);
 	}
-	
+
+	public static FiniteSet<Permutation> even(int n){
+		if(n <= 0 || n > 12) {
+			throw new IllegalArgumentException("Invalid n="+n);
+		}
+        Permutation[] list = new Permutation[(int) CFunctions.factorial(n) /2];
+        int i = 0;
+        for(int[] arr : Enumer.permutation(n, n)) {
+            Permutation p  = new ArrPermutation(arr);
+            if(p.isEven()){
+                list[i++] = p;
+            }
+        }
+        return MathSets.asSet(mc, list);
+	}
+
+    /**
+     * Composes all the permutations in the list, applying the last element in the list first.
+     * @param list a list of permutations, not empty
+     * @return the result as a permutation
+     */
+	public static Permutation composeAll(List<? extends Permutation> list){
+	    if(list.isEmpty()){
+	        throw new IllegalArgumentException();
+        }
+        var lit = list.listIterator(list.size());
+	    Permutation p = lit.previous();
+	    while(lit.hasPrevious()){
+	        p = p.andThen(lit.previous());
+        }
+        return p;
+    }
+    /**
+     * Composes all the permutations in the list, applying the last element in the list first.
+     * If the list is empty, returns the identity permutation.
+     * @param list a list of permutations
+     * @param size the size of the permutations
+     * @return the result as a permutation
+     */
+    public static Permutation composeAll(List<? extends Permutation> list,int size){
+	    if(list.isEmpty()){
+	        return Permutations.identity(size);
+        }
+        return composeAll(list);
+    }
+
+    public static void main(String[] args) {
+        var p1 = valueOf(new int[]{1,2,0});
+        var p2 = valueOf(new int[]{0,1,2});
+        print(p1.compose(p2));
+        print(p2.compose(p1));
+        print(p1.apply(p2.getArray()));
+    }
 }

@@ -5,6 +5,8 @@ package cn.timelives.java.math.algebra.abstractAlgebra.calculator;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.EqualRelation;
 
+import java.util.Objects;
+
 /**
  * A predicate that tests whether two objects are equal. EqualPredicate
  * is the same with {@link EqualRelation} but the method's name is "isEqual".
@@ -36,4 +38,11 @@ public interface EqualPredicate<T>{
 	 *             if {@code x==null || y == null}
 	 */
 	boolean isEqual(T x,T y);
+
+	EqualPredicate<?> NATURAL_EQUAL = (x, y) -> x.equals(Objects.requireNonNull(y));
+
+	@SuppressWarnings("unchecked")
+	static <T> EqualPredicate<T> naturalEqual(){
+	    return (EqualPredicate<T>) NATURAL_EQUAL;
+    }
 }

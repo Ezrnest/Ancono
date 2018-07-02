@@ -4,6 +4,7 @@
 package cn.timelives.java.math.numberTheory.combination;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,8 +41,8 @@ public abstract class AbstractPermutation implements Permutation {
 	 * @see cn.timelives.java.math.numberTheory.combination.Permutation#andThen(cn.timelives.java.math.numberTheory.combination.Permutation)
 	 */
 	@Override
-	public Permutation andThen(Permutation before) {
-		return before.compose(this);
+	public Permutation andThen(Permutation after) {
+		return after.compose(this);
 	}
 	
 	/*
@@ -53,13 +54,20 @@ public abstract class AbstractPermutation implements Permutation {
 		List<Transposition> list = new ArrayList<>(size);
 		int[] arr = getArray();
 		for(int i=0;i<size;i++) {
-			int j = arr[i];
-			if(j==i) {
-				continue;
-			}
-			list.add(new Permutations.Swap(size, i, j));
-			arr[i] = arr[j];
-			arr[j] = j;
+		    if(arr[i] == i){
+		        continue;
+            }
+            int j=i+1;
+		    for(;j<size;j++){
+		        if(arr[j] == i){
+		            break;
+                }
+            }
+            //arr[j] = i
+            //swap i,j
+            arr[j] = arr[i];
+		    arr[i] = i;
+		    list.add(new Permutations.Swap(size,i,j));
 		}
 		return list;
 	}

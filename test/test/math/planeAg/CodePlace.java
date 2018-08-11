@@ -42,7 +42,7 @@ public class CodePlace {
 //	 }
 
 	public void m1() {
-		MathCalculator<Fraction> mc = Fraction.getCalculator();
+		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
 		// = Line.twoPoint(
 		// Fraction.valueOf(3),Fraction.valueOf(4), Fraction.ZERO,Fraction.ZERO,
 		// mc);
@@ -51,9 +51,9 @@ public class CodePlace {
 		Line<Fraction> l1;
 		Scanner scn = new Scanner(System.in);
 		Pattern pt = Pattern.compile("[\\+\\-]?\\d+(\\/\\d+)?");
-		Point<Fraction> p1 = new Point<Fraction>(mc, Fraction.valueOf(scn.next(pt)), Fraction.valueOf(scn.next(pt)));
-		Point<Fraction> p2 = new Point<Fraction>(mc, Fraction.valueOf(scn.next(pt)), Fraction.valueOf(scn.next(pt)));
-		Point<Fraction> p3 = new Point<Fraction>(mc, Fraction.valueOf(scn.next(pt)), Fraction.valueOf(scn.next(pt)));
+		Point<Fraction> p1 = new Point<Fraction>(mc, Fraction.Companion.valueOf(scn.next(pt)), Fraction.Companion.valueOf(scn.next(pt)));
+		Point<Fraction> p2 = new Point<Fraction>(mc, Fraction.Companion.valueOf(scn.next(pt)), Fraction.Companion.valueOf(scn.next(pt)));
+		Point<Fraction> p3 = new Point<Fraction>(mc, Fraction.Companion.valueOf(scn.next(pt)), Fraction.Companion.valueOf(scn.next(pt)));
 		scn.close();
 		l1 = Line.twoPoint(p1, p2, mc);
 		print(l1);
@@ -64,26 +64,26 @@ public class CodePlace {
 	}
 
 	public void m2() {
-		MathCalculator<Fraction> mc = Fraction.getCalculator();
+		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
 		MathCalculator<Long> mct = Calculators.getCalculatorLong();
-		Line<Fraction> l1 = Line.generalFormula(1L, -2L, 4L, mct).mapTo(Fraction::valueOf, mc);
-		Line<Fraction> l2 = Line.generalFormula(1L, 1L, -2L, mct).mapTo(Fraction::valueOf, mc);
+		Line<Fraction> l1 = Line.generalFormula(1L, -2L, 4L, mct).mapTo(Fraction.Companion::valueOf, mc);
+		Line<Fraction> l2 = Line.generalFormula(1L, 1L, -2L, mct).mapTo(Fraction.Companion::valueOf, mc);
 		Point<Fraction> pin = l1.intersectPoint(l2);
 		print(pin);
-		Line<Fraction> lr = Line.twoPoint(pin, new Point<Long>(mct, 2L, -1L).mapTo(Fraction::valueOf, mc), mc);
+		Line<Fraction> lr = Line.twoPoint(pin, new Point<Long>(mct, 2L, -1L).mapTo(Fraction.Companion::valueOf, mc), mc);
 		print(lr);
-		Line<Fraction> lr2 = Line.generalFormula(3L, -4L, 5L, mct).mapTo(Fraction::valueOf, mc).perpendicular(pin);
+		Line<Fraction> lr2 = Line.generalFormula(3L, -4L, 5L, mct).mapTo(Fraction.Companion::valueOf, mc).perpendicular(pin);
 		print(lr2);
 	}
 
-	MathCalculator<Fraction> mc = Fraction.getCalculator();
+	MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
 	MathCalculator<Long> mct = Calculators.getCalculatorLong();
 	MathCalculator<Double> mcd = Calculators.getCalculatorDoubleDev();
 
 	public void m3() {
 
-		Point<Fraction> p = new Point<>(mct, 2l, 3l).mapTo(Fraction::valueOf, mc);
-		Line<Fraction> l = Line.generalFormula(2l, -1l, -4l, mct).mapTo(Fraction::valueOf, mc);
+		Point<Fraction> p = new Point<>(mct, 2l, 3l).mapTo(Fraction.Companion::valueOf, mc);
+		Line<Fraction> l = Line.generalFormula(2l, -1l, -4l, mct).mapTo(Fraction.Companion::valueOf, mc);
 		print(l);
 		print(l.symmetryPoint(p));
 		Line<Fraction> pen = l.perpendicular(p);
@@ -94,20 +94,20 @@ public class CodePlace {
 	}
 
 	void m4() {
-		Point<Fraction> a = new Point<>(mct, 1l, 4l).mapTo(Fraction::valueOf, mc);
+		Point<Fraction> a = new Point<>(mct, 1l, 4l).mapTo(Fraction.Companion::valueOf, mc);
 		// Point<Fraction> b = new Point<>(mct,-5l,2l).mapTo(Fraction::valueOf,
 		// mc);
-		Line<Fraction> l = Line.generalFormula(1l, -2l, 0l, mct).mapTo(Fraction::valueOf, mc);
-		Line<Fraction> l2 = Line.generalFormula(1l, 1l, -1l, mct).mapTo(Fraction::valueOf, mc);
+		Line<Fraction> l = Line.generalFormula(1l, -2l, 0l, mct).mapTo(Fraction.Companion::valueOf, mc);
+		Line<Fraction> l2 = Line.generalFormula(1l, 1l, -1l, mct).mapTo(Fraction.Companion::valueOf, mc);
 		Point<Fraction> a1 = l.symmetryPoint(a);
 		Point<Fraction> a2 = l2.symmetryPoint(a);
 		print(Line.twoPoint(a1, a2, mc));
 	}
 //	@Test
 	public void m5() {
-		Point<Fraction> a = new Point<>(mct, -7l, 1l).mapTo(Fraction::valueOf, mc);
-		Point<Fraction> b = new Point<>(mct, -5l, 5l).mapTo(Fraction::valueOf, mc);
-		Line<Fraction> l = Line.generalFormula(2l, -1l, -5l, mct).mapTo(Fraction::valueOf, mc);
+		Point<Fraction> a = new Point<>(mct, -7l, 1l).mapTo(Fraction.Companion::valueOf, mc);
+		Point<Fraction> b = new Point<>(mct, -5l, 5l).mapTo(Fraction.Companion::valueOf, mc);
+		Line<Fraction> l = Line.generalFormula(2l, -1l, -5l, mct).mapTo(Fraction.Companion::valueOf, mc);
 		b = l.symmetryPoint(b);
 		print(b);
 		Line<Fraction> l2 = Line.twoPoint(a, b, mc);
@@ -115,19 +115,19 @@ public class CodePlace {
 	}
 
 	Point<Fraction> of(int a, int b) {
-		return new Point<Fraction>(mc, Fraction.valueOf(a), Fraction.valueOf(b));
+		return new Point<Fraction>(mc, Fraction.Companion.valueOf(a), Fraction.Companion.valueOf(b));
 	}
 
 	Line<Fraction> of(int a, int b, int c) {
-		return Line.generalFormula(Fraction.valueOf(a), Fraction.valueOf(b), Fraction.valueOf(c), mc);
+		return Line.generalFormula(Fraction.Companion.valueOf(a), Fraction.Companion.valueOf(b), Fraction.Companion.valueOf(c), mc);
 	}
 
 	Line<Fraction> sim(Line<Fraction> l) {
-		return LineSup.simplify(l, Fraction.getFractionSimplifier());
+		return LineSup.simplify(l, Fraction.Companion.getFractionSimplifier());
 	}
 
 	MathObject<Fraction> map(MathObject<Long> obj) {
-		return obj.mapTo(Fraction::valueOf, mc);
+		return obj.mapTo(Fraction.Companion::valueOf, mc);
 	}
 
 	/*
@@ -137,7 +137,7 @@ public class CodePlace {
 	Line<Fraction> l1, l2, l3, l4, l5, l6, l;
 	
 	public void m6() {
-		l1 = Line.parallelX(Fraction.ZERO, mc);
+		l1 = Line.parallelX(Fraction.Companion.getZERO(), mc);
 		a = of(5, 2);
 		b = l1.symmetryPoint(a);
 		l2 = of(1, -1, 0);
@@ -171,7 +171,7 @@ public class CodePlace {
 	void m10() {
 		l1 = of(3, 4, -7);
 		l2 = of(3, 4, 3);
-		Fraction tan = Fraction.valueOf(2, 1);
+		Fraction tan = Fraction.Companion.valueOf(2, 1);
 		p = of(2, 3);
 		print(l1.rotateAngle(p, tan));
 		print(l1.rotateAngle(p, tan.negative()));
@@ -192,7 +192,7 @@ public class CodePlace {
 	}
 
 	void m12() {
-		Triangle<Fraction> tri = Triangle.fromVertex(mct, 0l, 3l, -2l, -1l, 3l, 2l).mapTo(Fraction::valueOf, mc);
+		Triangle<Fraction> tri = Triangle.fromVertex(mct, 0l, 3l, -2l, -1l, 3l, 2l).mapTo(Fraction.Companion::valueOf, mc);
 		print(tri.centerG());
 		print(tri.centerO());
 		print(tri.centerH());
@@ -207,7 +207,7 @@ public class CodePlace {
 
 	void m() {
 		Pattern pointP = Pattern
-				.compile(" *\\( *(" + Fraction.EXPRESSION_PATTERN + ") *, *(" + Fraction.EXPRESSION_PATTERN + ") *\\)");
+				.compile(" *\\( *(" + Fraction.Companion.getEXPRESSION_PATTERN() + ") *, *(" + Fraction.Companion.getEXPRESSION_PATTERN() + ") *\\)");
 		print(pointP);
 		EasyConsole con = EasyConsole.getSwingImpl();
 		con.open();
@@ -224,7 +224,7 @@ public class CodePlace {
 				while (true) {
 					pw.println("Input point A,B,C : (x,y)");
 					List<Point<Fraction>> abc = con.nextObjects(pointP,
-							mat -> new Point<>(mc, Fraction.valueOf(mat.group(1)), Fraction.valueOf(mat.group(3))), 3);
+							mat -> new Point<>(mc, Fraction.Companion.valueOf(mat.group(1)), Fraction.Companion.valueOf(mat.group(3))), 3);
 					Triangle<Fraction> tri = Triangle.fromVertex(mc, abc.get(0), abc.get(1), abc.get(2));
 					while (true) {
 						pw.println("Center of : G H O");
@@ -423,8 +423,8 @@ public class CodePlace {
 		print(MathUtils.lcm(5, 5));
 		a = of(-1, -3);
 		b = of(3, -1);
-		Circle<Fraction> c1 = Circle.centerAndRadius(a, Fraction.valueOf(1), mc);
-		Circle<Fraction> c2 = Circle.centerAndRadius(b, Fraction.valueOf(3), mc);
+		Circle<Fraction> c1 = Circle.centerAndRadius(a, Fraction.Companion.valueOf(1), mc);
+		Circle<Fraction> c2 = Circle.centerAndRadius(b, Fraction.Companion.valueOf(3), mc);
 		Circle<FracPoly> c1f = c1.mapTo(CodePlace::mapperFF, mcfp);
 		Circle<FracPoly> c2f = c2.mapTo(CodePlace::mapperFF, mcfp);
 		c1f.outerCommonTangentLine(c2f).forEach(l -> {
@@ -467,7 +467,7 @@ public class CodePlace {
 	}
 
 	private static Fraction getFraction(PolynomialOld fp) {
-		return Fraction.valueOf(getLongN(fp), getLongD(fp));
+		return Fraction.Companion.valueOf(getLongN(fp), getLongD(fp));
 	}
 
 	private static long getLongN(PolynomialOld p) {
@@ -487,8 +487,8 @@ public class CodePlace {
 	}
 
 	void m23() {
-		Fraction f1 = Fraction.valueOf(5l);
-		Fraction f2 = Fraction.valueOf(4l);
+		Fraction f1 = Fraction.Companion.valueOf(5l);
+		Fraction f2 = Fraction.Companion.valueOf(4l);
 		EllipseV<Fraction> ell1 = EllipseV.standardEquation(f1, f2, mc);
 		print(ell1);
 		print(ell1.getCoefficients());
@@ -536,7 +536,7 @@ public class CodePlace {
 		Line<Fraction> l2 = of(5, 4, -3);
 		Line<Fraction> l3 = of(5, 4, -6);
 		Point<Fraction> p = l1.intersectPoint(l2);
-		Point<Fraction> p2 = Point.valueOf(Fraction.valueOf(1l), Fraction.valueOf(3l), mc);
+		Point<Fraction> p2 = Point.valueOf(Fraction.Companion.valueOf(1l), Fraction.Companion.valueOf(3l), mc);
 		print(sim(Line.twoPoint(p, p2, mc)));
 		print(l1.symmetryPoint(p2));
 		print(l2.intersectPoint(l3));
@@ -635,7 +635,7 @@ public class CodePlace {
 	void m33() {
 		// inputPoly("a,b,c,aa,bb,cc,k,d");
 		// HyperbolaV<FractionalPoly> hyp = new HyperbolaV<>()
-		Progression<Fraction> pf = ProgressionSup.createArithmeticProgression(Fraction.valueOf(1l), Fraction.ONE, mc);
+		Progression<Fraction> pf = ProgressionSup.createArithmeticProgression(Fraction.Companion.valueOf(1l), Fraction.Companion.getONE(), mc);
 		// pf = pf.limit(100)
 		// .computeProgression(mc, f, pro)
 		// .stream()
@@ -800,18 +800,18 @@ public class CodePlace {
 		Random rd = new Random();
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 6; j++) {
-				mat[i][j] = Fraction.valueOf(rd.nextInt(10) + 1, 1 + rd.nextInt(10));
+				mat[i][j] = Fraction.Companion.valueOf(rd.nextInt(10) + 1, 1 + rd.nextInt(10));
 			}
 		}
 
 		for (int i = 0; i < 5; i++) {
 			print(mat[i]);
 		}
-		LinearEquationSolution<Fraction> solution = MatrixSup.solveLinearEquation(mat, Fraction.getCalculator());
+		LinearEquationSolution<Fraction> solution = MatrixSup.solveLinearEquation(mat, Fraction.Companion.getCalculator());
 		print(solution.getSolutionSituation());
 		print(solution.getBase());
 		print(solution.getSolution());
-		Fraction sum = Fraction.ZERO;
+		Fraction sum = Fraction.Companion.getZERO();
 		for (int i = 0; i < 5; i++) {
 			sum = sum.add(mat[0][i].multiply(solution.getBase().getNumber(i)));
 		}
@@ -852,7 +852,7 @@ public class CodePlace {
 		long[][] mat = new long[][] { { 1, 3, 5, 7, 1 }, { 2, 4, 3, 0, 2 }, { -3, -7, 0, 6, 8 },
 				{ -5, -12, 13, -27, -9 } };
 		Matrix<Long> mat1 = Matrix.valueOf(mat);
-		Matrix<Fraction> mat2 = mat1.mapTo(l -> Fraction.valueOf(l), Fraction.getCalculator());
+		Matrix<Fraction> mat2 = mat1.mapTo(l -> Fraction.Companion.valueOf(l), Fraction.Companion.getCalculator());
 		LinearEquationSolution<Fraction> solution = MatrixSup.solveLinearEquation(mat2);
 		print(solution);
 		print(solution.getBase());
@@ -988,7 +988,7 @@ public class CodePlace {
 			return mc.compare((p0.x - 2) * 3 - (2 - p1.x), 0d);
 		}, 50);
 		// print(result,16);
-		assertEquals("Result should be 7/9", Fraction.valueOf(7, 9), Fraction.bestApproximate(result * result, 100));
+		assertEquals("Result should be 7/9", Fraction.Companion.valueOf(7, 9), Fraction.Companion.bestApproximate(result * result, 100));
 
 		// print(result,16);
 		// print(result*result,16);

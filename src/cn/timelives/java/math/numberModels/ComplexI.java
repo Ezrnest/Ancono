@@ -196,19 +196,19 @@ public final class ComplexI {
 	 * @return
 	 */
 	public ComplexResult pow(Fraction f){
-		if(f.signum == 0){
+		if(f.getSignum() == 0){
 //			if(this.a == 0 && this.b == 0){
 //				throw new IllegalArgumentException("0^0");
 //			}
 			return new RootResult(1,1,arg());
 		}
 		long p,q;
-		if(f.signum == -1){
-			p = f.denominator;
-			q = f.numerator;
+		if(f.getSignum() == -1){
+			p = f.getDenominator();
+			q = f.getNumerator();
 		}else{
-			p = f.numerator;
-			q = f.denominator;
+			p = f.getNumerator();
+			q = f.getDenominator();
 		}
 		return pow(p).root(q);
 	}

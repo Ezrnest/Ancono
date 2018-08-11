@@ -148,10 +148,10 @@ public class MatrixSup {
 			Matcher mach = P_FOR_FRACTION.matcher(str);
 			for(int j=0;j<column;j++){
 				mach.find();
-				ma[i][j] = Fraction.valueOf(mach.group(1));
+				ma[i][j] = Fraction.Companion.valueOf(mach.group(1));
 			}
 		}
-		return Matrix.valueOf(ma,Fraction.getCalculator());
+		return Matrix.valueOf(ma, Fraction.Companion.getCalculator());
 	}
 	
 	

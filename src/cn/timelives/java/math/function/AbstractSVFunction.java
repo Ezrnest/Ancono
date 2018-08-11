@@ -73,7 +73,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 */
 		@Override
 		public Power<T> derive() {
-			return new Power<>(mc,mc.getOne(),Fraction.NEGATIVE_ONE);
+			return new Power<>(mc,mc.getOne(), Fraction.Companion.getNEGATIVE_ONE());
 		}
 		
 		/*
@@ -146,7 +146,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 */
 		@Override
 		public Power<T> derive() {
-			return new Power<>(mc, mc.reciprocal(mc.ln(a)), Fraction.NEGATIVE_ONE);
+			return new Power<>(mc, mc.reciprocal(mc.ln(a)), Fraction.Companion.getNEGATIVE_ONE());
 		}
 		/*
 		 * @see cn.timelives.java.math.function.MathFunction#domain()
@@ -217,7 +217,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 * 
 		 */
 		Power(MathCalculator<T> mc) {
-			this(mc,mc.getZero(),Fraction.ONE);
+			this(mc,mc.getZero(), Fraction.Companion.getONE());
 		}
 		
 		private final T a;
@@ -255,9 +255,9 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 				return this;
 			}
 			if(n.getSignum() == 0) {
-				return new Power<>(mc,mc.getZero(),Fraction.ONE);
+				return new Power<>(mc,mc.getZero(), Fraction.Companion.getONE());
 			}
-			Fraction _n = n.minus(Fraction.ONE);
+			Fraction _n = n.minus(Fraction.Companion.getONE());
 			T _a = mc.divideLong(mc.multiplyLong(a, n.getNumerator()), n.getDenominator());
 			return new Power<T>(mc, _a, _n);
 		}

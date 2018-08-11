@@ -245,7 +245,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     public Fraction getCharacterPower(String cha) {
         Fraction pow =  character.get(cha);
         if(pow == null) {
-            return Fraction.ZERO;
+            return Fraction.Companion.getZERO();
         }
         return pow;
     }
@@ -285,7 +285,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
      * @return a Fraction
      */
     public Fraction getPowerTotal(){
-        Fraction sum = Fraction.ZERO;
+        Fraction sum = Fraction.Companion.getZERO();
         for (Fraction p : character.values()) {
             sum = sum.add(p);
         }
@@ -380,7 +380,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     private static void appendChar(String ch,Fraction pow,StringBuilder sb){
         sb.append(ch);
-        if(pow.equals(Fraction.ONE)){
+        if(pow.equals(Fraction.Companion.getONE())){
             return;
         }
         sb.append('^').append(pow.toStringWithBracket());
@@ -558,11 +558,11 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                     hs2 = it2.hasNext();
             if(hs1){
                 if(!hs2){
-                    return -it1.next().getValue().signum;
+                    return -it1.next().getValue().getSignum();
                 }
             }else{
                 if(hs2){
-                    return it2.next().getValue().signum;
+                    return it2.next().getValue().getSignum();
                 }else{
                     return 0;
                 }
@@ -573,9 +573,9 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             String ch2 = en2.getKey();
             int comp = ch1.compareTo(ch2);
             if(comp<0){
-                return -en1.getValue().signum;
+                return -en1.getValue().getSignum();
             }else if(comp>0){
-                return en2.getValue().signum;
+                return en2.getValue().getSignum();
             }
             comp = en2.getValue().compareTo(en1.getValue());
             if(comp!=0){
@@ -673,7 +673,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             // -i^(2-a)
             signum = -signum;
             Fraction times = this.character.get(I_STR);
-            character.put(I_STR, Fraction.valueOf(2).minus(times));
+            character.put(I_STR, Fraction.Companion.valueOf(2).minus(times));
         }
 
         return new Term(signum, ndr, character);
@@ -992,7 +992,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             nchars.put(en.getKey(),en.getValue().divide(2));
         }
         if(signum < 0){
-            addChar(nchars,I_STR,Fraction.ONE);
+            addChar(nchars,I_STR, Fraction.Companion.getONE());
         }
 
         BigInteger nRad = numerator.multiply(denominator);
@@ -1195,13 +1195,13 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                 if (tpos < str.length() && str.charAt(tpos) == '^') {
                     nm.region(tpos + 1, end);
                     if (nm.lookingAt()) {
-                        time = Fraction.valueOf(nm.group());
+                        time = Fraction.Companion.valueOf(nm.group());
                         tpos = nm.end();
                     } else {
                         throw new NumberFormatException("Illgeal Expression using ^");
                     }
                 } else {
-                    time = Fraction.ONE;
+                    time = Fraction.Companion.getONE();
                 }
                 switch (state) {
                     case 1: {
@@ -1246,7 +1246,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         if (character.containsKey(cha)) {
             t = t.add(character.get(cha));
         }
-        if (t.equals(Fraction.ZERO)) {
+        if (t.equals(Fraction.Companion.getZERO())) {
             character.remove(cha);
         } else {
             character.put(cha, t);
@@ -1275,7 +1275,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         // make sure the radical is positive and add i if necessary
         if (radical.compareTo(BigInteger.ZERO) < 0) {
             radical = radical.negate();// 将根号内的-1提出
-            addChar(character, "i", Fraction.ONE);
+            addChar(character, "i", Fraction.Companion.getONE());
         }
 
         // make sure that denominator and numerator are both positive
@@ -1348,14 +1348,14 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     static int simplifyCharacter(int signum, NavigableMap<String, Fraction> character){
         if (character.containsKey(I_STR)) {
-            Fraction[] rd = character.get(I_STR).divideAndRemainder(Fraction.valueOf(2));
-            if (Fraction.ZERO.equals(rd[1])) {
+            Fraction[] rd = character.get(I_STR).divideAndRemainder(Fraction.Companion.valueOf(2));
+            if (Fraction.Companion.getZERO().equals(rd[1])) {
                 character.remove(I_STR);
             } else {
 
                 character.put(I_STR, rd[1]);
             }
-            return (Fraction.ZERO.equals(rd[0].remainder(Fraction.valueOf(2)))) ? (signum) : (-signum);
+            return (Fraction.Companion.getZERO().equals(rd[0].remainder(Fraction.Companion.valueOf(2)))) ? (signum) : (-signum);
         }else{
             return signum;
         }
@@ -1413,7 +1413,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             throw new IllegalArgumentException();
         }
         TreeMap<String,Fraction> map = new TreeMap<>();
-        map.put(character,Fraction.ONE);
+        map.put(character, Fraction.Companion.getONE());
         return new Term(map);
     }
     public static Term characters(NavigableMap<String,Fraction> characters){
@@ -1471,13 +1471,13 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                         commonCharPN.put(en.getKey(), p);
                     } else {
                         // does not contain this char
-                        if (en.getValue().compareTo(Fraction.ZERO) < 0) {
+                        if (en.getValue().compareTo(Fraction.Companion.getZERO()) < 0) {
                             commonCharPN.put(en.getKey(), en.getValue());
                         }
                     }
                 }
                 fchars.forEach((k, v) -> {
-                    if (v.compareTo(Fraction.ZERO) < 0) {
+                    if (v.compareTo(Fraction.Companion.getZERO()) < 0) {
                         commonCharPN.putIfAbsent(k, v);
                     }
                 });
@@ -1519,7 +1519,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                 }
             }
             fchars.forEach(cha::putIfAbsent);
-            cha.entrySet().removeIf(en -> Fraction.ZERO.equals(en.getValue()));
+            cha.entrySet().removeIf(en -> Fraction.Companion.getZERO().equals(en.getValue()));
 
             ts[i] = Term.newInstanceP(f.signum(), nume, deno, rad, cha);
         }
@@ -1551,7 +1551,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         if (character.isEmpty() || times == null) {
             throw new IllegalArgumentException();
         }
-        if (Fraction.ZERO.equals(times)) {
+        if (Fraction.Companion.getZERO().equals(times)) {
             return ONE;
         }
         NavigableMap<String,Fraction> map = new TreeMap<>();
@@ -1579,13 +1579,13 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     public static Term valueOf(Fraction f){
-        return new Term(f.signum,BigInteger.valueOf(f.numerator)
-                ,BigInteger.valueOf(f.denominator),BigInteger.ONE);
+        return new Term(f.getSignum(),BigInteger.valueOf(f.getNumerator())
+                ,BigInteger.valueOf(f.getDenominator()),BigInteger.ONE);
     }
 
     public static Term singleChar(String ch){
         NavigableMap<String,Fraction> map = new TreeMap<>();
-        map.put(ch,Fraction.ONE);
+        map.put(ch, Fraction.Companion.getONE());
         return ONE.sameNumber0(map);
     }
 

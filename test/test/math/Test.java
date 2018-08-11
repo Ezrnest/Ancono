@@ -436,16 +436,16 @@ class Test {
 	}
 	
 	static void progressionSum(){
-		MathCalculator<Fraction> mc = Fraction.getCalculator();
+		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
 		Progression<Fraction> a = Progression.createProgression(
-				l -> Fraction.valueOf(l).add(Fraction.ONE).squareOf().reciprocal(),-1,mc);
+				l -> Fraction.Companion.valueOf(l).add(Fraction.Companion.getONE()).squareOf().reciprocal(),-1,mc);
 		Progression<Fraction> b = Progression.createProgression(
 				new LongFunction<Fraction>(){
 					@Override
 					public Fraction apply(long value) {
-						Fraction sum = Fraction.ONE;
+						Fraction sum = Fraction.Companion.getONE();
 						for(long l = 1; l < value;l++){
-							sum = sum.multiply(Fraction.ONE.minus(a.get(l)));
+							sum = sum.multiply(Fraction.Companion.getONE().minus(a.get(l)));
 						}
 						return sum;
 					}

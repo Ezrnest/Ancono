@@ -13,6 +13,25 @@ package cn.timelives.java.utilities.structure;
 public final class WithInt<T> {
 	private int x;
 	private T obj;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof WithInt)) return false;
+
+		WithInt<?> withInt = (WithInt<?>) o;
+
+		if (x != withInt.x) return false;
+		return obj != null ? obj.equals(withInt.obj) : withInt.obj == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = x;
+		result = 31 * result + (obj != null ? obj.hashCode() : 0);
+		return result;
+	}
+
 	/**
 	 * 
 	 */

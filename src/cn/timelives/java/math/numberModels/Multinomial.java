@@ -1,7 +1,6 @@
 package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
@@ -15,18 +14,16 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 
-import static cn.timelives.java.utilities.Printer.print;
-
 /**
  * An improved class for multinomial.
  * A multinomial is composed of several terms.
  *
  * @see Term
  */
-public class Multinomial implements Comparable<Multinomial>,Computable,Serializable {
+public class Multinomial implements Comparable<Multinomial>, Computable, Serializable {
     final NavigableSet<Term> terms;
 
-    static boolean mergingAdd(NavigableSet<Term> base,Term e) {
+    static boolean mergingAdd(NavigableSet<Term> base, Term e) {
         Term low = base.floor(e);
         if(low != null && low.canMerge(e)){
             base.remove(low);
@@ -44,12 +41,13 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
      * @param set1 will be modified
      * @param set2 won't be modified
      */
-    static void mergingAddAll(NavigableSet<Term> set1,Iterable<Term> set2){
+    static void mergingAddAll(NavigableSet<Term> set1, Iterable<Term> set2) {
         for(Term t : set2){
             mergingAdd(set1,t);
         }
     }
-    static final Comparator<Term> charComp = (x,y)->x.compareChar(y);
+
+    static final Comparator<Term> charComp = Term::compareChar;
     
     static NavigableSet<Term> getSet(){
         return new TreeSet<>(charComp);
@@ -66,7 +64,7 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
      * @param s2
      * @return
      */
-    static NavigableSet<Term> mergingMultiply(NavigableSet<Term> s1,NavigableSet<Term> s2){
+    static NavigableSet<Term> mergingMultiply(NavigableSet<Term> s1, NavigableSet<Term> s2) {
         if(ZERO.terms.equals(s1) || ZERO.terms.equals(s2)){
             return singleTerm(Term.ZERO);
         }
@@ -78,7 +76,8 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
         }
         return set;
     }
-    static NavigableSet<Term> multiplyToSet(NavigableSet<Term> set,Term t){
+
+    static NavigableSet<Term> multiplyToSet(NavigableSet<Term> set, Term t) {
         NavigableSet<Term> nset = getSet();
         for (Term x : set) {
             Term re = x.multiply(t);
@@ -98,6 +97,8 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
     public static final Multinomial ZERO = new Multinomial(Term.ZERO);
 
     public static final Multinomial ONE = new Multinomial(Term.ONE);
+
+    public static final Multinomial TWO = new Multinomial(Term.valueOf(2));
 
     public static final Multinomial NEGATIVE_ONE = new Multinomial(Term.NEGATIVE_ONE);
 
@@ -203,7 +204,7 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
             return false;
         }
         //use the equals() method
-        return CollectionSup.collectionEqualSorted(terms,((Multinomial)obj).terms,(x,y)->x.equals(y));
+        return CollectionSup.collectionEqualSorted(terms, ((Multinomial) obj).terms, (x, y) -> x.equals(y));
     }
 
     private int hashCode = 0;
@@ -366,18 +367,40 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
         return new Multinomial[]{new Multinomial(q),new Multinomial(m)};
     }
 
+    private static boolean containsNonInteger(NavigableSet<Term> s) {
+        for (Term t : s) {
+            for (Fraction p : t.getCharacterNoCopy().values()) {
+                if (!p.isInteger()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      *
      * @param m modified to the remainder
      * @param divisor remains the same
      * @param quotient added
      */
-    private static void multinomialDivision(NavigableSet<Term> m,NavigableSet<Term> divisor,NavigableSet<Term> quotient){
+    private static void multinomialDivision(NavigableSet<Term> m, NavigableSet<Term> divisor, NavigableSet<Term> quotient) {
         //multinomial division
+        boolean nonInteger = containsNonInteger(m);
+        //fix bug: 9223372036854775807/2 ~
+        if (nonInteger) {
+            return;
+        }
+        nonInteger = containsNonInteger(divisor);
+        if (nonInteger) {
+            return;
+        }
+
         Set<String> remainChars = getCharacters(m);
         Term divisorHead = divisor.first();
         Set<String> divisorChars = getCharacters(divisor);
         List<Term> extraRemainders = new ArrayList<>(2);
+
         //while(true){
         while(remainChars.containsAll(divisorChars)){
             Term head = m.first();
@@ -401,7 +424,8 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
         }
         mergingAddAll(m,extraRemainders);
     }
-    private static void reduceGcd(NavigableSet<Term> m1,NavigableSet<Term> m2){
+
+    private static void reduceGcd(NavigableSet<Term> m1, NavigableSet<Term> m2) {
         int size1 = m1.size(),
                 size2 = m2.size();
         List<Term> list = new ArrayList<>(size1+size2);
@@ -430,7 +454,7 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
 
         NavigableSet<Term> quotient = singleTerm(Term.ZERO); //the quotient
         multinomialDivision(m,divisor,quotient);
-        if(m.size()>1 || m.first().isZero()==false){
+        if (m.size() > 1 || !m.first().isZero()) {
             throw new UnsupportedCalculationException();
         }
         return quotient;
@@ -451,7 +475,7 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
             else
                 return ONE;
         }
-        NavigableSet<Term> result = ModelPatterns.binaryReduce(pow,terms,Multinomial::mergingMultiply);
+        NavigableSet<Term> result = ModelPatterns.binaryReduce(pow, terms, Multinomial::mergingMultiply);
         return new Multinomial(result);
     }
 
@@ -568,14 +592,14 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
                 if (i != 0) {
                     char cr = expr.charAt(i - 1);
                     if (cr != '+' && cr != '-' && cr != '^') {
-                        mergingAdd(terms,Term.valueOf(temp));
+                        mergingAdd(terms, Term.valueOf(temp));
                         temp = "";
                     }
                 }
             }
             temp += c;
         }
-        mergingAdd(terms,Term.valueOf(temp));
+        mergingAdd(terms, Term.valueOf(temp));
         return new Multinomial(terms);
     }
 
@@ -663,7 +687,7 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
      * @param m2 another Multinomial
      * @return an array containing the Multinomials after simplification correspondingly
      */
-    public static Multinomial[] simplifyFraction(Multinomial m1,Multinomial m2){
+    public static Multinomial[] simplifyFraction(Multinomial m1, Multinomial m2) {
         var set1 = getSet(m1.terms);
         var set2 = getSet(m2.terms);
         reduceGcd(set1,set2);
@@ -752,9 +776,12 @@ public class Multinomial implements Comparable<Multinomial>,Computable,Serializa
         return monomial(Term.valueOf(n));
     }
 
+
 //    public static void main(String[] args) {
 //        print(cal.gcd(valueOf("a-b"), valueOf("a+b")));
-//    }
+//        var re = simplifyFraction(Multinomial.monomial(
+//                Term.singleChar("x",Fraction.Companion.valueOf("5/2"))),Multinomial.valueOf("-x+1"));
+//        print(re);
 //        Multinomial m1 = valueOf("x"),
 //                m2 = valueOf("x-4y");
 //        print(m1.add(m2));

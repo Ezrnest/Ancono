@@ -5,10 +5,11 @@ package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.Multinomial;
+import cn.timelives.java.math.numberModels.MultinomialCalculator;
+import cn.timelives.java.math.numberModels.Term;
 import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.numberModels.expression.Node.*;
-import cn.timelives.java.math.numberModels.expression.Node.Fraction;
 
 import java.util.*;
 
@@ -212,7 +213,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	/**
 	 * @param o
 	 * @return
-	 * @see java.util.Set#contains(java.lang.Object)
+     * @see Set#contains(Object)
 	 */
 	public boolean tagContains(Object o) {
 		return enabledTags.contains(o);
@@ -221,7 +222,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	/**
 	 * @param e
 	 * @return
-	 * @see java.util.Set#add(java.lang.Object)
+     * @see Set#add(Object)
 	 */
 	public boolean tagAdd(String e) {
 		boolean b =  enabledTags.add(e);
@@ -232,7 +233,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	/**
 	 * @param o
 	 * @return
-	 * @see java.util.Set#remove(java.lang.Object)
+     * @see Set#remove(Object)
 	 */
 	public boolean tagRemove(Object o) {
 		boolean b =  enabledTags.remove(o);
@@ -243,7 +244,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	/**
 	 * @param c
 	 * @return
-	 * @see java.util.Set#addAll(java.util.Collection)
+     * @see Set#addAll(Collection)
 	 */
 	public boolean tagAddAll(Collection<? extends String> c) {
 		boolean b = enabledTags.addAll(c);
@@ -252,8 +253,8 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	}
 
 	/**
-	 * 
-	 * @see java.util.Set#clear()
+     *
+     * @see Set#clear()
 	 */
 	public void tagClear() {
 		enabledTags.clear();
@@ -935,7 +936,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
      * @param val
      * @return
      */
-	public Expression substitute(Expression expr,String ch,Multinomial val) {
+    public Expression substitute(Expression expr, String ch, Multinomial val) {
 		Node root = expr.root.cloneNode(null);
 		root = root.recurApply(x -> {
 			Multinomial p = Node.getPolynomialPart(x, this);
@@ -960,7 +961,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
      * @param sub
      * @return
      */
-	public Expression substitute(Expression expr,String ch,Expression sub){
+    public Expression substitute(Expression expr, String ch, Expression sub) {
 	    Node root = expr.root.cloneNode(null);
 	    root = root.recurApply(x -> {
             Multinomial p = Node.getPolynomialPart(x, this);
@@ -987,7 +988,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
         return new Expression(root);
     }
 
-    static Node replaceMultinomial(Multinomial mul,String ch,Expression sub){
+    static Node replaceMultinomial(Multinomial mul, String ch, Expression sub) {
 	    int count = mul.containsCharCount(ch);
 	    if(count == 0){
 	        return null;
@@ -1003,7 +1004,7 @@ public class ExprCalculator implements MathCalculator<Expression> {
 	        DFunction nodeExp = Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP,
                     sub.root.cloneNode(null),
                     Node.newPolyNode(Multinomial.monomial(Term.valueOf(pow)),null));
-	        Multiply nodeMul = Node.wrapNodeMultiply(nodeExp,Multinomial.monomial(re));
+            Multiply nodeMul = Node.wrapNodeMultiply(nodeExp, Multinomial.monomial(re));
 	        nodes.add(nodeMul);
         }
         return Node.wrapNodeAM(true,nodes,remains);

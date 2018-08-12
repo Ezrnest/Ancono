@@ -40,8 +40,8 @@ public final class SimplificationStrategies {
 	public static final String TAG_ALGEBRA = "algebra";
 	public static final Set<String> TAG_ALGEBRA_SET = Collections
 			.unmodifiableSet(CollectionSup.createHashSet(TAG_ALGEBRA));
-	public static final Set<Type> TYPES_FUNCTION = 
-			CollectionSup.unmodifiableEnumSet(Type.S_FUNCTION,Type.D_FUNCTION,Type.M_FUNCTION);
+	public static final Set<Type> TYPES_FUNCTION =
+			CollectionSup.unmodifiableEnumSet(Type.S_FUNCTION, Type.D_FUNCTION, Type.M_FUNCTION);
 	
 	public static final String TAG_REGULARIZE = "regularize";
 	public static final Set<String> TAG_REGULARIZE_SET = Collections
@@ -104,9 +104,9 @@ public final class SimplificationStrategies {
 		@Override
 		protected abstract Node simplifyAdd(Add node, ExprCalculator mc);
 	}
-	
-	static final class SimplifyFraction extends SimpleStrategy{
-		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.ADD,Type.FRACTION,Type.MULTIPLY));
+
+	static final class SimplifyFraction extends SimpleStrategy {
+		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.ADD, Type.FRACTION, Type.MULTIPLY));
 
 		/**
 		 */
@@ -208,7 +208,7 @@ public final class SimplificationStrategies {
 					c2 = node.c2;
 			Type t1 = c1.getType(),
 					t2 = c2.getType();
-			if(!((t1 == Type.MULTIPLY || t1 == Type.POLYNOMIAL) && (t2 == Type.MULTIPLY || t2==Type.POLYNOMIAL))) {
+			if (!((t1 == Type.MULTIPLY || t1 == Type.POLYNOMIAL) && (t2 == Type.MULTIPLY || t2 == Type.POLYNOMIAL))) {
 				return null;
 			}
 			Multinomial pnume = Node.getPolynomialPart(c1, mc),
@@ -237,16 +237,16 @@ public final class SimplificationStrategies {
 		}
 		
 	}
-	
-	
-	static boolean simplifyDivideNode(Multiply m1,Multiply m2,ExprCalculator mc) {
+
+
+	static boolean simplifyDivideNode(Multiply m1, Multiply m2, ExprCalculator mc) {
 		List<Node> c1 = m1.children;
 		List<Node> c2 = m2.children;
 		Comparator<Node> nc = mc.nc;
 		m1.doSort(nc);
 		m2.doSort(nc);
 		boolean sim = false;
-		for(ListIterator<Node> it1 = c1.listIterator(c1.size());it1.hasPrevious();) {
+		for (ListIterator<Node> it1 = c1.listIterator(c1.size()); it1.hasPrevious(); ) {
 			Node n1 = it1.previous();
 			int index = Collections.binarySearch(c2, n1, nc);
 			if(index > -1) {
@@ -263,7 +263,7 @@ public final class SimplificationStrategies {
 	 * 2017-12-01 19:41
 	 *
 	 */
-	public static class Expand extends SimpleStrategy{
+	public static class Expand extends SimpleStrategy {
 		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.MULTIPLY));
 		/**
 		 */
@@ -324,7 +324,7 @@ public final class SimplificationStrategies {
 				polynode.parent = mul;
 				nchildren.add(mul);
 			}
-			for(ListIterator<Node> it = nchildren.listIterator();it.hasNext();) {
+			for (ListIterator<Node> it = nchildren.listIterator(); it.hasNext(); ) {
 				Multiply m = (Multiply)it.next();
 				//recursion
 				Node result = simplifyMultiply(m, mc);
@@ -342,8 +342,8 @@ public final class SimplificationStrategies {
 		}
 		
 	}
-	
-	public static abstract class SimplifyFunction extends SimpleStrategy{
+
+	public static abstract class SimplifyFunction extends SimpleStrategy {
 		
 		/**
 		 * @param tags
@@ -364,8 +364,8 @@ public final class SimplificationStrategies {
 	 * 2017-12-01 20:14
 	 *
 	 */
-	public static abstract class SimplifyMultiplyStruct extends SimpleStrategy{
-		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.MULTIPLY,Type.FRACTION));
+	public static abstract class SimplifyMultiplyStruct extends SimpleStrategy {
+		public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.MULTIPLY, Type.FRACTION));
 		/**
 		 * @param tags assigns the tags of this multiply.
 		 */
@@ -463,8 +463,9 @@ public final class SimplificationStrategies {
 		}
 		
 		private static final BigInteger NEGATIVE_ONE = BigInteger.ONE.negate();
-		private void filterAndAdd(List<Node> list,ExprCalculator mc,boolean deno,List<Pair<Node,BigInteger>> collect) {
-			for(ListIterator<Node> it=list.listIterator(list.size());it.hasPrevious();) {
+
+		private void filterAndAdd(List<Node> list, ExprCalculator mc, boolean deno, List<Pair<Node, BigInteger>> collect) {
+			for (ListIterator<Node> it = list.listIterator(list.size()); it.hasPrevious(); ) {
 				Node n = it.previous();
 				BigInteger pow = deno ?NEGATIVE_ONE:BigInteger.ONE;
 				if(accept(n, pow,mc)) {
@@ -485,15 +486,16 @@ public final class SimplificationStrategies {
 				}
 			}
 		}
-		
-		private void addToTheList(List<Node> list,List<Pair<Node,BigInteger>> result,NodeWithChildren parent, ExprCalculator mc) {
+
+		private void addToTheList(List<Node> list, List<Pair<Node, BigInteger>> result, NodeWithChildren parent, ExprCalculator mc) {
 			for(Pair<Node,BigInteger> en : result) {
 				Node node = Node.buildExpStructure(en.getFirst(), en.getSecond(), mc);
 				node.parent = parent;
 				list.add(node);
 			}
 		}
-		private void addToTheList(List<Node> nume,List<Node> deno,List<Pair<Node,BigInteger>> result, ExprCalculator mc) {
+
+		private void addToTheList(List<Node> nume, List<Node> deno, List<Pair<Node, BigInteger>> result, ExprCalculator mc) {
 			for(Pair<Node,BigInteger> en : result) {
 				BigInteger pow = en.getSecond();
 				if(pow.signum() < 0) {
@@ -504,8 +506,8 @@ public final class SimplificationStrategies {
 				
 			}
 		}
-		
-		protected Node buildExpStructure(Node n,BigInteger pow, ExprCalculator mc) {
+
+		protected Node buildExpStructure(Node n, BigInteger pow, ExprCalculator mc) {
 			return Node.buildExpStructure(n, pow, mc);
 		}
 		
@@ -515,9 +517,9 @@ public final class SimplificationStrategies {
 		 * Quickly tests the nodes to decide whether the simplification is necessary.
 		 * This method is used to filter firstly. 
 		 */
-		protected abstract boolean firstGlance(List<Node> nodes,ExprCalculator ec);
-		
-		protected abstract boolean accept(Node n,BigInteger pow, ExprCalculator mc);
+		protected abstract boolean firstGlance(List<Node> nodes, ExprCalculator ec);
+
+		protected abstract boolean accept(Node n, BigInteger pow, ExprCalculator mc);
 		
 		/**
 		 *  Performs simplify to the list, returns null if nothing is simplified.
@@ -784,7 +786,7 @@ public final class SimplificationStrategies {
 			@Override
 			protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
 				//sqr node 
-				if(node.getFunctionName().equals("sqr")==false) {
+				if (!node.getFunctionName().equals("sqr")) {
 					throw new AssertionError();
 				}
 				Node n =  Node.wrapNodeDF("exp", node.child, Node.newPolyNode(mc.pc.divideLong(mc.pOne, 2l), null));

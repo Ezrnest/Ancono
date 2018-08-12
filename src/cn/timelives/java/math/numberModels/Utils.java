@@ -65,9 +65,9 @@ public final class Utils {
 		if(x.isZero()){
 			return mc.getZero();
 		}
-		T re = valueOfLong(x.numerator,mc);
-		if(x.denominator!=1){
-			re = mc.divideLong(re,x.denominator);
+		T re = valueOfLong(x.getNumerator(), mc);
+		if (x.getDenominator() != 1) {
+			re = mc.divideLong(re, x.getDenominator());
 		}
 		if(x.isNegative()){
 			re = mc.negate(re);

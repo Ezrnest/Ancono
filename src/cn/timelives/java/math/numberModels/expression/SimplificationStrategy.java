@@ -28,6 +28,6 @@ public interface SimplificationStrategy {
 	 * @param mc an ExprCalculator to support the simplification
 	 * @return a node or {@code null}
 	 */
-	public Node simplifyNode(Node node,ExprCalculator mc);
+    public Node simplifyNode(Node node, ExprCalculator mc);
 	
 }

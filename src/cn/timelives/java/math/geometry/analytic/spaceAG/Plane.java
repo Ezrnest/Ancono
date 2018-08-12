@@ -920,36 +920,32 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 		SVector<T> pln = SVector.angledVector(pl.getNormalVector(), n, tan);
 		return pointNormalVector(line.p0,pln);
 	}
-	
-	
-	
-	
-	
 
-	public static void main(String[] args) {
-		MathCalculator<Fraction> mc =Fraction.getCalculator();
-		SVector<Fraction> v1 = SVector.valueOf(Fraction.ONE, Fraction.ZERO, Fraction.ZERO, mc); 
-		SVector<Fraction> v2 = SVector.valueOf(Fraction.ZERO, Fraction.ONE, Fraction.ZERO, mc);
-//				v3 = SVector.vector(3d, 4d, 1d, mc);
-		print(v1.perpendicular(v2));
-//		print(v1);
-//		print(v2);
-		Plane<Fraction> p1 = generalFormula(Fraction.ZERO, Fraction.ZERO,Fraction.ONE.negative(), Fraction.ONE, mc);
-//		Plane<Fraction> p2 = generalFormula(1d, 0d, 0d, 0d, mcd);
-//		Line<Double> l = Line.pointDirect(Point.pointO(mcd),v3);
-//		p1 = vectorPoint(v1, v2, SPoint.pointO(mcd), mcd);
-		print(p1);
-//		print(p2);
-//		print(p1.intersectLine(p2));
-//		print(p1.projection(Point.valueOf(1d, 1d, 1d, mcd)));
-//		print(p1.projection(v3));
-//		print(l);
-//		print(p1.projection(l));
-		PlaneCoordinateConverter<Fraction> pcc = p1.getCoordinateConverter(v1, v2, 
-				SPoint.valueOf(Fraction.ZERO, Fraction.ZERO, Fraction.ONE, mc));
-		print(pcc.toPlanePoint(SPoint.valueOf(Fraction.ONE, Fraction.ONE, Fraction.ONE, mc)));
-		print(pcc.toSpacePoint(Point.valueOf(Fraction.valueOf(10), Fraction.valueOf(20), mc)));
-	}
+
+//	public static void main(String[] args) {
+//		MathCalculator<Fraction> mc =Fraction.getCalculator();
+//		SVector<Fraction> v1 = SVector.valueOf(Fraction.ONE, Fraction.ZERO, Fraction.ZERO, mc);
+//		SVector<Fraction> v2 = SVector.valueOf(Fraction.ZERO, Fraction.ONE, Fraction.ZERO, mc);
+////				v3 = SVector.vector(3d, 4d, 1d, mc);
+//		print(v1.perpendicular(v2));
+////		print(v1);
+////		print(v2);
+//		Plane<Fraction> p1 = generalFormula(Fraction.ZERO, Fraction.ZERO,Fraction.ONE.negative(), Fraction.ONE, mc);
+////		Plane<Fraction> p2 = generalFormula(1d, 0d, 0d, 0d, mcd);
+////		Line<Double> l = Line.pointDirect(Point.pointO(mcd),v3);
+////		p1 = vectorPoint(v1, v2, SPoint.pointO(mcd), mcd);
+//		print(p1);
+////		print(p2);
+////		print(p1.intersectLine(p2));
+////		print(p1.projection(Point.valueOf(1d, 1d, 1d, mcd)));
+////		print(p1.projection(v3));
+////		print(l);
+////		print(p1.projection(l));
+//		PlaneCoordinateConverter<Fraction> pcc = p1.getCoordinateConverter(v1, v2,
+//				SPoint.valueOf(Fraction.ZERO, Fraction.ZERO, Fraction.ONE, mc));
+//		print(pcc.toPlanePoint(SPoint.valueOf(Fraction.ONE, Fraction.ONE, Fraction.ONE, mc)));
+//		print(pcc.toSpacePoint(Point.valueOf(Fraction.valueOf(10), Fraction.valueOf(20), mc)));
+//	}
 
 	
 }

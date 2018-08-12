@@ -4,7 +4,10 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.*;
+import cn.timelives.java.math.numberModels.Calculators;
+import cn.timelives.java.math.numberModels.Multinomial;
+import cn.timelives.java.math.numberModels.MultinomialCalculator;
+import cn.timelives.java.math.numberModels.Term;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
@@ -103,7 +106,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param n
 	 * @return
 	 */
-	public abstract boolean equalNode(Node n,MultinomialCalculator pc);
+	public abstract boolean equalNode(Node n, MultinomialCalculator pc);
 	
 	public abstract Type getType();
 	
@@ -183,7 +186,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param b
 	 * @return
 	 */
-	public static boolean nodeEquals(Node a,Node b,MultinomialCalculator pc) {
+	public static boolean nodeEquals(Node a, Node b, MultinomialCalculator pc) {
 		 return (a == b) || (a != null && a.equalNode(b,pc));
 	}
 	
@@ -204,7 +207,7 @@ public abstract class Node implements Computable,Serializable {
 	 * 2017-11-25 18:23
 	 *
 	 */
-	public static abstract class NodeWithChildren extends Node{
+	public static abstract class NodeWithChildren extends Node {
 
 		/**
 		 * @param parent
@@ -220,7 +223,7 @@ public abstract class Node implements Computable,Serializable {
 		 * @param replacement
 		 * @return
 		 */
-		abstract boolean replace(Node original,Node replacement);
+		abstract boolean replace(Node original, Node replacement);
 		
 		abstract boolean remove(Node n);
 		
@@ -444,7 +447,7 @@ public abstract class Node implements Computable,Serializable {
 		/**
 		 * @param parent
 		 */
-		SingleNode(NodeWithChildren parent,Node child) {
+		SingleNode(NodeWithChildren parent, Node child) {
 			super(parent);
 			this.child = child;
 		}
@@ -561,7 +564,7 @@ public abstract class Node implements Computable,Serializable {
 		/**
 		 * @param parent
 		 */
-		BiNode(NodeWithChildren parent,Node c1,Node c2,boolean sortable) {
+		BiNode(NodeWithChildren parent, Node c1, Node c2, boolean sortable) {
 			super(parent);
 			this.c1 = c1;
 			this.c2 = c2;
@@ -711,9 +714,10 @@ public abstract class Node implements Computable,Serializable {
 	 * 2017-11-25 20:28
 	 *
 	 */
-	public static final class Poly extends Node{
+	public static final class Poly extends Node {
 		final Multinomial p;
-		Poly(NodeWithChildren parent,Multinomial p) {
+
+		Poly(NodeWithChildren parent, Multinomial p) {
 			super(parent);
 			this.p = Objects.requireNonNull(p); 
 		}
@@ -721,7 +725,7 @@ public abstract class Node implements Computable,Serializable {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,MultinomialCalculator pc) {
+		public boolean equalNode(Node n, MultinomialCalculator pc) {
 			if(!(n instanceof Poly)) {
 				return false;
 			}
@@ -834,12 +838,12 @@ public abstract class Node implements Computable,Serializable {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,MultinomialCalculator pc) {
+		public boolean equalNode(Node n, MultinomialCalculator pc) {
 			if(!(n instanceof Add)) {
 				return false;
 			}
 			Add node = (Add)n;
-			return polyEquals(p, node.p, pc) && CollectionSup.listEqual(children, node.children, (x,y)->x.equalNode(y,pc));
+			return polyEquals(p, node.p, pc) && CollectionSup.listEqual(children, node.children, (x, y) -> x.equalNode(y, pc));
 		}
 		
 		
@@ -923,12 +927,12 @@ public abstract class Node implements Computable,Serializable {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,MultinomialCalculator pc) {
+		public boolean equalNode(Node n, MultinomialCalculator pc) {
 			if(!(n instanceof Multiply)) {
 				return false;
 			}
 			Multiply node = (Multiply)n;
-			return polyEquals(p, node.p, pc) && CollectionSup.listEqual(children, node.children, (x,y)->x.equalNode(y,pc));
+			return polyEquals(p, node.p, pc) && CollectionSup.listEqual(children, node.children, (x, y) -> x.equalNode(y, pc));
 		}
 		/*
 		 * @see cn.timelives.java.math.numberModels.expression.Node#cloneNode(cn.timelives.java.math.numberModels.expression.Node)
@@ -998,6 +1002,8 @@ public abstract class Node implements Computable,Serializable {
 	}
 	public interface FunctionNode{
 		String getFunctionName();
+
+		int getParameterLength();
 	}
 	/**
 	 * The node contains a single-parameter function.
@@ -1013,7 +1019,7 @@ public abstract class Node implements Computable,Serializable {
 		 * @param parent
 		 * @param child
 		 */
-		SFunction(NodeWithChildren parent, Node child,String name) {
+		SFunction(NodeWithChildren parent, Node child, String name) {
 			super(parent, child);
 			this.functionName = Objects.requireNonNull(name);
 		}
@@ -1025,12 +1031,17 @@ public abstract class Node implements Computable,Serializable {
 		public String getFunctionName() {
 			return functionName;
 		}
-		
+
+		@Override
+		public int getParameterLength() {
+			return 1;
+		}
+
 		/*
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,MultinomialCalculator pc) {
+		public boolean equalNode(Node n, MultinomialCalculator pc) {
 			if(!(n instanceof SFunction)) {
 				return false;
 			}
@@ -1089,7 +1100,7 @@ public abstract class Node implements Computable,Serializable {
 		 * @param c1
 		 * @param c2
 		 */
-		DFunction(NodeWithChildren parent, Node c1, Node c2,String name,boolean sortable) {
+		DFunction(NodeWithChildren parent, Node c1, Node c2, String name, boolean sortable) {
 			super(parent, c1, c2,sortable);
 			this.functionName = name;
 		}
@@ -1103,12 +1114,17 @@ public abstract class Node implements Computable,Serializable {
 		public String getFunctionName() {
 			return functionName;
 		}
-		
+
+		@Override
+		public int getParameterLength() {
+			return 2;
+		}
+
 		/*
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,MultinomialCalculator pc) {
+		public boolean equalNode(Node n, MultinomialCalculator pc) {
 			if(!(n instanceof DFunction)) {
 				return false;
 			}
@@ -1175,7 +1191,7 @@ public abstract class Node implements Computable,Serializable {
 		 * @param children
 		 * @param sortable
 		 */
-		MFunction(NodeWithChildren parent, List<Node> children, String name,boolean sortable) {
+		MFunction(NodeWithChildren parent, List<Node> children, String name, boolean sortable) {
 			super(parent, children, sortable);
 			this.functionName = name;
 		}
@@ -1192,7 +1208,7 @@ public abstract class Node implements Computable,Serializable {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,MultinomialCalculator pc) {
+		public boolean equalNode(Node n, MultinomialCalculator pc) {
 			if(!(n instanceof MFunction)) {
 				return false;
 			}
@@ -1200,7 +1216,7 @@ public abstract class Node implements Computable,Serializable {
 			if(! functionName.equals(node.functionName)) {
 				return false;
 			}
-			return CollectionSup.listEqual(children, node.children, (x,y)->x.equalNode(y,pc));
+			return CollectionSup.listEqual(children, node.children, (x, y) -> x.equalNode(y, pc));
 
 		}
 		/*
@@ -1238,6 +1254,11 @@ public abstract class Node implements Computable,Serializable {
 			return functionName;
 		}
 
+		@Override
+		public int getParameterLength() {
+			return children.size();
+		}
+
         @Override
         public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
 		    @SuppressWarnings("unchecked")
@@ -1273,7 +1294,7 @@ public abstract class Node implements Computable,Serializable {
 		 * @see cn.timelives.java.math.numberModels.expression.Node#equalNode(cn.timelives.java.math.numberModels.expression.Node)
 		 */
 		@Override
-		public boolean equalNode(Node n,MultinomialCalculator pc) {
+		public boolean equalNode(Node n, MultinomialCalculator pc) {
 			if(!(n instanceof Fraction)) {
 				return false;
 			}
@@ -1330,9 +1351,13 @@ public abstract class Node implements Computable,Serializable {
 	public static Poly newPolyNode(Multinomial p, NodeWithChildren parent) {
 		return new Poly(parent, p);
 	}
-	
-	
-	static boolean replaceChildNode(Node n,Node replacement) {
+
+	public static Poly newPolyNode(Multinomial p) {
+		return newPolyNode(p, null);
+	}
+
+
+	static boolean replaceChildNode(Node n, Node replacement) {
 		if(n.parent!=null) {
 			return n.parent.replace(n, replacement);
 		}
@@ -1344,7 +1369,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param isAdd
 	 * @return
 	 */
-	public static Node wrapCloneNodeAM(boolean isAdd, Node n1,Node n2) {
+	public static Node wrapCloneNodeAM(boolean isAdd, Node n1, Node n2) {
 		NodeWithChildren root;
 		if(isAdd) {
 			Add add = new Add(null, null, new ArrayList<>(2));
@@ -1403,7 +1428,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param ns
 	 * @return
 	 */
-	static CombinedNode wrapNodeAM(boolean isAdd, List<Node> ns,Multinomial p) {
+	static CombinedNode wrapNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
 		CombinedNode root;
 		if(isAdd) {
 			root = new Add(null, null, ns);
@@ -1425,7 +1450,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param n2
 	 * @return
 	 */
-	static CombinedNode wrapNodeAM(boolean isAdd, Node n1,Node n2) {
+	static CombinedNode wrapNodeAM(boolean isAdd, Node n1, Node n2) {
 		CombinedNode root;
 		List<Node> list = new ArrayList<>(2);
 		list.add(n1);
@@ -1446,7 +1471,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param x
 	 * @return
 	 */
-	public static Multiply wrapCloneNodeMultiply(Node n,Multinomial x) {
+	public static Multiply wrapCloneNodeMultiply(Node n, Multinomial x) {
 		List<Node> list = new ArrayList<>(1);
 		Multiply nroot = new Multiply(null, x, list);
 		Node rt = n.cloneNode(nroot);
@@ -1462,7 +1487,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param x
 	 * @return
 	 */
-	static Multiply wrapNodeMultiply(Node n,Multinomial x) {
+	static Multiply wrapNodeMultiply(Node n, Multinomial x) {
 		n.removeFromParent();
 		List<Node> list = new ArrayList<>(1);
 		Multiply nroot = new Multiply(null, x, list);
@@ -1470,14 +1495,31 @@ public abstract class Node implements Computable,Serializable {
 		n.parent = nroot;
 		return nroot;
 	}
-	
+
+	/**
+	 * Returns {@code n+x} without any simplification.
+	 * <p>The node has no parent!
+	 *
+	 * @param n
+	 * @param x
+	 * @return
+	 */
+	static Add wrapNodeAdd(Node n, Multinomial x) {
+		n.removeFromParent();
+		List<Node> list = new ArrayList<>(1);
+		Add nroot = new Add(null, x, list);
+		list.add(n);
+		n.parent = nroot;
+		return nroot;
+	}
+
 	/**
 	 * Returns {@code n+x} without any simplification.
 	 * @param n
 	 * @param x
 	 * @return
 	 */
-	public static Add wrapCloneNodeAdd(Node n,Multinomial x) {
+	public static Add wrapCloneNodeAdd(Node n, Multinomial x) {
 		List<Node> list = new ArrayList<>(1);
 		Add nroot = new Add(null, x, list);
 		Node rt = n.cloneNode(nroot);
@@ -1490,37 +1532,39 @@ public abstract class Node implements Computable,Serializable {
 	 * @param n
 	 * @return
 	 */
-	static SFunction wrapNodeSF(String fname,Node n) {
+	static SFunction wrapNodeSF(String fname, Node n) {
 		n.removeFromParent();
 		SFunction root = new SFunction(null, n, fname);
 		n.parent =root;
 		return root;
 	}
+
+
 	/**
 	 * 
 	 * @param fname
 	 * @param n
 	 * @return
 	 */
-	public static SFunction wrapCloneNodeSF(String fname,Node n) {
+	public static SFunction wrapCloneNodeSF(String fname, Node n) {
 		SFunction root = new SFunction(null, null, fname);
 		root.child = n.cloneNode(root);
 		return root;
 	}
-	
-	public static Fraction wrapCloneNodeFraction(Node nume,Node deno) {
+
+	public static Fraction wrapCloneNodeFraction(Node nume, Node deno) {
 		Fraction root = new Fraction(null, null,null);
 		root.c1 = nume.cloneNode(root);
 		root.c2 = deno.cloneNode(root);
 		return root;
 	}
-	
-	static void linkToBiNode(Node c1,Node c2,BiNode root) {
+
+	static void linkToBiNode(Node c1, Node c2, BiNode root) {
 		c1.parent = root;
 		c2.parent = root;
 	}
-	
-	static Fraction wrapNodeFraction(Node nume,Node deno) {
+
+	static Fraction wrapNodeFraction(Node nume, Node deno) {
 		Fraction root = new Fraction(null, nume,deno);
 		linkToBiNode(nume,deno,root);
 		return root;
@@ -1573,7 +1617,7 @@ public abstract class Node implements Computable,Serializable {
 	 * @param p
 	 * @return
 	 */
-	static Node setPolynomialPart(Node node,Multinomial p) {
+	static Node setPolynomialPart(Node node, Multinomial p) {
 		if(node instanceof CombinedNode) {
 			CombinedNode cn = (CombinedNode) node;
 			cn.p = p;
@@ -1596,8 +1640,8 @@ public abstract class Node implements Computable,Serializable {
 		}
 		return null;
 	}
-	
-	public static boolean isFunctionNode(Node n,String fname,int argumentLength) {
+
+	public static boolean isFunctionNode(Node n, String fname, int argumentLength) {
 		if(!fname.equals(getFunctionName(n))) {
 			return false;
 		}
@@ -1611,23 +1655,25 @@ public abstract class Node implements Computable,Serializable {
 			return argumentLength == mf.getNumberOfChildren();
 		}
 	}
-	
-	public static DFunction wrapCloneNodeDF(String fname,Node n1,Node n2) {
+
+	public static DFunction wrapCloneNodeDF(String fname, Node n1, Node n2) {
 		DFunction root = new DFunction(null,null,null,fname,false);
 		root.c1 = n1.cloneNode(root);
 		root.c2 = n2.cloneNode(root);
 		return root;
 	}
-	
-	static DFunction wrapNodeDF(String fname,Node n1,Node n2) {
+
+	static DFunction wrapNodeDF(String fname, Node n1, Node n2) {
 		return wrapNodeDF(fname, n1, n2, false);
 	}
-	static DFunction wrapNodeDF(String fname,Node n1,Node n2,boolean sortable) {
+
+	static DFunction wrapNodeDF(String fname, Node n1, Node n2, boolean sortable) {
 		DFunction root = new DFunction(null, n1,n2, fname,sortable);
 		linkToBiNode(n1,n2,root);
 		return root;
 	}
-	static MFunction wrapNodeMF(String fname,List<Node> nodes,boolean sortable) {
+
+	static MFunction wrapNodeMF(String fname, List<Node> nodes, boolean sortable) {
 		MFunction root = new MFunction(null, nodes, fname, sortable);
 		for(Node n : nodes) {
 			n.parent = root;
@@ -1660,8 +1706,8 @@ public abstract class Node implements Computable,Serializable {
 		}
 		return new Pair<>(p, m.children);
 	}
-	
-	public static Pair<Node,BigInteger> peelExpStructure(Node node,ExprCalculator ec){
+
+	public static Pair<Node, BigInteger> peelExpStructure(Node node, ExprCalculator ec){
 		if(node.getType() != Type.D_FUNCTION) {
 			return null;
 		}
@@ -1677,10 +1723,10 @@ public abstract class Node implements Computable,Serializable {
 			return null;
 		}
 		Node sub = df.c1;
-		return new Pair<>(sub,pow);
+		return new Pair<>(sub, pow);
 	}
-	
-	static Node buildExpStructure(Node n,BigInteger pow,ExprCalculator ec) {
+
+	static Node buildExpStructure(Node n, BigInteger pow, ExprCalculator ec) {
 		if(pow.equals(BigInteger.ONE)) {
 			return n;
 		}else if(pow.equals(BigInteger.ZERO)) {

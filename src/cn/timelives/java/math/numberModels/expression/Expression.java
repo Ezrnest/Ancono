@@ -3,8 +3,8 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.ParserUtils;
 import cn.timelives.java.math.numberModels.api.Computable;
@@ -37,7 +37,7 @@ public final class Expression implements Computable,Serializable {
 	/**
 	 *
 	 */
-	Expression(Node root) {
+    public Expression(Node root) {
 		this.root = Objects.requireNonNull(root);
 	}
 
@@ -89,7 +89,7 @@ public final class Expression implements Computable,Serializable {
      * @param mc a expression calculator
      * @return a function
      */
-    public SVFunction<Expression> asFunction(String varName,ExprCalculator mc){
+    public SVFunction<Expression> asFunction(String varName, ExprCalculator mc) {
 	    return x-> mc.substitute(this,varName,x);
     }
 
@@ -108,7 +108,9 @@ public final class Expression implements Computable,Serializable {
 	 * <h3>Variables:</h3>
 	 * The expression
 	 * <h3>Functions:</h3>
-	 *
+     * All the basic math functions are included and will be recognized. Also, customized functions can
+     * be recognized with a '_' suffix, such as myFunction_(x). All the letter in front of _ directly will
+     * be parsed to the name of the function.
 	 * @param expr
 	 * @return
 	 */
@@ -162,7 +164,7 @@ public final class Expression implements Computable,Serializable {
 			return n;
 		}
 
-		Node partPoly(String str,int offset,Node.NodeWithChildren parent){
+        Node partPoly(String str, int offset, Node.NodeWithChildren parent) {
 		    return Node.newPolyNode(parseWithExceptionDetail(str,offset),parent);
         }
 
@@ -204,7 +206,7 @@ public final class Expression implements Computable,Serializable {
             }
 		}
 
-		Node partMultiply(String str,int offset,Node.NodeWithChildren parent){
+        Node partMultiply(String str, int offset, Node.NodeWithChildren parent) {
             if(!str.contains("(")){
                 return partPoly(str,offset,parent);
             }
@@ -328,7 +330,7 @@ public final class Expression implements Computable,Serializable {
             return new WithInt<>(endPos-fName.length(),fName);
         }
 
-        Node parseToFunction(String fName,String sub,int offset,int nextLeft){
+        Node parseToFunction(String fName, String sub, int offset, int nextLeft) {
             String[] ss = StringSup.splitWithMatching(sub,',');
             if(ss.length==1){
                 //single
@@ -349,7 +351,7 @@ public final class Expression implements Computable,Serializable {
             }
         }
 
-        Node buildMultiply(Multinomial m,List<Node> nNode,List<Node> dNode){
+        Node buildMultiply(Multinomial m, List<Node> nNode, List<Node> dNode) {
             if(dNode.isEmpty()){
                 return Node.wrapNodeAM(false,nNode,m);
             }else{
@@ -359,7 +361,7 @@ public final class Expression implements Computable,Serializable {
             }
         }
 
-	    Multinomial parseRemaining(String expr,int offset){
+        Multinomial parseRemaining(String expr, int offset) {
 		    char c = expr.charAt(0);
 		    if(c == '/' || c == '*'){
 		        expr = "1" + expr;

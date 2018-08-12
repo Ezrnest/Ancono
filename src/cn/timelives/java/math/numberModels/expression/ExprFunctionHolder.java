@@ -15,10 +15,10 @@ import java.util.*;
  *
  */
 public final class ExprFunctionHolder {
-	
-	private final Map<String,PolyFunctionS> singleFunctions;
-	private final Map<String,PolyFunctionB> binaryFunctions;
-	private final Map<String,PolyFunctionM> multiFunctions;
+
+    private final Map<String, PolyFunctionS> singleFunctions;
+    private final Map<String, PolyFunctionB> binaryFunctions;
+    private final Map<String, PolyFunctionM> multiFunctions;
 	private final Set<ExprFunction> functions;
 	
 	/**
@@ -28,7 +28,7 @@ public final class ExprFunctionHolder {
 		singleFunctions = new HashMap<>();
 		binaryFunctions = new HashMap<>();
 		multiFunctions = new HashMap<>();
-		functions = new TreeSet<>((ExprFunction x,ExprFunction y)-> x.getName().compareTo(y.getName()));
+        functions = new TreeSet<>((ExprFunction x, ExprFunction y) -> x.getName().compareTo(y.getName()));
 	}
 	
 	void addExprFunction(ExprFunction f) {

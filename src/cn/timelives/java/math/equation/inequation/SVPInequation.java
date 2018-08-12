@@ -21,16 +21,16 @@ import java.util.function.Function;
 
 /**
  * SVPEquation stands for <i>single variable polynomial inequation</i>.
- * Generally, the inequation can be shown as 
+ * Generally, the inequation can be shown as
  * <pre>an*x^n + ... + a1*x + a0 <i>op</i> 0 , (an!=0,n>=0)</pre>
- * where <i>op</i> is one of the inequation operation(Inequation{@link #getInquationType()}).
+ * where <i>op</i> is one of the inequation operation(Inequation{@link #getOperationType()} ()}).
  * @author liyicheng
  * 2017-10-06 09:33
  *
  */
 public abstract class SVPInequation<T> extends SVInquation<T> implements Polynomial<T> {
 	protected final int mp;
-	
+
 	/**
 	 * @param mc
 	 * @param op
@@ -47,13 +47,13 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		return mp;
 	}
 	/**
-	 * Determine whether the two inequations are equal, this method only 
-	 * compare the corresponding coefficient. 
-	 * <p>Therefore, for example, 
+	 * Determine whether the two inequations are equal, this method only
+	 * compare the corresponding coefficient.
+	 * <p>Therefore, for example,
 	 * {@literal 2x>0} and {@literal x>0} are considered to be not the same.
 	 * This assures that if two equations are equal, then the functions returned
-	 * by {@link #asFunction()} are equal. 
-	 * 
+	 * by {@link #asFunction()} are equal.
+	 *
 	 */
 	@Override
 	public boolean valueEquals(MathObject<T> obj) {
@@ -66,7 +66,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		SVPInequation<T> sv = (SVPInequation<T>) obj;
 		return op == sv.op && Polynomial.isEqual(this,sv, mc::isEqual);
 	}
-	
+
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
@@ -81,7 +81,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		SVPInequation<N> sv = (SVPInequation<N>) obj;
 		return op == sv.op && Polynomial.isEqual(this,sv, Utils.mappedIsEqual(mc, mapper));
 	}
-	
+
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#equals(java.lang.Object)
 	 */
@@ -96,7 +96,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		SVPInequation<?> sv = (SVPInequation<?>)obj;
 		return op == sv.op && Polynomial.isEqual(this, sv);
 	}
-	
+
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#hashCode()
 	 */
@@ -104,8 +104,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	public int hashCode() {
 		return op.hashCode()*31 + Polynomial.hashCodeOf(this);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
@@ -116,17 +116,15 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		sb.append(" 0");
 		return sb.toString();
 	}
-	
-	
-	
+
+
 	/*
 	 * @see cn.timelives.java.math.SingleVInquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
 	public abstract <N> SVPInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
-	
-	
-	
+
+
 	static class FromFunction<T> extends SVPInequation<T>{
 		final AbstractSVPFunction<T> f;
 		/**
@@ -144,7 +142,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		public T getCoefficient(int n) {
 			return f.getCoefficient(n);
 		}
-		
+
 		/*
 		 * @see cn.timelives.java.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
@@ -160,7 +158,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			return f.apply(x);
 		}
 	}
-	
+
 	/**
 	 * Linear inequation.
 	 * <pre>ax + b <i>op</i> 0</pre>
@@ -181,7 +179,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			super(mc, op, 1);
 			this.f = f;
 		}
-		
+
 		/*
 		 * @see cn.timelives.java.math.algebra.Polynomial#getCoefficient(int)
 		 */
@@ -189,7 +187,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		public T getCoefficient(int n) {
 			return f.getCoefficient(n);
 		}
-		
+
 		/*
 		 * @see cn.timelives.java.math.equation.SVCompareStructure#compute(java.lang.Object)
 		 */
@@ -197,7 +195,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		public T compute(T x) {
 			return f.apply(x);
 		}
-		
+
 		/*
 		 * @see cn.timelives.java.math.equation.CompareStructure#asFunction()
 		 */
@@ -213,10 +211,10 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		public <N> LinearInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
 			return new LinearInequation<>(newCalculator, op, f.mapTo(mapper, newCalculator));
 		}
-		
+
 		private Interval<T> solution;
-		
-		
+
+
 		/**
 		 * Returns an interval union representing the solution of this linear equation.
 		 */
@@ -254,7 +252,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 				}
 				}
 			}
-			
+
 			return solution;
 		}
 	}
@@ -371,7 +369,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 				}
 				solution = solu;
 			}
-			
+
 			return solution;
 		}
 
@@ -382,12 +380,12 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		public <N> QuadraticInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
 			return new QuadraticInequation<>(newCalculator, op, f.mapTo(mapper, newCalculator));
 		}
-		
+
 	}
-	
+
 	/**
-	 * Creates an SVPInequation from a list of coefficients. The index of the 
-	 * coefficient is considered as the corresponding power of {@code x}. 
+	 * Creates an SVPInequation from a list of coefficients. The index of the
+	 * coefficient is considered as the corresponding power of {@code x}.
 	 * For example, a list [1,2,3] represents for {@literal 3x^2+2x+1}.
 	 * @param coes a list of coefficient
 	 * @param op the inequation operation type
@@ -402,9 +400,9 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 				throw new NullPointerException("null in list: index = "+i);
 			}
 		}
-		return new FromFunction<>(mc, op, AbstractSVPFunction.valueOf(coes, mc));
+		return new FromFunction<>(mc, op, AbstractSVPFunction.Companion.valueOf(coes, mc));
 	}
-	
+
 	/**
 	 * Creates an linear inequation.
 	 * <pre>ax + b <i>op</i> 0</pre>
@@ -416,7 +414,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 * @return a new LinearInequation
 	 */
 	public static <T> LinearInequation<T> linear(T a,T b,Type op,MathCalculator<T> mc){
-		return new LinearInequation<>(mc, op, AbstractSVPFunction.linear(a, b, mc));
+		return new LinearInequation<>(mc, op, AbstractSVPFunction.Companion.linear(a, b, mc));
 	}
 	/**
 	 * Creates a new quadratic inequation.
@@ -430,9 +428,9 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 * @return a new QuadraticInequation
 	 */
 	public static <T> QuadraticInequation<T> quadratic(T a,T b,T c,Type op,MathCalculator<T> mc){
-		return new QuadraticInequation<>(mc, op, AbstractSVPFunction.quadratic(a, b, c, mc));
+		return new QuadraticInequation<>(mc, op, AbstractSVPFunction.Companion.quadratic(a, b, c, mc));
 	}
-	
+
 }
 
 	

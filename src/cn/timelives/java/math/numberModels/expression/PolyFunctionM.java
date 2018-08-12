@@ -13,7 +13,7 @@ import java.util.function.Function;
  * 2017-11-25 19:13
  *
  */
-public interface PolyFunctionM extends Function<Multinomial[],Multinomial>{
+public interface PolyFunctionM extends Function<Multinomial[], Multinomial> {
 	/**
 	 * Returns the result of applying the function, or throws UnsupportedCalculationException if the result cannot be 
 	 * returned as a Multinomial.

@@ -26,8 +26,8 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	public SimpleStrategy(Set<String> tags, Set<Type> types, String fname) {
 		super(tags, types, fname);
 	}
-	
-	public SimpleStrategy(Set<String> tags, Set<Type> types, String fname,String description) {
+
+	public SimpleStrategy(Set<String> tags, Set<Type> types, String fname, String description) {
 		super(tags, types, fname, description);
 	}
 	
@@ -53,7 +53,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param c1
 	 * @param c2
 	 */
-	protected final void setChildren(BiNode f,Node c1,Node c2) {
+	protected final void setChildren(BiNode f, Node c1, Node c2) {
 		f.c1 = c1;
 		f.c2 = c2;
 	}
@@ -62,7 +62,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param n
 	 * @param p
 	 */
-	protected final void setPolynomial(Node n,Multinomial p) {
+	protected final void setPolynomial(Node n, Multinomial p) {
 		Node.setPolynomialPart(n, p);
 	}
 	/**
@@ -70,11 +70,11 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param f
 	 * @param c
 	 */
-	protected final void setChildren(SingleNode f,Node c) {
+	protected final void setChildren(SingleNode f, Node c) {
 		f.child = c;
 	}
-	
-	protected final void setParent(Node n,NodeWithChildren parent) {
+
+	protected final void setParent(Node n, NodeWithChildren parent) {
 		n.parent = parent;
 	}
 	
@@ -87,7 +87,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param p a polynomial, or null.
 	 * @return a node, either of type Add or Multiply.
 	 */
-	protected final CombinedNode wrapNodeAM(boolean isAdd,List<Node> nodes,Multinomial p) {
+	protected final CombinedNode wrapNodeAM(boolean isAdd, List<Node> nodes, Multinomial p) {
 		return Node.wrapNodeAM(isAdd, nodes, p);
 	}
 	/**
@@ -98,7 +98,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param n the node to wrap in
 	 * @return a new SFunction node
 	 */
-	protected final SFunction wrapNodeSF(String fname,Node n) {
+	protected final SFunction wrapNodeSF(String fname, Node n) {
 		return Node.wrapNodeSF(fname, n);
 	}
 	/**
@@ -109,7 +109,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param deno the node as the denominator
 	 * @return a new Fraction node
 	 */
-	protected final Fraction wrapNodeFraction(Node nume,Node deno) {
+	protected final Fraction wrapNodeFraction(Node nume, Node deno) {
 		return Node.wrapNodeFraction(nume, deno);
 	}
 	/**
@@ -122,7 +122,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param sortable determines whether the order of the argument can be changed.
 	 * @return a new DFunction node
 	 */
-	protected final DFunction wrapNodeDF(String fname,Node n1,Node n2,boolean sortable) {
+	protected final DFunction wrapNodeDF(String fname, Node n1, Node n2, boolean sortable) {
 		return Node.wrapNodeDF(fname, n1, n2);
 	}
 	/**
@@ -134,31 +134,28 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param sortable determines whether the order of the argument can be changed.
 	 * @return a new MFunction node
 	 */
-	protected final MFunction wrapNodeMF(String fname,List<Node> nodes,boolean sortable) {
+	protected final MFunction wrapNodeMF(String fname, List<Node> nodes, boolean sortable) {
 		return Node.wrapNodeMF(fname, nodes, sortable);
 	}
 	
 	protected final MultinomialCalculator getMultiCalculator(ExprCalculator mc) {
 		return mc.pc;
 	}
-	
-	
-	
-	
-	
-	protected final Node simplifyNode(Node n,int depth,ExprCalculator mc) {
+
+
+	protected final Node simplifyNode(Node n, int depth, ExprCalculator mc) {
 		return mc.simplify(n,depth);
 	}
-	
-	protected final Node simplifyPoly(Node n,int depth,ExprCalculator mc) {
+
+	protected final Node simplifyPoly(Node n, int depth, ExprCalculator mc) {
 		return mc.simplifyPolynomial(n, depth);
 	}
-	
-	protected final void sortNode(Node n,int depth,ExprCalculator mc) {
+
+	protected final void sortNode(Node n, int depth, ExprCalculator mc) {
 		mc.doSort(n, depth);
 	}
-	
-	protected final Node simplifyWithStrategy(Node n,int depth,ExprCalculator mc) {
+
+	protected final Node simplifyWithStrategy(Node n, int depth, ExprCalculator mc) {
 		return mc.simplifyWithStrategy(n, depth);
 	}
 

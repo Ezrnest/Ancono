@@ -44,7 +44,7 @@ public class CodePlace {
 	public void m1() {
 		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
 		// = Line.twoPoint(
-		// Fraction.valueOf(3),Fraction.valueOf(4), Fraction.ZERO,Fraction.ZERO,
+		// Fraction.Companion.valueOf(3),Fraction.Companion.valueOf(4), Fraction.ZERO,Fraction.ZERO,
 		// mc);
 		// print(l1);
 		// information participation
@@ -135,7 +135,7 @@ public class CodePlace {
 	 */
 	Point<Fraction> a, b, c, d, e, f, g, m, n, o, p;
 	Line<Fraction> l1, l2, l3, l4, l5, l6, l;
-	
+
 	public void m6() {
 		l1 = Line.parallelX(Fraction.Companion.getZERO(), mc);
 		a = of(5, 2);
@@ -152,7 +152,7 @@ public class CodePlace {
 		print(l2.symmetryPoint(of(2,0)));
 		print(l2.symmetryPoint(of(0,-1)));
 	}
-	
+
 	public void m8() {
 		l1 = of(1,-2,1);
 		l2 = of(1,0,-1);
@@ -736,7 +736,7 @@ public class CodePlace {
 
 	/**
 	 * Returns a general triangle: A(d[x1],d[y1])...
-	 * 
+	 *
 	 * @return
 	 */
 	public Triangle<FracPoly> generalTriangle() {
@@ -992,7 +992,7 @@ public class CodePlace {
 
 		// print(result,16);
 		// print(result*result,16);
-		// print(Fraction.valueOfDouble(result*result, 1000));
+		// print(Fraction.Companion.valueOfDouble(result*result, 1000));
 	}
 
 	private static final ExprCalculator ec = new ExprCalculator();

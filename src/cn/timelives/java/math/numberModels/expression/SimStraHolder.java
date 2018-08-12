@@ -17,10 +17,10 @@ import java.util.*;
 public final class SimStraHolder {
 	
 	private final List<SimplificationStrategy> generalTypes;
-	private final EnumMap<Node.Type, Pair<List<SpecificStrategy>, Map<String, List<SpecificStrategy>>>> specifices;
+	private final EnumMap<Type, Pair<List<SpecificStrategy>, Map<String, List<SpecificStrategy>>>> specifices;
 	private final List<TaggedStrategy> tagged;
 	/**
-	 * 
+	 *
 	 */
 	public SimStraHolder() {
 		generalTypes = new ArrayList<>();
@@ -70,8 +70,8 @@ public final class SimStraHolder {
 			}
 		}
 	}
-	
-	public List<SimplificationStrategy> getStrategies(Node node,Set<String> tags){
+
+	public List<SimplificationStrategy> getStrategies(Node node, Set<String> tags) {
 		List<SimplificationStrategy> list = new ArrayList<>(generalTypes.size()+5);
 		list.addAll(generalTypes);
 		for(TaggedStrategy ts : tagged) {
@@ -94,10 +94,9 @@ public final class SimStraHolder {
 		}
 		return list;
 	}
-	
-	
-	
-	private void addAfterCheckTags(Set<String> tags,List<? extends SimplificationStrategy> slist,List<SimplificationStrategy> list) {
+
+
+	private void addAfterCheckTags(Set<String> tags, List<? extends SimplificationStrategy> slist, List<SimplificationStrategy> list) {
 		if(slist.isEmpty()) {
 			return;
 		}
@@ -161,7 +160,7 @@ public final class SimStraHolder {
 		return true;
 	}
 
-	private Node performAfterCheckTags(Set<String> tags,List<? extends SimplificationStrategy> slist,final Node node,ExprCalculator mc) {
+	private Node performAfterCheckTags(Set<String> tags, List<? extends SimplificationStrategy> slist, final Node node, ExprCalculator mc) {
 		if(slist.isEmpty()) {
 			return node;
 		}
@@ -187,7 +186,7 @@ public final class SimStraHolder {
 	 * @param tags
 	 * @return
 	 */
-	Node performSimplification(final Node node,Set<String> tags,ExprCalculator mc) {
+	Node performSimplification(final Node node, Set<String> tags, ExprCalculator mc) {
 		Node result = node;
 		Type ty = node.getType();
 		Pair<List<SpecificStrategy>, Map<String, List<SpecificStrategy>>> p = specifices.get(ty);

@@ -7,6 +7,7 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	/**
 	 */
 	@Override
-	public <N> SingletonSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> SingletonSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new SingletonSet<>(newCalculator,mapper.apply(element));
 	}
 
@@ -84,7 +85,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	 */
 	@Override
 	public boolean contains(T t) {
-		return mc.isEqual(element, t);
+        return getMc().isEqual(element, t);
 	}
 	/**
 	 */
@@ -93,7 +94,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 		ArrayList<T> list = new ArrayList<>(2);
 		list.add(this.element);
 		list.add(element);
-		return new CollectionSet<>(mc, list);
+        return new CollectionSet<>(getMc(), list);
 	}
 	/**
 	 * Gets the element.
@@ -109,7 +110,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 	 * @see MathObject#valueEquals(MathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}
@@ -117,15 +118,15 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
 			return false;
 		}
 		AbstractLimitedSet<T> ls = (AbstractLimitedSet<T>) obj;
-		return ls.size()==1 && mc.isEqual(element, ls.get(0));
+        return ls.size() == 1 && getMc().isEqual(element, ls.get(0));
 	}
 
 	/**
 	 * @see MathObject#toString(NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
-		return "{"+nf.format(element, mc)+"}";
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        return "{" + nf.format(element, getMc()) + "}";
 	}
 
 }

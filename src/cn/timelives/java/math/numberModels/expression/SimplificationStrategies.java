@@ -131,7 +131,7 @@ public final class SimplificationStrategies {
 				return null;
 			}
 			//try merge
-			TreeMap<Node,List<Node>> map = new TreeMap<>(mc.nc);
+            TreeMap<Node, List<Node>> map = new TreeMap<>(mc.getNodeComparator());
 			for(Node n: children) {
 				if(n.getType() == Type.FRACTION) {
 					Fraction f = (Fraction)n;
@@ -158,7 +158,7 @@ public final class SimplificationStrategies {
 				children.add(f);
 				f.parent = node;
 			}
-			return mc.simplify(node, 2);
+            return mc.simplify(node, 2);
 		}
 		
 		/**
@@ -219,8 +219,8 @@ public final class SimplificationStrategies {
 			}
 			
 			List<Multinomial> list = Arrays.asList(pnume,pdeno);
-			list = mc.ps.simplify(list);
-			if(!sim && mc.pc.isEqual(pnume, list.get(0))){
+            list = mc.getPolynomialSimplifier().simplify(list);
+            if (!sim && mc.getMultinomialCalculator().isEqual(pnume, list.get(0))) {
 				//nothing is changed.
 				return null;
 			}
@@ -242,7 +242,7 @@ public final class SimplificationStrategies {
     static boolean simplifyDivideNode(Multiply m1, Multiply m2, ExprCalculator mc) {
 		List<Node> c1 = m1.children;
 		List<Node> c2 = m2.children;
-		Comparator<Node> nc = mc.nc;
+        Comparator<Node> nc = mc.getNodeComparator();
 		m1.doSort(nc);
 		m2.doSort(nc);
 		boolean sim = false;
@@ -565,7 +565,7 @@ public final class SimplificationStrategies {
 				}
 				List<Node> nChildren = new ArrayList<>(add);
 				Multinomial p = Node.getPolynomialOrDefault(node, mc);
-				MultinomialCalculator pc = mc.pc;
+                MultinomialCalculator pc = mc.getMultinomialCalculator();
 				for (Node n : children) {
 					if (n.getType() == Type.ADD) {
 						Add sub = (Add) n;
@@ -602,7 +602,7 @@ public final class SimplificationStrategies {
 				}
 				List<Node> nChildren = new ArrayList<>(num);
 				Multinomial p = Node.getPolynomialOrDefault(node, mc);
-				MultinomialCalculator pc = mc.pc;
+                MultinomialCalculator pc = mc.getMultinomialCalculator();
 				for (Node n : children) {
 					if (n.getType() == Type.MULTIPLY) {
 						Multiply sub = (Multiply) n;
@@ -656,10 +656,10 @@ public final class SimplificationStrategies {
 					return null;
 				}
 				List<Node> children = node.children;
-				TreeMap<List<Node>, Multinomial> map = new TreeMap<>(CollectionSup.collectionComparator(mc.nc));
+                TreeMap<List<Node>, Multinomial> map = new TreeMap<>(CollectionSup.collectionComparator(mc.getNodeComparator()));
 				boolean collected = false;
-				MultinomialCalculator pc = mc.pc;
-				Multinomial pOne = mc.pOne;
+                MultinomialCalculator pc = mc.getMultinomialCalculator();
+                Multinomial pOne = mc.getPOne();
 				// separate to
 				for (Node n : children) {
 					Pair<Multinomial, List<Node>> p = Node.unwrapMultiplyList(n, mc);
@@ -789,7 +789,7 @@ public final class SimplificationStrategies {
                 if (!node.getFunctionName().equals("sqr")) {
 					throw new AssertionError();
 				}
-				Node n =  Node.wrapNodeDF("exp", node.child, Node.newPolyNode(mc.pc.divideLong(mc.pOne, 2l), null));
+                Node n = Node.wrapNodeDF("exp", node.child, Node.newPolyNode(mc.getMultinomialCalculator().divideLong(mc.getPOne(), 2l), null));
 				n.parent = node;
 				return n;
 			}
@@ -819,7 +819,7 @@ public final class SimplificationStrategies {
 			protected Node simplifyDFunction(DFunction node, ExprCalculator mc) {
 				Node c1 = node.c1,
 						c2 = node.c2;
-				if(Node.isPolynomial(c1,mc.pc.constantValue(MathCalculator.STR_E),mc)) {
+                if (Node.isPolynomial(c1, mc.getMultinomialCalculator().constantValue(MathCalculator.STR_E), mc)) {
 					return Node.wrapNodeSF("exp", c2);
 				}
 				if(Node.isFunctionNode(c1, "exp", 2)) {
@@ -848,7 +848,7 @@ public final class SimplificationStrategies {
 			//exp(x,y) * exp(x,z) = exp(x,y+z)
 			@Override
 			protected List<Pair<Node, BigInteger>> simplify(List<Pair<Node, BigInteger>> nodes, ExprCalculator ec) {
-				TreeMap<Node,List<Pair<Node,BigInteger>>> map = new TreeMap<>(ec.nc);
+                TreeMap<Node, List<Pair<Node, BigInteger>>> map = new TreeMap<>(ec.getNodeComparator());
 				for(Pair<Node,BigInteger> p : nodes) {
 					DFunction df = (DFunction) p.getFirst();
 					CollectionSup.accumulateMap(map, df.c1, new Pair<>(df.c2,p.getSecond()),ArrayList::new);

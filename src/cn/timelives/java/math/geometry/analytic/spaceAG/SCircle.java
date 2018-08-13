@@ -7,6 +7,7 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Circle;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -34,7 +35,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 */
 	@Override
 	public boolean contains(SPoint<T> p) {
-		return pl.contains(p) && mc.compare(o.distanceSq(p), r2) <= 0;
+        return pl.contains(p) && getMc().compare(o.distanceSq(p), r2) <= 0;
 	}
 	/**
 	 * Determines whether the point is on the edge of the circle.
@@ -42,7 +43,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @return
 	 */
 	public boolean isOnEgde(SPoint<T> p){
-		return pl.contains(p) && mc.compare(o.distanceSq(p), r2) == 0;
+        return pl.contains(p) && getMc().compare(o.distanceSq(p), r2) == 0;
 	}
 	
 	/**
@@ -52,7 +53,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @return square of x
 	 */
 	private T square(T x){
-		return mc.multiply(x, x);
+        return getMc().multiply(x, x);
 	}
 	/**
 	 * Get the center of this circle.
@@ -69,7 +70,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 */
 	public T getRadius(){
 		if(r==null){
-			r = mc.squareRoot(r2);
+            r = getMc().squareRoot(r2);
 		}
 		return r;
 	}
@@ -77,10 +78,10 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * Gets the diameter of this circle.This method usually requires the {@code squareRoot} method is 
 	 * available in the math calculator.
 	 * @return the diameter of this circle.
-	 * @see Circle#radius()
+     * @see Circle#getRadius()
 	 */
 	public T getDiameter(){
-		return mc.multiplyLong(getRadius(), 2l);
+        return getMc().multiplyLong(getRadius(), 2l);
 	}
 	/**
 	 * Computes the corresponding arc length of the given angle.This method will not check whether 
@@ -89,7 +90,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @return the length of the arc
 	 */
 	public T getArcLength(T angle){
-		return mc.multiply(angle, getRadius());
+        return getMc().multiply(angle, getRadius());
 	}
 	
 	
@@ -99,8 +100,8 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @return the area of this circle
 	 */
 	public T getArea(){
-		T pi = mc.constantValue(MathCalculator.STR_PI);
-		return mc.multiply(pi, r2);
+        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        return getMc().multiply(pi, r2);
 	}
 	/**
 	 * Get the perimeter of this circle,which is equal to {@literal C = 2πr}.This method requires the 
@@ -108,8 +109,8 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @return the perimeter of this circle.
 	 */
 	public T getPerimeter(){
-		T pi = mc.constantValue(MathCalculator.STR_PI);
-		return mc.multiply(mc.multiplyLong(pi, 2l), getRadius());
+        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        return getMc().multiply(getMc().multiplyLong(pi, 2l), getRadius());
 	}
 	/**
 	 * Assume {@code d} is the distance of the center of this circle to a chord,
@@ -120,19 +121,19 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 */
 	public T getChordLength(T d){
 		T d2 = square(d);
-		if(mc.compare(d2, r2)>0){
+        if (getMc().compare(d2, r2) > 0) {
 			return null;
 		}
-		return mc.multiplyLong(mc.squareRoot(mc.subtract(r2, d2)), 2l);
+        return getMc().multiplyLong(getMc().squareRoot(getMc().subtract(r2, d2)), 2l);
 	}
 	/**
 	 * Assume {@code d2} is the square of the distance of the center of this circle to a chord,
 	 * return the square of the length of the chord.
-	 * @param d square of distance
+     * @param d2 square of distance
 	 * @return the square of the length of the chord
 	 */
 	public T getChordLengthSq(T d2){
-		return mc.multiplyLong(mc.subtract(r2, d2), 4l);
+        return getMc().multiplyLong(getMc().subtract(r2, d2), 4l);
 	}
 	/**
 	 * Get the corresponding central angle of the chord whose length is {@code cl}.
@@ -147,7 +148,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 		if(an == null){
 			return null;
 		}
-		return mc.multiplyLong(an, 2l);
+        return getMc().multiplyLong(an, 2l);
 	}
 	/**
 	 * Get the corresponding circumference angle of the chord whose length is {@code cl}.
@@ -158,11 +159,11 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @return the angle of 
 	 */
 	public T getCircumAngle(T cl,MathFunction<T,T> arccos){
-		T l_2 = mc.divideLong(cl, 2l);
-		if(mc.compare(l_2, getRadius())>0){
+        T l_2 = getMc().divideLong(cl, 2l);
+        if (getMc().compare(l_2, getRadius()) > 0) {
 			return null;
 		}
-		return arccos.apply(mc.divide(l_2, r));
+        return arccos.apply(getMc().divide(l_2, r));
 	}
 	
 	/**
@@ -178,14 +179,14 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 			throw new IllegalArgumentException("Not on this plane");
 		}
 		T dis = o.distanceSq(p);
-		return mc.compare(dis, square(getRadius()));
+        return getMc().compare(dis, square(getRadius()));
 	}
 	
 	public Circle<T> toPlaneCircle(Plane.PlaneCoordinateConverter<T> pcc){
 		return pcc.toPlaneCircle(this);
 	}
-	
-	<N> void fillFields(SCircle<N> sc,Function<T,N> mapper){
+
+    private <N> void fillFields(SCircle<N> sc, Function<T, N> mapper) {
 		if(r != null){
 			sc.r = mapper.apply(r);
 		}
@@ -194,8 +195,9 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
-	public <N> SCircle<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    @NotNull
+    @Override
+    public <N> SCircle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		SCircle<N> sc = new SCircle<N>(newCalculator, 
 				o.mapTo(mapper, newCalculator), mapper.apply(r2), pl.mapTo(mapper, newCalculator));
 		fillFields(sc,mapper);
@@ -229,12 +231,12 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof SCircle){
 			SCircle<T> sp = (SCircle<T>) obj;
 			return pl.valueEquals(sp.pl) && 
 					o.valueEquals(sp.o) &&
-					mc.isEqual(r2,sp.r2);
+                    getMc().isEqual(r2, sp.r2);
 		}
 		return false;
 	}
@@ -243,12 +245,12 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof SCircle){
 			SCircle<N> sp = (SCircle<N>) obj;
 			return pl.valueEquals(sp.pl,mapper) && 
-					o.valueEquals(sp.o,mapper) && 
-					mc.isEqual(r2,mapper.apply(sp.r2));
+					o.valueEquals(sp.o,mapper) &&
+                    getMc().isEqual(r2, mapper.apply(sp.r2));
 		}
 		return false;
 	}

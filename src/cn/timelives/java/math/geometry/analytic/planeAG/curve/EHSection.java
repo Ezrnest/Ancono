@@ -47,7 +47,7 @@ public abstract class EHSection<T> extends ConicSection<T> {
 	 */
 	public T getEccentricity(){
 		if(e==null){
-			e = mc.divide(c, a);
+            e = getMc().divide(c, a);
 		}
 		return e;
 	}
@@ -107,7 +107,7 @@ public abstract class EHSection<T> extends ConicSection<T> {
 	 * @return square of x
 	 */
 	protected T square(T x){
-		return mc.multiply(x, x);
+        return getMc().multiply(x, x);
 	}
 	
 	/**
@@ -116,13 +116,13 @@ public abstract class EHSection<T> extends ConicSection<T> {
 	 */
 	public List<Point<T>> foci(){
 		if(f1==null){
-			T zero = mc.getZero();
+            T zero = getMc().getZero();
 			if(onX){
-				f1 = new Point<>(mc,mc.negate(c),zero);
-				f2 = new Point<>(mc,c,zero);
+                f1 = new Point<>(getMc(), getMc().negate(c), zero);
+                f2 = new Point<>(getMc(), c, zero);
 			}else{
-				f1 = new Point<>(mc,zero,mc.negate(c));
-				f2 = new Point<>(mc,zero,c);
+                f1 = new Point<>(getMc(), zero, getMc().negate(c));
+                f2 = new Point<>(getMc(), zero, c);
 			}
 		}
 		List<Point<T>> list = new ArrayList<>(2);
@@ -143,15 +143,15 @@ public abstract class EHSection<T> extends ConicSection<T> {
 	 * @return a list of lines.
 	 */
 	public List<Line<T>> directrix(){
-		T t = mc.divide(a2, c);
-		T tn = mc.negate(t);
+        T t = getMc().divide(a2, c);
+        T tn = getMc().negate(t);
 		List<Line<T>> list = new ArrayList<>(2);
 		if(onX){
-			list.add(Line.parallelY(t, mc));
-			list.add(Line.parallelY(tn, mc));
+            list.add(Line.parallelY(t, getMc()));
+            list.add(Line.parallelY(tn, getMc()));
 		}else{
-			list.add(Line.parallelX(t, mc));
-			list.add(Line.parallelX(tn, mc));
+            list.add(Line.parallelX(t, getMc()));
+            list.add(Line.parallelX(tn, getMc()));
 		}
 		return list;
 	}
@@ -207,7 +207,7 @@ public abstract class EHSection<T> extends ConicSection<T> {
 	 */
 	@Override
 	public Pair<TransMatrix<T>, ConicSection<T>> normalizeAndTrans() {
-		return new Pair<>(TransMatrix.identityTrans(mc),this);
+        return new Pair<>(TransMatrix.identityTrans(getMc()), this);
 	}
 	/**
 	 * Returns {@code this} because it is already the normalized form.
@@ -222,7 +222,7 @@ public abstract class EHSection<T> extends ConicSection<T> {
 	 */
 	@Override
 	public Pair<PAffineTrans<T>, ConicSection<T>> toStandardFormAndTrans() {
-		return new Pair<>(PAffineTrans.identity(mc),this);
+        return new Pair<>(PAffineTrans.identity(getMc()), this);
 	}
 	
 	/**

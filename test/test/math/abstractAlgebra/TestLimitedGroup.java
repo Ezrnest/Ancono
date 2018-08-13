@@ -10,6 +10,7 @@ import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.TransMatrix;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.util.function.Function;
@@ -35,6 +36,13 @@ public class TestLimitedGroup {
 	public void test1() {
 		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
 		GroupCalculator<TransMatrix<Integer>> matmc = new GroupCalculator<TransMatrix<Integer>>() {
+			@NotNull
+			@Override
+			@SuppressWarnings("unchecked")
+			public TransMatrix<Integer> gpow(@NotNull TransMatrix<Integer> x, long n) {
+				return (TransMatrix<Integer>) DefaultImpls.gpow(this, x, n);
+			}
+
 			@Override
 			public boolean isEqual(TransMatrix<Integer> x, TransMatrix<Integer> y) {
 				return x.valueEquals(y);

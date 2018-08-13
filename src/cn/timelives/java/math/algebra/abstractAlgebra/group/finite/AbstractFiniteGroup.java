@@ -47,7 +47,7 @@ public abstract class AbstractFiniteGroup<T> implements FiniteGroup<T, AbstractF
 	
 	protected MathCalculator<T> getWrappedCalculator(){
 		if(mc==null) {
-			mc = GroupCalculators.toMathCalculatorAdd(gc);
+            mc = GroupCalculators.INSTANCE.toMathCalculatorAdd(gc);
 		}
 		return mc;
 	}
@@ -195,7 +195,7 @@ public abstract class AbstractFiniteGroup<T> implements FiniteGroup<T, AbstractF
 	 */
 	@Override
 	public FiniteSet<AbstractFiniteGroup<T>> getSubgroups() {
-		return MathSets.asSet(EqualPredicate.naturalEqual(),this,FiniteGroups.identityGroup(gc));
+        return MathSets.asSet(EqualPredicate.Companion.naturalEqual(), this, FiniteGroups.identityGroup(gc));
 	}
 	
 	/*

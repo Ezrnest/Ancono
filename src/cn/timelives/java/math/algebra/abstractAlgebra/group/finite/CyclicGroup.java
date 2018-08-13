@@ -9,6 +9,7 @@ import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.Printer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -86,7 +87,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
             }
             n+= generator;
         }
-        return MathSets.fromCollection(list,EqualPredicate.naturalEqual());
+        return MathSets.fromCollection(list, EqualPredicate.Companion.naturalEqual());
     }
 
     public FiniteSet<CyclicGroup> getSubgroupsAsCyclic(){
@@ -99,7 +100,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
             }
         }
         list.add(this);
-        return MathSets.fromCollection(list,EqualPredicate.naturalEqual());
+        return MathSets.fromCollection(list, EqualPredicate.Companion.naturalEqual());
     }
 
     /**
@@ -142,6 +143,12 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
         @Override
         public boolean isEqual(Integer x, Integer y) {
             return x.equals(y);
+        }
+
+        @NotNull
+        @Override
+        public Integer gpow(@NotNull Integer x, long n) {
+            return (Integer) GroupCalculator.DefaultImpls.gpow(this, x, n);
         }
     }
 

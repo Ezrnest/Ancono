@@ -4,13 +4,13 @@ import cn.timelives.java.math.MathUtils
 import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix
+import cn.timelives.java.math.numberModels.api.FeildNumberModel
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.utilities.ArraySup
 import java.io.Serializable
 
 import java.util.ArrayList
 import java.util.regex.Pattern
-
 
 
 /**
@@ -51,7 +51,7 @@ internal constructor(
          * Gets the sign number of this Fraction.
          * @return sign number
          */
-        val signum: Int) : Number(), Comparable<Fraction>,Serializable {
+        val signum: Int) : Number(), FeildNumberModel<Fraction>, Comparable<Fraction>, Serializable {
 
     /**
      * Determines whether this fraction is an integer.
@@ -148,7 +148,6 @@ internal constructor(
     }
 
 
-
     /**
      * Return the value of `this / num`
      * @param num divider,zero is not allowed.
@@ -178,7 +177,7 @@ internal constructor(
      * Return the value of `-this `
      * @return `-this `
      */
-    fun negative(): Fraction {
+    override fun negate(): Fraction {
         return if (this.signum == 0) ZERO else Fraction(this.numerator, this.denominator, -this.signum)
     }
 
@@ -187,7 +186,7 @@ internal constructor(
      * @return `1/this`
      * @throws IllegalArgumentException if this == 0.
      */
-    fun reciprocal(): Fraction {
+    override fun reciprocal(): Fraction {
         if (this.signum == 0) {
             throw ArithmeticException("Zero to reciprocal")
         }
@@ -196,43 +195,42 @@ internal constructor(
 
     /**
      * Return the value of `this * fra`
-     * @param fra another fraction
+     * @param y another fraction
      * @return `this * fra`
      */
-    fun multiply(fra: Fraction): Fraction {
-        if (this.signum == 0 || fra.signum == 0) {
+    override fun multiply(y: Fraction): Fraction {
+        if (this.signum == 0 || y.signum == 0) {
             return ZERO
         }
 
-        val n1D2 = gcdNumAndDen(this.numerator, fra.denominator)
-        val n2D1 = gcdNumAndDen(fra.numerator, this.denominator)
+        val n1D2 = gcdNumAndDen(this.numerator, y.denominator)
+        val n2D1 = gcdNumAndDen(y.numerator, this.denominator)
         return Fraction(
                 n1D2[0] * n2D1[0],
                 n1D2[1] * n2D1[1],
-                if (this.signum == fra.signum) 1 else -1)
+                if (this.signum == y.signum) 1 else -1)
     }
 
     /**
      * Return the value of `this / fra`
-     * @param fra divider
+     * @param y divider
      * @return `this / fra`
      * @throws IllegalArgumentException if fra == 0.
      */
-    fun divide(fra: Fraction): Fraction? {
-        if (fra.signum == 0) {
+    override fun divide(y: Fraction): Fraction {
+        if (y.signum == 0) {
             ExceptionUtil.divideByZero()
-            return null
         }
         if (this.signum == 0) {
             return ZERO
         }
         //exchange fra's numerator and denominator .
-        val n1D2 = gcdNumAndDen(this.numerator, fra.numerator)
-        val n2D1 = gcdNumAndDen(fra.denominator, this.denominator)
+        val n1D2 = gcdNumAndDen(this.numerator, y.numerator)
+        val n2D1 = gcdNumAndDen(y.denominator, this.denominator)
         return Fraction(
                 n1D2[0] * n2D1[0],
                 n1D2[1] * n2D1[1],
-                if (this.signum == fra.signum) 1 else -1)
+                if (this.signum == y.signum) 1 else -1)
     }
 
     /**
@@ -275,11 +273,11 @@ internal constructor(
 
     /**
      * Return the value of `this + frac`
-     * @param frac a fraction
+     * @param y a fraction
      * @return `this + frac`
      */
-    fun add(frac: Fraction): Fraction {
-        var num = this.signum.toLong() * this.numerator * frac.denominator + frac.signum.toLong() * frac.numerator * this.denominator
+    override fun add(y: Fraction): Fraction {
+        var num = this.signum.toLong() * this.numerator * y.denominator + y.signum.toLong() * y.numerator * this.denominator
         if (num == 0L) {
             return ZERO
         }
@@ -290,7 +288,7 @@ internal constructor(
         } else {
             signum = 1
         }
-        val den = MathUtils.lcm(denominator, frac.denominator)
+        val den = MathUtils.lcm(denominator, y.denominator)
         val nAd = gcdNumAndDen(num, den)
         return Fraction(nAd[0], nAd[1], signum)
     }
@@ -318,21 +316,16 @@ internal constructor(
         return Fraction(nAd[0], nAd[1], signum)
     }
 
-    operator fun times(x : Fraction) = multiply(x)
 
-    operator fun times(x : Long) = multiply(x)
+    operator fun times(y: Long) = multiply(y)
 
-    operator fun div(x : Fraction) = divide(x)
 
-    operator fun div(x : Long) = divide(x)
+    operator fun div(y: Long) = divide(y)
 
-    operator fun plus(x : Fraction) = add(x)
 
-    operator fun plus(x : Long) = add(x)
+    operator fun plus(y: Long) = add(y)
 
-    operator fun unaryMinus() = negative()
-
-    operator fun rem(x : Fraction) = remainder(x)
+    operator fun rem(y: Fraction) = remainder(y)
 
 
     /**
@@ -348,7 +341,6 @@ internal constructor(
         if (signum == 0) {
             return if (n == 0) {
                 ExceptionUtil.zeroExponent()
-                null
             } else {
                 Fraction.ZERO
             }
@@ -391,7 +383,6 @@ internal constructor(
         if (exp.signum == 0) {
             if (this.signum == 0) {
                 ExceptionUtil.zeroExponent()
-                return null
             }
             return Fraction.ONE
 
@@ -405,7 +396,6 @@ internal constructor(
             } else {
                 if (exp.denominator % 2 == 0L) {
                     ExceptionUtil.negativeSquare()
-                    return null
                 }
                 return Fraction.NEGATIVE_ONE
             }
@@ -468,14 +458,14 @@ internal constructor(
             return ZERO
         }
         val re = this.divide(divisor)
-        return Fraction.valueOf(re!!.toLong())
+        return Fraction.valueOf(re.toLong())
 
     }
 
     fun divideAndRemainder(divisor: Fraction): Array<Fraction> {
         val result0 = this.divideToIntegralValue(divisor)
         val result1 = this.minus(result0.multiply(divisor))
-        return arrayOf(result0,result1)
+        return arrayOf(result0, result1)
     }
 
     /**
@@ -576,79 +566,68 @@ internal constructor(
 
 
     class FractionCalculator : MathCalculatorAdapter<Fraction>() {
-        /* (non-Javadoc)
-		 * @see cn.timelives.java.utilities.math.MathCalculator#getNumberClass()
-		 */
-        override fun getNumberClass(): Class<Fraction> {
-            return Fraction::class.java
-        }
+        override val numberClass: Class<*> = Fraction::class.java
 
-        override fun isEqual(para1: Fraction, para2: Fraction): Boolean {
-            return para1 == para2
+        override fun isEqual(x: Fraction, y: Fraction): Boolean {
+            return x == y
         }
 
         override fun compare(para1: Fraction, para2: Fraction): Int {
             return para1.compareTo(para2)
         }
 
-        override fun isComparable(): Boolean {
-            return true
+        override val isComparable: Boolean = true
+
+        override fun add(x: Fraction, y: Fraction): Fraction {
+            return x.add(y)
         }
 
-        override fun add(para1: Fraction, para2: Fraction): Fraction {
-            return para1.add(para2)
-        }
-
-        override fun negate(para: Fraction): Fraction {
-            return para.negative()
+        override fun negate(x: Fraction): Fraction {
+            return x.negate()
         }
 
         override fun abs(para: Fraction): Fraction {
             return Fraction(para.numerator, para.denominator, 1)
         }
 
-        override fun subtract(para1: Fraction, para2: Fraction): Fraction {
-            return para1.minus(para2)
+        override fun subtract(x: Fraction, y: Fraction): Fraction {
+            return x.minus(y)
         }
 
-        override fun getZero(): Fraction {
-            return ZERO
-        }
+        override val zero: Fraction = ZERO
 
         override fun isZero(para: Fraction): Boolean {
             return ZERO == para
         }
 
-        override fun multiply(para1: Fraction, para2: Fraction): Fraction {
-            return para1.multiply(para2)
+        override fun multiply(x: Fraction, y: Fraction): Fraction {
+            return x.multiply(y)
         }
 
-        override fun divide(para1: Fraction, para2: Fraction): Fraction? {
-            return para1.divide(para2)
+        override fun divide(x: Fraction, y: Fraction): Fraction {
+            return x.divide(y)
         }
 
-        override fun getOne(): Fraction {
-            return ONE
+        override val one: Fraction = ONE
+
+        override fun reciprocal(x: Fraction): Fraction {
+            return x.reciprocal()
         }
 
-        override fun reciprocal(p: Fraction): Fraction {
-            return p.reciprocal()
+        override fun multiplyLong(x: Fraction, n: Long): Fraction {
+            return x.multiply(n)
         }
 
-        override fun multiplyLong(p: Fraction, l: Long): Fraction {
-            return p.multiply(l)
+        override fun divideLong(x: Fraction, n: Long): Fraction {
+            return x.divide(n)
         }
 
-        override fun divideLong(p: Fraction, l: Long): Fraction {
-            return p.divide(l)
-        }
-
-        override fun squareRoot(p: Fraction): Fraction {
-            if (p.signum == 0) {
+        override fun squareRoot(x: Fraction): Fraction {
+            if (x.signum == 0) {
                 return Fraction.ZERO
-            } else if (p.signum > 0) {
-                val noe = MathUtils.squareRootExact(p.numerator)
-                val deo = MathUtils.squareRootExact(p.denominator)
+            } else if (x.signum > 0) {
+                val noe = MathUtils.squareRootExact(x.numerator)
+                val deo = MathUtils.squareRootExact(x.denominator)
                 if (noe != -1L && deo != -1L) {
                     return Fraction(noe, deo, 1)
                 }
@@ -657,14 +636,14 @@ internal constructor(
             throw UnsupportedCalculationException()
         }
 
-        override fun pow(p: Fraction, exp: Long): Fraction {
-            var exp1 = exp
-            if (p.signum == 0) {
+        override fun pow(x: Fraction, n: Long): Fraction {
+            var exp1 = n
+            if (x.signum == 0) {
                 return if (exp1 == 0L) Fraction.ONE else Fraction.ZERO
             }
-            val signum = if (exp1 % 2 == 0L) 1 else p.signum
-            if (p.denominator == 1L && p.numerator == 1L) {
-                return if (signum == p.signum) p else p.negative()
+            val signum = if (exp1 % 2 == 0L) 1 else x.signum
+            if (x.denominator == 1L && x.numerator == 1L) {
+                return if (signum == x.signum) x else x.negate()
             }
             if (exp1 == 0L) {
                 return Fraction.ONE
@@ -673,11 +652,11 @@ internal constructor(
             var de: Long
             if (exp1 < 0) {
                 exp1 = -exp1
-                no = p.denominator
-                de = p.numerator
+                no = x.denominator
+                de = x.numerator
             } else {
-                no = p.numerator
-                de = p.denominator
+                no = x.numerator
+                de = x.denominator
             }
             var noR = 1L
             var deR = 1L

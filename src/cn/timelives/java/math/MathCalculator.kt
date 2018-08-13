@@ -1,24 +1,27 @@
-package cn.timelives.java.math;
+package cn.timelives.java.math
 
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator;
-import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 
-import java.util.Comparator;
+import java.util.Comparator
 
 /**
  * Describe a calculator that can calculator the basic operations for
  * number, this interface is create to give some math-based objects full
  * flexibility to all kind of numbers.
- * <p>
+ *
+ *
  * All methods in a math calculator should be consistent.No change should be
  * done to the number when any method is called.
- * <p>
+ *
+ *
  * All methods in this calculator may not be operational because of the limit of
  * number's format and so other reasons,so if necessary, an
- * {@linkplain UnsupportedCalculationException} can be thrown.For some special
+ * [UnsupportedCalculationException] can be thrown.For some special
  * operations, exceptional arithmetic condition may occur, so an
- * {@linkplain ArithmeticException} may be thrown.
- * <p>
+ * [ArithmeticException] may be thrown.
+ *
+ *
  * It is highly recommended that you should only create one instance of the math
  * calculator and pass it all through the calculation. This can keep the
  * calculation result from being different and in some FlexibleMathObject,such
@@ -27,61 +30,87 @@ import java.util.Comparator;
  * used(which means the calculator in Point may be used), so there may be
  * potential safety problems. Therefore, in a multiple-number-type task, you
  * should always be careful with the math calculator.
- * <p>
- * A MathCalculator naturally deals with numbers, so it is a subclass of {@link FieldCalculator}.
+ *
+ *
+ * A MathCalculator naturally deals with numbers, so it is a subclass of [FieldCalculator].
  * However, it is not strictly required all the operations(addition, multiplication..)
  * must return a number and throwing exceptions is acceptable.
  *
  * @param <T> the type of number to deal with
  * @author lyc
- */
-public interface MathCalculator<T> extends FieldCalculator<T>, Comparator<T> {
+</T> */
+interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
+
+    /**
+     * Determines whether this calculator supports `compare()` method.
+     *
+     * @return `true` if compare method is available.
+     */
+    val isComparable: Boolean
+
+    /**
+     * Return the value zero in this kind of number type.The returned number should
+     * be equal to `this.subtract(t,t)`.
+     *
+     * @return 0
+     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     */
+    override val zero: T
+
+    /**
+     * Return the value one in this kind of number type. The returned number should
+     * be equal to `this.divide(t,t)`.
+     *
+     * @return 1
+     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     */
+    override val one: T
+
+    /**
+     * Returns the class object of the number type operated by this MathCalculator.
+     *
+     * @return the class
+     */
+    val numberClass: Class<*>
 
     /**
      * Compare the two numbers and determines whether these two numbers are the
      * same.
      *
-     * <b> For any calculator, this method should be implemented.</b>
+     * ** For any calculator, this method should be implemented.**
+     *
+     * @param x a number
+     * @param y another number
+     * @return `true` if `para1 == para2`,otherwise `false`
+     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     */
+    override fun isEqual(x: T, y: T): Boolean
+
+    /**
+     * Compare the two numbers, return -1 if `para1 < para2 `, 0 if
+     * `para1==para2` , or 1 if `para1 > para2`.This method is
+     * recommended to be literally the same to the method `compareTo()` if the
+     * object `T` is comparable.
      *
      * @param para1 a number
      * @param para2 another number
-     * @return {@code true} if {@code para1 == para2},otherwise {@code false}
+     * @return -1 if `para1 < para2 `, 0 if `para1==para2` , or 1 if
+     * `para1 > para2`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
-    boolean isEqual(T para1, T para2);
-
-    /**
-     * Compare the two numbers, return -1 if {@code para1 < para2 }, 0 if
-     * {@code para1==para2} , or 1 if {@code para1 > para2}.This method is
-     * recommended to be literally the same to the method {@code compareTo()} if the
-     * object {@code T} is comparable.
-     *
-     * @param para1 a number
-     * @param para2 another number
-     * @return -1 if {@code para1 < para2 }, 0 if {@code para1==para2} , or 1 if
-     * {@code para1 > para2}
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     */
-    int compare(T para1, T para2);
-
-    /**
-     * Determines whether this calculator supports {@code compare()} method.
-     *
-     * @return {@code true} if compare method is available.
-     */
-    boolean isComparable();
+    override fun compare(para1: T, para2: T): Int
 
     /**
      * Add two parameters, this method is required to be commutative, so is it
-     * required that {@code add(t1,t2)=add(t2,t1)}.
+     * required that `add(t1,t2)=add(t2,t1)`.
      *
-     * @param para1 a number
-     * @param para2 another number
-     * @return {@code para1 + para2}
+     * @param x a number
+     * @param y another number
+     * @return `para1 + para2`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T add(T para1, T para2);
+    override fun add(x: T, y: T): T
 
     /**
      * Add the parameters,this method is equal to:
@@ -89,90 +118,82 @@ public interface MathCalculator<T> extends FieldCalculator<T>, Comparator<T> {
      * <pre>
      * T sum = getZero();
      * for (Object t : ps) {
-     * 	sum = add(sum, (T) t);
+     * sum = add(sum, (T) t);
      * }
      * return sum;
-     * </pre>
-     * <p>
+    </pre> *
+     *
+     *
      * The Object-type input array is to fit genetic types.
      *
      * @param ps an array of numbers to add
-     * @return the sum of {@code ps}
+     * @return the sum of `ps`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @SuppressWarnings("unchecked")
-    default T addX(Object... ps) {
-        T sum = getZero();
-        for (Object t : ps) {
-            sum = add(sum, (T) t);
+    fun addX(vararg ps: Any): T {
+        var sum = zero
+        for (t in ps) {
+            @Suppress("UNCHECKED_CAST")
+            sum = add(sum, t as T)
         }
-        return sum;
+        return sum
     }
 
     /**
      * Returns the negate of this number.
      *
-     * @param para a number
-     * @return {@code -para}
+     * @param x a number
+     * @return `-para`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T negate(T para);
+    override fun negate(x: T): T
 
     /**
      * Returns the absolute value of this number.
      *
      * @param para a number
-     * @return {@code |para|}
+     * @return `|para|`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T abs(T para);
+    fun abs(para: T): T
 
     /**
-     * Returns the result of {@code para1-para2},this method should return the same
-     * result with {@code add(para1,this.negate(para2))}.
+     * Returns the result of `para1-para2`,this method should return the same
+     * result with `add(para1,this.negate(para2))`.
      *
-     * @param para1 a number
-     * @param para2 another number
-     * @return {@code para1-para2}
+     * @param x a number
+     * @param y another number
+     * @return `para1-para2`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T subtract(T para1, T para2);
-
-    /**
-     * Return the value zero in this kind of number type.The returned number should
-     * be equal to {@code this.subtract(t,t)}.
-     *
-     * @return 0
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     */
-    T getZero();
+    override fun subtract(x: T, y: T): T
 
     /**
      * Determines whether the given parameter is zero.This method is set because the
      * high frequency of testing whether the number is zero in most math
      * calculations.
      *
-     * @return {@code true} if {@code para==zero}
+     * @return `true` if `para==zero`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
-    default boolean isZero(T para) {
-        return isEqual(getZero(), para);
+    open fun isZero(para: T): Boolean {
+        return isEqual(zero, para)
     }
 
     /**
-     * Returns the result of {@code para1 * para2}.
+     * Returns the result of `para1 * para2`.
      *
-     * @param para1 a number
-     * @param para2 another number
-     * @return {@code para1 * para2}
+     * @param x a number
+     * @param y another number
+     * @return `para1 * para2`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T multiply(T para1, T para2);
+    override fun multiply(x: T, y: T): T
 
     /**
      * Multiply the parameters,this method is equal to:
@@ -180,200 +201,177 @@ public interface MathCalculator<T> extends FieldCalculator<T>, Comparator<T> {
      * <pre>
      * T re = getOne();
      * for (T t : ps) {
-     * 	re = multiply(re, t);
+     * re = multiply(re, t);
      * }
      * return re;
-     * </pre>
+    </pre> *
      *
      * @param ps an array of numbers to multiply
      * @return the result
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @SuppressWarnings("unchecked")
-    default T multiplyX(Object... ps) {
-        T re = getOne();
-        for (Object t : ps) {
-            re = multiply(re, (T) t);
+    open fun multiplyX(vararg ps: Any): T {
+        var re = one
+        for (t in ps) {
+            @Suppress("UNCHECKED_CAST")
+            re = multiply(re, t as T)
         }
-        return re;
+        return re
     }
 
     /**
-     * Returns the result of {@code para1 / para2}.
+     * Returns the result of `para1 / para2`.
      *
-     * @param para1 a number as dividend
-     * @param para2 another number as divisor
-     * @return {@code para1 / para2}
+     * @param x a number as dividend
+     * @param y another number as divisor
+     * @return `para1 / para2`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T divide(T para1, T para2);
+    override fun divide(x: T, y: T): T
 
     /**
-     * Return the value one in this kind of number type. The returned number should
-     * be equal to {@code this.divide(t,t)}.
-     *
-     * @return 1
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     */
-    T getOne();
-
-    /**
-     * Return the value of {@code 1/p}. This method should be equal to
-     * {@code this.divide(this.getOne,p)}.
-     *
-     * @param p a number
-     * @return {@code 1/p}
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
-     */
-    T reciprocal(T p);
-
-    /**
-     * Return the result of {@code l*p}, this method is provided because this is
-     * equals to {@code add(p,p)} for {@code l} times. This method expects a better
-     * performance.
-     *
-     * @param p a number
-     * @param l another number of long
-     * @return {@code p*l}
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
-     */
-    default T multiplyLong(T p, long l) {
-        return FieldCalculator.super.multiplyLong(p, l);
-    }
-
-    /**
-     * Return the result of {@code p / l} , throws exception if necessary.
-     *
-     * @param p a number as dividend
-     * @param l another number of long as divisor
-     * @return {@code p / l}
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
-     */
-    T divideLong(T p, long l);
-
-    /**
-     * Return the square root of {@code p}. This method should return the positive
-     * square of {@code p}.
-     *
-     * @param p a number
-     * @return {@code p ^ 0.5}
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
-     */
-    T squareRoot(T p);
-
-    /**
-     * Return the n-th root of {@code x}. This method should return a positive
-     * number if {@code n} is even.
+     * Return the value of `1/p`. This method should be equal to
+     * `this.divide(this.getOne,p)`.
      *
      * @param x a number
-     * @return {@code x ^ (1/n)}
+     * @return `1/p`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T nroot(T x, long n);
+    override fun reciprocal(x: T): T
 
     /**
-     * Return {@code p ^ exp}.This method should be equal to calling
-     * {@code this.multiply(p,p)} for many times if {@code exp > 0} , or
-     * {@code this.divide(p,p)} if {@code exp < 0 }, or return {@code getOne()} if
-     * {@code exp == 0}.Notice that this calculator may not throw an
-     * ArithmeticException if {@code p == 0 && exp <= 0},whether to throw exception
+     * Return the result of `l*p`, this method is provided because this is
+     * equals to `add(p,p)` for `l` times. This method expects a better
+     * performance.
+     *
+     * @param x a number
+     * @param n another number of long
+     * @return `p*l`
+     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
+     */
+    override fun multiplyLong(x: T, n: Long): T {
+        return super.multiplyLong(x, n)
+    }
+
+    /**
+     * Return the result of `p / n` , throws exception if necessary.
+     *
+     * @param x a number as dividend
+     * @param n another number of long as divisor
+     * @return `p / n`
+     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
+     */
+    override fun divideLong(x: T, n: Long): T
+
+    /**
+     * Return the square root of `x`. This method should return the positive
+     * square of `x`.
+     *
+     * @param x a number
+     * @return `x ^ 0.5`
+     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
+     */
+    fun squareRoot(x: T): T
+
+    /**
+     * Return the n-th root of `x`. This method should return a positive
+     * number if `n` is even.
+     *
+     * @param x a number
+     * @return `x ^ (1/n)`
+     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
+     */
+    fun nroot(x: T, n: Long): T
+
+    /**
+     * Return `p ^ exp`.This method should be equal to calling
+     * `this.multiply(p,p)` for many times if `exp > 0` , or
+     * `this.divide(p,p)` if `exp < 0 `, or return `getOne()` if
+     * `exp == 0`.Notice that this calculator may not throw an
+     * ArithmeticException if `p == 0 && exp <= 0`,whether to throw exception
      * is determined by the implementation.
      *
-     * @param p   a number
-     * @param exp the exponent
-     * @return {@code p ^ exp}.
+     * @param x   a number
+     * @param n the exponent
+     * @return `p ^ exp`.
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T pow(T p, long exp);
-
-    /**
-     * The string representation of pi.
-     */
-    String STR_PI = "Pi";
-    /**
-     * The string representation of e.
-     */
-    String STR_E = "e";
-    /**
-     * The string representation of i, the square root of -1.
-     * This constant value may not be available.
-     */
-    String STR_I = "i";
+    override fun pow(x: T, n: Long): T
 
     /**
      * Gets a constant value from the calculator, the constant value is got by its
      * name as a String. It is recommended that the string should be case
      * insensitive in case of spelling mistakes. The name of the constant value should be
-     * specified wherever the value is needed. <br>
+     * specified wherever the value is needed. <br></br>
      * Some common constants are list below:
-     * <ul>
-     * <li><tt>Pi</tt> :the ratio of the circumference of a circle to its
-     * diameter.See:{@link Math#PI}
-     * <li><tt>e</tt> :the base of the natural logarithms.See:{@link Math#E}
-     * <li><tt>i</tt> :the square root of {@code -1}.
-     * </ul>
+     *
+     *  * <tt>Pi</tt> :the ratio of the circumference of a circle to its
+     * diameter.See:[Math.PI]
+     *  * <tt>e</tt> :the base of the natural logarithms.See:[Math.E]
+     *  * <tt>i</tt> :the square root of `-1`.
+     *
      *
      * @param name the name of the constant value,case insensitive
      * @return a number that represents the constant value.
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
-    T constantValue(String name);
+    fun constantValue(name: String): T
 
     /**
-     * Returns the result of {@code a^b}. <br>
+     * Returns the result of `a^b`. <br></br>
      * This method provides a default implement by computing:
-     * {@code exp(multiply(ln(a), b))}.
+     * `exp(multiply(ln(a), b))`.
      *
      * @param a a number
      * @param b the exponent
-     * @return {@code a^b}
+     * @return `a^b`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    default T exp(T a, T b) {
-        return exp(multiply(ln(a), b));
+    open fun exp(a: T, b: T): T {
+        return exp(multiply(ln(a), b))
     }
 
     /**
-     * Returns the result of {@code e^x}, where {@code e} is the base of the natural
+     * Returns the result of `e^x`, where `e` is the base of the natural
      * logarithm.
      *
      * @param x the exponent
-     * @return {@code e^x}
+     * @return `e^x`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T exp(T x);
+    fun exp(x: T): T
 
     /**
      * Returns result of
      *
      * <pre>
      * log<sub>a</sub>b
-     * </pre>
+    </pre> *
      *
-     * <br>
+     * <br></br>
      * This method provides a default implement by computing:
-     * {@code divide(ln(b),ln(a))}.
+     * `divide(ln(b),ln(a))`.
      *
      * @param a a number
      * @param b another number
      * @return <pre>
      * log<sub>a</sub>b
-     *         </pre>
+    </pre> *
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    default T log(T a, T b) {
-        return divide(ln(b), ln(a));
+    open fun log(a: T, b: T): T {
+        return divide(ln(b), ln(a))
     }
 
     /**
@@ -381,104 +379,115 @@ public interface MathCalculator<T> extends FieldCalculator<T>, Comparator<T> {
      *
      * <pre>
      * ln(x)
-     * </pre>
-     * <p>
+    </pre> *
+     *
+     *
      * or the natural logarithm (base e).
      *
      * @param x a number
      * @return <pre>
-     *         ln(x)
-     *         </pre>
+     * ln(x)
+    </pre> *
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T ln(T x);
+    fun ln(x: T): T
 
     /**
-     * Returns the result of {@code sin(x)}
+     * Returns the result of `sin(x)`
      *
      * @param x a number
-     * @return {@code sin(x)}
+     * @return `sin(x)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T sin(T x);
+    fun sin(x: T): T
 
     /**
-     * Returns the result of {@code cos(x)}. <br>
+     * Returns the result of `cos(x)`. <br></br>
      * This method provides a default implement by computing:
-     * {@code squareRoot(subtract(getOne(), multiply(x, x)))}. If a better implement
+     * `squareRoot(subtract(getOne(), multiply(x, x)))`. If a better implement
      * is available, subclasses should always override this method.
      *
      * @param x a number
-     * @return {@code cos(x)}
+     * @return `cos(x)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    default T cos(T x) {
-        return squareRoot(subtract(getOne(), multiply(x, x)));
+    open fun cos(x: T): T {
+        return squareRoot(subtract(one, multiply(x, x)))
     }
 
     /**
-     * Returns the result of {@code tan(x)}. <br>
+     * Returns the result of `tan(x)`. <br></br>
      * This method provides a default implement by computing:
-     * {@code  divide(sin(x),cos(x))}. If a better implement is available,
+     * `divide(sin(x),cos(x))`. If a better implement is available,
      * subclasses should always override this method.
      *
      * @param x a number
-     * @return {@code tan(x)}
+     * @return `tan(x)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    default T tan(T x) {
-        return divide(sin(x), cos(x));
+    open fun tan(x: T): T {
+        return divide(sin(x), cos(x))
     }
 
     /**
-     * Returns the result of {@code arcsin(x)}.
+     * Returns the result of `arcsin(x)`.
      *
      * @param x a number
-     * @return {@code arcsin(x)}
+     * @return `arcsin(x)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    T arcsin(T x);
+    fun arcsin(x: T): T
 
     /**
-     * Returns the result of {@code arccos(x)}. <br>
+     * Returns the result of `arccos(x)`. <br></br>
      * This method provides a default implement by computing:
-     * {@code  subtract(divideLong(constantValue(STR_PI), 2l), arcsin(x))}. If a
+     * `subtract(divideLong(constantValue(STR_PI), 2l), arcsin(x))`. If a
      * better implement is available, subclasses should always override this method.
      *
      * @param x a number
-     * @return {@code arccos(x)}
+     * @return `arccos(x)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    default T arccos(T x) {
-        return subtract(divideLong(constantValue(STR_PI), 2l), arcsin(x));
+    open fun arccos(x: T): T {
+        return subtract(divideLong(constantValue(STR_PI), 2L), arcsin(x))
     }
 
     /**
-     * Returns the result of {@code arctan(x)}. <br>
+     * Returns the result of `arctan(x)`. <br></br>
      * This method provides a default implement by computing:
-     * {@code arcsin(divide(x,squareRoot(add(getOne(), multiply(x, x)))))}. If a
+     * `arcsin(divide(x,squareRoot(add(getOne(), multiply(x, x)))))`. If a
      * better implement is available, subclasses should always override this method.
      *
      * @param x a number
-     * @return {@code arctan(x)}
+     * @return `arctan(x)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    default T arctan(T x) {
-        return arcsin(divide(x, squareRoot(add(getOne(), multiply(x, x)))));
+    open fun arctan(x: T): T {
+        return arcsin(divide(x, squareRoot(add(one, multiply(x, x)))))
     }
 
-    /**
-     * Returns the class object of the number type operated by this MathCalculator.
-     *
-     * @return the class
-     */
-    Class<?> getNumberClass();
+    companion object {
+
+        /**
+         * The string representation of pi.
+         */
+        const val STR_PI = "Pi"
+        /**
+         * The string representation of e.
+         */
+        const val STR_E = "e"
+        /**
+         * The string representation of i, the square root of -1.
+         * This constant value may not be available.
+         */
+        const val STR_I = "i"
+    }
 
 }

@@ -10,6 +10,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.Simplifiable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -98,14 +99,14 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 		T[][] mat = (T[][]) new Object[3][3];
 		mat[0][0] = vec.x;
 		mat[0][1] = l.vec.x;
-		mat[0][2] = mc.subtract(l.p0.x, p0.x);
+        mat[0][2] = getMc().subtract(l.p0.x, p0.x);
 		mat[1][0] = vec.y;
 		mat[1][1] = l.vec.y;
-		mat[1][2] = mc.subtract(l.p0.y, p0.y);
+        mat[1][2] = getMc().subtract(l.p0.y, p0.y);
 		mat[2][0] = vec.z;
 		mat[2][1] = l.vec.z;
-		mat[2][2] = mc.subtract(l.p0.z, p0.z);
-		return Matrix.valueOf(mat, mc);
+        mat[2][2] = getMc().subtract(l.p0.z, p0.z);
+        return Matrix.valueOf(mat, getMc());
 	}
 	
 	/**
@@ -150,10 +151,10 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 		//here shows the advantage of naming the vector in space as SVector 
 		Vector<T> base = sov.getBase();
 		T k = base.getNumber(0);
-		
-		return new SPoint<T>(mc,mc.add(p0.x, mc.multiply(k, vec.x)),
-				mc.add(p0.y, mc.multiply(k, vec.y)),
-						mc.add(p0.z, mc.multiply(k, vec.z)));
+
+        return new SPoint<T>(getMc(), getMc().add(p0.x, getMc().multiply(k, vec.x)),
+                getMc().add(p0.y, getMc().multiply(k, vec.y)),
+                getMc().add(p0.z, getMc().multiply(k, vec.z)));
 	}
 	
 	/**
@@ -162,7 +163,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	 * @return the cos value of the angle of {@code this} and {@code l}.
 	 */
 	public T angleCos(Line<T> l){
-		return mc.abs(vec.angleCos(l.vec));
+        return getMc().abs(vec.angleCos(l.vec));
 	}
 	/**
 	 * Returns the angle of {@code this} and {@code l}.
@@ -176,31 +177,31 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	
 	@Override
 	public boolean contains(SPoint<T> p) {
-		if(mc.isZero(vec.x)){
-			if(!mc.isEqual(p0.x, p.x)){
+        if (getMc().isZero(vec.x)) {
+            if (!getMc().isEqual(p0.x, p.x)) {
 				return false;
 			}
-			return mc.isEqual(mc.multiply(vec.z, mc.subtract(p.y, p0.y)), 
-					mc.multiply(vec.y, mc.subtract(p.z, p0.z)));
-		}
-		if(mc.isZero(vec.y)){
-			if(!mc.isEqual(p0.y, p.y)){
+            return getMc().isEqual(getMc().multiply(vec.z, getMc().subtract(p.y, p0.y)),
+                    getMc().multiply(vec.y, getMc().subtract(p.z, p0.z)));
+        }
+        if (getMc().isZero(vec.y)) {
+            if (!getMc().isEqual(p0.y, p.y)) {
 				return false;
 			}
-			return  mc.isEqual(mc.multiply(vec.z, mc.subtract(p.x, p0.x)), 
-					mc.multiply(vec.x, mc.subtract(p.z, p0.z)));
-		}
-		if(mc.isZero(vec.z)){
-			if(!mc.isEqual(p0.z, p.z)){
+            return getMc().isEqual(getMc().multiply(vec.z, getMc().subtract(p.x, p0.x)),
+                    getMc().multiply(vec.x, getMc().subtract(p.z, p0.z)));
+        }
+        if (getMc().isZero(vec.z)) {
+            if (!getMc().isEqual(p0.z, p.z)) {
 				return false;
 			}
-			return  mc.isEqual(mc.multiply(vec.y, mc.subtract(p.x, p0.x)), 
-					mc.multiply(vec.x, mc.subtract(p.y, p0.y)));
-		}
-		return  mc.isEqual(mc.multiply(vec.z, mc.subtract(p.x, p0.x)), 
-				mc.multiply(vec.x, mc.subtract(p.z, p0.z))) && 
-				mc.isEqual(mc.multiply(vec.y, mc.subtract(p.x, p0.x)), 
-						mc.multiply(vec.x, mc.subtract(p.y, p0.y)));
+            return getMc().isEqual(getMc().multiply(vec.y, getMc().subtract(p.x, p0.x)),
+                    getMc().multiply(vec.x, getMc().subtract(p.y, p0.y)));
+        }
+        return getMc().isEqual(getMc().multiply(vec.z, getMc().subtract(p.x, p0.x)),
+                getMc().multiply(vec.x, getMc().subtract(p.z, p0.z))) &&
+                getMc().isEqual(getMc().multiply(vec.y, getMc().subtract(p.x, p0.x)),
+                        getMc().multiply(vec.x, getMc().subtract(p.y, p0.y)));
 		/* or replace it with
 		return SVector.vector(p0, p).isParallel(vec)
 		 */
@@ -226,7 +227,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 		if(v.isZeroVector()){
 			throw new ArithmeticException("Line contains point");
 		}
-		return new Line<>(mc,p,v);
+        return new Line<>(getMc(), p, v);
 	}
 	/**
 	 * Returns a vector that is perpendicular to this line and 
@@ -255,7 +256,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	 * @return a line
 	 */
 	public Line<T> parallel(SPoint<T> p){
-		return new Line<>(mc,p,vec);
+        return new Line<>(getMc(), p, vec);
 	}
 	/**
 	 * Returns  square of the distance of the two lines. Returns 0 if the two lines are 
@@ -266,12 +267,12 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	public T distanceSq(Line<T> l){
 		SVector<T> s = vec.outerProduct(l.vec);
 		if(s.isZeroVector()){
-			return mc.getZero();
+            return getMc().getZero();
 		}
 		SVector<T> d = SVector.vector(p0, l.p0);
 		T t = s.innerProduct(d);
-		t = mc.multiply(t, t);
-		return mc.divide(t, s.calLengthSq());
+        t = getMc().multiply(t, t);
+        return getMc().divide(t, s.calLengthSq());
 	}
 	/**
 	 * Returns the distance of the two lines. Returns 0 if the two lines are 
@@ -282,11 +283,11 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	public T distance(Line<T> l){
 		SVector<T> s = vec.outerProduct(l.vec);
 		if(s.isZeroVector()){
-			return mc.getZero();
+            return getMc().getZero();
 		}
 		SVector<T> d = SVector.vector(p0, l.p0);
-		T t = mc.abs(s.innerProduct(d));
-		return mc.divide(t, s.calLength());
+        T t = getMc().abs(s.innerProduct(d));
+        return getMc().divide(t, s.calLength());
 	}
 	/**
 	 * Returns the square of the distance of this to the point.
@@ -311,11 +312,11 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	 * @return a new line
 	 */
 	public Line<T> moveToward(SVector<T> v){
-		return  new Line<>(mc,p0.moveToward(v),vec);
+        return new Line<>(getMc(), p0.moveToward(v), vec);
 	}
 
 	@Override
-	public <N> Line<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Line<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Line<>(newCalculator,p0.mapTo(mapper, newCalculator),vec.mapTo(mapper, newCalculator));
 	}
 
@@ -334,7 +335,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Line){
 			Line<T> line = (Line<T>) obj;
 			return isParallel(line) && line.contains(p0);
@@ -343,9 +344,9 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Line){
-			return valueEquals(((Line<N>)obj).mapTo(mapper, mc));
+            return valueEquals(((Line<N>) obj).mapTo(mapper, getMc()));
 		}
 		return false;
 	}
@@ -379,7 +380,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	public Line<T> simplify(Simplifier<T> sim) {
 		List<T> list = Arrays.asList(vec.toArray());
 		list = sim.simplify(list);
-		return new Line<>(mc,p0,SVector.fromList(list, mc));
+        return new Line<>(getMc(), p0, SVector.fromList(list, getMc()));
 	}
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.utilities.math.spaceAG.SpacePointSet#intersect(cn.timelives.java.utilities.math.spaceAG.SpacePointSet)
@@ -393,35 +394,35 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 				if(pl.contains(p0)){
 					return this;
 				}
-				return getEmptySet(mc);
+                return getEmptySet(getMc());
 			}
 			SPoint<T> p = pl.intersectPoint(this);
-			return SpacePointSet.cenvertNull(p, mc);
+            return SpacePointSet.cenvertNull(p, getMc());
 		}else if(set instanceof Line){
 			Line<T> l = (Line<T>) set;
 			Relation r = this.relationWith(l);
 			if(r == Relation.COINCIDE){
 				return this;
 			}else if(r == Relation.PARALLEL || r== Relation.SKEW){
-				return SpacePointSet.getEmptySet(mc);
+                return SpacePointSet.getEmptySet(getMc());
 			}
 			return intersectPoint(l);
 		}else if(set instanceof SPoint){
 			SPoint<T> p = (SPoint<T>) set;
-			return this.contains(p) ? SpacePointSet.getEmptySet(mc) : p;
+            return this.contains(p) ? SpacePointSet.getEmptySet(getMc()) : p;
 		}else if(set instanceof Segment){
 			Segment<T> s = (Segment<T>) set;
 			if(s.getLine().isParallel(this) || this.valueEquals(s.getLine())){
 				return s;
 			}
 			SPoint<T> sp = s.intersectPoint(this);
-			return SpacePointSet.cenvertNull(sp, mc);
+            return SpacePointSet.cenvertNull(sp, getMc());
 		}else if(set instanceof STriangle){
 			STriangle<T> tri = (STriangle<T>) set;
 			Plane<T> pl = tri.getPlane();
 			if(pl.isParallel(this)){
 				if(!pl.contains(p0)){
-					return getEmptySet(mc);
+                    return getEmptySet(getMc());
 				}
 				if(pl.valueEquals(tri.getEdgeA().getLine())){
 					return tri.getEdgeA();
@@ -438,7 +439,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 				SPoint<T>[] ps = (SPoint<T>[]) new SPoint<?>[]{p1,p2,p3};
 				int n = ArraySup.sortNull(ps);
 				if(n==0){
-					return getEmptySet(mc);
+                    return getEmptySet(getMc());
 				}else if(n==1){
 					return ps[0];
 				}else if(n==2){
@@ -449,7 +450,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 				//n = 3 is impossible
 			}else{
 				SPoint<T> p = pl.intersectPoint(this);
-				return tri.contains(p) ? p : getEmptySet(mc);
+                return tri.contains(p) ? p : getEmptySet(getMc());
 			}
 		}
 		return super.intersect(set);

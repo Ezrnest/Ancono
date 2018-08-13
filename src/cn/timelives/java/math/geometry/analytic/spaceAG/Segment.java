@@ -3,6 +3,7 @@ package cn.timelives.java.math.geometry.analytic.spaceAG;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Line.Relation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -188,7 +189,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	 * @return a segment
 	 */
 	public Segment<T> middleA(){
-		return new Segment<>(mc, l, p1, middlePoint());
+        return new Segment<>(getMc(), l, p1, middlePoint());
 	}
 	/**
 	 * Returns the segment BM, where M is the middle point of this.
@@ -196,7 +197,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	 * @return a segment
 	 */
 	public Segment<T> middleB(){
-		return new Segment<>(mc, l, p2, middlePoint());
+        return new Segment<>(getMc(), l, p2, middlePoint());
 	}
 	/**
 	 * Returns a segment of AP, 
@@ -206,7 +207,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	 * @return a segment
 	 */
 	public Segment<T> propotionSegmentA(T k){
-		return new Segment<>(mc, l, p1, p1.proportionPoint(p2, k));
+        return new Segment<>(getMc(), l, p1, p1.proportionPoint(p2, k));
 	}
 	/**
 	 * Returns a segment of BP, 
@@ -216,7 +217,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	 * @return a segment
 	 */
 	public Segment<T> propotionSegmentB(T k){
-		return new Segment<>(mc, l, p2, p2.proportionPoint(p1, k));
+        return new Segment<>(getMc(), l, p2, p2.proportionPoint(p1, k));
 	}
 	/**
 	 * Moves this segment for the given vector. 
@@ -224,14 +225,14 @@ public final class Segment<T> extends SpacePointSet<T> {
 	 * @return a new segment
 	 */
 	public Segment<T> moveToward(SVector<T> s){
-		return new Segment<>(mc, l.moveToward(s), p1.moveToward(s), p2.moveToward(s), v, comp);
+        return new Segment<>(getMc(), l.moveToward(s), p1.moveToward(s), p2.moveToward(s), v, comp);
 	}
 	/**
 	 * Returns the reverse of this segment, which means the two end points are exchanged.
 	 * @return a new segment
 	 */
 	public Segment<T> reverse(){
-		return new Segment<>(mc,l,p2,p1,v == null ?  null : v.negative(),comp);
+        return new Segment<>(getMc(), l, p2, p1, v == null ? null : v.negative(), comp);
 	}
 	
 	@Override
@@ -239,13 +240,13 @@ public final class Segment<T> extends SpacePointSet<T> {
 		if(l.contains(p)){
 			switch(comp){
 			case 0:{
-				return mc.compare(p1.x, p.x) * mc.compare(p.x, p2.x) >= 0;
+                return getMc().compare(p1.x, p.x) * getMc().compare(p.x, p2.x) >= 0;
 			}
 			case 1:{
-				return mc.compare(p1.y, p.y) * mc.compare(p.y, p2.y) >= 0;
+                return getMc().compare(p1.y, p.y) * getMc().compare(p.y, p2.y) >= 0;
 			}
 			case 2:{
-				return mc.compare(p1.z, p.z) * mc.compare(p.z, p2.z) >= 0;
+                return getMc().compare(p1.z, p.z) * getMc().compare(p.z, p2.z) >= 0;
 			}
 			default:{
 				throw new AssertionError();
@@ -256,7 +257,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	}
 
 	@Override
-	public <N> Segment<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Segment<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Segment<>(newCalculator,l.mapTo(mapper, newCalculator)
 				,p1.mapTo(mapper, newCalculator)
 				,p2.mapTo(mapper, newCalculator),comp);
@@ -286,7 +287,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	}
 
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Segment){
 			Segment<T> seg = (Segment<T>) obj;
 			return l.valueEquals(seg.l) && ((p1.valueEquals(seg.p1) && p2.valueEquals(seg.p2))
@@ -296,7 +297,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	}
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Segment){
 			Segment<N> seg = (Segment<N>) obj;
 			return l.valueEquals(seg.l,mapper) && ((p1.valueEquals(seg.p1,mapper) && p2.valueEquals(seg.p2,mapper))

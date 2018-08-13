@@ -419,7 +419,7 @@ public class DerivativeHelper {
     }
 
     public static void main(String[] args) {
-        ExprCalculator ec = ExprCalculator.getInstance();
+        ExprCalculator ec = ExprCalculator.Companion.getInstance();
         Expression expr = Expression.valueOf("exp(ln(x))");
         SimplificationStrategies.setCalRegularization(ec);
         expr = ec.simplify(expr);

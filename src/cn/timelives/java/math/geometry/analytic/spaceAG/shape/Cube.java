@@ -6,6 +6,7 @@ import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Segment;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Line;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -162,12 +163,12 @@ public final class Cube<T> extends RightPrism<T> {
 
 	@Override
 	public T surfaceArea() {
-		return mc.multiplyLong(mc.multiply(a, a), 6l);
+        return getMc().multiplyLong(getMc().multiply(a, a), 6l);
 	}
 
 	@Override
 	public T volume() {
-		return mc.pow(a, 3);
+        return getMc().pow(a, 3);
 	}
 
 	@Override
@@ -191,7 +192,7 @@ public final class Cube<T> extends RightPrism<T> {
 	}
 
 	@Override
-	public <N> Cube<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Cube<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -211,13 +212,13 @@ public final class Cube<T> extends RightPrism<T> {
 	}
 
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		// TODO Auto-generated method stub
 		return false;
 	}

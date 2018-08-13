@@ -6,6 +6,7 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Line;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +56,11 @@ public final class HyperbolaV<T> extends EHSection<T> {
 		//points :
 		List<Point<T>> list = new ArrayList<>();
 		if(onX){
-			list.add(Point.valueOf(mc.negate(a), mc.getZero(), mc));
-			list.add(Point.valueOf(a, mc.getZero(), mc));
+            list.add(Point.valueOf(getMc().negate(a), getMc().getZero(), getMc()));
+            list.add(Point.valueOf(a, getMc().getZero(), getMc()));
 		}else{
-			list.add(Point.valueOf( mc.getZero(),mc.negate(b), mc));
-			list.add(Point.valueOf( mc.getZero(),b, mc));
+            list.add(Point.valueOf(getMc().getZero(), getMc().negate(b), getMc()));
+            list.add(Point.valueOf(getMc().getZero(), b, getMc()));
 		}
 		return list;
 	}
@@ -67,16 +68,16 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	@Override
 	public T substitute(T x, T y) {
 		//Ax^2 / a^2 + By^2 + F 
-		T re = mc.multiply(A, square(x));
-		re =  mc.add(re, mc.multiply(C, square(y)));
-		return mc.add(re, F);
+        T re = getMc().multiply(A, square(x));
+        re = getMc().add(re, getMc().multiply(C, square(y)));
+        return getMc().add(re, F);
 	}
 	/**
 	 * Returns the conjugate hyperbola of this.
 	 * @return a hyperbola
 	 */
 	public HyperbolaV<T> conjugateHyperbola(){
-		return new HyperbolaV<>(mc,mc.negate(A),mc.negate(C),a,b,c,a2,b2,c2,!onX);
+        return new HyperbolaV<>(getMc(), getMc().negate(A), getMc().negate(C), a, b, c, a2, b2, c2, !onX);
 	}
 	/**
 	 * Returns the two asymptotes of this hyperbola.
@@ -84,10 +85,10 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	 */
 	public List<Line<T>> asymptote(){
 		if(asys==null){
-			T zero = mc.getZero();
+            T zero = getMc().getZero();
 			asys = new ArrayList<>(2);
-			asys.add(Line.pointDirection(zero, zero, a, b, mc));
-			asys.add(Line.pointDirection(zero, zero, a, mc.negate(b), mc));
+            asys.add(Line.pointDirection(zero, zero, a, b, getMc()));
+            asys.add(Line.pointDirection(zero, zero, a, getMc().negate(b), getMc()));
 		}
 		return asys;
 	}
@@ -115,9 +116,9 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	public T focusDL(Point<T> p) {
 		checkOn(p);
 		if(onX){
-			return mc.abs(mc.add(a, mc.multiply(getEccentricity(), p.x)));
+            return getMc().abs(getMc().add(a, getMc().multiply(getEccentricity(), p.x)));
 		}else{
-			return mc.abs(mc.add(b, mc.multiply(getEccentricity(), p.y)));
+            return getMc().abs(getMc().add(b, getMc().multiply(getEccentricity(), p.y)));
 		}
 	}
 
@@ -125,24 +126,24 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	public T focuseDR(Point<T> p) {
 		checkOn(p);
 		if(onX){
-			return mc.abs(mc.subtract(a, mc.multiply(getEccentricity(), p.x)));
+            return getMc().abs(getMc().subtract(a, getMc().multiply(getEccentricity(), p.x)));
 		}else{
-			return mc.abs(mc.subtract(b, mc.multiply(getEccentricity(), p.y)));
+            return getMc().abs(getMc().subtract(b, getMc().multiply(getEccentricity(), p.y)));
 		}
 	}
 	
 	@Override
 	public T computeX(T y) {
-		T t = onX ? b2 : mc.negate(b2);
-		T re = mc.divide(a, b);
-		return mc.multiply(re, mc.squareRoot(mc.add(t, square(y))));
+        T t = onX ? b2 : getMc().negate(b2);
+        T re = getMc().divide(a, b);
+        return getMc().multiply(re, getMc().squareRoot(getMc().add(t, square(y))));
 	}
 	
 	@Override
 	public T computeY(T x) {
-		T t = onX ? mc.negate(b2) : b2;
-		T re = mc.divide(b, a);
-		return mc.multiply(re, mc.squareRoot(mc.add(t, square(x))));
+        T t = onX ? getMc().negate(b2) : b2;
+        T re = getMc().divide(b, a);
+        return getMc().multiply(re, getMc().squareRoot(getMc().add(t, square(x))));
 	}
 	
 	/**
@@ -193,7 +194,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 			if(re == 0){
 				return null;
 			}else if(re==1){
-				return mc.getZero();
+                return getMc().getZero();
 			}
 			return equ.rootsSubtract();
 		}
@@ -207,10 +208,10 @@ public final class HyperbolaV<T> extends EHSection<T> {
 		if(re==0){
 			return null;
 		}else if(re == 1){
-			return mc.getZero();
-		}
-		T len = mc.squareRoot(mc.add(mc.getOne(), square(k)));
-		return mc.multiply(len, equ.rootsSubtract());
+            return getMc().getZero();
+        }
+        T len = getMc().squareRoot(getMc().add(getMc().getOne(), square(k)));
+        return getMc().multiply(len, equ.rootsSubtract());
 	}
 	
 	@Override
@@ -230,7 +231,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 			if(re == 0){
 				return null;
 			}else if(re==1){
-				return mc.getZero();
+                return getMc().getZero();
 			}
 			return equ.rootsSubtractSq();
 		}
@@ -244,19 +245,19 @@ public final class HyperbolaV<T> extends EHSection<T> {
 		if(re==0){
 			return null;
 		}else if(re == 1){
-			return mc.getZero();
-		}
-		T len = mc.add(mc.getOne(), square(k));
-		return mc.multiply(len, equ.rootsSubtractSq());
+            return getMc().getZero();
+        }
+        T len = getMc().add(getMc().getOne(), square(k));
+        return getMc().multiply(len, equ.rootsSubtractSq());
 	}
 	
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof HyperbolaV){
 			HyperbolaV<N> ev = (HyperbolaV<N>) obj;
 			if(ev.onX == onX){
-				return mc.isEqual(mapper.apply(ev.a), a) && mc.isEqual(mapper.apply(ev.b), b);
+                return getMc().isEqual(mapper.apply(ev.a), a) && getMc().isEqual(mapper.apply(ev.b), b);
 			}
 			return false;
 		}
@@ -264,11 +265,11 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof HyperbolaV){
 			HyperbolaV<T> ev = (HyperbolaV<T>) obj;
 			if(ev.onX == onX){
-				return mc.isEqual(ev.a, a) && mc.isEqual(ev.b, b);
+                return getMc().isEqual(ev.a, a) && getMc().isEqual(ev.b, b);
 			}
 			return false;
 		}
@@ -285,7 +286,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 	}
 	
 	@Override
-	public <N> HyperbolaV<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> HyperbolaV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		HyperbolaV<N> nell = new HyperbolaV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
 				, mapper.apply(a), mapper.apply(b), mapper.apply(c)
 				, mapper.apply(a2), mapper.apply(b2), mapper.apply(c2)

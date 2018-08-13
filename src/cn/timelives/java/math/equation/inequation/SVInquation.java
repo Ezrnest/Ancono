@@ -6,6 +6,7 @@ package cn.timelives.java.math.equation.inequation;
 import cn.timelives.java.math.equation.SVCompareStructure;
 import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -31,6 +32,6 @@ public abstract class SVInquation<T> extends Inequation<T,T> implements SVCompar
 	public boolean isSolution(T x) {
 		return op.matches(compareZero(compute(x)));
 	}
-	
-	public abstract <N> SVInquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+
+    public abstract <N> SVInquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

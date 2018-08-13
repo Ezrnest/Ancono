@@ -4,6 +4,7 @@ import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -106,14 +107,14 @@ public final class DVector<T> extends Vector<T> {
 		@SuppressWarnings("unchecked")
 		T[] reV = (T[]) new Object[len];
 		for (int i = 0; i < len; i++) {
-			reV[i] = mc.negate(vec[i]);
-		}
-		return new DVector<>(reV, isRow,mc);
+            reV[i] = getMc().negate(vec[i]);
+        }
+        return new DVector<>(reV, isRow, getMc());
 	}
 
 	@Override
 	public DVector<T> transportMatrix() {
-		return new DVector<>(vec, !isRow,mc);
+        return new DVector<>(vec, !isRow, getMc());
 	}
 
 	@Override
@@ -140,8 +141,8 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("The same column:" + c1);
 		}
 		T[] rev = vec.clone();
-		rev[c2] = mc.add(mc.multiply(rev[c1], k), rev[c2]);
-		return new DVector<T>(rev, true,mc);
+        rev[c2] = getMc().add(getMc().multiply(rev[c1], k), rev[c2]);
+        return new DVector<T>(rev, true, getMc());
 	}
 
 	@Override
@@ -153,8 +154,8 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("The same column:" + c1);
 		}
 		T[] rev = vec.clone();
-		rev[c2] = mc.add(mc.multiplyLong(rev[c1], k), rev[c2]);
-		return new DVector<T>(rev, true,mc);
+        rev[c2] = getMc().add(getMc().multiplyLong(rev[c1], k), rev[c2]);
+        return new DVector<T>(rev, true, getMc());
 	}
 
 	@Override
@@ -166,8 +167,8 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("The same row:" + r1);
 		}
 		T[] rev = vec.clone();
-		rev[r2] = mc.add(mc.multiplyLong(rev[r1], k), rev[r2]);
-		return new DVector<T>(rev, false,mc);
+        rev[r2] = getMc().add(getMc().multiplyLong(rev[r1], k), rev[r2]);
+        return new DVector<T>(rev, false, getMc());
 	}
 
 	@Override
@@ -179,15 +180,15 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("The same row:" + r1);
 		}
 		T[] rev = vec.clone();
-		rev[r2] = mc.add(mc.multiply(rev[r1], k), rev[r2]);
-		return new DVector<T>(rev, false,mc);
+        rev[r2] = getMc().add(getMc().multiply(rev[r1], k), rev[r2]);
+        return new DVector<T>(rev, false, getMc());
 	}
 
 	@Override
 	public int calRank() {
-		T z = mc.getZero();
+        T z = getMc().getZero();
 		for (int i = 0; i < vec.length; i++) {
-			if (!mc.isEqual(vec[i], z)) {
+            if (!getMc().isEqual(vec[i], z)) {
 				return 1;
 			}
 		}
@@ -210,12 +211,12 @@ public final class DVector<T> extends Vector<T> {
 			int len = j2 - j1 + 1;
 			T[] fs = (T[]) new Object[len];
 			System.arraycopy(vec, j1, fs, 0, len);
-			return new DVector<T>(fs, true,mc);
+            return new DVector<T>(fs, true, getMc());
 		} else {
 			int len = i2 - i1 + 1;
 			T[] fs = (T[]) new Object[len];
 			System.arraycopy(vec, i1, fs, 0, len);
-			return new DVector<T>(fs, false,mc);
+            return new DVector<T>(fs, false, getMc());
 		}
 
 	}
@@ -226,7 +227,7 @@ public final class DVector<T> extends Vector<T> {
 		T[] rev = vec.clone();
 		rev[r1] = vec[r2];
 		rev[r2] = vec[r1];
-		return new DVector<T>(rev, false,mc);
+        return new DVector<T>(rev, false, getMc());
 	}
 
 	@Override
@@ -235,39 +236,39 @@ public final class DVector<T> extends Vector<T> {
 		T[] rev = vec.clone();
 		rev[c1] = vec[c2];
 		rev[c2] = vec[c1];
-		return new DVector<T>(rev, true,mc);
+        return new DVector<T>(rev, true, getMc());
 	}
 
 	@Override
 	public DVector<T> multiplyNumberColumn(T n, int c) {
 		columnRangeCheck(c);
 		T[] rev = vec.clone();
-		rev[c] =  mc.multiply(rev[c], n);
-		return new DVector<T>(rev, true,mc);
+        rev[c] = getMc().multiply(rev[c], n);
+        return new DVector<T>(rev, true, getMc());
 	}
 
 	@Override
 	public DVector<T> multiplyNumberColumn(long n, int c) {
 		columnRangeCheck(c);
 		T[] rev = vec.clone();
-		rev[c] =  mc.multiplyLong(rev[c], n);
-		return new DVector<T>(rev, true,mc);
+        rev[c] = getMc().multiplyLong(rev[c], n);
+        return new DVector<T>(rev, true, getMc());
 	}
 
 	@Override
 	public DVector<T> multiplyNumberRow(T n, int r) {
 		rowRangeCheck(r);
 		T[] rev = vec.clone();
-		rev[r] =  mc.multiply(rev[r], n);
-		return new DVector<T>(rev, false,mc);
+        rev[r] = getMc().multiply(rev[r], n);
+        return new DVector<T>(rev, false, getMc());
 	}
 
 	@Override
 	public DVector<T> multiplyNumberRow(long n, int r) {
 		rowRangeCheck(r);
 		T[] rev = vec.clone();
-		rev[r] = mc.multiplyLong(rev[r], n);
-		return new DVector<T>(rev, false,mc);
+        rev[r] = getMc().multiplyLong(rev[r], n);
+        return new DVector<T>(rev, false, getMc());
 	}
 	/**
 	 * Return a new Vector = k * this.This method is generally the same 
@@ -280,9 +281,9 @@ public final class DVector<T> extends Vector<T> {
 		@SuppressWarnings("unchecked")
 		T[] reV = (T[]) new Object[len];
 		for (int i = 0; i < len; i++) {
-			reV[i] = mc.multiplyLong(vec[i], k);
-		}
-		return new DVector<T>(reV, isRow,mc);
+            reV[i] = getMc().multiplyLong(vec[i], k);
+        }
+        return new DVector<T>(reV, isRow, getMc());
 	}
 	
 	/**
@@ -296,9 +297,9 @@ public final class DVector<T> extends Vector<T> {
 		@SuppressWarnings("unchecked")
 		T[] reV = (T[]) new Object[len];
 		for (int i = 0; i < len; i++) {
-			reV[i] = mc.multiply(vec[i], k);
-		}
-		return new DVector<T>(reV, isRow,mc);
+            reV[i] = getMc().multiply(vec[i], k);
+        }
+        return new DVector<T>(reV, isRow, getMc());
 	}
 	/**
 	 * Return whether is vector is a row vector.
@@ -314,11 +315,11 @@ public final class DVector<T> extends Vector<T> {
 	 */
 	@Override
 	public T calLength(){
-		T re = mc.getZero();
+        T re = getMc().getZero();
 		for(int i=0;i<vec.length;i++){
-			re = mc.add(mc.multiply(vec[i], vec[i]), re);
-		}
-		return mc.squareRoot(re);
+            re = getMc().add(getMc().multiply(vec[i], vec[i]), re);
+        }
+        return getMc().squareRoot(re);
 	}
 	/**
 	 * Calculate the square of |this|,which has full precision and use T as the 
@@ -328,9 +329,9 @@ public final class DVector<T> extends Vector<T> {
 	 */
 	@Override
 	public T calLengthSq(){
-		T re = mc.getZero();
+        T re = getMc().getZero();
 		for(int i=0;i<vec.length;i++){
-			re = mc.add(mc.multiply(vec[i], vec[i]), re);
+            re = getMc().add(getMc().multiply(vec[i], vec[i]), re);
 		}
 		return re;
 	}
@@ -340,9 +341,9 @@ public final class DVector<T> extends Vector<T> {
 		@SuppressWarnings("unchecked")
 		T[] vecn = (T[]) new Object[this.vec.length];
 		for(int i=0;i<vecn.length;i++){
-			vecn[i] = mc.divide(vec[i], l);
-		}
-		return new DVector<>(vecn,isRow,mc);
+            vecn[i] = getMc().divide(vec[i], l);
+        }
+        return new DVector<>(vecn, isRow, getMc());
 	}
 	
 	/* (non-Javadoc)
@@ -350,24 +351,24 @@ public final class DVector<T> extends Vector<T> {
 	 */
 	@Override
 	public DVector<T> applyFunction(MathFunction<T, T> f) {
-		return new DVector<>(ArraySup.mapTo(vec, f),isRow,mc);
+        return new DVector<>(ArraySup.mapTo(vec, f), isRow, getMc());
 	}
 	
 	/*
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Vector#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		for(int i=0,size= getSize();i<size;i++) {
-			sb.append(nf.format(getNumber(i), mc)).append(',');
+            sb.append(nf.format(getNumber(i), getMc())).append(',');
 		}
 		sb.setCharAt(sb.length()-1, ']');
 		return sb.toString();
 	}
 	@Override
-	public <N> DVector<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> DVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		N[] narr = ArraySup.mapTo(vec, mapper);
 		return new DVector<>(narr, isRow, newCalculator);
 	}

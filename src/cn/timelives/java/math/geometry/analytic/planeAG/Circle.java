@@ -9,6 +9,7 @@ import cn.timelives.java.math.geometry.analytic.planeAG.curve.ClosedCurve;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.ConicSection;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.RectifiableCurve;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,8 +102,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	/**
 	 * Used for inner calls.
 	 * @param mc
-	 * @param ox
-	 * @param oy
+     * @param o
 	 * @param r2
 	 * @param D
 	 * @param E
@@ -126,7 +126,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return square of x
 	 */
 	private T square(T x){
-		return mc.multiply(x, x);
+        return getMc().multiply(x, x);
 	}
 	
 	/* (non-Javadoc)
@@ -152,7 +152,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	public T getRadius(){
 		if(r==null){
-			r = mc.squareRoot(r2);
+            r = getMc().squareRoot(r2);
 		}
 		return r;
 	}
@@ -160,10 +160,10 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * Gets the diameter of this circle.This method usually requires the {@code squareRoot} method is 
 	 * available in the math calculator.
 	 * @return the diameter of this circle.
-	 * @see Circle#radius()
+     * @see Circle#getRadius()
 	 */
 	public T getDiameter(){
-		return mc.multiplyLong(getRadius(), 2l);
+        return getMc().multiplyLong(getRadius(), 2L);
 	}
 	/**
 	 * Computes the corresponding arc length of the given angle.This method will not check whether 
@@ -172,7 +172,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return the length of the arc
 	 */
 	public T getArcLength(T angle){
-		return mc.multiply(angle, getRadius());
+        return getMc().multiply(angle, getRadius());
 	}
 	
 	
@@ -182,8 +182,8 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return the area of this circle
 	 */
 	public T getArea(){
-		T pi = mc.constantValue(MathCalculator.STR_PI);
-		return mc.multiply(pi, r2);
+        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        return getMc().multiply(pi, r2);
 	}
 	/**
 	 * Get the perimeter of this circle,which is equal to {@literal C = 2πr}.This method requires the 
@@ -191,8 +191,8 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return the perimeter of this circle.
 	 */
 	public T getPerimeter(){
-		T pi = mc.constantValue(MathCalculator.STR_PI);
-		return mc.multiply(mc.multiplyLong(pi, 2l), getRadius());
+        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        return getMc().multiply(getMc().multiplyLong(pi, 2l), getRadius());
 	}
 	/**
 	 * Assume {@code d} is the distance of the center of this circle to a chord,
@@ -203,10 +203,10 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	public T getChordLength(T d){
 		T d2 = square(d);
-		if(mc.compare(d2, r2)>0){
+        if (getMc().compare(d2, r2) > 0) {
 			return null;
 		}
-		return mc.multiplyLong(mc.squareRoot(mc.subtract(r2, d2)), 2l);
+        return getMc().multiplyLong(getMc().squareRoot(getMc().subtract(r2, d2)), 2l);
 	}
 	/**
 	 * Assume {@code d2} is the square of the distance of the center of this circle to a chord,
@@ -215,7 +215,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return the square of the length of the chord
 	 */
 	public T getChordLengthSq(T d2){
-		return mc.multiplyLong(mc.subtract(r2, d2), 4l);
+        return getMc().multiplyLong(getMc().subtract(r2, d2), 4l);
 	}
 	/**
 	 * Get the corresponding central angle of the chord whose length is {@code cl}.
@@ -230,7 +230,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 		if(an == null){
 			return null;
 		}
-		return mc.multiplyLong(an, 2l);
+        return getMc().multiplyLong(an, 2l);
 	}
 	/**
 	 * Get the corresponding circumference angle of the chord whose length is {@code cl}.
@@ -241,11 +241,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return the angle of 
 	 */
 	public T getCircumAngle(T cl,MathFunction<T,T> arccos){
-		T l_2 = mc.divideLong(cl, 2l);
-		if(mc.compare(l_2, getRadius())>0){
+        T l_2 = getMc().divideLong(cl, 2l);
+        if (getMc().compare(l_2, getRadius()) > 0) {
 			return null;
 		}
-		return arccos.apply(mc.divide(l_2, r));
+        return arccos.apply(getMc().divide(l_2, r));
 	}
 	
 	/**
@@ -259,7 +259,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	@Override
 	public int relation(Point<T> p){
 		T dis = o.distanceSq(p);
-		return mc.compare(dis, square(getRadius()));
+        return getMc().compare(dis, square(getRadius()));
 	}
 	/**
 	 * Determines the relation of the given line and this circle.The relation may be 
@@ -269,7 +269,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	public int relation(Line<T> l){
 		T d2 = l.distanceSq(o);
-		return mc.compare(d2, r2);
+        return getMc().compare(d2, r2);
 	}
 	/**
 	 * Determines the relation of the given line and this circle.The relation may be 
@@ -281,16 +281,16 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	public Relation relation(Circle<T> c){
 		//first compute the distance of two centers.
 		T dis = c.o.distance(c.o);
-		T rs = mc.add(getRadius(), c.getRadius());
-		int t = mc.compare(dis, rs);
+        T rs = getMc().add(getRadius(), c.getRadius());
+        int t = getMc().compare(dis, rs);
 		if(t>0){
 			return Relation.DISJOINT;
 		}else if(t==0){
 			return Relation.CIRCUMSCRIBED;
 		}
 		//o1o2 < r1+r2
-		T rd = mc.abs(mc.subtract(r, c.r));
-		t = mc.compare(dis, rd);
+        T rd = getMc().abs(getMc().subtract(r, c.r));
+        t = getMc().compare(dis, rd);
 		if(t > 0){
 			return Relation.INTERSECT;
 		}else if(t==0){
@@ -312,14 +312,14 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return a line or {@code null} if {@code p} is equal to the center of this circle.
 	 */
 	public Line<T> radicalAxis(Point<T> p){
-		T a = mc.subtract(p.x, o.x);
-		T b = mc.subtract(p.y, o.y);
-		if(mc.isZero(a)&&mc.isZero(b)){
+        T a = getMc().subtract(p.x, o.x);
+        T b = getMc().subtract(p.y, o.y);
+        if (getMc().isZero(a) && getMc().isZero(b)) {
 			return null;
 		}
-		T c =mc.add(mc.multiply(a, o.x), mc.multiply(b, o.y));
-		c = mc.negate(mc.add(c, r2));
-		return Line.generalFormula(a, b, c, mc);
+        T c = getMc().add(getMc().multiply(a, o.x), getMc().multiply(b, o.y));
+        c = getMc().negate(getMc().add(c, r2));
+        return Line.generalFormula(a, b, c, getMc());
 	}
 	/**
 	 * Returns a directed tangent line that has a direct vector (x,y).
@@ -328,15 +328,15 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @return a list of two lines
 	 */
 	public List<Line<T>> directedTanLine(T x,T y){
-		T t1 = mc.add(mc.multiply(o.x, x),mc.multiply(o.y, y));
-		T t2 = mc.multiply(t1, t1);
-		T ca = mc.getOne();
-		T cb = mc.multiplyLong(t1,2l);
-		T cc = mc.subtract(t2, mc.multiply(r2, mc.add(mc.multiply(x, x),mc.multiply(y, y))));
-		List<T> c = MathUtils.solveEquation(ca, cb, cc, mc);
+        T t1 = getMc().add(getMc().multiply(o.x, x), getMc().multiply(o.y, y));
+        T t2 = getMc().multiply(t1, t1);
+        T ca = getMc().getOne();
+        T cb = getMc().multiplyLong(t1, 2l);
+        T cc = getMc().subtract(t2, getMc().multiply(r2, getMc().add(getMc().multiply(x, x), getMc().multiply(y, y))));
+        List<T> c = MathUtils.solveEquation(ca, cb, cc, getMc());
 		List<Line<T>> re = new ArrayList<>(2);
-		re.add(Line.generalFormula(x, y, c.get(0), mc));
-		re.add(Line.generalFormula(x, y, c.get(1), mc));
+        re.add(Line.generalFormula(x, y, c.get(0), getMc()));
+        re.add(Line.generalFormula(x, y, c.get(1), getMc()));
 		return re;
 	}
 	
@@ -391,7 +391,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 		List<Point<T>> ps = intersectPoints(ra);
 		List<Line<T>> list = new ArrayList<>(ps.size());
 		for(Point<T> t : ps){
-			list.add(Line.twoPoint(p, t, mc));
+            list.add(Line.twoPoint(p, t, getMc()));
 		}
 		return list;
 	}
@@ -429,10 +429,10 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 		if(o.valueEquals(c.o)){
 			return null;
 		}
-		T aL = mc.subtract(D, c.D);
-		T bL = mc.subtract(E, c.E);
-		T cL = mc.subtract(F, c.F);
-		return Line.generalFormula(aL, bL, cL, mc);
+        T aL = getMc().subtract(D, c.D);
+        T bL = getMc().subtract(E, c.E);
+        T cL = getMc().subtract(F, c.F);
+        return Line.generalFormula(aL, bL, cL, getMc());
 	}
 	
 	
@@ -447,13 +447,13 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	public T chordLength(Line<T> l){
 		T len2 = chordLengthSq(l);
 		try{
-			if(mc.compare(len2, mc.getZero())<0){
+            if (getMc().compare(len2, getMc().getZero()) < 0) {
 				return null;
 			}
 		}catch(UnsupportedCalculationException ex){
 			//disable check
 		}
-		return mc.squareRoot(len2);
+        return getMc().squareRoot(len2);
 	}
 	/**
 	 * Calculate the square of the chord length of the line {@code l} in this circle.This method is equal to 
@@ -474,7 +474,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	public Circle<T> symmetryCircle(Line<T> l){
 		Point<T> sp = l.symmetryPoint(o);
-		Circle<T> c =  centerAndRadiusSquare(sp, r2, mc);
+        Circle<T> c = centerAndRadiusSquare(sp, r2, getMc());
 		c.r = r;
 		return c;
 	}
@@ -492,9 +492,9 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	public List<Line<T>> commonTangentLine(Circle<T> cir){
 		List<Line<T>> list = new ArrayList<>(4);
-		T p = mc.divide(getRadius(), cir.getRadius());
+        T p = getMc().divide(getRadius(), cir.getRadius());
 		Point<T> m1 = o.proportionPoint(cir.o, p);
-		Point<T> m2 = o.proportionPoint(cir.o, mc.negate(p));
+        Point<T> m2 = o.proportionPoint(cir.o, getMc().negate(p));
 		for(Line<T> l : tangentLines(m1)){
 			list.add(l);
 		}
@@ -511,8 +511,8 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @see #commonTangentLine(Circle)
 	 */
 	public List<Line<T>> outerCommonTangentLine(Circle<T> cir){
-		T p = mc.divide(getRadius(), cir.getRadius());
-		Point<T> m2 = o.proportionPoint(cir.o, mc.negate(p));
+        T p = getMc().divide(getRadius(), cir.getRadius());
+        Point<T> m2 = o.proportionPoint(cir.o, getMc().negate(p));
 		return tangentLines(m2);
 	}
 	
@@ -523,7 +523,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @see #commonTangentLine(Circle)
 	 */
 	public List<Line<T>> innerCommonTangentLine(Circle<T> cir){
-		T p = mc.divide(getRadius(), cir.getRadius());
+        T p = getMc().divide(getRadius(), cir.getRadius());
 		Point<T> m1 = o.proportionPoint(cir.o, p);
 		return tangentLines(m1);
 	}
@@ -531,10 +531,10 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	
 	@Override
 	public T substitute(T x, T y) {
-		T re = mc.add(mc.multiply(x, x), mc.multiply(y, y));
-		re = mc.add(re, mc.multiply(x, D));
-		re = mc.add(re, mc.multiply(y, E));
-		return mc.add(re, F);
+        T re = getMc().add(getMc().multiply(x, x), getMc().multiply(y, y));
+        re = getMc().add(re, getMc().multiply(x, D));
+        re = getMc().add(re, getMc().multiply(y, E));
+        return getMc().add(re, F);
 	}
 	
 	
@@ -560,7 +560,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	@Override
 	public Pair<TransMatrix<T>, ConicSection<T>> normalizeAndTrans() {
-		return new Pair<>(TransMatrix.identityTrans(mc),this);
+        return new Pair<>(TransMatrix.identityTrans(getMc()), this);
 	}
 	/**
 	 * Returns {@code this} because it is already the normalized form.
@@ -575,7 +575,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 */
 	@Override
 	public Pair<PAffineTrans<T>, ConicSection<T>> toStandardFormAndTrans() {
-		return new Pair<>(PAffineTrans.identity(mc),this);
+        return new Pair<>(PAffineTrans.identity(getMc()), this);
 	}
 	
 	/**
@@ -589,7 +589,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	
 	
 	@Override
-	public <N> Circle<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Circle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		Point<N> op = o.mapTo(mapper, newCalculator);
 		N r2 = mapper.apply(this.r2);
 		N r = this.r == null ? null : mapper.apply(this.r);
@@ -611,22 +611,22 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Circle){
 			Circle<T> c = (Circle<T>) obj;
-			return o.valueEquals(c.o) && 
-					mc.isEqual(r, c.r);
+			return o.valueEquals(c.o) &&
+                    getMc().isEqual(r, c.r);
 			
 		}
 		return super.valueEquals(obj);
 	}
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Circle){
 			Circle<N> c = (Circle<N>) obj;
 			return o.valueEquals(c.o, mapper) &&
-					mc.isEqual(r, mapper.apply(c.r));
+                    getMc().isEqual(r, mapper.apply(c.r));
 			
 		}
 		return super.valueEquals(obj,mapper);

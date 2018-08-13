@@ -5,6 +5,7 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -24,7 +25,7 @@ public abstract class AbstractMathSet<T> extends MathObject<T> implements MathSe
 	}
 
 	@Override
-	public abstract <N> AbstractMathSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> AbstractMathSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 
 }

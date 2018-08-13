@@ -5,6 +5,7 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -83,14 +84,14 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 	}
 	
 	@Override
-	public abstract <N> AbstractLimitedSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	
 	/**
 	 * @see MathObject#valueEquals(MathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		return false;
 	}
 	
@@ -98,7 +99,7 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 	 * @see MathObject#valueEquals(MathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		return super.valueEquals(obj, mapper);
 	}
 }

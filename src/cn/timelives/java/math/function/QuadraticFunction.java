@@ -15,6 +15,7 @@ import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneFunction;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.ConicSection;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -45,7 +46,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	@Override
 	public T apply(T x) {
 		//(ax+b)x+c
-		return EXPR_APPLY.compute(mc, x,a,b,c);
+        return EXPR_APPLY.compute(getMc(), x, a, b, c);
 	}
 	
 	private Point<T> climax;
@@ -53,7 +54,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	public Point<T> climax(){
 		if(climax == null){
 			//-b/2a , (4ac-b^2)/4a
-			climax = Point.valueOf(mc.divideLong(mc.divide(b, a), -2l), EXPR_CLIMAXY.compute(mc, a,b,c), mc);
+            climax = Point.valueOf(getMc().divideLong(getMc().divide(b, a), -2l), EXPR_CLIMAXY.compute(getMc(), a, b, c), getMc());
 		}
 		return climax;
 	}
@@ -62,7 +63,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 * @return
 	 */
 	public boolean hasMinValue(){
-		return mc.compare(a, mc.getZero()) > 0;
+        return getMc().compare(a, getMc().getZero()) > 0;
 	}
 	/**
 	 * Gets the coefficient a.
@@ -92,8 +93,8 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 */
 	public Line<T> tangentLine(T x){
 		//k = 2ax0+b 
-		T k = mc.add(mc.multiplyLong(mc.multiply(a, x), 2l), b);
-		return Line.pointSlope(getPoint(x), k, mc);
+        T k = getMc().add(getMc().multiplyLong(getMc().multiply(a, x), 2l), b);
+        return Line.pointSlope(getPoint(x), k, getMc());
 	}
 	
 	
@@ -103,21 +104,21 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 * @return
 	 */
 	public QEquation<T> toEquation(){
-		return SVPEquation.quadratic(a, b, c, mc);
+        return SVPEquation.quadratic(a, b, c, getMc());
 	}
 	/**
 	 * Returns a ConicSection representing this function.
 	 * @return
 	 */
 	public ConicSection<T> toConicSection(){
-		return GeneralConicSection.generalFormula(mc, a,null,null,b,mc.negate(mc.getOne()),c);
+        return GeneralConicSection.generalFormula(getMc(), a, null, null, b, getMc().negate(getMc().getOne()), c);
 	}
 
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public <N> QuadraticFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> QuadraticFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new QuadraticFunction<N>(newCalculator, mapper.apply(a),mapper.apply(b),mapper.apply(c));
 	}
 
@@ -132,7 +133,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 
 		if(obj instanceof QuadraticFunction){
 			QuadraticFunction<?> q = (QuadraticFunction<?>) obj;
-			return mc.equals(q.mc) && a.equals(q.a) && b.equals(q.b) && c.equals(q.c);
+            return getMc().equals(q.getMc()) && a.equals(q.a) && b.equals(q.b) && c.equals(q.c);
 		}
 		return false;
 	}
@@ -142,7 +143,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 */
 	@Override
 	public int hashCode() {
-		int hash = mc.hashCode();
+        int hash = getMc().hashCode();
 		hash = hash*31 + a.hashCode();
 		hash = hash*31 + b.hashCode();
 		hash = hash*31 + c.hashCode();
@@ -154,7 +155,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 */
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}
@@ -163,14 +164,14 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 		}
 		@SuppressWarnings("unchecked")
 		SVPFunction<T> f = (SVPFunction<T>)obj;
-		return SVPFunction.isEqual(this,f , mc::isEqual);
+        return SVPFunction.isEqual(this, f, getMc()::isEqual);
 	}
 
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(this == obj){
 			return true;
 		}
@@ -179,7 +180,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 		}
 		@SuppressWarnings("unchecked")
 		SVPFunction<N> f = (SVPFunction<N>)obj;
-		return SVPFunction.isEqual(this,f , (x,y)->mc.isEqual(x, mapper.apply(y)));
+        return SVPFunction.isEqual(this, f, (x, y) -> getMc().isEqual(x, mapper.apply(y)));
 	}
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.function.SVPFunction#getCoefficient(int)
@@ -216,15 +217,15 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		for(int i=2;i>0;i--){
-			if(mc.isZero(getCoefficient(i)))
+            if (getMc().isZero(getCoefficient(i)))
 				continue;
-			sb.append(nf.format(getCoefficient(i), mc)).append("*x^").append(i).append(" + ");
-		}
-		if(mc.isZero(getCoefficient(0))==false){
-			sb.append(nf.format(getCoefficient(0), mc));
+            sb.append(nf.format(getCoefficient(i), getMc())).append("*x^").append(i).append(" + ");
+        }
+        if (getMc().isZero(getCoefficient(0)) == false) {
+            sb.append(nf.format(getCoefficient(0), getMc()));
 		}else{
 			sb.delete(sb.length()-3, sb.length());
 		}

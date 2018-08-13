@@ -6,6 +6,7 @@ import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.set.InfiniteSet;
 import cn.timelives.java.math.set.MathSet;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public abstract <N> SpacePointSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> SpacePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
 	 * Returns the intersect of the two space point sets.
@@ -65,7 +66,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		return this.getClass().getName();
 	}
 	/**
@@ -223,7 +224,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
 		@Override
-		public <N> UniversePointSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> UniversePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new UniversePointSet<>(newCalculator);
 		}
 
@@ -234,7 +235,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		public boolean equals(Object obj) {
 			if(obj instanceof UniversePointSet){
 				UniversePointSet<?> set = (UniversePointSet<?>) obj;
-				return mc.equals(set.mc);
+                return getMc().equals(set.getMc());
 			}
 			return false;
 		}
@@ -244,14 +245,14 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 */
 		@Override
 		public int hashCode() {
-			return mc.hashCode();
+            return getMc().hashCode();
 		}
 
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof UniversePointSet){
 				return true;
 			}
@@ -262,7 +263,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			if(obj instanceof UniversePointSet){
 				return true;
 			}
@@ -273,7 +274,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "Universe set";
 		}
 		/* (non-Javadoc)
@@ -312,7 +313,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
 		@Override
-		public <N> EmptyPointSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> EmptyPointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new EmptyPointSet<>(newCalculator);
 		}
 
@@ -323,7 +324,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		public boolean equals(Object obj) {
 			if(obj instanceof EmptyPointSet){
 				EmptyPointSet<?> set = (EmptyPointSet<?>) obj;
-				return mc.equals(set.mc);
+                return getMc().equals(set.getMc());
 			}
 			return false;
 		}
@@ -333,14 +334,14 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 */
 		@Override
 		public int hashCode() {
-			return mc.hashCode();
+            return getMc().hashCode();
 		}
 
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof EmptyPointSet){
 				return true;
 			}
@@ -351,7 +352,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			if(obj instanceof EmptyPointSet){
 				return true;
 			}
@@ -361,7 +362,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "Empty set";
 		}
 		
@@ -426,7 +427,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
 		@Override
-		public <N> CombinedSpacePointSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> CombinedSpacePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			List<SpacePointSet<N>> ln = new ArrayList<>(list.size());
 			for(SpacePointSet<T> set : list){
 				ln.add( set.mapTo(mapper, newCalculator));
@@ -461,7 +462,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof CombinedSpacePointSet){
 				CombinedSpacePointSet<T> isp = (CombinedSpacePointSet<T>) obj;
 				return this.flag == isp.flag &&ArraySup.arrayEqualNoOrder(
@@ -478,7 +479,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			if(obj instanceof CombinedSpacePointSet){
 				CombinedSpacePointSet<N> isp = (CombinedSpacePointSet<N>) obj;
 				return this.flag == isp.flag &&ArraySup.arrayEqualNoOrder(
@@ -491,7 +492,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "CombinedSpacePointSet:"+(flag == INTERSECT ? "Intersect" : "Union") + ":"+list.toString();
 		}
 	}

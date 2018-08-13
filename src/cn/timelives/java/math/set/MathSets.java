@@ -28,7 +28,7 @@ public final class MathSets {
 	
 	
 	public static <T> SingletonSet<T> singleton(T t,EqualPredicate<T> mc){
-		return new SingletonSet<>(GroupCalculators.toMathCalculatorEqual(mc), t);
+        return new SingletonSet<>(GroupCalculators.INSTANCE.toMathCalculatorEqual(mc), t);
 	}
 
 	@SafeVarargs
@@ -43,7 +43,7 @@ public final class MathSets {
 			}
 			list.add(t);
 		}
-		return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(mc), list);
+        return new CollectionSet<>(GroupCalculators.INSTANCE.toMathCalculatorEqual(mc), list);
 	}
 
 
@@ -65,7 +65,7 @@ public final class MathSets {
 			}
 			list.add(t);
 		}
-		return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(mc), coll);
+        return new CollectionSet<>(GroupCalculators.INSTANCE.toMathCalculatorEqual(mc), coll);
 	}
 	/**
 	 * Returns the symmetricGroups set in math, which contains all the elements. The set will

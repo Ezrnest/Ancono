@@ -4,6 +4,7 @@
 package cn.timelives.java.math.equation;
 
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Function;
@@ -31,8 +32,8 @@ implements MVCompareStructure<T>{
 	 */
 	@Override
 	public abstract boolean isSolution(List<T> x) ;
-	
-	
-	public abstract <N> AbstractMVCompareStructure<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+
+
+    public abstract <N> AbstractMVCompareStructure<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 }

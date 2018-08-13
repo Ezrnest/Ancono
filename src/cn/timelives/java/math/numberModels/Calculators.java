@@ -6,6 +6,7 @@ package cn.timelives.java.math.numberModels;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -30,7 +31,7 @@ public final class Calculators {
 	 * @param mc
 	 * @return
 	 */
-	public static <T> boolean isSameSign(T x,T y,MathCalculator<T> mc){
+	public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, MathCalculator<T> mc) {
 		T z = mc.getZero();
 		return mc.compare(x, z) == mc.compare(y, z);
 	}
@@ -41,15 +42,15 @@ public final class Calculators {
 	 * @param mc
 	 * @return
 	 */
-	public static <T> int signum(T x,MathCalculator<T> mc){
+	public static <T> int signum(@NotNull T x, MathCalculator<T> mc) {
 		return mc.compare(x, mc.getZero());
 	}
-	
-	public static <T> boolean isPositive(T x,MathCalculator<T> mc){
+
+	public static <T> boolean isPositive(@NotNull T x, @NotNull MathCalculator<T> mc) {
 		return signum(x,mc) > 0;
 	}
-	
-	public static <T> boolean isNegative(T x,MathCalculator<T> mc){
+
+	public static <T> boolean isNegative(@NotNull T x, @NotNull MathCalculator<T> mc) {
 		return signum(x,mc) < 0;
 	}
 
@@ -62,30 +63,31 @@ public final class Calculators {
      * @param <T>
      * @return
      */
-	public static <T> boolean between(T x,T a,T b,MathCalculator<T> mc){
+	public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, MathCalculator<T> mc) {
 	    return mc.compare(a,x) * mc.compare(x,b) > 0;
     }
 
-	public static <T> T square(T x,MathCalculator<T> mc){
+	public static <T> T square(@NotNull T x, MathCalculator<T> mc) {
 		return mc.multiply(x, x);
 	}
-	
-	public static <T> T cube(T x,MathCalculator<T> mc){
+
+	public static <T> T cube(@NotNull T x, MathCalculator<T> mc) {
 		return mc.multiply(x, mc.multiply(x, x));
 	}
-	
-	public static <T> T doubleOf(T x,MathCalculator<T> mc){
+
+	public static <T> T doubleOf(@NotNull T x, MathCalculator<T> mc) {
 		return mc.multiplyLong(x, 2l);
 	}
-	
-	public static <T> T half(T x,MathCalculator<T> mc){
+
+	public static <T> T half(@NotNull T x, MathCalculator<T> mc) {
 		return mc.divideLong(x, 2l);
 	}
-	
-	public static <T> T plus1(T x,MathCalculator<T> mc){
+
+	public static <T> T plus1(@NotNull T x, MathCalculator<T> mc) {
 		return mc.add(x, mc.getOne());
 	}
-	public static <T> T minus1(T x,MathCalculator<T> mc){
+
+	public static <T> T minus1(@NotNull T x, MathCalculator<T> mc) {
 		return mc.add(x, mc.getOne());
 	}
 
@@ -93,7 +95,7 @@ public final class Calculators {
 	    return mc.constantValue(MathCalculator.STR_PI);
     }
 
-    public static <T> T hypot(T a,T b,MathCalculator<T> mc){
+	public static <T> T hypot(@NotNull T a, @NotNull T b, MathCalculator<T> mc) {
 		return mc.squareRoot(mc.add(square(a,mc),square(b,mc)));
 	}
 
@@ -112,55 +114,64 @@ public final class Calculators {
 		IntegerCalculatorExact(){};
 		
 		@Override
-		public boolean isEqual(Integer para1, Integer para2) {
+		public boolean isEqual(@NotNull Integer para1, Integer para2) {
 			return para1.equals(para2);
 		}
 
 		@Override
-		public int compare(Integer para1, Integer para2) {
+		public int compare(@NotNull Integer para1, @NotNull Integer para2) {
 			return para1.compareTo(para2);
 		}
 
+		@NotNull
 		@Override
 		public Integer add(Integer para1, Integer para2) {
 			return Math.addExact(para1, para2);
 		}
 
+		@NotNull
 		@Override
 		public Integer negate(Integer para) {
 			return -para;
 		}
 
+		@NotNull
 		@Override
 		public Integer abs(Integer para) {
 			return Math.abs(para);
 		}
 
+		@NotNull
 		@Override
 		public Integer subtract(Integer para1, Integer para2) {
 			return Math.subtractExact(para1, para2);
 		}
 
+		@NotNull
 		@Override
-		public Integer multiply(Integer para1, Integer para2) {
+		public Integer multiply(@NotNull Integer para1, Integer para2) {
 			return Math.multiplyExact(para1, para2);
 		}
 
+		@NotNull
 		@Override
 		public Integer divide(Integer para1, Integer para2) {
 			return para1/para2;
 		}
 
+		@NotNull
 		@Override
 		public Integer multiplyLong(Integer p, long l) {
 			return Math.toIntExact(p*l);
 		}
 
+		@NotNull
 		@Override
-		public Integer divideLong(Integer p, long l) {
-			return (int)(p/l);
+		public Integer divideLong(Integer p, long n) {
+			return (int) (p / n);
 		}
 
+		@NotNull
 		@Override
 		public Integer getZero() {
 			return Integer.valueOf(0);
@@ -171,24 +182,28 @@ public final class Calculators {
 			return Integer.valueOf(0).equals(para);
 		};
 
+		@NotNull
 		@Override
 		public Integer getOne() {
 			return Integer.valueOf(1);
 		}
 
+		@NotNull
 		@Override
 		public Integer reciprocal(Integer p) {
 			throwFor("Integer value");
 			return null;
 		}
 
+		@NotNull
 		@Override
-		public Integer squareRoot(Integer p) {
-			return (int)Math.sqrt(p);
+		public Integer squareRoot(Integer x) {
+			return (int) Math.sqrt(x);
 		}
 
+		@NotNull
 		@Override
-		public Integer pow(Integer p, long exp) {
+		public Integer pow(@NotNull Integer p, long exp) {
 			int n = p;
 			//range check 
 			if( n==0 || n == 1){
@@ -206,22 +221,24 @@ public final class Calculators {
 			}
 			int ex = (int) exp;
 			int re = n;
-			for(int i=1;i<ex;i++){
+			for(int i = 1; i<ex; i++){
 				re = Math.multiplyExact(re, n);
 			}
 			return re;
 		}
-		
+
+		@NotNull
 		@Override
 		public Integer constantValue(String name) {
 			throwFor("No constant value avaliable");
 			return null;
 		}
-		
+
+		@NotNull
 		@Override
 		public Integer exp(Integer a, Integer b) {
 			int d = a,z = b;
-			
+
 			if(z < 0){
 				if(d ==1 ){
 					return 1;
@@ -248,14 +265,12 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter.IntegerCalculator#decrease(java.lang.Integer)
 		 */
 		@Override
 		public Integer decrease(Integer x) {
 			return Math.decrementExact(x);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter.IntegerCalculator#increase(java.lang.Integer)
 		 */
 		@Override
 		public Integer increase(Integer x) {
@@ -279,14 +294,7 @@ public final class Calculators {
 			}
 			int ans = 1;
 			a = a % mod;
-			while(n>0){
-				if((n&1)==1){
-					ans = Math.multiplyExact(a, ans)%mod;
-					
-				}
-				a = Math.multiplyExact(a, a) % mod;
-				n>>=1;
-			}
+			ans = Math.toIntExact(LongCalculatorExact.getAns(n, mod, ans, Math.multiplyExact(a, ans), Math.multiplyExact(a, a), a));
 			return ans;
 		}
 		
@@ -295,6 +303,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.MathCalculator#getNumberClass()
 		 */
+		@NotNull
 		@Override
 		public Class<Integer> getNumberClass() {
 			return Integer.class;
@@ -312,12 +321,12 @@ public final class Calculators {
 		IntegerCalculator(){};
 		
 		@Override
-		public boolean isEqual(Integer para1, Integer para2) {
+		public boolean isEqual(@NotNull Integer para1, Integer para2) {
 			return para1.equals(para2);
 		}
 
 		@Override
-		public int compare(Integer para1, Integer para2) {
+		public int compare(@NotNull Integer para1, @NotNull Integer para2) {
 			return para1.compareTo(para2);
 		}
 
@@ -326,74 +335,90 @@ public final class Calculators {
 			return true;
 		}
 
+		@NotNull
 		@Override
 		public Integer add(Integer para1, Integer para2) {
 			return para1+para2;
 		}
 
+		@NotNull
 		@Override
 		public Integer negate(Integer para) {
 			return -para;
 		}
 
+		@NotNull
 		@Override
 		public Integer abs(Integer para) {
 			return Math.abs(para);
 		}
 
+		@NotNull
 		@Override
 		public Integer subtract(Integer para1, Integer para2) {
 			return para1-para2;
 		}
 
+		@NotNull
 		@Override
-		public Integer multiply(Integer para1, Integer para2) {
+		public Integer multiply(@NotNull Integer para1, Integer para2) {
 			return para1*para2;
 		}
 
+		@NotNull
 		@Override
 		public Integer divide(Integer para1, Integer para2) {
 			return para1/para2;
 		}
 
+		@NotNull
 		@Override
 		public Integer multiplyLong(Integer p, long l) {
 			return (int)(p*l);
 		}
 
+		@NotNull
 		@Override
-		public Integer divideLong(Integer p, long l) {
-			return (int)(p/l);
+		public Integer divideLong(Integer p, long n) {
+			return (int) (p / n);
 		}
 
+		@NotNull
 		@Override
 		public Integer getZero() {
-			return Integer.valueOf(0);
+			return 0;
 		}
 		
 		@Override
 		public boolean isZero(Integer para) {
 			return Integer.valueOf(0).equals(para);
 		}
+
+		@NotNull
 		@Override
 		public Integer getOne() {
-			return Integer.valueOf(1);
+			return 1;
 		}
+
+		@NotNull
 		@Override
 		public Integer reciprocal(Integer p) {
 			throwFor("Integer value");
 			return null;
 		}
+
+		@NotNull
 		@Override
-		public Integer squareRoot(Integer p) {
-			return (int)Math.sqrt(p);
+		public Integer squareRoot(Integer x) {
+			return (int) Math.sqrt(x);
 		}
 
+		@NotNull
 		@Override
-		public Integer pow(Integer p, long exp) {
+		public Integer pow(@NotNull Integer p, long exp) {
 			int n = p;
 			if(exp == 0){
-				return Integer.valueOf(1);
+				return 1;
 			}
 			//range check 
 			if( n==0 || n == 1){
@@ -407,22 +432,24 @@ public final class Calculators {
 				throwFor("exp = "+exp+" < 0");
 			}
 			int re = n;
-			for(long i=1;i<exp;i++){
+			for(long i = 1; i<exp; i++){
 				re = re * n;
 			}
 			return re;
 		}
-		
+
+		@NotNull
 		@Override
 		public Integer constantValue(String name) {
 			throwFor("No constant value avaliable");
 			return null;
 		}
-		
+
+		@NotNull
 		@Override
 		public Integer exp(Integer a, Integer b) {
 			int d = a,z = b;
-			
+
 			if(z < 0){
 				if(d ==1 ){
 					return 1;
@@ -451,6 +478,7 @@ public final class Calculators {
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#divideToInteger(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Integer divideToInteger(Integer a, Integer b) {
 			return a/b;
@@ -458,6 +486,7 @@ public final class Calculators {
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#mod(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Integer mod(Integer a, Integer b) {
 			int x = a,y = b;
@@ -525,6 +554,7 @@ public final class Calculators {
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#reminder(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Integer reminder(Integer a, Integer b) {
 			return a%b;
@@ -551,7 +581,8 @@ public final class Calculators {
 		public Integer powerAndMod(Integer a, Integer n, Integer m) {
 			return MathUtils.powerAndMod(a, n, m);
 		}
-		
+
+		@NotNull
 		@Override
 		public Class<Integer> getNumberClass() {
 			return Integer.class;
@@ -565,58 +596,67 @@ public final class Calculators {
 		LongCalculatorExact(){};
 		
 		@Override
-		public boolean isEqual(Long para1, Long para2) {
+		public boolean isEqual(@NotNull Long para1, Long para2) {
 			return para1.equals(para2);
 		}
 
 		@Override
-		public int compare(Long para1, Long para2) {
+		public int compare(@NotNull Long para1, @NotNull Long para2) {
 			return para1.compareTo(para2);
 		}
 
+		@NotNull
 		@Override
 		public Long add(Long para1, Long para2) {
 			return Math.addExact(para1, para2);
 		}
 
+		@NotNull
 		@Override
 		public Long negate(Long para) {
 			return -para;
 		}
 
+		@NotNull
 		@Override
 		public Long abs(Long para) {
 			return Math.abs(para);
 		}
 
+		@NotNull
 		@Override
 		public Long subtract(Long para1, Long para2) {
 			return Math.subtractExact(para1, para2);
 		}
 
+		@NotNull
 		@Override
-		public Long multiply(Long para1, Long para2) {
+		public Long multiply(@NotNull Long para1, Long para2) {
 			return Math.multiplyExact(para1, para2);
 		}
 
+		@NotNull
 		@Override
 		public Long divide(Long para1, Long para2) {
 			return para1/para2;
 		}
 
+		@NotNull
 		@Override
 		public Long multiplyLong(Long p, long l) {
 			return Math.multiplyExact(p, l);
 		}
 
+		@NotNull
 		@Override
-		public Long divideLong(Long p, long l) {
-			return p/l;
+		public Long divideLong(Long p, long n) {
+			return p / n;
 		}
 
-		private static final Long ZERO = Long.valueOf(0),
-				ONE = Long.valueOf(1);
+		private static final Long ZERO = 0L,
+				ONE = 1L;
 
+		@NotNull
 		@Override
 		public Long getZero() {
 			return ZERO;
@@ -626,35 +666,43 @@ public final class Calculators {
 		public boolean isZero(Long para) {
 			return ZERO.equals(para);
 		}
+
+		@NotNull
 		@Override
 		public Long getOne() {
 			return ONE;
 		}
 
+		@NotNull
 		@Override
 		public Long reciprocal(Long p) {
 			throwFor();
 			return null;
 		}
 
+		@NotNull
 		@Override
-		public Long squareRoot(Long p) {
-			return (long)Math.sqrt(p);
+		public Long squareRoot(Long x) {
+			return (long) Math.sqrt(x);
 		}
 
+		@NotNull
 		@Override
 		public Long pow(Long p, long exp) {
 			return exp0(p,exp);
 		}
-		
+
+		@NotNull
 		@Override
 		public Long constantValue(String name) {
 			throwFor("No constant value avaliable");
 			return null;
 		}
+
+		@NotNull
 		public Long exp0(long a, long b) {
 			long d = a,z = b;
-			
+
 			if(z < 0l){
 				if(d ==1l ){
 					return 1l;
@@ -679,21 +727,20 @@ public final class Calculators {
 			}
 			return Long.valueOf(re);
 		}
-		
+
+		@NotNull
 		@Override
 		public Long exp(Long a, Long b) {
 			return exp0(a,b);
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter.IntegerCalculator#decrease(java.lang.Integer)
 		 */
 		@Override
 		public Long decrease(Long x) {
 			return Math.decrementExact(x);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter.IntegerCalculator#increase(java.lang.Integer)
 		 */
 		@Override
 		public Long increase(Long x) {
@@ -701,7 +748,6 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public Long powerAndMod(Long at, Long nt, Long mt) {
@@ -717,17 +763,23 @@ public final class Calculators {
 			}
 			long ans = 1;
 			a = a % mod;
+			ans = getAns(n, mod, ans, Math.multiplyExact(a, ans), Math.multiplyExact(a, a), a);
+			return ans;
+		}
+
+		private static long getAns(long n, long mod, long ans, long l, long l2, long a) {
 			while(n>0){
 				if((n&1)==1){
-					ans = Math.multiplyExact(a, ans)%mod;
-					
+					ans = l % mod;
+
 				}
-				a = Math.multiplyExact(a, a) % mod;
+				a = l2 % mod;
 				n>>=1;
 			}
 			return ans;
 		}
-		
+
+		@NotNull
 		@Override
 		public Class<Long> getNumberClass() {
 			return Long.class;
@@ -745,61 +797,71 @@ public final class Calculators {
 		LongCalculator(){};
 		
 		@Override
-		public boolean isEqual(Long para1, Long para2) {
+		public boolean isEqual(@NotNull Long para1, Long para2) {
 			return para1.equals(para2);
 		}
 
 		@Override
-		public int compare(Long para1, Long para2) {
+		public int compare(@NotNull Long para1, @NotNull Long para2) {
 			return para1.compareTo(para2);
 		}
 		@Override
 		public boolean isComparable() {
 			return true;
 		}
+
+		@NotNull
 		@Override
 		public Long add(Long para1, Long para2) {
 			return para1+para2;
 		}
 
+		@NotNull
 		@Override
 		public Long negate(Long para) {
 			return -para;
 		}
 
+		@NotNull
 		@Override
 		public Long abs(Long para) {
 			return Math.abs(para);
 		}
 
+		@NotNull
 		@Override
 		public Long subtract(Long para1, Long para2) {
 			return para1-para2;
 		}
 
+		@NotNull
 		@Override
-		public Long multiply(Long para1, Long para2) {
+		public Long multiply(@NotNull Long para1, Long para2) {
 			return para1*para2;
 		}
 
+		@NotNull
 		@Override
 		public Long divide(Long para1, Long para2) {
 			return para1/para2;
 		}
 
+		@NotNull
 		@Override
 		public Long multiplyLong(Long p, long l) {
 			return p * l;
 		}
 
+		@NotNull
 		@Override
-		public Long divideLong(Long p, long l) {
-			return p/l;
+		public Long divideLong(Long p, long n) {
+			return p / n;
 		}
 		
 		private static final Long ZERO = Long.valueOf(0),
 									ONE = Long.valueOf(1);
-		
+
+		@NotNull
 		@Override
 		public Long getZero() {
 			return ZERO;
@@ -809,32 +871,40 @@ public final class Calculators {
 		public boolean isZero(Long para) {
 			return ZERO.equals(para);
 		}
+
+		@NotNull
 		@Override
 		public Long getOne() {
 			return ONE;
 		}
 
+		@NotNull
 		@Override
 		public Long reciprocal(Long p) {
 			throwFor();
 			return null;
 		}
 
+		@NotNull
 		@Override
-		public Long squareRoot(Long p) {
-			return (long)Math.sqrt(p);
+		public Long squareRoot(Long x) {
+			return (long) Math.sqrt(x);
 		}
 
+		@NotNull
 		@Override
 		public Long pow(Long p, long exp) {
 			return exp0(p,exp);
 		}
-		
+
+		@NotNull
 		@Override
 		public Long constantValue(String name) {
 			throwFor("No constant value avaliable");
 			return null;
 		}
+
+		@NotNull
 		@Override
 		public Long exp(Long a, Long b) {
 			return exp0(a,b);
@@ -864,19 +934,19 @@ public final class Calculators {
 				d *= d;
 				z >>= 1;
 			}
-			return Long.valueOf(re);
+			return re;
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#divideToLong(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Long divideToInteger(Long a, Long b) {
 			return a/b;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#mod(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Long mod(Long a, Long b) {
 			long x = a,y = b;
@@ -884,7 +954,6 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isLong(java.lang.Object)
 		 */
 		@Override
 		public boolean isInteger(Long x) {
@@ -944,6 +1013,7 @@ public final class Calculators {
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#reminder(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Long reminder(Long a, Long b) {
 			return a%b;
@@ -951,6 +1021,7 @@ public final class Calculators {
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#deg(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Long deg(Long a, Long b) {
 			return (long) MathUtils.deg(a, b);
@@ -962,8 +1033,9 @@ public final class Calculators {
 		public boolean isExactDivide(Long a, Long b) {
 			return a%b==0;
 		}
-		
-		
+
+
+		@NotNull
 		@Override
 		public Class<Long> getNumberClass() {
 			return Long.class;
@@ -983,12 +1055,12 @@ public final class Calculators {
 		}
 		
 		@Override
-		public boolean isEqual(BigInteger para1, BigInteger para2) {
+		public boolean isEqual(@NotNull BigInteger para1, BigInteger para2) {
 			return para1.equals(para2);
 		}
 
 		@Override
-		public int compare(BigInteger para1, BigInteger para2) {
+		public int compare(@NotNull BigInteger para1, @NotNull BigInteger para2) {
 			return para1.compareTo(para2);
 		}
 
@@ -997,28 +1069,32 @@ public final class Calculators {
             return true;
         }
 
+		@NotNull
 		@Override
-		public BigInteger add(BigInteger para1, BigInteger para2) {
+		public BigInteger add(@NotNull BigInteger para1, @NotNull BigInteger para2) {
 			return para1.add(para2);
 		}
 
+		@NotNull
 		@Override
-		public BigInteger negate(BigInteger para) {
+		public BigInteger negate(@NotNull BigInteger para) {
 			return para.negate();
 		}
 
+		@NotNull
 		@Override
-		public BigInteger abs(BigInteger para) {
+		public BigInteger abs(@NotNull BigInteger para) {
 			return para.abs();
 		}
 
+		@NotNull
 		@Override
-		public BigInteger subtract(BigInteger para1, BigInteger para2) {
+		public BigInteger subtract(@NotNull BigInteger para1, @NotNull BigInteger para2) {
 			return para1.subtract(para2);
 		}
-		
-		
-		
+
+
+		@NotNull
 		@Override
 		public BigInteger getZero() {
 			return BigInteger.ZERO;
@@ -1027,21 +1103,26 @@ public final class Calculators {
 		public boolean isZero(BigInteger para) {
 			return BigInteger.ZERO.equals(para);
 		}
+
+		@NotNull
 		@Override
-		public BigInteger multiply(BigInteger para1, BigInteger para2) {
+		public BigInteger multiply(@NotNull BigInteger para1, @NotNull BigInteger para2) {
 			return para1.multiply(para2);
 		}
 
+		@NotNull
 		@Override
-		public BigInteger divide(BigInteger para1, BigInteger para2) {
+		public BigInteger divide(@NotNull BigInteger para1, @NotNull BigInteger para2) {
 			return para1.divide(para2);
 		}
 
+		@NotNull
 		@Override
 		public BigInteger getOne() {
 			return BigInteger.ONE;
 		}
 
+		@NotNull
 		@Override
 		public BigInteger reciprocal(BigInteger p) {
 			//impossible 
@@ -1049,36 +1130,43 @@ public final class Calculators {
 			return null;
 		}
 
+		@NotNull
 		@Override
-		public BigInteger multiplyLong(BigInteger p, long l) {
+		public BigInteger multiplyLong(@NotNull BigInteger p, long l) {
 			return p.multiply(BigInteger.valueOf(l));
 		}
 
+		@NotNull
 		@Override
-		public BigInteger divideLong(BigInteger p, long l) {
-			return p.divide(BigInteger.valueOf(l));
+		public BigInteger divideLong(@NotNull BigInteger p, long n) {
+			return p.divide(BigInteger.valueOf(n));
 		}
 
+		@NotNull
 		@Override
-		public BigInteger squareRoot(BigInteger p) {
-			return BigInteger.valueOf((long)Math.sqrt(p.doubleValue()));
+		public BigInteger squareRoot(@NotNull BigInteger x) {
+			return BigInteger.valueOf((long) Math.sqrt(x.doubleValue()));
 		}
 
+		@NotNull
 		@Override
-		public BigInteger pow(BigInteger p, long exp) {
+		public BigInteger pow(@NotNull BigInteger p, long exp) {
 			if(exp > Integer.MAX_VALUE){
 				throwFor("Too big.");
 			}
 			return p.pow((int)exp);
 		}
-		
+
+		@NotNull
 		@Override
 		public BigInteger constantValue(String name) {
 			throwFor();
 			return null;
 		}
+
+		@NotNull
 		@Override
-		public BigInteger exp(BigInteger a, BigInteger b) {
+		public BigInteger exp(@NotNull BigInteger a, @NotNull BigInteger b) {
 			try{
 				int t = b.intValueExact();
 				return a.pow(t);
@@ -1088,22 +1176,20 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#divideToBigInteger(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public BigInteger divideToInteger(BigInteger a, BigInteger b) {
+		public BigInteger divideToInteger(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.divide(b);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#mod(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public BigInteger mod(BigInteger a, BigInteger b) {
+		public BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.mod(b.abs());
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isBigInteger(java.lang.Object)
 		 */
 		@Override
 		public boolean isInteger(BigInteger x) {
@@ -1121,21 +1207,21 @@ public final class Calculators {
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#gcd(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public BigInteger gcd(BigInteger a, BigInteger b) {
+		public BigInteger gcd(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.gcd(b);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#decrease(java.lang.Object)
 		 */
 		@Override
-		public BigInteger decrease(BigInteger x) {
+		public BigInteger decrease(@NotNull BigInteger x) {
 			return x.subtract(BigInteger.ONE);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#increase(java.lang.Object)
 		 */
 		@Override
-		public BigInteger increase(BigInteger x) {
+		public BigInteger increase(@NotNull BigInteger x) {
 			return x.add(BigInteger.ONE);
 		}
 		
@@ -1143,45 +1229,46 @@ public final class Calculators {
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isEven(java.lang.Object)
 		 */
 		@Override
-		public boolean isEven(BigInteger x) {
+		public boolean isEven(@NotNull BigInteger x) {
 			return !x.testBit(0);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isOdd(java.lang.Object)
 		 */
 		@Override
-		public boolean isOdd(BigInteger x) {
+		public boolean isOdd(@NotNull BigInteger x) {
 			return x.testBit(0);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isPositive(java.lang.Object)
 		 */
 		@Override
-		public boolean isPositive(BigInteger x) {
+		public boolean isPositive(@NotNull BigInteger x) {
 			return x.signum()>0;
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#reminder(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public BigInteger reminder(BigInteger a, BigInteger b) {
+		public BigInteger reminder(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.remainder(b);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public boolean isExactDivide(BigInteger a, BigInteger b) {
+		public boolean isExactDivide(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.mod(b).equals(BigInteger.ZERO);
 		}
 		/**
 		 * @see cn.timelives.java.math.numberModels.NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public BigInteger powerAndMod(BigInteger a, BigInteger n, BigInteger mod) {
+		public BigInteger powerAndMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
 			return a.modPow(n, mod);
 		}
-		
+
+		@NotNull
 		@Override
 		public Class<BigInteger> getNumberClass() {
 			return BigInteger.class;
@@ -1202,12 +1289,12 @@ public final class Calculators {
 		}
 		
 		@Override
-		public boolean isEqual(BigDecimal para1, BigDecimal para2) {
+		public boolean isEqual(@NotNull BigDecimal para1, BigDecimal para2) {
 			return para1.equals(para2);
 		}
 
 		@Override
-		public int compare(BigDecimal para1, BigDecimal para2) {
+		public int compare(@NotNull BigDecimal para1, @NotNull BigDecimal para2) {
 			return para1.compareTo(para2);
 		}
 
@@ -1216,26 +1303,31 @@ public final class Calculators {
             return true;
         }
 
+		@NotNull
 		@Override
-		public BigDecimal add(BigDecimal para1, BigDecimal para2) {
+		public BigDecimal add(@NotNull BigDecimal para1, @NotNull BigDecimal para2) {
 			return para1.add(para2);
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal negate(BigDecimal para) {
+		public BigDecimal negate(@NotNull BigDecimal para) {
 			return para.negate();
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal abs(BigDecimal para) {
+		public BigDecimal abs(@NotNull BigDecimal para) {
 			return para.abs();
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal subtract(BigDecimal para1, BigDecimal para2) {
+		public BigDecimal subtract(@NotNull BigDecimal para1, @NotNull BigDecimal para2) {
 			return para1.subtract(para2);
 		}
 
+		@NotNull
 		@Override
 		public BigDecimal getZero() {
 			return BigDecimal.ZERO;
@@ -1246,50 +1338,60 @@ public final class Calculators {
 			return BigDecimal.ZERO.equals(para);
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal multiply(BigDecimal para1, BigDecimal para2) {
+		public BigDecimal multiply(@NotNull BigDecimal para1, @NotNull BigDecimal para2) {
 			return para1.multiply(para2);
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal divide(BigDecimal para1, BigDecimal para2) {
+		public BigDecimal divide(@NotNull BigDecimal para1, BigDecimal para2) {
 			return para1.divide(para2,mc);
 		}
 
+		@NotNull
 		@Override
 		public BigDecimal getOne() {
 			return BigDecimal.ONE;
 		}
 
+		@NotNull
 		@Override
 		public BigDecimal reciprocal(BigDecimal p) {
 			return BigDecimal.ONE.divide(p,mc);
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal multiplyLong(BigDecimal p, long l) {
+		public BigDecimal multiplyLong(@NotNull BigDecimal p, long l) {
 			return p.multiply(BigDecimal.valueOf(l));
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal divideLong(BigDecimal p, long l) {
-			return p.divide(BigDecimal.valueOf(l));
+		public BigDecimal divideLong(@NotNull BigDecimal p, long n) {
+			return p.divide(BigDecimal.valueOf(n));
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal squareRoot(BigDecimal p) {
-			return BigDecimal.valueOf(Math.sqrt(p.doubleValue()));
+		public BigDecimal squareRoot(@NotNull BigDecimal x) {
+			return BigDecimal.valueOf(Math.sqrt(x.doubleValue()));
 		}
 
+		@NotNull
 		@Override
-		public BigDecimal pow(BigDecimal p, long exp) {
+		public BigDecimal pow(@NotNull BigDecimal p, long exp) {
 			if(exp >= Integer.MAX_VALUE){
 				throwFor("Too big.");
 			}
 			return p.pow((int)exp);
 		}
+
+		@NotNull
 		@Override
-		public BigDecimal constantValue(String name) {
+		public BigDecimal constantValue(@NotNull String name) {
 			if(name.equalsIgnoreCase(STR_PI)){
 				return PI_VALUE;
 			}
@@ -1305,8 +1407,9 @@ public final class Calculators {
 		 * @param b
 		 * @return
 		 */
+		@NotNull
 		@Override
-		public BigDecimal exp(BigDecimal a, BigDecimal b) {
+		public BigDecimal exp(@NotNull BigDecimal a, @NotNull BigDecimal b) {
 			//use exp method in double instead.
 			double ad = a.doubleValue();
 			double ab = b.doubleValue();
@@ -1318,6 +1421,8 @@ public final class Calculators {
 			}
 			return BigDecimal.valueOf(Math.pow(ad, ab));
 		}
+
+		@NotNull
 		@Override
 		public Class<BigDecimal> getNumberClass() {
 			return BigDecimal.class;
@@ -1331,12 +1436,12 @@ public final class Calculators {
 		static final DoubleCalculator dc = new DoubleCalculator();
 		
 		@Override
-		public boolean isEqual(Double para1, Double para2) {
+		public boolean isEqual(@NotNull Double para1, Double para2) {
 			return para1.equals(para2);
 		}
 
 		@Override
-		public int compare(Double para1, Double para2) {
+		public int compare(@NotNull Double para1, @NotNull Double para2) {
 			return para1.compareTo(para2);
 		}
 
@@ -1345,21 +1450,25 @@ public final class Calculators {
             return true;
         }
 
+		@NotNull
 		@Override
 		public Double add(Double para1, Double para2) {
 			return para1 + para2;
 		}
 
+		@NotNull
 		@Override
 		public Double negate(Double para) {
 			return - para;
 		}
 
+		@NotNull
 		@Override
 		public Double abs(Double para) {
 			return Math.abs(para);
 		}
 
+		@NotNull
 		@Override
 		public Double subtract(Double para1, Double para2) {
 			return para1 - para2 ;
@@ -1367,63 +1476,74 @@ public final class Calculators {
 		
 		private static final Double ZERO = 0.0d;
 		private static final Double ONE = 1.0d;
-		
+
+		@NotNull
 		@Override
 		public Double getZero() {
 			return ZERO;
 		}
 
+		@NotNull
 		@Override
-		public Double multiply(Double para1, Double para2) {
+		public Double multiply(@NotNull Double para1, Double para2) {
 			return para1 * para2 ;
 		}
 
+		@NotNull
 		@Override
 		public Double divide(Double para1, Double para2) {
 			return para1/para2;
 		}
 
+		@NotNull
 		@Override
 		public Double getOne() {
 			return ONE;
 		}
 
+		@NotNull
 		@Override
 		public Double reciprocal(Double p) {
 			return 1 / p;
 		}
 
+		@NotNull
 		@Override
 		public Double multiplyLong(Double p, long l) {
 			return p * l;
 		}
 
+		@NotNull
 		@Override
-		public Double divideLong(Double p, long l) {
-			return p / l;
+		public Double divideLong(Double p, long n) {
+			return p / n;
 		}
 
+		@NotNull
 		@Override
-		public Double squareRoot(Double p) {
-			return Math.sqrt(p);
+		public Double squareRoot(Double x) {
+			return Math.sqrt(x);
 		}
 
+		@NotNull
 		@Override
 		public Double pow(Double p, long exp) {
 			return Math.pow(p, exp);
 		}
-		
+
+		@NotNull
 		@Override
-		public Double addX(Object... ps) {
+		public Double addX(@NotNull Object... ps) {
 			double sum = 0;
 			for(Object d : ps){
 				sum += (Double)d;
 			}
 			return sum;
 		}
-		
+
+		@NotNull
 		@Override
-		public Double multiplyX(Object... ps) {
+		public Double multiplyX(@NotNull Object... ps) {
 			double sum = 1;
 			for(Object d : ps){
 				sum *=  (Double)d;
@@ -1433,9 +1553,10 @@ public final class Calculators {
 		
 		private static final Double pi = Math.PI;
 		private static final Double e = Math.E;
-		
+
+		@NotNull
 		@Override
-		public Double constantValue(String name) {
+		public Double constantValue(@NotNull String name) {
 			if(name.equalsIgnoreCase(STR_PI)){
 				return pi;
 			}
@@ -1445,6 +1566,8 @@ public final class Calculators {
 			throwFor("No constant value avaliable");
 			return null;
 		}
+
+		@NotNull
 		@Override
 		public Double exp(Double a, Double b) {
 			return Math.pow(a, b);
@@ -1453,6 +1576,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculatorAdapter#log(java.lang.Object, java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double log(Double a, Double b) {
 			return Math.log(b)/Math.log(a);
@@ -1461,6 +1585,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculatorAdapter#sin(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double sin(Double x) {
 			return Math.sin(x);
@@ -1468,6 +1593,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculator#cos(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double cos(Double x) {
 			return Math.cos(x);
@@ -1476,6 +1602,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculatorAdapter#arcsin(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double arcsin(Double x) {
 			return Math.asin(x);
@@ -1483,6 +1610,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculator#arccos(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double arccos(Double x) {
 			return Math.acos(x);
@@ -1490,6 +1618,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculatorAdapter#ln(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double ln(Double x) {
 			return Math.log(x);
@@ -1497,6 +1626,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculatorAdapter#exp(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double exp(Double x) {
 			return Math.exp(x);
@@ -1504,6 +1634,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculator#tan(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double tan(Double x) {
 			return Math.tan(x);
@@ -1512,6 +1643,7 @@ public final class Calculators {
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.number_models.MathCalculator#arctan(java.lang.Object)
 		 */
+		@NotNull
 		@Override
 		public Double arctan(Double x) {
 			return Math.atan(x);
@@ -1527,11 +1659,13 @@ public final class Calculators {
 		/**
 		 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#nroot(java.lang.Object, long)
 		 */
+		@NotNull
 		@Override
 		public Double nroot(Double x, long n) {
 			return Math.pow(x, 1d/n);
 		}
-		
+
+		@NotNull
 		@Override
 		public Class<Double> getNumberClass() {
 			return Double.class;
@@ -1569,7 +1703,7 @@ public final class Calculators {
 		 * @see cn.timelives.java.math.MathCalculatorAdapter.DoubleCalculator#compare(java.lang.Double, java.lang.Double)
 		 */
 		@Override
-		public int compare(Double para1, Double para2) {
+		public int compare(@NotNull Double para1, @NotNull Double para2) {
 			if(isEqual(para1, para2)){
 				return 0;
 			}
@@ -1582,10 +1716,11 @@ public final class Calculators {
 	/**
 	 * Return an exact calculator for Integer,all operations that will cause a overflow will 
 	 * not be operated and an exception will be thrown.<p>
-	 * <p>The {@link #squareRoot(Integer)}
+	 * <p>The {@link IntegerCalculator#squareRoot(Integer)}
 	 * The calculator does not have any constant values.
 	 * @return a MathCalculator
 	 */
+	@NotNull
 	public static IntegerCalculator getCalculatorIntegerExact(){
 		return IntegerCalculatorExact.cal;
 	}
@@ -1597,6 +1732,7 @@ public final class Calculators {
 	 * The calculator does not have any constant values.
 	 * @return a MathCalculator
 	 */
+	@NotNull
 	public static IntegerCalculator getCalculatorInteger(){
 		return IntegerCalculator.cal;
 	}
@@ -1607,6 +1743,7 @@ public final class Calculators {
 	 * The calculator does not have any constant values.
 	 * @return a MathCalculator
 	 */
+	@NotNull
 	public static LongCalculator getCalculatorLongExact(){
 		return LongCalculatorExact.cal;
 	}
@@ -1616,6 +1753,7 @@ public final class Calculators {
 	 * The calculator does not have any constant values.
 	 * @return a MathCalculator
 	 */
+	@NotNull
 	public static LongCalculator getCalculatorLong(){
 		return LongCalculator.cal;
 	}
@@ -1626,13 +1764,14 @@ public final class Calculators {
 	 * The calculator does not have any constant values.
 	 * @return a MathCalculator
 	 */
+	@NotNull
 	public static BigIntegerCalculator getCalculatorBigInteger(){
 		return BigIntegerCalculator.cal;
 	}
 	/**
 	 * Return a calculator for {@linkplain BigDecimal} with the given math context.Notice that the method 
 	 * {@code pow} has a limit that {@code exp <= 999999999}<p>
-	 * The calculator has {@value #STR_PI} and {@value #STR_E} as constant values,which have the rounding mode of 
+	 * The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,which have the rounding mode of
 	 * {@link MathContext#DECIMAL128}.
 	 * @param mc a math context
 	 * @return a MathCalculator
@@ -1642,29 +1781,31 @@ public final class Calculators {
 	}
 	/**
 	 * Return a calculator for Double.
-	 * <p>The calculator has {@value #STR_PI} and {@value #STR_E} as constant values,
+	 * <p>The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,
 	 * which are the double values in Math.<p>
 	 * This calculator doesn't consider the deviation of double and it 
 	 * {@link MathCalculator#isEqual(Object, Object)} method is just equal to {@code d1 == d2}.
 	 * @return a MathCalculator
 	 */
+	@NotNull
 	public static MathCalculator<Double> getCalculatorDouble(){
 		return DoubleCalculator.dc;
 	}
 	/**
 	 * Return a calculator for Double.
-	 * <p>The calculator has {@value #STR_PI} and {@value #STR_E} as constant values,
+	 * <p>The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,
 	 * which are the double values in Math.<p>
 	 * This calculator considers the deviation of double and it 
 	 * allows a deviation of {@code 10E-10}
 	 * @return a MathCalculator
 	 */
+	@NotNull
 	public static MathCalculator<Double> getCalculatorDoubleDev(){
 		return DoubleCalcualtorWithDeviation.dc;
 	}
 	/**
 	 * Return a calculator for Double.
-	 * <p>The calculator has {@value #STR_PI} and {@value #STR_E} as constant values,
+	 * <p>The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,
 	 * which are the double values in Math.<p>
 	 * This calculator considers the deviation of double.
 	 * @return a MathCalculator

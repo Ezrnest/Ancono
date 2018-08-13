@@ -12,6 +12,7 @@ import cn.timelives.java.math.numberModels.structure.PolynomialX;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
@@ -136,7 +137,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}
 		if(obj instanceof Matrix){
 			Matrix<?> mat = (Matrix<?>)obj;
-			if(!mc.equals(mat.mc))
+            if (!getMc().equals(mat.getMc()))
 				return false;
 			return Arrays.deepEquals(getValues(), mat.getValues());
 		}
@@ -145,7 +146,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 	}
 	@Override
 	public int hashCode() {
-		int hash = mc.hashCode();
+        int hash = getMc().hashCode();
 		hash = hash*37 + column;
 		hash = hash*37 + row;
 		hash = hash* 31 + getNumber(0, 0).hashCode();
@@ -195,15 +196,15 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 	 */
 	public Matrix<T> multiplyNumberColumn(T n,int c){
 		columnRangeCheck(c);
-		if(mc.isEqual(n ,mc.getZero())){
+        if (getMc().isEqual(n, getMc().getZero())) {
 			throw new IllegalArgumentException("Multiply by 0");
 		}
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for(int i=0;i<row;i++){
-			re[i][c] = mc.multiply(re[i][c], n);
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[i][c] = getMc().multiply(re[i][c], n);
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 	/**
 	 * Multiply the specific column with the given T.
@@ -221,9 +222,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for(int i=0;i<row;i++){
-			re[i][c] = mc.multiplyLong(re[i][c], n);
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[i][c] = getMc().multiplyLong(re[i][c], n);
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 	
 	/**
@@ -236,15 +237,15 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 	 */
 	public Matrix<T> multiplyNumberRow(T n,int r){
 		columnRangeCheck(r);
-		if(mc.isEqual(n ,mc.getZero())){
+        if (getMc().isEqual(n, getMc().getZero())) {
 			throw new IllegalArgumentException("Multiply by 0");
 		}
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for(int i=0;i<column;i++){
-			re[r][i] = mc.multiply(re[r][i], n);
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[r][i] = getMc().multiply(re[r][i], n);
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 	/**
 	 * Multiply the specific column with the given T.
@@ -262,9 +263,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for(int i=0;i<column;i++){
-			re[r][i] = mc.multiplyLong(re[r][i], n);
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[r][i] = getMc().multiplyLong(re[r][i], n);
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	/**
@@ -290,7 +291,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			re[r1][c] = re[r2][c];
 			re[r2][c] = t;
 		}
-		return new DMatrix<>(re, row, column,mc);
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	/**
@@ -316,7 +317,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			re[l][c1] = re[l][c2];
 			re[l][c2] = t;
 		}
-		return new DMatrix<>(re, row, column,mc);
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	/**
@@ -341,9 +342,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for (int i = 0; i < column; i++) {
-			re[r2][i]=mc.add(re[r2][i], mc.multiplyLong(re[r1][i], k));
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[r2][i] = getMc().add(re[r2][i], getMc().multiplyLong(re[r1][i], k));
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 	
 	/**
@@ -368,9 +369,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for (int i = 0; i < column; i++) {
-			re[r2][i]= mc.add(re[r2][i], mc.multiply(re[r1][i], k));
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[r2][i] = getMc().add(re[r2][i], getMc().multiply(re[r1][i], k));
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	/**
@@ -392,9 +393,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for (int i = 0; i < row; i++) {
-			re[i][c2] = mc.add(re[i][c2], mc.multiplyLong(re[i][c1], k));
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[i][c2] = getMc().add(re[i][c2], getMc().multiplyLong(re[i][c1], k));
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 	/**
 	 * Multiply one column in this matrix with k and add the result to another column.
@@ -414,9 +415,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for (int i = 0; i < row; i++) {
-			re[i][c2] = mc.add(re[i][c2], mc.multiply(re[i][c1], k));
-		}
-		return new DMatrix<>(re, row, column,mc);
+            re[i][c2] = getMc().add(re[i][c2], getMc().multiply(re[i][c1], k));
+        }
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	
@@ -434,27 +435,27 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		
 		//some fast implement when the order is below 4
 		if(row==3){
-			T sum = mc.multiply(mc.multiply(getNumber(0,0), getNumber(1,1)), getNumber(2,2));
-			sum = mc.add(sum, mc.multiply(mc.multiply(getNumber(0,1), getNumber(1,2)), getNumber(2,0)));
-			sum = mc.add(sum, mc.multiply(mc.multiply(getNumber(0,2), getNumber(1,0)), getNumber(2,1)));
-			sum = mc.subtract(sum, mc.multiply(mc.multiply(getNumber(0,0), getNumber(1,2)), getNumber(2,1)));
-			sum = mc.subtract(sum, mc.multiply(mc.multiply(getNumber(0,1), getNumber(1,0)), getNumber(2,2)));
-			sum = mc.subtract(sum, mc.multiply(mc.multiply(getNumber(0,2), getNumber(1,1)), getNumber(2,0)));
+            T sum = getMc().multiply(getMc().multiply(getNumber(0, 0), getNumber(1, 1)), getNumber(2, 2));
+            sum = getMc().add(sum, getMc().multiply(getMc().multiply(getNumber(0, 1), getNumber(1, 2)), getNumber(2, 0)));
+            sum = getMc().add(sum, getMc().multiply(getMc().multiply(getNumber(0, 2), getNumber(1, 0)), getNumber(2, 1)));
+            sum = getMc().subtract(sum, getMc().multiply(getMc().multiply(getNumber(0, 0), getNumber(1, 2)), getNumber(2, 1)));
+            sum = getMc().subtract(sum, getMc().multiply(getMc().multiply(getNumber(0, 1), getNumber(1, 0)), getNumber(2, 2)));
+            sum = getMc().subtract(sum, getMc().multiply(getMc().multiply(getNumber(0, 2), getNumber(1, 1)), getNumber(2, 0)));
 			return sum;
 		}else if(row==1){
 			return getNumber(0, 0);
 		}else if(row == 2){
-			return mc.subtract(mc.multiply(getNumber(0,0), getNumber(1,1)), mc.multiply(getNumber(0,1), getNumber(1,0)));
-		}
-		T sum = mc.getZero();
+            return getMc().subtract(getMc().multiply(getNumber(0, 0), getNumber(1, 1)), getMc().multiply(getNumber(0, 1), getNumber(1, 0)));
+        }
+        T sum = getMc().getZero();
 		//calculate by separating first row
 		boolean turn = false;
 		for(int i=0;i<column;i++){
-			T det = mc.multiply(getNumber(0,i), cofactor(0, i).calDet());
+            T det = getMc().multiply(getNumber(0, i), cofactor(0, i).calDet());
 			if(turn){
-				sum = mc.subtract(sum, det);
+                sum = getMc().subtract(sum, det);
 			}else{
-				sum = mc.add(sum, det);
+                sum = getMc().add(sum, det);
 			}
 			turn = !turn;
 		}
@@ -478,7 +479,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] mat = (T[][]) getValues();
 		toUpperTri0(mat,row,column);
-		return new DMatrix<T>(mat,row,column,mc);
+        return new DMatrix<T>(mat, row, column, getMc());
 	}
 	/**
 	 * Return a series of operations that can transform the matrix to an upper-triangle matrix.
@@ -490,7 +491,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] mat = (T[][]) getValues();
 		List<MatrixOperation<T>> ops = toUpperTri0(mat, row, column);
-		Matrix<T> res = new DMatrix<T>(mat,row,column,mc);
+        Matrix<T> res = new DMatrix<T>(mat, row, column, getMc());
 		return new MatResult<T>(ops,res);
 	}
 	/**
@@ -507,11 +508,11 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 //			Printer.printMatrix(mat);
 			//search for a non-zero row
 			T f = mat[i][target];
-			if(mc.isEqual(f, mc.getZero())){
+            if (getMc().isEqual(f, getMc().getZero())) {
 				//find another one
 				boolean found = false;
 				for(int a=i+1;a<row;a++){
-					if(!mc.isEqual(mat[a][target], mc.getZero())){
+                    if (!getMc().isEqual(mat[a][target], getMc().getZero())) {
 						f = mat[a][target];
 						T[] t = mat[a];
 						mat[a] = mat[i];
@@ -525,11 +526,11 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 				}
 			}
 			for(int j=i+1;j<row;j++){
-				if(!mc.isEqual(mat[j][target], mc.getZero())){
-					T mul = mc.negate(mc.divide(mat[j][target], f));
-					mat[j][target] = mc.getZero();
+                if (!getMc().isEqual(mat[j][target], getMc().getZero())) {
+                    T mul = getMc().negate(getMc().divide(mat[j][target], f));
+                    mat[j][target] = getMc().getZero();
 					for(int c=target+1;c<column;c++){
-						mat[j][c] = mc.add(mat[j][c], mc.multiply(mat[i][c], mul));
+                        mat[j][c] = getMc().add(mat[j][c], getMc().multiply(mat[i][c], mul));
 					}
 					ops.add(MatrixOperation.multiplyAddRow(i, j, mul));
 				}
@@ -541,7 +542,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		for(int i=0;i<row;i++){
 			int v = column;
 			for(int c=0;c<column;c++){
-				if(!mc.isEqual(mat[i][c], mc.getZero())){
+                if (!getMc().isEqual(mat[i][c], getMc().getZero())) {
 					v = c;
 					break;
 				}
@@ -591,7 +592,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		for(int i=0;i<row;i++){
 			int tar = -1 ;
 			for(int c=lastTar+1;c<column;c++){
-				if(!mc.isZero(mat[i][c])){
+                if (!getMc().isZero(mat[i][c])) {
 					//non-zero
 					tar = c;
 					break;
@@ -602,12 +603,12 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 				break;
 			}
 			//turn to 1 
-			
-			if(!mc.isEqual(mat[i][tar], mc.getOne())){
-				T f = mc.reciprocal(mat[i][tar]);
-				mat[i][tar] = mc.getOne();
+
+            if (!getMc().isEqual(mat[i][tar], getMc().getOne())) {
+                T f = getMc().reciprocal(mat[i][tar]);
+                mat[i][tar] = getMc().getOne();
 				for(int j=tar+1;j<column;j++){
-					mat[i][j] = mc.multiply(mat[i][j], f);
+                    mat[i][j] = getMc().multiply(mat[i][j], f);
 				}
 				ops.add(MatrixOperation.multiplyRow(i, f));
 //				Printer.print(ops.get(ops.size()-1).toDetail());
@@ -615,12 +616,12 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			}
 			
 			for(int r=0;r<i;r++){
-				if(!mc.isZero(mat[r][tar])){
-					T fra = mc.negate(mat[r][tar]);
+                if (!getMc().isZero(mat[r][tar])) {
+                    T fra = getMc().negate(mat[r][tar]);
 					for(int j = tar+1;j<column;j++){
-						mat[r][j] = mc.add(mat[r][j], mc.multiply(mat[i][j], fra)); 
+                        mat[r][j] = getMc().add(mat[r][j], getMc().multiply(mat[i][j], fra));
 					}
-					mat[r][tar] = mc.getZero();
+                    mat[r][tar] = getMc().getZero();
 					ops.add(MatrixOperation.multiplyAddRow(i, r, fra));
 //					Printer.print(ops.get(ops.size()-1).toDetail());
 //					Printer.printMatrix(mat);
@@ -648,16 +649,16 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		int bound = Math.min(column, row);
 		//check for ability
 		for(int i=0;i<bound;i++){
-			if(mc.isEqual(mat[i][i], mc.getZero())){
+            if (getMc().isEqual(mat[i][i], getMc().getZero())) {
 				throw new ArithmeticException("Cannot trans to Identity:Not Full Rank");
 			}
 		}
 		for(int i=0;i<bound;i++){
-			if(!mc.isEqual(mat[i][i], mc.getOne())){
-				T f = mc.reciprocal(mat[i][i]);
-				mat[i][i] = mc.getOne();
+            if (!getMc().isEqual(mat[i][i], getMc().getOne())) {
+                T f = getMc().reciprocal(mat[i][i]);
+                mat[i][i] = getMc().getOne();
 				for(int j=i+1;j<column;j++){
-					mat[i][j] = mc.multiply(mat[i][j], f);
+                    mat[i][j] = getMc().multiply(mat[i][j], f);
 				}
 				ops.add(MatrixOperation.multiplyRow(i, f));
 			}
@@ -666,9 +667,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		
 		for(int i=bound-1;i>-1;i--){
 			for(int j=i+1;j<column;j++){
-				if(mat[i][j].equals(mc.getZero())==false){
-					T f = mc.negate(mat[i][j]);
-					mat[i][j] = mc.getZero();
+                if (mat[i][j].equals(getMc().getZero()) == false) {
+                    T f = getMc().negate(mat[i][j]);
+                    mat[i][j] = getMc().getZero();
 					ops.add(MatrixOperation.multiplyAddRow(j, i, f));
 				}
 				
@@ -718,7 +719,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		@SuppressWarnings("unchecked")
 		T[][] mat =(T[][]) getValues();
 		List<MatrixOperation<T>> ops = toStepMatrix(mat, row, column);
-		Matrix<T> res = new DMatrix<T>(mat,row,column,mc);
+        Matrix<T> res = new DMatrix<T>(mat, row, column, getMc());
 		return new MatResult<T>(ops,res);
 	}
 	
@@ -732,7 +733,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}
 		T tr = getNumber(0, 0);
 		for(int i= 1;i<row;i++){
-			tr = mc.add(tr, getNumber(i, i));
+            tr = getMc().add(tr, getNumber(i, i));
 		}
 		return tr;
 	}
@@ -749,9 +750,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}
 		//transform to a temporary matrix to compute the determinant
 		//in multinomial
-		MathCalculator<PolynomialX<T>> mct = PolynomialX.getCalculator(mc);
-		Matrix<PolynomialX<T>> tmat = this.mapTo(x -> PolynomialX.constant(mc, x), mct),
-				eigen = Matrix.diag(PolynomialX.oneX(mc),row, mct);
+        MathCalculator<PolynomialX<T>> mct = PolynomialX.getCalculator(getMc());
+        Matrix<PolynomialX<T>> tmat = this.mapTo(x -> PolynomialX.constant(getMc(), x), mct),
+                eigen = Matrix.diag(PolynomialX.oneX(getMc()), row, mct);
 		tmat = minusMatrix(eigen, tmat);
 		PolynomialX<T> expr = tmat.calDet();
 		return SVPEquation.fromMultinomial(expr);
@@ -767,7 +768,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		List<T> eigenvalues = eigenvalues(equationSolver);
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[])eigenvalues.toArray();
-		return Matrix.diag(arr,mc);
+        return Matrix.diag(arr, getMc());
 	}
 	/**
 	 * Computes the eigenvalues of this matrix.
@@ -799,13 +800,13 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			int times = 1;
 			while(++i<size) {
 				T y = eigenvalues.get(i);
-				if(mc.isEqual(x, y)) {
+                if (getMc().isEqual(x, y)) {
 					times++;
 				}else {
 					break;
 				}
 			}
-			Matrix<T> A = minusMatrix(this, Matrix.diag(x, row, mc));
+            Matrix<T> A = minusMatrix(this, Matrix.diag(x, row, getMc()));
 			LinearEquationSolution<T> solution = MatrixSup.solveHomogeneousLinearEquation(A);
 			Vector<T>[] ks = solution.getSolution();
 			for (int k = 0; k < ks.length; k++) {
@@ -866,7 +867,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 //		Printer.printMatrix(mat);
 		for(int i=row-1;i>-1;i--){
 			for(int j=column-1;j>-1;j--){
-				if(mat[i][j].equals(mc.getZero())==false){
+                if (mat[i][j].equals(getMc().getZero()) == false) {
 					return Math.min(i+1, column);
 				}
 			}
@@ -887,7 +888,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		try{
 			@SuppressWarnings("unchecked")
 			List<MatrixOperation<T>> ops = toIdentity((T[][]) getValues(), row, column);
-			Matrix<T> idt = identityMatrix(row,mc);
+            Matrix<T> idt = identityMatrix(row, getMc());
 			idt = idt.doOperation(ops);
 			return idt;
 		}catch(ArithmeticException ae){
@@ -959,31 +960,31 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}catch(RuntimeException ex){
 			throw new RuntimeException("Operation failed",ex);
 		}
-		return new DMatrix<T>(mat,row,column,mc);
+        return new DMatrix<T>(mat, row, column, getMc());
 	}
 	
 	void multiplyAndAddColumn0(T[][] mat,int c1,int c2,T f){
 		for(int i=0;i<mat.length;i++){
-			mat[i][c2] = mc.add(mat[i][c2], mc.multiply(mat[i][c1], f));
+            mat[i][c2] = getMc().add(mat[i][c2], getMc().multiply(mat[i][c1], f));
 		}
 	}
 	
 	void multiplyAndAddRow0(T[][] mat,int r1,int r2,T f){
 		for(int i=0;i<mat[r1].length;i++){
-			
-			mat[r2][i] =mc.add(mat[r2][i], mc.multiply(mat[r1][i], f));
+
+            mat[r2][i] = getMc().add(mat[r2][i], getMc().multiply(mat[r1][i], f));
 		}
 	}
 	
 	void multiplyNumberColumn0(T[][] mat,int c,T f){
 		for(int i=0;i<mat.length;i++){
-			mat[i][c] = mc.multiply(mat[i][c], f);
+            mat[i][c] = getMc().multiply(mat[i][c], f);
 		}
 	}
 	
 	void multiplyNumberRow0(T[][] mat,int r,T f){
 		for(int i=0;i<mat[r].length;i++){
-			mat[r][i] =mc.multiply(mat[r][i], f);
+            mat[r][i] = getMc().multiply(mat[r][i], f);
 		}
 	}
 	
@@ -1053,7 +1054,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}
 		T[][] ndata = (T[][]) getValues();
 		ndata[row] = (T[]) v.toArray();
-		return new DMatrix<>(ndata, this.row, this.column, mc);
+        return new DMatrix<>(ndata, this.row, this.column, getMc());
 	}
 	/**
 	 * Replaces the Matrix with a column vector. The length of this vector must be 
@@ -1072,11 +1073,11 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		for(int i=0;i<row;i++){
 			ndata[i][column] = v.getNumber(i);
 		}
-		return new DMatrix<>(ndata, this.row, this.column, mc);
+        return new DMatrix<>(ndata, this.row, this.column, getMc());
 	}
 	
 	@Override
-	public <N> Matrix<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Matrix<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		Object[][] newData = new Object[row][column];
 		for(int i=0;i<row;i++){
 			for(int j=0;j<column;j++){
@@ -1087,14 +1088,14 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		
 	}
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Matrix){
 			Matrix<N> m = (Matrix<N>)obj;
 			if(m.row == this.row && m.column == this.column){
 				for(int i=0;i<row;i++){
 					for(int j=0;j<column;j++){
 						T t = mapper.apply(m.getNumber(i, j));
-						if(!mc.isEqual(t, getNumber(i,j))){
+                        if (!getMc().isEqual(t, getNumber(i, j))) {
 							return false;
 						}
 					}
@@ -1106,13 +1107,13 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 	}
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Matrix){
 			Matrix<T> m = (Matrix<T>)obj;
 			if(m.row == this.row && m.column == this.column){
 				for(int i=0;i<row;i++){
 					for(int j=0;j<column;j++){
-						if(!mc.isEqual(m.getNumber(i, j), getNumber(i,j))){
+                        if (!getMc().isEqual(m.getNumber(i, j), getNumber(i, j))) {
 							return false;
 						}
 					}
@@ -1128,7 +1129,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		return "Matrix:row="+row+",column="+column;
 	}
 	
@@ -1169,11 +1170,11 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			Object[][] ne = new Object[row][column];
 			for (int i = dx; i < row + dx; i++) {
 				for (int j = dy; j < column + dy; j++) {
-					
-					ne[i][j] = mc.negate((T)data[i][j]);
+
+                    ne[i][j] = getMc().negate((T) data[i][j]);
 				}
 			}
-			return new DMatrix<T>(ne, row, column,mc);
+            return new DMatrix<T>(ne, row, column, getMc());
 		}
 
 		@SuppressWarnings("unchecked")
@@ -1182,10 +1183,10 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			Object[][] re = new Object[row][column];
 			for (int i = dx; i < row + dx; i++) {
 				for (int j = dy; j < column + dy; j++) {
-					re[i][j] = mc.multiplyLong((T)data[i][j], n);
+                    re[i][j] = getMc().multiplyLong((T) data[i][j], n);
 				}
 			}
-			return new DMatrix<T>(re, row, column,mc);
+            return new DMatrix<T>(re, row, column, getMc());
 		}
 		@SuppressWarnings("unchecked")
 		@Override
@@ -1193,17 +1194,17 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			Object[][] re = new Object[row][column];
 			for (int i = dx; i < row + dx; i++) {
 				for (int j = dy; j < column + dy; j++) {
-					re[i][j] = mc.multiply((T)data[i][j], n);
+                    re[i][j] = getMc().multiply((T) data[i][j], n);
 				}
 			}
-			return new DMatrix<T>(re, row, column,mc);
+            return new DMatrix<T>(re, row, column, getMc());
 		}
 
 		@Override
 		public Matrix<T> subMatrix(int i1, int j1, int i2, int j2) {
 			super.subMatrix(i1, j1, i2, j2);
 			// range check
-			SubMatrix<T> sm = new SubMatrix<T>(data, dx + i1, dy + j1, i2 - i1 + 1, j2 - j1 + 1,mc);
+            SubMatrix<T> sm = new SubMatrix<T>(data, dx + i1, dy + j1, i2 - i1 + 1, j2 - j1 + 1, getMc());
 			return sm;
 		}
 
@@ -1225,7 +1226,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 					re[c][l] = data[l + dx][c + dy];
 				}
 			}
-			return new DMatrix<T>(re, column, row,mc);
+            return new DMatrix<T>(re, column, row, getMc());
 		}
 
 		@Override
@@ -1240,7 +1241,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			}
 			re[r1] = data[r2 + dx];
 			re[r2] = data[r1 + dx];
-			return new DMatrix<T>(re, column, row,mc);
+            return new DMatrix<T>(re, column, row, getMc());
 		}
 
 		@SuppressWarnings("unchecked")
@@ -1261,9 +1262,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			int lt = r2 + dy;
 			r1 += dy;
 			for (int i = dy; i < column + dy; ++i) {
-				re[r2][i] = mc.add((T)data[lt][i], mc.multiplyLong((T)data[r1][i], k));
+                re[r2][i] = getMc().add((T) data[lt][i], getMc().multiplyLong((T) data[r1][i], k));
 			}
-			return new DMatrix<T>(re, row, column,mc);
+            return new DMatrix<T>(re, row, column, getMc());
 		}
 		@SuppressWarnings("unchecked")
 		@Override
@@ -1283,9 +1284,9 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 			int lt = r2 + dy;
 			r1 += dy;
 			for (int i = dy; i < column + dy; ++i) {
-				re[r2][i] = mc.add((T)data[lt][i], mc.multiply((T)data[r1][i], k));
+                re[r2][i] = getMc().add((T) data[lt][i], getMc().multiply((T) data[r1][i], k));
 			}
-			return new DMatrix<T>(re, row, column,mc);
+            return new DMatrix<T>(re, row, column, getMc());
 		}
 
 		
@@ -1342,7 +1343,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 				}
 			}
 			//copy ends
-			return new DMatrix<T>(ma,row-1,column-1,mc);
+            return new DMatrix<T>(ma, row - 1, column - 1, getMc());
 		}
 		@Override
 		public boolean equals(Object obj) {
@@ -1641,7 +1642,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}
 		int row = m1.row;
 		int column = m1.column;
-		MathCalculator<T> mc = m1.mc;
+        MathCalculator<T> mc = m1.getMc();
 		T[][] re = (T[][]) new Object[row][column];
 		if (m1 instanceof DMatrix && m2 instanceof DMatrix) {
 			T[][] d1 = (T[][]) ((DMatrix<T>) m1).data;
@@ -1683,7 +1684,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		}
 		int row = m1.row;
 		int column = m1.column;
-		MathCalculator<T> mc = m1.mc;
+        MathCalculator<T> mc = m1.getMc();
 		T[][] re = (T[][]) new Object[row][column];
 		if (m1 instanceof DMatrix && m2 instanceof DMatrix) {
 			T[][] d1 = (T[][]) ((DMatrix<T>) m1).data;
@@ -1727,7 +1728,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		int n = m1.column;
 		int row = m1.row;
 		int column = m2.column;
-		MathCalculator<T> mc = m1.mc;
+        MathCalculator<T> mc = m1.getMc();
 		Object[][] re = new Object[row][column];
 		if (m1 instanceof DMatrix && m2 instanceof DMatrix) {
 			T[][] d1 = (T[][]) ((DMatrix<T>) m1).data;
@@ -1775,7 +1776,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 		if (mat.row != mat.column)
 			throw new IllegalArgumentException("Cannot calculate" + mat.row + "*" + mat.column);
 		if (pow == 0)
-			return identityMatrix(mat.row,mat.mc);
+            return identityMatrix(mat.row, mat.getMc());
 		if (pow == 1)
 			return mat;
 
@@ -1822,7 +1823,7 @@ public abstract class Matrix<T> extends MathObject<T> implements Invertible<Matr
 				mat[i][j] = f.apply(getNumber(i, j));
 			}
 		}
-		return new DMatrix<>(mat, row, column, mc);
+        return new DMatrix<>(mat, row, column, getMc());
 	}
 	
 	/**

@@ -8,6 +8,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	@Override
 	public boolean contains(T t) {
 		for(T e : list){
-			if(mc.isEqual(t, e)){
+            if (getMc().isEqual(t, e)) {
 				return true;
 			}
 		}
@@ -82,7 +83,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	 * @see MathObject#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@Override
-	public <N> CollectionSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> CollectionSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		List<N> nlist = new ArrayList<>(list.size());
 		for(T t : list){
 			nlist.add(mapper.apply(t));
@@ -95,7 +96,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj == this){
 			return true;
 		}
@@ -104,7 +105,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 			if(cs.size()!=size()){
 				return false;
 			}
-			return ArraySup.arrayEqualNoOrder(list.toArray(), cs.list.toArray(),(x,y)->mc.isEqual((T)x, (T)y));
+            return ArraySup.arrayEqualNoOrder(list.toArray(), cs.list.toArray(), (x, y) -> getMc().isEqual((T) x, (T) y));
 		}
 		
 		return super.valueEquals(obj);
@@ -115,7 +116,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj == this){
 			return true;
 		}
@@ -125,7 +126,7 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 				return false;
 			}
 			return ArraySup.arrayEqualNoOrder(list.toArray(), ArraySup.modifyAll(list.toArray(),(x)->
-			mapper.apply((N)x)),(x,y)->mc.isEqual((T)x, (T)y));
+                    mapper.apply((N) x)), (x, y) -> getMc().isEqual((T) x, (T) y));
 		}
 		
 		return super.valueEquals(obj,mapper);
@@ -135,11 +136,11 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	 * @see MathObject#toString(NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('{');
 		for(T t : list){
-			sb.append(nf.format(t, mc));
+            sb.append(nf.format(t, getMc()));
 			sb.append(',');
 		}
 		sb.deleteCharAt(sb.length()-1);

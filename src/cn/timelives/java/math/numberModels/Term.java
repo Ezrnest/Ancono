@@ -664,7 +664,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         // deal with all chracter
         NavigableMap<String, Fraction> character = new TreeMap<>();
         for (Map.Entry<String, Fraction> e : this.character.entrySet()) {
-            character.put(e.getKey(), e.getValue().negative());
+            character.put(e.getKey(), e.getValue().negate());
         }
         int signum = this.signum;
         // deal with i
@@ -766,7 +766,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
         NavigableMap<String, Fraction> ch = new TreeMap<>(getCharacterNoCopy());
         for(Map.Entry<String,Fraction> e: t.getCharacterNoCopy().entrySet()){
-            addChar(ch, e.getKey(),e.getValue().negative());
+            addChar(ch, e.getKey(), e.getValue().negate());
         }
         signum = simplifyCharacter(signum,ch);
         return new Term(signum,nd1,ch);
@@ -1209,11 +1209,11 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                         break;
                     }
                     case 2: {
-                        time = time.negative();
+                        time = time.negate();
                         break;
                     }
                     case 3: {
-                        time = time.divide(2).negative();
+                        time = time.divide(2).negate();
                     }
                 }
                 // System.out.println(character+"---"+cm.group()+"---"+time);
@@ -1512,7 +1512,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             for (Map.Entry<String, Fraction> en : commonCharP.entrySet()) {
                 Fraction bd = fchars.get(en.getKey());
                 if (bd == null) {
-                    cha.put(en.getKey(), en.getValue().negative());
+                    cha.put(en.getKey(), en.getValue().negate());
                 } else {
                     bd = bd.minus(en.getValue());
                     cha.put(en.getKey(), bd);

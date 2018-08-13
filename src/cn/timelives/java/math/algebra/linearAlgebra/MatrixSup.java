@@ -69,7 +69,7 @@ public class MatrixSup {
 		for(int i=1;i<mat.row;i++){
 			re = re.multiply(mar[i][i]);
 		}
-		return nega ? re.negative() : re;
+        return nega ? re.negate() : re;
 	}
 	
 	/**

@@ -15,6 +15,7 @@ import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.structure.Pair;
 import cn.timelives.java.utilities.structure.WithInt;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -60,7 +61,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 	private T getCoefficient0(Integer n) {
 		T a = map.get(n);
 		if(a == null) {
-			a = mc.getZero();
+            a = getMc().getZero();
 		}
 		return a;
 	}
@@ -88,8 +89,8 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 	public T compute(T x) {
 		T re = getCoefficient(degree);
 		for(int i=degree-1;i>-1;i--){
-			re = mc.multiply(x, re);
-			re = mc.add(getCoefficient(i), re);
+            re = getMc().multiply(x, re);
+            re = getMc().add(getCoefficient(i), re);
 		}
 		return re;
 	}
@@ -99,22 +100,22 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 	 * @return
 	 */
 	public PolynomialX<T> unit(){
-		if(mc.isEqual(mc.getOne(), getCoefficient(degree))) {
+        if (getMc().isEqual(getMc().getOne(), getCoefficient(degree))) {
 			return this;
 		}
 		T k = getCoefficient(degree);
 		NavigableMap<Integer, T> nmap = getCoefficientMap();
 		for(Entry<Integer,T> en : nmap.entrySet()) {
-			en.setValue(mc.divide(en.getValue(),k));
-		}
-		return new PolynomialX<>(mc, nmap, degree);
+            en.setValue(getMc().divide(en.getValue(), k));
+        }
+        return new PolynomialX<>(getMc(), nmap, degree);
 	}
 
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public <N> PolynomialX<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> PolynomialX<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		TreeMap<Integer,N> nmap = new TreeMap<>();
 		for(Entry<Integer,T> en : map.entrySet()) {
 			nmap.put(en.getKey(),mapper.apply(en.getValue()));
@@ -126,11 +127,11 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(!(obj instanceof PolynomialX)) {
 			return false;
 		}
-		return Polynomial.isEqual(this, (PolynomialX<T>)obj, mc::isEqual);
+        return Polynomial.isEqual(this, (PolynomialX<T>) obj, getMc()::isEqual);
 	}
 	
 	
@@ -138,18 +139,18 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if (!(obj instanceof PolynomialX)) {
 			return false;
 		}
-		return Polynomial.isEqual(this, (PolynomialX<N>) obj, (x, y)->mc.isEqual(x, mapper.apply(y)));
+        return Polynomial.isEqual(this, (PolynomialX<N>) obj, (x, y) -> getMc().isEqual(x, mapper.apply(y)));
 	}
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
-		 return Polynomial.stringOf(this, mc, nf);
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        return Polynomial.stringOf(this, getMc(), nf);
 	}
 	
 	/*
@@ -167,7 +168,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 			Integer n = i;
 			T a =getCoefficient0(n);
 			T b = o.getCoefficient0(n);
-			int t = mc.compare(a, b);
+            int t = getMc().compare(a, b);
 			if(t != 0) {
 				return t;
 			}
@@ -487,7 +488,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 		 * @see cn.timelives.java.math.MathCalculator#multiply(java.lang.Object, java.lang.Object)
 		 */
 		@Override
-		public PolynomialX<T> multiply(PolynomialX<T> para1, PolynomialX<T> para2) {
+        public PolynomialX<T> multiply(@NotNull PolynomialX<T> para1, PolynomialX<T> para2) {
 			NavigableMap<Integer,T> map = multiplyToMap(para1.map, para2.map);
 			if(map.isEmpty()) {
 				return zero;
@@ -611,18 +612,18 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 		 * @see cn.timelives.java.math.MathCalculator#divideLong(java.lang.Object, long)
 		 */
 		@Override
-		public PolynomialX<T> divideLong(PolynomialX<T> p, long l) {
-			if(l == 0) {
+        public PolynomialX<T> divideLong(PolynomialX<T> p, long n) {
+            if (n == 0) {
 				throw new ArithmeticException("Divide by zero");
 			}
-			if(l==1) {
+            if (n == 1) {
 				return p;
 			}
-			if(l == -1) {
+            if (n == -1) {
 				return negate(p);
 			}
 			NavigableMap<Integer, T> nmap = p.getCoefficientMap();
-			CollectionSup.modifyMap(nmap, (x,y)->mc.divideLong(y, l));
+            CollectionSup.modifyMap(nmap, (x, y) -> mc.divideLong(y, n));
 			return new PolynomialX<>(mc, nmap, p.degree);
 		}
 
@@ -630,7 +631,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 		 * @see cn.timelives.java.math.MathCalculator#squareRoot(java.lang.Object)
 		 */
 		@Override
-		public PolynomialX<T> squareRoot(PolynomialX<T> p) {
+        public PolynomialX<T> squareRoot(PolynomialX<T> x) {
 			throw new UnsupportedCalculationException();
 		}
 

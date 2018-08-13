@@ -15,6 +15,7 @@ import cn.timelives.java.math.numberModels.Utils;
 import cn.timelives.java.math.property.Solveable;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Function;
@@ -56,7 +57,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 *
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj == this) {
 			return true;
 		}
@@ -64,14 +65,14 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			return false;
 		}
 		SVPInequation<T> sv = (SVPInequation<T>) obj;
-		return op == sv.op && Polynomial.isEqual(this,sv, mc::isEqual);
+        return op == sv.op && Polynomial.isEqual(this, sv, getMc()::isEqual);
 	}
 
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj == this) {
 			return true;
 		}
@@ -79,7 +80,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			return false;
 		}
 		SVPInequation<N> sv = (SVPInequation<N>) obj;
-		return op == sv.op && Polynomial.isEqual(this,sv, Utils.mappedIsEqual(mc, mapper));
+        return op == sv.op && Polynomial.isEqual(this, sv, Utils.mappedIsEqual(getMc(), mapper));
 	}
 
 	/*
@@ -110,8 +111,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
-		StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, mc, nf));
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, getMc(), nf));
 		sb.append(' ').append(op.toString());
 		sb.append(" 0");
 		return sb.toString();
@@ -122,7 +123,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 * @see cn.timelives.java.math.SingleVInquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public abstract <N> SVPInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> SVPInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 
 
 	static class FromFunction<T> extends SVPInequation<T>{
@@ -147,7 +148,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		 * @see cn.timelives.java.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> SVPInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> SVPInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new FromFunction<>(newCalculator, op, f.mapTo(mapper, newCalculator));
 		}
 		/*
@@ -208,7 +209,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		 * @see cn.timelives.java.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> LinearInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> LinearInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new LinearInequation<>(newCalculator, op, f.mapTo(mapper, newCalculator));
 		}
 
@@ -225,26 +226,26 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 				T b = f.getCoefficient(0);
 				//ax+b ? 0
 					// x ? -b/a
-				T x = mc.negate(mc.divide(b, a));
+                T x = getMc().negate(getMc().divide(b, a));
 				Type op = this.op;
 				if (compareZero(a) < 0) {
 					op = op.negative();
 				}
 				switch (op) {
 				case GREATER: {
-					solution = Interval.toPositiveInf(x, false, mc);
+                    solution = Interval.toPositiveInf(x, false, getMc());
 					break;
 				}
 				case GREATER_OR_EQUAL: {
-					solution = Interval.toPositiveInf(x, true, mc);
+                    solution = Interval.toPositiveInf(x, true, getMc());
 					break;
 				}
 				case LESS: {
-					solution = Interval.fromNegativeInf(x, false, mc);
+                    solution = Interval.fromNegativeInf(x, false, getMc());
 					break;
 				}
 				case LESS_OR_EQUAL: {
-					solution = Interval.fromNegativeInf(x, true, mc);
+                    solution = Interval.fromNegativeInf(x, true, getMc());
 					break;
 				}
 				default: {
@@ -301,34 +302,34 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			if(solution == null) {
 				IntervalUnion<T> solu;
 				T a = f.getA();
-				List<T> x1x2 = MathUtils.solveEquation(a, f.getB(), f.getC(), mc);
+                List<T> x1x2 = MathUtils.solveEquation(a, f.getB(), f.getC(), getMc());
 				Type op = this.op;
 				if(compareZero(a)<0) {
 					op = op.negative();
 				}
 				if(x1x2.size()==0) {
 					if(op==Type.LESS ||op == Type.LESS_OR_EQUAL) {
-						solu = IntervalUnion.empty(mc);
+                        solu = IntervalUnion.empty(getMc());
 					}else {
-						solu = IntervalUnion.universe(mc);
+                        solu = IntervalUnion.universe(getMc());
 					}
 				}else if(x1x2.size()==1) {
 					T x = x1x2.get(0);
 					switch (op) {
 					case GREATER: {
-						solu = IntervalUnion.except(x, mc);
+                        solu = IntervalUnion.except(x, getMc());
 						break;
 					}
 					case GREATER_OR_EQUAL: {
-						solu = IntervalUnion.universe(mc);
+                        solu = IntervalUnion.universe(getMc());
 						break;
 					}
 					case LESS: {
-						solu = IntervalUnion.empty(mc);
+                        solu = IntervalUnion.empty(getMc());
 						break;
 					}
 					case LESS_OR_EQUAL: {
-						solu = IntervalUnion.single(x, mc);
+                        solu = IntervalUnion.single(x, getMc());
 						break;
 					}
 					default: {
@@ -338,28 +339,28 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 				}else {
 					T x1 = x1x2.get(0),
 							x2 = x1x2.get(1);
-					if(mc.compare(x1, x2)>0) {
+                    if (getMc().compare(x1, x2) > 0) {
 						T t = x1;
 						x1 = x2;
 						x2 = t;
 					}
 					switch (op) {
 					case GREATER: {
-						solu = IntervalUnion.valueOf(Interval.fromNegativeInf(x1, false, mc),
-								Interval.toPositiveInf(x2, false, mc));
+                        solu = IntervalUnion.valueOf(Interval.fromNegativeInf(x1, false, getMc()),
+                                Interval.toPositiveInf(x2, false, getMc()));
 						break;
 					}
 					case GREATER_OR_EQUAL: {
-						solu = IntervalUnion.valueOf(Interval.fromNegativeInf(x1, true, mc),
-								Interval.toPositiveInf(x2, true, mc));
+                        solu = IntervalUnion.valueOf(Interval.fromNegativeInf(x1, true, getMc()),
+                                Interval.toPositiveInf(x2, true, getMc()));
 						break;
 					}
 					case LESS: {
-						solu = IntervalUnion.valueOf(Interval.openInterval(x1, x2, mc));
+                        solu = IntervalUnion.valueOf(Interval.openInterval(x1, x2, getMc()));
 						break;
 					}
 					case LESS_OR_EQUAL: {
-						solu = IntervalUnion.valueOf(Interval.closedInterval(x1, x2, mc));
+                        solu = IntervalUnion.valueOf(Interval.closedInterval(x1, x2, getMc()));
 						break;
 					}
 					default: {
@@ -377,7 +378,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		 * @see cn.timelives.java.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> QuadraticInequation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> QuadraticInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new QuadraticInequation<>(newCalculator, op, f.mapTo(mapper, newCalculator));
 		}
 

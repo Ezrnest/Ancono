@@ -4,6 +4,7 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 public final class IntervalI<T> extends Interval<T>{
@@ -65,7 +66,7 @@ public final class IntervalI<T> extends Interval<T>{
 			if(right == null){
 				return true;
 			}
-			int t = mc.compare(n, right);
+            int t = getMc().compare(n, right);
 			if((type & RIGHT_OPEN_MASK) == RIGHT_OPEN_MASK){
 				// right open
 				return t == -1;
@@ -73,7 +74,7 @@ public final class IntervalI<T> extends Interval<T>{
 				return t == -1 || t == 0;
 			}
 		}else if(right == null){
-			int t = mc.compare(left, n);
+            int t = getMc().compare(left, n);
 			if((type & LEFT_OPEN_MASK) == LEFT_OPEN_MASK){
 				//left open
 				return t == -1;
@@ -81,7 +82,7 @@ public final class IntervalI<T> extends Interval<T>{
 				return t != 1;
 			}
 		}
-		int rl = mc.compare(left, n);
+        int rl = getMc().compare(left, n);
 		if((type & LEFT_OPEN_MASK) == LEFT_OPEN_MASK){
 			if(rl != -1){
 				return false;
@@ -91,7 +92,7 @@ public final class IntervalI<T> extends Interval<T>{
 				return false;
 			}
 		}
-		int rr = mc.compare(n, right);
+        int rr = getMc().compare(n, right);
 		if((type & RIGHT_OPEN_MASK) == RIGHT_OPEN_MASK){
 			return rr == -1;
 		}else{
@@ -129,7 +130,7 @@ public final class IntervalI<T> extends Interval<T>{
 	public T lengthOf() {
 		if(left == null || right == null)
 			return null;
-		return mc.subtract(right, left);
+        return getMc().subtract(right, left);
 	}
 
 	
@@ -138,17 +139,17 @@ public final class IntervalI<T> extends Interval<T>{
 			if(left == null){
 				return true;
 			}
-			return mc.compare(left, n) == -1;
+            return getMc().compare(left, n) == -1;
 		}
 		if(left == null){
-			return mc.compare(n,right) == -1;
+            return getMc().compare(n, right) == -1;
 		}
-		
-		int t = mc.compare(left,n);
+
+        int t = getMc().compare(left, n);
 		if(t != -1){
 			return false;
 		}
-		t = mc.compare(n, right);
+        t = getMc().compare(n, right);
 		return t == -1;
 	}
 	
@@ -161,7 +162,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> downerPart(T n) {
 		if(inRangeExclusive(n)){
-			return new IntervalI<T>(mc,left,n,type);
+            return new IntervalI<T>(getMc(), left, n, type);
 		}
 		thr(n);
 		return null;
@@ -171,7 +172,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> downerPart(T n, boolean include) {
 		if(inRangeExclusive(n)){
-			return new IntervalI<T>(mc,left,n,(type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
+            return new IntervalI<T>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -181,7 +182,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> upperPart(T n) {
 		if(inRangeExclusive(n)){
-			return new IntervalI<T>(mc,n,right,type);
+            return new IntervalI<T>(getMc(), n, right, type);
 		}
 		thr(n);
 		return null;
@@ -191,7 +192,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> upperPart(T n, boolean include) {
 		if(inRangeExclusive(n)){
-			return new IntervalI<T>(mc,n,right,(type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
+            return new IntervalI<T>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -200,8 +201,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandUpperBound(T n) {
-		if(mc.compare(right, n) == -1){
-			return new IntervalI<T>(mc,left,n,type);
+        if (getMc().compare(right, n) == -1) {
+            return new IntervalI<T>(getMc(), left, n, type);
 		}
 		thr(n);
 		return null;
@@ -210,8 +211,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandUpperBound(T n, boolean include) {
-		if(mc.compare(right, n) == -1){
-			return new IntervalI<T>(mc,left,n,(type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
+        if (getMc().compare(right, n) == -1) {
+            return new IntervalI<T>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -220,8 +221,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandDownerBound(T n) {
-		if(mc.compare(left, n) == -1){
-			return new IntervalI<T>(mc,n,right,type);
+        if (getMc().compare(left, n) == -1) {
+            return new IntervalI<T>(getMc(), n, right, type);
 		}
 		thr(n);
 		return null;
@@ -230,8 +231,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandDownerBound(T n, boolean include) {
-		if(mc.compare(left, n) == -1){
-			return new IntervalI<T>(mc,n,right,(type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
+        if (getMc().compare(left, n) == -1) {
+            return new IntervalI<T>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -243,7 +244,7 @@ public final class IntervalI<T> extends Interval<T>{
 		if(downerBound == null || upperBound == null){
 			throw new NullPointerException();
 		}
-		return new IntervalI<>(mc,downerBound,upperBound,type);
+        return new IntervalI<>(getMc(), downerBound, upperBound, type);
 	}
 
 
@@ -253,7 +254,7 @@ public final class IntervalI<T> extends Interval<T>{
 		T iR = iv.upperBound();
 		//left side judge
 		if(left != null){
-			int t = mc.compare(left, iL);
+            int t = getMc().compare(left, iL);
 			if(t == 1){
 				return false;
 			}
@@ -262,7 +263,7 @@ public final class IntervalI<T> extends Interval<T>{
 			}
 		}
 		if(right != null){
-			int t = mc.compare(iR, right);
+            int t = getMc().compare(iR, right);
 			if(t == 1){
 				return false;
 			}
@@ -278,20 +279,20 @@ public final class IntervalI<T> extends Interval<T>{
 	public Interval<T> intersect(Interval<T> iv) {
 		T iL = iv.downerBound();
 		T iR = iv.upperBound();
-		if((right == null || iL ==null || mc.compare(right, iL) >=0) &&
-			(iR == null ||  left == null || mc.compare(iR, left) >=0)){
-			if(mc.compare(left, iL) == -1){
-				if(mc.isEqual(right, iL) && (!isUpperBoundInclusive()|| !iv.isDownerBoundInclusive())) {
+        if ((right == null || iL == null || getMc().compare(right, iL) >= 0) &&
+                (iR == null || left == null || getMc().compare(iR, left) >= 0)) {
+            if (getMc().compare(left, iL) == -1) {
+                if (getMc().isEqual(right, iL) && (!isUpperBoundInclusive() || !iv.isDownerBoundInclusive())) {
 					return null;
 				}
 				return new IntervalI<>
-				(mc, iL, right, iv.isDownerBoundInclusive(), isUpperBoundInclusive());
+                        (getMc(), iL, right, iv.isDownerBoundInclusive(), isUpperBoundInclusive());
 			}else{
-				if(mc.isEqual(left, iR) && (!isDownerBoundInclusive() || !iv.isUpperBoundInclusive()) ) {
+                if (getMc().isEqual(left, iR) && (!isDownerBoundInclusive() || !iv.isUpperBoundInclusive())) {
 					return null;
 				}
 				return new IntervalI<>
-				(mc, left, iR , isDownerBoundInclusive(),iv.isUpperBoundInclusive());
+                        (getMc(), left, iR, isDownerBoundInclusive(), iv.isUpperBoundInclusive());
 			}
 		}
 		return null;
@@ -307,7 +308,7 @@ public final class IntervalI<T> extends Interval<T>{
 	 * @see cn.timelives.java.math.Interval#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		if(isDownerBoundInclusive()){
 			sb.append('[');
@@ -317,13 +318,13 @@ public final class IntervalI<T> extends Interval<T>{
 		if(left==null){
 			sb.append("-∞");
 		}else{
-			sb.append(nf.format(left, mc));
+            sb.append(nf.format(left, getMc()));
 		}
 		sb.append(',');
 		if(right == null){
 			sb.append("+∞");
 		}else{
-			sb.append(nf.format(right, mc));
+            sb.append(nf.format(right, getMc()));
 		}
 		if(isUpperBoundInclusive()){
 			sb.append(']');
@@ -334,7 +335,7 @@ public final class IntervalI<T> extends Interval<T>{
 	}
 
 	@Override
-	public <N> Interval<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Interval<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new IntervalI<>(newCalculator, mapper.apply(left), mapper.apply(right), type);
 	}
 
@@ -345,7 +346,7 @@ public final class IntervalI<T> extends Interval<T>{
 			Interval<?> iv = (Interval<?>) obj;
 			if(isDownerBoundInclusive()== iv.isDownerBoundInclusive() 
 					&& isUpperBoundInclusive() == iv.isUpperBoundInclusive()){
-				return mc.equals(iv.getMathCalculator()) && (left == null ? iv.downerBound() == null : left.equals(iv.downerBound())) &&
+                return getMc().equals(iv.getMathCalculator()) && (left == null ? iv.downerBound() == null : left.equals(iv.downerBound())) &&
 						(right == null ? iv.upperBound() == null : right.equals(iv.upperBound()));
 			}
 		}
@@ -354,7 +355,7 @@ public final class IntervalI<T> extends Interval<T>{
 	
 	@Override
 	public int hashCode() {
-		int hash = mc.hashCode();
+        int hash = getMc().hashCode();
 		hash = hash + 31*type;
 		hash = hash*37 + left.hashCode();
 		hash = hash*37 + right.hashCode();
@@ -363,7 +364,7 @@ public final class IntervalI<T> extends Interval<T>{
 
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Interval){
 			Interval<N> iv = (Interval<N>) obj;
 			if(isDownerBoundInclusive()== iv.isDownerBoundInclusive() 
@@ -378,7 +379,7 @@ public final class IntervalI<T> extends Interval<T>{
 					return false;
 				}else{
 					T iLM = mapper.apply(iL);
-					if(!mc.isEqual(iLM, left)){
+                    if (!getMc().isEqual(iLM, left)) {
 						return false;
 					}
 				}
@@ -390,7 +391,7 @@ public final class IntervalI<T> extends Interval<T>{
 					return false;
 				}else{
 					T iRM = mapper.apply(iR);
-					if(!mc.isEqual(iRM, right)){
+                    if (!getMc().isEqual(iRM, right)) {
 						return false;
 					}
 				}
@@ -402,7 +403,7 @@ public final class IntervalI<T> extends Interval<T>{
 	}
 
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Interval){
 			Interval<T> iv = (Interval<T>) obj;
 			if(isDownerBoundInclusive()== iv.isDownerBoundInclusive() 
@@ -416,7 +417,7 @@ public final class IntervalI<T> extends Interval<T>{
 				}else if(left == null){
 					return false;
 				}else{
-					if(!mc.isEqual(iL, left)){
+                    if (!getMc().isEqual(iL, left)) {
 						return false;
 					}
 				}
@@ -427,7 +428,7 @@ public final class IntervalI<T> extends Interval<T>{
 				}else if(right == null){
 					return false;
 				}else{
-					if(!mc.isEqual(iR, right)){
+                    if (!getMc().isEqual(iR, right)) {
 						return false;
 					}
 				}

@@ -4,6 +4,7 @@
 package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.function.Function;
@@ -32,5 +33,5 @@ public abstract class AbstractCountableSet<T> extends AbstractMathSet<T> impleme
 	}
 	
 	@Override
-	public abstract <N> AbstractCountableSet<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> AbstractCountableSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

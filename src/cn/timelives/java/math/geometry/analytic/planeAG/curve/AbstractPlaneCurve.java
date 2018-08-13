@@ -10,6 +10,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
 import cn.timelives.java.math.geometry.analytic.planeAG.PlanePointSet;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 /**
@@ -42,7 +43,7 @@ public abstract class AbstractPlaneCurve<T> extends MathObject<T> implements Pla
 	 * @throws ArithmeticException if the affine translation cannot be inversed.
 	 */
 	public AbstractPlaneCurve<T> transform(PAffineTrans<T> trans){
-		return new TransformedCurve<>(mc,this,trans.inverse());
+        return new TransformedCurve<>(getMc(), this, trans.inverse());
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public abstract class AbstractPlaneCurve<T> extends MathObject<T> implements Pla
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public abstract <N> AbstractPlaneCurve<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	
 	

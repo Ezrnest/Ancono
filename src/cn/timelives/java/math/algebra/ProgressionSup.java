@@ -4,6 +4,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -48,7 +49,7 @@ public final class ProgressionSup {
 		@Override
 		public T get(long index) {
 			if(inRange(index)){
-				return mc.add(mc.multiplyLong(k, index), b);
+                return getMc().add(getMc().multiplyLong(k, index), b);
 			}
 			throw new IndexOutOfBoundsException("for index:"+index);
 		}
@@ -67,7 +68,7 @@ public final class ProgressionSup {
 			T[] arr = (T[]) new Object[len];
 			T t = b;
 			for(int i=0;i<len;i++){
-				t = mc.add(t, k);
+                t = getMc().add(t, k);
 				arr[i] = t; 
 			}
 			return arr;
@@ -94,7 +95,7 @@ public final class ProgressionSup {
 			public T next() {
 				if( hasNext()){
 					T re = cur;
-					cur = mc.add(cur, k);
+                    cur = getMc().add(cur, k);
 					index ++;
 					return re;
 				}
@@ -119,7 +120,7 @@ public final class ProgressionSup {
 				try{
 					@SuppressWarnings("unchecked")
 					ArithmeticProgression<T> ap = (ArithmeticProgression<T>) obj;
-					return ap.length == length && mc.isEqual(ap.b, b) &&mc.isEqual(ap.k, k);
+                    return ap.length == length && getMc().isEqual(ap.b, b) && getMc().isEqual(ap.k, k);
 				}catch(ClassCastException x){
 					//class cast different
 					return false;
@@ -133,19 +134,19 @@ public final class ProgressionSup {
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("ArithmeticProgression:");
-			sb.append("a[n]=(").append(nf.format(k, mc))
+            sb.append("a[n]=(").append(nf.format(k, getMc()))
 			.append(")n").append("+")
-			.append(nf.format(b, mc));
+                    .append(nf.format(b, getMc()));
 			return sb.toString();
 		}
 		
 		@Override
 		public Progression<T> limit(long limit) {
 			if((limit > 0 )&&(length == UNLIMITED || limit <= length)){
-				return new ArithmeticProgression<>(k, b, limit, mc);
+                return new ArithmeticProgression<>(k, b, limit, getMc());
 			}
 			throw new IllegalArgumentException();
 		}
@@ -154,15 +155,15 @@ public final class ProgressionSup {
 		public T sumOf(long start, long end) {
 			//use the arithmetic progression sum formula :
 			// average of the first number and the last and multiply them with the count of number
-			T sum = mc.add(get(start), get(end-1));
+            T sum = getMc().add(get(start), get(end - 1));
 			long count = end - start;
 			if(count % 2 == 0){
 				//not necessary to divide the number.
-				return mc.multiplyLong(sum, count/2);
+                return getMc().multiplyLong(sum, count / 2);
 			}
 			try{
-				sum = mc.divideLong(sum, 2);
-				sum = mc.multiplyLong(sum, count);
+                sum = getMc().divideLong(sum, 2);
+                sum = getMc().multiplyLong(sum, count);
 				return sum;
 			}catch(RuntimeException re){
 				return super.sumOf(start, end);
@@ -174,15 +175,15 @@ public final class ProgressionSup {
 
 		@Override
 		public <N> Progression<N> mapTo(
-				Function<T, N> mapper, MathCalculator<N> newCalculator) {
+                @NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new ArithmeticProgression<>(mapper.apply(k),mapper.apply(b),length,newCalculator);
 		}
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj,
-				Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj,
+                                       @NotNull Function<N, T> mapper) {
 			if(obj instanceof ArithmeticProgression){
-				ArithmeticProgression<N> ap = (ArithmeticProgression<N>) obj; 
-				return ap.length == this.length && mc.isEqual(mapper.apply(ap.k), k) && mc.isEqual(mapper.apply(ap.b), b);
+				ArithmeticProgression<N> ap = (ArithmeticProgression<N>) obj;
+                return ap.length == this.length && getMc().isEqual(mapper.apply(ap.k), k) && getMc().isEqual(mapper.apply(ap.b), b);
 			}
 			return false;
 		}
@@ -270,7 +271,7 @@ public final class ProgressionSup {
 		@Override
 		public Progression<T> limit(long limit) {
 			if(limit <= length){
-				return new ConstantProgression<T>(constant, limit, mc);
+                return new ConstantProgression<T>(constant, limit, getMc());
 			}
 			throw new IllegalArgumentException();
 		}
@@ -311,7 +312,7 @@ public final class ProgressionSup {
 		@Override
 		public T get(long index) {
 			if(inRange(index)){
-				return mc.multiply(a0, mc.pow(q, index));
+                return getMc().multiply(a0, getMc().pow(q, index));
 			}
 			throw new IndexOutOfBoundsException("For index : "+index);
 		}
@@ -350,7 +351,7 @@ public final class ProgressionSup {
 			public T next() {
 				if(hasNext()){
 					T re = cur;
-					cur = mc.multiply(cur, q);
+                    cur = getMc().multiply(cur, q);
 					return re;
 				}
 				throw new NoSuchElementException();
@@ -361,22 +362,22 @@ public final class ProgressionSup {
 		public T sumOf(long start, long end) {
 			if(inRange(start) && inRange(end-1) && start < end){
 				//use the general formula of geometric progression
-				if(mc.isEqual(a0, mc.getZero())){
-					return mc.getZero();
+                if (getMc().isEqual(a0, getMc().getZero())) {
+                    return getMc().getZero();
 				}
 				long count = end - start;
-				if(mc.isEqual(q, mc.getOne())){
-					return mc.multiplyLong(a0, count);
+                if (getMc().isEqual(q, getMc().getOne())) {
+                    return getMc().multiplyLong(a0, count);
 				}
-				T upper = mc.multiply(a0, mc.subtract(mc.pow(q, end), mc.pow(q, start)));
-				return mc.divide(upper, mc.subtract(q, mc.getOne()));
+                T upper = getMc().multiply(a0, getMc().subtract(getMc().pow(q, end), getMc().pow(q, start)));
+                return getMc().divide(upper, getMc().subtract(q, getMc().getOne()));
 			}
 			throw new IllegalArgumentException();
 		}
 		
 		
 		@Override
-		public <N> Progression<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> Progression<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			N a0N = mapper.apply(a0);
 			N qN = mapper.apply(q);
 			return new GeometricProgression<>(newCalculator,length,a0N,qN);

@@ -9,6 +9,7 @@ import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.geometry.analytic.planeAG.TransMatrix;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -46,8 +47,8 @@ public final class ParabolaV<T> extends ConicSection<T> {
 	 */
 	public Line<T> directrix(){
 		if(directrix==null){
-			T p_2 = mc.divideLong(p, -2l);
-			directrix = onX ? Line.parallelY(p_2, mc) : Line.parallelX(p_2, mc); 
+            T p_2 = getMc().divideLong(p, -2l);
+            directrix = onX ? Line.parallelY(p_2, getMc()) : Line.parallelX(p_2, getMc());
 		}
 		return directrix;
 	}
@@ -59,8 +60,8 @@ public final class ParabolaV<T> extends ConicSection<T> {
 	 */
 	public Point<T> focus(){
 		if(focus == null){
-			T p_2 = mc.divideLong(p, 2l), z = mc.getZero();
-			focus = Point.valueOf(onX ? p_2 : z, onX ? z : p_2, mc);
+            T p_2 = getMc().divideLong(p, 2l), z = getMc().getZero();
+            focus = Point.valueOf(onX ? p_2 : z, onX ? z : p_2, getMc());
 		}
 		return focus;
 	}
@@ -70,7 +71,7 @@ public final class ParabolaV<T> extends ConicSection<T> {
 	 */
 	@Override
 	public Pair<TransMatrix<T>, ConicSection<T>> normalizeAndTrans() {
-		return new Pair<>(TransMatrix.identityTrans(mc),this);
+        return new Pair<>(TransMatrix.identityTrans(getMc()), this);
 	}
 	/**
 	 * Returns {@code this} because it is already the normalized form.
@@ -85,7 +86,7 @@ public final class ParabolaV<T> extends ConicSection<T> {
 	 */
 	@Override
 	public Pair<PAffineTrans<T>, ConicSection<T>> toStandardFormAndTrans() {
-		return new Pair<>(PAffineTrans.identity(mc),this);
+        return new Pair<>(PAffineTrans.identity(getMc()), this);
 	}
 	
 	/**
@@ -101,7 +102,7 @@ public final class ParabolaV<T> extends ConicSection<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public <N> ParabolaV<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> ParabolaV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new ParabolaV<>(newCalculator, mapper.apply(A), mapper.apply(B),
 				mapper.apply(C), mapper.apply(D), mapper.apply(E), mapper.apply(F), mapper.apply(p), onX);
 	}

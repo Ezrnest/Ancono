@@ -47,7 +47,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         }
     }
 
-    static final Comparator<Term> charComp = Term::compareChar;
+    private static final Comparator<Term> charComp = Term::compareChar;
     
     static NavigableSet<Term> getSet(){
         return new TreeSet<>(charComp);

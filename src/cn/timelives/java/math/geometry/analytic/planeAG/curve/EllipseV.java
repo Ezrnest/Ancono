@@ -9,6 +9,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Line;
 import cn.timelives.java.math.geometry.analytic.planeAG.LineSup;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,27 +47,27 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	@Override
 	public List<Point<T>> vertices(){
 		List<Point<T>> list = new ArrayList<>(2);
-		T zero = mc.getZero();
+        T zero = getMc().getZero();
 		if(onX){
-			list.add(new Point<>(mc,a,zero));
-			list.add(new Point<>(mc,mc.negate(a),zero));
-			list.add(new Point<>(mc,zero,b));
-			list.add(new Point<>(mc,zero,mc.negate(b)));
+            list.add(new Point<>(getMc(), a, zero));
+            list.add(new Point<>(getMc(), getMc().negate(a), zero));
+            list.add(new Point<>(getMc(), zero, b));
+            list.add(new Point<>(getMc(), zero, getMc().negate(b)));
 		}else{
-			list.add(new Point<>(mc,b,zero));
-			list.add(new Point<>(mc,mc.negate(b),zero));
-			list.add(new Point<>(mc,zero,a));
-			list.add(new Point<>(mc,zero,mc.negate(a)));
+            list.add(new Point<>(getMc(), b, zero));
+            list.add(new Point<>(getMc(), getMc().negate(b), zero));
+            list.add(new Point<>(getMc(), zero, a));
+            list.add(new Point<>(getMc(), zero, getMc().negate(a)));
 		}
 		return list;
 	}
 	private int comp0 = 0;
 	private void computeComp(){
-		comp0 = - mc.compare(substitute(Point.pointO(mc)), mc.getZero());
+        comp0 = -getMc().compare(substitute(Point.pointO(getMc())), getMc().getZero());
 	}
 	
 	private int computeRelation(Point<T> p){
-		return mc.compare(substitute(Point.pointO(mc)), mc.getZero());
+        return getMc().compare(substitute(Point.pointO(getMc())), getMc().getZero());
 	}
 	
 	/* (non-Javadoc)
@@ -119,8 +120,8 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	 * @return the area of this ellipse
 	 */
 	public T getArea(){
-		T pi = mc.constantValue(MathCalculator.STR_PI);
-		return mc.multiply(pi, mc.multiply(a, b));
+        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        return getMc().multiply(pi, getMc().multiply(a, b));
 	}
 	/**
 	 * Computes the distance from point on this ellipse that is 
@@ -130,8 +131,8 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	 * @return the distance
 	 */
 	public T distanceFL(T p){
-		T x = mc.multiply(getEccentricity(), p);
-		return mc.add(x, a);
+        T x = getMc().multiply(getEccentricity(), p);
+        return getMc().add(x, a);
 	}
 	
 	/**
@@ -142,8 +143,8 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	 * @return the distance
 	 */
 	public T distanceFR(T p){
-		T x = mc.multiply(getEccentricity(), p);
-		return mc.subtract(a, x);
+        T x = getMc().multiply(getEccentricity(), p);
+        return getMc().subtract(a, x);
 	}
 	/**
 	 * Computes the corresponding positive value x of the given value {@code y}
@@ -159,15 +160,15 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		}
 	}
 	private T computeX0(T y){
-		T t = mc.subtract(b2, square(y));
-		t = mc.squareRoot(t);
-		t = mc.multiply(mc.divide(a, b), t);
+        T t = getMc().subtract(b2, square(y));
+        t = getMc().squareRoot(t);
+        t = getMc().multiply(getMc().divide(a, b), t);
 		return t;
 	}
 	private T computeY0(T x){
-		T t = mc.subtract(a2, square(x));
-		t = mc.squareRoot(t);
-		t = mc.multiply(mc.divide(b, a), t);
+        T t = getMc().subtract(a2, square(x));
+        t = getMc().squareRoot(t);
+        t = getMc().multiply(getMc().divide(b, a), t);
 		return t;
 	}
 	/**
@@ -193,8 +194,8 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	public List<Line<T>> directTanLine(T a,T b){
 		T c = directTanLineC(a, b);
 		List<Line<T>> re = new ArrayList<>(2);
-		re.add(Line.generalFormula(a, b, c, mc));
-		re.add(Line.generalFormula(a, b, mc.negate(c), mc));
+        re.add(Line.generalFormula(a, b, c, getMc()));
+        re.add(Line.generalFormula(a, b, getMc().negate(c), getMc()));
 		return re;
 	}
 	/**
@@ -207,9 +208,9 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	 */
 	public T directTanLineC(T a,T b){
 		if(onX)
-			return mc.squareRoot(mc.add(mc.multiply(square(a), a2),mc.multiply(square(b), b2)));
+            return getMc().squareRoot(getMc().add(getMc().multiply(square(a), a2), getMc().multiply(square(b), b2)));
 		else
-			return mc.squareRoot(mc.add(mc.multiply(square(a), b2),mc.multiply(square(b), a2)));
+            return getMc().squareRoot(getMc().add(getMc().multiply(square(a), b2), getMc().multiply(square(b), a2)));
 	}
 	
 	/**
@@ -224,19 +225,19 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		if(k==null){
 			//must be x = ...
 			T x = line.getInterceptX();
-			int t = mc.compare(mc.abs(x), onX ? a : b);
+            int t = getMc().compare(getMc().abs(x), onX ? a : b);
 			
 			if(t < 0 ){
 				//two point 
 				T y = computeY(x);
 				List<Point<T>> list = new ArrayList<>(2);
-				list.add(Point.valueOf(x, y, mc));
-				list.add(Point.valueOf(x, mc.negate(y), mc));
+                list.add(Point.valueOf(x, y, getMc()));
+                list.add(Point.valueOf(x, getMc().negate(y), getMc()));
 				return list;
 			}else if(t == 0){
 				//y == 0
 				List<Point<T>> list = new ArrayList<>(1);
-				list.add(Point.valueOf(x, mc.getZero(), mc));
+                list.add(Point.valueOf(x, getMc().getZero(), getMc()));
 				return list;
 			}else{
 				return Collections.emptyList();
@@ -246,7 +247,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		List<T> sol = createEquation0(line).solveR();
 		List<Point<T>> re = new ArrayList<>(sol.size());
 		for(T t: sol){
-			re.add(Point.valueOf(t, line.computeY(t), mc));
+            re.add(Point.valueOf(t, line.computeY(t), getMc()));
 		}
 		return re;
 	}
@@ -261,15 +262,15 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		T k = line.slope();
 		if(k==null){
 			T x = line.getInterceptX();
-			int t = mc.compare(mc.abs(x), onX ? a : b);
+            int t = getMc().compare(getMc().abs(x), onX ? a : b);
 			if(t < 0 ){
 				if(onX){
-					return mc.squareRoot(mc.subtract(b2, mc.multiply(mc.divide(b2, a2),square(x))));
+                    return getMc().squareRoot(getMc().subtract(b2, getMc().multiply(getMc().divide(b2, a2), square(x))));
 				}else{
-					return mc.squareRoot(mc.subtract(a2, mc.multiply(mc.divide(a2, b2),square(x))));
+                    return getMc().squareRoot(getMc().subtract(a2, getMc().multiply(getMc().divide(a2, b2), square(x))));
 				}
 			}else if(t == 0){
-				return mc.getZero();
+                return getMc().getZero();
 			}else{
 				return null;
 			}
@@ -284,11 +285,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		if(rn == 0){
 			return null;
 		}else if(rn==1){
-			return mc.getZero();
-		}
-		T re = mc.multiply(equa.delta(), mc.add(mc.getOne(), square(k)));
-		re = mc.squareRoot(re);
-		return mc.divide(re, equa.coeA());
+            return getMc().getZero();
+        }
+        T re = getMc().multiply(equa.delta(), getMc().add(getMc().getOne(), square(k)));
+        re = getMc().squareRoot(re);
+        return getMc().divide(re, equa.coeA());
 	}
 	/**
 	 * Returns square of the chord length of the line in this ellipse. If this line doesn't not intersect with 
@@ -301,15 +302,15 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		T k = line.slope();
 		if(k==null){
 			T x = line.getInterceptX();
-			int t = mc.compare(mc.abs(x), onX ? a : b);
+            int t = getMc().compare(getMc().abs(x), onX ? a : b);
 			if(t < 0 ){
 				if(onX){
-					return mc.multiplyLong(mc.subtract(b2, mc.multiply(mc.divide(b2, a2),square(x))), 4l);
+                    return getMc().multiplyLong(getMc().subtract(b2, getMc().multiply(getMc().divide(b2, a2), square(x))), 4l);
 				}else{
-					return mc.multiplyLong(mc.subtract(a2, mc.multiply(mc.divide(a2, b2),square(x))), 4l);
+                    return getMc().multiplyLong(getMc().subtract(a2, getMc().multiply(getMc().divide(a2, b2), square(x))), 4l);
 				}
 			}else if(t == 0){
-				return mc.getZero();
+                return getMc().getZero();
 			}else{
 				return null;
 			}
@@ -324,10 +325,10 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		if(rn == 0){
 			return null;
 		}else if(rn==1){
-			return mc.getZero();
-		}
-		T re = mc.multiply(equa.delta(), mc.add(mc.getOne(), square(k)));
-		re  = mc.divide(re, square(equa.coeA()));
+            return getMc().getZero();
+        }
+        T re = getMc().multiply(equa.delta(), getMc().add(getMc().getOne(), square(k)));
+        re = getMc().divide(re, square(equa.coeA()));
 		return re;
 	}
 	
@@ -337,16 +338,16 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		T c = line.getInterceptY();
 		T ea,eb,ec;
 		if(onX){
-			ea = mc.add(b2, mc.multiply(a2, square(k)));
-			eb = mc.multiplyLong(mc.multiply(a2, mc.multiply(k, c)), 2l);
-			ec = mc.multiply(a2, mc.subtract(square(c), b2));
+            ea = getMc().add(b2, getMc().multiply(a2, square(k)));
+            eb = getMc().multiplyLong(getMc().multiply(a2, getMc().multiply(k, c)), 2l);
+            ec = getMc().multiply(a2, getMc().subtract(square(c), b2));
 //			Printer.print("ec = "+ec);
 		}else{
-			ea = mc.add(a2, mc.multiply(b2, square(k)));
-			eb = mc.multiplyLong(mc.multiply(b2, mc.multiply(k, c)), 2l);
-			ec = mc.multiply(b2, mc.subtract(square(c), a2));
-		}
-		return SVPEquation.quadratic(ea, eb, ec, mc);
+            ea = getMc().add(a2, getMc().multiply(b2, square(k)));
+            eb = getMc().multiplyLong(getMc().multiply(b2, getMc().multiply(k, c)), 2l);
+            ec = getMc().multiply(b2, getMc().subtract(square(c), a2));
+        }
+        return SVPEquation.quadratic(ea, eb, ec, getMc());
 	}
 	
 	/**
@@ -361,7 +362,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	public QEquation<T> createEquationX(Line<T> line){
 		T k = line.slope();
 		if(k==null){
-			return QEquation.perfectSquare(line.getInterceptX(), mc);
+            return QEquation.perfectSquare(line.getInterceptX(), getMc());
 		}
 		return createEquation0(line);
 	}
@@ -377,25 +378,25 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	@Override
 	public QEquation<T> createEquationY(Line<T> line){
 		T a = line.getA();
-		if(mc.isZero(a)){
-			return QEquation.perfectSquare(line.getInterceptY(), mc);
+        if (getMc().isZero(a)) {
+            return QEquation.perfectSquare(line.getInterceptY(), getMc());
 		}
 		T b = line.getB();
-		T k = mc.negate(mc.divide(b, a));
+        T k = getMc().negate(getMc().divide(b, a));
 		// solve an equation:
 		T c = line.getInterceptX();
 		T ea,eb,ec;
 		if(!onX){
-			ea = mc.add(b2, mc.multiply(a2, square(k)));
-			eb = mc.multiplyLong(mc.multiply(a2, mc.multiply(k, c)), 2l);
-			ec = mc.multiply(a2, mc.subtract(square(c), b2));
+            ea = getMc().add(b2, getMc().multiply(a2, square(k)));
+            eb = getMc().multiplyLong(getMc().multiply(a2, getMc().multiply(k, c)), 2l);
+            ec = getMc().multiply(a2, getMc().subtract(square(c), b2));
 //			Printer.print("ec = "+ec);
 		}else{
-			ea = mc.add(a2, mc.multiply(b2, square(k)));
-			eb = mc.multiplyLong(mc.multiply(b2, mc.multiply(k, c)), 2l);
-			ec = mc.multiply(b2, mc.subtract(square(c), a2));
-		}
-		return SVPEquation.quadratic(ea, eb, ec, mc);
+            ea = getMc().add(a2, getMc().multiply(b2, square(k)));
+            eb = getMc().multiplyLong(getMc().multiply(b2, getMc().multiply(k, c)), 2l);
+            ec = getMc().multiply(b2, getMc().subtract(square(c), a2));
+        }
+        return SVPEquation.quadratic(ea, eb, ec, getMc());
 	}
 	
 	/**
@@ -409,10 +410,10 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		T k = chord.slope();
 		if(k==null){
 			//return X axis
-			return LineSup.xAxis(mc);
-		}
-		T k1 = mc.negate(mc.divide(mc.divide(b2, a2), k));
-		return Line.pointSlope(Point.pointO(mc), k1, mc);
+            return LineSup.xAxis(getMc());
+        }
+        T k1 = getMc().negate(getMc().divide(getMc().divide(b2, a2), k));
+        return Line.pointSlope(Point.pointO(getMc()), k1, getMc());
 	}
 	/**
 	 * Returns the point's distance to the left focus,which is calculated by the formula
@@ -426,7 +427,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 			throw new IllegalArgumentException("Point not on ellipse");
 		}
 		T t = onX ? p.x : p.y;
-		return mc.subtract(a, mc.multiply(getEccentricity(), t));
+        return getMc().subtract(a, getMc().multiply(getEccentricity(), t));
 	}
 	/**
 	 * Returns the point's distance to the right focus,which is calculated by the formula
@@ -440,7 +441,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 			throw new IllegalArgumentException("Point not on ellipse");
 		}
 		T t = onX ? p.x : p.y;
-		return mc.add(a, mc.multiply(getEccentricity(), t));
+        return getMc().add(a, getMc().multiply(getEccentricity(), t));
 	}
 	/**
 	 * Returns the triangle's area whose vertices are the two foci and a point {@code P}on this ellipse,and 
@@ -451,16 +452,16 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	 * @return the area of the triangle.
 	 */
 	public T trianlgeArea(T angle,MathFunction<T,T> tan){
-		angle = mc.divideLong(angle, 2l);
+        angle = getMc().divideLong(angle, 2l);
 		T tv = tan.apply(angle);
 		try{
-			if(mc.compare(tv, mc.getZero())<=0 || mc.compare(tv, mc.divide(c, b))>0){
+            if (getMc().compare(tv, getMc().getZero()) <= 0 || getMc().compare(tv, getMc().divide(c, b)) > 0) {
 				throw new IllegalArgumentException("angle too big");
 			}
 		}catch(UnsupportedCalculationException ex){
 			//ignore
 		}
-		return mc.multiply(b2, tv);
+        return getMc().multiply(b2, tv);
 	}
 	
 	
@@ -485,11 +486,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	}
 	
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof EllipseV){
 			EllipseV<N> ev = (EllipseV<N>) obj;
 			if(ev.onX == onX){
-				return mc.isEqual(mapper.apply(ev.a), a) && mc.isEqual(mapper.apply(ev.b), b);
+                return getMc().isEqual(mapper.apply(ev.a), a) && getMc().isEqual(mapper.apply(ev.b), b);
 			}
 			return false;
 		}
@@ -497,11 +498,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	}
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof EllipseV){
 			EllipseV<T> ev = (EllipseV<T>) obj;
 			if(ev.onX == onX){
-				return mc.isEqual(ev.a, a) && mc.isEqual(ev.b, b);
+                return getMc().isEqual(ev.a, a) && getMc().isEqual(ev.b, b);
 			}
 			return false;
 		}
@@ -520,7 +521,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 	}
 	
 	@Override
-	public <N> EllipseV<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> EllipseV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		EllipseV<N> nell = new EllipseV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
 				, mapper.apply(a), mapper.apply(b), mapper.apply(c)
 				, mapper.apply(a2), mapper.apply(b2), mapper.apply(c2)

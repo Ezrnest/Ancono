@@ -6,6 +6,7 @@ package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -48,7 +49,7 @@ public class MovedShape<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public <N> MovedShape<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> MovedShape<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -75,7 +76,7 @@ public class MovedShape<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -84,7 +85,7 @@ public class MovedShape<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		// TODO Auto-generated method stub
 		return false;
 	}

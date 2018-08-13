@@ -5,6 +5,7 @@ import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Segment;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Line;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.function.Function;
@@ -95,5 +96,5 @@ public abstract class Polyhedron<T> extends SpaceObject<T> {
 	public abstract T volume();
 	
 	@Override
-	public abstract <N> Polyhedron<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> Polyhedron<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

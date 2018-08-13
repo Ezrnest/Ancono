@@ -8,6 +8,7 @@ import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.PlanePointSet;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -29,7 +30,7 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
 	 */
 	@Override
 	public boolean contains(Point<T> p) {
-		return mc.isEqual(p.y, apply(p.x));
+        return getMc().isEqual(p.y, apply(p.x));
 	}
 	/**
 	 * Returns a point.
@@ -37,12 +38,12 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
 	 * @return a new point.
 	 */
 	public Point<T> getPoint(T x){
-		return Point.valueOf(x, apply(x), mc);
+        return Point.valueOf(x, apply(x), getMc());
 	}
 	
 	/*
 	 * @see cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public abstract <N> AbstractPlaneFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

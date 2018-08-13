@@ -10,6 +10,7 @@ import cn.timelives.java.math.numberModels.api.Simplifiable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve;
 import cn.timelives.java.math.geometry.analytic.planeAG.curve.SubstituableCurve;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,16 +121,16 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	@Override
 	public T substitute(Point<T> p){
-		T t = mc.multiply(a, p.x);
-		t = mc.add(t, mc.multiply(b, p.y));
-		return mc.add(t, c);
+        T t = getMc().multiply(a, p.x);
+        t = getMc().add(t, getMc().multiply(b, p.y));
+        return getMc().add(t, c);
 	}
 	
 	@Override
 	public T substitute(T x, T y) {
-		T t = mc.multiply(a, x);
-		t = mc.add(t, mc.multiply(b, y));
-		return mc.add(t, c);
+        T t = getMc().multiply(a, x);
+        t = getMc().add(t, getMc().multiply(b, y));
+        return getMc().add(t, c);
 	}
 	
 	/**
@@ -139,21 +140,21 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	@Override
 	public boolean contains(Point<T> p){
-		return mc.isZero(substitute(p));
+        return getMc().isZero(substitute(p));
 	}
 	private boolean isPossibleParallel(Line<T> l){
-		return mc.isEqual(mc.multiply(a, l.b),
-				mc.multiply(b, l.a));
+        return getMc().isEqual(getMc().multiply(a, l.b),
+                getMc().multiply(b, l.a));
 	}
 	
 	private boolean isPossibleEqual(Line<T> l){
-		if(mc.isZero(a)){
+        if (getMc().isZero(a)) {
 			//a = 0 so b != 0
-			return mc.isEqual(mc.multiply(b, l.c), mc.multiply(l.b, c));
+            return getMc().isEqual(getMc().multiply(b, l.c), getMc().multiply(l.b, c));
 		}
 		//compare a
 		//a != 0 
-		return mc.isEqual(mc.multiply(a, l.c), mc.multiply(l.a, c));
+        return getMc().isEqual(getMc().multiply(a, l.c), getMc().multiply(l.a, c));
 		
 //		return mc.isEqual(mc.multiply(b, l.c), mc.multiply(l.b, c));
 	}
@@ -164,14 +165,14 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return the corresponding y value 
 	 */
 	public T computeY(T x){
-		if(mc.isZero(b)){
+        if (getMc().isZero(b)) {
 			//x = ..
 			return null;
 		}
 		//ax + by + c = 0
 		//-> y = -1/b * (ax +c)
-		T axc = mc.add(c, mc.multiply(x, a));
-		return mc.negate(mc.divide(axc, b));
+        T axc = getMc().add(c, getMc().multiply(x, a));
+        return getMc().negate(getMc().divide(axc, b));
 	}
 	/**
 	 * Assign the value y and try to calculate value x.If this line 
@@ -180,14 +181,14 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return the corresponding x value 
 	 */
 	public T computeX(T y) {
-		if(mc.isZero(a)){
+        if (getMc().isZero(a)) {
 			//y= .. 
 			return null;
 		}
 		//ax + by + c = 0
 		// -> x = -1/a * (by +c)
-		T axc = mc.add(c, mc.multiply(y, b));
-		return mc.negate(mc.divide(axc,  a));
+        T axc = getMc().add(c, getMc().multiply(y, b));
+        return getMc().negate(getMc().divide(axc, a));
 	}
 	
 	
@@ -224,8 +225,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return {@code true} only if {@code this �� l}
 	 */
 	public boolean isPerpendicular(Line<T> l){
-		T m = mc.add(mc.multiply(a, l.a), mc.multiply(b, l.b));
-		return mc.isZero(m);
+        T m = getMc().add(getMc().multiply(a, l.a), getMc().multiply(b, l.b));
+        return getMc().isZero(m);
 	}
 	
 	/**
@@ -236,16 +237,16 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return the intersect point of the two line, or null.
 	 */
 	public Point<T> intersectPoint(Line<T> l){
-		T d = mc.subtract(
-				mc.multiply(a, l.b), 
-				mc.multiply(b, l.a));
+        T d = getMc().subtract(
+                getMc().multiply(a, l.b),
+                getMc().multiply(b, l.a));
 		//d = a*l.b - b*l.a
-		if(mc.isZero(d)){
+        if (getMc().isZero(d)) {
 			return null;
 		}
-		T xd = mc.subtract(mc.multiply(b, l.c),mc.multiply(l.b, c));
-		T yd = mc.subtract(mc.multiply(c, l.a), mc.multiply(l.c, a));
-		return new Point<T>(mc,mc.divide(xd, d),mc.divide(yd, d));
+        T xd = getMc().subtract(getMc().multiply(b, l.c), getMc().multiply(l.b, c));
+        T yd = getMc().subtract(getMc().multiply(c, l.a), getMc().multiply(l.c, a));
+        return new Point<T>(getMc(), getMc().divide(xd, d), getMc().divide(yd, d));
 	}
 	/**
 	 * Returns a parallel line of {@code this} that passes through the given point.
@@ -266,8 +267,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	public Line<T> parallel(T x,T y){
 		//create a line ax + by + c' = 0
 		//and c' = -ax-by
-		T c = mc.negate(mc.add(mc.multiply(a, x),mc.multiply(b, y)));
-		return new Line<T>(mc,a,b,c);
+        T c = getMc().negate(getMc().add(getMc().multiply(a, x), getMc().multiply(b, y)));
+        return new Line<T>(getMc(), a, b, c);
 	}
 	/**
 	 * Returns a perpendicular line of this line which passes through the given point.
@@ -288,9 +289,9 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	public Line<T> perpendicular(T x,T y){
 		// create a line that bx - ay + c' = 0
 		// and c' = ay - bx
-		T c = mc.subtract(mc.multiply(a, y), mc.multiply(b, x));
-		T b = mc.negate(a);
-		return new Line<T>(mc,this.b,b,c);
+        T c = getMc().subtract(getMc().multiply(a, y), getMc().multiply(b, x));
+        T b = getMc().negate(a);
+        return new Line<T>(getMc(), this.b, b, c);
 	}
 	/**
 	 * Returns the symmetry point of the given point by this line.The given point and 
@@ -315,26 +316,26 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	public Point<T> symmetryPoint(T x,T y){
 		//use the pre-calculated formula.
-		T a2 = mc.multiply(a, a);
-		T b2 = mc.multiply(b, b);
-		T d_b2a2 = mc.subtract(b2, a2);
-		T ab2 = mc.multiplyLong(mc.multiply(a, b), 2);
-		T c2 = mc.multiplyLong(c, 2);
-		T d1 = mc.subtract(
-				mc.subtract(
-						mc.multiply(d_b2a2, x), 
-								mc.multiply(ab2, y)), 
-				mc.multiply(c2, a));
-		d_b2a2 = mc.negate(d_b2a2);
-		T d2 = mc.subtract(
-				mc.subtract(
-						mc.multiply(d_b2a2, y), 
-								mc.multiply(ab2, x)), 
-				mc.multiply(c2, b));
-		T s_a2b2 = mc.add(a2, b2);
-		d1 = mc.divide(d1, s_a2b2);
-		d2 = mc.divide(d2, s_a2b2);
-		return new Point<T>(mc,d1,d2);
+        T a2 = getMc().multiply(a, a);
+        T b2 = getMc().multiply(b, b);
+        T d_b2a2 = getMc().subtract(b2, a2);
+        T ab2 = getMc().multiplyLong(getMc().multiply(a, b), 2);
+        T c2 = getMc().multiplyLong(c, 2);
+        T d1 = getMc().subtract(
+                getMc().subtract(
+                        getMc().multiply(d_b2a2, x),
+                        getMc().multiply(ab2, y)),
+                getMc().multiply(c2, a));
+        d_b2a2 = getMc().negate(d_b2a2);
+        T d2 = getMc().subtract(
+                getMc().subtract(
+                        getMc().multiply(d_b2a2, y),
+                        getMc().multiply(ab2, x)),
+                getMc().multiply(c2, b));
+        T s_a2b2 = getMc().add(a2, b2);
+        d1 = getMc().divide(d1, s_a2b2);
+        d2 = getMc().divide(d2, s_a2b2);
+        return new Point<T>(getMc(), d1, d2);
 	}
 	/**
 	 * Return the symmetry line of {@code this} by the point{@code p}.The returned line 
@@ -355,14 +356,14 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return a symmetry line.
 	 */
 	public Line<T> symmetryLine(T x,T y){
-		T cN = mc.add(c, 
-				mc.multiplyLong(
-						mc.add(
-								mc.multiply(a, x), 
-								mc.multiply(b, y)),
+        T cN = getMc().add(c,
+                getMc().multiplyLong(
+                        getMc().add(
+                                getMc().multiply(a, x),
+                                getMc().multiply(b, y)),
 						2));
-		cN = mc.negate(cN);
-		return new Line<T>(mc,a,b,cN);
+        cN = getMc().negate(cN);
+        return new Line<T>(getMc(), a, b, cN);
 	}
 	/**
 	 * Returns the symmetry line of {@code this} by line {@code l}.The returned line 
@@ -378,19 +379,19 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		if(in==null){
 			//no intersect point
 			//parallel or coincide.
-			T cN = mc.subtract(mc.multiplyLong(l.c, 2), c);
-			return new Line<T>(mc,a,b,cN);
+            T cN = getMc().subtract(getMc().multiplyLong(l.c, 2), c);
+            return new Line<T>(getMc(), a, b, cN);
 		}
 		T x,y;
-		if(mc.isZero(b)){
+        if (getMc().isZero(b)) {
 			x = in.x;
-			y = System.currentTimeMillis() % 2 == 0 ? mc.add(in.y, mc.getOne()) : mc.subtract(in.y, mc.getOne());
+            y = System.currentTimeMillis() % 2 == 0 ? getMc().add(in.y, getMc().getOne()) : getMc().subtract(in.y, getMc().getOne());
 		}else{
-			x = System.currentTimeMillis() % 2 == 0 ? mc.add(in.x, mc.getOne()) : mc.subtract(in.x, mc.getOne());
-			y = mc.negate(mc.divide(mc.add(mc.multiply(a, x), c), b));
+            x = System.currentTimeMillis() % 2 == 0 ? getMc().add(in.x, getMc().getOne()) : getMc().subtract(in.x, getMc().getOne());
+            y = getMc().negate(getMc().divide(getMc().add(getMc().multiply(a, x), c), b));
 		}
 		Point<T> pass = l.symmetryPoint(x, y);
-		return twoPoint(in, pass, mc);
+        return twoPoint(in, pass, getMc());
 	}
 	/**
 	 * Returns the symmetry line of {@code this} by the perpendicular line of {@code l} 
@@ -415,8 +416,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return
 	 */
 	public T tensor(){
-		T sum = mc.add(mc.multiply(a, a), mc.multiply(b, b));
-		return mc.squareRoot(sum);
+        T sum = getMc().add(getMc().multiply(a, a), getMc().multiply(b, b));
+        return getMc().squareRoot(sum);
 	}
 	
 	/**
@@ -424,7 +425,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return
 	 */
 	public T tensorSq(){
-		T sum = mc.add(mc.multiply(a, a), mc.multiply(b, b));
+        T sum = getMc().add(getMc().multiply(a, a), getMc().multiply(b, b));
 		return sum;
 	}
 	
@@ -438,10 +439,10 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	public Line<T> intersectAngleBisector(Line<T> l){
 		T tense1 = tensor();
 		T tense2 = l.tensor();
-		T aN = mc.add(mc.multiply(a, tense2), mc.multiply(l.a, tense1));
-		T bN = mc.add(mc.multiply(b, tense2), mc.multiply(l.b, tense1));
-		T cN = mc.add(mc.multiply(c, tense2), mc.multiply(l.c, tense1));
-		return new Line<T>(mc,aN,bN,cN);
+        T aN = getMc().add(getMc().multiply(a, tense2), getMc().multiply(l.a, tense1));
+        T bN = getMc().add(getMc().multiply(b, tense2), getMc().multiply(l.b, tense1));
+        T cN = getMc().add(getMc().multiply(c, tense2), getMc().multiply(l.c, tense1));
+        return new Line<T>(getMc(), aN, bN, cN);
 	}
 	/**
 	 * Rotate this line anticlockwise by an angle,which has of tan value of {@code tanValue}.
@@ -453,22 +454,22 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return a rotated line.
 	 */
 	public Line<T> rotateAngle(Point<T> p,T tanValue){
-		if(mc.isZero(tanValue)){
+        if (getMc().isZero(tanValue)) {
 			return parallel(p);
 		}
 		T k = slope();
 		if(k==null){
 			//perpendicular to x axis
-			T kN = mc.reciprocal(tanValue);
-			return pointSlope(p.x, p.y, kN, mc);
-		}
-		T t = mc.subtract(mc.getOne(), mc.multiply(k, tanValue));
-		if(mc.isZero(t)){
+            T kN = getMc().reciprocal(tanValue);
+            return pointSlope(p.x, p.y, kN, getMc());
+        }
+        T t = getMc().subtract(getMc().getOne(), getMc().multiply(k, tanValue));
+        if (getMc().isZero(t)) {
 			//this should only happen when the new line is perpendicular to x axis
-			return parallelY(p.x, mc);
-		}
-		T kN = mc.divide(mc.add(tanValue,k), t);
-		return pointSlope(p.x,p.y,kN, mc);
+            return parallelY(p.x, getMc());
+        }
+        T kN = getMc().divide(getMc().add(tanValue, k), t);
+        return pointSlope(p.x, p.y, kN, getMc());
 	}
 	
 	/**
@@ -487,9 +488,9 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	public T distanceSq(T x,T y){
 		T sub = substitute(x, y);
-		sub = mc.multiply(sub, sub);
-		T a2b2 = mc.add(mc.multiply(a, a), mc.multiply(b, b));
-		return mc.divide(sub, a2b2);
+        sub = getMc().multiply(sub, sub);
+        T a2b2 = getMc().add(getMc().multiply(a, a), getMc().multiply(b, b));
+        return getMc().divide(sub, a2b2);
 	}
 	/**
 	 * Return the distance of this line to the point p.
@@ -506,10 +507,10 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return |a*p.x+b*p.y+c|/Sqrt(a^2+b^2)
 	 */
 	public T distance(T x,T y){
-		T sub = mc.abs(substitute(x, y));
-		T a2b2 = mc.add(mc.multiply(a, a), mc.multiply(b, b));
-		a2b2 = mc.squareRoot(a2b2);
-		return mc.divide(sub, a2b2);
+        T sub = getMc().abs(substitute(x, y));
+        T a2b2 = getMc().add(getMc().multiply(a, a), getMc().multiply(b, b));
+        a2b2 = getMc().squareRoot(a2b2);
+        return getMc().divide(sub, a2b2);
 	}
 	/**
 	 * Return the square of distance of this line and another 
@@ -518,10 +519,10 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return the square of distance between two lines.
 	 */
 	public T distanceLineSq(Line<T> l){
-		T a2b2 = mc.add(mc.multiply(a, a), mc.multiply(b, b));
-		T cd = mc.subtract(c, l.c);
-		cd = mc.multiply(cd, cd);
-		return mc.divide(cd, a2b2);
+        T a2b2 = getMc().add(getMc().multiply(a, a), getMc().multiply(b, b));
+        T cd = getMc().subtract(c, l.c);
+        cd = getMc().multiply(cd, cd);
+        return getMc().divide(cd, a2b2);
 	}
 	
 	/**
@@ -531,9 +532,9 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return the distance between two lines.
 	 */
 	public T distanceLine(Line<T> l){
-		T a2b2 = mc.add(mc.multiply(a, a), mc.multiply(b, b));
-		a2b2 = mc.squareRoot(a2b2);
-		return mc.divide(mc.abs(mc.subtract(c, l.c)), a2b2);
+        T a2b2 = getMc().add(getMc().multiply(a, a), getMc().multiply(b, b));
+        a2b2 = getMc().squareRoot(a2b2);
+        return getMc().divide(getMc().abs(getMc().subtract(c, l.c)), a2b2);
 	}
 	
 	/**
@@ -545,8 +546,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return {@code true} if {@code p} is above {@code this}
 	 */
 	public boolean isAbove(Point<T> p){
-		int bB = mc.compare(b, mc.getZero());
-		int sub = mc.compare(substitute(p.x, p.y), mc.getZero());
+        int bB = getMc().compare(b, getMc().getZero());
+        int sub = getMc().compare(substitute(p.x, p.y), getMc().getZero());
 		return (bB*sub) == 1;
 	}
 	
@@ -557,10 +558,10 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * slope doesn't exists.
 	 */
 	public T slope(){
-		if(mc.isZero(b)){
+        if (getMc().isZero(b)) {
 			return null;
 		}
-		return mc.negate(mc.divide(a, b));
+        return getMc().negate(getMc().divide(a, b));
 	}
 	
 	/**
@@ -570,8 +571,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	public PVector<T> directionVector(){
 		T x = b;
-		T y = mc.negate(a);
-		return PVector.valueOf(x, y, mc);
+        T y = getMc().negate(a);
+        return PVector.valueOf(x, y, getMc());
 	}
 	/**
 	 * Returns one of the formal vector of this line.The vector 
@@ -579,7 +580,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return a 2-dimension column vector
 	 */
 	public PVector<T> normalVector(){
-		return PVector.valueOf(a, b, mc);
+        return PVector.valueOf(a, b, getMc());
 	}
 	/**
 	 * Get the number of coefficient A in the equation.
@@ -609,10 +610,10 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return the x coordinate of the intersect point of {@code this} and x axis.
 	 */
 	public T getInterceptX(){
-		if(mc.isZero(a)){
+        if (getMc().isZero(a)) {
 			return null;
 		}
-		return mc.negate(mc.divide(c, a));
+        return getMc().negate(getMc().divide(c, a));
 	}
 	/**
 	 * Get the intercept in y axis.If this line is parallel to y axis,{@code null} will 
@@ -620,10 +621,10 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return the y coordinate of the intersect point of {@code this} and y axis.
 	 */
 	public T getInterceptY(){
-		if(mc.isZero(b)){
+        if (getMc().isZero(b)) {
 			return null;
 		}
-		return mc.negate(mc.divide(c, b));
+        return getMc().negate(getMc().divide(c, b));
 	}
 
 	/**
@@ -636,7 +637,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		if(t == null){
 			return null;
 		}
-		return Point.valueOf(t,mc.getZero(),mc);
+        return Point.valueOf(t, getMc().getZero(), getMc());
 	}
 
 	/**
@@ -649,7 +650,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		if(t == null){
 			return null;
 		}
-		return Point.valueOf(mc.getZero(),t,mc);
+        return Point.valueOf(getMc().getZero(), t, getMc());
 	}
 
 	/**
@@ -662,7 +663,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		//|a1b2-a2b1|
 		//----------- = tan(angle)
 		// a1a2+b1b2
-		return mc.abs(intersectTanDirected(l));
+        return getMc().abs(intersectTanDirected(l));
 	}
 	/**
 	 * Compute the tan value of the intersect angle.The value will be in [0,+INF).
@@ -674,12 +675,12 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		// a1b2-a2b1
 		// ----------- = tan(angle)
 		// a1a2+b1b2
-		T deno = mc.add(mc.multiply(a, l.a), mc.multiply(b, l.b));
-		if (mc.isZero(deno)) {
+        T deno = getMc().add(getMc().multiply(a, l.a), getMc().multiply(b, l.b));
+        if (getMc().isZero(deno)) {
 			return null;
 		}
-		T nume = mc.subtract(mc.multiply(a, l.b), mc.multiply(b, l.a));
-		return mc.divide(nume, deno);
+        T nume = getMc().subtract(getMc().multiply(a, l.b), getMc().multiply(b, l.a));
+        return getMc().divide(nume, deno);
 	}
 	
 	/**
@@ -701,25 +702,25 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 */
 	public Point<T> projection(Point<T> p){
 		//( (B^2*x-ABy-AC)/(A^2+B^2) , (A^2*y-ABx-BC)/(A^2+B^2) )
-		T a2 = mc.multiply(a,a);
-		T b2 = mc.multiply(b,b);
-		T tensor = mc.add(a2,b2);
-		T ab = mc.multiply(a,b);
-		T corx = mc.subtract(mc.multiply(b2,p.x),
-					mc.add(mc.multiply(ab,p.y),
-							mc.multiply(a,c)));
-		T cory = mc.subtract(mc.multiply(a2,p.y),
-				mc.add(mc.multiply(ab,p.x),
-						mc.multiply(b,c)));
-		corx = mc.divide(corx,tensor);
-		cory = mc.divide(cory,tensor);
-		return Point.valueOf(corx,cory,mc);
+        T a2 = getMc().multiply(a, a);
+        T b2 = getMc().multiply(b, b);
+        T tensor = getMc().add(a2, b2);
+        T ab = getMc().multiply(a, b);
+        T corx = getMc().subtract(getMc().multiply(b2, p.x),
+                getMc().add(getMc().multiply(ab, p.y),
+                        getMc().multiply(a, c)));
+        T cory = getMc().subtract(getMc().multiply(a2, p.y),
+                getMc().add(getMc().multiply(ab, p.x),
+                        getMc().multiply(b, c)));
+        corx = getMc().divide(corx, tensor);
+        cory = getMc().divide(cory, tensor);
+        return Point.valueOf(corx, cory, getMc());
 	}
 
 
 
 	@Override
-	public <N> Line<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Line<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Line<>(newCalculator,mapper.apply(a),mapper.apply(b),mapper.apply(c));
 	}
 	
@@ -741,7 +742,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	
 	@Override
 	public int hashCode() {
-		int hash = mc.hashCode();
+        int hash = getMc().hashCode();
 		hash = hash*31 + a.hashCode();
 		hash = hash*31 + b.hashCode();
 		hash = hash*31 + c.hashCode();
@@ -750,25 +751,25 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	}
 	
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Line: ");
-		T z = mc.getZero();
-		T o = mc.getOne();
-		if(!mc.isEqual(a, z)){
-			if(!mc.isEqual(a, o)){
-				sb.append('(').append(nf.format(a,mc)).append(')');
+        T z = getMc().getZero();
+        T o = getMc().getOne();
+        if (!getMc().isEqual(a, z)) {
+            if (!getMc().isEqual(a, o)) {
+                sb.append('(').append(nf.format(a, getMc())).append(')');
 			}
 			sb.append("x + ");
 		}
-		if(!mc.isEqual(b, z)){
-			if(!mc.isEqual(b, o)){
-				sb.append('(').append(nf.format(b,mc)).append(')');
+        if (!getMc().isEqual(b, z)) {
+            if (!getMc().isEqual(b, o)) {
+                sb.append('(').append(nf.format(b, getMc())).append(')');
 			}
 			sb.append("y + ");
 		}
-		if(!mc.isEqual(c, z))
-			sb.append('(').append(nf.format(c,mc)).append(")   ");
+        if (!getMc().isEqual(c, z))
+            sb.append('(').append(nf.format(c, getMc())).append(")   ");
 		sb.delete(sb.length()-2, sb.length());
 		sb.append("= 0");
 		return sb.toString();
@@ -782,17 +783,17 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	 * @return
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Line){
 			//we just map the line to a new line type T
 			Line<N> l = (Line<N>) obj;
-			Line<T> ll = l.mapTo(mapper, mc);
+            Line<T> ll = l.mapTo(mapper, getMc());
 			return relationWith(ll) == Relation.COINCIDE;
 		}
 		return false;
 	}
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}

@@ -8,6 +8,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.geometry.analytic.planeAG.PAffineTrans;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -55,7 +56,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 	 */
 	
 	@Override
-	public <N> TransformedCurve<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> TransformedCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// this should be assured that the returned type is a plane curve of type N.
 		AbstractPlaneCurve<N> npc = original.mapTo(mapper, newCalculator);
 		return new TransformedCurve<N>(newCalculator, npc, backward.mapTo(mapper, newCalculator));
@@ -80,7 +81,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(this == obj){
 			return true;
 		}
@@ -94,7 +95,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(!(obj instanceof TransformedCurve)){
 			return false;
 		}
@@ -105,7 +106,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder(64);
 		sb.append("TransformedCurve:original=").append(original.toString(nf)).append(", inversed transformation=").append(backward.toString(nf));
 		return sb.toString();

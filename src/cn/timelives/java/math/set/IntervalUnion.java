@@ -6,6 +6,7 @@ import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
@@ -138,7 +139,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 			if (downer == null) {
 				return -1;
 			}
-			return mc.compare(downer, t);
+            return getMc().compare(downer, t);
 		});
 		if(n<-1) {
 			n = -n-2;
@@ -149,7 +150,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	private boolean shouldUnionWithThePrevInterval(Interval<T> v,int downer) {
 		if(v.isDownerBoundInclusive() && downer>0) {
 			Interval<T> prev = is.get(downer-1);
-			if(!prev.isUpperBoundInclusive() && mc.isEqual(v.downerBound(), prev.upperBound())) {
+            if (!prev.isUpperBoundInclusive() && getMc().isEqual(v.downerBound(), prev.upperBound())) {
 				return true;
 			}
 		}
@@ -166,7 +167,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 */
 	public IntervalUnion<T> unionWith(Interval<T> v){
 		if(is.isEmpty()) {
-			return new IntervalUnion<>(mc,v);
+            return new IntervalUnion<>(getMc(), v);
 		}
 		//deal with inf cases
 		
@@ -212,7 +213,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		}else {
 			Interval<T> in = is.get(downer);
 			final T vdb= v.downerBound();
-			if(in.downerBound()!=null && vdb != null && mc.isEqual(in.downerBound(), vdb)) {
+            if (in.downerBound() != null && vdb != null && getMc().isEqual(in.downerBound(), vdb)) {
 				if(shouldUnionWithThePrevInterval(v, downer)) {
 					Interval<T> prev = is.get(downer-1);
 					indexDowner = downer-1;
@@ -224,7 +225,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 					indexDowner = downer;
 				}
 			}else {
-				int t2 = vdb == null ? 1 : in.upperBound() == null ? 1 : mc.compare(in.upperBound(), vdb);
+                int t2 = vdb == null ? 1 : in.upperBound() == null ? 1 : getMc().compare(in.upperBound(), vdb);
 				if(t2>=0 && (t2!=0 || in.isUpperBoundInclusive() || v.isDownerBoundInclusive() )) {
 					indexDowner = downer;
 					ndownerIn = in.isDownerBoundInclusive();
@@ -244,7 +245,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 			//deal with upper
 			Interval<T> in = is.get(upper);
 			final T vub= v.upperBound();
-			if(vub!=null && in.downerBound()!=null && mc.isEqual(in.downerBound(), vub)) {
+            if (vub != null && in.downerBound() != null && getMc().isEqual(in.downerBound(), vub)) {
 				if(shouldUnionWithTheNextInterval(v,in)) {
 					nupperIn = in.isUpperBoundInclusive();
 					nupper = in.upperBound();
@@ -255,7 +256,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 					indexUpper = upper-1;
 				}
 			}else {
-				int t2 = vub ==null ? -1 : in.upperBound()== null ? 1 : mc.compare(in.upperBound(),vub);
+                int t2 = vub == null ? -1 : in.upperBound() == null ? 1 : getMc().compare(in.upperBound(), vub);
 				indexUpper= upper;
 				if(t2==0) {
 					nupper = in.upperBound();
@@ -269,7 +270,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 				}
 			}
 		}
-		Interval<T> nin = new IntervalI<>(mc, ndowner, nupper, ndownerIn, nupperIn);
+        Interval<T> nin = new IntervalI<>(getMc(), ndowner, nupper, ndownerIn, nupperIn);
 		indexUpper++;
 		return replaceIntervalRange(indexDowner,indexUpper,nin);
 	}
@@ -281,9 +282,9 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	public IntervalUnion<T> union(IntervalUnion<T> in){
 		List<Interval<T>> nivs = copyList();
 		for(Interval<T> v : in.is) {
-			unionWith0(nivs, v, mc);
-		}
-		return new IntervalUnion<>(mc, nivs);
+            unionWith0(nivs, v, getMc());
+        }
+        return new IntervalUnion<>(getMc(), nivs);
 	}
 	
 	/**
@@ -302,13 +303,13 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		for(int i=n+1;i<size;i++) {
 			nivs.add(is.get(i-1));
 		}
-		return new IntervalUnion<>(mc, nivs);
+        return new IntervalUnion<>(getMc(), nivs);
 	}
 	
 	private IntervalUnion<T> replaceInterval(int n,Interval<T> v){
 		List<Interval<T>> nivs = copyList();
 		nivs.set(n, v);
-		return new IntervalUnion<>(mc,nivs);
+        return new IntervalUnion<>(getMc(), nivs);
 	}
 	/**
 	 * Replaces the intervals.
@@ -332,7 +333,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		for(int i=upper,isize = is.size();i<isize;i++) {
 			nivs.add(is.get(i));
 		}
-		return new IntervalUnion<>(mc, nivs);
+        return new IntervalUnion<>(getMc(), nivs);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -351,7 +352,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	public IntervalUnion<T> intersect(Interval<T> v){
 		List<Interval<T>> nis = new ArrayList<>(2);
 		intersect0(nis,v);
-		return new IntervalUnion<>(mc, nis);
+        return new IntervalUnion<>(getMc(), nis);
 	}
 	
 	private void intersect0(List<Interval<T>> nis,Interval<T> v){
@@ -392,7 +393,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		for(Interval<T> v : in.is) {
 			intersect0(nis,v);
 		}
-		return new IntervalUnion<>(mc, nis);
+        return new IntervalUnion<>(getMc(), nis);
 	}
 	
 	/**
@@ -401,7 +402,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 */
 	public IntervalUnion<T> complement(){
 		if(is.isEmpty()) {
-			return universe(mc);
+            return universe(getMc());
 		}
 		List<Interval<T>> nis = new ArrayList<>(is.size()+1);
 		T prev = null;
@@ -410,17 +411,17 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 			T downer = v.downerBound();
 			if(downer!=null) {
 				//not -inf
-				Interval<T> in = Interval.valueOf(prev, downer, prevInclusive, !v.isDownerBoundInclusive(), mc);
+                Interval<T> in = Interval.valueOf(prev, downer, prevInclusive, !v.isDownerBoundInclusive(), getMc());
 				nis.add(in);
 			}
 			prev = v.upperBound();
 			prevInclusive = !v.isUpperBoundInclusive();
 		}
 		if(prev != null) {
-			Interval<T> in = Interval.valueOf(prev, null, prevInclusive, false, mc);
+            Interval<T> in = Interval.valueOf(prev, null, prevInclusive, false, getMc());
 			nis.add(in);
 		}
-		return new IntervalUnion<>(mc, nis);
+        return new IntervalUnion<>(getMc(), nis);
 	}
 	
 	
@@ -428,7 +429,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@Override
-	public <N> IntervalUnion<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> IntervalUnion<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new IntervalUnion<>(newCalculator, CollectionSup.mapList(is, x -> x.mapTo(mapper, newCalculator)));
 	}
 	
@@ -447,7 +448,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @see MathObject#valueEquals(MathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(!(obj instanceof IntervalUnion)) {
 			return false;
 		}
@@ -459,7 +460,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @see MathObject#valueEquals(MathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(!(obj instanceof IntervalUnion)) {
 			return false;
 		}
@@ -470,7 +471,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	 * @see MathObject#toString(NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		if(is.isEmpty()) {
 			return "∅";
 		}else {

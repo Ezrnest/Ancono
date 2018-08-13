@@ -6,6 +6,7 @@ import cn.timelives.java.math.exceptions.UnsatisfiedCalculationResultException;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -184,8 +185,8 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	@Override
 	public T surfaceArea() {
 		if(surfaceArea==null){
-			
-			surfaceArea = mc.addX(bot.area(),f1.area(),f2.area(),f3.area());
+
+            surfaceArea = getMc().addX(bot.area(), f1.area(), f2.area(), f3.area());
 		}
 		return surfaceArea;
 	}
@@ -197,7 +198,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 */
 	@Override
 	public T volume() {
-		return mc.abs(volumePN());
+        return getMc().abs(volumePN());
 	}
 	/**
 	 * Returns the volume computed by the determination, may be negative. 
@@ -205,7 +206,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 */
 	public T volumePN(){
 		if(volume == null){
-			volume = mc.divideLong(SVector.mixedProduct(
+            volume = getMc().divideLong(SVector.mixedProduct(
 					es[0].getDirectVector(),es[2].getDirectVector(), es[3].getDirectVector()), 6l);
 		}
 		return volume;
@@ -225,7 +226,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @return
 	 */
 	public T radiusI(){
-		return mc.multiplyLong(mc.divide(volume(), surfaceArea()), 3l);
+        return getMc().multiplyLong(getMc().divide(volume(), surfaceArea()), 3l);
 	}
 	/**
 	 * Returns the radius of the out-sphere.
@@ -253,25 +254,25 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 		initPlaneDirect();
 		surfaceArea();
 		T r = radiusI();
-		T x = mc.add(mc.add(mc.multiply(
-				bot.area(), ps[0].getX()), mc.multiply(
-				f2.area(), ps[1].getX())), mc.add(mc.multiply(
-				f3.area(), ps[2].getX()), mc.multiply(
+        T x = getMc().add(getMc().add(getMc().multiply(
+                bot.area(), ps[0].getX()), getMc().multiply(
+                f2.area(), ps[1].getX())), getMc().add(getMc().multiply(
+                f3.area(), ps[2].getX()), getMc().multiply(
 				f1.area(), ps[3].getX())));
-		T y = mc.add(mc.add(mc.multiply(
-				bot.area(), ps[0].getY()), mc.multiply(
-				f2.area(), ps[1].getY())), mc.add(mc.multiply(
-				f3.area(), ps[2].getY()), mc.multiply(
+        T y = getMc().add(getMc().add(getMc().multiply(
+                bot.area(), ps[0].getY()), getMc().multiply(
+                f2.area(), ps[1].getY())), getMc().add(getMc().multiply(
+                f3.area(), ps[2].getY()), getMc().multiply(
 				f1.area(), ps[3].getY())));
-		T z = mc.add(mc.add(mc.multiply(
-				bot.area(), ps[0].getZ()), mc.multiply(
-				f2.area(), ps[1].getZ())), mc.add(mc.multiply(
-				f3.area(), ps[2].getZ()), mc.multiply(
+        T z = getMc().add(getMc().add(getMc().multiply(
+                bot.area(), ps[0].getZ()), getMc().multiply(
+                f2.area(), ps[1].getZ())), getMc().add(getMc().multiply(
+                f3.area(), ps[2].getZ()), getMc().multiply(
 				f1.area(), ps[3].getZ())));
-		x = mc.divide(x, surfaceArea);
-		y = mc.divide(y, surfaceArea);
-		z = mc.divide(z, surfaceArea);
-		SPoint<T> center = SPoint.valueOf(x, y, z, mc);
+        x = getMc().divide(x, surfaceArea);
+        y = getMc().divide(y, surfaceArea);
+        z = getMc().divide(z, surfaceArea);
+        SPoint<T> center = SPoint.valueOf(x, y, z, getMc());
 		return Sphere.centerRadius(center, r);
 	}
 	
@@ -291,10 +292,10 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 		if (planeDirect==0){
 			initPlaneDirect();
 		}
-		T z = mc.getZero();
-		int d1 = mc.compare(f1.getPlane().distanceDirected(p), z);
-		int d2 = mc.compare(f2.getPlane().distanceDirected(p), z);
-		int d3 = mc.compare(f3.getPlane().distanceDirected(p), z);
+        T z = getMc().getZero();
+        int d1 = getMc().compare(f1.getPlane().distanceDirected(p), z);
+        int d2 = getMc().compare(f2.getPlane().distanceDirected(p), z);
+        int d3 = getMc().compare(f3.getPlane().distanceDirected(p), z);
 		if (planeDirect > 0) {
 			return d1 > 0 && d2 > 0 && d3 > 0;
 		} else {
@@ -310,9 +311,9 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 		return bot.contains(p) || f1.contains(p) || f2.contains(p) || f3.contains(p);
 	}
 	private void initPlaneDirect(){
-		planeDirect = mc.compare(bot.getPlane().distanceDirected(centerG()), mc.getZero());
+        planeDirect = getMc().compare(bot.getPlane().distanceDirected(centerG()), getMc().getZero());
 		if(planeDirect == 0){
-			throw new UnsatisfiedCalculationResultException("Distance=0", mc);
+            throw new UnsatisfiedCalculationResultException("Distance=0", getMc());
 		}
 	}
 	/* (non-Javadoc)
@@ -323,10 +324,10 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 		if (planeDirect==0){
 			initPlaneDirect();
 		}
-		T z = mc.getZero();
-		int d1 = mc.compare(f1.getPlane().distanceDirected(p), z);
-		int d2 = mc.compare(f2.getPlane().distanceDirected(p), z);
-		int d3 = mc.compare(f3.getPlane().distanceDirected(p), z);
+        T z = getMc().getZero();
+        int d1 = getMc().compare(f1.getPlane().distanceDirected(p), z);
+        int d2 = getMc().compare(f2.getPlane().distanceDirected(p), z);
+        int d3 = getMc().compare(f3.getPlane().distanceDirected(p), z);
 		if(d1 == 0 || d2 == 0 || d3==0){
 			return true;
 			//on surface
@@ -350,7 +351,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 	 */
 	@Override
-	public <N> Tetrahedron<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Tetrahedron<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		Tetrahedron<N> te= new Tetrahedron<>(newCalculator, 
 				bot.mapTo(mapper, newCalculator),
 				f1.mapTo(mapper, newCalculator),
@@ -383,7 +384,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Tetrahedron){
 			Tetrahedron<T> tr = (Tetrahedron<T>) obj;
 			return ArraySup.arrayEqualNoOrder(ps, tr.ps, (p1,p2)->p1.valueEquals(p2));
@@ -395,10 +396,10 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Tetrahedron){
 			Tetrahedron<N> tr = (Tetrahedron<N>) obj;
-			SPoint<T>[] ar = ArraySup.mapTo(tr.ps, p -> p.mapTo(mapper, mc));
+            SPoint<T>[] ar = ArraySup.mapTo(tr.ps, p -> p.mapTo(mapper, getMc()));
 			return ArraySup.arrayEqualNoOrder(ps, ar, (p1,p2)->p1.valueEquals(p2));
 		}
 		return false;

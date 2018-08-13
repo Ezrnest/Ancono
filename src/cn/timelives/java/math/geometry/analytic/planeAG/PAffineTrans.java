@@ -8,6 +8,7 @@ import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.property.Invertible;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -60,7 +61,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 * @return a point
 	 */
 	public Point<T> apply(T x,T y){
-		return apply(Point.valueOf(x, y, mc));
+        return apply(Point.valueOf(x, y, getMc()));
 	}
 	/**
 	 * Gets the TransMatrix of this affine transformation, the matrix will be 
@@ -90,7 +91,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 * @return a new PAffineTrans
 	 */
 	public PAffineTrans<T> translate(PVector<T> vec){
-		return new PAffineTrans<>(mc, mat, v.add(vec));
+        return new PAffineTrans<>(getMc(), mat, v.add(vec));
 	}
 	/**
 	 * Returns a composed transformation that performs this transformation first and then performs a center affine transformation 
@@ -101,7 +102,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	public PAffineTrans<T> translate(TransMatrix<T> tm){
 		TransMatrix<T> nmat = mat.andThen(tm);
 		PVector<T> nv = tm.transform(v);
-		return new PAffineTrans<>(mc, nmat, nv);
+        return new PAffineTrans<>(getMc(), nmat, nv);
 	}
 	/**
 	 * Returns a composed transformation that performs this transformation first and then performs a rotate operation, with its angle(anticlockwise) given.
@@ -110,7 +111,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 */
 	public PAffineTrans<T> rotate(T angle){
 		//use the corresponding method in TransMatrix
-		return translate(TransMatrix.rotate(angle, mc));
+        return translate(TransMatrix.rotate(angle, getMc()));
 	}
 	/**
 	 * Returns a composed transformation that apply this first and then apply the {@code after} transformation. The new transformation will be 
@@ -121,7 +122,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	public PAffineTrans<T> andThen(PAffineTrans<T> after){
 		TransMatrix<T> nmat = mat.andThen(after.mat);
 		PVector<T> nv = after.mat.transform(v).add(after.v);
-		return new PAffineTrans<>(mc, nmat, nv);
+        return new PAffineTrans<>(getMc(), nmat, nv);
 	}
 	
 	
@@ -140,12 +141,12 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 			}catch(ArithmeticException ae){
 				throw new ArithmeticException("Cannot inverse transformation.");
 			}
-			T nc1 = mc.negate(mc.add(mc.multiply(matInversed.getNumber(0, 0), v.x), 
-					mc.multiply(matInversed.getNumber(0, 1), v.y)));
-			T nc2 = mc.negate(mc.add(mc.multiply(matInversed.getNumber(1, 0), v.x), 
-					mc.multiply(matInversed.getNumber(1, 1), v.y)));
-			PVector<T> nv = PVector.valueOf(nc1, nc2, mc);
-			inversed = new PAffineTrans<>(mc, matInversed, nv);
+            T nc1 = getMc().negate(getMc().add(getMc().multiply(matInversed.getNumber(0, 0), v.x),
+                    getMc().multiply(matInversed.getNumber(0, 1), v.y)));
+            T nc2 = getMc().negate(getMc().add(getMc().multiply(matInversed.getNumber(1, 0), v.x),
+                    getMc().multiply(matInversed.getNumber(1, 1), v.y)));
+            PVector<T> nv = PVector.valueOf(nc1, nc2, getMc());
+            inversed = new PAffineTrans<>(getMc(), matInversed, nv);
 			inversed.inversed = this;
 		}
 		return inversed;
@@ -159,14 +160,14 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 		if(inversed!=null){
 			return true;
 		}
-		return !mc.isZero(mat.calDet());
+        return !getMc().isZero(mat.calDet());
 	}
 
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public <N> PAffineTrans<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> PAffineTrans<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new PAffineTrans<>(newCalculator, mat.mapTo(mapper, newCalculator), v.mapTo(mapper, newCalculator));
 	}
 
@@ -204,7 +205,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(this==obj){
 			return true;
 		}
@@ -219,7 +220,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(!(obj instanceof PAffineTrans)){
 			return false;
 		}
@@ -231,7 +232,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Affine Transformation: x'=");
 		append(sb,nf,0);
@@ -242,16 +243,16 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	}
 	private void append(StringBuilder sb,FlexibleNumberFormatter<T,MathCalculator<T>> nf,int n){
 		boolean appended = false;
-		if(!mc.isZero(mat.getNumber(n, 0))){
+        if (!getMc().isZero(mat.getNumber(n, 0))) {
 			appended = true;
-			sb.append("(").append(nf.format(mat.getNumber(n, 0), mc)).append(")x+");
-		}
-		if(!mc.isZero(mat.getNumber(n, 1))){
+            sb.append("(").append(nf.format(mat.getNumber(n, 0), getMc())).append(")x+");
+        }
+        if (!getMc().isZero(mat.getNumber(n, 1))) {
 			appended = true;
-			sb.append("(").append(nf.format(mat.getNumber(n, 1), mc)).append(")y+");
-		}
-		if(!appended || !mc.isZero(v.getNumber(n))){
-			sb.append(nf.format(v.getNumber(n),mc));
+            sb.append("(").append(nf.format(mat.getNumber(n, 1), getMc())).append(")y+");
+        }
+        if (!appended || !getMc().isZero(v.getNumber(n))) {
+            sb.append(nf.format(v.getNumber(n), getMc()));
 		}else{
 			sb.deleteCharAt(sb.length()-1);
 		}

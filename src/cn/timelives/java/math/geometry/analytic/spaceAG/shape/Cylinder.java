@@ -3,6 +3,7 @@ package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint;
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 /**
@@ -38,7 +39,7 @@ public final class Cylinder<T> extends SpaceObject<T> {
 	}
 
 	@Override
-	public <N> Cylinder<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Cylinder<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -56,13 +57,13 @@ public final class Cylinder<T> extends SpaceObject<T> {
 	}
 
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		// TODO Auto-generated method stub
 		return false;
 	}

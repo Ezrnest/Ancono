@@ -3,6 +3,7 @@ package cn.timelives.java.math.geometry.analytic.spaceAG.shape;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Plane;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Segment;
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.function.Function;
@@ -77,5 +78,5 @@ public abstract class Prism<T> extends Polyhedron<T> {
 	public abstract T getHeight();
 	
 	@Override
-	public abstract <N> Prism<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> Prism<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

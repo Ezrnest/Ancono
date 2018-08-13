@@ -55,10 +55,10 @@ class DMatrix<T> extends Matrix<T> {
 		Object[][] ne = new Object[row][column];
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < column; j++) {
-				ne[i][j] = mc.negate((T) data[i][j]);
+                ne[i][j] = getMc().negate((T) data[i][j]);
 			}
 		}
-		return new DMatrix<T>(ne, row, column, mc);
+        return new DMatrix<T>(ne, row, column, getMc());
 	}
 
 	/**
@@ -72,10 +72,10 @@ class DMatrix<T> extends Matrix<T> {
 		Object[][] re = new Object[row][column];
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < column; j++) {
-				re[i][j] = mc.multiplyLong((T) data[i][j], n);
+                re[i][j] = getMc().multiplyLong((T) data[i][j], n);
 			}
 		}
-		return new DMatrix<T>(re, row, column, mc);
+        return new DMatrix<T>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,7 +88,7 @@ class DMatrix<T> extends Matrix<T> {
 	public Matrix<T> subMatrix(int i1, int j1, int i2, int j2) {
 		super.subMatrix(i1, j1, i2, j2);
 		// range check
-		SubMatrix<T> sm = new SubMatrix<T>(data, i1, j1, i2 - i1 + 1, j2 - j1 + 1, mc);
+        SubMatrix<T> sm = new SubMatrix<T>(data, i1, j1, i2 - i1 + 1, j2 - j1 + 1, getMc());
 		return sm;
 	}
 
@@ -113,7 +113,7 @@ class DMatrix<T> extends Matrix<T> {
 				re[c][l] = data[l][c];
 			}
 		}
-		return new DMatrix<>(re, column, row, mc);
+        return new DMatrix<>(re, column, row, getMc());
 	}
 
 	@Override
@@ -128,7 +128,7 @@ class DMatrix<T> extends Matrix<T> {
 		}
 		re[r1] = data[r2];
 		re[r2] = data[r1];
-		return new DMatrix<T>(re, row, column, mc);
+        return new DMatrix<T>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -142,9 +142,9 @@ class DMatrix<T> extends Matrix<T> {
 
 		re[l] = new Object[column];
 		for (int i = 0; i < column; ++i) {
-			re[l][i] = mc.multiply((T) data[l][i], n);
-		}
-		return new DMatrix<T>(re, row, column, mc);
+            re[l][i] = getMc().multiply((T) data[l][i], n);
+        }
+        return new DMatrix<T>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -158,9 +158,9 @@ class DMatrix<T> extends Matrix<T> {
 
 		re[l] = new Object[column];
 		for (int i = 0; i < column; ++i) {
-			re[l][i] = mc.multiplyLong((T) data[l][i], n);
-		}
-		return new DMatrix<T>(re, row, column, mc);
+            re[l][i] = getMc().multiplyLong((T) data[l][i], n);
+        }
+        return new DMatrix<T>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -180,9 +180,9 @@ class DMatrix<T> extends Matrix<T> {
 
 		for (int i = 0; i < column; ++i) {
 
-			re[r2][i] = mc.add((T) data[r2][i], mc.multiplyLong((T) data[r1][i], k));
-		}
-		return new DMatrix<T>(re, row, column, mc);
+            re[r2][i] = getMc().add((T) data[r2][i], getMc().multiplyLong((T) data[r1][i], k));
+        }
+        return new DMatrix<T>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -201,9 +201,9 @@ class DMatrix<T> extends Matrix<T> {
 		// just copy this row
 
 		for (int i = 0; i < column; ++i) {
-			re[r2][i] = mc.add((T) data[r2][i], mc.multiply((T) data[r1][i], k));
-		}
-		return new DMatrix<T>(re, row, column, mc);
+            re[r2][i] = getMc().add((T) data[r2][i], getMc().multiply((T) data[r1][i], k));
+        }
+        return new DMatrix<T>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -212,10 +212,10 @@ class DMatrix<T> extends Matrix<T> {
 		Object[][] re = new Object[row][column];
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < column; j++) {
-				re[i][j] = mc.multiply((T) data[i][j], n);
+                re[i][j] = getMc().multiply((T) data[i][j], n);
 			}
 		}
-		return new DMatrix<T>(re, row, column, mc);
+        return new DMatrix<T>(re, row, column, getMc());
 	}
 
 	/**
@@ -237,7 +237,7 @@ class DMatrix<T> extends Matrix<T> {
 				mat[i][j] = f.apply((T) data[i][j]);
 			}
 		}
-		return new DMatrix<>(mat, row, column, mc);
+        return new DMatrix<>(mat, row, column, getMc());
 	}
 
 	@Override
@@ -291,7 +291,7 @@ class DMatrix<T> extends Matrix<T> {
 			}
 		}
 		// copy ends
-		return new DMatrix<T>(ma, row - 1, column - 1, mc);
+        return new DMatrix<T>(ma, row - 1, column - 1, getMc());
 	}
 
 }

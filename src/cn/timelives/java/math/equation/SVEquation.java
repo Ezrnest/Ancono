@@ -1,6 +1,7 @@
 package cn.timelives.java.math.equation;
 
 import cn.timelives.java.math.MathCalculator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -21,7 +22,7 @@ public abstract class SVEquation<T> extends Equation<T,T> implements SVCompareSt
 	 * @return {@code true} if x is the solution of this equation.
 	 */
 	public boolean isSolution(T x) {
-		return mc.isZero(compute(x));
+        return getMc().isZero(compute(x));
 	}
 	
 	
@@ -29,5 +30,5 @@ public abstract class SVEquation<T> extends Equation<T,T> implements SVCompareSt
 	 * @see cn.timelives.java.math.Equation#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public abstract <N> SVEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> SVEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

@@ -1579,7 +1579,7 @@ public abstract class Node implements Computable,Serializable {
 			return false;
 		}
 		Poly poly = (Poly)n;
-		return ec.pc.isEqual(poly.p, p);
+		return ec.getMultinomialCalculator().isEqual(poly.p, p);
 	}
 	
 	public static Poly toPolynomial(Node n) {
@@ -1589,7 +1589,7 @@ public abstract class Node implements Computable,Serializable {
 	public static Multinomial getPolynomialOrDefault(CombinedNode node, ExprCalculator ec) {
 		Multinomial p = node.p;
 		if(p == null) {
-			return node.getType() == Type.ADD ? ec.pZero : ec.pOne;
+			return node.getType() == Type.ADD ? ec.getPZero() : ec.getPOne();
 		}
 		return p;
 	}
@@ -1689,7 +1689,7 @@ public abstract class Node implements Computable,Serializable {
 		if(m.getNumberOfChildren()==1) {
 			Multinomial p = m.p;
 			if(p==null) {
-				p = ec.pOne;
+				p = ec.getPOne();
 			}
 			return new Pair<Multinomial, Node>(p, m.getChildren(0));
 		}
@@ -1702,7 +1702,7 @@ public abstract class Node implements Computable,Serializable {
 		Multiply m = (Multiply) node;
 		Multinomial p = m.p;
 		if (p == null) {
-			p = ec.pOne;
+			p = ec.getPOne();
 		}
 		return new Pair<>(p, m.children);
     }
@@ -1730,7 +1730,7 @@ public abstract class Node implements Computable,Serializable {
 		if(pow.equals(BigInteger.ONE)) {
 			return n;
 		}else if(pow.equals(BigInteger.ZERO)) {
-			return newPolyNode(ec.pOne, null);
+			return newPolyNode(ec.getPOne(), null);
 		}
 		Poly p = newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null);
 		DFunction sf = new DFunction(null, n, p, "exp", false);

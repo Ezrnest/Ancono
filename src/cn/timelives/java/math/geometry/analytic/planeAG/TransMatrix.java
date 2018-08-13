@@ -10,6 +10,7 @@ import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -72,10 +73,10 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 		T[][] d2 = gd();
 		for(int i=0;i<2;i++){
 			for(int j=0;j<2;j++){
-				d2[i][j] = mc.negate(data[i][j]);
+                d2[i][j] = getMc().negate(data[i][j]);
 			}
 		}
-		return new TransMatrix<>(d2, mc);
+        return new TransMatrix<>(d2, getMc());
 	}
 
 	/* (non-Javadoc)
@@ -89,7 +90,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 				d2[i][j] = data[j][i];
 			}
 		}
-		return new TransMatrix<>(d2, mc);
+        return new TransMatrix<>(d2, getMc());
 	}
 
 	/* (non-Javadoc)
@@ -100,10 +101,10 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 		T[][] d2 = gd();
 		for(int i=0;i<2;i++){
 			for(int j=0;j<2;j++){
-				d2[i][j] = mc.multiplyLong(data[i][j], n);
+                d2[i][j] = getMc().multiplyLong(data[i][j], n);
 			}
 		}
-		return new TransMatrix<>(d2, mc);
+        return new TransMatrix<>(d2, getMc());
 	}
 
 	/* (non-Javadoc)
@@ -114,10 +115,10 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 		T[][] d2 = gd();
 		for(int i=0;i<2;i++){
 			for(int j=0;j<2;j++){
-				d2[i][j] = mc.multiply(data[i][j], n);
+                d2[i][j] = getMc().multiply(data[i][j], n);
 			}
 		}
-		return new TransMatrix<>(d2, mc);
+        return new TransMatrix<>(d2, getMc());
 	}
 
 	/* (non-Javadoc)
@@ -128,7 +129,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	public Matrix<T> cofactor(int r, int c) {
 		rowRangeCheck(r);
 		columnRangeCheck(c);
-		return Matrix.valueOf((T[][])new Object[][]{{data[1-r][1-c]}}, mc);
+        return Matrix.valueOf((T[][]) new Object[][]{{data[1 - r][1 - c]}}, getMc());
 	}
 	
 	/* (non-Javadoc)
@@ -142,7 +143,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 				d2[i][j] = f.apply(data[i][j]);
 			}
 		}
-		return new TransMatrix<>(d2, mc);
+        return new TransMatrix<>(d2, getMc());
 	}
 	
 	/* (non-Javadoc)
@@ -150,7 +151,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	 */
 	@Override
 	public T calDet() {
-		return MatrixSup.det2(data, mc);
+        return MatrixSup.det2(data, getMc());
 	}
 	
 	private int rank = -1;
@@ -160,7 +161,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	@Override
 	public int calRank() {
 		if(rank==-1)
-			rank = Matrix.valueOf(data,mc).calRank();
+            rank = Matrix.valueOf(data, getMc()).calRank();
 		return rank;
 	}
 	
@@ -190,11 +191,11 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	public TransMatrix<T> inverse() {
 		if(inversed == null){
 			T deno = calDet();
-			if(mc.isZero(deno)){
+            if (getMc().isZero(deno)) {
 				throw new ArithmeticException("det == 0");
 			}
-			inversed =  valueOf(mc.divide(data[1][1], deno), mc.divide(mc.negate(data[0][1]), deno), 
-					mc.divide(mc.negate(data[1][0]), deno), mc.divide(data[0][0], deno), mc);
+            inversed = valueOf(getMc().divide(data[1][1], deno), getMc().divide(getMc().negate(data[0][1]), deno),
+                    getMc().divide(getMc().negate(data[1][0]), deno), getMc().divide(data[0][0], deno), getMc());
 			inversed.inversed = this;
 		}
 		return inversed;
@@ -204,7 +205,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public <N> TransMatrix<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> TransMatrix<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		N[][] d2 = gd();
 		for(int i=0;i<2;i++){
 			for(int j=0;j<2;j++){
@@ -218,13 +219,13 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[[");
-		sb.append(nf.format(data[0][0], mc)).append(",");
-		sb.append(nf.format(data[0][1], mc)).append("],[");
-		sb.append(nf.format(data[1][0], mc)).append(",");
-		sb.append(nf.format(data[1][1], mc)).append("]]");
+        sb.append(nf.format(data[0][0], getMc())).append(",");
+        sb.append(nf.format(data[0][1], getMc())).append("],[");
+        sb.append(nf.format(data[1][0], getMc())).append(",");
+        sb.append(nf.format(data[1][1], getMc())).append("]]");
 		return sb.toString();
 	}
 	
@@ -235,9 +236,9 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	 * @return transformed vector
 	 */
 	public PVector<T> transform(PVector<T> v){
-		T _x = mc.add(mc.multiply(data[0][0],v.x ), mc.multiply(data[0][1], v.y));
-		T _y = mc.add(mc.multiply(data[1][0],v.x ), mc.multiply(data[1][1], v.y));
-		return new PVector<T>(_x, _y, mc);
+        T _x = getMc().add(getMc().multiply(data[0][0], v.x), getMc().multiply(data[0][1], v.y));
+        T _y = getMc().add(getMc().multiply(data[1][0], v.x), getMc().multiply(data[1][1], v.y));
+        return new PVector<T>(_x, _y, getMc());
 	}
 	/**
 	 * Transforms the given point��<br />
@@ -245,9 +246,9 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	 * @return transformed vector
 	 */
 	public Point<T> transform(Point<T> p){
-		T _x = mc.add(mc.multiply(data[0][0],p.x ), mc.multiply(data[0][1], p.y));
-		T _y = mc.add(mc.multiply(data[1][0],p.x ), mc.multiply(data[1][1], p.y));
-		return new Point<T>( mc,_x, _y);
+        T _x = getMc().add(getMc().multiply(data[0][0], p.x), getMc().multiply(data[0][1], p.y));
+        T _y = getMc().add(getMc().multiply(data[1][0], p.x), getMc().multiply(data[1][1], p.y));
+        return new Point<T>(getMc(), _x, _y);
 	}
 	/**
 	 * Returns this��tm
@@ -258,11 +259,11 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 		T[][] mat = gd();
 		for(int i=0;i<2;i++){
 			for(int j=0;j<2;j++){
-				mat[i][j] = mc.add(mc.multiply(data[i][0], tm.data[0][j]),
-						mc.multiply(data[i][1], tm.data[1][j]));
+                mat[i][j] = getMc().add(getMc().multiply(data[i][0], tm.data[0][j]),
+                        getMc().multiply(data[i][1], tm.data[1][j]));
 ;			}
 		}
-		return new TransMatrix<>(mat, mc);
+        return new TransMatrix<>(mat, getMc());
 	}
 	
 	/**

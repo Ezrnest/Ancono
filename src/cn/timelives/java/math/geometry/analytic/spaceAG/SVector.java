@@ -11,6 +11,7 @@ import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public final class SVector<T> extends Vector<T> {
 
 	@Override
 	public SVector<T> negative() {
-		return new SVector<>(mc.negate(x),mc.negate(y),mc.negate(z),mc);
+        return new SVector<>(getMc().negate(x), getMc().negate(y), getMc().negate(z), getMc());
 	}
 
 
@@ -77,19 +78,19 @@ public final class SVector<T> extends Vector<T> {
 		arr[0] = x;
 		arr[1] = y;
 		arr[2] = z;
-		return Vector.createVector(mc, true, arr);
+        return Vector.createVector(getMc(), true, arr);
 	}
 
 
 	@Override
 	public SVector<T> multiplyNumber(long n) {
-		return new SVector<>(mc.multiplyLong(x,n),mc.multiplyLong(y,n),mc.multiplyLong(z,n),mc);
+        return new SVector<>(getMc().multiplyLong(x, n), getMc().multiplyLong(y, n), getMc().multiplyLong(z, n), getMc());
 	}
 
 
 	@Override
 	public SVector<T> multiplyNumber(T n) {
-		return new SVector<>(mc.multiply(x,n),mc.multiply(y,n),mc.multiply(z,n),mc);
+        return new SVector<>(getMc().multiply(x, n), getMc().multiply(y, n), getMc().multiply(z, n), getMc());
 	}
 
 	
@@ -161,7 +162,7 @@ public final class SVector<T> extends Vector<T> {
 	 * @return this + s
 	 */
 	public SVector<T> add(SVector<T> s){
-		return new SVector<>(mc.add(x, s.x),mc.add(y, s.y),mc.add(z, s.z),mc);
+        return new SVector<>(getMc().add(x, s.x), getMc().add(y, s.y), getMc().add(z, s.z), getMc());
 	}
 	/**
 	 * Returns {@code this - s}.
@@ -169,7 +170,7 @@ public final class SVector<T> extends Vector<T> {
 	 * @return this - s
 	 */
 	public SVector<T> subtract(SVector<T> s){
-		return new SVector<>(mc.subtract(x, s.x),mc.subtract(y, s.y),mc.subtract(z, s.z),mc);
+        return new SVector<>(getMc().subtract(x, s.x), getMc().subtract(y, s.y), getMc().subtract(z, s.z), getMc());
 	}
 	/**
 	 * Returns the inner(scalar) product of {@code this} and {@code s}, which 
@@ -180,7 +181,7 @@ public final class SVector<T> extends Vector<T> {
 	 * @return this · s
 	 */
 	public T innerProduct(SVector<T> s){
-		return mc.add(mc.add(mc.multiply(x, s.x), mc.multiply(y, s.y)), mc.multiply(z, s.z));
+        return getMc().add(getMc().add(getMc().multiply(x, s.x), getMc().multiply(y, s.y)), getMc().multiply(z, s.z));
 	}
 	
 	/**
@@ -192,10 +193,10 @@ public final class SVector<T> extends Vector<T> {
 	 * @return this × s
 	 */
 	public SVector<T> outerProduct(SVector<T> s){
-		T nx = mc.subtract(mc.multiply(y, s.z), mc.multiply(s.y, z));
-		T ny = mc.subtract(mc.multiply(z, s.x), mc.multiply(s.z, x));
-		T nz = mc.subtract(mc.multiply(x, s.y), mc.multiply(s.x, y));
-		return new SVector<T>(nx, ny, nz, mc);
+        T nx = getMc().subtract(getMc().multiply(y, s.z), getMc().multiply(s.y, z));
+        T ny = getMc().subtract(getMc().multiply(z, s.x), getMc().multiply(s.z, x));
+        T nz = getMc().subtract(getMc().multiply(x, s.y), getMc().multiply(s.x, y));
+        return new SVector<T>(nx, ny, nz, getMc());
 	}
 	
 	/**
@@ -206,7 +207,7 @@ public final class SVector<T> extends Vector<T> {
 	@Override
 	public T calLength(){
 		if(length == null){
-			length = mc.squareRoot(calLengthSq());
+            length = getMc().squareRoot(calLengthSq());
 		}
 		return length;
 	}
@@ -252,7 +253,7 @@ public final class SVector<T> extends Vector<T> {
 	 */
 	public <R> R angle(SVector<T> s,MathFunction<T, R> arccos){
 		T pro = innerProduct(s);
-		pro = mc.divide(pro, mc.multiply(calLength(), s.calLength()));
+        pro = getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
 		return arccos.apply(pro);
 	}
 	/**
@@ -263,7 +264,7 @@ public final class SVector<T> extends Vector<T> {
 	 */
 	public T angleCos(SVector<T> s){
 		T pro = innerProduct(s);
-		return mc.divide(pro, mc.multiply(calLength(), s.calLength()));
+        return getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
 	}
 	
 	/**
@@ -272,18 +273,18 @@ public final class SVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public boolean isParallel(SVector<T> s){
-		if(!mc.isZero(x)){
-			if(mc.isZero(s.x)){
+        if (!getMc().isZero(x)) {
+            if (getMc().isZero(s.x)) {
 				return false;
 			}
-			return mc.isEqual(mc.multiply(x, s.y), mc.multiply(y, s.x)) && 
-					mc.isEqual(mc.multiply(x, s.z), mc.multiply(z, s.x));
+            return getMc().isEqual(getMc().multiply(x, s.y), getMc().multiply(y, s.x)) &&
+                    getMc().isEqual(getMc().multiply(x, s.z), getMc().multiply(z, s.x));
 		}
 		//x == 0
-		if(!mc.isZero(s.x)){
+        if (!getMc().isZero(s.x)) {
 			return false;
 		}
-		return mc.isEqual(mc.multiply(y, s.z), mc.multiply(z, s.y));
+        return getMc().isEqual(getMc().multiply(y, s.z), getMc().multiply(z, s.y));
 	}
 	/**
 	 * Determines whether the given vector is in the same direction of this vector, which means 
@@ -300,8 +301,8 @@ public final class SVector<T> extends Vector<T> {
 			return false;
 		}
 		T t1 = x,t2 = s.x;
-		if(mc.isZero(t1)){
-			if(mc.isZero(y)){
+        if (getMc().isZero(t1)) {
+            if (getMc().isZero(y)) {
 				t1 = z;
 				t2 = s.z;
 			}else{
@@ -309,7 +310,7 @@ public final class SVector<T> extends Vector<T> {
 				t2 = s.y;
 			}
 		}
-		return Calculators.isSameSign(t1, t2, mc);
+        return Calculators.isSameSign(t1, t2, getMc());
 	}
 	
 	/**
@@ -318,7 +319,7 @@ public final class SVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public boolean isPerpendicular(SVector<T> s){
-		return mc.isZero(innerProduct(s));
+        return getMc().isZero(innerProduct(s));
 	}
 	
 	/**
@@ -328,11 +329,11 @@ public final class SVector<T> extends Vector<T> {
 	@Override
 	public SVector<T> unitVector(){
 		T length = calLength();
-		SVector<T> s = new SVector<>(mc.divide(x, length), 
-				mc.divide(y, length), 
-				mc.divide(z, length), mc);
-		s.length = mc.getOne();
-		s.lenSq = mc.getOne();
+        SVector<T> s = new SVector<>(getMc().divide(x, length),
+                getMc().divide(y, length),
+                getMc().divide(z, length), getMc());
+        s.length = getMc().getOne();
+        s.lenSq = getMc().getOne();
 		return s;
 	}
 	/**
@@ -342,9 +343,9 @@ public final class SVector<T> extends Vector<T> {
 	 */
 	public SVector<T> parallel(T len){
 		T length = calLength();
-		SVector<T> s = new SVector<>(mc.multiply(len, mc.divide(x, length)), 
-				mc.multiply(len, mc.divide(y, length)), 
-						mc.multiply(len, mc.divide(z, length)), mc);
+        SVector<T> s = new SVector<>(getMc().multiply(len, getMc().divide(x, length)),
+                getMc().multiply(len, getMc().divide(y, length)),
+                getMc().multiply(len, getMc().divide(z, length)), getMc());
 		s.length = len;
 		return s;
 	}
@@ -354,7 +355,7 @@ public final class SVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public boolean isZeroVector(){
-		return mc.isZero(x) && mc.isZero(y) && mc.isZero(z);
+        return getMc().isZero(x) && getMc().isZero(y) && getMc().isZero(z);
 	}
 	
 	
@@ -373,15 +374,15 @@ public final class SVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public SVector<T> perpendicular(SVector<T> v){
-		T k = mc.negate(mc.divide(innerProduct(v), calLengthSq()));
-		T nx = mc.add(v.x, mc.multiply(k, x));
-		T ny = mc.add(v.y, mc.multiply(k, y));
-		T nz = mc.add(v.z, mc.multiply(k, z));
-		return new SVector<T>(nx, ny, nz, mc);
+        T k = getMc().negate(getMc().divide(innerProduct(v), calLengthSq()));
+        T nx = getMc().add(v.x, getMc().multiply(k, x));
+        T ny = getMc().add(v.y, getMc().multiply(k, y));
+        T nz = getMc().add(v.z, getMc().multiply(k, z));
+        return new SVector<T>(nx, ny, nz, getMc());
 	}
 	
 	@Override
-	public <N> SVector<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> SVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		SVector<N> sn =  new SVector<>(mapper.apply(x),mapper.apply(y),mapper.apply(z),newCalculator);
 		if(length!=null){
 			sn.length = mapper.apply(length);
@@ -424,23 +425,23 @@ public final class SVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof SVector){
 			SVector<N> s = (SVector<N>) obj;
-			return mc.isEqual(x, mapper.apply(s.x)) &&
-					mc.isEqual(y, mapper.apply(s.y)) &&
-					mc.isEqual(z, mapper.apply(s.z)) ;
+            return getMc().isEqual(x, mapper.apply(s.x)) &&
+                    getMc().isEqual(y, mapper.apply(s.y)) &&
+                    getMc().isEqual(z, mapper.apply(s.z));
 		}
 		return false;
 	}
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof SVector){
 			SVector<T> s = (SVector<T>) obj;
-			return mc.isEqual(x, s.x) &&
-					mc.isEqual(y, s.y) &&
-					mc.isEqual(z, s.z) ;
+            return getMc().isEqual(x, s.x) &&
+                    getMc().isEqual(y, s.y) &&
+                    getMc().isEqual(z, s.z);
 		}
 		return false;
 	}
@@ -474,8 +475,8 @@ public final class SVector<T> extends Vector<T> {
 		mat[2][1] = y.z;
 		mat[2][2] = z.z;
 		mat[2][3] = this.z;
-		
-		LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, mc);
+
+        LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, getMc());
 		if(sol.getSolutionSituation()!= Situation.SINGLE_SOLUTION){
 			throw new ArithmeticException("Not single?");
 		}
@@ -494,7 +495,7 @@ public final class SVector<T> extends Vector<T> {
 	
 	@Override
 	public SVector<T> applyFunction(MathFunction<T, T> f) {
-		return new SVector<>(f.apply(x), f.apply(y), f.apply(z), mc);
+        return new SVector<>(f.apply(x), f.apply(y), f.apply(z), getMc());
 	}
 	
 	/**
@@ -567,7 +568,7 @@ public final class SVector<T> extends Vector<T> {
 	 */
 	@SafeVarargs
 	public static <T> SVector<T> sum(SVector<T>...vectors){
-		MathCalculator<T> mc = vectors[0].mc;
+        MathCalculator<T> mc = vectors[0].getMc();
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[]) Array.newInstance(vectors[0].x.getClass(), vectors.length);
 		for(int i=0;i<vectors.length;i++){
@@ -618,7 +619,7 @@ public final class SVector<T> extends Vector<T> {
 	 * @return result
 	 */
 	public static <T> T mixedProduct(SVector<T> a,SVector<T> b,SVector<T> c){
-		return MatrixSup.det3(toMatrix(a,b,c), a.mc);
+        return MatrixSup.det3(toMatrix(a, b, c), a.getMc());
 	}
 	/**
 	 * Returns a vector which is on the same plane of {@code n �� v} and {@code v} and the cosine value of the 
@@ -707,20 +708,20 @@ public final class SVector<T> extends Vector<T> {
 			T[][] mt2 = mat.clone();
 			T[] t = mt2[0];
 			mt2[0] = v;
-			T D1 = MatrixSup.det3(mt2, mc);
+            T D1 = MatrixSup.det3(mt2, getMc());
 			mt2[0] = t;
 			t = mt2[1];
 			mt2[1] = v;
-			T D2 = MatrixSup.det3(mt2, mc);
+            T D2 = MatrixSup.det3(mt2, getMc());
 			mt2[1] = t;
 			mt2[2] = v;
-			T D3 = MatrixSup.det3(mt2, mc);
-			return new SVector<>(mc.divide(D1, D), mc.divide(D2, D), mc.divide(D3, D), mc);
+            T D3 = MatrixSup.det3(mt2, getMc());
+            return new SVector<>(getMc().divide(D1, D), getMc().divide(D2, D), getMc().divide(D3, D), getMc());
 		}
 		
 		
 		@Override
-		public <N> SVectorBase<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> SVectorBase<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			N[][] ret = ArraySup.mapTo(mat, (T[] arr) -> 
 				ArraySup.mapTo(arr, mapper)
 			);
@@ -745,7 +746,7 @@ public final class SVector<T> extends Vector<T> {
 			return hash*37 + z.hashCode();
 		}
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof SVectorBase){
 				SVectorBase<T> svb = (SVectorBase<T>) obj;
 				return x.valueEquals(svb.x) && y.valueEquals(svb.y) && z.valueEquals(svb.z);
@@ -753,7 +754,7 @@ public final class SVector<T> extends Vector<T> {
 			return false;
 		}
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			if(obj instanceof SVectorBase){
 				SVectorBase<N> svb = (SVectorBase<N>) obj;
 				return x.valueEquals(svb.x,mapper) && y.valueEquals(svb.y,mapper) && z.valueEquals(svb.z,mapper);
@@ -764,7 +765,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "SVectorBase";
 		}
 		
@@ -777,7 +778,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @return a new vector base
 		 */
 		public static <T> SVectorBase<T> createBase(SVector<T> x,SVector<T> y,SVector<T> z){
-			MathCalculator<T> mc = x.mc;
+            MathCalculator<T> mc = x.getMc();
 			T[][] mat = toMatrix(x, y, z);
 			T d = MatrixSup.det3(mat, mc);
 			if(mc.isZero(d)){
@@ -802,14 +803,14 @@ public final class SVector<T> extends Vector<T> {
 		 * @return
 		 */
 		public SVector<T> of(T x,T y,T z){
-			return SVector.valueOf(x, y, z, mc);
+            return SVector.valueOf(x, y, z, getMc());
 		}
 
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
 		@Override
-		public <N> SVectorGenerator<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> SVectorGenerator<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new SVectorGenerator<>(newCalculator);
 		}
 
@@ -819,7 +820,7 @@ public final class SVector<T> extends Vector<T> {
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof SVectorGenerator){
-				return mc.equals(((SVectorGenerator<?>)obj).mc);
+                return getMc().equals(((SVectorGenerator<?>) obj).getMc());
 			}
 			return false;
 		}
@@ -829,14 +830,14 @@ public final class SVector<T> extends Vector<T> {
 		 */
 		@Override
 		public int hashCode() {
-			return mc.hashCode();
+            return getMc().hashCode();
 		}
 
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			return equals(obj);
 		}
 
@@ -844,7 +845,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			return equals(obj);
 		}
 		
@@ -852,7 +853,7 @@ public final class SVector<T> extends Vector<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "SVectorGenerator";
 		}
 	}

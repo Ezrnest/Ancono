@@ -4,6 +4,7 @@ import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SpacePointSet;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.set.InfiniteSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 /**
@@ -53,5 +54,5 @@ public abstract class SpaceObject<T> extends SpacePointSet<T> implements Infinit
 	 * @see cn.timelives.java.math.spaceAG.SpacePointSet#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	@Override
-	public abstract <N> SpaceObject<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> SpaceObject<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

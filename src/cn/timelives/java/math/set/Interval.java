@@ -2,6 +2,7 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -187,7 +188,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@Override
-	public abstract <N> Interval<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> Interval<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
 	 * Returns the mathematical expression of this interval. Like {@literal (0,2)} or {@literal [2,3)}.
@@ -201,7 +202,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return a String representing this interval.
 	 */
 	@Override
-	public abstract String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf);
+    public abstract String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf);
 	
 	
 	/**

@@ -9,6 +9,7 @@ import cn.timelives.java.math.geometry.analytic.planeAG.curve.SubstituableCurve;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.Simplifiable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -33,7 +34,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public <N> AbstractPlaneCurve<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> AbstractPlaneCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
         var nline = line.mapTo(mapper,newCalculator);
         var nA = A.mapTo(mapper,newCalculator);
         var nB = B.mapTo(mapper,newCalculator);
@@ -42,7 +43,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
         if(!(obj instanceof Segment)){
             return false;
         }
@@ -51,7 +52,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
         if(!(obj instanceof Segment)){
             return false;
         }
@@ -62,7 +63,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         return "Segment:A"+A.toString(nf)+"-B"+B.toString(nf);
     }
 
@@ -72,9 +73,9 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
             return false;
         }
         if(xZero){
-            return MathUtils.oppositeSide(A.y,B.y,p.y,mc);
+            return MathUtils.oppositeSide(A.y, B.y, p.y, getMc());
         }
-        return MathUtils.oppositeSide(A.x,B.x,p.x,mc);
+        return MathUtils.oppositeSide(A.x, B.x, p.x, getMc());
     }
 
     @Override
@@ -126,13 +127,13 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     @Override
     public Segment<T> simplify() {
         var nline = line.simplify();
-        return new Segment<>(nline,A,B,v,mc);
+        return new Segment<>(nline, A, B, v, getMc());
     }
 
     @Override
     public Segment<T> simplify(Simplifier<T> sim) {
         var nline = line.simplify(sim);
-        return new Segment<>(nline,A,B,v,mc);
+        return new Segment<>(nline, A, B, v, getMc());
     }
 
 
@@ -152,7 +153,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
      * @return
      */
     public T distance(Point<T> p){
-        return mc.squareRoot(distanceSq(p));
+        return getMc().squareRoot(distanceSq(p));
     }
     /**
      * Returns the square of {@code distance(p)}
@@ -165,15 +166,15 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
         }
         T d1 = A.distanceSq(p),
                 d2 = B.distanceSq(p);
-        return Utils.min(d1,d2,mc);
+        return Utils.min(d1, d2, getMc());
     }
 
     public T distanceSq(T x,T y){
-        return distanceSq(Point.valueOf(x,y,mc));
+        return distanceSq(Point.valueOf(x, y, getMc()));
     }
 
     public T distance(T x,T y){
-        return distance(Point.valueOf(x,y,mc));
+        return distance(Point.valueOf(x, y, getMc()));
     }
 
 

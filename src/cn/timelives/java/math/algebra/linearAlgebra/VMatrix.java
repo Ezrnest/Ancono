@@ -69,7 +69,7 @@ final class VMatrix<T> extends Matrix<T> {
 	private Matrix<T> mapTo0(@SuppressWarnings("rawtypes") Function<Vector<T>,Vector> f){
 		@SuppressWarnings("unchecked")
 		Vector<T>[] vn = ArraySup.mapTo(vs, f,Vector.class);
-		return new VMatrix<>(vn, row, column, mc, isRow);
+        return new VMatrix<>(vn, row, column, getMc(), isRow);
 	}
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#negative()
@@ -84,7 +84,7 @@ final class VMatrix<T> extends Matrix<T> {
 	 */
 	@Override
 	public Matrix<T> transportMatrix() {
-		return new VMatrix<>(vs, column, row, mc, !isRow);
+        return new VMatrix<>(vs, column, row, getMc(), !isRow);
 	}
 
 	/* (non-Javadoc)
@@ -124,7 +124,7 @@ final class VMatrix<T> extends Matrix<T> {
 			}
 			x++;
 		}
-		return new DMatrix<>(mat, row-1,column-1, mc);
+        return new DMatrix<>(mat, row - 1, column - 1, getMc());
 	}
 	
 	/* (non-Javadoc)
@@ -138,7 +138,7 @@ final class VMatrix<T> extends Matrix<T> {
 		columnRangeCheck(column);
 		Vector<T>[] vn = Arrays.copyOf(vs, vs.length);
 		vn[column] = v;
-		return new VMatrix<>(vn, this.row, this.column, mc, isRow);
+        return new VMatrix<>(vn, this.row, this.column, getMc(), isRow);
 	}
 	
 	/* (non-Javadoc)
@@ -152,6 +152,6 @@ final class VMatrix<T> extends Matrix<T> {
 		rowRangeCheck(column);
 		Vector<T>[] vn = Arrays.copyOf(vs, vs.length);
 		vn[row] = v;
-		return new VMatrix<>(vn, this.row, this.column, mc, isRow);
+        return new VMatrix<>(vn, this.row, this.column, getMc(), isRow);
 	}
 }

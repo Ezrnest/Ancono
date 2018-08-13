@@ -85,7 +85,7 @@ public class PermutationGroup extends AbstractFiniteGroup<Permutation> {
 		checkPositive(n);
 		GroupCalculator<Permutation> pc = pcMap.get(n);
 		if(pc==null) {
-			pc = GroupCalculators.createComposing(Permutations.identity(n));
+            pc = GroupCalculators.INSTANCE.createComposing(Permutations.identity(n));
 			pcMap.put(n, pc);
 		}
 		return pc;

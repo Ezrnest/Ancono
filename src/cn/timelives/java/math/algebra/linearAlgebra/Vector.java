@@ -4,6 +4,7 @@ import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +90,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return |this|
 	 */
 	public T calLength(){
-		return mc.squareRoot(calLengthSq());
+        return getMc().squareRoot(calLengthSq());
 	}
 	/**
 	 * Returns a unit vector of this vector's direction, throws an exception 
@@ -108,11 +109,11 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return |this|^2
 	 */
 	public T calLengthSq(){
-		T re = mc.getZero();
+        T re = getMc().getZero();
 		int size = getSize();
 		for(int i=0;i<size;i++){
 			T t = getNumber(i);
-			re = mc.add(mc.multiply(t, t), re);
+            re = getMc().add(getMc().multiply(t, t), re);
 		}
 		return re;
 	}
@@ -134,9 +135,9 @@ public abstract class Vector<T> extends Matrix<T> {
 	public T innerProduct(Vector<T> v) {
 		checkSameSize(v);
 		final int size = getSize();
-		T re =  mc.getZero();
+        T re = getMc().getZero();
 		for(int i=0;i<size;i++){
-			re = mc.add(mc.multiply(getNumber(i), v.getNumber(i)), re);
+            re = getMc().add(getMc().multiply(getNumber(i), v.getNumber(i)), re);
 		}
 		return re;
 	}
@@ -148,7 +149,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return {@code true} of the vectors are perpendicular
 	 */
 	public boolean isPerpendicular(Vector<T> v){
-		return mc.isZero(innerProduct(v));
+        return getMc().isZero(innerProduct(v));
 	}
 	/**
 	 * Returns the angle of {@code this} and {@code v}.
@@ -157,7 +158,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return <pre> arccos(this · v / (|this| |v|))</pre>
 	 */
 	public T angle(Vector<T> v) {
-		return mc.arccos(angleCos(v));
+        return getMc().arccos(angleCos(v));
 	}
 	/**
 	 * Returns the cos value of the angle of {@code this} and {@code v}.
@@ -167,7 +168,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 */
 	public T angleCos(Vector<T> v) {
 		T pro = innerProduct(v);
-		return mc.divide(pro, mc.multiply(calLength(), v.calLength()));
+        return getMc().divide(pro, getMc().multiply(calLength(), v.calLength()));
 	}
 	
 	
@@ -177,7 +178,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 */
 	public boolean isZeroVector(){
 		for(int i=0,size=getSize();i<size;i++) {
-			if(!mc.isZero(getNumber(i))) {
+            if (!getMc().isZero(getNumber(i))) {
 				return false;
 			}
 		}
@@ -199,8 +200,8 @@ public abstract class Vector<T> extends Matrix<T> {
 		}
 		final int size = getSize();
 		int not0 = 0;
-		while (mc.isZero(getNumber(not0))) {
-			if (!mc.isZero(v.getNumber(not0))) {
+        while (getMc().isZero(getNumber(not0))) {
+            if (!getMc().isZero(v.getNumber(not0))) {
 				return false;
 			}
 			not0++;
@@ -211,7 +212,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		T t1 = getNumber(not0);
 		T t2 = v.getNumber(not0);
 		for (int i = not0 + 1; i < size; i++) {
-			if (!mc.isEqual(mc.multiply(t1, v.getNumber(i)), mc.multiply(t2, getNumber(i)))) {
+            if (!getMc().isEqual(getMc().multiply(t1, v.getNumber(i)), getMc().multiply(t2, getNumber(i)))) {
 				return false;
 			}
 		}
@@ -259,12 +260,12 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		int size = getSize();
 		for(int i=0;i<size;i++){
-			sb.append(nf.format(getNumber(i), mc)).append(",");
+            sb.append(nf.format(getNumber(i), getMc())).append(",");
 		}
 		sb.deleteCharAt(sb.length()-1);
 		sb.append(")");
@@ -274,7 +275,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public abstract <N> Vector<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> Vector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
 	 * Create a new Matrix with the given fraction array.A boolean representing whether the 
@@ -354,7 +355,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		final int size = v1.getSize();
 		@SuppressWarnings("unchecked")
 		T[] re = (T[]) new Object[size];
-		MathCalculator<T> mc = v1.mc;
+        MathCalculator<T> mc = v1.getMc();
 		for(int i=0;i<re.length;i++){
 			re[i] = mc.add(v1.getNumber(i), v2.getNumber(i));
 		}
@@ -371,7 +372,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		final int size = v1.getSize();
 		@SuppressWarnings("unchecked")
 		T[] re = (T[]) new Object[size];
-		MathCalculator<T> mc = v1.mc;
+        MathCalculator<T> mc = v1.getMc();
 		for(int i=0;i<re.length;i++){
 			re[i] = mc.subtract(v1.getNumber(i), v2.getNumber(i));
 		}
@@ -402,7 +403,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		final int size = vecs[0].getSize();
 		@SuppressWarnings("unchecked")
 		T[] re = (T[]) vecs[0].toArray();
-		MathCalculator<T> mc = vecs[0].mc;
+        MathCalculator<T> mc = vecs[0].getMc();
 		for(int j=1;j<n;j++) {
 			Vector<T> v = vecs[j];
 			if(v.getSize() != size) {
@@ -425,7 +426,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		final int size = v.getSize();
 		@SuppressWarnings("unchecked")
 		T[] re = (T[]) v.toArray();
-		MathCalculator<T> mc = vecs[0].mc;
+        MathCalculator<T> mc = vecs[0].getMc();
 		for (Vector<T> vt : vecs) {
 			if (vt.getSize() != size) {
 				throw new IllegalArgumentException();
@@ -461,7 +462,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 */
 	public static <T> T cosValueOfIntersectionAngle(Vector<T> v1,Vector<T> v2){
 		T re = v1.innerProduct(v2);
-		MathCalculator<T> mc = v1.mc;
+        MathCalculator<T> mc = v1.getMc();
 		T d1 = v1.calLength();
 		T d2 = v2.calLength();
 		if(mc.isEqual(mc.getZero(), d1)||mc.isEqual(mc.getZero(), d2)){

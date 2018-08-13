@@ -12,6 +12,7 @@ import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.Simplifiable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -174,12 +175,12 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	
 	@Override
 	public T substitute(T x, T y) {
-		T re = mc.multiply(A, mc.multiply(x, x));
-		re = mc.add(re, mc.multiply(B, mc.multiply(x, y)));
-		re = mc.add(re, mc.multiply(C, mc.multiply(y, y)));
-		re = mc.add(re, mc.multiply(D, x));
-		re = mc.add(re, mc.multiply(E, y));
-		re = mc.add(re, F);
+        T re = getMc().multiply(A, getMc().multiply(x, x));
+        re = getMc().add(re, getMc().multiply(B, getMc().multiply(x, y)));
+        re = getMc().add(re, getMc().multiply(C, getMc().multiply(y, y)));
+        re = getMc().add(re, getMc().multiply(D, x));
+        re = getMc().add(re, getMc().multiply(E, y));
+        re = getMc().add(re, F);
 		return re;
 	}
 	/* (non-Javadoc)
@@ -187,7 +188,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 */
 	@Override
 	public boolean contains(Point<T> p) {
-		return mc.isZero(substitute(p.x,p.y));
+        return getMc().isZero(substitute(p.x, p.y));
 	}
 	/**
 	 * Returns the polar line corresponding to the given point. The point must not be the 
@@ -207,14 +208,14 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * @return the polar line, or {@code null}
 	 */
 	public Line<T> polarLine(Point<T> p){
-		T a = mc.add(mc.multiply(mc.add(A, mc.divideLong(B, 2)), p.x), mc.divideLong(D,2));
-		T b = mc.add(mc.multiply(mc.add(C, mc.divideLong(B, 2)), p.y), mc.divideLong(E,2));
-		T c = mc.add(mc.divideLong(mc.multiply(D, p.x), 2), 
-				mc.add(mc.divideLong(mc.multiply(E, p.y), 2), F));
-		if(mc.isZero(a)&&mc.isZero(b)){
+        T a = getMc().add(getMc().multiply(getMc().add(A, getMc().divideLong(B, 2)), p.x), getMc().divideLong(D, 2));
+        T b = getMc().add(getMc().multiply(getMc().add(C, getMc().divideLong(B, 2)), p.y), getMc().divideLong(E, 2));
+        T c = getMc().add(getMc().divideLong(getMc().multiply(D, p.x), 2),
+                getMc().add(getMc().divideLong(getMc().multiply(E, p.y), 2), F));
+        if (getMc().isZero(a) && getMc().isZero(b)) {
 			return null;
 		}
-		return Line.generalFormula(a, b, c, mc);
+        return Line.generalFormula(a, b, c, getMc());
 	}
 	
 	
@@ -241,10 +242,10 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * @see #polarLine(Point)
 	 */
 	public Point<T> polarPoint(Line<T> l){
-		T x = mc.divide(mc.subtract(mc.multiplyLong(l.getA(), 2l), D), mc.subtract(mc.multiplyLong(A, 2l), B));
-		T y = mc.divide(mc.subtract(mc.multiplyLong(l.getB(), 2l), E), mc.subtract(mc.multiplyLong(C, 2l), B));
+        T x = getMc().divide(getMc().subtract(getMc().multiplyLong(l.getA(), 2l), D), getMc().subtract(getMc().multiplyLong(A, 2l), B));
+        T y = getMc().divide(getMc().subtract(getMc().multiplyLong(l.getB(), 2l), E), getMc().subtract(getMc().multiplyLong(C, 2l), B));
 		//check valid
-		Point<T> p = Point.valueOf(x, y, mc);
+        Point<T> p = Point.valueOf(x, y, getMc());
 		Line<T> l2 = polarLine(p);
 		if(l2!=null && l2.valueEquals(l)){
 			return p;
@@ -270,16 +271,16 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		}
 		T b = line.getInterceptY();
 		//(A +Bk+Ck^2)
-		T ca = mc.add(A, mc.multiply(k, mc.add(B, mc.multiply(C, k))));
+        T ca = getMc().add(A, getMc().multiply(k, getMc().add(B, getMc().multiply(C, k))));
 		// Bb + 2kbc + Ek + D
-		T cb = mc.add(D, mc.add(mc.multiply(b, mc.add(B, mc.multiply(k, C))), mc.multiply(k, mc.add(mc.multiply(b, C), E))));
+        T cb = getMc().add(D, getMc().add(getMc().multiply(b, getMc().add(B, getMc().multiply(k, C))), getMc().multiply(k, getMc().add(getMc().multiply(b, C), E))));
 		//cb^2 + Eb + F
-		T cc = mc.add(F, mc.multiply(b, mc.add(mc.multiply(C, b), E)));
-		if(mc.isZero(ca)){
+        T cc = getMc().add(F, getMc().multiply(b, getMc().add(getMc().multiply(C, b), E)));
+        if (getMc().isZero(ca)) {
 //			throw new ArithmeticException("a = 0");
-			return SVPEquation.linear(cb, cc, mc);
-		}
-		return SVPEquation.quadratic(ca, cb, cc, mc);
+            return SVPEquation.linear(cb, cc, getMc());
+        }
+        return SVPEquation.quadratic(ca, cb, cc, getMc());
 	}
 	
 	/**
@@ -295,24 +296,24 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 */
 	public SVPEquation<T> createEquationY(Line<T> line){
 		T at = line.getA();
-		if(mc.isZero(at)){
+        if (getMc().isZero(at)) {
 			throw new IllegalArgumentException("k==0");
 		}
 		T bt = line.getB();
-		T k = mc.negate(mc.divide(bt, at));
+        T k = getMc().negate(getMc().divide(bt, at));
 		// solve an equation:
 		T b = line.getInterceptX();
 		//(C +Bk+Ak^2)
-		T ca = mc.add(C, mc.multiply(k, mc.add(B, mc.multiply(A, k))));
+        T ca = getMc().add(C, getMc().multiply(k, getMc().add(B, getMc().multiply(A, k))));
 		// Bb + 2kbc + Ek + D
-		T cb = mc.add(E, mc.add(mc.multiply(b, mc.add(B, mc.multiply(k, A))), mc.multiply(k, mc.add(mc.multiply(b, A), D))));
+        T cb = getMc().add(E, getMc().add(getMc().multiply(b, getMc().add(B, getMc().multiply(k, A))), getMc().multiply(k, getMc().add(getMc().multiply(b, A), D))));
 		//cb^2 + Eb + F
-		T cc = mc.add(F, mc.multiply(b, mc.add(mc.multiply(A, b), D)));
-		if(mc.isZero(ca)){
+        T cc = getMc().add(F, getMc().multiply(b, getMc().add(getMc().multiply(A, b), D)));
+        if (getMc().isZero(ca)) {
 //			throw new ArithmeticException("a = 0");
-			return SVPEquation.linear(cb, cc, mc);
-		}
-		return SVPEquation.quadratic(ca, cb, cc, mc);
+            return SVPEquation.linear(cb, cc, getMc());
+        }
+        return SVPEquation.quadratic(ca, cb, cc, getMc());
 	}
 	/**
 	 * Computes the intersect points with the given line. 
@@ -330,7 +331,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 				List<Point<T>> ps = new ArrayList<>(1);
 				T x = ((LEquation<T>)equa).solution();
 				T y = line.computeY(x);
-				ps.add(new Point<>(mc,x,y));
+                ps.add(new Point<>(getMc(), x, y));
 				return ps;
 			}else{
 				QEquation<T> eq = (QEquation<T>) equa;
@@ -346,13 +347,13 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 				case 1:{
 					List<Point<T>> ps = new ArrayList<>(1);
 					T x = eq.solve().get(0);
-					ps.add(new Point<>(mc,x,line.computeY(x)));
+                    ps.add(new Point<>(getMc(), x, line.computeY(x)));
 					return ps;
 				}
 				default:{
 					List<Point<T>> ps = new ArrayList<>(2);
 					for(T x : eq.solve()){
-						ps.add(new Point<>(mc,x,line.computeY(x)));
+                        ps.add(new Point<>(getMc(), x, line.computeY(x)));
 					}
 					return ps;
 				}
@@ -364,7 +365,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 				List<Point<T>> ps = new ArrayList<>(1);
 				T y = ((LEquation<T>)equa).solution();
 				T x = line.computeX(y);
-				ps.add(new Point<>(mc,x,y));
+                ps.add(new Point<>(getMc(), x, y));
 				return ps;
 			}else{
 				QEquation<T> eq = (QEquation<T>) equa;
@@ -375,13 +376,13 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 				case 1:{
 					List<Point<T>> ps = new ArrayList<>(1);
 					T y = eq.solve().get(0);
-					ps.add(new Point<>(mc,line.computeX(y),y));
+                    ps.add(new Point<>(getMc(), line.computeX(y), y));
 					return ps;
 				}
 				default:{
 					List<Point<T>> ps = new ArrayList<>(2);
 					for(T y : eq.solve()){
-						ps.add(new Point<>(mc,line.computeX(y),y));
+                        ps.add(new Point<>(getMc(), line.computeX(y), y));
 					}
 					return ps;
 				}
@@ -407,7 +408,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		boolean equationOfX;
 		//if line is Ax - C = 0, then the slope doesn't exist,
 		//so create the equation with y.
-		if(mc.isZero(line.getB())){
+        if (getMc().isZero(line.getB())) {
 			equationOfX = false;
 			equa= createEquationY(line);
 		}else {
@@ -428,13 +429,13 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		}
 		T x, y;
 		if (equationOfX) {
-			x = mc.subtract(eq.rootsSum(), p.x);
+            x = getMc().subtract(eq.rootsSum(), p.x);
 			y = line.computeY(x);
 		} else {
-			y = mc.subtract(eq.rootsSum(), p.y);
+            y = getMc().subtract(eq.rootsSum(), p.y);
 			x = line.computeX(y);
 		}
-		return Point.valueOf(x, y, mc);
+        return Point.valueOf(x, y, getMc());
 		
 	}
 	
@@ -455,17 +456,17 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	}
 	
 	GeneralConicSection<T> transform0(T a,T b,T c,T d){
-		T _A = mc.add(mc.add(mc.multiply(A, mc.multiply(a, a)), mc.multiply(B, mc.multiply(a, c))), mc.multiply(C, mc.multiply(c, c)));
-		T _C = mc.add(mc.add(mc.multiply(A, mc.multiply(b, b)), mc.multiply(B, mc.multiply(b, d))), mc.multiply(C, mc.multiply(d, d)));
-		T _B = mc.add(mc.add(mc.multiply(mc.multiply(B, a), d), mc.multiply(B, mc.multiply(b, c))), 
-				mc.add(mc.multiplyLong(mc.multiply(A, mc.multiply(a, b)), 2l),
-						mc.multiplyLong(mc.multiply(C, mc.multiply(c, d)), 2l)));
-		if(mc.isZero(_A)&&mc.isZero(_C)&&mc.isZero(_B)){
+        T _A = getMc().add(getMc().add(getMc().multiply(A, getMc().multiply(a, a)), getMc().multiply(B, getMc().multiply(a, c))), getMc().multiply(C, getMc().multiply(c, c)));
+        T _C = getMc().add(getMc().add(getMc().multiply(A, getMc().multiply(b, b)), getMc().multiply(B, getMc().multiply(b, d))), getMc().multiply(C, getMc().multiply(d, d)));
+        T _B = getMc().add(getMc().add(getMc().multiply(getMc().multiply(B, a), d), getMc().multiply(B, getMc().multiply(b, c))),
+                getMc().add(getMc().multiplyLong(getMc().multiply(A, getMc().multiply(a, b)), 2l),
+                        getMc().multiplyLong(getMc().multiply(C, getMc().multiply(c, d)), 2l)));
+        if (getMc().isZero(_A) && getMc().isZero(_C) && getMc().isZero(_B)) {
 			throw new IllegalArgumentException("A=B=C=0");
 		}
-		T _D = mc.add(mc.multiply(E, c), mc.multiply(D, a));
-		T _E = mc.add(mc.multiply(E, d), mc.multiply(D, b));
-		return new GeneralConicSection<T>(mc, _A, _B, _C, _D, _E, F);
+        T _D = getMc().add(getMc().multiply(E, c), getMc().multiply(D, a));
+        T _E = getMc().add(getMc().multiply(E, d), getMc().multiply(D, b));
+        return new GeneralConicSection<T>(getMc(), _A, _B, _C, _D, _E, F);
 	}
 	
 	/**
@@ -495,7 +496,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * @return
 	 */
 	public ConicSection<T> translate(T d,boolean doX){
-		return translate(PVector.valueOf(doX ? d : mc.getZero(), doX ? mc.getZero() : d, mc));
+        return translate(PVector.valueOf(doX ? d : getMc().getZero(), doX ? getMc().getZero() : d, getMc()));
 	}
 	/**
 	 * Performs a translation operation,(moves the conic section toward).
@@ -509,10 +510,10 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 		//y: E-2*Cb-Ba
 		//F: Aa^2+Bab+Cb^2-Da-Eb+F
 		T x = v.getX(),y = v.getY();
-		T _D = mc.subtract(D, mc.add(mc.multiplyLong(mc.multiply(A, x), 2l), mc.multiply(B, y)));
-		T _E = mc.subtract(D, mc.add(mc.multiplyLong(mc.multiply(C, y), 2l), mc.multiply(B, x)));
-		T _F = expr1.compute(mc, A,B,C,D,E,F,x,y);
-		return GeneralConicSection.generalFormula(A, B, C, _D, _E, _F, mc);
+        T _D = getMc().subtract(D, getMc().add(getMc().multiplyLong(getMc().multiply(A, x), 2l), getMc().multiply(B, y)));
+        T _E = getMc().subtract(D, getMc().add(getMc().multiplyLong(getMc().multiply(C, y), 2l), getMc().multiply(B, x)));
+        T _F = expr1.compute(getMc(), A, B, C, D, E, F, x, y);
+        return GeneralConicSection.generalFormula(A, B, C, _D, _E, _F, getMc());
 	}
 	private static final ComputeExpression expr1 = ComputeExpression.compile("$0$6^2+$1$6$7+$2$7^2-$3$6-$4$7+$5");
 	
@@ -565,51 +566,51 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof ConicSection){
 			ConicSection<T> cs = (ConicSection<T>) obj;
 			T p ;
-			if(mc.isZero(A)){
+            if (getMc().isZero(A)) {
 				//use the 
-				p = mc.divide(cs.C, C);
+                p = getMc().divide(cs.C, C);
 			}else{
-				p = mc.divide(cs.A, A);
+                p = getMc().divide(cs.A, A);
 			}
-			if(mc.isZero(p)){
+            if (getMc().isZero(p)) {
 				return false;
 			}
-			
-			return mc.isEqual(mc.multiply(A,p), cs.A) && 
-					mc.isEqual(mc.multiply(B,p), cs.B) && 
-					mc.isEqual(mc.multiply(C,p), cs.C) && 
-					mc.isEqual(mc.multiply(D,p), cs.D) && 
-					mc.isEqual(mc.multiply(E,p), cs.E) && 
-					mc.isEqual(mc.multiply(F,p), cs.F) ;
+
+            return getMc().isEqual(getMc().multiply(A, p), cs.A) &&
+                    getMc().isEqual(getMc().multiply(B, p), cs.B) &&
+                    getMc().isEqual(getMc().multiply(C, p), cs.C) &&
+                    getMc().isEqual(getMc().multiply(D, p), cs.D) &&
+                    getMc().isEqual(getMc().multiply(E, p), cs.E) &&
+                    getMc().isEqual(getMc().multiply(F, p), cs.F);
 		}
 		return false;
 	}
 	
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof ConicSection){
 			ConicSection<N> cs = (ConicSection<N>) obj;
 			T p ;
-			if(mc.isZero(A)){
+            if (getMc().isZero(A)) {
 				//use the 
-				p = mc.divide(mapper.apply(cs.C), C);
+                p = getMc().divide(mapper.apply(cs.C), C);
 			}else{
-				p = mc.divide(mapper.apply(cs.A), A);
+                p = getMc().divide(mapper.apply(cs.A), A);
 			}
-			if(mc.isZero(p)){
+            if (getMc().isZero(p)) {
 				return false;
 			}
-			
-			return mc.isEqual(mc.multiply(A,p), mapper.apply(cs.A)) && 
-					mc.isEqual(mc.multiply(B,p), mapper.apply(cs.B)) && 
-					mc.isEqual(mc.multiply(C,p), mapper.apply(cs.C)) && 
-					mc.isEqual(mc.multiply(D,p), mapper.apply(cs.D)) && 
-					mc.isEqual(mc.multiply(E,p), mapper.apply(cs.E)) && 
-					mc.isEqual(mc.multiply(F,p), mapper.apply(cs.F)) ;
+
+            return getMc().isEqual(getMc().multiply(A, p), mapper.apply(cs.A)) &&
+                    getMc().isEqual(getMc().multiply(B, p), mapper.apply(cs.B)) &&
+                    getMc().isEqual(getMc().multiply(C, p), mapper.apply(cs.C)) &&
+                    getMc().isEqual(getMc().multiply(D, p), mapper.apply(cs.D)) &&
+                    getMc().isEqual(getMc().multiply(E, p), mapper.apply(cs.E)) &&
+                    getMc().isEqual(getMc().multiply(F, p), mapper.apply(cs.F));
 		}
 		return false;
 	}
@@ -658,34 +659,34 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	@Override
 	public ConicSection<T> simplify(Simplifier<T> sim) {
 		List<T> list =sim.simplify(getCoefficients());
-		return GeneralConicSection.generalFormula(list, mc);
+        return GeneralConicSection.generalFormula(list, getMc());
 	}
 	
 	/**
 	 * Returns the general formula.
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		final String str = " + ";
 		sb.append("ConicSection : ");
-		if(!mc.isZero(A)){
-			sb.append('(').append(nf.format(A,mc)).append(")x^2").append(str);
-		}
-		if(!mc.isZero(B)){
-			sb.append('(').append(nf.format(B,mc)).append(")xy").append(str);
-		}
-		if(!mc.isZero(C)){
-			sb.append('(').append(nf.format(C,mc)).append(")y^2").append(str);
-		}
-		if(!mc.isZero(D)){
-			sb.append('(').append(nf.format(D,mc)).append(")x").append(str);
-		}
-		if(!mc.isZero(E)){
-			sb.append('(').append(nf.format(E,mc)).append(")y").append(str);
-		}
-		if(!mc.isZero(F)){
-			sb.append('(').append(nf.format(F,mc)).append(")").append(str);
+        if (!getMc().isZero(A)) {
+            sb.append('(').append(nf.format(A, getMc())).append(")x^2").append(str);
+        }
+        if (!getMc().isZero(B)) {
+            sb.append('(').append(nf.format(B, getMc())).append(")xy").append(str);
+        }
+        if (!getMc().isZero(C)) {
+            sb.append('(').append(nf.format(C, getMc())).append(")y^2").append(str);
+        }
+        if (!getMc().isZero(D)) {
+            sb.append('(').append(nf.format(D, getMc())).append(")x").append(str);
+        }
+        if (!getMc().isZero(E)) {
+            sb.append('(').append(nf.format(E, getMc())).append(")y").append(str);
+        }
+        if (!getMc().isZero(F)) {
+            sb.append('(').append(nf.format(F, getMc())).append(")").append(str);
 		}
 		sb.delete(sb.length()-str.length()+1, sb.length());
 		sb.append("= 0");

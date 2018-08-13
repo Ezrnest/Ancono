@@ -7,6 +7,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.geometry.analytic.planeAG.*;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,21 +96,21 @@ public class GTriangle<T> extends MathObject<T> {
 
     public T cosA(){
         if(A != null){
-            return mc.cos(A);
+            return getMc().cos(A);
         }
-        return oppositeAngleCos(a,b,c,mc);
+        return oppositeAngleCos(a, b, c, getMc());
     }
     public T cosB(){
         if(B != null){
-            return mc.cos(B);
+            return getMc().cos(B);
         }
-        return oppositeAngleCos(b,a,c,mc);
+        return oppositeAngleCos(b, a, c, getMc());
     }
     public T cosC(){
         if(C != null){
-            return mc.cos(C);
+            return getMc().cos(C);
         }
-        return oppositeAngleCos(c,a,b,mc);
+        return oppositeAngleCos(c, a, b, getMc());
     }
 
     /**
@@ -136,7 +137,7 @@ public class GTriangle<T> extends MathObject<T> {
             nB = C;
             nC = A;
         }
-        GTriangle<T> ntri = new GTriangle<>(mc,na,nb,nc,nA,nB,nC);
+        GTriangle<T> ntri = new GTriangle<>(getMc(), na, nb, nc, nA, nB, nC);
         ntri.outerR = outerR;
         ntri.area = area;
         return ntri;
@@ -149,11 +150,11 @@ public class GTriangle<T> extends MathObject<T> {
      */
     public Triangle<T> toPlaneTriangle(){
         Point<T> A,B,C;
-        A = Point.pointO(mc);
-        B = Point.valueOf(c,mc.getZero(),mc);
+        A = Point.pointO(getMc());
+        B = Point.valueOf(c, getMc().getZero(), getMc());
         T cosA = cosA();
-        T sinA = mc.squareRoot(mc.subtract(mc.getOne(),Calculators.square(cosA,mc)));
-        C = Point.valueOf(mc.multiply(b,cosA),mc.multiply(b,sinA),mc);
+        T sinA = getMc().squareRoot(getMc().subtract(getMc().getOne(), Calculators.square(cosA, getMc())));
+        C = Point.valueOf(getMc().multiply(b, cosA), getMc().multiply(b, sinA), getMc());
         return Triangle.fromVertex(A,B,C);
     }
 
@@ -177,7 +178,7 @@ public class GTriangle<T> extends MathObject<T> {
      * @return
      */
     public T circumference(){
-        return mc.add(a,mc.add(b,c));
+        return getMc().add(a, getMc().add(b, c));
     }
 
     /**
@@ -187,9 +188,9 @@ public class GTriangle<T> extends MathObject<T> {
     public T area(){
         if(area == null){
             if(A == null && B == null && C == null){
-                T p = mc.divideLong(circumference(),2);
-                T square = mc.multiplyX(p,mc.subtract(p,a),mc.subtract(p,b),mc.subtract(p,c));
-                area = mc.squareRoot(square);
+                T p = getMc().divideLong(circumference(), 2);
+                T square = getMc().multiplyX(p, getMc().subtract(p, a), getMc().subtract(p, b), getMc().subtract(p, c));
+                area = getMc().squareRoot(square);
             }else{
                 T r1,r2,angle;
                 if(A != null){
@@ -205,7 +206,7 @@ public class GTriangle<T> extends MathObject<T> {
                     r1 = a;
                     r2 = b;
                 }
-                area = mc.divideLong(mc.multiply(mc.multiply(r1,r2),mc.sin(angle)),2);
+                area = getMc().divideLong(getMc().multiply(getMc().multiply(r1, r2), getMc().sin(angle)), 2);
             }
         }
         return area;
@@ -222,7 +223,7 @@ public class GTriangle<T> extends MathObject<T> {
      */
     private T computeAngle(T coside,T sideA,T sideB,T angleA,T angleB){
 //        if(angleA == null || angleB == null){
-        return mc.arccos(oppositeAngleCos(coside,sideA,sideB,mc));
+        return getMc().arccos(oppositeAngleCos(coside, sideA, sideB, getMc()));
 //        }else{
 //            return mc.subtract(mc.constantValue(MathCalculator.STR_PI),mc.add(angleA,angleB));
 //        }
@@ -231,7 +232,7 @@ public class GTriangle<T> extends MathObject<T> {
 
 
     @Override
-    public <N> MathObject<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> MathObject<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
         GTriangle<N> tri =  new GTriangle<>(newCalculator,
                 mapper.apply(a),
                 mapper.apply(b),
@@ -262,7 +263,7 @@ public class GTriangle<T> extends MathObject<T> {
      */
     @SuppressWarnings("unchecked")
     public boolean shapeEquals(GTriangle<T> tri){
-        return ArraySup.arrayEqualNoOrder((T[])new Object[]{a,b,c},(T[])new Object[]{tri.a,tri.b,tri.c},mc::isEqual);
+        return ArraySup.arrayEqualNoOrder((T[]) new Object[]{a, b, c}, (T[]) new Object[]{tri.a, tri.b, tri.c}, getMc()::isEqual);
     }
 
 
@@ -290,33 +291,33 @@ public class GTriangle<T> extends MathObject<T> {
     }
 
     @Override
-    public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
         if(!(obj instanceof GTriangle)){
             return false;
         }
         GTriangle<N> tri = (GTriangle<N>)obj;
-        return mc.isEqual(a,mapper.apply(tri.a))&&
-                mc.isEqual(b,mapper.apply(tri.b))&&
-                mc.isEqual(c,mapper.apply(tri.c));
+        return getMc().isEqual(a, mapper.apply(tri.a)) &&
+                getMc().isEqual(b, mapper.apply(tri.b)) &&
+                getMc().isEqual(c, mapper.apply(tri.c));
     }
 
     @Override
-    public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
         if(!(obj instanceof GTriangle)){
             return false;
         }
         GTriangle<T> tri = (GTriangle<T>)obj;
-        return mc.isEqual(a,tri.a)&&
-         mc.isEqual(b,tri.b)&&
-         mc.isEqual(c,tri.c);
+        return getMc().isEqual(a, tri.a) &&
+                getMc().isEqual(b, tri.b) &&
+                getMc().isEqual(c, tri.c);
     }
 
     @Override
-    public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         StringBuilder sb = new StringBuilder("Triangle:a=");
-        sb.append(nf.format(a,mc));
-        sb.append(",b=").append(nf.format(b,mc));
-        sb.append(",c=").append(nf.format(c,mc));
+        sb.append(nf.format(a, getMc()));
+        sb.append(",b=").append(nf.format(b, getMc()));
+        sb.append(",c=").append(nf.format(c, getMc()));
         return sb.toString();
     }
 

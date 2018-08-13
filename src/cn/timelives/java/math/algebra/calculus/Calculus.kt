@@ -119,7 +119,7 @@ fun integralApproximationSimpson(fx: DoubleUnaryOperator, a: Double, b: Double, 
  * @param f
  * @return
  */
-fun <T> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
+fun <T : Any> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
     val cns = arrayOfNulls<Any>(f.degree) as Array<T>
     val mc = f.mathCalculator
     for (i in 1..f.degree) {
@@ -134,7 +134,7 @@ fun <T> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
  * @param f
  * @return
  */
-fun <T> integration(f: SVPFunction<T>): AbstractSVPFunction<T> {
+fun <T : Any> integration(f: SVPFunction<T>): AbstractSVPFunction<T> {
     val cns = arrayOfNulls<Any>(f.degree + 2) as Array<T>
     val mc = f.mathCalculator
     for (i in 0..f.degree) {

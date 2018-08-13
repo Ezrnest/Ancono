@@ -11,6 +11,7 @@ import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.property.Solveable;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.math.set.SingletonSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
@@ -57,7 +58,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			list.add(getCoefficient(i));
 		}
 		list = sim.simplify(list);
-		return valueOf(list, mc);
+        return valueOf(list, getMc());
 	}
 	/**
 	 * Determine whether the two equations are equal, this method only 
@@ -70,7 +71,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	 * 
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if (!(obj instanceof SVPEquation)) {
 			return false;
 		}
@@ -78,11 +79,11 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			return true;
 		}
 		SVPEquation<T> sv = (SVPEquation<T>) obj;
-		return Polynomial.isEqual(this,sv, mc::isEqual);
+        return Polynomial.isEqual(this, sv, getMc()::isEqual);
 	}
 	
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if (!(obj instanceof SVPEquation)) {
 			return false;
 		}
@@ -90,15 +91,15 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			return true;
 		}
 		SVPEquation<N> sv = (SVPEquation<N>) obj;
-		return Polynomial.isEqual(this,sv,Utils.mappedIsEqual(mc, mapper));
+        return Polynomial.isEqual(this, sv, Utils.mappedIsEqual(getMc(), mapper));
 	}
 	
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
-		StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, mc, nf));
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, getMc(), nf));
 		sb.append(" = 0");
 		return sb.toString();
 		
@@ -131,7 +132,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public abstract <N> SVPEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	/**
 	 * A default implements for the equation.
 	 * @author lyc
@@ -154,15 +155,15 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		public T compute(T x){
 			T re = coes[mp];
 			for(int i=mp-1;i>-1;i--){
-				re = mc.multiply(x, re);
-				re = mc.add(coes[i], re);
+                re = getMc().multiply(x, re);
+                re = getMc().add(coes[i], re);
 			}
 			return re;
 		}
 		
 		@Override
 		public boolean isSolution(T x) {
-			return mc.isZero(compute(x));
+            return getMc().isZero(compute(x));
 		}
 		
 		@Override
@@ -173,7 +174,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		
 
 		@Override
-		public <N> DSVPEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> DSVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			@SuppressWarnings("unchecked")
 			N[] newCoes = (N[]) new Object[coes.length];
 			for(int i=0;i<newCoes.length;i++){
@@ -203,13 +204,13 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		
 
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			if(obj instanceof SVPEquation){
 				DSVPEquation<N> sv = (DSVPEquation<N>) obj;
 				if(sv.mp == this.mp){
 					N[] svc = sv.coes;
 					for(int i=0;i<coes.length;i++){
-						if(!mc.isEqual(coes[i], mapper.apply(svc[i]))){
+                        if (!getMc().isEqual(coes[i], mapper.apply(svc[i]))) {
 							return false;
 						}
 					}
@@ -263,7 +264,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> SVPEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new SVPFEquation<>(newCalculator, f.mapTo(mapper, newCalculator));
 		}
 		
@@ -464,10 +465,10 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		
 		@Override
 		public T compute(T x) {
-			T re = mc.multiply(a, x);
-			re = mc.add(re, b);
-			re = mc.multiply(x, re);
-			return mc.add(re, c);
+            T re = getMc().multiply(a, x);
+            re = getMc().add(re, b);
+            re = getMc().multiply(x, re);
+            return getMc().add(re, c);
 		}
 		
 		public T coeA(){
@@ -491,12 +492,12 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 */
 		public List<T> solve(){
 			if(x1==null){
-				T delta = mc.squareRoot(delta());
+                T delta = getMc().squareRoot(delta());
 				// x1 = (-b + sqr(delta)) / 2a
 				// x2 = (-b - sqr(delta)) / 2a
-				T a2 = mc.multiplyLong(a, 2);
-				x1 = mc.divide(mc.subtract(delta, b), a2);
-				x2 = mc.negate(mc.divide(mc.add(b, delta), a2));
+                T a2 = getMc().multiplyLong(a, 2);
+                x1 = getMc().divide(getMc().subtract(delta, b), a2);
+                x2 = getMc().negate(getMc().divide(getMc().add(b, delta), a2));
 			}
 			List<T> so = new ArrayList<>(2);
 			so.add(x1);
@@ -513,7 +514,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 */
 		public T delta(){
 			if(delta==null)
-				delta =  mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));
+                delta = getMc().subtract(getMc().multiply(b, b), getMc().multiplyLong(getMc().multiply(a, c), 4l));
 			return delta;
 		}
 		/**
@@ -523,7 +524,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 */
 		public int getNumberOfRoots(){
 			delta();
-			int comp = mc.compare(delta, mc.getZero());
+            int comp = getMc().compare(delta, getMc().getZero());
 			if(comp < 0){
 				d = NONE_IN_R;
 				return 0;
@@ -556,7 +557,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 				return Collections.emptyList();
 			}else if( d== ONE_IN_R){
 				if(x1 == null){
-					T t = mc.divide(b, mc.multiplyLong(a, -2l));
+                    T t = getMc().divide(b, getMc().multiplyLong(a, -2l));
 					x1 = t;
 					x2 = t;
 				}
@@ -573,7 +574,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 * @return x1+x2
 		 */
 		public T rootsSum(){
-			return mc.negate(mc.divide(b, a));
+            return getMc().negate(getMc().divide(b, a));
 		}
 		/**
 		 * Returns the multiply of roots in this equation,which is calculated by
@@ -581,7 +582,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 * @return x1*x2
 		 */
 		public T rootsMul(){
-			return mc.divide(c, a);
+            return getMc().divide(c, a);
 		}
 		/**
 		 * Returns (x1-x2)^2,which is equal to delta/a^2.
@@ -589,7 +590,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 */
 		public T rootsSubtractSq(){
 			T d = delta();
-			d = mc.divide(delta, mc.multiply(a, a));
+            d = getMc().divide(delta, getMc().multiply(a, a));
 			return d;
 		}
 		/**
@@ -598,15 +599,15 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 */
 		public T rootsSubtract(){
 			if(x1!=null){
-				return mc.abs(mc.subtract(x1, x2));
+                return getMc().abs(getMc().subtract(x1, x2));
 			}
 			T d = delta();
-			return mc.divide(mc.squareRoot(d), mc.abs(a));
+            return getMc().divide(getMc().squareRoot(d), getMc().abs(a));
 		}
 		
 
 		@Override
-		public <N> QEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> QEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new QEquation<>(newCalculator,mapper.apply(a),mapper.apply(b),mapper.apply(c)
 					,mapper.apply(x1),mapper.apply(x2),mapper.apply(delta),d);
 		}
@@ -629,22 +630,22 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		}
 
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof QEquation){
 				QEquation<T> eq = (QEquation<T>) obj;
-				return mc.isEqual(a, eq.a)&&mc.isEqual(b, eq.b)&&mc.isEqual(c, eq.c);
+                return getMc().isEqual(a, eq.a) && getMc().isEqual(b, eq.b) && getMc().isEqual(c, eq.c);
 			}
 			return super.valueEquals(obj);
 			
 		}
 
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			if(obj instanceof QEquation){
 				QEquation<N> eq = (QEquation<N>) obj;
-				return mc.isEqual(a, mapper.apply(eq.a))
-						&&mc.isEqual(b, mapper.apply(eq.b))
-						&&mc.isEqual(c, mapper.apply(eq.c));
+                return getMc().isEqual(a, mapper.apply(eq.a))
+                        && getMc().isEqual(b, mapper.apply(eq.b))
+                        && getMc().isEqual(c, mapper.apply(eq.c));
 			}
 			return super.valueEquals(obj,mapper);
 		}
@@ -704,7 +705,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		
 		@Override
 		public T compute(T x) {
-			return mc.add(mc.multiply(a, x), b);
+            return getMc().add(getMc().multiply(a, x), b);
 		}
 
 		@Override
@@ -732,11 +733,11 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 */
 		@Override
 		public SingletonSet<T> getSolution() {
-			return MathSets.singleton(sol, mc);
+            return MathSets.singleton(sol, getMc());
 		}
 
 		@Override
-		public <N> LEquation<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> LEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new LEquation<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(sol));
 		}
 
@@ -755,19 +756,19 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		}
 
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof LEquation){
 				LEquation<T> leq = (LEquation<T>) obj;
-				return mc.isEqual(a, leq.a) && mc.isEqual(b, leq.b);
+                return getMc().isEqual(a, leq.a) && getMc().isEqual(b, leq.b);
 			}
 			return super.valueEquals(obj);
 		}
 
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			if(obj instanceof LEquation){
 				LEquation<N> leq = (LEquation<N>) obj;
-				return mc.isEqual(a, mapper.apply(leq.a)) && mc.isEqual(b, mapper.apply(leq.b));
+                return getMc().isEqual(a, mapper.apply(leq.a)) && getMc().isEqual(b, mapper.apply(leq.b));
 			}
 			return super.valueEquals(obj,mapper);
 		}

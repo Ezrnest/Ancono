@@ -3,6 +3,7 @@ package cn.timelives.java.math.geometry.analytic.spaceAG;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.function.Function;
@@ -50,7 +51,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return a vector
 	 */
 	public SVector<T> getVector(){
-		return new SVector<>(x,y,z,mc);
+        return new SVector<>(x, y, z, getMc());
 	}
 	/**
 	 * Return the square of the distance between this point and the given point.This method 
@@ -59,10 +60,10 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return {@literal (x-p.x)^2 + (y-p.y)^2 + (z-p.z)^2}
 	 */
 	public T distanceSq(SPoint<T> p){
-		T dx = mc.subtract(x, p.x);
-		T dy = mc.subtract(y, p.y);
-		T dz = mc.subtract(z, p.z);
-		return mc.add(mc.add(mc.multiply(dx, dx), mc.multiply(dy, dy)),mc.multiply(dz, dz));
+        T dx = getMc().subtract(x, p.x);
+        T dy = getMc().subtract(y, p.y);
+        T dz = getMc().subtract(z, p.z);
+        return getMc().add(getMc().add(getMc().multiply(dx, dx), getMc().multiply(dy, dy)), getMc().multiply(dz, dz));
 	}
 	/**
 	 * Return the distance of {@code this} and the given point {@code p}.The operation 
@@ -73,7 +74,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @see SPoint#distance(SPoint)
 	 */
 	public T distance(SPoint<T> p){
-		return mc.squareRoot(distanceSq(p));
+        return getMc().squareRoot(distanceSq(p));
 	}
 	
 	/**
@@ -82,10 +83,10 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return a column vector with two dimensions.
 	 */
 	public SVector<T> directVector(SPoint<T> p){
-		T vx = mc.subtract(p.x, x);
-		T vy = mc.subtract(p.y, y);
-		T vz = mc.subtract(p.z, z);
-		return SVector.valueOf(vx, vy, vz, mc);
+        T vx = getMc().subtract(p.x, x);
+        T vy = getMc().subtract(p.y, y);
+        T vz = getMc().subtract(p.z, z);
+        return SVector.valueOf(vx, vy, vz, getMc());
 	}
 	
 	/**
@@ -99,14 +100,14 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return the proportion point.
 	 */
 	public SPoint<T> proportionPoint(SPoint<T> p,T k){
-		T de = mc.add(k, mc.getOne());
-		T xN = mc.add(mc.multiply(k, p.x), x);
-		T yN = mc.add(mc.multiply(k, p.y), y);
-		T zN = mc.add(mc.multiply(k, p.z), z);
-		xN = mc.divide(xN, de);
-		yN = mc.divide(yN, de);
-		zN = mc.divide(zN, de);
-		return new SPoint<>(mc,xN,yN,zN);
+        T de = getMc().add(k, getMc().getOne());
+        T xN = getMc().add(getMc().multiply(k, p.x), x);
+        T yN = getMc().add(getMc().multiply(k, p.y), y);
+        T zN = getMc().add(getMc().multiply(k, p.z), z);
+        xN = getMc().divide(xN, de);
+        yN = getMc().divide(yN, de);
+        zN = getMc().divide(zN, de);
+        return new SPoint<>(getMc(), xN, yN, zN);
 	}
 	
 	/**
@@ -115,7 +116,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return a new point
 	 */
 	public SPoint<T> moveToward(SVector<T> v){
-		return new SPoint<>(mc,mc.add(x, v.x),mc.add(y, v.y),mc.add(z, v.z));
+        return new SPoint<>(getMc(), getMc().add(x, v.x), getMc().add(y, v.y), getMc().add(z, v.z));
 	}
 	/**
 	 * Returns a point of {@code this} moves by {@code v}.
@@ -123,7 +124,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return a new point
 	 */
 	public SPoint<T> moveToward(T vx,T vy,T vz){
-		return new SPoint<>(mc,mc.add(x, vx),mc.add(y, vy),mc.add(z, vz));
+        return new SPoint<>(getMc(), getMc().add(x, vx), getMc().add(y, vy), getMc().add(z, vz));
 	}
 	
 	/**
@@ -132,10 +133,10 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return middle point
 	 */
 	public SPoint<T> middle(SPoint<T> p){
-		T xm = mc.divideLong(mc.add(x, p.x), 2);
-		T ym = mc.divideLong(mc.add(y, p.y), 2);
-		T zm = mc.divideLong(mc.add(z, p.z), 2);
-		return new SPoint<T>(mc,xm,ym,zm);
+        T xm = getMc().divideLong(getMc().add(x, p.x), 2);
+        T ym = getMc().divideLong(getMc().add(y, p.y), 2);
+        T zm = getMc().divideLong(getMc().add(z, p.z), 2);
+        return new SPoint<T>(getMc(), xm, ym, zm);
 	}
 	
 	/**
@@ -143,12 +144,12 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 */
 	@Override
 	public boolean contains(SPoint<T> p) {
-		return mc.isEqual(x, p.x) &&
-				mc.isEqual(y, p.y) &&
-				mc.isEqual(z, p.z) ;
+        return getMc().isEqual(x, p.x) &&
+                getMc().isEqual(y, p.y) &&
+                getMc().isEqual(z, p.z);
 	}
 	@Override
-	public <N> SPoint<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> SPoint<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new SPoint<>(newCalculator,mapper.apply(x),mapper.apply(y),mapper.apply(z));
 	}
 	
@@ -174,23 +175,23 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof SPoint){
 			SPoint<N> s = (SPoint<N>) obj;
-			return mc.isEqual(x, mapper.apply(s.x)) &&
-					mc.isEqual(y, mapper.apply(s.y)) &&
-					mc.isEqual(z, mapper.apply(s.z)) ;
+            return getMc().isEqual(x, mapper.apply(s.x)) &&
+                    getMc().isEqual(y, mapper.apply(s.y)) &&
+                    getMc().isEqual(z, mapper.apply(s.z));
 		}
 		return false;
 	}
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof SPoint){
 			SPoint<T> s = (SPoint<T>) obj;
-			return mc.isEqual(x, s.x) &&
-					mc.isEqual(y, s.y) &&
-					mc.isEqual(z, s.z) ;
+            return getMc().isEqual(x, s.x) &&
+                    getMc().isEqual(y, s.y) &&
+                    getMc().isEqual(z, s.z);
 		}
 		return false;
 	}
@@ -243,7 +244,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 */
 	@SafeVarargs
 	public static <T> SPoint<T> average(SPoint<T>...points){
-		MathCalculator<T> mc = points[0].mc;
+        MathCalculator<T> mc = points[0].getMc();
 		final int num = points.length;
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[]) Array.newInstance(points[0].x.getClass(), points.length);
@@ -281,14 +282,14 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		 * @return
 		 */
 		public SPoint<T> of(T x,T y,T z){
-			return SPoint.valueOf(x, y, z, mc);
+            return SPoint.valueOf(x, y, z, getMc());
 		}
 
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
 		@Override
-		public <N> SPointGenerator<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> SPointGenerator<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new SPointGenerator<>(newCalculator);
 		}
 
@@ -298,7 +299,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof SPointGenerator){
-				return mc.equals(((SPointGenerator<?>)obj).mc);
+                return getMc().equals(((SPointGenerator<?>) obj).getMc());
 			}
 			return false;
 		}
@@ -308,14 +309,14 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		 */
 		@Override
 		public int hashCode() {
-			return mc.hashCode();
+            return getMc().hashCode();
 		}
 
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			return equals(obj);
 		}
 
@@ -323,7 +324,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 		 */
 		@Override
-		public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 			return equals(obj);
 		}
 		
@@ -331,7 +332,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "SPointGenerator";
 		}
 	}

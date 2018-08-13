@@ -12,6 +12,7 @@ import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -95,7 +96,7 @@ public final class PVector<T> extends Vector<T> {
 	@Override
 	public T calLength() {
 		if(length==null){
-			length = mc.squareRoot(calLengthSq());
+            length = getMc().squareRoot(calLengthSq());
 		}
 		return length;
 	}
@@ -107,7 +108,7 @@ public final class PVector<T> extends Vector<T> {
 	@Override
 	public T calLengthSq() {
 		if(lengthSq==null){
-			lengthSq = mc.add(mc.multiply(x, x),mc.multiply(y, y));
+            lengthSq = getMc().add(getMc().multiply(x, x), getMc().multiply(y, y));
 		}
 		return lengthSq;
 	}
@@ -118,7 +119,7 @@ public final class PVector<T> extends Vector<T> {
 	 */
 	@Override
 	public PVector<T> applyFunction(MathFunction<T, T> f) {
-		return new PVector<T>(f.apply(x), f.apply(y), mc);
+        return new PVector<T>(f.apply(x), f.apply(y), getMc());
 	}
 
 	/** Ignores the parameter {@code i}.
@@ -146,7 +147,7 @@ public final class PVector<T> extends Vector<T> {
 	 */
 	@Override
 	public PVector<T> negative() {
-		return new PVector<T>(mc.negate(x), mc.negate(y), mc);
+        return new PVector<T>(getMc().negate(x), getMc().negate(y), getMc());
 	}
 
 	/* (non-Javadoc)
@@ -158,18 +159,18 @@ public final class PVector<T> extends Vector<T> {
 		T[] arr = (T[]) Array.newInstance(x.getClass(), 2);
 		arr[0] = x;
 		arr[1] = y;
-		return Vector.createVector(mc, true, arr);
+        return Vector.createVector(getMc(), true, arr);
 	}
 
 	@Override
 	public PVector<T> multiplyNumber(long n) {
-		return new PVector<>(mc.multiplyLong(x,n),mc.multiplyLong(y,n),mc);
+        return new PVector<>(getMc().multiplyLong(x, n), getMc().multiplyLong(y, n), getMc());
 	}
 
 
 	@Override
 	public PVector<T> multiplyNumber(T n) {
-		return new PVector<>(mc.multiply(x,n),mc.multiply(y,n),mc);
+        return new PVector<>(getMc().multiply(x, n), getMc().multiply(y, n), getMc());
 	}
 
 	
@@ -208,7 +209,7 @@ public final class PVector<T> extends Vector<T> {
 	 * @return this + s
 	 */
 	public PVector<T> add(PVector<T> s){
-		return new PVector<>(mc.add(x, s.x),mc.add(y, s.y),mc);
+        return new PVector<>(getMc().add(x, s.x), getMc().add(y, s.y), getMc());
 	}
 	/**
 	 * Returns {@code this - s}.
@@ -216,7 +217,7 @@ public final class PVector<T> extends Vector<T> {
 	 * @return this - s
 	 */
 	public PVector<T> subtract(PVector<T> s){
-		return new PVector<>(mc.subtract(x, s.x),mc.subtract(y, s.y),mc);
+        return new PVector<>(getMc().subtract(x, s.x), getMc().subtract(y, s.y), getMc());
 	}
 	
 	/**
@@ -228,7 +229,7 @@ public final class PVector<T> extends Vector<T> {
 	 * @return this · s
 	 */
 	public T innerProduct(PVector<T> s){
-		return mc.add(mc.multiply(x, s.x), mc.multiply(y, s.y));
+        return getMc().add(getMc().multiply(x, s.x), getMc().multiply(y, s.y));
 	}
 	
 	/**
@@ -239,7 +240,7 @@ public final class PVector<T> extends Vector<T> {
 	 */
 	public <R> R angle(PVector<T> s,MathFunction<T, R> arccos){
 		T pro = innerProduct(s);
-		pro = mc.divide(pro, mc.multiply(calLength(), s.calLength()));
+        pro = getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
 		return arccos.apply(pro);
 	}
 	/**
@@ -250,7 +251,7 @@ public final class PVector<T> extends Vector<T> {
 	 */
 	public T angleCos(PVector<T> s){
 		T pro = innerProduct(s);
-		return mc.divide(pro, mc.multiply(calLength(), s.calLength()));
+        return getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
 	}
 	
 	/**
@@ -259,7 +260,7 @@ public final class PVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public boolean isParallel(PVector<T> s){
-		return mc.isEqual(mc.multiply(x, s.y),mc.multiply(y, s.x));
+        return getMc().isEqual(getMc().multiply(x, s.y), getMc().multiply(y, s.x));
 	}
 	/**
 	 * Determines whether the two vectors are perpendicular.
@@ -267,7 +268,7 @@ public final class PVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public boolean isPerpendicular(PVector<T> s){
-		return mc.isZero(innerProduct(s));
+        return getMc().isZero(innerProduct(s));
 	}
 	
 	/**
@@ -277,11 +278,11 @@ public final class PVector<T> extends Vector<T> {
 	@Override
 	public PVector<T> unitVector(){
 		T length = calLength();
-		PVector<T> s = new PVector<>(mc.divide(x, length), 
-				mc.divide(y, length), 
-				 mc);
-		s.length = mc.getOne();
-		s.lengthSq = mc.getOne();
+        PVector<T> s = new PVector<>(getMc().divide(x, length),
+                getMc().divide(y, length),
+                getMc());
+        s.length = getMc().getOne();
+        s.lengthSq = getMc().getOne();
 		return s;
 	}
 	/**
@@ -291,9 +292,9 @@ public final class PVector<T> extends Vector<T> {
 	 */
 	public PVector<T> parallel(T len){
 		T length = calLength();
-		PVector<T> s = new PVector<>(mc.multiply(len, mc.divide(x, length)), 
-				mc.multiply(len, mc.divide(y, length)), 
-						 mc);
+        PVector<T> s = new PVector<>(getMc().multiply(len, getMc().divide(x, length)),
+                getMc().multiply(len, getMc().divide(y, length)),
+                getMc());
 		s.length = len;
 		return s;
 	}
@@ -303,7 +304,7 @@ public final class PVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public boolean isZeroVector(){
-		return mc.isZero(x) && mc.isZero(y);
+        return getMc().isZero(x) && getMc().isZero(y);
 	}
 	/**
 	 * Rotate this vector by {@code angle} in the anti-clockwise direction. The result is:
@@ -318,11 +319,11 @@ public final class PVector<T> extends Vector<T> {
 		//The rotate matrix is 
 		//(cos x -sinx)
 		//(sin x cos x)
-		return TransMatrix.rotate(angle, mc).transform(this);
+        return TransMatrix.rotate(angle, getMc()).transform(this);
 	}
 	
 	@Override
-	public <N> PVector<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> PVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		PVector<N> sn =  new PVector<>(mapper.apply(x),mapper.apply(y),newCalculator);
 		if(length!=null){
 			sn.length = mapper.apply(length);
@@ -335,10 +336,10 @@ public final class PVector<T> extends Vector<T> {
 	
 	
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
-		sb.append('(').append(nf.format(x,mc))
-			.append(',').append(nf.format(y,mc))
+        sb.append('(').append(nf.format(x, getMc()))
+                .append(',').append(nf.format(y, getMc()))
 			.append(')');
 		return sb.toString();
 	}
@@ -368,25 +369,25 @@ public final class PVector<T> extends Vector<T> {
 	}
 	
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		
 		if(obj instanceof PVector){
 			PVector<N> s = (PVector<N>) obj;
-			return mc.isEqual(x, mapper.apply(s.x)) &&
-					mc.isEqual(y, mapper.apply(s.y)); 
+            return getMc().isEqual(x, mapper.apply(s.x)) &&
+                    getMc().isEqual(y, mapper.apply(s.y));
 		}
 		return false;
 	}
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(this==obj){
 			return true;
 		}
 		if(obj instanceof PVector){
 			PVector<T> s = (PVector<T>) obj;
-			return mc.isEqual(x, s.x) &&
-					mc.isEqual(y, s.y) ;
+            return getMc().isEqual(x, s.x) &&
+                    getMc().isEqual(y, s.y);
 		}
 		return false;
 	}
@@ -412,8 +413,8 @@ public final class PVector<T> extends Vector<T> {
 		mat[1][0] = x.y;
 		mat[1][1] = y.y;
 		mat[1][2] = this.y;
-		
-		LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, mc);
+
+        LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, getMc());
 		if(sol.getSolutionSituation()!= Situation.SINGLE_SOLUTION){
 			throw new ArithmeticException("Not single?");
 		}
@@ -490,7 +491,7 @@ public final class PVector<T> extends Vector<T> {
 	 */
 	@SafeVarargs
 	public static <T> PVector<T> sum(PVector<T>...vectors){
-		MathCalculator<T> mc = vectors[0].mc;
+        MathCalculator<T> mc = vectors[0].getMc();
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[]) Array.newInstance(vectors[0].x.getClass(), vectors.length);
 		for(int i=0;i<vectors.length;i++){

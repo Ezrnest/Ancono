@@ -6,6 +6,7 @@ import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -89,7 +90,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public Line<T> sideA() {
 		if(a == null){
-			a = Line.twoPoint(B, C, mc);
+            a = Line.twoPoint(B, C, getMc());
 		}
 		return a;
 	}
@@ -100,7 +101,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public Line<T> sideB() {
 		if(b == null){
-			b = Line.twoPoint(A, C, mc);
+            b = Line.twoPoint(A, C, getMc());
 		}
 		return b;
 	}
@@ -111,7 +112,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public Line<T> sideC() {
 		if(c == null){
-			c = Line.twoPoint(A, B, mc);
+            c = Line.twoPoint(A, B, getMc());
 		}
 		return c;
 	}
@@ -143,7 +144,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public T lengthA(){
 		if(lenA==null){
-			lenA = mc.squareRoot(B.distanceSq(C));
+            lenA = getMc().squareRoot(B.distanceSq(C));
 		}
 		return lenA;
 	}
@@ -153,7 +154,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public T lengthB(){
 		if(lenB==null){
-			lenB = mc.squareRoot(A.distanceSq(C));
+            lenB = getMc().squareRoot(A.distanceSq(C));
 		}
 		return lenB;
 	}
@@ -163,7 +164,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public T lengthC(){
 		if(lenC==null){
-			lenC = mc.squareRoot(A.distanceSq(B));
+            lenC = getMc().squareRoot(A.distanceSq(B));
 		}
 		return lenC;
 	}
@@ -186,9 +187,9 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @return the area of this triangle
 	 */
 	public T areaPN(){
-		T t1 = mc.multiply(mc.subtract(A.x, B.x), mc.subtract(A.y, C.y));
-		T t2 = mc.multiply(mc.subtract(A.x, C.x), mc.subtract(B.y, A.y));
-		return mc.add(t1, t2);
+        T t1 = getMc().multiply(getMc().subtract(A.x, B.x), getMc().subtract(A.y, C.y));
+        T t2 = getMc().multiply(getMc().subtract(A.x, C.x), getMc().subtract(B.y, A.y));
+        return getMc().add(t1, t2);
 	}
 	
 	/**
@@ -196,7 +197,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @return the area of this triangle
 	 */
 	public T area(){
-		return mc.abs(areaPN());
+        return getMc().abs(areaPN());
 	}
 	
 	/**
@@ -205,9 +206,9 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @return the center of gravity of this triangle.
 	 */
 	public Point<T> centerG(){
-		T x = mc.divideLong(mc.addX(A.x,B.x,C.x),3);
-		T y = mc.divideLong(mc.addX(A.y,B.y,C.y),3);
-		return new Point<>(mc,x,y);
+        T x = getMc().divideLong(getMc().addX(A.x, B.x, C.x), 3);
+        T y = getMc().divideLong(getMc().addX(A.y, B.y, C.y), 3);
+        return new Point<>(getMc(), x, y);
 		
 	}
 	/**
@@ -216,28 +217,28 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @return the orthocenter of this triangle
 	 */
 	public Point<T> centerH(){
-		T y2_y1 = mc.subtract(B.y, A.y);
-		T y3_y2 = mc.subtract(C.y, B.y);
-		T y1_y3 = mc.subtract(A.y, C.y);
-		T x2_x1 = mc.subtract(B.x, A.x);
-		T x3_x2 = mc.subtract(C.x, B.x);
-		T x1_x3 = mc.subtract(A.x, C.x);
-		T s = mc.negate(mc.add(mc.add(
- 				mc.multiply(A.x, y3_y2),
- 				mc.multiply(B.x, y1_y3)),
- 				mc.multiply(C.x, y2_y1)));
-		T d1 = mc.add(mc.multiply(mc.multiply(A.x,B.x),y2_y1),
-					mc.multiply(mc.multiply(B.x,C.x),y3_y2));
-			d1 = mc.add(d1, mc.multiply(mc.multiply(C.x,A.x),y1_y3));
-			d1 = mc.subtract(d1,mc.multiply(mc.multiply(y2_y1, y3_y2),y1_y3));
-		T d2 = mc.add(mc.multiply(mc.multiply(A.y,B.y),x2_x1),
-				mc.multiply(mc.multiply(B.y,C.y),x3_x2));
-			d2 = mc.add(d2, mc.multiply(mc.multiply(C.y,A.y),x1_x3));
-			d2 = mc.subtract(d2,mc.multiply(mc.multiply(x2_x1, x3_x2),x1_x3));
-			d2 = mc.negate(d2);
-		d1 = mc.divide(d1, s);
-		d2 = mc.divide(d2, s);
-		return new Point<T>(mc,d1,d2);
+        T y2_y1 = getMc().subtract(B.y, A.y);
+        T y3_y2 = getMc().subtract(C.y, B.y);
+        T y1_y3 = getMc().subtract(A.y, C.y);
+        T x2_x1 = getMc().subtract(B.x, A.x);
+        T x3_x2 = getMc().subtract(C.x, B.x);
+        T x1_x3 = getMc().subtract(A.x, C.x);
+        T s = getMc().negate(getMc().add(getMc().add(
+                getMc().multiply(A.x, y3_y2),
+                getMc().multiply(B.x, y1_y3)),
+                getMc().multiply(C.x, y2_y1)));
+        T d1 = getMc().add(getMc().multiply(getMc().multiply(A.x, B.x), y2_y1),
+                getMc().multiply(getMc().multiply(B.x, C.x), y3_y2));
+        d1 = getMc().add(d1, getMc().multiply(getMc().multiply(C.x, A.x), y1_y3));
+        d1 = getMc().subtract(d1, getMc().multiply(getMc().multiply(y2_y1, y3_y2), y1_y3));
+        T d2 = getMc().add(getMc().multiply(getMc().multiply(A.y, B.y), x2_x1),
+                getMc().multiply(getMc().multiply(B.y, C.y), x3_x2));
+        d2 = getMc().add(d2, getMc().multiply(getMc().multiply(C.y, A.y), x1_x3));
+        d2 = getMc().subtract(d2, getMc().multiply(getMc().multiply(x2_x1, x3_x2), x1_x3));
+        d2 = getMc().negate(d2);
+        d1 = getMc().divide(d1, s);
+        d2 = getMc().divide(d2, s);
+        return new Point<T>(getMc(), d1, d2);
 	}
 	/**
 	 * Returns the circumcenter of this triangle,which is the the center of the circumcircle,as well 
@@ -245,29 +246,29 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @return the circumcenter of this triangle
 	 */
 	public Point<T> centerO(){
-		T y1_y2 = mc.subtract(A.y, B.y);
-		T y2_y3 = mc.subtract(B.y, C.y);
-		T y3_y1 = mc.subtract(C.y, A.y);
-		T x1_x2 = mc.subtract(A.x, B.x);
-		T x2_x3 = mc.subtract(B.x, C.x);
-		T x3_x1 = mc.subtract(C.x, A.x);
-		
-		T s = mc.multiplyLong(mc.add(mc.add(
-				 				mc.multiply(A.x, y2_y3),
-				 				mc.multiply(B.x, y3_y1)),
-				 				mc.multiply(C.x, y1_y2)), 2);
-		T n1 = mc.add(mc.multiply(y2_y3,mc.multiply(A.x, A.x)),
-				mc.multiply(y3_y1,mc.multiply(B.x, B.x)));
-			n1 = mc.add(n1,mc.multiply(y1_y2,mc.multiply(C.x, C.x)));
-			n1 = mc.subtract(n1,mc.multiply(mc.multiply(y1_y2, y2_y3),y3_y1));
-		T n2 = mc.add(mc.multiply(x2_x3,mc.multiply(A.y, A.y)),
-				mc.multiply(x3_x1,mc.multiply(B.y, B.y)));
-			n2 = mc.add(n2,	mc.multiply(x1_x2,mc.multiply(C.y, C.y)));
-			n2 = mc.subtract(n2,	mc.multiply(mc.multiply(x1_x2, x2_x3),x3_x1));
-			n2 = mc.negate(n2);
-		n1 = mc.divide(n1, s);
-		n2 = mc.divide(n2, s);
-		return new Point<>(mc,n1,n2);
+        T y1_y2 = getMc().subtract(A.y, B.y);
+        T y2_y3 = getMc().subtract(B.y, C.y);
+        T y3_y1 = getMc().subtract(C.y, A.y);
+        T x1_x2 = getMc().subtract(A.x, B.x);
+        T x2_x3 = getMc().subtract(B.x, C.x);
+        T x3_x1 = getMc().subtract(C.x, A.x);
+
+        T s = getMc().multiplyLong(getMc().add(getMc().add(
+                getMc().multiply(A.x, y2_y3),
+                getMc().multiply(B.x, y3_y1)),
+                getMc().multiply(C.x, y1_y2)), 2);
+        T n1 = getMc().add(getMc().multiply(y2_y3, getMc().multiply(A.x, A.x)),
+                getMc().multiply(y3_y1, getMc().multiply(B.x, B.x)));
+        n1 = getMc().add(n1, getMc().multiply(y1_y2, getMc().multiply(C.x, C.x)));
+        n1 = getMc().subtract(n1, getMc().multiply(getMc().multiply(y1_y2, y2_y3), y3_y1));
+        T n2 = getMc().add(getMc().multiply(x2_x3, getMc().multiply(A.y, A.y)),
+                getMc().multiply(x3_x1, getMc().multiply(B.y, B.y)));
+        n2 = getMc().add(n2, getMc().multiply(x1_x2, getMc().multiply(C.y, C.y)));
+        n2 = getMc().subtract(n2, getMc().multiply(getMc().multiply(x1_x2, x2_x3), x3_x1));
+        n2 = getMc().negate(n2);
+        n1 = getMc().divide(n1, s);
+        n2 = getMc().divide(n2, s);
+        return new Point<>(getMc(), n1, n2);
 	}
 	/**
 	 * Returns the incenter of this triangle,which is the the center of the incircle,as well 
@@ -279,12 +280,12 @@ public final class Triangle<T> extends MathObject<T> {
 		lengthB();
 		lengthC();
 		//calculate the length
-		T nx = mc.add(mc.add(mc.multiply(A.x, lenA), mc.multiply(B.x, lenB)), mc.multiply(C.x, lenC));
-		T ny = mc.add(mc.add(mc.multiply(A.y, lenA), mc.multiply(B.y, lenB)), mc.multiply(C.y, lenC));
-		T deno = mc.add(mc.add(lenA, lenB), lenC);
-		nx = mc.divide(nx, deno);
-		ny = mc.divide(ny, deno);
-		return new Point<>(mc,nx,ny);
+        T nx = getMc().add(getMc().add(getMc().multiply(A.x, lenA), getMc().multiply(B.x, lenB)), getMc().multiply(C.x, lenC));
+        T ny = getMc().add(getMc().add(getMc().multiply(A.y, lenA), getMc().multiply(B.y, lenB)), getMc().multiply(C.y, lenC));
+        T deno = getMc().add(getMc().add(lenA, lenB), lenC);
+        nx = getMc().divide(nx, deno);
+        ny = getMc().divide(ny, deno);
+        return new Point<>(getMc(), nx, ny);
 		
 	}
 	
@@ -325,7 +326,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public Line<T> centralLineA(){
 		Point<T> m = B.middle(C);
-		return Line.twoPoint(m, A, mc);
+        return Line.twoPoint(m, A, getMc());
 	}
 	/**
 	 * Returns the central line of side <b>b</b>,which is the connecting line 
@@ -334,7 +335,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public Line<T> centralLineB(){
 		Point<T> m = A.middle(C);
-		return Line.twoPoint(m, B, mc);
+        return Line.twoPoint(m, B, getMc());
 	}
 	/**
 	 * Returns the central line of side <b>c</b>,which is the connecting line 
@@ -343,7 +344,7 @@ public final class Triangle<T> extends MathObject<T> {
 	 */
 	public Line<T> centralLineC(){
 		Point<T> m = A.middle(B);
-		return Line.twoPoint(m, C, mc);
+        return Line.twoPoint(m, C, getMc());
 	}
 	
 	/**
@@ -384,8 +385,8 @@ public final class Triangle<T> extends MathObject<T> {
 	public Line<T> angularBisectorA(){
 		lengthB();
 		lengthC();
-		Point<T> p = B.proportionPoint(C, mc.divide(lenC, lenB));
-		return Line.twoPoint(p, A, mc);
+        Point<T> p = B.proportionPoint(C, getMc().divide(lenC, lenB));
+        return Line.twoPoint(p, A, getMc());
 	}
 	/**
 	 * Returns the angle <i>B</i>'s angular bisector.This operation requires square root operation in math 
@@ -395,8 +396,8 @@ public final class Triangle<T> extends MathObject<T> {
 	public Line<T> angularBisectorB(){
 		lengthA();
 		lengthC();
-		Point<T> p = A.proportionPoint(C, mc.divide(lenC, lenA));
-		return Line.twoPoint(p, B, mc);
+        Point<T> p = A.proportionPoint(C, getMc().divide(lenC, lenA));
+        return Line.twoPoint(p, B, getMc());
 	}
 	/**
 	 * Returns the angle <i>A</i>'s angular bisector.This operation requires square root operation in math 
@@ -406,8 +407,8 @@ public final class Triangle<T> extends MathObject<T> {
 	public Line<T> angularBisectorC(){
 		lengthA();
 		lengthB();
-		Point<T> p = A.proportionPoint(B, mc.divide(lenB, lenA));
-		return Line.twoPoint(p, C, mc);
+        Point<T> p = A.proportionPoint(B, getMc().divide(lenB, lenA));
+        return Line.twoPoint(p, C, getMc());
 	}
 	
 	void assignLenA(T len){
@@ -431,8 +432,8 @@ public final class Triangle<T> extends MathObject<T> {
 		PVector<T> AB = A.directVector(B),
 				AC = A.directVector(C);
 		PVector<T> xy = v.reduce(AB,AC);
-		T zero = mc.getZero(),one = mc.getOne();
-		return MathUtils.oppositeSide(zero,one,xy.x,mc) && Calculators.between(zero,one,xy.y,mc);
+        T zero = getMc().getZero(), one = getMc().getOne();
+        return MathUtils.oppositeSide(zero, one, xy.x, getMc()) && Calculators.between(zero, one, xy.y, getMc());
 	}
 
 
@@ -448,11 +449,11 @@ public final class Triangle<T> extends MathObject<T> {
 		Point<T> nA = trans.apply(A),
 				nB = trans.apply(B),
 				nC = trans.apply(C);
-		return new Triangle<>(mc,nA,nB,nC);
+        return new Triangle<>(getMc(), nA, nB, nC);
 	}
 
 	@Override
-	public <N> Triangle<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Triangle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Triangle<>(newCalculator, A.mapTo(mapper, newCalculator),
 								B.mapTo(mapper, newCalculator),
 								C.mapTo(mapper, newCalculator),
@@ -481,7 +482,7 @@ public final class Triangle<T> extends MathObject<T> {
 	
 	@Override
 	public int hashCode() {
-		int h = mc.hashCode();
+        int h = getMc().hashCode();
 		h = h*31 + A.hashCode();
 		h = h*31 + B.hashCode();
 		h = h*31 + C.hashCode();
@@ -492,26 +493,26 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		return "Triangle: A:"+A.toString(nf)+" B:"+B.toString(nf)+" C:"+C.toString(nf);
 	}
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Triangle){
 			Triangle<N> tri = (Triangle<N>)obj;
 			T x = mapper.apply(tri.A.x);
 			T y = mapper.apply(tri.A.y);
-			if(mc.isEqual(x, A.x)==false || mc.isEqual(y, A.y)==false){
+            if (getMc().isEqual(x, A.x) == false || getMc().isEqual(y, A.y) == false) {
 				return false;
 			}
 			x = mapper.apply(tri.B.x);
 			y = mapper.apply(tri.B.y);
-			if(mc.isEqual(x, B.x)==false || mc.isEqual(y, B.y)==false){
+            if (getMc().isEqual(x, B.x) == false || getMc().isEqual(y, B.y) == false) {
 				return false;
 			}
 			x = mapper.apply(tri.C.x);
 			y = mapper.apply(tri.C.y);
-			if(mc.isEqual(x, C.x)==false || mc.isEqual(y, C.y)==false){
+            if (getMc().isEqual(x, C.x) == false || getMc().isEqual(y, C.y) == false) {
 				return false;
 			}
 			return true;
@@ -520,15 +521,15 @@ public final class Triangle<T> extends MathObject<T> {
 	}
 	
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj == this){
 			return true;
 		}
 		if(obj instanceof Triangle){
 			Triangle<T> tri = (Triangle<T>)obj;
-			return mc.isEqual(A.x, tri.A.x) && mc.isEqual(A.y, tri.A.y)&&
-					mc.isEqual(B.x, tri.B.x) && mc.isEqual(B.y, tri.B.y)&&
-					mc.isEqual(C.x, tri.C.x) && mc.isEqual(C.y, tri.C.y);
+            return getMc().isEqual(A.x, tri.A.x) && getMc().isEqual(A.y, tri.A.y) &&
+                    getMc().isEqual(B.x, tri.B.x) && getMc().isEqual(B.y, tri.B.y) &&
+                    getMc().isEqual(C.x, tri.C.x) && getMc().isEqual(C.y, tri.C.y);
 		}
 		return false;
 	}

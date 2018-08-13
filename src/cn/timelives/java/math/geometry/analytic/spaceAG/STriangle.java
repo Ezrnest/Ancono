@@ -4,6 +4,7 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.planeAG.Triangle;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +49,13 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 		SVector<T> vt = SVector.vector(A, point);
 		SVector<T> v1 = c.getDirectVector(),
 					v2 = b.getDirectVector();
-		T D = mc.subtract(mc.multiply(v1.y, v2.x),mc.multiply(v1.x, v2.y));
-		T Dx = mc.subtract(mc.multiply(vt.y, v2.x),mc.multiply(vt.x, v2.y));	
-		T Dy = mc.subtract(mc.multiply(v1.x, vt.y), mc.multiply(v1.y, vt.x));
-		T x = mc.divide(Dx, D);
-		T y = mc.divide(Dy, D);
-		T zero = mc.getZero();
-		if(mc.compare(x, zero)>=0 && mc.compare(y, zero) >=0 && mc.compare(mc.add(y, x), mc.getOne())<=0){
+        T D = getMc().subtract(getMc().multiply(v1.y, v2.x), getMc().multiply(v1.x, v2.y));
+        T Dx = getMc().subtract(getMc().multiply(vt.y, v2.x), getMc().multiply(vt.x, v2.y));
+        T Dy = getMc().subtract(getMc().multiply(v1.x, vt.y), getMc().multiply(v1.y, vt.x));
+        T x = getMc().divide(Dx, D);
+        T y = getMc().divide(Dy, D);
+        T zero = getMc().getZero();
+        if (getMc().compare(x, zero) >= 0 && getMc().compare(y, zero) >= 0 && getMc().compare(getMc().add(y, x), getMc().getOne()) <= 0) {
 			return true;
 		}
 		return false;
@@ -140,7 +141,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 */
 	public T area(){
 		if(area == null){
-			area = mc.divideLong(
+            area = getMc().divideLong(
 					a.getDirectVector()
 						.outerProduct(
 					c.getDirectVector()).calLength(), 2l);
@@ -149,7 +150,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	}
 	
 	public T areaSq(){
-		return mc.divideLong(a.getDirectVector().outerProduct(c.getDirectVector()).calLengthSq(), 4l);
+        return getMc().divideLong(a.getDirectVector().outerProduct(c.getDirectVector()).calLengthSq(), 4l);
 	}
 	
 	/**
@@ -158,10 +159,10 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 * @return the center of gravity of this triangle.
 	 */
 	public SPoint<T> centerG(){
-		T x = mc.divideLong(mc.addX(A.x,B.x,C.x),3);
-		T y = mc.divideLong(mc.addX(A.y,B.y,C.y),3);
-		T z = mc.divideLong(mc.addX(A.z,B.z,C.z),3);
-		return new SPoint<>(mc,x,y,z);
+        T x = getMc().divideLong(getMc().addX(A.x, B.x, C.x), 3);
+        T y = getMc().divideLong(getMc().addX(A.y, B.y, C.y), 3);
+        T z = getMc().divideLong(getMc().addX(A.z, B.z, C.z), 3);
+        return new SPoint<>(getMc(), x, y, z);
 	}
 	
 //	/**
@@ -204,17 +205,17 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 */
 	public SPoint<T> centerI(){
 		//calculate the length
-		T nx = mc.add(mc.add(mc.multiply(A.x, a.getLength()), mc.multiply(B.x, b.getLength())),
-				mc.multiply(C.x, c.getLength()));
-		T ny = mc.add(mc.add(mc.multiply(A.y, a.getLength()), mc.multiply(B.y, b.getLength())),
-				mc.multiply(C.y, c.getLength()));
-		T nz = mc.add(mc.add(mc.multiply(A.z, a.getLength()), mc.multiply(B.z, b.getLength())),
-				mc.multiply(C.z, c.getLength()));
-		T deno = mc.add(mc.add(a.getLength(), b.getLength()), c.getLength());
-		nx = mc.divide(nx, deno);
-		ny = mc.divide(ny, deno);
-		nz = mc.divide(nz, deno);
-		return new SPoint<>(mc,nx,ny,nz);
+        T nx = getMc().add(getMc().add(getMc().multiply(A.x, a.getLength()), getMc().multiply(B.x, b.getLength())),
+                getMc().multiply(C.x, c.getLength()));
+        T ny = getMc().add(getMc().add(getMc().multiply(A.y, a.getLength()), getMc().multiply(B.y, b.getLength())),
+                getMc().multiply(C.y, c.getLength()));
+        T nz = getMc().add(getMc().add(getMc().multiply(A.z, a.getLength()), getMc().multiply(B.z, b.getLength())),
+                getMc().multiply(C.z, c.getLength()));
+        T deno = getMc().add(getMc().add(a.getLength(), b.getLength()), c.getLength());
+        nx = getMc().divide(nx, deno);
+        ny = getMc().divide(ny, deno);
+        nz = getMc().divide(nz, deno);
+        return new SPoint<>(getMc(), nx, ny, nz);
 	}
 	
 	/**
@@ -311,7 +312,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 * @return the angle <i>A</i>'s angular bisector
 	 */
 	public Line<T> angularBisectorA(){
-		SPoint<T> p = B.proportionPoint(C, mc.divide(c.getLength(), b.getLength()));
+        SPoint<T> p = B.proportionPoint(C, getMc().divide(c.getLength(), b.getLength()));
 		return Line.twoPoints(p, A);
 	}
 	/**
@@ -320,7 +321,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 * @return the angle <i>B</i>'s angular bisector
 	 */
 	public Line<T> angularBisectorB(){
-		SPoint<T> p = A.proportionPoint(C, mc.divide(c.getLength(), a.getLength()));
+        SPoint<T> p = A.proportionPoint(C, getMc().divide(c.getLength(), a.getLength()));
 		return Line.twoPoints(p, B);
 	}
 	/**
@@ -329,7 +330,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 * @return the angle <i>A</i>'s angular bisector
 	 */
 	public Line<T> angularBisectorC(){
-		SPoint<T> p = A.proportionPoint(B, mc.divide(b.getLength(), a.getLength()));
+        SPoint<T> p = A.proportionPoint(B, getMc().divide(b.getLength(), a.getLength()));
 		return Line.twoPoints(p, C);
 	}
 	/**
@@ -354,7 +355,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 * @return
 	 */
 	public STriangle<T> changeOrderReverse(){
-		STriangle<T> s =  new STriangle<>(mc, pl, A, C, B, c.reverse(), b.reverse(), a.reverse());
+        STriangle<T> s = new STriangle<>(getMc(), pl, A, C, B, c.reverse(), b.reverse(), a.reverse());
 		fillField(s);
 		return s;
 	}
@@ -374,9 +375,9 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	public STriangle<T> changeOrderMove(boolean forward){
 		STriangle<T> s;
 		if(forward){
-			s =  new STriangle<>(mc, pl, C, A, B, c, a, b);
+            s = new STriangle<>(getMc(), pl, C, A, B, c, a, b);
 		}else{
-			s =  new STriangle<>(mc, pl, B, C, A, b, c, a);
+            s = new STriangle<>(getMc(), pl, B, C, A, b, c, a);
 		}
 		fillField(s);
 		return s;
@@ -389,7 +390,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 		s.area = area == null ? null : mapper.apply(area);
 	}
 	@Override
-	public <N> STriangle<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> STriangle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		STriangle<N> s =new STriangle<>(newCalculator, pl.mapTo(mapper, newCalculator),
 				A.mapTo(mapper, newCalculator), B.mapTo(mapper, newCalculator), C.mapTo(mapper, newCalculator),
 				a.mapTo(mapper, newCalculator), b.mapTo(mapper, newCalculator), c.mapTo(mapper, newCalculator));
@@ -415,7 +416,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	}
 
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof STriangle){
 			if(this==obj){
 				return true;
@@ -427,7 +428,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	}
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof STriangle){
 			STriangle<N> s = (STriangle<N>) obj;
 			return A.valueEquals(s.A,mapper) && B.valueEquals(s.B,mapper) && C.valueEquals(s.C,mapper);

@@ -31,7 +31,7 @@ implements CompareStructure<T, S>{
 	 * @return  {@code mc.compare(y, mc.getZero())}
 	 */
 	protected int compareZero(T y) {
-		return mc.compare(y, mc.getZero());
+        return getMc().compare(y, getMc().getZero());
 	}
 	
 	

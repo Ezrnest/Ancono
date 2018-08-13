@@ -7,6 +7,7 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.algebra.calculus.Derivable;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -35,7 +36,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 	 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
 	@Override
-	public abstract <N> CombinedFunction<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator);
+    public abstract <N> CombinedFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
 	 * Defines the combined function:
@@ -60,14 +61,14 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
 		@Override
 		public T apply(T x) {
-			return mc.add(f.apply(x), g.apply(x));
+            return getMc().add(f.apply(x), g.apply(x));
 		}
 		
 		/*
 		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> Add<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> Add<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Add<>(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator);
 		}
 		
@@ -75,7 +76,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return f.toString(nf)+" + "+g.toString(nf);
 		}
 		
@@ -83,7 +84,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(!(obj instanceof Add)) {
 				return false;
 			}
@@ -122,9 +123,9 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 			AbstractSVFunction<T> f_ = fx.derive();
 			AbstractSVFunction<T> g_ = gx.derive();
 			if(f_ instanceof Derivable && g_ instanceof Derivable) {
-				return new AddD<>(f_,g_,mc);
+                return new AddD<>(f_, g_, getMc());
 			}
-			return new Add<>(f_,g_,mc);
+            return new Add<>(f_, g_, getMc());
 		}
 	}
 	
@@ -152,14 +153,14 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
 		@Override
 		public T apply(T x) {
-			return mc.subtract(f.apply(x), g.apply(x));
+            return getMc().subtract(f.apply(x), g.apply(x));
 		}
 		
 		/*
 		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> Subtract<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> Subtract<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Subtract<>(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator);
 		}
 		
@@ -167,7 +168,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return f.toString(nf)+" - "+g.toString(nf);
 		}
 		
@@ -175,7 +176,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(!(obj instanceof Subtract)) {
 				return false;
 			}
@@ -214,9 +215,9 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 			AbstractSVFunction<T> f_ = fx.derive();
 			AbstractSVFunction<T> g_ = gx.derive();
 			if(f_ instanceof Derivable && g_ instanceof Derivable) {
-				return new SubtractD<>(f_,g_,mc);
+                return new SubtractD<>(f_, g_, getMc());
 			}
-			return new Subtract<>(f_,g_,mc);
+            return new Subtract<>(f_, g_, getMc());
 		}
 	}
 	
@@ -243,14 +244,14 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
 		@Override
 		public T apply(T x) {
-			return mc.multiply(f.apply(x), g.apply(x));
+            return getMc().multiply(f.apply(x), g.apply(x));
 		}
 		
 		/*
 		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> Multiply<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> Multiply<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Multiply<>(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator);
 		}
 		
@@ -258,7 +259,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "("+f.toString(nf)+")*("+g.toString(nf)+")";
 		}
 		
@@ -266,7 +267,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(!(obj instanceof Multiply)) {
 				return false;
 			}
@@ -305,13 +306,13 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 			AbstractSVFunction<T> f_ = fx.derive();
 			AbstractSVFunction<T> g_ = gx.derive();
 			if(f_ instanceof Derivable && g_ instanceof Derivable) {
-				MultiplyD<T> m1 = new MultiplyD<>(f_, g, mc);
-				MultiplyD<T> m2 = new MultiplyD<>(f, g_, mc);
-				return new AddD<>(m1,m2,mc);
+                MultiplyD<T> m1 = new MultiplyD<>(f_, g, getMc());
+                MultiplyD<T> m2 = new MultiplyD<>(f, g_, getMc());
+                return new AddD<>(m1, m2, getMc());
 			}
-			Multiply<T> m1 = new Multiply<>(f_, g, mc);
-			Multiply<T> m2 = new Multiply<>(f, g_, mc);
-			return new Add<>(m1,m2,mc);
+            Multiply<T> m1 = new Multiply<>(f_, g, getMc());
+            Multiply<T> m2 = new Multiply<>(f, g_, getMc());
+            return new Add<>(m1, m2, getMc());
 		}
 	}
 	
@@ -338,14 +339,14 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
 		@Override
 		public T apply(T x) {
-			return mc.divide(f.apply(x), g.apply(x));
+            return getMc().divide(f.apply(x), g.apply(x));
 		}
 		
 		/*
 		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> Divide<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> Divide<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Divide<>(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator);
 		}
 		
@@ -353,7 +354,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "("+f.toString(nf)+")/("+g.toString(nf)+")";
 		}
 		
@@ -361,7 +362,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(!(obj instanceof Divide)) {
 				return false;
 			}
@@ -400,17 +401,17 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 			AbstractSVFunction<T> f_ = fx.derive();
 			AbstractSVFunction<T> g_ = gx.derive();
 			if(f_ instanceof Derivable && g_ instanceof Derivable) {
-				MultiplyD<T> m1 = new MultiplyD<>(f_, g, mc);
-				MultiplyD<T> m2 = new MultiplyD<>(f, g_, mc);
-				SubtractD<T> s = new SubtractD<>(m1, m2, mc);
-				MultiplyD<T> m3 = new MultiplyD<>(g, g, mc);
-				return new DivideD<>(s,m3,mc);
+                MultiplyD<T> m1 = new MultiplyD<>(f_, g, getMc());
+                MultiplyD<T> m2 = new MultiplyD<>(f, g_, getMc());
+                SubtractD<T> s = new SubtractD<>(m1, m2, getMc());
+                MultiplyD<T> m3 = new MultiplyD<>(g, g, getMc());
+                return new DivideD<>(s, m3, getMc());
 			}
-			Multiply<T> m1 = new Multiply<>(f_, g, mc);
-			Multiply<T> m2 = new Multiply<>(f, g_, mc);
-			Subtract<T> s = new Subtract<>(m1, m2, mc);
-			Multiply<T> m3 = new Multiply<>(g, g, mc);
-			return new Divide<>(s,m3,mc);
+            Multiply<T> m1 = new Multiply<>(f_, g, getMc());
+            Multiply<T> m2 = new Multiply<>(f, g_, getMc());
+            Subtract<T> s = new Subtract<>(m1, m2, getMc());
+            Multiply<T> m3 = new Multiply<>(g, g, getMc());
+            return new Divide<>(s, m3, getMc());
 		}
 	}
 	
@@ -444,7 +445,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
 		@Override
-		public <N> Combine<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> Combine<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Combine<>(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator);
 		}
 		
@@ -452,7 +453,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
 		@Override
-		public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "("+f.toString(nf)+")/("+g.toString(nf)+")";
 		}
 		
@@ -460,7 +461,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
 		 */
 		@Override
-		public boolean valueEquals(MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(!(obj instanceof Combine)) {
 				return false;
 			}
@@ -499,9 +500,9 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 			AbstractSVFunction<T> f_ = fx.derive();
 			AbstractSVFunction<T> g_ = gx.derive();
 			if(f_ instanceof Derivable && g_ instanceof Derivable) {
-				return new MultiplyD<>(f_, new CombineD<>(f, g_, mc), mc);
+                return new MultiplyD<>(f_, new CombineD<>(f, g_, getMc()), getMc());
 			}
-			return new Multiply<>(f_, new Combine<>(f, g_, mc), mc);
+            return new Multiply<>(f_, new Combine<>(f, g_, getMc()), getMc());
 		}
 	}
 	

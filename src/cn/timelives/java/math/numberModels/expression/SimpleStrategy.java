@@ -139,7 +139,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	}
 	
 	protected final MultinomialCalculator getMultiCalculator(ExprCalculator mc) {
-		return mc.pc;
+		return mc.getMultinomialCalculator();
 	}
 
 

@@ -9,6 +9,7 @@ import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public final class Complex<T> extends MathObject<T> {
 	 */
 	public T modulus(){
 		if(m == null){
-			m = mc.squareRoot(mc.add(mc.multiply(a, a), mc.multiply(b, b)));
+            m = getMc().squareRoot(getMc().add(getMc().multiply(a, a), getMc().multiply(b, b)));
 		}
 		return m;
 	}
@@ -78,7 +79,7 @@ public final class Complex<T> extends MathObject<T> {
 	 * @return a vector
 	 */
 	public PVector<T> toVector(){
-		return PVector.valueOf(a, b, mc);
+        return PVector.valueOf(a, b, getMc());
 	}
 	
 	/**
@@ -86,7 +87,7 @@ public final class Complex<T> extends MathObject<T> {
 	 * @return point(a,b)
 	 */
 	public Point<T> toPoint(){
-		return Point.valueOf(a, b, mc);
+        return Point.valueOf(a, b, getMc());
 	}
 	
 	/**
@@ -113,36 +114,36 @@ public final class Complex<T> extends MathObject<T> {
 	 */
 	public T arg(){
 		if(arg==null){
-			T pi = mc.constantValue(MathCalculator.STR_PI);
-			int compa = mc.compare(a, mc.getZero());
-			int compb = mc.compare(b, mc.getZero());
+            T pi = getMc().constantValue(MathCalculator.STR_PI);
+            int compa = getMc().compare(a, getMc().getZero());
+            int compb = getMc().compare(b, getMc().getZero());
 			if(compa == 0){
 				if(compb==0){
-					return mc.getZero();
+                    return getMc().getZero();
 				}
 				if(compb>0){
-					return mc.divideLong(pi, 2l);
+                    return getMc().divideLong(pi, 2l);
 				}else{
-					return mc.add(mc.divideLong(pi, 2l), pi);
+                    return getMc().add(getMc().divideLong(pi, 2l), pi);
 				}
 			}
 			if(compb == 0){
 				if(compa>0){
-					return mc.getZero();
+                    return getMc().getZero();
 				}else{
 					return pi;
 				}
 			}
-			T theta = mc.arctan(mc.abs(mc.divide(b, a)));
+            T theta = getMc().arctan(getMc().abs(getMc().divide(b, a)));
 			if(compa>0){
 				if(compb<0){
-					theta = mc.subtract(mc.multiplyLong(pi, 2l), theta);
+                    theta = getMc().subtract(getMc().multiplyLong(pi, 2l), theta);
 				}
 			}else{
 				if(compb>0){
-					theta = mc.subtract(pi, theta);
+                    theta = getMc().subtract(pi, theta);
 				}else{
-					theta = mc.add(theta, pi);
+                    theta = getMc().add(theta, pi);
 				}
 			}
 			arg = theta;
@@ -154,26 +155,23 @@ public final class Complex<T> extends MathObject<T> {
 	/**
 	 * A default implement of argument function for Double.
 	 */
-	public static final MathFunction<Complex<Double>, Double> 
-		DAF = new MathFunction<Complex<Double>, Double>() {
-			@Override
-			public Double apply(Complex<Double> t) {
-				
-				double arg = Math.atan2(t.b, t.a);
-				//must be in [0,2pi),so add 2Pi if necessary.
-				if(arg<0){
-					arg += Math.PI*2;
-				}
-				return arg;
-			}
-	};
+	public static final MathFunction<Complex<Double>, Double>
+            DAF = t -> {
+
+        double arg = Math.atan2(t.b, t.a);
+        //must be in [0,2pi),so add 2Pi if necessary.
+        if (arg < 0) {
+            arg += Math.PI * 2;
+        }
+        return arg;
+    };
 	/**
 	 * Returns {@code this+z}.
 	 * @param z
 	 * @return {@code this+z}
 	 */
 	public Complex<T> add(Complex<T> z){
-		return new Complex<T>(mc,mc.add(a, z.a),mc.add(b, z.b));
+        return new Complex<T>(getMc(), getMc().add(a, z.a), getMc().add(b, z.b));
 	}
 	/**
 	 * Returns {@code this-z}.
@@ -181,14 +179,14 @@ public final class Complex<T> extends MathObject<T> {
 	 * @return {@code this-z}
 	 */
 	public Complex<T> subtract(Complex<T> z){
-		return new Complex<T>(mc,mc.subtract(a, z.a),mc.subtract(b, z.b));
+        return new Complex<T>(getMc(), getMc().subtract(a, z.a), getMc().subtract(b, z.b));
 	}
 	/**
 	 * Returns {@code -this}.
 	 * @return {@code -this}
 	 */
 	public Complex<T> negate(){
-		return new Complex<T>(mc,mc.negate(a),mc.negate(b));
+        return new Complex<T>(getMc(), getMc().negate(a), getMc().negate(b));
 	}
 	/**
 	 * Returns the conjugate complex number of {@code this}.
@@ -199,7 +197,7 @@ public final class Complex<T> extends MathObject<T> {
 	 * 
 	 */
 	public Complex<T> conjugate(){
-		return new Complex<T>(mc,a,mc.negate(b));
+        return new Complex<T>(getMc(), a, getMc().negate(b));
 	}
 	/**
 	 * Returns this*z.
@@ -214,12 +212,12 @@ public final class Complex<T> extends MathObject<T> {
 		//2.ac , 3. bd
 		//and 1 - 2 - 3 = ad + bc
 		//    2 - 3 = ac - bd
-		T t1 = mc.multiply(mc.add(a, b), mc.add(z.a, z.b));
-		T t2 = mc.multiply(a, z.a);
-		T t3 = mc.multiply(b, z.b);
-		T an = mc.subtract(t2, t3);
-		T bn = mc.subtract(t1, mc.add(t2, t3));
-		return new Complex<T>(mc, an, bn);
+        T t1 = getMc().multiply(getMc().add(a, b), getMc().add(z.a, z.b));
+        T t2 = getMc().multiply(a, z.a);
+        T t3 = getMc().multiply(b, z.b);
+        T an = getMc().subtract(t2, t3);
+        T bn = getMc().subtract(t1, getMc().add(t2, t3));
+        return new Complex<T>(getMc(), an, bn);
 	}
 	/**
 	 * Returns this*r.
@@ -227,7 +225,7 @@ public final class Complex<T> extends MathObject<T> {
 	 * @return this*r
 	 */
 	public Complex<T> multiplyReal(T r){
-		return new Complex<T>(mc,mc.multiply(a, r),mc.multiply(b, r));
+        return new Complex<T>(getMc(), getMc().multiply(a, r), getMc().multiply(b, r));
 	}
 	
 	/**
@@ -238,26 +236,26 @@ public final class Complex<T> extends MathObject<T> {
 	public Complex<T> divide(Complex<T> z){
 		//                _
 		//z1 / z2 = (z1 * z2) / |z2|^2
-		T sq = mc.add(mc.multiply(z.a, z.a), mc.multiply(z.b, z.b));
+        T sq = getMc().add(getMc().multiply(z.a, z.a), getMc().multiply(z.b, z.b));
 		//copy code here
-		T tb = mc.negate(z.b);
-		T t1 = mc.multiply(mc.add(a, b), mc.add(z.a, tb));
-		T t2 = mc.multiply(a, z.a);
-		T t3 = mc.multiply(b, tb);
-		T an = mc.subtract(t2, t3);
-		T bn = mc.subtract(t1, mc.add(t2, t3));
-		an = mc.divide(an, sq);
-		bn = mc.divide(bn, sq);
-		return new Complex<T>(mc, an, bn);
+        T tb = getMc().negate(z.b);
+        T t1 = getMc().multiply(getMc().add(a, b), getMc().add(z.a, tb));
+        T t2 = getMc().multiply(a, z.a);
+        T t3 = getMc().multiply(b, tb);
+        T an = getMc().subtract(t2, t3);
+        T bn = getMc().subtract(t1, getMc().add(t2, t3));
+        an = getMc().divide(an, sq);
+        bn = getMc().divide(bn, sq);
+        return new Complex<T>(getMc(), an, bn);
 	}
 	
 	public Complex<T> reciprocal(){
 		//         _
 		// 1 / z = z / |z|^2
-		T sq = mc.add(mc.multiply(a, a), mc.multiply(b, b));
-		T an = mc.divide(a, sq);
-		T bn = mc.divide(mc.negate(b), sq);
-		return new Complex<T>(mc, an, bn);
+        T sq = getMc().add(getMc().multiply(a, a), getMc().multiply(b, b));
+        T an = getMc().divide(a, sq);
+        T bn = getMc().divide(getMc().negate(b), sq);
+        return new Complex<T>(getMc(), an, bn);
 	}
 	/**
 	 * Calculates the result of {@code this^p},the {@code p} should be a non-negative 
@@ -272,9 +270,9 @@ public final class Complex<T> extends MathObject<T> {
 		}
 		
 		//we use this way to reduce the calculation to log(p)
-		Complex<T> re = Complex.real(mc.getOne(), mc);
+        Complex<T> re = Complex.real(getMc().getOne(), getMc());
 		if(p == 0){
-			if(mc.isZero(a)&&mc.isZero(b)){
+            if (getMc().isZero(a) && getMc().isZero(b)) {
 				throw new ArithmeticException("0^0");
 			}
 			return re;
@@ -294,7 +292,7 @@ public final class Complex<T> extends MathObject<T> {
 //	public Complex<T> powf()
 	
 	@Override
-	public <N> Complex<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Complex<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Complex<N>(newCalculator,mapper.apply(a),mapper.apply(b));
 	}
 	
@@ -317,38 +315,38 @@ public final class Complex<T> extends MathObject<T> {
 	 * @return
 	 */
 	@Override
-	public String toString(FlexibleNumberFormatter<T,MathCalculator<T>> nf) {
-		if(mc.isZero(a)){
-			if (mc.isZero(b)) {
+    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        if (getMc().isZero(a)) {
+            if (getMc().isZero(b)) {
 				return "0";
 			}
-			return "("+nf.format(b, mc)+")i";
+            return "(" + nf.format(b, getMc()) + ")i";
 		}else{
-			if(mc.isZero(b)){
-				return "("+nf.format(a, mc)+")i";
+            if (getMc().isZero(b)) {
+                return "(" + nf.format(a, getMc()) + ")i";
 			}
 			StringBuilder sb = new StringBuilder();
-			sb.append('(').append(nf.format(a, mc))
+            sb.append('(').append(nf.format(a, getMc()))
 			.append(")")
-			.append(nf.format(b, mc))
+                    .append(nf.format(b, getMc()))
 			.append(")i");
 			return sb.toString();
 		}
 	}
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Complex){
 			Complex<T> com = (Complex<T>) obj;
-			return mc.isEqual(a, com.a) && mc.isEqual(b, com.b);
+            return getMc().isEqual(a, com.a) && getMc().isEqual(b, com.b);
 		}
 		return false;
 	}
 
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Complex){
 			Complex<N> com = (Complex<N>) obj;
-			return mc.isEqual(a, mapper.apply(com.a)) && mc.isEqual(b, mapper.apply(com.b));
+            return getMc().isEqual(a, mapper.apply(com.a)) && getMc().isEqual(b, mapper.apply(com.b));
 		}
 		return false;
 	}
@@ -396,7 +394,7 @@ public final class Complex<T> extends MathObject<T> {
 	 * Create a real number 
 	 * <pre>bi</pre>
 	 * The real part of this number will be 0.
-	 * @param a the imaginary part
+     * @param b the imaginary part
 	 * @param mc a {@link MathCalculator}
 	 * @return a new complex.
 	 */
@@ -455,7 +453,7 @@ public final class Complex<T> extends MathObject<T> {
 		 */
 		@Override
 		public Complex<T> abs(Complex<T> para) {
-			return Complex.real(para.modulus(), para.mc);
+            return Complex.real(para.modulus(), para.getMc());
 		}
 
 		@Override
@@ -469,7 +467,7 @@ public final class Complex<T> extends MathObject<T> {
 		}
 
 		@Override
-		public Complex<T> multiply(Complex<T> para1, Complex<T> para2) {
+        public Complex<T> multiply(@NotNull Complex<T> para1, Complex<T> para2) {
 			return para1.multiply(para2);
 		}
 
@@ -494,27 +492,27 @@ public final class Complex<T> extends MathObject<T> {
 		}
 
 		@Override
-		public Complex<T> divideLong(Complex<T> p, long l) {
-			return new Complex<T>(mc,mc.divideLong(p.a, l),mc.divideLong(p.b, l));
+        public Complex<T> divideLong(Complex<T> p, long n) {
+            return new Complex<T>(mc, mc.divideLong(p.a, n), mc.divideLong(p.b, n));
 		}
 
 		@Override
-		public Complex<T> squareRoot(Complex<T> p) {
-			if(mc.isZero(p.im())){
-				T re = p.re();
+        public Complex<T> squareRoot(Complex<T> x) {
+            if (mc.isZero(x.im())) {
+                T re = x.re();
 				if(nonNegative(re)){
 					return new Complex<>(mc, mc.squareRoot(re), mc.getZero());
 				}else{
 					return new Complex<>(mc,mc.getZero(),mc.negate(re));
 				}
 			}
-			T m = p.modulus();
+            T m = x.modulus();
 			T r = mc.squareRoot(m);
-			T cos = mc.divide(p.a, m);
-			T sin = mc.divide(p.b, r);
+            T cos = mc.divide(x.a, m);
+            T sin = mc.divide(x.b, r);
 			cos = mc.squareRoot(mc.divideLong(mc.add(cos, mc.getOne()), 2l));
 			sin = mc.squareRoot(mc.divideLong(mc.subtract(mc.getOne(), sin), 2l));
-			if(!nonNegative(p.b)){
+            if (!nonNegative(x.b)) {
 				cos = mc.negate(cos);
 			}
 			cos = mc.multiply(r, cos);
@@ -524,7 +522,8 @@ public final class Complex<T> extends MathObject<T> {
 		}
 		
 		/**
-		 * @see MathCalculator#root(java.lang.Object, long)
+         * @see MathCalculator#nroot(Object, long)
+         *
 		 */
 		@Override
 		public Complex<T> nroot(Complex<T> x, long n) {

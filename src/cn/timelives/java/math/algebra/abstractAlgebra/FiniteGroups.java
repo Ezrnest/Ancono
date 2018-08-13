@@ -154,7 +154,7 @@ public final class FiniteGroups {
             list.add(x);
         }
         listGenerate(list,gc);
-        FiniteSet<T> set = MathSets.fromCollection(list,GroupCalculators.toMathCalculatorAdd(gc));
+        FiniteSet<T> set = MathSets.fromCollection(list, GroupCalculators.INSTANCE.toMathCalculatorAdd(gc));
         return new FiniteGroupImpl<>(gc, set);
 	}
 
@@ -201,7 +201,7 @@ public final class FiniteGroups {
             list.add(x);
         }
         listGenerate(list,f);
-        FiniteSet<T> set = MathSets.fromCollection(list,GroupCalculators.toMathCalculatorAdd(f));
+        FiniteSet<T> set = MathSets.fromCollection(list, GroupCalculators.INSTANCE.toMathCalculatorAdd(f));
         return new FiniteGroupImpl<>(f, set);
     }
 

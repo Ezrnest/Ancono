@@ -1,0 +1,960 @@
+/**
+ * 2017-11-24
+ */
+package cn.timelives.java.math.numberModels.expression
+
+import cn.timelives.java.math.MathCalculator
+import cn.timelives.java.math.exceptions.UnsupportedCalculationException
+import cn.timelives.java.math.numberModels.Multinomial
+import cn.timelives.java.math.numberModels.MultinomialCalculator
+import cn.timelives.java.math.numberModels.Term
+import cn.timelives.java.math.numberModels.api.Simplifier
+import cn.timelives.java.math.numberModels.expression.Node.*
+
+import java.util.*
+import cn.timelives.java.utilities.Printer.print
+
+/**
+ * Expression Calculator deals with the calculation of the Expression. Unlike
+ * most types of [MathCalculator] which have few things to configure,
+ * expression calculator provides a wide variety of configurations and plug-ins
+ * that enable the calculator to handle customized calculation.
+ * <h3>Functions</h3> In addition to basic math operations like add, multiply
+ * and so on, the Expression also allows functions. A function is identified
+ * with it own name and the number of parameters. The expression calculator
+ * allows users to set the functions that the calculator should recognize by
+ * assigning an instance of [ExprFunctionHolder] when creating a
+ * calculator. Then the expression calculator can handle the functions and
+ * compute them. A more detailed instruction of expression function can be found
+ * in [ExprFunction].
+ * <h3>Simplification</h3> Expressions can be mathematically equal but are of
+ * different Expression, and one of the possible forms can be simpler than
+ * others and is more efficient. Therefore, proper simplification is essential
+ * for expression calculator. Generally, there are two types of simplification.
+ * <P>
+ * One of them is polynomial simplification, which is already defined in the
+ * calculator. The calculator doing polynomial simplification will try to add,
+ * subtract, multiply, divide and calculate the functions available as long as
+ * the result can be expressed with polynomials. It is normally the basic and
+ * default simplification strategy.
+</P> *
+ *
+ * The other type is
+ *
+ *
+ *
+ *
+ *
+ * <h3></h3> Each ExprCalculator has a level of simplification, which determines
+ * how far the calculator should perform the simplification. Generally, a higher
+ * level of simplification means that the calculator will try to simplify the
+ * expression by using more high-leveled [SimplificationStrategy], thus
+ * making the simplification more thorough. However, it is not necessarily
+ * better to set the level of simplification as high as possible, because a
+ * higher level of simplification can also consume lots of time when the
+ * expression cannot be simplified. Therefore, a suitable level should be set
+ * according to the task. The following is some basic levels:
+ *
+ *  * level = 0 : Multinomial
+ *
+ *
+ * In this level the calculator will try to
+ *  * level = 100 : Merge
+ *
+ *
+ * In this level the calculator will try
+ *
+ *
+ *
+ * @author liyicheng 2017-11-24 18:27
+ */
+class ExprCalculator
+/**
+ *
+ */
+@JvmOverloads constructor(
+        /**
+         * The polynomial calculator of this calculator
+         */
+        /**
+         * Gets the pc.
+         *
+         * @return the pc
+         */
+        val multinomialCalculator: MultinomialCalculator = DEFAULT_CALCULATOR,
+        /**
+         * Gets the nc.
+         *
+         * @return the nc
+         */
+        val nodeComparator: Comparator<Node> = NodeComparator.DEFAULT,
+        /**
+         * Gets the ps.
+         *
+         * @return the ps
+         */
+        val polynomialSimplifier: Simplifier<Multinomial> = Multinomial.getSimplifier(),
+        /**
+         * Gets the fs.
+         *
+         * @return the fs
+         */
+        val functionHolder: ExprFunctionHolder = DEFAULT_FUNCTIONS,
+        /**
+         * Gets the ss.
+         *
+         * @return the ss
+         */
+        val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : MathCalculator<Expression> {
+    internal val enabledTags: MutableSet<String>
+    internal val properties: MutableMap<String, String>
+    // some constants here
+    @get:JvmName("getPOne")
+    internal val pOne: Multinomial
+    @get:JvmName("getPZero")
+    internal val pZero: Multinomial
+    @get:JvmName("getPMinusOne")
+    internal val pMinusOne: Multinomial
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#getZero()
+	 */
+    override val zero: Expression
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#getOne()
+	 */
+    override val one: Expression
+
+    private var simplificationIdentifier: Int = 0
+
+    override val isComparable: Boolean
+        get() = false
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#getNumberClass()
+	 */
+    override val numberClass: Class<*>
+        get() = Expression::class.java
+
+
+    init {
+        enabledTags = SimplificationStrategies.getDefaultTags()
+        properties = HashMap()
+        pOne = multinomialCalculator.one
+        pZero = multinomialCalculator.zero
+        pMinusOne = multinomialCalculator.negate(pOne)
+        zero = Expression.fromMultinomial(pZero)
+        one = Expression.fromMultinomial(pOne)
+        updateSimplificationIdentifier()
+    }
+
+    private fun updateSimplificationIdentifier() {
+        var si = multinomialCalculator.hashCode()
+        si = si * 31 + polynomialSimplifier.hashCode()
+        si = si * 31 + functionHolder.hashCode()
+        si = si * 31 + simStraHolder.hashCode()
+        si = si * 31 + properties.hashCode()
+        si = si * 31 + enabledTags.hashCode()
+        if (si == 0) {
+            si = 1
+        }
+        simplificationIdentifier = si
+    }
+
+    /**
+     * Gets a property from this calculator.
+     * @param key
+     * @return
+     */
+    fun getProperty(key: String): String? {
+        return properties[key]
+    }
+
+    /**
+     * Sets a property for this calculator.
+     * @param key
+     * @return
+     */
+    fun setProperty(key: String, value: String) {
+        properties[key] = value
+        updateSimplificationIdentifier()
+    }
+
+    /**
+     * Gets the enabledTags.
+     *
+     * @return the enabledTags
+     */
+    fun getEnabledTags(): Set<String> {
+        return HashSet(enabledTags)
+    }
+
+
+    /**
+     * @param o
+     * @return
+     * @see Set.contains
+     */
+    fun tagContains(o: Any): Boolean {
+        return enabledTags.contains(o)
+    }
+
+    /**
+     * @param e
+     * @return
+     * @see Set.add
+     */
+    fun tagAdd(e: String): Boolean {
+        val b = enabledTags.add(e)
+        updateSimplificationIdentifier()
+        return b
+    }
+
+    /**
+     * @param o
+     * @return
+     * @see Set.remove
+     */
+    fun tagRemove(o: Any): Boolean {
+        val b = enabledTags.remove(o)
+        updateSimplificationIdentifier()
+        return b
+    }
+
+    /**
+     * @param c
+     * @return
+     * @see Set.addAll
+     */
+    fun tagAddAll(c: Collection<String>): Boolean {
+        val b = enabledTags.addAll(c)
+        updateSimplificationIdentifier()
+        return b
+    }
+
+    /**
+     *
+     * @see Set.clear
+     */
+    fun tagClear() {
+        enabledTags.clear()
+        updateSimplificationIdentifier()
+    }
+
+    fun setTags(set: Set<String>) {
+        enabledTags.clear()
+        enabledTags.addAll(set)
+        updateSimplificationIdentifier()
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#isEqual(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun isEqual(para1: Expression, para2: Expression): Boolean {
+        return para1.root.equalNode(para2.root, multinomialCalculator)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#compare(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun compare(para1: Expression, para2: Expression): Int {
+        throw UnsupportedCalculationException()
+        //		return nc.compare(para1.root, para2.root);
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#add(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun add(para1: Expression, para2: Expression): Expression {
+        // special case for both polynomial:
+        if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
+            val p1 = toPolynomial(para1.root).p
+            val p2 = toPolynomial(para2.root).p
+            return Expression(Node.newPolyNode(multinomialCalculator.add(p1, p2), null))
+        }
+        val list = ArrayList<Node>(2)
+        val nroot = Add(null, null, list)
+        val rt1 = para1.root.cloneNode(nroot)
+        val rt2 = para2.root.cloneNode(nroot)
+        list.add(rt1)
+        list.add(rt2)
+        val root = simplify(nroot)
+        return Expression(root)
+    }
+
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#negate(java.lang.Object)
+	 */
+    override fun negate(para: Expression): Expression {
+        if (isPolynomial(para.root)) {
+            return Expression(Node.newPolyNode(multinomialCalculator.negate(toPolynomial(para.root).p), null))
+        }
+        var nroot: Node = Node.wrapCloneNodeMultiply(para.root, pMinusOne)
+        nroot = simplify(nroot)
+        return Expression(nroot)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#abs(java.lang.Object)
+	 */
+    override fun abs(para: Expression): Expression {
+        var rt: Node = Node.wrapCloneNodeSF("abs", para.root)
+        rt = simplify(rt)
+        return Expression(rt)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#subtract(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun subtract(para1: Expression, para2: Expression): Expression {
+        if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
+            val p1 = toPolynomial(para1.root).p
+            val p2 = toPolynomial(para2.root).p
+            return Expression(Node.newPolyNode(multinomialCalculator.subtract(p1, p2), null))
+        }
+        // para1 + (-1)*para2
+        val p1 = para1.root.cloneNode(null)
+        val p2 = Node.wrapCloneNodeMultiply(para2.root, pMinusOne)
+        var root: Node = Node.wrapNodeAM(true, p1, p2)
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#isZero(java.lang.Object)
+	 */
+    override fun isZero(para: Expression): Boolean {
+        return isEqual(zero, para)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#multiply(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun multiply(para1: Expression, para2: Expression): Expression {
+        // special case for both polynomial:
+        if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
+            val p1 = toPolynomial(para1.root).p
+            val p2 = toPolynomial(para2.root).p
+            return Expression(Node.newPolyNode(multinomialCalculator.multiply(p1, p2), null))
+        }
+        var root = Node.wrapCloneNodeAM(false, para1.root, para2.root)
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#divide(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun divide(para1: Expression, para2: Expression): Expression {
+        var root: Node = Node.wrapCloneNodeFraction(para1.root, para2.root)
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#reciprocal(java.lang.
+	 * Object)
+	 */
+    override fun reciprocal(p: Expression): Expression {
+        val root = Node.wrapNodeFraction(Node.newPolyNode(pOne, null), p.root.cloneNode(null))
+        val r = simplify(root)
+        return Expression(r)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#multiplyLong(java.lang.
+	 * Object, long)
+	 */
+    override fun multiplyLong(p: Expression, l: Long): Expression {
+        // special case for both polynomial:
+        if (isPolynomial(p.root)) {
+            val p1 = toPolynomial(p.root).p
+            return Expression(Node.newPolyNode(multinomialCalculator.multiplyLong(p1, l), null))
+        }
+        var root: Node = wrapCloneNodeMultiply(p.root, Multinomial.valueOf(l))
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#divideLong(java.lang.
+	 * Object, long)
+	 */
+    override fun divideLong(p: Expression, n: Long): Expression {
+        if (isPolynomial(p.root)) {
+            val p1 = toPolynomial(p.root).p
+            return Expression(Node.newPolyNode(multinomialCalculator.divideLong(p1, n), null))
+        }
+        var root: Node = wrapCloneNodeMultiply(p.root, Multinomial.monomial(Term.valueOfRecip(n)))
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#squareRoot(java.lang.
+	 * Object)
+	 */
+    override fun squareRoot(x: Expression): Expression {
+        return sfunction("sqr", x)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#nroot(java.lang.Object,
+	 * long)
+	 */
+    override fun nroot(x: Expression, n: Long): Expression {
+        var root: Node = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(Multinomial.monomial(Term.valueOfRecip(n)), null))
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#pow(java.lang.Object,
+	 * long)
+	 */
+    override fun pow(p: Expression, exp: Long): Expression {
+        var root: Node = wrapNodeDF("exp", p.root.cloneNode(null), newPolyNode(Multinomial.valueOf(exp), null))
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#constantValue(java.lang.
+	 * String)
+	 */
+    override fun constantValue(name: String): Expression {
+        try {
+            val p = multinomialCalculator.constantValue(name)
+            return Expression.fromMultinomial(p)
+        } catch (uce: UnsupportedCalculationException) {
+            throw uce
+        }
+
+        //		return null;
+    }
+
+    private fun sfunction(name: String, p: Expression): Expression {
+        var root: Node = wrapCloneNodeSF(name, p.root)
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    private fun dFunction(name: String, p1: Expression, p2: Expression): Expression {
+        var root: Node = wrapCloneNodeDF(name, p1.root, p2.root)
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#exp(java.lang.Object)
+	 */
+    override fun exp(x: Expression): Expression {
+        return sfunction("exp", x)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#ln(java.lang.Object)
+	 */
+    override fun ln(x: Expression): Expression {
+        return sfunction("ln", x)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#sin(java.lang.Object)
+	 */
+    override fun sin(x: Expression): Expression {
+        return sfunction("sin", x)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#arcsin(java.lang.Object)
+	 */
+    override fun arcsin(x: Expression): Expression {
+        return sfunction("arcsin", x)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#arccos(java.lang.Object)
+	 */
+    override fun arccos(x: Expression): Expression {
+        return sfunction("arccos", x)
+    }
+
+    /*
+	 * @see
+	 * cn.timelives.java.math.MathCalculator#arctan(java.lang.Object)
+	 */
+    override fun arctan(x: Expression): Expression {
+        return sfunction("arctan", x)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#cos(java.lang.Object)
+	 */
+    override fun cos(x: Expression): Expression {
+        return sfunction("cos", x)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#exp(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun exp(a: Expression, b: Expression): Expression {
+        return dFunction("exp", a, b)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#log(java.lang.Object,
+	 * java.lang.Object)
+	 */
+    override fun log(a: Expression, b: Expression): Expression {
+        return dFunction("log", a, b)
+    }
+
+    /*
+	 * @see cn.timelives.java.math.MathCalculator#tan(java.lang.Object)
+	 */
+    override fun tan(x: Expression): Expression {
+        return sfunction("tan", x)
+    }
+
+
+    fun simplify(x: Expression): Expression {
+        var root = x.root.cloneNode(null)
+        root = simplify(root)
+
+        return Expression(root)
+    }
+
+    /**
+     * Simplifies the node with the given depth. Assigning depth = 0 means only
+     * simplify the node. The given node will be simplified regardless of its simplification identifier.
+     * @param root
+     * @param depth
+     * @return
+     */
+    @JvmName("simplify")
+    @JvmOverloads
+    internal fun simplify(root: Node, depth: Int = Integer.MAX_VALUE): Node {
+        checkValidTree(root)
+        root.resetSimIdentifier()
+        return if (depth == 0) {
+            //special case: avoid recursion.
+            simplifyNode(root)
+        } else root.recurApply({ x ->
+            if (simplificationIdentifier == x.simIdentifier) {
+                //simplified
+                return@recurApply x
+            }
+            simplifyNode(x)
+        }, depth)
+    }
+
+    /**
+     * Simplify the single node, this method will only simplify only node and
+     * there will be no recursion.
+     * @param node
+     * @return
+     */
+    private fun simplifyNode(node: Node): Node {
+        var node = node
+        if (debugEnabled) {
+            count++
+            if (count % 100 == 0L)
+                print("Simplify: " + node.type + " : " + node.hashCode())//TODO
+        }
+        node = simplifyPolynomial(node, 0)
+        doSort(node, 0)
+        node = simplifyWithStrategyNoRecur(node)
+        node.simIdentifier = simplificationIdentifier
+        return node
+    }
+
+    /**
+     * Try to merge polynomials in the expression as well as possible. For example,
+     *
+     * @param node
+     * @param depth
+     * @return
+     */
+    @JvmName("simplifyPolynomial")
+    internal fun simplifyPolynomial(node: Node, depth: Int): Node {
+        var node = node
+        if (node.simIdentifier == simplificationIdentifier) {
+            return node
+        }
+        when (node.type) {
+            Node.Type.POLYNOMIAL -> {
+                return node
+            }
+            Node.Type.ADD -> {
+                node = polySimplifyAdd(node as Add, depth)
+            }
+            Node.Type.FRACTION -> {
+                node = polySimplifyFraction(node as Fraction, depth)
+            }
+            Node.Type.MULTIPLY -> {
+                node = polySimplifyMultiply(node as Multiply, depth)
+            }
+
+            Node.Type.S_FUNCTION -> {
+                node = polySimplifySFunction(node as SFunction, depth)
+            }
+            Node.Type.D_FUNCTION -> {
+                node = polySimplifyDFunction(node as DFunction, depth)
+            }
+            Node.Type.M_FUNCTION -> {
+                node = polySimplifyMFunction(node as MFunction, depth)
+            }
+        }
+        return node
+    }
+
+    internal fun setParentAndReturn(original: Node, returned: Node): Node {
+        returned.parent = original.parent
+        return returned
+    }
+
+    internal fun polySimplifyAdd(node: Add, depth: Int): Node {
+        var p: Multinomial? = node.p
+        if (p == null) {
+            p = multinomialCalculator.zero
+        }
+        val children = node.children
+        val lit = node.children.listIterator(children.size)
+        while (lit.hasPrevious()) {
+            val t = lit.previous()
+            val nt = if (depth > 0) simplifyPolynomial(t, depth - 1) else t
+            if (nt.type == Type.POLYNOMIAL) {
+                // add this one
+                val pn = nt as Poly
+                p = multinomialCalculator.add(p!!, pn.p)
+                lit.remove()
+            } else if (nt !== t) {
+                lit.set(nt)
+            }
+
+        }
+        if (children.isEmpty()) {
+            return newPolyNode(p, node.parent)
+        }
+        if (multinomialCalculator.isZero(p!!)) {
+            if (children.size == 1) {
+                return setParentAndReturn(node, children[0])
+            }
+            node.p = null
+        } else {
+            node.p = p
+        }
+        return node
+    }
+
+    internal fun polySimplifyMultiply(node: Multiply, depth: Int): Node {
+        var p: Multinomial? = node.p
+        if (p == null) {
+            p = multinomialCalculator.one
+        }
+        val children = node.children
+        val lit = node.children.listIterator(children.size)
+        while (lit.hasPrevious()) {
+            val t = lit.previous()
+            val nt = if (depth > 0) simplifyPolynomial(t, depth - 1) else t
+            if (nt.type == Type.POLYNOMIAL) {
+                // add this one
+                val pn = nt as Poly
+                p = multinomialCalculator.multiply(p!!, pn.p)
+                if (multinomialCalculator.isZero(p)) {
+                    // *0
+                    break
+                }
+                lit.remove()
+            } else if (nt !== t) {
+                lit.set(nt)
+            }
+        }
+
+        if (node.children.isEmpty() || multinomialCalculator.isZero(p!!)) {
+            return newPolyNode(p, node.parent)
+        }
+        if (multinomialCalculator.isEqual(p!!, multinomialCalculator.one)) {
+            if (children.size == 1) {
+                return setParentAndReturn(node, children[0])
+            }
+            node.p = null
+        } else {
+            node.p = p
+        }
+        return node
+    }
+
+    internal fun polySimplifyFraction(node: Fraction, depth: Int): Node {
+        var nume = if (depth > 0) simplifyPolynomial(node.c1, depth - 1) else node.c1
+        var deno = if (depth > 0) simplifyPolynomial(node.c2, depth - 1) else node.c2
+        if (nume.type == Type.POLYNOMIAL) {
+            val pnume = nume as Poly
+            if (multinomialCalculator.isZero(pnume.p)) {
+                return Node.newPolyNode(multinomialCalculator.zero, node.parent)
+            }
+            if (deno.type == Type.POLYNOMIAL) {
+                val pdeno = deno as Poly
+                try {
+                    val quotient = multinomialCalculator.divide(pnume.p, pdeno.p)
+                    return Node.newPolyNode(quotient, node.parent)
+                } catch (ex: UnsupportedCalculationException) {
+                    // cannot compute
+                }
+
+                val list = polynomialSimplifier.simplify(Arrays.asList(pnume.p, pdeno.p))
+                nume = Node.newPolyNode(list[0], node)
+                deno = Node.newPolyNode(list[1], node)
+            }
+        } else if (deno.type == Type.POLYNOMIAL) {
+            val pdeno = deno as Poly
+            try {
+                val _p = multinomialCalculator.reciprocal(pdeno.p)
+                nume.parent = null
+                if (multinomialCalculator.isEqual(pOne, _p)) {
+                    nume.parent = node.parent
+                    return nume
+                }
+                val n = Node.wrapNodeMultiply(nume, _p)
+                n.parent = node.parent
+                return n
+            } catch (ex: UnsupportedCalculationException) {
+            }
+
+        }
+        node.c1 = nume
+        if (deno.parent == null) {
+            deno.javaClass
+        }
+        node.c2 = deno
+        return node
+    }
+
+    internal fun polySimplifySFunction(node: SFunction, depth: Int): Node {
+        val c = if (depth > 0) simplifyPolynomial(node.child, depth - 1) else node.child
+        if (c.type == Type.POLYNOMIAL) {
+            val p = c as Poly
+            val result = functionHolder.computeSingle(node.functionName, p.p)
+            if (result != null) {
+                return Node.newPolyNode(result, node.parent)
+            }
+        }
+        node.child = c
+        return node
+    }
+
+    internal fun polySimplifyDFunction(node: DFunction, depth: Int): Node {
+        val c1 = if (depth > 0) simplifyPolynomial(node.c1, depth - 1) else node.c1
+        val c2 = if (depth > 0) simplifyPolynomial(node.c2, depth - 1) else node.c2
+        if (c1.type == Type.POLYNOMIAL && c2.type == Type.POLYNOMIAL) {
+            val p1 = c1 as Poly
+            val p2 = c2 as Poly
+            val result = functionHolder.computeDouble(node.functionName, p1.p, p2.p)
+            if (result != null) {
+                return Node.newPolyNode(result, node.parent)
+            }
+        }
+        node.c1 = c1
+        node.c2 = c2
+        return node
+    }
+
+    internal fun polySimplifyMFunction(node: MFunction, depth: Int): Node {
+        var allPoly = true
+        val children = node.children
+        val lit = children.listIterator()
+        while (lit.hasNext()) {
+            val t = lit.next()
+            val nt = if (depth > 0) simplifyPolynomial(t, depth - 1) else t
+            if (nt.type != Type.POLYNOMIAL) {
+                allPoly = false
+            }
+            if (nt !== t) {
+                lit.set(nt)
+            }
+        }
+        if (allPoly) {
+            val ps = arrayOfNulls<Multinomial>(children.size)
+            var i = 0
+            for (n in children) {
+                ps[i++] = (n as Poly).p
+            }
+            val result = functionHolder.computeMultiple(node.functionName, ps)
+            if (result != null) {
+                return Node.newPolyNode(result, node.parent)
+            }
+        }
+        return node
+    }
+
+    @JvmName("simplifyWithStrategy")
+    internal fun simplifyWithStrategy(node: Node, depth: Int): Node {
+        return if (depth == 0) {
+            simStraHolder.performSimplification(node, enabledTags, this)
+        } else node.recurApply({ x -> simStraHolder.performSimplification(x, enabledTags, this) }, depth)
+    }
+
+    internal fun simplifyWithStrategyNoRecur(node: Node): Node {
+        return simStraHolder.performSimplification(node, enabledTags, this)
+    }
+
+    @JvmName("doSort")
+    internal fun doSort(node: Node, depth: Int): Node {
+        return node.recurApply({ x ->
+            if (x is NodeWithChildren) {
+                x.doSort(nodeComparator)
+            }
+            x
+        }, depth)
+    }
+
+    internal fun simplifyPolyAndSort(n: Node): Node {
+        var n = n
+        n = simplifyPolynomial(n, Integer.MAX_VALUE)
+        n = doSort(n, Integer.MAX_VALUE)
+        return n
+    }
+
+    fun checkValidTree(n: Node) {
+        n.recurApply({ x ->
+            if (x !== n) {
+                if (x.parent == null) {
+                    throw AssertionError("For node: " + x.toString())
+                }
+            }
+            x
+        }, Integer.MAX_VALUE)
+    }
+
+
+    /**
+     * Substitutes the multinomial for the given character to the expression. This method only supports
+     * integral exponent for the character.
+     * @param expr
+     * @param ch
+     * @param val
+     * @return
+     */
+    fun substitute(expr: Expression, ch: String, `val`: Multinomial): Expression {
+        var root = expr.root.cloneNode(null)
+        root = root.recurApply({ x ->
+            var p = Node.getPolynomialPart(x, this)
+            if (p != null) {
+                p = p.replace(ch, `val`)
+                //				if(n.parent == null) {
+                //					n.getClass();
+                //				}
+                return@recurApply setPolynomialPart(x, p)
+            }
+            x
+        }, Integer.MAX_VALUE)
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /**
+     * Substitutes the give expression `sub` for the character to the expression.
+     * @param expr
+     * @param ch
+     * @param sub
+     * @return
+     */
+    fun substitute(expr: Expression, ch: String, sub: Expression): Expression {
+        var root = expr.root.cloneNode(null)
+        root = root.recurApply({ x ->
+            val p = Node.getPolynomialPart(x, this) ?: return@recurApply x
+            val afterSub = replaceMultinomial(p, ch, sub)
+                    ?: //not changed
+                    return@recurApply x
+            if (x.type == Type.POLYNOMIAL) {
+                //replace the whole
+                afterSub.parent = x.parent
+                return@recurApply afterSub
+            }
+            val comb = x as CombinedNode
+            comb.addChild(afterSub)
+            comb.polynomial = pOne
+            comb
+        }, Integer.MAX_VALUE)
+        //	    root.listNode(0);
+        root = simplify(root)
+        return Expression(root)
+    }
+
+
+    fun parseExpr(expr: String): Expression {
+        val expression = Expression.valueOf(expr)
+        return simplify(expression)
+    }
+
+    companion object {
+
+        private val DEFAULT_CALCULATOR = Multinomial.getCalculator()
+
+        private val DEFAULT_FUNCTIONS = ExprFunctionHolder
+                .getDefaultKit(Multinomial.getCalculator())
+        private var count: Long = 0
+
+        internal fun replaceMultinomial(mul: Multinomial, ch: String, sub: Expression): Node? {
+            val count = mul.containsCharCount(ch)
+            if (count == 0) {
+                return null
+            }
+            val nodes = ArrayList<Node>(count)
+            val remains = mul.removeAll { x -> x.containsChar(ch) }
+            for (t in mul.terms) {
+                if (!t.containsChar(ch)) {
+                    continue
+                }
+                val pow = t.getCharacterPower(ch)
+                val re = t.removeChar(ch)
+                val nodeExp = Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP,
+                        sub.root.cloneNode(null),
+                        Node.newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null))
+                val nodeMul = Node.wrapNodeMultiply(nodeExp, Multinomial.monomial(re))
+                nodes.add(nodeMul)
+            }
+            return Node.wrapNodeAM(true, nodes, remains)
+        }
+
+        /**
+         * Gets a default instance of the ExprCalculator.
+         * @return
+         */
+        val instance: ExprCalculator
+            get() = ExprCalculator()
+
+        internal var debugEnabled = false
+    }
+
+
+}
+/**
+ *
+ */
+/**
+ * Performs simplify to the Expression
+ *
+ * @param root
+ * @return
+ */

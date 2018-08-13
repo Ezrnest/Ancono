@@ -13,6 +13,7 @@ import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.Line;
 import cn.timelives.java.utilities.Printer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -73,7 +74,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 */
 	public T getRadius(){
 		if(r == null){
-			r = mc.squareRoot(r2);
+            r = getMc().squareRoot(r2);
 		}
 		return r;
 	}
@@ -98,8 +99,8 @@ public final class Sphere<T> extends SpaceObject<T> {
 	@Override
 	public T surfaceArea(){
 		if(surfaceArea == null){
-			surfaceArea = mc.multiplyLong(mc.multiply(r2, 
-					mc.constantValue(STR_PI)), 2l);
+            surfaceArea = getMc().multiplyLong(getMc().multiply(r2,
+                    getMc().constantValue(MathCalculator.STR_PI)), 2l);
 		}
 		return surfaceArea;
 	}
@@ -110,8 +111,8 @@ public final class Sphere<T> extends SpaceObject<T> {
 	@Override
 	public T volume(){
 		if(volume == null){
-			volume = mc.divideLong(mc.multiplyLong(mc.multiply(
-					mc.multiply(r2, getRadius()), mc.constantValue(STR_PI)), 4l), 3l);
+            volume = getMc().divideLong(getMc().multiplyLong(getMc().multiply(
+                    getMc().multiply(r2, getRadius()), getMc().constantValue(MathCalculator.STR_PI)), 4l), 3l);
 		}
 		return volume;
 	}
@@ -119,10 +120,10 @@ public final class Sphere<T> extends SpaceObject<T> {
 	/**
 	 * Gets the diameter of this sphere.
 	 * @return the diameter of this sphere.
-	 * @see Sphere#radius()
+     * @see Sphere#getRadius()
 	 */
 	public T getDiameter(){
-		return mc.multiplyLong(getRadius(), 2l);
+        return getMc().multiplyLong(getRadius(), 2l);
 	}
 	/**
 	 * Returns the distance of the point to the center of this sphere
@@ -146,7 +147,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * @return
 	 */
 	public T distanceSurface(SPoint<T> p){
-		return mc.abs(mc.subtract(o.distance(p), getRadius()));
+        return getMc().abs(getMc().subtract(o.distance(p), getRadius()));
 	}
 	
 	/* (non-Javadoc)
@@ -154,7 +155,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 */
 	@Override
 	public boolean isInside(SPoint<T> p) {
-		return mc.compare(o.distanceSq(p), r2) < 0;
+        return getMc().compare(o.distanceSq(p), r2) < 0;
 	}
 
 	/* (non-Javadoc)
@@ -162,7 +163,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 */
 	@Override
 	public boolean isOnSurface(SPoint<T> p) {
-		return mc.compare(o.distanceSq(p), r2) == 0;
+        return getMc().compare(o.distanceSq(p), r2) == 0;
 	}
 
 	/* (non-Javadoc)
@@ -170,11 +171,11 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 */
 	@Override
 	public boolean contains(SPoint<T> p) {
-		return mc.compare(o.distanceSq(p), r2) <= 0;
+        return getMc().compare(o.distanceSq(p), r2) <= 0;
 	}
 	
 	private T square(T x){
-		return mc.multiply(x, x);
+        return getMc().multiply(x, x);
 	}
 	
 	/**
@@ -186,19 +187,19 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 */
 	public T getChordLength(T d){
 		T d2 = square(d);
-		if(mc.compare(d2, r2)>0){
+        if (getMc().compare(d2, r2) > 0) {
 			return null;
 		}
-		return mc.multiplyLong(mc.squareRoot(mc.subtract(r2, d2)), 2l);
+        return getMc().multiplyLong(getMc().squareRoot(getMc().subtract(r2, d2)), 2l);
 	}
 	/**
 	 * Assume {@code d2} is the square of the distance of the center of this sphere to a chord,
 	 * return the square of the length of the chord.
-	 * @param d square of distance
+     * @param d2 square of distance
 	 * @return the square of the length of the chord
 	 */
 	public T getChordLengthSq(T d2){
-		return mc.multiplyLong(mc.subtract(r2, d2), 4l);
+        return getMc().multiplyLong(getMc().subtract(r2, d2), 4l);
 	}
 	/**
 	 * Get the corresponding central angle of the chord whose length is {@code cl}.
@@ -213,7 +214,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 		if(an == null){
 			return null;
 		}
-		return mc.multiplyLong(an, 2l);
+        return getMc().multiplyLong(an, 2l);
 	}
 	/**
 	 * Get the corresponding circumference angle of the chord whose length is {@code cl}.
@@ -224,11 +225,11 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * @return the angle of 
 	 */
 	public T getCircumAngle(T cl,MathFunction<T,T> arccos){
-		T l_2 = mc.divideLong(cl, 2l);
-		if(mc.compare(l_2, getRadius())>0){
+        T l_2 = getMc().divideLong(cl, 2l);
+        if (getMc().compare(l_2, getRadius()) > 0) {
 			return null;
 		}
-		return arccos.apply(mc.divide(l_2, r));
+        return arccos.apply(getMc().divide(l_2, r));
 	}
 	
 	/**
@@ -241,7 +242,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 */
 	public int relation(SPoint<T> p){
 		T dis = o.distanceSq(p);
-		return mc.compare(dis, square(getRadius()));
+        return getMc().compare(dis, square(getRadius()));
 	}
 	/**
 	 * Determines the relation of the given line and this sphere.The relation may be 
@@ -251,7 +252,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 */
 	public int relation(Line<T> l){
 		T d2 = l.distanceSq(o);
-		return mc.compare(d2, r2);
+        return getMc().compare(d2, r2);
 	}
 	/**
 	 * Determines the relation of the given line and this sphere.The relation may be 
@@ -263,16 +264,16 @@ public final class Sphere<T> extends SpaceObject<T> {
 	public Relation relation(Sphere<T> c){
 		//first compute the distance of two centers.
 		T dis = c.o.distance(c.o);
-		T rs = mc.add(getRadius(), c.getRadius());
-		int t = mc.compare(dis, rs);
+        T rs = getMc().add(getRadius(), c.getRadius());
+        int t = getMc().compare(dis, rs);
 		if(t>0){
 			return Relation.DISJOINT;
 		}else if(t==0){
 			return Relation.CIRCUMSCRIBED;
 		}
 		//o1o2 < r1+r2
-		T rd = mc.abs(mc.subtract(r, c.r));
-		t = mc.compare(dis, rd);
+        T rd = getMc().abs(getMc().subtract(r, c.r));
+        t = getMc().compare(dis, rd);
 		if(t > 0){
 			return Relation.INTERSECT;
 		}else if(t==0){
@@ -285,7 +286,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 	 */
 	@Override
-	public <N> Sphere<N> mapTo(Function<T, N> mapper, MathCalculator<N> newCalculator) {
+    public <N> Sphere<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		Sphere<N> sp = new Sphere<N>(newCalculator,
 				r == null ? null : mapper.apply(r)
 				,mapper.apply(r2),o.mapTo(mapper, newCalculator));
@@ -322,10 +323,10 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject)
 	 */
 	@Override
-	public boolean valueEquals(MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Sphere){
 			Sphere<T> sp = (Sphere<T>) obj;
-			return o.valueEquals(sp.o) && mc.isEqual(r2,sp.r2);
+            return o.valueEquals(sp.o) && getMc().isEqual(r2, sp.r2);
 		}
 		return false;
 	}
@@ -334,10 +335,10 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#valueEquals(cn.timelives.java.utilities.math.FlexibleMathObject, java.util.function.Function)
 	 */
 	@Override
-	public <N> boolean valueEquals(MathObject<N> obj, Function<N, T> mapper) {
+    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 		if(obj instanceof Sphere){
 			Sphere<N> sp = (Sphere<N>) obj;
-			return o.valueEquals(sp.o,mapper) && mc.isEqual(r2,mapper.apply(sp.r2));
+            return o.valueEquals(sp.o, mapper) && getMc().isEqual(r2, mapper.apply(sp.r2));
 		}
 		return false;
 	}
@@ -381,7 +382,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	 * Creates a sphere with its center point and its radius' square.
 	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p a point 
-	 * @param r square of the radius, must be positive.
+     * @param r2 square of the radius, must be positive.
 	 * @return a new sphere
 	 */
 	public static <T> Sphere<T> centerRadiusSq(SPoint<T> p,T r2){

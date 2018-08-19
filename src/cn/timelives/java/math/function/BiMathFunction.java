@@ -10,8 +10,8 @@ import java.util.function.BiFunction;
  * This function must perform like a real math function:
  * <ul>
  * <li>It does NOT make change to parameter:Any parameter should not be changed in this function. 
- * <li>It is <tt>consistent</tt>:If this function is applied with same parameters for multiple times,the 
- * result should be the same.
+ * <li>It is <tt>consistent</tt>:If this function is applied with identity parameters for multiple times,the
+ * result should be the identity.
  * </ul>
  * 
  * @author lyc

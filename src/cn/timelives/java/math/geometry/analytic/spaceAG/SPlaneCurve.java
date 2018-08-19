@@ -40,7 +40,8 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public <N> SPlaneCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new SPlaneCurve<N>(newCalculator, pcc.mapTo(mapper, newCalculator),
 				pc.mapTo(mapper, newCalculator));

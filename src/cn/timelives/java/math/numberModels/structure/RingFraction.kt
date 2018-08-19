@@ -2,9 +2,11 @@ package cn.timelives.java.math.numberModels.structure
 
 
 import cn.timelives.java.math.FlexibleMathObject
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.DivisionRingCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.RingCalculator
 import cn.timelives.java.math.exceptions.ExceptionUtil
+import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberModels.api.Simplifier
 import org.hamcrest.core.AnyOf
@@ -27,7 +29,8 @@ import java.util.function.Function
  * supports the basic operations defined on a field calculator.
  * [Field of fractions](https://en.wikipedia.org/wiki/Field_of_fractions)
  */
-class RingFraction<T : Any> internal constructor(nume: T, deno: T, mc: RingCalculator<T>) : FlexibleMathObject<T, RingCalculator<T>>(mc) {
+class RingFraction<T : Any>
+internal constructor(nume: T, deno: T, mc: RingCalculator<T>) : FlexibleMathObject<T, RingCalculator<T>>(mc) {
 
     /**
      * Gets the numerator of the fraction.

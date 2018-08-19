@@ -114,7 +114,7 @@ public final class ModelPatterns {
 			return high;
 		}
 		if(MathUtils.sameSignum(cl, ch)) {
-			throw new IllegalArgumentException("Sign numbers are the same!");
+            throw new IllegalArgumentException("Sign numbers are the identity!");
 		}
 		
 		boolean downerNegative = cl < 0;
@@ -156,7 +156,7 @@ public final class ModelPatterns {
 			return high;
 		}
 		if(MathUtils.sameSignum(cl, ch)) {
-			throw new IllegalArgumentException("Sign numbers are the same!");
+            throw new IllegalArgumentException("Sign numbers are the identity!");
 		}
 		
 		boolean downerNegative = cl < 0;

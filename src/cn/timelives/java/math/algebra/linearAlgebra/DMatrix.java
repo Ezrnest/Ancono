@@ -86,7 +86,7 @@ class DMatrix<T> extends Matrix<T> {
 
 	@Override
 	public Matrix<T> subMatrix(int i1, int j1, int i2, int j2) {
-		super.subMatrix(i1, j1, i2, j2);
+        subMatrixRangeCheck(i1, j1, i2, j2);
 		// range check
         SubMatrix<T> sm = new SubMatrix<T>(data, i1, j1, i2 - i1 + 1, j2 - j1 + 1, getMc());
 		return sm;
@@ -168,7 +168,7 @@ class DMatrix<T> extends Matrix<T> {
 	public Matrix<T> multiplyAndAddRow(long k, int r1, int r2) {
 		rowRangeCheck(r1, r2);
 		if (r1 == r2) {
-			throw new IllegalArgumentException("The same row:" + r1);
+            throw new IllegalArgumentException("The identity row:" + r1);
 		}
 		Object[][] re = new Object[row][];
 		for (int l = 0; l < row; ++l) {
@@ -190,7 +190,7 @@ class DMatrix<T> extends Matrix<T> {
 	public Matrix<T> multiplyAndAddRow(T k, int r1, int r2) {
 		rowRangeCheck(r1, r2);
 		if (r1 == r2) {
-			throw new IllegalArgumentException("The same row:" + r1);
+            throw new IllegalArgumentException("The identity row:" + r1);
 		}
 		Object[][] re = new Object[row][];
 		for (int l = 0; l < row; ++l) {

@@ -350,6 +350,7 @@ public final class Tetrahedron<T> extends Pyramid<T>{
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 	 */
+	@NotNull
 	@Override
     public <N> Tetrahedron<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		Tetrahedron<N> te= new Tetrahedron<>(newCalculator, 

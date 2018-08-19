@@ -100,7 +100,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	}
 	/**
 	 * Determines whether the two segment is intersect.<p>
-	 * <ul><li>If the two segment is on the same line, then if 
+	 * <ul><li>If the two segment is on the identity line, then if
 	 * there is a point on both of them, then the result is true.
 	 * <li>If the two segment's line is intersect and the intersect point 
 	 * is on both of the segment, then the result is true.
@@ -145,7 +145,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	/**
 	 * Returns the intersect point of the two segment.Throws an 
 	 * exception if 
-	 * two segments are parallel or on the same line, 
+	 * two segments are parallel or on the identity line,
 	 * @param s another segment
 	 * @return a point or null if they doesn't intersect
 	 */
@@ -162,7 +162,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	/**
 	 * Returns the intersect point of the two segment.Throws an 
 	 * exception if 
-	 * parallel or on the same line, 
+	 * parallel or on the identity line,
 	 * @param l2 another line
 	 * @return a point or null if they doesn't intersect
 	 */
@@ -256,6 +256,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 		return false;
 	}
 
+	@NotNull
 	@Override
     public <N> Segment<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Segment<>(newCalculator,l.mapTo(mapper, newCalculator)
@@ -319,7 +320,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 	}
 	/**
 	 * Create a Segment passing through the two points, throws an exception if the two 
-	 * points are the same.
+	 * points are the identity.
 	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p1
 	 * @param p2

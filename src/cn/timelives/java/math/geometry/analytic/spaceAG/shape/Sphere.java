@@ -257,7 +257,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 	/**
 	 * Determines the relation of the given line and this sphere.The relation may be 
 	 * <i>include</i>,<i>inscribed</i>,<i>intersect</i>,<i>circumscribed</i>,<i>disjoint</i>.
-	 * If the two spheres are the same,the relation <i>circumscribed</i> will be returned.
+     * If the two spheres are the identity,the relation <i>circumscribed</i> will be returned.
 	 * @param c a sphere.
 	 * @return the relation of the spheres.
 	 */
@@ -285,7 +285,8 @@ public final class Sphere<T> extends SpaceObject<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public <N> Sphere<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		Sphere<N> sp = new Sphere<N>(newCalculator,
 				r == null ? null : mapper.apply(r)
@@ -393,7 +394,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 		return new Sphere<T>(mc,null,r2,p);
 	}
 	/**
-	 * Creates a sphere with four points, they must not be on the same plane.
+     * Creates a sphere with four points, they must not be on the identity plane.
 	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param a
 	 * @param b
@@ -424,7 +425,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 		Printer.printMatrix(mat);
 		LinearEquationSolution<T> sov = MatrixSup.solveLinearEquation(mat, mc);
 		if(sov.getSolutionSituation() == Situation.UNBOUNDED_SOLUTION){
-			throw new IllegalArgumentException("Four points same plane");
+            throw new IllegalArgumentException("Four points identity plane");
 		}
 		Vector<T> vec = sov.getBase();
 		SPoint<T> o = SPoint.valueOf(vec.getNumber(0), vec.getNumber(1), vec.getNumber(2), mc);

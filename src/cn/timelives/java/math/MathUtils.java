@@ -617,7 +617,7 @@ public class MathUtils {
 	 * This method will ignore imaginary solutions.
 	 * <p>This method will return a list of solutions,which will contain 
 	 * no element if there is no real solution({@code delta<0}),
-	 * one if there is only one solution(or two solutions of the same value)({@code delta==0})
+	 * one if there is only one solution(or two solutions of the identity value)({@code delta==0})
 	 * or two elements if there are two solutions(({@code delta>0}).
 	 * <p>This method normally requires {@code squareRoot()} method of the {@link MathCalculator}. 
 	 * 
@@ -673,7 +673,7 @@ public class MathUtils {
 	 * Solve an equation of 
 	 * <pre>ax^2 + bx + c = 0</pre>
 	 * This method will use the root-formula and will compute all of the solutions(include imaginary 
-	 * solutions),and always returns two solutions even if the two solutions are the same. 
+	 * solutions),and always returns two solutions even if the two solutions are the identity.
 	 * @param a the coefficient of x^2.
 	 * @param b the coefficient of x.
 	 * @param c the constant coefficient
@@ -985,5 +985,9 @@ public class MathUtils {
 		}
 		return factors;
 	}
-	
+
+
+	public static void main(String[] args) {
+		MathObject mo = null;
+	}
 }

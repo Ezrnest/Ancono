@@ -24,14 +24,6 @@ abstract class MathObject<T : Any>
  */
 protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalculator<T>>(mc) {
 
-    /* (non-Javadoc)
-	 * @see cn.timelives.java.math.MathCalculatorHolder#getMathCalculator()
-	 */
-    override fun getMathCalculator(): MathCalculator<T> {
-        return mc
-    }
-
-
     /**
      * Map this object using the number type `T` to a new object using the number type `N`. This
      * method is a core method of [MathObject]. The subclasses can always changes the return
@@ -39,7 +31,7 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
      * @param newCalculator a new calculator of type `N`
      * @param mapper the function used in mapping.
      * @param <N> the new number type.
-     * @return a new FlexibleMathObject of type N
+     * @return a new MathObject of type N
     </N> */
     abstract fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): MathObject<N>
 
@@ -62,7 +54,7 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
 
 
     /**
-     * Determines whether the two objects using the same number type is the same. In this method,
+     * Determines whether the two objects using the identity number type is the identity. In this method,
      * [MathCalculator.isEqual] is used instead of `Object.equals()` method.
      * This method is basically equal to [.valueEquals] as
      * `this.valueEquals(obj,x -> x)`
@@ -75,11 +67,11 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
 
 
     /**
-     * Determines whether the two objects are the same according to the given mapper and the calculator.This
+     * Determines whether the two objects are the identity according to the given mapper and the calculator.This
      * method is based on math definition so this method should not simply use `equal()` method , instead,
      * [MathCalculator.isEqual] should be used when comparing two numbers. This method
      * provides the equality in math.
-     * @param obj another object, type is the same as this
+     * @param obj another object, type is the identity as this
      * @param mapper a function
      * @param <N> another type of number
      * @return `true` if this is equal to obj , else `false`.

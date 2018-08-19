@@ -156,7 +156,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	public abstract Interval<T> expandDownerBound(T n,boolean include);
 	
 	/**
-	 * Returns a same type interval of {@code this}, whether  the new interval should be inclusive in upper or 
+     * Returns a identity type interval of {@code this}, whether  the new interval should be inclusive in upper or
 	 * downer bound is determined by {@code this}.
 	 * @param downerBound the downer bound of the new interval 
 	 * @param upperBound the new downer bound of the new interval 
@@ -167,7 +167,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	
 	
 	/**
-	 * Returns {@code true} if the given interval is in the range of this.If {@code iv} has same upper or downer bound 
+     * Returns {@code true} if the given interval is in the range of this.If {@code iv} has identity upper or downer bound
 	 * with {@code this} and the bound in this is exclusive while in {@code iv} is inclusive, then {@literal iv ⊆  this} is false,
 	 * so {@code false} will be returned.
 	 * @param iv another interval

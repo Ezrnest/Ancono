@@ -51,7 +51,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 * Determine whether the two inequations are equal, this method only
 	 * compare the corresponding coefficient.
 	 * <p>Therefore, for example,
-	 * {@literal 2x>0} and {@literal x>0} are considered to be not the same.
+     * {@literal 2x>0} and {@literal x>0} are considered to be not the identity.
 	 * This assures that if two equations are equal, then the functions returned
 	 * by {@link #asFunction()} are equal.
 	 *

@@ -294,7 +294,7 @@ public class CodePlace {
 ////	void computeExpression() {
 ////		for (int i = 0; i < pos.length; i++) {
 ////			if (pos[i] != null) {
-////				es[i] = Expression.fromMultinomial(pos[i]);
+////				es[i] = Expression.fromPolynomial(pos[i]);
 ////			}
 ////		}
 ////	}
@@ -1013,16 +1013,16 @@ public class CodePlace {
 ////		s = ec.simplify(s);
 ////		// print(s);
 ////		Node.Fraction n = (Node.Fraction) s.getRoot();
-////		PolynomialX<PolynomialOld> nume = PolynomialX.fromMultinomial(Node.getPolynomialPart(n.getC1(), null), "x");
-////		PolynomialX<PolynomialOld> deno = PolynomialX.fromMultinomial(Node.getPolynomialPart(n.getC2(), null), "x");
+////		PolynomialX<PolynomialOld> nume = PolynomialX.fromPolynomial(Node.getPolynomialPart(n.getC1(), null), "x");
+////		PolynomialX<PolynomialOld> deno = PolynomialX.fromPolynomial(Node.getPolynomialPart(n.getC2(), null), "x");
 ////		PolynomialOld f12 = PolynomialOld.fromFormula(Formula.valueOf(12));
 ////		PolynomialOld result = PolyCalculator.DEFAULT_CALCULATOR.divide(nume.compute(f12), deno.compute(f12));
 ////		assertTrue("Result is 72", Formula.valueOf(72).absEquals(result.getFormulaList().get(0)));
 ////		// MultinomialCalculator<Formula> muc =
 ////		// PolynomialX.getCalculator(Formula.getCalculator());
 ////		// print(muc.divideAndReminder(nume,deno));
-////		// AbstractSVPFunction<Formula> f1 = AbstractSVPFunction.fromMultinomial(nume),
-////		// f2 = AbstractSVPFunction.fromMultinomial(deno);
+////		// AbstractSVPFunction<Formula> f1 = AbstractSVPFunction.fromPolynomial(nume),
+////		// f2 = AbstractSVPFunction.fromPolynomial(deno);
 ////		// AbstractSVPFunction<Formula> f =
 ////		// AbstractSVPFunction.subtract(AbstractSVPFunction.multiply(f1,
 ////		// f2.derive()),AbstractSVPFunction.multiply(f1.derive(), f2));

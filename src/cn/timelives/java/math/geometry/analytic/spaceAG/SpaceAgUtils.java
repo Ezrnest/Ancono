@@ -11,7 +11,7 @@ import cn.timelives.java.math.MathCalculator;
  * @author liyicheng
  *
  */
-public final class MathTools {
+public final class SpaceAgUtils {
 	/**
 	 * Returns the angle of {@code ��AOB}
 	 * @param A

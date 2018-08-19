@@ -15,12 +15,12 @@ import java.util.function.ToDoubleFunction;
  * @author liyicheng
  *
  */
-public final class Utilities {
+public final class PlaneAgUtils {
 
 	/**
 	 * 
 	 */
-	private Utilities() {
+    private PlaneAgUtils() {
 	}
 	/**
 	 * Returns the area of triangle <i>ABC</i>, the 
@@ -60,7 +60,7 @@ public final class Utilities {
 	 */
 	public static SubstitutableCurve mapToDouble(
 			SubstituableCurve<Double> curve){
-		return (x,y) -> curve.substitute(x, y);
+        return curve::substitute;
 		
 	}
 	

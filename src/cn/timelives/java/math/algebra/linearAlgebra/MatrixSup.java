@@ -48,7 +48,7 @@ public class MatrixSup {
 	}
 	
 	/**
-	 * Return det(mat),this method use elementary operation to simplify the matrix first and then 
+	 * Return det(mat), this method use elementary operation to simplify the matrix first and then
 	 * calculate the result.
 	 * @param mat a square Matrix
 	 * @return det(mat) 

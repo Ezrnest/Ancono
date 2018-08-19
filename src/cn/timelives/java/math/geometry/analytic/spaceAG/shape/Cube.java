@@ -191,7 +191,8 @@ public final class Cube<T> extends RightPrism<T> {
 		return false;
 	}
 
-	@Override
+    @NotNull
+    @Override
     public <N> Cube<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// TODO Auto-generated method stub
 		return null;

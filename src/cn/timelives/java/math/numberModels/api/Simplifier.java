@@ -18,7 +18,7 @@ import java.util.List;
 public interface Simplifier<T> {
 	/**
 	 * Input a list of numbers to simplify, and return a list of simplified numbers,
-	 * the number and order of numbers should be the same.<p>
+     * the number and order of numbers should be the identity.<p>
 	 * This simplify method should be equal to multiply a non-zero value to all 
 	 * of the numbers to make the result simpler. For example, for the input {@code [2,4,6]}, the 
 	 * simplifier may  multiply number {@code 1/2} so the result will be {@code [1,2,3]}, which 

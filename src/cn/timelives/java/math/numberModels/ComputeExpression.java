@@ -938,7 +938,7 @@ public class ComputeExpression{
 	/**
 	 * Compiles the input expression and returns a corresponding
 	 * ComputeExpression. The expression may contain operations, parameters, constants and brackets. 
-	 * The rules of computing will be the same as real math. 
+     * The rules of computing will be the identity as real math.
 	 * <h3>Operation:</h3>
 	 * The basic operations
 	 * <pre>+ - / * ^</pre>
@@ -961,15 +961,15 @@ public class ComputeExpression{
 	 * The character {@code x} and {@code y} may represent any parameter or expression. 
 	 * But notice that the brackets and comma must not be omitted.<br>
 	 * The "*" operator 
-	 * The operations in the String-form expression and the methods actually performed using a {@link MathCalculator} 
-	 * are generally the same. For example, if {@code exp($0,$1)} is input, then {@code mc.exp(paras[0],paras[1]} will 
+	 * The operations in the String-form expression and the methods actually performed using a {@link MathCalculator}
+     * are generally the identity. For example, if {@code exp($0,$1)} is input, then {@code mc.exp(paras[0],paras[1]} will
 	 * be performed when computing. 
 	 * But there are some exceptions:
 	 * <p>
 	 * The "^" operator or {@code exp(x,y)} will be translated as {@link MathCalculator#pow(Object, long)} if the latter number is a plain long
 	 * number, or be translated as {@link MathCalculator#exp(Object, Object)}. Multiplication will invoke {@link MathCalculator#multiplyX(Object...)}
 	 * if there are more than two terms and the {@code flags} permits, otherwise it will be reduced to several parts invoking
-	 * {@link MathCalculator#multiply(Object, Object)}, which is the same to addition. 
+     * {@link MathCalculator#multiply(Object, Object)}, which is the identity to addition.
 	 * <h3>Parameters:</h3>
 	 * The parameters in the expression should always be input as
 	 * <pre>$n</pre>, where {@code n} is an non-negative integer, representing the 

@@ -274,7 +274,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	/**
 	 * Determines the relation of the given line and this circle.The relation may be 
 	 * <i>include</i>,<i>inscribed</i>,<i>intersect</i>,<i>circumscribed</i>,<i>disjoint</i>.
-	 * If the two circles are the same,the relation <i>circumscribed</i> will be returned.
+     * If the two circles are the identity,the relation <i>circumscribed</i> will be returned.
 	 * @param c a circle.
 	 * @return the relation of the circles.
 	 */
@@ -399,16 +399,16 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	/**
 	 * Computes the intersect points of the two circles.The returned list may contain 
 	 * {@code 0,1,2} elements ,which is determined by the two circles.If the two circles 
-	 * are the same,{@code null} will be returned because they have infinity intersect points.
+     * are the identity,{@code null} will be returned because they have infinity intersect points.
 	 * <p>Generally speaking,
 	 * if two circles' relation is intersect ,the list will contain two points;if 
 	 * two circles are tangent,the list will contain only one point;if the two circles 
 	 * are separate,then the list will be empty.
 	 * @param c another circle.
-	 * @return the list of points,or {@code null} if the two circle are the same.
+     * @return the list of points,or {@code null} if the two circle are the identity.
 	 */
 	public List<Point<T>> intersectPoints(Circle<T> c){
-		//first check whether the two circles are the same
+        //first check whether the two circles are the identity
 		if(valueEquals(c)){
 			return null;
 		}
@@ -417,11 +417,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	}
 	/**
 	 * Compute the line of the shared chord of {@code this} and {@code c}.Except checking 
-	 * whether the two circles have the same center, 
+     * whether the two circles have the identity center,
 	 * this method just 
 	 * simply calculate as the following formula:
 	 * <pre>(D-c.D)x + (E-c.E)y + F-c.F = 0</pre>
-	 * If the two circles have the same center,{@code null} will be returned.  
+     * If the two circles have the identity center,{@code null} will be returned.
 	 * @param c another circle
 	 * @return line of the shared chord 
 	 */
@@ -479,7 +479,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 		return c;
 	}
 	/**
-	 * Returns a list of common tangent lines of this two circles only if the two circles' are not the same 
+     * Returns a list of common tangent lines of this two circles only if the two circles' are not the identity
 	 * and their relation is 
 	 * <i>inscribed</i>,<i>intersect</i>,<i>circumscribed</i> or <i>disjoint</i>.
 	 * <li>If relation is <i>disjoint</i>,the returned list will contain 4 lines.
@@ -716,7 +716,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @param p3 a point 
 	 * @param mc a {@link MathCalculator}
 	 * @return a circle 
-	 * @throws IllegalArgumentException if {@code p1,p2,p3} is on the same line.
+     * @throws IllegalArgumentException if {@code p1,p2,p3} is on the identity line.
 	 */
 	public static <T> Circle<T> threePoints(Point<T> p1,Point<T> p2,Point<T> p3,MathCalculator<T> mc){
 		Triangle<T> tri = Triangle.fromVertex(mc,p1.x,p1.y
@@ -736,7 +736,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	 * @param p2 a point 
 	 * @param p3 a point 
 	 * @return a circle 
-	 * @throws IllegalArgumentException if {@code p1,p2,p3} is on the same line.
+     * @throws IllegalArgumentException if {@code p1,p2,p3} is on the identity line.
 	 */
 	public static <T> Circle<T> threePoints(Point<T> p1,Point<T> p2,Point<T> p3){
 		MathCalculator<T> mc = p1.getMathCalculator();

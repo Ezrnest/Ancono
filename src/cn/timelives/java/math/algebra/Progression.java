@@ -20,8 +20,8 @@ import java.util.stream.StreamSupport;
  * math,but unlike the progression in math, the starting element's index is zero, just as what we do in arrays.
  * <p>The progression can either be limited or unlimited.Because of such a feature, the {@code equals()} method can 
  * make sure  whether the two progression is actually equal, so sometimes the {@code equals()} method will not return 
- * {@code true} even if the two progression is actually the same.But this method is required return {@code false} if the 
- * progression if the two progression is not the same.
+ * {@code true} even if the two progression is actually the identity.But this method is required return {@code false} if the
+ * progression if the two progression is not the identity.
  * @author lyc
  * @param <T> the type of number returned as the number in the progression
  */
@@ -65,7 +65,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 	
 	/**
 	 * Convert this progression to an array,if this progression is unlimited,then {@code null} should be returned.
-	 * The index of elements in the returning array should be the same to the index in the progression.
+     * The index of elements in the returning array should be the identity to the index in the progression.
 	 * @return an array, or {@code null } if the progression is unlimited.
 	 * @throws IllegalArgumentException if this progression's size is bigger than the max length of an array,
 	 * 
@@ -219,7 +219,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
             if (pro.getMc() != this.getMc()) {
 				return false;
 			}
-			// the same progression type.
+            // the identity progression type.
 			long len = this.getLength();
 			if (len > 0 && len == pro.getLength()) {
 				for (long l = 0; l < len; l++) {
@@ -1021,7 +1021,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 	
 	/**
 	 * Create a new progression containing the values in the given array.The order of elements in this progression
-	 * will be the same to the order in the array.The length of this progression will be the same to the length
+     * will be the identity to the order in the array.The length of this progression will be the identity to the length
 	 * of the array.Notice that all of the elements in the array should not be null.
 	 * @param array an array to copy data from.
 	 * @param mc a math calculator
@@ -1038,7 +1038,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 	
 	/**
 	 * Create a new progression containing the elements in the given list.The order of the elements is 
-	 * the same as the order in the list.
+     * the identity as the order in the list.
 	 * @param list the list containing all the elements
 	 * @param mc a math calculator
 	 * @return a new progression
@@ -1056,7 +1056,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 	 * The function itself should 
 	 * be careful with the length of the number array for the number is corresponding to the progressions' order.
 	 * <P> 
-	 * The length of these progressions should be the same , or all of them are unlimited progressions.
+     * The length of these progressions should be the identity , or all of them are unlimited progressions.
 	 * @param mc a new calculator for the progression
 	 * @param function a function
 	 * @param pros progressions to calculate
@@ -1079,7 +1079,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 	
 	/**
 	 * Assume the progression {@code pro} is {@code p(n)},and this method will return a new progression that is {@code f(p(n))}.
-	 * The new progression has the same length as the original one.This method is like a one-parameter version of method 
+     * The new progression has the identity length as the original one.This method is like a one-parameter version of method
 	 * {@link #combinedProgression(MathCalculator, Function, Progression...)},while it has better performance.
 	 * @param mc a new calculator for the progression
 	 * @param f a function

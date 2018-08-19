@@ -259,7 +259,24 @@ public class DerivativeHelper {
         //initialize the derivators
         addSingles();
         addDoubles();
+        addBackups();
+    }
 
+    private static void addBackups() {
+        addDerivator(new FunctionDerivator() {
+            @Override
+            public boolean accept(String functionName, int parameterLength) {
+                return parameterLength == 1;
+            }
+
+            @Override
+            public Node derivation(Node node, String variableName) {
+                if (node instanceof Node.SFunction) {
+                    return dFunction((Node.SFunction) node, variableName);
+                }
+                return null;
+            }
+        });
     }
 
     private static void addDoubles() {
@@ -278,6 +295,14 @@ public class DerivativeHelper {
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_ARCSIN, DerivativeHelper::dArcsin);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_ARCCOS, DerivativeHelper::dArccos);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_ARCTAN, DerivativeHelper::dArctan);
+    }
+
+    private static Node dFunction(Node.SFunction node, String variableName) {
+        Node gx = node.child.cloneNode(null);
+        Node gx_ = derivativeNode(gx, variableName);
+        String functionName_ = node.functionName + "'";
+        Node fx_ = Node.wrapCloneNodeSF(functionName_, gx);
+        return Node.wrapNodeAM(false, gx_, fx_);
     }
 
 
@@ -420,14 +445,13 @@ public class DerivativeHelper {
 
     public static void main(String[] args) {
         ExprCalculator ec = ExprCalculator.Companion.getInstance();
-        Expression expr = Expression.valueOf("exp(ln(x))");
+        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
         SimplificationStrategies.setCalRegularization(ec);
         expr = ec.simplify(expr);
-        print(expr);
+        print("Expression is: " + expr);
         var re = Calculus.derivation(expr, "x");
+//        re.listNode();
         re = ec.simplify(re);
         print(re);
-        re.listNode();
-
     }
 }

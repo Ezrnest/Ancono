@@ -135,7 +135,7 @@ public class NameGenerator implements ContentGenerator<Name> {
 		}
 		r = ran();
 		int li = 10;
-		int he = 20;//light and heavy is the same 
+        int he = 20;//light and heavy is the identity
 		int ta = 40,dow = 50,oth = 65;
 		int ae = 90 ; //the remaining part is for e
 		if(r<li){
@@ -166,7 +166,7 @@ public class NameGenerator implements ContentGenerator<Name> {
 		}
 		r = ran();
 		int li = 25;
-		int he = 50;//light and heavy is the same 
+        int he = 50;//light and heavy is the identity
 		int ta = 65,dow = 75,oth = 90;
 		int ae = 95 ; //the remaining part is for e
 		if(r<li){

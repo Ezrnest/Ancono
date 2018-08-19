@@ -9,7 +9,7 @@ import java.util.Objects
 
 /**
  * A predicate that tests whether two objects are equal. EqualPredicate
- * is the same with [EqualRelation] but the method's name is "isEqual".
+ * is the identity with [EqualRelation] but the method's name is "isEqual".
  * @author liyicheng
  * 2018-02-28 17:33
  */

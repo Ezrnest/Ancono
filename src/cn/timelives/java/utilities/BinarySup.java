@@ -106,11 +106,11 @@ public class BinarySup {
 	/**
 	 * Converts to byte array to a long array,the new long array will have a length of 
 	 *  {@code (arr.length+7)/8},and the bits' order in the {@code arr} and the returned long 
-	 *  array is the same,but there may be some remaining empty bits at the end.
+     *  array is the identity,but there may be some remaining empty bits at the end.
 	 * <p>
 	 * For example,byte array {0x0f,0x0f,0x0f} will have a returned long for {@code f0f0f00000000000}
 	 * @param arr an array.
-	 * @return an new array,with the same order of bits.
+     * @return an new array,with the identity order of bits.
 	 */
 	public static long[] byteToLong(byte[] arr){
 		//long = 64 bits, byte = 8 bits.

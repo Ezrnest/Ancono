@@ -14,7 +14,7 @@ import static cn.timelives.java.utilities.Printer.print_;
  * elements which are equal. <p>
  * You should always be sure that for the object put in this set ,either the {@code equals()}
  * and {@code hashCode()} is literally 
- * the same to {@linkplain PartialOrderComparator#isEqual(Object, Object)} , or the {@code equals()} 
+ * the identity to {@linkplain PartialOrderComparator#isEqual(Object, Object)} , or the {@code equals()}
  * has not been overrode. Or unexpected error would happen.
  * 
  * @author lyc

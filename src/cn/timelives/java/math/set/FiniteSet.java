@@ -12,7 +12,7 @@ import java.util.ListIterator;
  */
 public interface FiniteSet<T> extends CountableSet<T>{
 	/**
-	 * Gets an elements from this set. The method should always returns the same
+     * Gets an elements from this set. The method should always returns the identity
 	 * value.
 	 * 
 	 * @param index
@@ -22,7 +22,7 @@ public interface FiniteSet<T> extends CountableSet<T>{
 	T get(long index);
 
 	/**
-	 * Gets an elements from this set. The method should always returns the same
+     * Gets an elements from this set. The method should always returns the identity
 	 * value.
 	 * 
 	 * @param index

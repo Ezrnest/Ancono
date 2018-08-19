@@ -15,14 +15,11 @@ import java.util.Objects
  */
 abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>
 (mc: S) : CalculatorHolder<T, S> {
+
     protected val mc: S = Objects.requireNonNull(mc, "Calculator must not be null!")
 
-    /*
-	 * @see cn.timelives.java.math.MathCalculatorHolder#getMathCalculator()
-	 */
-    override fun getMathCalculator(): S {
-        return mc
-    }
+    override val mathCalculator: S
+        get() = mc
 
 
     /**
@@ -40,7 +37,6 @@ abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>
     override fun hashCode(): Int {
         return super.hashCode()
     }
-
     /**
      * Returns a String representing this object, the [NumberFormatter] should
      * be used whenever a number is presented.

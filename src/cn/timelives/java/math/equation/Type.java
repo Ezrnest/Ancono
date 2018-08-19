@@ -142,7 +142,7 @@ public enum Type{
 	public abstract Type complement();
 	
 	/**
-	 * Returns the operation that returns the same result when a negative sign number 
+     * Returns the operation that returns the identity result when a negative sign number
 	 * is given, in other words, {@code this.matches(x) == this.negative().matches(-x)}.
 	 * For example, the negative of {@link #GREATER_OR_EQUAL} is {@link #LESS_OR_EQUAL}.
 	 * @return

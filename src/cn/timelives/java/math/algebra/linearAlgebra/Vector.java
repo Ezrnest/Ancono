@@ -38,9 +38,9 @@ public abstract class Vector<T> extends Matrix<T> {
 	}
 	
 	/**
-	 * Determines whether the two vectors are of the same size.
+     * Determines whether the two vectors are of the identity size.
 	 * @param v another vector.
-	 * @return {@code true} if they are the same in size.
+     * @return {@code true} if they are the identity in size.
 	 */
 	public boolean isSameSize(Vector<?> v) {
 		return getSize() == v.getSize();
@@ -126,7 +126,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	
 	/**
 	 * This method will return the inner product of {@code this} and {@code v}.
-	 * The size of the two vectors must be the same while what kind of vector
+     * The size of the two vectors must be the identity while what kind of vector
 	 * (row or column) is ignored. 
 	 * @param v a vector
 	 * @return the inner(scalar) product of this two vectors.
@@ -274,7 +274,8 @@ public abstract class Vector<T> extends Matrix<T> {
 	/*
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public abstract <N> Vector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
@@ -500,7 +501,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		return zeroVector(length, false,mc);
 	}
 	/**
-	 * Returns a vector that is filled with the same value.
+     * Returns a vector that is filled with the identity value.
 	 * @param length
 	 * @param value
 	 * @param mc

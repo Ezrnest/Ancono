@@ -43,7 +43,8 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.geometry.analytic.planeAG.curve.PlaneFunction#apply(java.lang.Object)
 	 */
-	@Override
+    @NotNull
+    @Override
 	public T apply(T x) {
 		//(ax+b)x+c
         return EXPR_APPLY.compute(getMc(), x, a, b, c);
@@ -117,7 +118,8 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public <N> QuadraticFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new QuadraticFunction<N>(newCalculator, mapper.apply(a),mapper.apply(b),mapper.apply(c));
 	}
@@ -216,7 +218,8 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
-	@Override
+    @NotNull
+    @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		for(int i=2;i>0;i--){

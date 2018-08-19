@@ -9,6 +9,7 @@ import java.util.*
 
 import cn.timelives.java.math.numberModels.Multinomial.*
 
+@Suppress("NAME_SHADOWING")
 class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinomial> {
 
     override val isComparable: Boolean
@@ -29,9 +30,9 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
             return n.hashCode() * 31 + d.hashCode()
         }
 
-        override fun equals(obj: Any?): Boolean {
-            if (obj is Pair) {
-                val p = obj as Pair?
+        override fun equals(other: Any?): Boolean {
+            if (other is Pair) {
+                val p = other as Pair?
                 return n == p!!.n && d == p.d
             }
             return false
@@ -49,17 +50,17 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     }
 
 
-    override fun isEqual(para1: Multinomial, para2: Multinomial): Boolean {
-        return para1 == para2
+    override fun isEqual(x: Multinomial, y: Multinomial): Boolean {
+        return x == y
     }
 
-    override fun compare(para1: Multinomial, para2: Multinomial): Int {
-        return para1.compareTo(para2)
+    override fun compare(x: Multinomial, y: Multinomial): Int {
+        return x.compareTo(y)
     }
 
 
-    override fun add(para1: Multinomial, para2: Multinomial): Multinomial {
-        return para1.add(para2)
+    override fun add(x: Multinomial, y: Multinomial): Multinomial {
+        return x.add(y)
     }
 
     override fun addX(vararg ps: Any): Multinomial {
@@ -81,16 +82,16 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return para
     }
 
-    override fun subtract(para1: Multinomial, para2: Multinomial): Multinomial {
-        return para1.subtract(para2)
+    override fun subtract(x: Multinomial, y: Multinomial): Multinomial {
+        return x.subtract(y)
     }
 
     override fun isZero(para: Multinomial): Boolean {
         return para == ZERO
     }
 
-    override fun multiply(para1: Multinomial, para2: Multinomial): Multinomial {
-        return para1.multiply(para2)
+    override fun multiply(x: Multinomial, y: Multinomial): Multinomial {
+        return x.multiply(y)
     }
 
     override fun multiplyX(vararg ps: Any): Multinomial {
@@ -104,8 +105,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return Multinomial(result)
     }
 
-    override fun divide(para1: Multinomial, para2: Multinomial): Multinomial {
-        return para1.divide(para2)
+    override fun divide(x: Multinomial, y: Multinomial): Multinomial {
+        return x.divide(y)
     }
 
     override fun reciprocal(p: Multinomial): Multinomial {
@@ -485,6 +486,26 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
             return Pair(BigInteger.valueOf(n), BigInteger.valueOf(d))
         }
 
+        /**
+         * SIN_VALUE stores the sin result stored in 0 to Pi/2
+         *
+         *
+         */
+        private val SIN_VALUE: MutableMap<Pair, Multinomial> = HashMap()
+
+        private val TAN_VALUE: MutableMap<Pair, Multinomial> = HashMap()
+
+        /**
+         * this Map contains arcsin values
+         * @see .SIN_VALUE
+         */
+        val ARCSIN_VALUE: MutableMap<Multinomial, Multinomial> = TreeMap()
+        /**
+         * this Map contains arctan values
+         * @see .TAN_VALUE
+         */
+        val ARCTAN_VALUE: MutableMap<Multinomial, Multinomial> = TreeMap()
+
         init {
             initValue()
         }
@@ -540,26 +561,6 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
             }
         }
 
-
-        /**
-         * SIN_VALUE stores the sin result stored in 0 to Pi/2
-         *
-         *
-         */
-        private val SIN_VALUE: MutableMap<Pair, Multinomial> = HashMap()
-
-        private val TAN_VALUE: MutableMap<Pair, Multinomial> = HashMap()
-
-        /**
-         * this Map contains arcsin values
-         * @see .SIN_VALUE
-         */
-        val ARCSIN_VALUE: MutableMap<Multinomial, Multinomial> = TreeMap()
-        /**
-         * this Map contains arctan values
-         * @see .TAN_VALUE
-         */
-        val ARCTAN_VALUE: MutableMap<Multinomial, Multinomial> = TreeMap()
 
         private fun reduceByTwoPi(arr: Array<BigInteger>) {
             //firstly get the Numerator

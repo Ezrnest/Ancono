@@ -287,7 +287,7 @@ public final class SVector<T> extends Vector<T> {
         return getMc().isEqual(getMc().multiply(y, s.z), getMc().multiply(z, s.y));
 	}
 	/**
-	 * Determines whether the given vector is in the same direction of this vector, which means 
+     * Determines whether the given vector is in the identity direction of this vector, which means
 	 * the vector the result of {@code this.angleCos(s)} will be 1. If {@code s} is a zero vector, 
 	 * an exception will be thrown.
 	 * @param s
@@ -337,8 +337,8 @@ public final class SVector<T> extends Vector<T> {
 		return s;
 	}
 	/**
-	 * Returns a SVector that has the same direct of this but length is given.
-	 * @param length the length
+     * Returns a SVector that has the identity direct of this but length is given.
+     * @param len the length
 	 * @return a new SVector
 	 */
 	public SVector<T> parallel(T len){
@@ -355,11 +355,12 @@ public final class SVector<T> extends Vector<T> {
 	 * @return
 	 */
 	public boolean isZeroVector(){
-        return getMc().isZero(x) && getMc().isZero(y) && getMc().isZero(z);
+        var mc = getMathCalculator();
+        return mc.isZero(x) && mc.isZero(y) && mc.isZero(z);
 	}
-	
-	
-	/**
+
+
+    /**
 	 * Returns the 'projection' of v.<p>
 	 * The returned vector {@code r} will on this plane of this and v 
 	 * and be perpendicular to {@code this}.<pre>
@@ -380,8 +381,18 @@ public final class SVector<T> extends Vector<T> {
         T nz = getMc().add(v.z, getMc().multiply(k, z));
         return new SVector<T>(nx, ny, nz, getMc());
 	}
-	
-	@Override
+
+    /**
+     * Returns the point that this vector represents.
+     *
+     * @return
+     */
+    public SPoint<T> asPoint() {
+        return SPoint.valueOf(this);
+    }
+
+    @NotNull
+    @Override
     public <N> SVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		SVector<N> sn =  new SVector<>(mapper.apply(x),mapper.apply(y),mapper.apply(z),newCalculator);
 		if(length!=null){
@@ -484,7 +495,7 @@ public final class SVector<T> extends Vector<T> {
 	}
 //	/**
 //	 * Reduce this vector, but in two vectors, which means the three vectors must be on the 
-//	 * same plane.
+//	 * identity plane.
 //	 * @param x
 //	 * @param y
 //	 * @return
@@ -589,7 +600,7 @@ public final class SVector<T> extends Vector<T> {
 	/**
 	 * Create the SVector through another vector, the method only considers 
 	 * the first three dimensions of the given vector.
-	 * <p>Notice: The MathCalculator of the new vector will be the same as the vector's.
+     * <p>Notice: The MathCalculator of the new vector will be the identity as the vector's.
 	 * @param v a vector whose size is bigger than or equal to 3.
 	 * @return a new SVector
 	 */
@@ -620,9 +631,10 @@ public final class SVector<T> extends Vector<T> {
 	 */
 	public static <T> T mixedProduct(SVector<T> a,SVector<T> b,SVector<T> c){
         return MatrixSup.det3(toMatrix(a, b, c), a.getMc());
-	}
-	/**
-	 * Returns a vector which is on the same plane of {@code n �� v} and {@code v} and the cosine value of the 
+    }
+
+    /**
+     * Returns a vector which is on the identity plane of {@code n �� v} and {@code v} and the cosine value of the
 	 * angle of it and {@code v} is equal to {@code cos}. The mix product of {@code (result �� v) �� n}
 	 * will be positive.
 	 * @param v
@@ -635,14 +647,15 @@ public final class SVector<T> extends Vector<T> {
 		SVector<T> res = perp.multiplyNumber(v.calLength());
 		res = res.add(v.multiplyNumber(mc.divide(perp.calLength(), tan)));
 		return res;
-	}
-	/**
-	 * Returns the two possible vectors that are on the same plane of {@code n �� v} and {@code v} 
+    }
+
+    /**
+     * Returns the two possible vectors that are on the identity plane of {@code n �� v} and {@code v}
 	 *  and the cosine value of the 
 	 * angle of either of them and {@code v} is equal to {@code cos}.
 	 * @param v
 	 * @param n
-	 * @param cos
+     * @param tan
 	 * @return
 	 */
 	public static <T> List<SVector<T>> angledVectorTwo(SVector<T> v,SVector<T> n,T tan){
@@ -662,9 +675,17 @@ public final class SVector<T> extends Vector<T> {
 	 * @param pl
 	 * @return
 	 */
-	public static <T> SVector<T> angleSamePlane(SVector<T> vec,Plane<T> pl,T tan){
-		return angledVector(vec,pl.getNormalVector(),tan); 
-	}
+    public static <T> SVector<T> angleSamePlane(SVector<T> vec, Plane<T> pl, T tan){
+        return angledVector(vec,pl.getNormalVector(),tan);
+    }
+
+    /**
+     * Determines whether the three vectors are on the same plane.
+     */
+    public static <T> boolean isOnSamePlane(SVector<T> v1, SVector<T> v2, SVector<T> v3) {
+        var mc = v1.getMathCalculator();
+        return mc.isZero(SVector.mixedProduct(v1, v2, v3));
+    }
 	
 	private static <T> T[][] toMatrix(SVector<T> x,SVector<T> y,SVector<T> z){
 		@SuppressWarnings("unchecked")
@@ -681,8 +702,27 @@ public final class SVector<T> extends Vector<T> {
 		mat[2][1] = z.y;
 		mat[2][2] = z.z;
 		return mat;
+    }
+
+    /**
+     * Create a new vector base, the three SVector must not be parallel.
+     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return a new vector base
+     */
+    public static <T> SVectorBase<T> createBase(SVector<T> x, SVector<T> y, SVector<T> z) {
+        MathCalculator<T> mc = x.getMc();
+        T[][] mat = toMatrix(x, y, z);
+        T d = MatrixSup.det3(mat, mc);
+        if (mc.isZero(d)) {
+            throw new IllegalArgumentException("They are on the identity plane");
+        }
+        return new SVectorBase<>(x, y, z, mat, d,mc);
 	}
-	
+
 	/**
 	 * Describe a vector base in space
 	 * @author liyicheng
@@ -768,24 +808,7 @@ public final class SVector<T> extends Vector<T> {
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "SVectorBase";
 		}
-		
-		/**
-		 * Create a new vector base, the three SVector must not be parallel.
-		 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
-		 * @param x
-		 * @param y
-		 * @param z
-		 * @return a new vector base
-		 */
-		public static <T> SVectorBase<T> createBase(SVector<T> x,SVector<T> y,SVector<T> z){
-            MathCalculator<T> mc = x.getMc();
-			T[][] mat = toMatrix(x, y, z);
-			T d = MatrixSup.det3(mat, mc);
-			if(mc.isZero(d)){
-				throw new IllegalArgumentException("They are on the same plane");
-			}
-			return new SVectorBase<>(x, y, z, mat,d,mc);
-		}
+
 	}
 	public static class SVectorGenerator<T> extends MathObject<T> {
 

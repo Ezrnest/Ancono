@@ -48,8 +48,8 @@ public final class CollectionSup {
 	}
 	/**
 	 * Determines whether the two lists are equal by means of {@code isEqual}. The two 
-	 * lists are equal only when they have the same size and the corresponding elements 
-	 * are the same.
+     * lists are equal only when they have the identity size and the corresponding elements
+     * are the identity.
 	 * @param list1 a list
 	 * @param list2 another list
 	 * @param isEqual a function to determine whether two elements are equal.

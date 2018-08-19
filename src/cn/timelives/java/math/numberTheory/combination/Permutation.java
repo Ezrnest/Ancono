@@ -7,6 +7,7 @@ import cn.timelives.java.math.property.Composable;
 import cn.timelives.java.math.property.Invertible;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	/**
 	 * Returns the index of this permutation. The index is 
 	 * a number ranged in [0,size!-1]. It represents the index of this 
-	 * permutation in all the permutations of the same size ordered by 
+     * permutation in all the permutations of the identity size ordered by
 	 * the natural of their representative array. The identity permutation always 
 	 * has the index of {@code 0} and the total flip permutation always has the 
 	 * index of {@code size!-1}<P>
@@ -144,14 +145,16 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
      * permutation to its input, and then applies this permutation to the result.
      * 
      */
-    Permutation compose(Permutation before);
+    @NotNull
+    Permutation compose(@NotNull Permutation before);
 
     /**
      * Returns a composed permutation that first applies this permutation to
      * its input, and then applies the {@code after} permutation to the result.
      * 
      */
-    Permutation andThen(Permutation after);
+    @NotNull
+    Permutation andThen(@NotNull Permutation after);
 	
 	/**
 	 * Gets a copy of array representing this permutation. For each index n in the range, 
@@ -247,7 +250,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	
 	/**
 	 * An transposition permutation is a permutation that only swap two elements.
-	 * By convenience, it is not strictly required that the two elements aren't the same.
+     * By convenience, it is not strictly required that the two elements aren't the identity.
 	 * @author liyicheng
 	 * 2018-03-02 20:47
 	 *

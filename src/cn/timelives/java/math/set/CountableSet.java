@@ -25,7 +25,7 @@ public interface CountableSet<T> extends MathSet<T> ,Iterable<T>{
 	 * iterator may always return {@code true} when calling {@link Iterator#hasNext()}
 	 * if this countable set contains infinite elements.
 	 * The order of the elements can be any, but should 
-	 * maintain the same. 
+     * maintain the identity.
 	 */
 	@Override
 	Iterator<T> iterator();

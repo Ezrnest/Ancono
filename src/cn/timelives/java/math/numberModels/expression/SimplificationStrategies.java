@@ -481,7 +481,6 @@ public final class SimplificationStrategies {
 					if(accept(n, pow,mc)) {
 						collect.add(pair);
 						it.remove();
-						continue;
 					}
 				}
 			}

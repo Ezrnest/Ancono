@@ -9,6 +9,7 @@ import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.numberModels.Calculators;
 
 import java.math.BigInteger;
+import java.sql.Array;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -103,7 +104,7 @@ public final class MathSets {
 			Objects.requireNonNull(t);
 			return true;
 		}
-		
+
 
 		/**
 		 * Returns "Ω", which indicates this is an
@@ -202,9 +203,6 @@ public final class MathSets {
 
     /**
      * Determines whether the set contains all the elements in s2.
-     * @param set
-     * @param s2
-     * @param <T>
      * @return
      */
 	public static <T> boolean containsAll(MathSet<T> set, FiniteSet<T> s2) {
@@ -215,4 +213,82 @@ public final class MathSets {
         }
         return true;
 	}
+
+    @SafeVarargs
+    public static <T> MathSet<T> unionOf(MathSet<T>... sets) {
+        if (sets.length == 0) {
+            return empty();
+        }
+        if (sets.length == 2) {
+            //special simplification
+            if (sets[0] == sets[1]) {
+                return sets[0];
+            }
+        }
+        for (MathSet<T> s : sets) {
+            if (s == UNIVERSE) {
+                return universe();
+            }
+        }
+        return new CombinedSet<>(Arrays.asList(sets), CombinedSet.OperatorType.UNION);
+    }
+
+    @SafeVarargs
+    public static <T> MathSet<T> intersectOf(MathSet<T>... sets) {
+        if (sets.length == 0) {
+            return universe();
+        }
+        if (sets.length == 2) {
+            //special simplification
+            if (sets[0] == sets[1]) {
+                return sets[0];
+            }
+        }
+        for (MathSet<T> s : sets) {
+            if (s == EMPTY) {
+                return empty();
+            }
+        }
+        return new CombinedSet<>(Arrays.asList(sets), CombinedSet.OperatorType.INTERSECT);
+    }
+
+    static final class CombinedSet<T> implements MathSet<T> {
+
+
+        enum OperatorType {
+            UNION, INTERSECT
+        }
+
+        private final Collection<MathSet<T>> sets;
+        private final OperatorType type;
+
+        CombinedSet(Collection<MathSet<T>> sets, OperatorType type) {
+            this.sets = sets;
+            this.type = type;
+        }
+
+        @Override
+        public boolean contains(T t) {
+            switch (type) {
+                case UNION: {
+                    for (MathSet<T> s : sets) {
+                        if (s.contains(t)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                case INTERSECT: {
+                    for (MathSet<T> s : sets) {
+                        if (!s.contains(t)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+            throw new AssertionError();
+        }
+
+    }
 }

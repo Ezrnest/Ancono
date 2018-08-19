@@ -8,8 +8,8 @@ package cn.timelives.java.math.property;
  * operation on the object:
  * <ul>
  * <li>It is <i>reflexive</i>: {@code x.union(x)} should return an equivalent of {@code x}.
- * <li>It is <i>symmetric</i>: {@code x.union(y)} should return the same as {@code y.union(x)}.
- * <li>It is <i>consistent</i>: the result of {@code x.union(y)} should return the same as long as 
+ * <li>It is <i>symmetric</i>: {@code x.union(y)} should return the identity as {@code y.union(x)}.
+ * <li>It is <i>consistent</i>: the result of {@code x.union(y)} should return the identity as long as
  * no changes happen to {@code x} or {@code y}.
  * </ul>
  * @author liyicheng 2017-10-05 12:58

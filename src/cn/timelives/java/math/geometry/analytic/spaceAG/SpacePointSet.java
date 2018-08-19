@@ -25,7 +25,6 @@ import java.util.function.Function;
  * @author liyicheng
  *
  * @param <T>
- * @param <S>
  */
 public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<SPoint<T>>{
 
@@ -42,7 +41,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public abstract <N> SpacePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
@@ -65,7 +65,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
-	@Override
+    @NotNull
+    @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		return this.getClass().getName();
 	}
@@ -223,7 +224,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> UniversePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new UniversePointSet<>(newCalculator);
 		}
@@ -273,7 +275,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "Universe set";
 		}
@@ -312,7 +315,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> EmptyPointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new EmptyPointSet<>(newCalculator);
 		}
@@ -361,7 +365,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "Empty set";
 		}
@@ -426,7 +431,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.utilities.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> CombinedSpacePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			List<SpacePointSet<N>> ln = new ArrayList<>(list.size());
 			for(SpacePointSet<T> set : list){
@@ -491,7 +497,8 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "CombinedSpacePointSet:"+(flag == INTERSECT ? "Intersect" : "Union") + ":"+list.toString();
 		}

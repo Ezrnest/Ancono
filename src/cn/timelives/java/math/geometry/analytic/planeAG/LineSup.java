@@ -15,11 +15,11 @@ public class LineSup {
 	private LineSup(){}
 	
 	/**
-	 * Calculate whether the three lines intersect at the same point.
+     * Calculate whether the three lines intersect at the identity point.
 	 * @param l1 a line 
 	 * @param l2 a line 
 	 * @param l3 a line 
-	 * @return {@code true} if they intersect at the same point.
+     * @return {@code true} if they intersect at the identity point.
 	 */
 	public static <T> boolean sameIntersectPoint(Line<T> l1,Line<T> l2,Line<T> l3){
 		//we use a matrix to calculate this stuff
@@ -56,7 +56,7 @@ public class LineSup {
 	 * @param A
 	 * @param B
 	 * @return a line
-	 * @throws IllegalArgumentException if A and B are the same point 
+     * @throws IllegalArgumentException if A and B are the identity point
 	 */
 	public static <T> Line<T> perpendicularMiddleLine(Point<T> A,Point<T> B){
 		if(A.valueEquals(B)){

@@ -3,6 +3,8 @@
  */
 package cn.timelives.java.math.numberTheory.combination;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,16 +34,18 @@ public abstract class AbstractPermutation implements Permutation {
 	/*
 	 * @see cn.timelives.java.math.numberTheory.combination.Permutation#compose(cn.timelives.java.math.numberTheory.combination.Permutation)
 	 */
-	@Override
-	public Permutation compose(Permutation before) {
+    @NotNull
+    @Override
+    public Permutation compose(@NotNull Permutation before) {
 		return Permutations.valueOf(apply(before.getArray()));
 	}
 	
 	/*
 	 * @see cn.timelives.java.math.numberTheory.combination.Permutation#andThen(cn.timelives.java.math.numberTheory.combination.Permutation)
 	 */
-	@Override
-	public Permutation andThen(Permutation after) {
+    @NotNull
+    @Override
+    public Permutation andThen(@NotNull Permutation after) {
 		return after.compose(this);
 	}
 	

@@ -550,7 +550,7 @@ public final class Triangle<T> extends MathObject<T> {
 		Point<T> A = new Point<T>(mc,ax,ay);
 		Point<T> B = new Point<T>(mc,bx,by);
 		Point<T> C = new Point<T>(mc,cx,cy);
-		//must check the three point is not on a same line.
+        //must check the three point is not on a identity line.
 		
 		
 		Triangle<T> tri =  new Triangle<>(mc, A, B, C);
@@ -596,7 +596,7 @@ public final class Triangle<T> extends MathObject<T> {
 	}
 	/**
 	 * Returns a triangle whose vertexes are the three intersect point of these three lines.If either 
-	 * there are two parallel line or three lines have the same intersect point,exception will be 
+     * there are two parallel line or three lines have the identity intersect point,exception will be
 	 * thrown. 
 	 * <p>
 	 * The triangle will use the given math calculator instead of using one from one of the three lines.

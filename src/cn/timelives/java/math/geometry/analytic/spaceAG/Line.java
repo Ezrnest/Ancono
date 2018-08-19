@@ -21,7 +21,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	public enum Relation{
 		/**
 		 * Skew lines, which means the two lines neither intersect, nor parallel(sure them are not 
-		 * the same).
+         * the identity).
 		 */
 		SKEW,
 		/**
@@ -315,7 +315,8 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
         return new Line<>(getMc(), p0.moveToward(v), vec);
 	}
 
-	@Override
+    @NotNull
+    @Override
     public <N> Line<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Line<>(newCalculator,p0.mapTo(mapper, newCalculator),vec.mapTo(mapper, newCalculator));
 	}
@@ -486,7 +487,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 	}
 	/**
 	 * Create a line passing through the two points, throws an exception if the two 
-	 * points are the same.
+     * points are the identity.
 	 * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
 	 * @param p1
 	 * @param p2

@@ -202,7 +202,7 @@ implements Simplifiable<T,ConicSection<T>>,SubstituableCurve<T>{
 	 * <li>Otherwise, for each secant line that passes {@code p}, 
 	 * there are two intersect points with this conic section, 
 	 * and the all intersect point of the two tangent lines from the two 
-	 * intersect points will be on <b>the same line</b>, which is the result.
+     * intersect points will be on <b>the identity line</b>, which is the result.
 	 * </ul>
 	 * @param p a point.
 	 * @return the polar line, or {@code null}

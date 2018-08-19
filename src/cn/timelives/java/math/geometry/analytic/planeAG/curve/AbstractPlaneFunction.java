@@ -44,6 +44,7 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
 	/*
 	 * @see cn.timelives.java.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

@@ -14,6 +14,7 @@ import cn.timelives.java.math.numberModels.expression.Node.*
 import java.util.*
 import cn.timelives.java.utilities.Printer.print
 
+@Suppress("NAME_SHADOWING")
 /**
  * Expression Calculator deals with the calculation of the Expression. Unlike
  * most types of [MathCalculator] which have few things to configure,
@@ -106,7 +107,7 @@ class ExprCalculator
          * @return the ss
          */
         val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : MathCalculator<Expression> {
-    internal val enabledTags: MutableSet<String>
+    internal val enabledTags: MutableSet<String> = SimplificationStrategies.getDefaultTags()
     internal val properties: MutableMap<String, String>
     // some constants here
     @get:JvmName("getPOne")
@@ -138,7 +139,6 @@ class ExprCalculator
 
 
     init {
-        enabledTags = SimplificationStrategies.getDefaultTags()
         properties = HashMap()
         pOne = multinomialCalculator.one
         pZero = multinomialCalculator.zero
@@ -252,8 +252,8 @@ class ExprCalculator
 	 * cn.timelives.java.math.MathCalculator#isEqual(java.lang.Object,
 	 * java.lang.Object)
 	 */
-    override fun isEqual(para1: Expression, para2: Expression): Boolean {
-        return para1.root.equalNode(para2.root, multinomialCalculator)
+    override fun isEqual(x: Expression, y: Expression): Boolean {
+        return x.root.equalNode(y.root, multinomialCalculator)
     }
 
     /*
@@ -270,17 +270,17 @@ class ExprCalculator
 	 * @see cn.timelives.java.math.MathCalculator#add(java.lang.Object,
 	 * java.lang.Object)
 	 */
-    override fun add(para1: Expression, para2: Expression): Expression {
+    override fun add(x: Expression, y: Expression): Expression {
         // special case for both polynomial:
-        if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
-            val p1 = toPolynomial(para1.root).p
-            val p2 = toPolynomial(para2.root).p
+        if (isPolynomial(x.root) && isPolynomial(y.root)) {
+            val p1 = toPolynomial(x.root).p
+            val p2 = toPolynomial(y.root).p
             return Expression(Node.newPolyNode(multinomialCalculator.add(p1, p2), null))
         }
         val list = ArrayList<Node>(2)
         val nroot = Add(null, null, list)
-        val rt1 = para1.root.cloneNode(nroot)
-        val rt2 = para2.root.cloneNode(nroot)
+        val rt1 = x.root.cloneNode(nroot)
+        val rt2 = y.root.cloneNode(nroot)
         list.add(rt1)
         list.add(rt2)
         val root = simplify(nroot)
@@ -292,11 +292,11 @@ class ExprCalculator
 	 * @see
 	 * cn.timelives.java.math.MathCalculator#negate(java.lang.Object)
 	 */
-    override fun negate(para: Expression): Expression {
-        if (isPolynomial(para.root)) {
-            return Expression(Node.newPolyNode(multinomialCalculator.negate(toPolynomial(para.root).p), null))
+    override fun negate(x: Expression): Expression {
+        if (isPolynomial(x.root)) {
+            return Expression(Node.newPolyNode(multinomialCalculator.negate(toPolynomial(x.root).p), null))
         }
-        var nroot: Node = Node.wrapCloneNodeMultiply(para.root, pMinusOne)
+        var nroot: Node = Node.wrapCloneNodeMultiply(x.root, pMinusOne)
         nroot = simplify(nroot)
         return Expression(nroot)
     }
@@ -315,15 +315,15 @@ class ExprCalculator
 	 * cn.timelives.java.math.MathCalculator#subtract(java.lang.Object,
 	 * java.lang.Object)
 	 */
-    override fun subtract(para1: Expression, para2: Expression): Expression {
-        if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
-            val p1 = toPolynomial(para1.root).p
-            val p2 = toPolynomial(para2.root).p
+    override fun subtract(x: Expression, y: Expression): Expression {
+        if (isPolynomial(x.root) && isPolynomial(y.root)) {
+            val p1 = toPolynomial(x.root).p
+            val p2 = toPolynomial(y.root).p
             return Expression(Node.newPolyNode(multinomialCalculator.subtract(p1, p2), null))
         }
         // para1 + (-1)*para2
-        val p1 = para1.root.cloneNode(null)
-        val p2 = Node.wrapCloneNodeMultiply(para2.root, pMinusOne)
+        val p1 = x.root.cloneNode(null)
+        val p2 = Node.wrapCloneNodeMultiply(y.root, pMinusOne)
         var root: Node = Node.wrapNodeAM(true, p1, p2)
         root = simplify(root)
         return Expression(root)
@@ -341,14 +341,14 @@ class ExprCalculator
 	 * cn.timelives.java.math.MathCalculator#multiply(java.lang.Object,
 	 * java.lang.Object)
 	 */
-    override fun multiply(para1: Expression, para2: Expression): Expression {
+    override fun multiply(x: Expression, y: Expression): Expression {
         // special case for both polynomial:
-        if (isPolynomial(para1.root) && isPolynomial(para2.root)) {
-            val p1 = toPolynomial(para1.root).p
-            val p2 = toPolynomial(para2.root).p
+        if (isPolynomial(x.root) && isPolynomial(y.root)) {
+            val p1 = toPolynomial(x.root).p
+            val p2 = toPolynomial(y.root).p
             return Expression(Node.newPolyNode(multinomialCalculator.multiply(p1, p2), null))
         }
-        var root = Node.wrapCloneNodeAM(false, para1.root, para2.root)
+        var root = Node.wrapCloneNodeAM(false, x.root, y.root)
         root = simplify(root)
         return Expression(root)
     }
@@ -358,8 +358,8 @@ class ExprCalculator
 	 * cn.timelives.java.math.MathCalculator#divide(java.lang.Object,
 	 * java.lang.Object)
 	 */
-    override fun divide(para1: Expression, para2: Expression): Expression {
-        var root: Node = Node.wrapCloneNodeFraction(para1.root, para2.root)
+    override fun divide(x: Expression, y: Expression): Expression {
+        var root: Node = Node.wrapCloneNodeFraction(x.root, y.root)
         root = simplify(root)
         return Expression(root)
     }
@@ -368,8 +368,8 @@ class ExprCalculator
 	 * @see cn.timelives.java.math.MathCalculator#reciprocal(java.lang.
 	 * Object)
 	 */
-    override fun reciprocal(p: Expression): Expression {
-        val root = Node.wrapNodeFraction(Node.newPolyNode(pOne, null), p.root.cloneNode(null))
+    override fun reciprocal(x: Expression): Expression {
+        val root = Node.wrapNodeFraction(Node.newPolyNode(pOne, null), x.root.cloneNode(null))
         val r = simplify(root)
         return Expression(r)
     }
@@ -379,13 +379,13 @@ class ExprCalculator
 	 * cn.timelives.java.math.MathCalculator#multiplyLong(java.lang.
 	 * Object, long)
 	 */
-    override fun multiplyLong(p: Expression, l: Long): Expression {
+    override fun multiplyLong(x: Expression, n: Long): Expression {
         // special case for both polynomial:
-        if (isPolynomial(p.root)) {
-            val p1 = toPolynomial(p.root).p
-            return Expression(Node.newPolyNode(multinomialCalculator.multiplyLong(p1, l), null))
+        if (isPolynomial(x.root)) {
+            val p1 = toPolynomial(x.root).p
+            return Expression(Node.newPolyNode(multinomialCalculator.multiplyLong(p1, n), null))
         }
-        var root: Node = wrapCloneNodeMultiply(p.root, Multinomial.valueOf(l))
+        var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.valueOf(n))
         root = simplify(root)
         return Expression(root)
     }
@@ -394,12 +394,12 @@ class ExprCalculator
 	 * @see cn.timelives.java.math.MathCalculator#divideLong(java.lang.
 	 * Object, long)
 	 */
-    override fun divideLong(p: Expression, n: Long): Expression {
-        if (isPolynomial(p.root)) {
-            val p1 = toPolynomial(p.root).p
+    override fun divideLong(x: Expression, n: Long): Expression {
+        if (isPolynomial(x.root)) {
+            val p1 = toPolynomial(x.root).p
             return Expression(Node.newPolyNode(multinomialCalculator.divideLong(p1, n), null))
         }
-        var root: Node = wrapCloneNodeMultiply(p.root, Multinomial.monomial(Term.valueOfRecip(n)))
+        var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.monomial(Term.valueOfRecip(n)))
         root = simplify(root)
         return Expression(root)
     }
@@ -427,8 +427,8 @@ class ExprCalculator
 	 * @see cn.timelives.java.math.MathCalculator#pow(java.lang.Object,
 	 * long)
 	 */
-    override fun pow(p: Expression, exp: Long): Expression {
-        var root: Node = wrapNodeDF("exp", p.root.cloneNode(null), newPolyNode(Multinomial.valueOf(exp), null))
+    override fun pow(x: Expression, n: Long): Expression {
+        var root: Node = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(Multinomial.valueOf(n), null))
         root = simplify(root)
         return Expression(root)
     }
@@ -582,7 +582,7 @@ class ExprCalculator
                 print("Simplify: " + node.type + " : " + node.hashCode())//TODO
         }
         node = simplifyPolynomial(node, 0)
-        doSort(node, 0)
+        doSort(node, 0)//very important
         node = simplifyWithStrategyNoRecur(node)
         node.simIdentifier = simplificationIdentifier
         return node
@@ -601,7 +601,7 @@ class ExprCalculator
         if (node.simIdentifier == simplificationIdentifier) {
             return node
         }
-        when (node.type) {
+        when (node.type!!) {
             Node.Type.POLYNOMIAL -> {
                 return node
             }
@@ -694,7 +694,7 @@ class ExprCalculator
         if (node.children.isEmpty() || multinomialCalculator.isZero(p!!)) {
             return newPolyNode(p, node.parent)
         }
-        if (multinomialCalculator.isEqual(p!!, multinomialCalculator.one)) {
+        if (multinomialCalculator.isEqual(p, multinomialCalculator.one)) {
             if (children.size == 1) {
                 return setParentAndReturn(node, children[0])
             }

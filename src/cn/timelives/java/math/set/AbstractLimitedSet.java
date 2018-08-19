@@ -16,7 +16,7 @@ import java.util.function.Function;
  * A limited set is a set with limited elements. The 
  * order of the elements in this set should be persistent 
  * so that the method {@link #get(BigInteger)} will always returns 
- * the same value. The usage of {@link #get(BigInteger)} is because  
+ * the identity value. The usage of {@link #get(BigInteger)} is because
  * potential huge sets may overflow even {@code long}. The 
  * index given in the method get is required to be 0 or positive.
  *  
@@ -35,7 +35,7 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 
 	/**
 	 * Gets an elements from this set. The method 
-	 * should always returns the same value.
+     * should always returns the identity value.
 	 * @param index the index of the element.
 	 * @return a number
 	 */
@@ -45,7 +45,7 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 	
 	/**
 	 * Gets an elements from this set. The method 
-	 * should always returns the same value.
+     * should always returns the identity value.
 	 * @param index the index of the element.
 	 * @return a number
 	 */

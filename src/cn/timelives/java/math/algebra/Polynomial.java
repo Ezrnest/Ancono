@@ -6,6 +6,7 @@ package cn.timelives.java.math.algebra;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -40,8 +41,9 @@ public interface Polynomial<T> extends Iterable<T>{
 	/** 
 	 * Iterators the coefficient from the lowest one(a0).
 	 */
-	@Override
-	public default Iterator<T> iterator() {
+    @NotNull
+    @Override
+    public default Iterator<T> iterator() {
 		return new It<>(this);
 	}
 
@@ -135,7 +137,7 @@ public interface Polynomial<T> extends Iterable<T>{
 			sb.append(" + ");
 			
 		}
-		if(mc.isZero(m.getCoefficient(0))==false){
+        if (!mc.isZero(m.getCoefficient(0))) {
 			sb.append(nf.format(m.getCoefficient(0), mc));
 		}else{
 			sb.delete(sb.length()-3, sb.length());

@@ -160,7 +160,7 @@ public class GTriangle<T> extends MathObject<T> {
 
     /**
      * Transforms this triangle to a plane triangle. The vertex A of the returned triangle will
-     * be the given pointA and the side AB will be in the same direction of directAB.
+     * be the given pointA and the side AB will be in the identity direction of directAB.
      * @param pointA
      * @param directAB
      * @return

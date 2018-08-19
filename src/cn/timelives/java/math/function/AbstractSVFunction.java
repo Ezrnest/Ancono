@@ -5,6 +5,7 @@ package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.algebra.calculus.Derivable;
+import cn.timelives.java.math.algebra.calculus.SDerivable;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.MathCalculator;
@@ -13,6 +14,7 @@ import cn.timelives.java.math.set.IntervalUnion;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -35,14 +37,16 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	 * Returns the String representation of this function, the prefix 'f(x)=' 
 	 * should not be included.
 	 */
-	@Override
+    @NotNull
+    @Override
     public abstract String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf);
 	
 	
 	/*
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public abstract <N> AbstractSVFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
@@ -53,7 +57,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	 *
 	 * @param <T>
 	 */
-	public static final class Ln<T> extends AbstractSVFunction<T> implements Derivable<T,Power<T>>{
+    public static final class Ln<T> extends AbstractSVFunction<T> implements SDerivable<T, Power<T>> {
 		/**
 		 * @param mc
 		 */
@@ -64,8 +68,9 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
 		 */
-		@Override
-		public T apply(T x) {
+        @NotNull
+        @Override
+        public T apply(T x) {
             return getMc().ln(x);
 		}
 
@@ -80,7 +85,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.MathFunction#domain()
 		 */
-		@Override
+        @NotNull
+        @Override
 		public Interval<T> domain() {
             return Interval.positive(getMc());
 		}
@@ -88,7 +94,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> Ln<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Ln<>(newCalculator);
 		}
@@ -99,21 +106,19 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		@Override
         public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof Log) {
-                if (getMc().isEqual(((Log<T>) obj).a, getMc().constantValue(MathCalculator.Companion.STR_E))) {
-						return true;
-					}
-				return false;
+                return getMc().isEqual(((Log<T>) obj).a, getMc().constantValue(MathCalculator.Companion.STR_E));
 			}
 			if(! (obj instanceof Ln)) {
 				return false;
 			}
-			return true; 
+            return true;
 		}
 
 		/*
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "ln(x)";
 		}
@@ -126,7 +131,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	 * 2017-10-10 18:37
 	 * @param <T>
 	 */
-	public static final class Log<T> extends AbstractSVFunction<T> implements Derivable<T,Power<T>>{
+    public static final class Log<T> extends AbstractSVFunction<T> implements SDerivable<T, Power<T>> {
 		private final T a;
 		/**
 		 * @param mc
@@ -138,7 +143,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
 		 */
-		@Override
+        @NotNull
+        @Override
 		public T apply(T x) {
             return getMc().log(a, x);
 		}
@@ -152,7 +158,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.MathFunction#domain()
 		 */
-		@Override
+        @NotNull
+        @Override
 		public Interval<T> domain() {
             return Interval.positive(getMc());
 		}
@@ -160,14 +167,16 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
             return "log(" + nf.format(a, getMc()) + ",x)";
 		}
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> Log<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Log<>(newCalculator,mapper.apply(a));
 		}
@@ -199,7 +208,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	 *
 	 * @param <T>
 	 */
-	public static final class Power<T> extends AbstractSVFunction<T> implements Derivable<T,Power<T>>{
+    public static final class Power<T> extends AbstractSVFunction<T> implements SDerivable<T, Power<T>> {
 		/**
 		 * @param mc
 		 */
@@ -226,7 +235,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
 		 */
-		@Override
+        @NotNull
+        @Override
 		public T apply(T x) {
 			if(n.getSignum()==0) {
 				return a;
@@ -250,8 +260,9 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
-		@Override
-		public Power<T> derive() {
+        @NotNull
+        @Override
+        public Power<T> derive() {
             if (getMc().isZero(a)) {
 				return this;
 			}
@@ -284,7 +295,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.MathFunction#domain()
 		 */
-		@Override
+        @NotNull
+        @Override
 		public IntervalUnion<T> domain() {
 			if(domain ==null) {
 				IntervalUnion<T> dom;
@@ -310,7 +322,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
             if (getMc().isZero(a)) {
 				return "0";
@@ -329,12 +342,13 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 			}else {
 				sb.append("^(").append(n.toString()).append(")");
 			}
-			return null;
+            return sb.toString();
 		}
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> Power<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Power<N>(newCalculator, mapper.apply(a), n);
 		}
@@ -363,7 +377,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	 *
 	 * @param <T>
 	 */
-	public static final class Exp<T> extends AbstractSVFunction<T> implements Derivable<T,Exp<T>>{
+    public static final class Exp<T> extends AbstractSVFunction<T> implements SDerivable<T, Exp<T>> {
 		private final T a,c;
 		/**
 		 * @param mc
@@ -376,7 +390,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
 		 */
-		@Override
+        @NotNull
+        @Override
 		public T apply(T x) {
             return getMc().multiply(c, getMc().exp(a, x));
 		}
@@ -407,7 +422,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			StringBuilder sb = new StringBuilder();
             if (!getMc().isEqual(getMc().getOne(), a)) {
@@ -426,7 +442,8 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> Exp<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Exp<N>(newCalculator, mapper.apply(c), mapper.apply(a));
 		}
@@ -436,7 +453,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		@Override
         public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof Ex) {
-				return ((Ex<T>)obj).valueEquals(this);
+                return obj.valueEquals(this);
 			}
 			if(! (obj instanceof Exp)) {
 				return false;
@@ -455,7 +472,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	 *
 	 * @param <T>
 	 */
-	public static final class Ex<T> extends AbstractSVFunction<T> implements Derivable<T,Ex<T>>{
+    public static final class Ex<T> extends AbstractSVFunction<T> implements SDerivable<T, Ex<T>> {
 		/**
 		 * @param mc
 		 */
@@ -465,28 +482,32 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		/*
 		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
 		 */
-		@Override
+        @NotNull
+        @Override
 		public T apply(T x) {
             return getMc().exp(x);
 		}
 		/*
 		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
 		 */
-		@Override
-		public Ex<T> derive() {
+        @NotNull
+        @Override
+        public Ex<T> derive() {
 			return this;
 		}
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 		 */
-		@Override
+        @NotNull
+        @Override
         public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 			return "e^x";
 		}
 		/*
 		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> Ex<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new Ex<N>(newCalculator);
 		}
@@ -497,7 +518,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
         public boolean valueEquals(@NotNull MathObject<T> obj) {
 			if(obj instanceof Exp) {
 				Exp<T> exp = (Exp<T>)obj;
-                return getMc().isEqual(getMc().getOne(), exp.c) && getMc().isEqual(getMc().constantValue(MathCalculator.Companion.STR_E), exp.a);
+                return getMc().isEqual(getMc().getOne(), exp.c) && getMc().isEqual(Objects.requireNonNull(getMc().constantValue(MathCalculator.STR_E)), exp.a);
 			}
 			return obj instanceof Ex;
 		}
@@ -605,5 +626,5 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 	public static <T> Power<T> pow(Fraction n,MathCalculator<T> mc){
 		return new Power<>(mc, n);
 	}
-	
+
 }

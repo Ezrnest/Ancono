@@ -381,7 +381,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      *
      * @param m modified to the remainder
-     * @param divisor remains the same
+     * @param divisor remains the identity
      * @param quotient added
      */
     private static void multinomialDivision(NavigableSet<Term> m, NavigableSet<Term> divisor, NavigableSet<Term> quotient) {

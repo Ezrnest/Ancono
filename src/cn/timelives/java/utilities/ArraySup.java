@@ -191,7 +191,7 @@ public class ArraySup {
 			cal:
 			while(true){
 				int t = rd.nextInt(bound);
-				//check for the same
+                //check for the identity
 				for(int i=0;i<c;i++){
 					if(arr[i]==t)
 						continue cal;
@@ -223,7 +223,7 @@ public class ArraySup {
 			cal:
 			while(true){
 				int t = rd.nextInt(bound);
-				//check for the same
+                //check for the identity
 				for(int i=0;i<c;i++){
 					if(arr[i]==t)
 						continue cal;
@@ -533,7 +533,7 @@ public class ArraySup {
 	
 	/**
 	 * Determines whether the two array is equal, this method will ignore the order of 
-	 * specific element. The length of the two array should be the same.
+     * specific element. The length of the two array should be the identity.
 	 * @param a1
 	 * @param a2
 	 * @param testEqual a function that test whether two given object is equal, return true if equal
@@ -565,7 +565,7 @@ public class ArraySup {
 	}
 	/**
 	 * Determines whether the two array is equal, this method will ignore the order of 
-	 * specific element. The length of the two array should be the same.(Two elements <tt>e1</tt> and
+     * specific element. The length of the two array should be the identity.(Two elements <tt>e1</tt> and
      * <tt>e2</tt> are <i>equal</i> if <tt>(e1==null ? e2==null :
      * e1.equals(e2))</tt>.)
 	 * @param a1
@@ -603,7 +603,7 @@ public class ArraySup {
 	 * Determines whether the array contains the specific object.
 	 * @param arr
 	 * @param element
-	 * @param testEqual a function to determines whether the two objects are the same.
+     * @param testEqual a function to determines whether the two objects are the identity.
 	 * @return 
 	 */
 	public static <T,S> boolean arrayContains(T[] arr,S element,BiFunction<T, S, Boolean> testEqual){

@@ -23,7 +23,7 @@ interface GroupCalculator<T : Any> : MonoidCalculator<T> {
      *
      *
      *  * If `n=0`, returns the identity element.
-     *  * If `n>0`, returns the same result as defined in semigroup.
+     *  * If `n>0`, returns the identity result as defined in semigroup.
      * <lI>If `n<0`, returns `inverse(gpow(x,-n))`.
      *
     </lI> */

@@ -7,10 +7,7 @@ import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.MathCalculatorHolder
 import cn.timelives.java.math.MathObject
 import cn.timelives.java.math.algebra.Polynomial
-import cn.timelives.java.math.algebra.calculus.Derivable
-import cn.timelives.java.math.algebra.calculus.Integrable
-import cn.timelives.java.math.algebra.calculus.derivation
-import cn.timelives.java.math.algebra.calculus.integration
+import cn.timelives.java.math.algebra.calculus.*
 import cn.timelives.java.math.numberModels.Utils
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.utilities.ArraySup
@@ -27,7 +24,7 @@ abstract class AbstractSVPFunction<T : Any>
 /**
  * @param mc
  */
-protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVFunction<T>(mc), SVPFunction<T>, Derivable<T, AbstractSVPFunction<T>>, Integrable<T> {
+protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVFunction<T>(mc), SVPFunction<T>, SDerivable<T, AbstractSVPFunction<T>>, Integrable<T> {
 
     override fun getDegree(): Int {
         return mp
@@ -70,9 +67,9 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 	 * @see cn.timelives.java.math.FlexibleMathObject#equals(java.lang.Object)
 	 */
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj is AbstractSVPFunction<*>) {
-            val `as` = obj as AbstractSVPFunction<T>?
+    override fun equals(other: Any?): Boolean {
+        if (other is AbstractSVPFunction<*>) {
+            val `as` = other as AbstractSVPFunction<T>?
             if (degree != `as`!!.degree) {
                 return false
             }
@@ -157,12 +154,12 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             return SVPFunctionImpl1(newCalculator, mp, ArraySup.mapTo(coes, mapper))
         }
 
-        override fun equals(obj: Any?): Boolean {
-            if (this === obj) return true
-            if (obj !is SVPFunctionImpl1<*>) return false
-            if (!super.equals(obj)) return false
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is SVPFunctionImpl1<*>) return false
+            if (!super.equals(other)) return false
 
-            if (!Arrays.equals(coes, obj.coes)) return false
+            if (!Arrays.equals(coes, other.coes)) return false
 
             return true
         }
@@ -217,12 +214,12 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             return mc.hashCode() * 31 + map.hashCode()
         }
 
-        override fun equals(obj: Any?): Boolean {
-            if (this === obj) return true
-            if (obj !is SVPFunctionImpl2<*>) return false
-            if (!super.equals(obj)) return false
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is SVPFunctionImpl2<*>) return false
+            if (!super.equals(other)) return false
 
-            if (map != obj.map) return false
+            if (map != other.map) return false
 
             return true
         }
@@ -275,7 +272,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 
     /**
      * A constant function is a type of MathFunction that
-     * always returns the same result.
+     * always returns the identity result.
      * @author
      */
     class ConstantFunction<T : Any> internal constructor(mc: MathCalculator<T>,
@@ -341,7 +338,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @return a new single variable polynomial function
          */
         @SafeVarargs
-        fun <T : Any> valueOf(mc: MathCalculator<T>, vararg coes: T): AbstractSVPFunction<T> {
+        fun <T : Any> valueOf(mc: MathCalculator<T>, vararg coes: T?): AbstractSVPFunction<T> {
             var ncoes: Array<T> = Array<Any?>(coes.size) {
                 if (coes[it] == null) {
                     mc.zero
@@ -366,11 +363,6 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          */
         fun <T : Any> valueOf(coes: List<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
             val arr = coes.toTypedArray<Any?>() as Array<T>
-            for (i in arr.indices) {
-                if (arr[i] == null) {
-                    throw NullPointerException("null in list: index = $i")
-                }
-            }
             return SVPFunctionImpl1(mc, arr.size - 1, arr)
         }
 
@@ -385,9 +377,6 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             var mp = 0
             for ((key, value) in coes) {
 
-                if (value == null) {
-                    throw NullPointerException()
-                }
                 mp = Math.max(mp, key)
                 map[key] = value
             }

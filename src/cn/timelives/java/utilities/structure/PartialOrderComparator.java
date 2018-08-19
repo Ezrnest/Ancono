@@ -10,8 +10,8 @@ package cn.timelives.java.utilities.structure;
  *     {@code compareWith(A,B)} consistently return {@code true}
  *     or consistently return {@code false}, if no change has happened to both A and B
  *  <li>It is partially <i>symmetric</i>:If {@code compareWith(A,B)==true} and {@code compareWith(B,A)==true},then A and B are literally 
- *  	the same in this relationship,and for any object C {@code compareWith(A,C)} and {@code compareWith(B,C)} must return the same value,
- *  	{@code compareWith(C,A)} and {@code compareWith(C,B)} must return the same value too.
+ *  	the identity in this relationship,and for any object C {@code compareWith(A,C)} and {@code compareWith(B,C)} must return the identity value,
+ *    {@code compareWith(C,A)} and {@code compareWith(C,B)} must return the identity value too.
  * </ul>
  * This relationship is designed for the partial order in math , the using of math symbol {@literal ≧ } indicates this relationship.For instance,
  * {@literal A ≧ B} means {@code compareWith(A,B)==true}.
@@ -30,7 +30,7 @@ package cn.timelives.java.utilities.structure;
  * this partial order and {@code equals()} and {@code compareTo()} should be clear.It is highly recommended that {@literal A ≧ B && B ≧ A} should be equal 
  * to {@code A.equals(B) == true}.  
  * <p>For {@code comparaTo()} method , if implemented , if {@literal A ≧ B} , then {@code A.ompareTo(B)} should return either 
- * {0,1} or {0,-1} , which means unless {@literal B ≧ A}, the {@code compareTo()} method should return a same value (either 1 or -1) for any pair (A,B) that 
+ * {0,1} or {0,-1} , which means unless {@literal B ≧ A}, the {@code compareTo()} method should return a identity value (either 1 or -1) for any pair (A,B) that
  *  {@literal A ≧ B}.In the special situation of {@literal A ≧ B && B ≧ A}, {@code A.compareTo(B)} should return {@code 0}.
  * @author lyc
  *

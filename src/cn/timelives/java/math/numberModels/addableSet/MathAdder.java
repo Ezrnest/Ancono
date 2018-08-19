@@ -1,7 +1,5 @@
 package cn.timelives.java.math.numberModels.addableSet;
 
-import cn.timelives.java.math.numberModels.old.FormulaCalculator;
-
 /**
  * MathAdder ��MathAddable �ıر����֣�
  * <p>������������һ�����㹤��,���Լ��������ɼӶ���ĵ���

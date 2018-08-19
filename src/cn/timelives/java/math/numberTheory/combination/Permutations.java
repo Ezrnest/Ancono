@@ -13,6 +13,7 @@ import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.Printer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -124,8 +125,9 @@ public final class Permutations {
 		 * cn.timelives.java.math.numberTheory.combination.AbstractPermutation#compose(cn.timelives.
 		 * java.math.combination.Permutation)
 		 */
-		@Override
-		public Permutation compose(Permutation before) {
+        @NotNull
+        @Override
+        public Permutation compose(@NotNull Permutation before) {
 			return new ArrPermutation(apply(before.getArray()));
 		}
 
@@ -134,8 +136,9 @@ public final class Permutations {
 		 * cn.timelives.java.math.numberTheory.combination.AbstractPermutation#andThen(cn.timelives.
 		 * java.math.combination.Permutation)
 		 */
-		@Override
-		public Permutation andThen(Permutation after) {
+        @NotNull
+        @Override
+        public Permutation andThen(@NotNull Permutation after) {
 			return new ArrPermutation(after.apply(getArray()));
 		}
 	}
@@ -342,8 +345,9 @@ public final class Permutations {
 		 * cn.timelives.java.math.numberTheory.combination.AbstractPermutation#andThen(cn.timelives.
 		 * java.math.combination.Permutation)
 		 */
-		@Override
-		public Permutation andThen(Permutation after) {
+        @NotNull
+        @Override
+        public Permutation andThen(@NotNull Permutation after) {
 			return after;
 		}
 
@@ -352,8 +356,9 @@ public final class Permutations {
 		 * cn.timelives.java.math.numberTheory.combination.AbstractPermutation#compose(cn.timelives.
 		 * java.math.combination.Permutation)
 		 */
-		@Override
-		public Permutation compose(Permutation before) {
+        @NotNull
+        @Override
+        public Permutation compose(@NotNull Permutation before) {
 			return before;
 		}
 

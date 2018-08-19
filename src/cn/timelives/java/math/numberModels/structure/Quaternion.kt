@@ -187,9 +187,9 @@ class QuaternionCalculator<T : Any>(val mc: MathCalculator<T>) : DivisionRingCal
 
 }
 
-fun main(args: Array<String>) {
-    val mc: MathCalculator<Double> = Calculators.getCalculatorDouble()
-    val q = Quaternion.zero(mc)
-    val (a, b, c, d) = q
-
-}
+//fun main(args: Array<String>) {
+//    val mc: MathCalculator<Double> = Calculators.getCalculatorDouble()
+//    val q = Quaternion.zero(mc)
+//    val (a, b, c, d) = q
+//
+//}

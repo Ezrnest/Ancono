@@ -131,12 +131,12 @@ extends Iterable<N>{
 	
 	
 	/**
-	 * Compare this graph and the given graph , if this graph and the graph have the same structure and 
+     * Compare this graph and the given graph , if this graph and the graph have the identity structure and
 	 * {@code equal(Object)}method for corresponding elements all return {@code true},then the two 
-	 * graphs are the same,and the method will return {@code true}.
+     * graphs are the identity,and the method will return {@code true}.
 	 * <p>This method may cost much time,seek some better methods if they are available.
 	 * @param obj an object 
-	 * @return {@code true} if the two graphs are the same,{@code false}
+     * @return {@code true} if the two graphs are the identity,{@code false}
 	 */
 	public boolean equals(Object obj);
 	
@@ -198,7 +198,7 @@ extends Iterable<N>{
 	
 	/**
 	 * Returns all the connected components in this graph , the connected component is a set of nodes that each node 
-	 * in this set can reach all the other nodes in the same set.Each of the returned connected components will be the largest 
+     * in this set can reach all the other nodes in the identity set.Each of the returned connected components will be the largest
 	 * connected component for its containing nodes , and any two sets' complement will be none , while the union of the 
 	 * sets will be all the nodes in this graph.<p>
 	 * The returned sets will be contained in a list.

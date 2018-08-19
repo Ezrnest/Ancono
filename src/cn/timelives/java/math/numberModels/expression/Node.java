@@ -102,7 +102,7 @@ public abstract class Node implements Computable,Serializable {
 	
 	/**
 	 * Determines whether this node is equal to the other node in terms of it content it stores. Notice that this method 
-	 * is not the same to {@code equals()}.
+     * is not the identity to {@code equals()}.
 	 * @param n
 	 * @return
 	 */

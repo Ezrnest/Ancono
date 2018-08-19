@@ -50,7 +50,8 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	 * @param p a point
 	 * @return the point after translation
 	 */
-	@Override
+    @NotNull
+    @Override
 	public Point<T> apply(Point<T> p) {
 		return mat.transform(p).translate(v);
 	}
@@ -299,7 +300,7 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 	}
 	/**
 	 *  Returns a transformation that performs TransMatrix first, and then performs the translate, 
-	 *  which is the same as {@code fromTransMatrix(m).translate(v)}.
+     *  which is the identity as {@code fromTransMatrix(m).translate(v)}.
 	 * @param m a TransMatrix
 	 * @param v a PVector
 	 * @return a new PAffineTrans

@@ -117,22 +117,22 @@ object GroupCalculators {
             /*
 			 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#isEqual(java.lang.Object, java.lang.Object)
 			 */
-            override fun isEqual(para1: T, para2: T): Boolean {
-                return gc.isEqual(para1, para2)
+            override fun isEqual(x: T, y: T): Boolean {
+                return gc.isEqual(x, y)
             }
 
             /*
 			 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#add(java.lang.Object, java.lang.Object)
 			 */
-            override fun add(para1: T, para2: T): T {
-                return gc.apply(para1, para2)
+            override fun add(x: T, y: T): T {
+                return gc.apply(x, y)
             }
 
             /*
 			 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#negate(java.lang.Object)
 			 */
-            override fun negate(para: T): T {
-                return gc.inverse(para)
+            override fun negate(x: T): T {
+                return gc.inverse(x)
             }
 
             /*
@@ -156,8 +156,8 @@ object GroupCalculators {
             /*
 			 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#isEqual(java.lang.Object, java.lang.Object)
 			 */
-            override fun isEqual(para1: T, para2: T): Boolean {
-                return gc.isEqual(para1, para2)
+            override fun isEqual(x: T, y: T): Boolean {
+                return gc.isEqual(x, y)
             }
         }
     }
@@ -174,24 +174,24 @@ object GroupCalculators {
             override val zero: T
                 get() = rc.zero
 
-            override fun isEqual(para1: T, para2: T): Boolean {
-                return rc.isEqual(para1, para2)
+            override fun isEqual(x: T, y: T): Boolean {
+                return rc.isEqual(x, y)
             }
 
-            override fun add(para1: T, para2: T): T {
-                return rc.add(para1, para2)
+            override fun add(x: T, y: T): T {
+                return rc.add(x, y)
             }
 
             override fun negate(para: T): T {
                 return rc.negate(para)
             }
 
-            override fun subtract(para1: T, para2: T): T {
-                return rc.subtract(para1, para2)
+            override fun subtract(x: T, y: T): T {
+                return rc.subtract(x, y)
             }
 
-            override fun multiply(para1: T, para2: T): T {
-                return rc.multiply(para1, para2)
+            override fun multiply(x: T, y: T): T {
+                return rc.multiply(x, y)
             }
 
             override fun multiplyLong(p: T, l: Long): T {
@@ -219,44 +219,44 @@ object GroupCalculators {
             override val zero: T
                 get() = fc.zero
 
-            override fun isEqual(para1: T, para2: T): Boolean {
-                return fc.isEqual(para1, para2)
+            override fun isEqual(x: T, y: T): Boolean {
+                return fc.isEqual(x, y)
             }
 
-            override fun add(para1: T, para2: T): T {
-                return fc.add(para1, para2)
+            override fun add(x: T, y: T): T {
+                return fc.add(x, y)
             }
 
-            override fun negate(para: T): T {
-                return fc.negate(para)
+            override fun negate(x: T): T {
+                return fc.negate(x)
             }
 
-            override fun subtract(para1: T, para2: T): T {
-                return fc.subtract(para1, para2)
+            override fun subtract(x: T, y: T): T {
+                return fc.subtract(x, y)
             }
 
-            override fun multiply(para1: T, para2: T): T {
-                return fc.multiply(para1, para2)
+            override fun multiply(x: T, y: T): T {
+                return fc.multiply(x, y)
             }
 
-            override fun divide(para1: T, para2: T): T {
-                return fc.divide(para1, para2)
+            override fun divide(x: T, y: T): T {
+                return fc.divide(x, y)
             }
 
-            override fun divideLong(p: T, n: Long): T {
-                return fc.divideLong(p, n)
+            override fun divideLong(x: T, n: Long): T {
+                return fc.divideLong(x, n)
             }
 
-            override fun multiplyLong(p: T, l: Long): T {
-                return fc.multiplyLong(p, l)
+            override fun multiplyLong(x: T, n: Long): T {
+                return fc.multiplyLong(x, n)
             }
 
-            override fun reciprocal(p: T): T {
-                return fc.reciprocal(p)
+            override fun reciprocal(x: T): T {
+                return fc.reciprocal(x)
             }
 
-            override fun pow(p: T, exp: Long): T {
-                return fc.pow(p, exp)
+            override fun pow(x: T, n: Long): T {
+                return fc.pow(x, n)
             }
         }
     }
@@ -280,11 +280,7 @@ object GroupCalculators {
         /*
 		 * @see cn.timelives.java.math.algebra.abstractAlgebra.calculator.MonoidCalculator#getIdentity()
 		 */
-        override val identity: S
-
-        init {
-            identity = f.apply(origin.identity)
-        }
+        override val identity: S = f.apply(origin.identity)
 
         /*
 		 * @see cn.timelives.java.math.algebra.abstractAlgebra.calculator.SemigroupCalculator#apply(java.lang.Object, java.lang.Object)

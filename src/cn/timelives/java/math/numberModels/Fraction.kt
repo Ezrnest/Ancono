@@ -4,7 +4,7 @@ import cn.timelives.java.math.MathUtils
 import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix
-import cn.timelives.java.math.numberModels.api.FeildNumberModel
+import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.utilities.ArraySup
 import java.io.Serializable
@@ -51,7 +51,7 @@ internal constructor(
          * Gets the sign number of this Fraction.
          * @return sign number
          */
-        val signum: Int) : Number(), FeildNumberModel<Fraction>, Comparable<Fraction>, Serializable {
+        val signum: Int) : Number(), DivisionRingNumberModel<Fraction>, Comparable<Fraction>, Serializable {
 
     /**
      * Determines whether this fraction is an integer.

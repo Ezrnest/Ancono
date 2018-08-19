@@ -362,8 +362,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	
 	/**
 	 * Returns the parallel projection of the point and the direct vector vec.<br/>
-	 * The result of {@code this.projection(p,this.getNormalVector())} and {@code this.projection(p)} 
-	 * will always be the same.<p>
+	 * The result of {@code this.projection(p,this.getNormalVector())} and {@code this.projection(p)}
+	 * will always be the identity.<p>
 	 * 
 	 * <pre>
 	 * . <-- a point
@@ -664,7 +664,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 			return "PlaneCoordinateConverter";
 		}
 	}
-	
+
+	@NotNull
 	@Override
     public <N> Plane<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Plane<N>(newCalculator,mapper.apply(a),mapper.apply(b),mapper.apply(c),mapper.apply(d));
@@ -914,43 +915,39 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 	 * @return
 	 */
 	public static <T> Plane<T> anglePlane(Plane<T> pl,Line<T> line,T tan){
-		if(pl.isParallel(line)==false){
+		if (!pl.isParallel(line)) {
 			throw new IllegalArgumentException("Not parallel");
 		}
 		SVector<T> n = line.vec;
 		SVector<T> pln = SVector.angledVector(pl.getNormalVector(), n, tan);
 		return pointNormalVector(line.p0,pln);
 	}
-	
-	
-	
-	
-	
 
-	public static void main(String[] args) {
-		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
-		SVector<Fraction> v1 = SVector.valueOf(Fraction.Companion.getONE(), Fraction.Companion.getZERO(), Fraction.Companion.getZERO(), mc);
-		SVector<Fraction> v2 = SVector.valueOf(Fraction.Companion.getZERO(), Fraction.Companion.getONE(), Fraction.Companion.getZERO(), mc);
-//				v3 = SVector.vector(3d, 4d, 1d, mc);
-		print(v1.perpendicular(v2));
-//		print(v1);
-//		print(v2);
-        Plane<Fraction> p1 = generalFormula(Fraction.Companion.getZERO(), Fraction.Companion.getZERO(), Fraction.Companion.getONE().negate(), Fraction.Companion.getONE(), mc);
-//		Plane<Fraction> p2 = generalFormula(1d, 0d, 0d, 0d, mcd);
-//		Line<Double> l = Line.pointDirect(Point.pointO(mcd),v3);
-//		p1 = vectorPoint(v1, v2, SPoint.pointO(mcd), mcd);
-		print(p1);
-//		print(p2);
-//		print(p1.intersectLine(p2));
-//		print(p1.projection(Point.valueOf(1d, 1d, 1d, mcd)));
-//		print(p1.projection(v3));
-//		print(l);
-//		print(p1.projection(l));
-		PlaneCoordinateConverter<Fraction> pcc = p1.getCoordinateConverter(v1, v2, 
-				SPoint.valueOf(Fraction.Companion.getZERO(), Fraction.Companion.getZERO(), Fraction.Companion.getONE(), mc));
-		print(pcc.toPlanePoint(SPoint.valueOf(Fraction.Companion.getONE(), Fraction.Companion.getONE(), Fraction.Companion.getONE(), mc)));
-		print(pcc.toSpacePoint(Point.valueOf(Fraction.Companion.valueOf(10), Fraction.Companion.valueOf(20), mc)));
-	}
+
+//	public static void main(String[] args) {
+//		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
+//		SVector<Fraction> v1 = SVector.valueOf(Fraction.Companion.getONE(), Fraction.Companion.getZERO(), Fraction.Companion.getZERO(), mc);
+//		SVector<Fraction> v2 = SVector.valueOf(Fraction.Companion.getZERO(), Fraction.Companion.getONE(), Fraction.Companion.getZERO(), mc);
+////				v3 = SVector.vector(3d, 4d, 1d, mc);
+//		print(v1.perpendicular(v2));
+////		print(v1);
+////		print(v2);
+//        Plane<Fraction> p1 = generalFormula(Fraction.Companion.getZERO(), Fraction.Companion.getZERO(), Fraction.Companion.getONE().negate(), Fraction.Companion.getONE(), mc);
+////		Plane<Fraction> p2 = generalFormula(1d, 0d, 0d, 0d, mcd);
+////		Line<Double> l = Line.pointDirect(Point.pointO(mcd),v3);
+////		p1 = vectorPoint(v1, v2, SPoint.pointO(mcd), mcd);
+//		print(p1);
+////		print(p2);
+////		print(p1.intersectLine(p2));
+////		print(p1.projection(Point.valueOf(1d, 1d, 1d, mcd)));
+////		print(p1.projection(v3));
+////		print(l);
+////		print(p1.projection(l));
+//		PlaneCoordinateConverter<Fraction> pcc = p1.getCoordinateConverter(v1, v2,
+//				SPoint.valueOf(Fraction.Companion.getZERO(), Fraction.Companion.getZERO(), Fraction.Companion.getONE(), mc));
+//		print(pcc.toPlanePoint(SPoint.valueOf(Fraction.Companion.getONE(), Fraction.Companion.getONE(), Fraction.Companion.getONE(), mc)));
+//		print(pcc.toSpacePoint(Point.valueOf(Fraction.Companion.valueOf(10), Fraction.Companion.valueOf(20), mc)));
+//	}
 
 	
 }

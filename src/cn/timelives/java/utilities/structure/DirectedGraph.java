@@ -152,7 +152,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 		connectNodesTo(n,others);
 	}
 	/**
-	 * The same as {@link #connectNodes(DirectedGraphNode, Set)}.This has a more clear method name. 
+     * The identity as {@link #connectNodes(DirectedGraphNode, Set)}.This has a more clear method name.
 	 * @param n a node 
 	 * @param others other nodes to connect to
 	 * @see #connectTo(DirectedGraphNode, DirectedGraphNode)
@@ -189,7 +189,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 	}
 	
 	/**
-	 * The same as {@link disconnectNodes(DirectedGraphNode, Set)}.This has a more clear method name. 
+     * The identity as {@link disconnectNodes(DirectedGraphNode, Set)}.This has a more clear method name.
 	 * @param n a node 
 	 * @param others other nodes to disconnect to
 	 * @see #disconnectNode(DirectedGraphNode, DirectedGraphNode)
@@ -242,7 +242,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 	/**
 	 * Returns a deep copy of this graph,which means all of the nodes in the
 	 * graph will be cloned and their relations and the elements reference will
-	 * be the same.The elements in the graph will not be cloned.
+     * be the identity.The elements in the graph will not be cloned.
 	 * 
 	 * @return a clone of this graph.
 	 */
@@ -260,7 +260,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 	
 	/**
 	 * Compute the transposition of this DirectedGraph. A transposition is a graph that all the nodes 
-	 * is the same(clone),but the connection will be turned,which means if in this graph {@code isConnected(n1,n2)==true},
+     * is the identity(clone),but the connection will be turned,which means if in this graph {@code isConnected(n1,n2)==true},
 	 * then in the transposition , {@code isConnected(n2,n1)==true}.
 	 * @return the transposition of this graph
 	 */
@@ -295,7 +295,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 	public abstract DirectedGraph<E> subGraphOfBy( DirectedGraphNode<E> node);
 	
 	/**
-	 * Almost the same as the description in {@linkplain Graph#connectedComponent()}, and the returned 
+     * Almost the identity as the description in {@linkplain Graph#connectedComponent()}, and the returned
 	 * connected component is a strongly connected component.
 	 */
 	public abstract List<Set<DirectedGraphNode<E>>> connectedComponent();
@@ -311,7 +311,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 	public abstract DirectedGraph<Set<DirectedGraphNode<E>>> stronglyConnectedComponent();
 	
 	/**
-	 * Almost the same as the description in {@linkplain Graph#connectedComponentOf(DirectedGraphNode)},and the returned 
+     * Almost the identity as the description in {@linkplain Graph#connectedComponentOf(DirectedGraphNode)},and the returned
 	 * connected component is a strongly connected component.
 	 */
 	public abstract Set< DirectedGraphNode<E>> connectedComponentOf( DirectedGraphNode<E> node);

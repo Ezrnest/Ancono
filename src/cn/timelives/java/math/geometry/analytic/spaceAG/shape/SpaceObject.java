@@ -53,6 +53,7 @@ public abstract class SpaceObject<T> extends SpacePointSet<T> implements Infinit
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.spaceAG.SpacePointSet#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public abstract <N> SpaceObject<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

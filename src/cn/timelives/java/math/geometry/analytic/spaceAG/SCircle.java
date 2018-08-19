@@ -169,7 +169,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
 	/**
 	 * Determines the relation of the given point and this circle.The relation may be 
 	 * <i>inside</i>,<i>on</i>,<i>outside</i>.
-	 * @param p a point on the same plane
+	 * @param p a point on the identity plane
 	 * @return {@code -1} if {@code p} is inside this circle,
 	 * {@code 0} if {@code p} is on this circle,
 	 * or {@code 1} if {@code p} is outside this circle.

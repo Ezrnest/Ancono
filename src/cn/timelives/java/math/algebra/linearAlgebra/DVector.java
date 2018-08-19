@@ -138,7 +138,7 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("A column vector");
 		}
 		if (c1 == c2) {
-			throw new IllegalArgumentException("The same column:" + c1);
+            throw new IllegalArgumentException("The identity column:" + c1);
 		}
 		T[] rev = vec.clone();
         rev[c2] = getMc().add(getMc().multiply(rev[c1], k), rev[c2]);
@@ -151,7 +151,7 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("A column vector");
 		}
 		if (c1 == c2) {
-			throw new IllegalArgumentException("The same column:" + c1);
+            throw new IllegalArgumentException("The identity column:" + c1);
 		}
 		T[] rev = vec.clone();
         rev[c2] = getMc().add(getMc().multiplyLong(rev[c1], k), rev[c2]);
@@ -164,7 +164,7 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("A column vector");
 		}
 		if (r1 == r2) {
-			throw new IllegalArgumentException("The same row:" + r1);
+            throw new IllegalArgumentException("The identity row:" + r1);
 		}
 		T[] rev = vec.clone();
         rev[r2] = getMc().add(getMc().multiplyLong(rev[r1], k), rev[r2]);
@@ -177,7 +177,7 @@ public final class DVector<T> extends Vector<T> {
 			throw new IllegalArgumentException("A column vector");
 		}
 		if (r1 == r2) {
-			throw new IllegalArgumentException("The same row:" + r1);
+            throw new IllegalArgumentException("The identity row:" + r1);
 		}
 		T[] rev = vec.clone();
         rev[r2] = getMc().add(getMc().multiply(rev[r1], k), rev[r2]);
@@ -271,7 +271,7 @@ public final class DVector<T> extends Vector<T> {
         return new DVector<T>(rev, false, getMc());
 	}
 	/**
-	 * Return a new Vector = k * this.This method is generally the same 
+     * Return a new Vector = k * this.This method is generally the identity
 	 * to {@link #multiplyNumber(long)} , yet the returning object is 
 	 * sure to be a Vector.
 	 * @return k * this
@@ -287,7 +287,7 @@ public final class DVector<T> extends Vector<T> {
 	}
 	
 	/**
-	 * Return a new Vector = k * this.This method is generally the same 
+     * Return a new Vector = k * this.This method is generally the identity
 	 * to {@link #multiplyNumber(T)} , yet the returning object is 
 	 * sure to be a Vector.
 	 * @return k * this
@@ -367,7 +367,9 @@ public final class DVector<T> extends Vector<T> {
 		sb.setCharAt(sb.length()-1, ']');
 		return sb.toString();
 	}
-	@Override
+
+    @NotNull
+    @Override
     public <N> DVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		N[] narr = ArraySup.mapTo(vec, mapper);
 		return new DVector<>(narr, isRow, newCalculator);

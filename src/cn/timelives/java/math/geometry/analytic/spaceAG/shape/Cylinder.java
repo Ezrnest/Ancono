@@ -38,7 +38,8 @@ public final class Cylinder<T> extends SpaceObject<T> {
 		return false;
 	}
 
-	@Override
+    @NotNull
+    @Override
     public <N> Cylinder<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// TODO Auto-generated method stub
 		return null;

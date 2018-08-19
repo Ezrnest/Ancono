@@ -8,8 +8,8 @@ import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 /**
  * Closed curve is a curve that keeps a relation of inside and outside 
  * determining whether a point in plane is inside this curve, on this curve
- * or outside this curve. A curve should always returns the same result
- * for the methods as long as the given points are the same or they are 
+ * or outside this curve. A curve should always returns the identity result
+ * for the methods as long as the given points are the identity or they are
  * {@link Point#valueEquals(cn.timelives.java.math.FlexibleMathObject)}.
  * <p>
  * The closed curve may also provides the  

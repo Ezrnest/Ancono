@@ -7,24 +7,25 @@ interface GroupNumberModel<T : GroupNumberModel<T>> {
 
     fun subtract(y: T): T = add(y.negate())
 
-    operator fun plus(y: T): T = add(y)
 
-    operator fun unaryMinus(): T = negate()
 
 }
+
+operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.plus(y: T): T = add(y)
+
+operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.unaryMinus(): T = negate()
 
 interface RingNumberModel<T : RingNumberModel<T>> : GroupNumberModel<T> {
     fun multiply(y: T): T
-
-    operator fun times(y: T): T = multiply(y)
-
 }
 
-interface FeildNumberModel<T : FeildNumberModel<T>> : RingNumberModel<T> {
-    fun reciprocal(): T
+operator fun <T : RingNumberModel<T>> RingNumberModel<T>.times(y: T): T = multiply(y)
 
+interface DivisionRingNumberModel<T : DivisionRingNumberModel<T>> : RingNumberModel<T> {
+    fun reciprocal(): T
     fun divide(y: T): T = multiply(y.reciprocal())
 
-    operator fun div(y: T): T = divide(y)
 
 }
+
+operator fun <T : DivisionRingNumberModel<T>> DivisionRingNumberModel<T>.div(y: T): T = divide(y)

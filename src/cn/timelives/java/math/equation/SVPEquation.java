@@ -11,6 +11,7 @@ import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.property.Solveable;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.math.set.SingletonSet;
+import cn.timelives.java.utilities.CollectionSup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -64,7 +65,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	 * Determine whether the two equations are equal, this method only 
 	 * compare the corresponding coefficient. 
 	 * <p>Therefore, for example, 
-	 * {@literal 2x=0} and {@literal x=0} are considered to be not the same.
+     * {@literal 2x=0} and {@literal x=0} are considered to be not the identity.
 	 * This assures that if two equations are equal, then the functions returned
 	 * <p>To compare the another 
 	 * by {@link #asFunction()} are equal. 
@@ -97,11 +98,10 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
-	@Override
+    @NotNull
+    @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, getMc(), nf));
-		sb.append(" = 0");
-		return sb.toString();
+        return Polynomial.stringOf(this, getMc(), nf) + " = 0";
 		
 	}
 	
@@ -131,7 +131,8 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	/*
 	 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public abstract <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	/**
 	 * A default implements for the equation.
@@ -145,8 +146,8 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		
 		
 		private transient int hash = 0;
-		
-		protected DSVPEquation(MathCalculator<T> mc,T[] coes) {
+
+        DSVPEquation(MathCalculator<T> mc, T[] coes) {
 			super(mc,coes.length-1);
 			this.coes = coes;
 		}
@@ -170,10 +171,10 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		public int getDegree() {
 			return mp;
 		}
-		
-		
 
-		@Override
+
+        @NotNull
+        @Override
         public <N> DSVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			@SuppressWarnings("unchecked")
 			N[] newCoes = (N[]) new Object[coes.length];
@@ -195,7 +196,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		public int hashCode() {
 			if(hash==0){
 				int h = mp;
-				h = h * 31 + coes.hashCode();
+                h = h * 31 + Arrays.hashCode(coes);
 				hash = h;
 			}
 			return hash;
@@ -208,9 +209,8 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			if(obj instanceof SVPEquation){
 				DSVPEquation<N> sv = (DSVPEquation<N>) obj;
 				if(sv.mp == this.mp){
-					N[] svc = sv.coes;
-					for(int i=0;i<coes.length;i++){
-                        if (!getMc().isEqual(coes[i], mapper.apply(svc[i]))) {
+                    for (int i = 0; i < coes.length; i++) {
+                        if (!getMc().isEqual(coes[i], mapper.apply(sv.coes[i]))) {
 							return false;
 						}
 					}
@@ -263,7 +263,8 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		/*
 		 * @see cn.timelives.java.math.SingleVEquation#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 		 */
-		@Override
+        @NotNull
+        @Override
         public <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new SVPFEquation<>(newCalculator, f.mapTo(mapper, newCalculator));
 		}
@@ -318,7 +319,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	 * @param mc a {@link MathCalculator}
 	 * @return a {@link SVPEquation}
 	 */
-	public static <T> SVPEquation<T> fromMultinomial(Polynomial<T> m, MathCalculator<T> mc){
+    public static <T> SVPEquation<T> fromPolynomial(Polynomial<T> m, MathCalculator<T> mc) {
 		if(m instanceof SVPEquation) {
 			return (SVPEquation<T>)m;
 		}
@@ -336,10 +337,10 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	 * @return a {@link SVPEquation}
 	 * @throws ClassCastException if {@code !(m instanceof MathCalculatorHolder)};
 	 */
-	public static <T> SVPEquation<T> fromMultinomial(Polynomial<T> m){
+    public static <T> SVPEquation<T> fromPolynomial(Polynomial<T> m) {
 		@SuppressWarnings("unchecked")
 		MathCalculatorHolder<T> holder = (MathCalculatorHolder<T>)m;
-		return fromMultinomial(m, holder.getMathCalculator());
+        return fromPolynomial(m, holder.getMathCalculator());
 	}
 	/**
 	 * Returns an equation that is equal to {@code (x-a)^p = 0},the roots are 
@@ -358,23 +359,41 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		//TODO
 		return null;
 	}
-//	/**
-//	 * A root equation is 
-//	 * @author liyicheng
-//	 * 2017-10-06 15:59
-//	 *
-//	 * @param <T>
-//	 */
-//	static final class RootEquation<T> extends SVPEquation<T>{
-//
-//		/**
-//		 * @param mc
-//		 */
-//		protected RootEquation(MathCalculator<T> mc) {
-//			super(mc);
-//		}
-//		
-//	}
+
+    /**
+     * A root equation is a equation with its roots given.
+     *
+     * @param <T>
+     * @author liyicheng
+     * 2017-10-06 15:59
+     */
+    public static final class RootEquation<T> extends SVPEquation<T> {
+        private final List<T> roots;
+
+
+        RootEquation(MathCalculator<T> mc, List<T> roots) {
+            super(mc, roots.size());
+            this.roots = roots;
+        }
+
+
+        @Override
+        public <N> RootEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+            return new RootEquation<>(newCalculator, CollectionSup.mapList(roots, mapper));
+        }
+
+        @Override
+        public T getCoefficient(int n) {
+            return null;
+        }
+
+        @Override
+        public T compute(T x) {
+            T re = getMc().getOne();
+
+            return null;
+        }
+    }
 	
 	
 	/**
@@ -541,7 +560,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		 * Solve this equation in real number field,and take the duplicated root as one root,
 		 * <p>This method will return a list of solutions,which will contain 
 		 * no element if there is no real solution({@code ��<0}),
-		 * one if there is only one solution(or two solutions of the same value)({@code ��=0})
+         * one if there is only one solution(or two solutions of the identity value)({@code ��=0})
 		 * or two elements if there are two solutions(({@code ��>0}).
 		 * @return a list of solution,regardless of order.
 		 */

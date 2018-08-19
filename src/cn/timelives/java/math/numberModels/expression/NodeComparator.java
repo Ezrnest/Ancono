@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
+import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.expression.Node.*;
 import cn.timelives.java.utilities.CollectionSup;
 
@@ -42,13 +43,15 @@ public final class NodeComparator implements Comparator<Node> {
 			if (comp != 0) {
 				return comp;
 			}
-			if (a.p == null) {
-				return 1;
-			}
-			if (b.p == null) {
-				return -1;
-			}
-			comp = a.p.compareTo(b.p);
+            Multinomial p1 = a.p == null ? Multinomial.ZERO : a.p;
+//			if (a.p == null) {
+//				return 1;
+//			}
+//			if (b.p == null) {
+//				return -1;
+//			}
+            Multinomial p2 = b.p == null ? Multinomial.ZERO : b.p;
+            comp = p1.compareTo(p2);
 			if (comp != 0) {
 				return comp;
 			}
@@ -105,5 +108,9 @@ public final class NodeComparator implements Comparator<Node> {
 	}
 	
 	public static final NodeComparator DEFAULT = new NodeComparator();
-	
+
+
+//    public static void main(String[] args) {
+//        Node ns = new Node[]{Expression.valueOf("f(x)g(x)h(x)")}
+//    }
 }

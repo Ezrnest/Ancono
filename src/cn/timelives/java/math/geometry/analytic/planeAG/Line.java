@@ -296,7 +296,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Returns the symmetry point of the given point by this line.The given point and 
 	 * the point returned will have 
-	 * the same distance to this line and their connecting line will be perpendicular 
+     * the identity distance to this line and their connecting line will be perpendicular
 	 * to this line. 
 	 * @param p a point
 	 * @return the symmetry point of the point {@code p}
@@ -308,7 +308,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Returns the symmetry point of the given point by this line.The given point and 
 	 * the point returned will have 
-	 * the same distance to this line and their connecting line will be perpendicular 
+     * the identity distance to this line and their connecting line will be perpendicular
 	 * to this line. 
 	 * @param x X coordinate of the point
 	 * @param y Y coordinate of the point
@@ -340,7 +340,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Return the symmetry line of {@code this} by the point{@code p}.The returned line 
 	 * will be parallel to this line and the distances from the point to both line are 
-	 * the same.
+     * the identity.
 	 * @param p a point
 	 * @return a symmetry line.
 	 */
@@ -350,7 +350,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Return the symmetry line of {@code this} by the point{@code p}.The returned line 
 	 * will be parallel to this line and the distances from the point to both line are 
-	 * the same.
+     * the identity.
 	 * @param x X coordinate of the point
 	 * @param y Y coordinate of the point
 	 * @return a symmetry line.
@@ -367,8 +367,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	}
 	/**
 	 * Returns the symmetry line of {@code this} by line {@code l}.The returned line 
-	 * will intersect with {@code l} at the same point where {@code this} intersects 
-	 * with {@code l} and the angle will be the same.
+     * will intersect with {@code l} at the identity point where {@code this} intersects
+     * with {@code l} and the angle will be the identity.
 	 * @param l a line
 	 * @return a symmetry line of {@code this}
 	 */
@@ -408,7 +408,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 		if(pi==null){
 			return null;
 		}
-		//actually,this two methods are calculating the same line...
+        //actually,this two methods are calculating the identity line...
 		return symmetryLine(l);
 	}
 	/**
@@ -432,7 +432,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	/**
 	 * Returns the bisector of the intersect angle of {@code this} and {@code l},the returned line will 
 	 * pass through the intersect point of {@code this} and {@code l} and any point in this line will 
-	 * have a same distance to both {@code this} and {@code l}. 
+     * have a identity distance to both {@code this} and {@code l}.
 	 * @param l a line
 	 * @return bisector of the intersect angle
 	 */
@@ -776,8 +776,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 	}
 	
 	/**
-	 * Determines whether the two lines are the same,the determinant is used in this method to
-	 * compare the two lines are the same instead of just comparing their coefficients.
+     * Determines whether the two lines are the identity,the determinant is used in this method to
+     * compare the two lines are the identity instead of just comparing their coefficients.
 	 * @param obj
 	 * @param mapper
 	 * @return

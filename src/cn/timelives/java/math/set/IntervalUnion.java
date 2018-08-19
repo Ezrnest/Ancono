@@ -189,7 +189,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 			return insertInterval(0,v);
 		}
 //		if(downer==upper) {
-//			//the two interval is the same
+//			//the two interval is the identity
 //			Interval<T> in = is.get(downer);
 //			int t = mc.compare(in.upperBound(), v.downerBound());
 //			if(t>=0) {
@@ -522,7 +522,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 			return;
 		}
 //		if(downer==upper) {
-//			//the two interval is the same
+//			//the two interval is the identity
 //			Interval<T> in = is.get(downer);
 //			int t = mc.compare(in.upperBound(), v.downerBound());
 //			if(t>=0) {

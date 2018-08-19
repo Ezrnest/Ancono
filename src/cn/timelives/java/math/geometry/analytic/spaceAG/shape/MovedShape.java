@@ -42,13 +42,14 @@ public class MovedShape<T> extends SpaceObject<T> {
 			return false;
 		}
 		SVector<T> sv = SVector.vector(p, projection);
-		return MathTools.compareVector(vec, sv)>=0;
+        return SpaceAgUtils.compareVector(vec, sv) >= 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public <N> MovedShape<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// TODO Auto-generated method stub
 		return null;

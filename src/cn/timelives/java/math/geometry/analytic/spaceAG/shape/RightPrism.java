@@ -10,7 +10,8 @@ public abstract class RightPrism<T> extends PePrism<T> {
 	protected RightPrism(MathCalculator<T> mc, long p) {
 		super(mc, p);
 	}
-	
-	@Override
+
+    @NotNull
+    @Override
     public abstract <N> RightPrism<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

@@ -149,14 +149,12 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Gets the denominator of this term.
-     * @return
      */
     public BigInteger denominator() {
         return denominator;
     }
     /**
      * Gets the radical part of this term.
-     * @return
      */
     public BigInteger radical() {
         return radical;
@@ -164,7 +162,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Returns the sign number of this term.
-     * @return
      */
     public int signum(){
         return signum;
@@ -172,7 +169,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Returns signum > 0
-     * @return
      */
     public boolean isPositive() {
         return signum > 0;
@@ -180,14 +176,12 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Determines whether this term is zero.
-     * @return
      */
     public boolean isZero(){
         return signum == 0;
     }
     /**
      * Returns signum < 0
-     * @return
      */
     public boolean isNegative(){
         return signum<0;
@@ -271,7 +265,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         return character.size();
     }
     /**
-     * Determines whether this term and another one have the same
+     * Determines whether this term and another one have the identity
      * characters and corresponding powers.
      * @param t
      * @return
@@ -608,7 +602,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Returns a term that doesn't have the given character and all of the other
-     * number remains the same.
+     * number remains the identity.
      * @param ch the character
      * @return a new formula
      */
@@ -789,7 +783,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Determines whether this term and another term can be merged.
-     * It is required that the radical and characters are the same unless
+     * It is required that the radical and characters are the identity unless
      *
      * @param t
      * @return
@@ -1001,7 +995,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     /**
-     * Returns a term who has the same number part as this but has no character.
+     * Returns a term who has the identity number part as this but has no character.
      * @return
      */
     public Term numberPart(){
@@ -1012,7 +1006,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     /**
-     * Returns a term who has the same character as this but has the number part of 1.
+     * Returns a term who has the identity character as this but has the number part of 1.
      * @return
      */
     public Term characterPart(){
@@ -1020,7 +1014,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     /**
-     * Returns a term who has the same number part as this and has the
+     * Returns a term who has the identity number part as this and has the
      * @param charcters
      * @return
      */
@@ -1711,10 +1705,10 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
 
-    public static void main(String[] args) {
-        print(ONE.equals(ONE.negate()));
-        print(ONE.compareTo(ONE.negate()));
-        print(Term.valueOf("x^-1"));
+//    public static void main(String[] args) {
+//        print(ONE.equals(ONE.negate()));
+//        print(ONE.compareTo(ONE.negate()));
+//        print(Term.valueOf("x^-1"));
 //        int times = 100000;
 //		Term tt = Term.valueOf("3aasdadxxcqSqr3/2");
 //		print(tt);
@@ -1738,5 +1732,5 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 //        }
 //        print(t.end());
 //        print(fsum);
-    }
+//    }
 }

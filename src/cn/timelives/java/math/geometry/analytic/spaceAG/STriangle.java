@@ -46,16 +46,17 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 		if(!pl.contains(point)){
 			return false;
 		}
+		var mc = getMc();
 		SVector<T> vt = SVector.vector(A, point);
 		SVector<T> v1 = c.getDirectVector(),
 					v2 = b.getDirectVector();
-        T D = getMc().subtract(getMc().multiply(v1.y, v2.x), getMc().multiply(v1.x, v2.y));
-        T Dx = getMc().subtract(getMc().multiply(vt.y, v2.x), getMc().multiply(vt.x, v2.y));
-        T Dy = getMc().subtract(getMc().multiply(v1.x, vt.y), getMc().multiply(v1.y, vt.x));
-        T x = getMc().divide(Dx, D);
-        T y = getMc().divide(Dy, D);
-        T zero = getMc().getZero();
-        if (getMc().compare(x, zero) >= 0 && getMc().compare(y, zero) >= 0 && getMc().compare(getMc().add(y, x), getMc().getOne()) <= 0) {
+		T D = mc.subtract(mc.multiply(v1.y, v2.x), mc.multiply(v1.x, v2.y));
+		T Dx = mc.subtract(mc.multiply(vt.y, v2.x), mc.multiply(vt.x, v2.y));
+		T Dy = mc.subtract(mc.multiply(v1.x, vt.y), mc.multiply(v1.y, vt.x));
+		T x = mc.divide(Dx, D);
+		T y = mc.divide(Dy, D);
+		T zero = mc.getZero();
+		if (mc.compare(x, zero) >= 0 && mc.compare(y, zero) >= 0 && mc.compare(mc.add(y, x), mc.getOne()) <= 0) {
 			return true;
 		}
 		return false;
@@ -159,10 +160,11 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 * @return the center of gravity of this triangle.
 	 */
 	public SPoint<T> centerG(){
-        T x = getMc().divideLong(getMc().addX(A.x, B.x, C.x), 3);
-        T y = getMc().divideLong(getMc().addX(A.y, B.y, C.y), 3);
-        T z = getMc().divideLong(getMc().addX(A.z, B.z, C.z), 3);
-        return new SPoint<>(getMc(), x, y, z);
+		var mc = getMc();
+		T x = mc.divideLong(mc.addX(A.x, B.x, C.x), 3);
+		T y = mc.divideLong(mc.addX(A.y, B.y, C.y), 3);
+		T z = mc.divideLong(mc.addX(A.z, B.z, C.z), 3);
+		return new SPoint<>(mc, x, y, z);
 	}
 	
 //	/**
@@ -205,17 +207,18 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	 */
 	public SPoint<T> centerI(){
 		//calculate the length
-        T nx = getMc().add(getMc().add(getMc().multiply(A.x, a.getLength()), getMc().multiply(B.x, b.getLength())),
-                getMc().multiply(C.x, c.getLength()));
-        T ny = getMc().add(getMc().add(getMc().multiply(A.y, a.getLength()), getMc().multiply(B.y, b.getLength())),
-                getMc().multiply(C.y, c.getLength()));
-        T nz = getMc().add(getMc().add(getMc().multiply(A.z, a.getLength()), getMc().multiply(B.z, b.getLength())),
-                getMc().multiply(C.z, c.getLength()));
-        T deno = getMc().add(getMc().add(a.getLength(), b.getLength()), c.getLength());
-        nx = getMc().divide(nx, deno);
-        ny = getMc().divide(ny, deno);
-        nz = getMc().divide(nz, deno);
-        return new SPoint<>(getMc(), nx, ny, nz);
+		var mc = getMc();
+		T nx = mc.add(mc.add(mc.multiply(A.x, a.getLength()), mc.multiply(B.x, b.getLength())),
+				mc.multiply(C.x, c.getLength()));
+		T ny = mc.add(mc.add(mc.multiply(A.y, a.getLength()), mc.multiply(B.y, b.getLength())),
+				mc.multiply(C.y, c.getLength()));
+		T nz = mc.add(mc.add(mc.multiply(A.z, a.getLength()), mc.multiply(B.z, b.getLength())),
+				mc.multiply(C.z, c.getLength()));
+		T deno = mc.add(mc.add(a.getLength(), b.getLength()), c.getLength());
+		nx = mc.divide(nx, deno);
+		ny = mc.divide(ny, deno);
+		nz = mc.divide(nz, deno);
+		return new SPoint<>(mc, nx, ny, nz);
 	}
 	
 	/**
@@ -334,7 +337,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 		return Line.twoPoints(p, C);
 	}
 	/**
-	 * Determines whether the two triangle is the same, regardless of the order of 
+	 * Determines whether the two triangle is the identity, regardless of the order of
 	 * the edges. 
 	 * @param s
 	 * @return
@@ -389,6 +392,8 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	private <N> void fillField(STriangle<N> s,Function<T, N> mapper){
 		s.area = area == null ? null : mapper.apply(area);
 	}
+
+	@NotNull
 	@Override
     public <N> STriangle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		STriangle<N> s =new STriangle<>(newCalculator, pl.mapTo(mapper, newCalculator),
@@ -476,7 +481,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 		return new STriangle<>(A.getMathCalculator(), p, A, B, C, a, b, c);
 	}
 	/**
-	 * Creates a new STriangle with three sides a,b,c. The end point must be the same.
+	 * Creates a new STriangle with three sides a,b,c. The end point must be the identity.
 	 * @param a 
 	 * @param b
 	 * @param c
@@ -485,7 +490,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 	public static <T> STriangle<T> sides(Segment<T> a,Segment<T> b,Segment<T> c){
 		SPoint<T> A = a.getEndPointA(),B = b.getEndPointA(), C = c.getEndPointA();
 		if(!A.valueEquals(c.getEndPointB()) || !B.valueEquals(a.getEndPointB()) || !C.valueEquals(b.getEndPointB())){
-			throw new IllegalArgumentException("End point not the same");
+			throw new IllegalArgumentException("End point not the identity");
 		}
 		Plane<T> p = Plane.vectorPoint(a.getDirectVector(), c.getDirectVector(), A);
 		return new STriangle<>(A.getMathCalculator(), p, A, B, C, a, b, c);

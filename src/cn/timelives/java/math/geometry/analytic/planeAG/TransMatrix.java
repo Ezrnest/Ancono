@@ -204,7 +204,8 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
-	@Override
+    @NotNull
+    @Override
     public <N> TransMatrix<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		N[][] d2 = gd();
 		for(int i=0;i<2;i++){
@@ -272,15 +273,17 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	 * @param after another matrix
 	 * @return
 	 */
-	public TransMatrix<T> andThen(TransMatrix<T> after){
+    @NotNull
+    public TransMatrix<T> andThen(@NotNull TransMatrix<T> after) {
 		return after.multiply0(this);
 	}
 	
 	/*
 	 * @see cn.timelives.java.math.property.Composable#compose(cn.timelives.java.math.property.Composable)
 	 */
-	@Override
-	public TransMatrix<T> compose(TransMatrix<T> before) {
+    @NotNull
+    @Override
+    public TransMatrix<T> compose(@NotNull TransMatrix<T> before) {
 		return this.multiply0(before);
 	}
 	

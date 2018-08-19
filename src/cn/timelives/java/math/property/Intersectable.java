@@ -8,8 +8,8 @@ package cn.timelives.java.math.property;
  * operation on the object:
  * <ul>
  * <li>It is <i>reflexive</i>: {@code x.intersect(x)} should return an equivalent of {@code x}
- * <li>It is <i>symmetric</i>: {@code x.intersect(y)} should return the same as {@code y.intersect(x)}.
- * <li>It is <i>consistent</i>: the result of {@code x.intersect(y)} should return the same as long as 
+ * <li>It is <i>symmetric</i>: {@code x.intersect(y)} should return the identity as {@code y.intersect(x)}.
+ * <li>It is <i>consistent</i>: the result of {@code x.intersect(y)} should return the identity as long as
  * no changes happen to {@code x} or {@code y}.
  * </ul>
  * 

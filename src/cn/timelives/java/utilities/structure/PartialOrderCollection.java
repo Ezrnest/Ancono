@@ -30,7 +30,7 @@ public abstract class PartialOrderCollection<E> extends AbstractCollection<E>{
 	/**
 	 * This method will search this collection for an element {@code equal} that {@code comparator.isEqual(equal,ele)==true}.
 	 * If there is such an element,then the element will be returned, otherwise, {@code null} will be returned. If an element 
-	 * that is added to this collection formally is used as a parameter,then the same object will be returned({@code ele == containsEqualElement(ele)}).
+     * that is added to this collection formally is used as a parameter,then the identity object will be returned({@code ele == containsEqualElement(ele)}).
 	 * @return an equal element in this collection , or {@code null} if there isn't one.
 	 *  
 	 */

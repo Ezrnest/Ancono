@@ -2,6 +2,8 @@ package cn.timelives.java.math
 
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
+import cn.timelives.java.math.function.Bijection
+import cn.timelives.java.math.function.invoke
 
 import java.util.Comparator
 
@@ -75,7 +77,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
     /**
      * Compare the two numbers and determines whether these two numbers are the
-     * same.
+     * identity.
      *
      * ** For any calculator, this method should be implemented.**
      *
@@ -89,7 +91,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     /**
      * Compare the two numbers, return -1 if `para1 < para2 `, 0 if
      * `para1==para2` , or 1 if `para1 > para2`.This method is
-     * recommended to be literally the same to the method `compareTo()` if the
+     * recommended to be literally the identity to the method `compareTo()` if the
      * object `T` is comparable.
      *
      * @param para1 a number
@@ -161,7 +163,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     fun abs(para: T): T
 
     /**
-     * Returns the result of `para1-para2`,this method should return the same
+     * Returns the result of `para1-para2`,this method should return the identity
      * result with `add(para1,this.negate(para2))`.
      *
      * @param x a number
@@ -180,7 +182,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @return `true` if `para==zero`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
-    open fun isZero(para: T): Boolean {
+    fun isZero(para: T): Boolean {
         return isEqual(zero, para)
     }
 
@@ -211,7 +213,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    open fun multiplyX(vararg ps: Any): T {
+    fun multiplyX(vararg ps: Any): T {
         var re = one
         for (t in ps) {
             @Suppress("UNCHECKED_CAST")
@@ -253,6 +255,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
+    @Suppress("RedundantOverride")//override to reduce unnecessary override of subclasses written in java.
     override fun multiplyLong(x: T, n: Long): T {
         return super.multiplyLong(x, n)
     }
@@ -323,7 +326,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @return a number that represents the constant value.
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
-    fun constantValue(name: String): T
+    fun constantValue(name: String): T?
 
     /**
      * Returns the result of `a^b`. <br></br>
@@ -336,7 +339,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    open fun exp(a: T, b: T): T {
+    fun exp(a: T, b: T): T {
         return exp(multiply(ln(a), b))
     }
 
@@ -370,7 +373,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    open fun log(a: T, b: T): T {
+    fun log(a: T, b: T): T {
         return divide(ln(b), ln(a))
     }
 
@@ -414,7 +417,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    open fun cos(x: T): T {
+    fun cos(x: T): T {
         return squareRoot(subtract(one, multiply(x, x)))
     }
 
@@ -429,7 +432,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    open fun tan(x: T): T {
+    fun tan(x: T): T {
         return divide(sin(x), cos(x))
     }
 
@@ -454,8 +457,8 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    open fun arccos(x: T): T {
-        return subtract(divideLong(constantValue(STR_PI), 2L), arcsin(x))
+    fun arccos(x: T): T {
+        return subtract(divideLong(constantValue(STR_PI)!!, 2L), arcsin(x))
     }
 
     /**
@@ -469,7 +472,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    open fun arctan(x: T): T {
+    fun arctan(x: T): T {
         return arcsin(divide(x, squareRoot(add(one, multiply(x, x)))))
     }
 
@@ -488,6 +491,125 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
          * This constant value may not be available.
          */
         const val STR_I = "i"
+
+        /**
+         * Returns a [MathCalculator] based on the given [mc] and the [Bijection] [f]. It is assured that [mappedCalculator(mc,Bijection.identity()]
+         * returns the identity value of all methods as [mc].
+         */
+        @Suppress("unused")
+        fun <T : Any, S : Any> mappedCalculator(mc: MathCalculator<T>, f: Bijection<T, S>): MathCalculator<S> {
+            return object : MathCalculator<S> {
+                override val isComparable: Boolean = mc.isComparable
+                override val zero: S = f(mc.zero)
+                override val one: S = f(mc.one)
+                override val numberClass: Class<*> = zero::class.java
+
+                override fun isEqual(x: S, y: S): Boolean = mc.isEqual(f.deply(x), f.deply(y))
+
+                override fun compare(para1: S, para2: S): Int {
+                    return mc.compare(f.deply(para1), f.deply(para2))
+                }
+
+                override fun add(x: S, y: S): S {
+                    return f(mc.add(f.deply(x), f.deply(y)))
+                }
+
+                override fun negate(x: S): S {
+                    return f(mc.negate(f.deply(x)))
+                }
+
+                override fun abs(para: S): S {
+                    return f(mc.abs(f.deply(para)))
+                }
+
+                override fun subtract(x: S, y: S): S = f(mc.subtract(f.deply(x), f.deply(y)))
+
+                override fun multiply(x: S, y: S): S {
+                    return f(mc.multiply(f.deply(x), f.deply(y)))
+                }
+
+                override fun divide(x: S, y: S): S {
+                    return f(mc.divide(f.deply(x), f.deply(y)))
+                }
+
+                override fun reciprocal(x: S): S {
+                    return f(mc.reciprocal(f.deply(x)))
+                }
+
+                override fun multiplyLong(x: S, n: Long): S {
+                    return f(mc.multiplyLong(f.deply(x), n))
+                }
+
+                override fun divideLong(x: S, n: Long): S {
+                    return f(mc.divideLong(f.deply(x), n))
+                }
+
+                override fun squareRoot(x: S): S {
+                    return f(mc.squareRoot(f.deply(x)))
+                }
+
+                override fun nroot(x: S, n: Long): S {
+                    return f(mc.nroot(f.deply(x), n))
+                }
+
+                override fun pow(x: S, n: Long): S {
+                    return f(mc.pow(f.deply(x), n))
+                }
+
+                override fun constantValue(name: String): S? {
+                    val t = mc.constantValue(name)
+                    return if (t == null) {
+                        null
+                    } else {
+                        f(t)
+                    }
+                }
+
+                override fun exp(x: S): S {
+                    return f(mc.exp(f.deply(x)))
+                }
+
+                override fun ln(x: S): S {
+                    return f(mc.ln(f.deply(x)))
+                }
+
+                override fun sin(x: S): S {
+                    return f(mc.sin(f.deply(x)))
+                }
+
+                override fun arcsin(x: S): S {
+                    return f(mc.arcsin(f.deply(x)))
+                }
+
+                override fun isZero(para: S): Boolean {
+                    return mc.isZero(f.deply(para))
+                }
+
+                override fun exp(a: S, b: S): S {
+                    return f(mc.exp(f.deply(a), f.deply(b)))
+                }
+
+                override fun log(a: S, b: S): S {
+                    return f(mc.log(f.deply(a), f.deply(b)))
+                }
+
+                override fun cos(x: S): S {
+                    return f(mc.cos(f.deply(x)))
+                }
+
+                override fun tan(x: S): S {
+                    return f(mc.tan(f.deply(x)))
+                }
+
+                override fun arccos(x: S): S {
+                    return f(mc.arccos(f.deply(x)))
+                }
+
+                override fun arctan(x: S): S {
+                    return f(mc.arctan(f.deply(x)))
+                }
+            }
+        }
     }
 
 }

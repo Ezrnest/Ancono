@@ -286,7 +286,7 @@ public final class PVector<T> extends Vector<T> {
 		return s;
 	}
 	/**
-	 * Returns a SVector that has the same direct of this but length is given.
+     * Returns a SVector that has the identity direct of this but length is given.
 	 * @param length the length
 	 * @return a new SVector
 	 */
@@ -321,8 +321,9 @@ public final class PVector<T> extends Vector<T> {
 		//(sin x cos x)
         return TransMatrix.rotate(angle, getMc()).transform(this);
 	}
-	
-	@Override
+
+    @NotNull
+    @Override
     public <N> PVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		PVector<N> sn =  new PVector<>(mapper.apply(x),mapper.apply(y),newCalculator);
 		if(length!=null){
@@ -508,7 +509,7 @@ public final class PVector<T> extends Vector<T> {
 	/**
 	 * Create the SVector through another vector, the method only considers 
 	 * the first two dimensions of the given vector.
-	 * <p>Notice: The MathCalculator of the new vector will be the same as the vector's.
+     * <p>Notice: The MathCalculator of the new vector will be the identity as the vector's.
 	 * @param v a vector whose size is bigger than or equal to 2.
 	 * @return a new SVector
 	 */

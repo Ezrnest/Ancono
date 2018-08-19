@@ -120,6 +120,7 @@ fun integralApproximationSimpson(fx: DoubleUnaryOperator, a: Double, b: Double, 
  * @return
  */
 fun <T : Any> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
+    @Suppress("UNCHECKED_CAST")
     val cns = arrayOfNulls<Any>(f.degree) as Array<T>
     val mc = f.mathCalculator
     for (i in 1..f.degree) {
@@ -135,6 +136,7 @@ fun <T : Any> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
  * @return
  */
 fun <T : Any> integration(f: SVPFunction<T>): AbstractSVPFunction<T> {
+    @Suppress("UNCHECKED_CAST")
     val cns = arrayOfNulls<Any>(f.degree + 2) as Array<T>
     val mc = f.mathCalculator
     for (i in 0..f.degree) {
@@ -199,8 +201,8 @@ fun findRoot(f: SVFunction<Double>,
 /**
  * Computes the derivation of the given expression without performing any simplification.
  */
-fun derivation(expr: Expression, variableName: String = "x"): Expression {
-    val root = expr.root
+fun Expression.derivation(variableName: String = "x"): Expression {
+    val root = this.root
     return Expression(DerivativeHelper.derivativeNode(root, variableName))
 }
 

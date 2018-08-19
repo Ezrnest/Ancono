@@ -139,7 +139,7 @@ public final class CodePlace {
 	public void m4() {
 		PlaneDrawer drawer = new PlaneDrawer();
 		double a = 0.24,b=0.5;
-		drawer.addCurve(Color.BLUE,Utilities.mapToDouble(EllipseV.generalFormula(a, b, 1d, mcd)));
+        drawer.addCurve(Color.BLUE, PlaneAgUtils.mapToDouble(EllipseV.generalFormula(a, b, 1d, mcd)));
 		drawer.addCurve(Color.RED, (x,y)->{
 			double x2 = Math.pow(x, 2),y2 = Math.pow(y, 2);
 			return Math.pow(x, 4)+Math.pow(y, 4)+2*x2*y2-a*x2-b*y2;
@@ -224,8 +224,8 @@ public final class CodePlace {
 		var D = Point.valueOf(-1d,0d,mcd);
 		var AB = Segment.twoPoints(A,B);
 		var CD = Segment.twoPoints(C,D);
-		drawer.addCurve(Color.BLUE,Utilities.mapToDouble(AB));
-		drawer.addCurve(Color.BLUE,Utilities.mapToDouble(CD));
+        drawer.addCurve(Color.BLUE, PlaneAgUtils.mapToDouble(AB));
+        drawer.addCurve(Color.BLUE, PlaneAgUtils.mapToDouble(CD));
 		drawer.addCurve(Color.RED,(x,y)->{
 			var p = Point.valueOf(x,y,mcd);
 			return AB.distanceSq(p)-CD.distanceSq(p);
@@ -236,8 +236,8 @@ public final class CodePlace {
 		var D2 = Point.valueOf(-1d,-2d,mcd);
 		var CD2 = Segment.twoPoints(C,D2);
 		drawer = new PlaneDrawer();
-		drawer.addCurve(Color.BLUE,Utilities.mapToDouble(AB));
-		drawer.addCurve(Color.BLUE,Utilities.mapToDouble(CD2));
+        drawer.addCurve(Color.BLUE, PlaneAgUtils.mapToDouble(AB));
+        drawer.addCurve(Color.BLUE, PlaneAgUtils.mapToDouble(CD2));
 		drawer.addCurve(Color.RED,(x,y)->{
 			var p = Point.valueOf(x,y,mcd);
 			return AB.distanceSq(p)-CD2.distanceSq(p);
@@ -250,8 +250,8 @@ public final class CodePlace {
 		var AB3 = Segment.twoPoints(A3,O);
 		var CD3 = Segment.twoPoints(O,D3);
 		drawer = new PlaneDrawer();
-		drawer.addCurve(Color.BLUE,Utilities.mapToDouble(AB3));
-		drawer.addCurve(Color.BLUE,Utilities.mapToDouble(CD3));
+        drawer.addCurve(Color.BLUE, PlaneAgUtils.mapToDouble(AB3));
+        drawer.addCurve(Color.BLUE, PlaneAgUtils.mapToDouble(CD3));
 		drawer.addCurve(Color.RED,(x,y)->{
 			var p = Point.valueOf(x,y,mcd);
 			return AB3.distanceSq(p)-CD3.distanceSq(p);

@@ -59,11 +59,13 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @param p another point
 	 * @return {@literal (x-p.x)^2 + (y-p.y)^2 + (z-p.z)^2}
 	 */
+	@SuppressWarnings("SuspiciousNameCombination")
 	public T distanceSq(SPoint<T> p){
-        T dx = getMc().subtract(x, p.x);
-        T dy = getMc().subtract(y, p.y);
-        T dz = getMc().subtract(z, p.z);
-        return getMc().add(getMc().add(getMc().multiply(dx, dx), getMc().multiply(dy, dy)), getMc().multiply(dz, dz));
+		var mc = getMc();
+		T dx = mc.subtract(x, p.x);
+		T dy = mc.subtract(y, p.y);
+		T dz = mc.subtract(z, p.z);
+		return mc.add(mc.add(mc.multiply(dx, dx), mc.multiply(dy, dy)), mc.multiply(dz, dz));
 	}
 	/**
 	 * Return the distance of {@code this} and the given point {@code p}.The operation 
@@ -82,6 +84,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @param p another point
 	 * @return a column vector with two dimensions.
 	 */
+	@SuppressWarnings("SuspiciousNameCombination")
 	public SVector<T> directVector(SPoint<T> p){
         T vx = getMc().subtract(p.x, x);
         T vy = getMc().subtract(p.y, y);
@@ -100,19 +103,19 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return the proportion point.
 	 */
 	public SPoint<T> proportionPoint(SPoint<T> p,T k){
-        T de = getMc().add(k, getMc().getOne());
-        T xN = getMc().add(getMc().multiply(k, p.x), x);
-        T yN = getMc().add(getMc().multiply(k, p.y), y);
-        T zN = getMc().add(getMc().multiply(k, p.z), z);
-        xN = getMc().divide(xN, de);
-        yN = getMc().divide(yN, de);
-        zN = getMc().divide(zN, de);
-        return new SPoint<>(getMc(), xN, yN, zN);
+		var mc = getMc();
+		T de = mc.add(k, mc.getOne());
+		T xN = mc.add(mc.multiply(k, p.x), x);
+		T yN = mc.add(mc.multiply(k, p.y), y);
+		T zN = mc.add(mc.multiply(k, p.z), z);
+		xN = mc.divide(xN, de);
+		yN = mc.divide(yN, de);
+		zN = mc.divide(zN, de);
+		return new SPoint<>(mc, xN, yN, zN);
 	}
 	
 	/**
 	 * Returns a point of {@code this} moves by {@code v}.
-	 * @param v
 	 * @return a new point
 	 */
 	public SPoint<T> moveToward(SVector<T> v){
@@ -120,7 +123,6 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	}
 	/**
 	 * Returns a point of {@code this} moves by {@code v}.
-	 * @param v
 	 * @return a new point
 	 */
 	public SPoint<T> moveToward(T vx,T vy,T vz){
@@ -133,10 +135,11 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 * @return middle point
 	 */
 	public SPoint<T> middle(SPoint<T> p){
-        T xm = getMc().divideLong(getMc().add(x, p.x), 2);
-        T ym = getMc().divideLong(getMc().add(y, p.y), 2);
-        T zm = getMc().divideLong(getMc().add(z, p.z), 2);
-        return new SPoint<T>(getMc(), xm, ym, zm);
+		var mc = getMc();
+		T xm = mc.divideLong(mc.add(x, p.x), 2);
+		T ym = mc.divideLong(mc.add(y, p.y), 2);
+		T zm = mc.divideLong(mc.add(z, p.z), 2);
+		return new SPoint<T>(mc, xm, ym, zm);
 	}
 	
 	/**
@@ -144,10 +147,13 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 */
 	@Override
 	public boolean contains(SPoint<T> p) {
-        return getMc().isEqual(x, p.x) &&
-                getMc().isEqual(y, p.y) &&
-                getMc().isEqual(z, p.z);
+		var mc = getMc();
+		return mc.isEqual(x, p.x) &&
+				mc.isEqual(y, p.y) &&
+				mc.isEqual(z, p.z);
 	}
+
+	@NotNull
 	@Override
     public <N> SPoint<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new SPoint<>(newCalculator,mapper.apply(x),mapper.apply(y),mapper.apply(z));
@@ -205,10 +211,8 @@ public final class SPoint<T> extends SpacePointSet<T> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("(");
-		sb.append(x).append(",").append(y).append(",").append(z).append(")");
-		return sb.toString();
+		return "(" +
+				x + "," + y + "," + z + ")";
 	}
 	/**
 	 * Create a point with the given coordinates. 

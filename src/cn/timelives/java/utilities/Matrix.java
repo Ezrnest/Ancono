@@ -126,7 +126,7 @@ public abstract class Matrix {
 	public Matrix multiplyAndAddLine(int k,int l1,int l2){
 		lineRangeCheck(l1,l2);
 		if(l1==l2){
-			throw new IllegalArgumentException("The same line:"+l1);
+            throw new IllegalArgumentException("The identity line:" + l1);
 		}
 		int[][] re = getValues();
 		for(int i=0;i<row;i++){
@@ -144,7 +144,7 @@ public abstract class Matrix {
 	public Matrix multiplyAndAddRow(int k,int c1,int c2){
 		rowRangeCheck(c1,c1);
 		if(c1==c2){
-			throw new IllegalArgumentException("The same row:"+c1);
+            throw new IllegalArgumentException("The identity row:" + c1);
 		}
 		int[][] re = getValues();
 		for(int i=0;i<line;i++){
@@ -305,7 +305,7 @@ public abstract class Matrix {
 		public Matrix multiplyAndAddLine(int k,int l1,int l2){
 			lineRangeCheck(l1,l2);
 			if(l1==l2){
-				throw new IllegalArgumentException("The same line:"+l1);
+                throw new IllegalArgumentException("The identity line:" + l1);
 			}
 			int[][] re = new int[line][];
 			for(int l=0;l<line;++l){
@@ -324,7 +324,7 @@ public abstract class Matrix {
 	}
 	/**
 	 * SubMatrix is a matrix base on another Matrix.To reduce memory,the data in this Matrix is the 
-	 * same as the original Matrix but additional delta x and y are added. 
+     * identity as the original Matrix but additional delta x and y are added.
 	 * @author lyc
 	 *
 	 */
@@ -417,7 +417,7 @@ public abstract class Matrix {
 		public Matrix multiplyAndAddLine(int k,int l1,int l2){
 			lineRangeCheck(l1,l2);
 			if(l1==l2){
-				throw new IllegalArgumentException("The same line:"+l1);
+                throw new IllegalArgumentException("The identity line:" + l1);
 			}
 			int[][] re = new int[line][];
 			for(int l=0;l<line;++l){
@@ -505,7 +505,7 @@ public abstract class Matrix {
 		return new DMatrix(mat,n,n);
 	}
 	/**
-	 * Add two matrix.The size of two matrix should be the same.
+     * Add two matrix.The size of two matrix should be the identity.
 	 * @param m1 a matrix
 	 * @param m2 another matrix
 	 * @return a new matrix mat = m1+m2
@@ -537,7 +537,7 @@ public abstract class Matrix {
 		return new DMatrix(re,line,row);
 	}
 	/**
-	 * Return m1-m2.The size of two matrix should be the same.
+     * Return m1-m2.The size of two matrix should be the identity.
 	 * @param m1 a matrix
 	 * @param m2 another matrix
 	 * @return a new matrix mat = m1-m2
@@ -614,9 +614,9 @@ public abstract class Matrix {
 	}
 	
 	/**
-	 * Calculate the result of {@code mat^pow},the given matrix must have the same column and 
+     * Calculate the result of {@code mat^pow},the given matrix must have the identity column and
 	 * row count.Negative power values are illegal and if {@code pow==0} then this method is 
-	 * the same as call {@link #identityMatrix(int)} which parameter is the given matrix's column 
+     * the identity as call {@link #identityMatrix(int)} which parameter is the given matrix's column
 	 * or row count.
 	 * 
 	 * @param mat the base 

@@ -126,6 +126,10 @@ public final class Expression implements Computable,Serializable {
 	    for(ExprFunction f : createBasicCalculatorFunctions(Multinomial.getCalculator())){
 	        FUNCTION_NAMES.add(f.getName());
         }
+        //some common names
+        FUNCTION_NAMES.add("f");
+        FUNCTION_NAMES.add("g");
+        FUNCTION_NAMES.add("h");
     }
 
 	static class ExprParser {
@@ -302,7 +306,8 @@ public final class Expression implements Computable,Serializable {
 		        //find function
                 int pos = endPos-2;
                 while(pos>-1){
-                    if(Character.isLetter(str.charAt(pos))){
+                    char ch = str.charAt(pos);
+                    if (Character.isLetter(ch) || Character.isDigit(ch)) {
                         pos--;
                     }else{
                         break;

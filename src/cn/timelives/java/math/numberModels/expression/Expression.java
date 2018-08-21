@@ -56,9 +56,9 @@ public final class Expression implements Computable,Serializable {
 
 	public void listNode(PrintWriter out) {
 		PrintWriter pw = Printer.getOutput();
-		Printer.reSet(out);
+        Printer.reset(out);
 		root.listNode(0);
-		Printer.reSet(pw);
+        Printer.reset(pw);
 	}
 
 	public void listNode() {

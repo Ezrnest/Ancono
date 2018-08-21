@@ -85,7 +85,7 @@ public interface MathFunction<P,R> extends Function<P,R>{
         return new SVFunction<T>() {
             @NotNull
             @Override
-            public T apply(T x) {
+            public T apply(@NotNull T x) {
                 return g.apply(f.apply(x));
             }
 

@@ -4,6 +4,9 @@ import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.function.*
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector
+import cn.timelives.java.math.numberModels.expression.ExprCalculator
+import cn.timelives.java.math.numberModels.expression.Expression
+import cn.timelives.java.math.numberModels.expression.SimplificationStrategies
 import cn.timelives.java.math.set.Interval
 
 class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
@@ -18,17 +21,24 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
             SVector.valueOf(x, y, z, mc)
         }
     }
-    override val alpha: VectorFunction<T> by lazy { super.alpha }
+
+    //lazy initialization
+    override val tangentVector: VectorFunction<T>  by lazy { super.tangentVector }
 
     override val mainNormalVector: VectorFunction<T> by lazy { super.mainNormalVector }
 
-    override val curvatureVector: DerivableFunction<T, SVector<T>> by lazy { super.curvatureVector }
-
     override val minorNormalVector: VectorFunction<T> by lazy { super.minorNormalVector }
+
+    override val alpha: VectorFunction<T> by lazy { super.alpha }
+
+    override val beta: VectorFunction<T> by lazy { super.beta }
+
+    override val gamma: VectorFunction<T> by lazy { super.gamma }
 
     override val curvature: SVFunction<T> by lazy { super.curvature }
 
     override val ds: SVFunction<T> by lazy { super.ds }
+
 
     override fun domain(): Interval<T> = domain
 
@@ -53,4 +63,16 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
 
     override fun substituteAsPoint(t: T): SPoint<T> = SPoint.valueOf(a(t), b(t), c(t), mathCalculator)
 
+}
+
+fun main(args: Array<String>) {
+    val mc = ExprCalculator.instance
+    SimplificationStrategies.setCalRegularization(mc)
+    val xt = Expression.valueOf("-a*cos(t)").asFunction(mc, "t")
+    val yt = Expression.valueOf("a*sin(t)").asFunction(mc, "t")
+    val zt = Expression.valueOf("bt").asFunction(mc, "t")
+    val t = Expression.valueOf("t")
+    val curve = NormalCurveComposed(xt, yt, zt, Interval.universe(mc), mc)
+    println(curve.tangentVector(t))
+    println(curve.curvature(t))
 }

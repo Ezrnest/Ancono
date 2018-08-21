@@ -207,7 +207,7 @@ class Test {
 	
 	
 	public static void detTest(){
-		Printer.reSet(System.out);
+		Printer.reset(System.out);
 		Matrix<?> mat = Matrix.valueOf(new long[][]{
 			{1,2,3,4,5},{0,0,0,6,7},{0,0,7,8,9}
 		});

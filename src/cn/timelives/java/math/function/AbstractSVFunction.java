@@ -70,7 +70,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 */
         @NotNull
         @Override
-        public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().ln(x);
 		}
 
@@ -145,7 +145,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().log(a, x);
 		}
 		/*
@@ -237,7 +237,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
 			if(n.getSignum()==0) {
 				return a;
 			}
@@ -392,7 +392,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().multiply(c, getMc().exp(a, x));
 		}
 		/*
@@ -484,7 +484,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().exp(x);
 		}
 		/*

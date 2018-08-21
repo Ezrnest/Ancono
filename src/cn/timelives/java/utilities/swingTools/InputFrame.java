@@ -42,7 +42,7 @@ public class InputFrame extends JFrame {
 								InputTextArea input = frame.input;
 //								input.disableInput();a
 								PrintWriter ps = new PrintWriter(input.getOutputStream(),true);
-//								Printer.reSet(ps);
+//								Printer.reset(ps);
 								while(true){
 									try {
 										sleep(2000);

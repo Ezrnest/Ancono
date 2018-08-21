@@ -5,10 +5,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
+
 public class ArraySup {
 	/**
      * The maximum size of array to allocate.
@@ -660,7 +658,34 @@ public class ArraySup {
 		}
 		return re;
 	}
-	
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<T> mapper, Class<T> clazz) {
+        Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
+        T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);
+        for (int i = 0; i < arr.length; i++) {
+            re[i] = (T[]) Array.newInstance(clazz, arr[i].length);
+            for (int j = 0; j < re[i].length; j++) {
+                re[i][j] = mapper.apply(arr[i][j]);
+            }
+        }
+        return re;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[][] mapTo2(int[][] arr, IntFunction<T> mapper, Class<T> clazz) {
+        Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
+        T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);
+        for (int i = 0; i < arr.length; i++) {
+            re[i] = (T[]) Array.newInstance(clazz, arr[i].length);
+            for (int j = 0; j < re[i].length; j++) {
+                re[i][j] = mapper.apply(arr[i][j]);
+            }
+        }
+        return re;
+    }
+
+
 	/**
 	 * Creates a set from the array, uses HashSet by default.
 	 * @param arr

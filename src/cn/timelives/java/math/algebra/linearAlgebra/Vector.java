@@ -636,6 +636,32 @@ public abstract class Vector<T> extends Matrix<T> {
 		}
 		return new DVector<>(arr,false,mc);
 	}
+
+    /**
+     * Returns the result of {@literal mat * v}, it is required the vector's size is
+     * equal to the matrix's column count. This method will ignore whether the vector is
+     * a row vector.
+     *
+     * @param mat a matrix
+     * @param v   a vector
+     * @return {@literal mat * v} as a vector, which has the length of {@code mat.getRowCount()}.
+     */
+    public static <T> Vector<T> multiplyToVector(Matrix<T> mat, Vector<T> v) {
+        if (mat.column != v.getSize()) {
+            throw new IllegalArgumentException("mat.column != v.size");
+        }
+        var mc = mat.getMathCalculator();
+        @SuppressWarnings("unchecked")
+        T[] result = (T[]) new Object[mat.row];
+        for (int i = 0; i < mat.row; i++) {
+            T t = mc.getZero();
+            for (int j = 0; j < mat.column; j++) {
+                t = mc.add(t, mc.multiply(mat.getNumber(i, j), v.getNumber(j)));
+            }
+            result[i] = t;
+        }
+        return new DVector<>(result, false, mc);
+    }
 	
 //	public static void main(String[] args) {
 //		MathCalculator<Double> mc = Calculators.getCalculatorDouble();

@@ -61,7 +61,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().add(f.apply(x), g.apply(x));
 		}
 
@@ -156,7 +156,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().subtract(f.apply(x), g.apply(x));
 		}
 
@@ -247,7 +247,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().multiply(f.apply(x), g.apply(x));
 		}
 
@@ -345,7 +345,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
             return getMc().divide(f.apply(x), g.apply(x));
 		}
 
@@ -447,7 +447,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		 */
         @NotNull
         @Override
-		public T apply(T x) {
+        public T apply(@NotNull T x) {
 			return g.apply(f.apply(x));
 		}
 

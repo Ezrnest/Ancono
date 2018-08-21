@@ -45,7 +45,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 	 */
     @NotNull
     @Override
-	public T apply(T x) {
+    public T apply(@NotNull T x) {
 		//(ax+b)x+c
         return EXPR_APPLY.compute(getMc(), x, a, b, c);
 	}

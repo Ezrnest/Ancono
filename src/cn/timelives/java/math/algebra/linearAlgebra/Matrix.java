@@ -1076,11 +1076,11 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	/**
 	 * Return a sub matrix.{@code (i1,j1)-(i2,j2)}.The new matrix's row count
 	 * will be {@code i2-i1+1}
-	 * @param i1
-	 * @param j1
-	 * @param i2
-	 * @param j2
-	 * @return a sub matrix containing a sub matrix in the given range
+     * @param i1 inclusive
+     * @param j1 inclusive
+     * @param i2 inclusive
+     * @param j2 inclusive
+     * @return a sub matrix
 	 */
 	public Matrix<T> subMatrix(int i1, int j1, int i2, int j2) {
 		// do range check

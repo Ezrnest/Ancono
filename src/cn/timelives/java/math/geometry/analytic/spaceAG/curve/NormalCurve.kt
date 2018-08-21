@@ -2,9 +2,7 @@ package cn.timelives.java.math.geometry.analytic.spaceAG.curve
 
 import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.function.*
-import cn.timelives.java.math.geometry.analytic.spaceAG.Line
-import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint
-import cn.timelives.java.math.geometry.analytic.spaceAG.SVector
+import cn.timelives.java.math.geometry.analytic.spaceAG.*
 import cn.timelives.java.math.set.Interval
 
 /**
@@ -30,20 +28,66 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
     val ds: SVFunction<T>
         get() = MathFunction.composeSV(this.derive(), MathFunction<SVector<T>, T> { x -> x.calLength() })
 
-    val alpha: VectorFunction<T>
-        get() = MathFunction.compose(this.derive(), MathFunction<SVector<T>, SVector<T>> { x -> x.unitVector() })
+
 
     val curvature: SVFunction<T>
-        get() = MathFunction.composeSV(curvatureVector, MathFunction<SVector<T>, T> { x -> x.calLength() })
+        get() {
+            val d = this.derive()
+            val dd = d.derive()
+            return SVFunction { t ->
+                val nume = d(t).outerProduct(dd(t)).calLength()
+                val deno = mathCalculator.pow(d(t).calLength(), 3L)
+                mathCalculator.divide(nume, deno)
+            }
+        }
 
-    val curvatureVector: DerivableFunction<T, SVector<T>>
+    /**
+     * The tangent vector of this normal curve as a vector function.
+     * The vector returned this not a unit vector.
+     * @see alpha
+     */
+    val tangentVector: VectorFunction<T>
+        get() = this.derive()
+
+    /**
+     * The main normal vector of this normal curve as a vector function.
+     * The vector returned this not a unit vector.
+     * @see beta
+     */
+    val mainNormalVector: VectorFunction<T>
         get() = this.derive().derive()
 
-    val mainNormalVector: VectorFunction<T>
-        get() = MathFunction.compose(curvatureVector, MathFunction<SVector<T>, SVector<T>> { x -> x.unitVector() })
-
+    /**
+     * The minor normal vector of this normal curve as a vector function.
+     * The vector returned this not a unit vector.
+     * @see gamma
+     */
     val minorNormalVector: VectorFunction<T>
-        get() = MathFunctionSup.mergeOf(alpha, mainNormalVector) { a, b -> a.outerProduct(b) }
+        get() = MathFunctionSup.mergeOf(tangentVector, mainNormalVector) { a, b -> a.outerProduct(b) }
+
+    /**
+     * `alpha(t)`,which is a unit vector parallel to tangent vector.
+     */
+    val alpha: VectorFunction<T>
+        get() = MathFunction.compose(tangentVector, MathFunction<SVector<T>, SVector<T>> { x -> x.unitVector() })
+
+    /**
+     * `beta(t)`,which is a unit vector parallel to main normal vector.
+     */
+    val beta: VectorFunction<T>
+        get() = MathFunctionSup.mergeOf(alpha, gamma) { a, b -> a.outerProduct(b) }
+
+    /**
+     * `gamma(t)`,which is a unit vector parallel to minor normal vector.
+     */
+    val gamma: VectorFunction<T>
+        get() {
+            val d = this.derive()
+            val dd = d.derive()
+            return MathFunction { t ->
+                d(t).outerProduct(dd(t)).unitVector()
+            }
+        }
 
     companion object {
         fun <T : Any> fromFunctionXYZ(a: DerivableSVFunction<T>,
@@ -56,11 +100,65 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
     }
 }
 
+/**
+ * Returns the tangent line of this curve on the point of parametric value [t].
+ * The direct vector is `alpha(t)`.
+ */
 fun <T : Any> NormalCurve<T>.tangentLine(t: T): Line<T> {
     val thisD = this.derive()
-    val p = SPoint.valueOf(this(t))
+    val p = this(t).asPoint()
     val v = thisD(t)
     return Line.pointDirect(p, v)
+}
+
+/**
+ * Returns the main normal line of this curve on the point of parametric value [t].
+ * The direct vector is `beta(t)`.
+ */
+fun <T : Any> NormalCurve<T>.mainNormalLine(t: T): Line<T> {
+    val p = this(t).asPoint()
+    val v = beta(t)
+    return Line.pointDirect(p, v)
+}
+
+/**
+ * Returns the minor normal line of this curve on the point of parametric value [t].
+ * The direct vector is `gamma(t)`.
+ */
+fun <T : Any> NormalCurve<T>.minorNormalLine(t: T): Line<T> {
+    val p = this(t).asPoint()
+    val v = gamma(t)
+    return Line.pointDirect(p, v)
+}
+
+/**
+ * Returns the normal plane of this curve on the point of parametric value [t].
+ * The normal vector of the plane is `alpha(t)`
+ */
+fun <T : Any> NormalCurve<T>.normalPlane(t: T): Plane<T> {
+    val p = this(t).asPoint()
+    val v = alpha(t)
+    return Plane.pointNormalVector(p, v)
+}
+
+/**
+ * Returns the rectifying plane of this curve on the point of parametric value [t].
+ * The normal vector of the plane is `beta(t)`
+ */
+fun <T : Any> NormalCurve<T>.rectifyingPlane(t: T): Plane<T> {
+    val p = this(t).asPoint()
+    val v = beta(t)
+    return Plane.pointNormalVector(p, v)
+}
+
+/**
+ * Returns the osculating plane of this curve on the point of parametric value [t].
+ * The normal vector of the plane is `gamma(t)`
+ */
+fun <T : Any> NormalCurve<T>.osculatingPlane(t: T): Plane<T> {
+    val p = this(t).asPoint()
+    val v = gamma(t)
+    return Plane.pointNormalVector(p, v)
 }
 
 fun <T : Any> NormalCurve<T>.arcLength(integralHelper: (SVFunction<T>, T, T) -> T): T {
@@ -91,4 +189,14 @@ fun <T : Any> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDoma
         }
     }
 }
+
+fun <T : Any> NormalCurve<T>.frenetCoordSystem(t: T): SpaceAffineCoordinateSystem<T> {
+    val o = this.substituteAsPoint(t)
+    val e1 = alpha(t)
+    val e2 = beta(t)
+    val e3 = gamma(t)
+    return SpaceAffineCoordinateSystem.valueOf(o, e1, e2, e3)
+}
+
+
 

@@ -4,6 +4,9 @@
 package cn.timelives.java.utilities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static cn.timelives.java.utilities.ArraySup.getSum;
 
 /**
  * @author liyicheng
@@ -85,5 +88,65 @@ public final class StringSup {
 
     public static String[] splitWithMatching(String str,char split){
 	    return splitWithMatching(str,split,'(',')');
+    }
+
+    private static void fillBlank(StringBuilder sb, int len) {
+        for (int i = 0; i < len; i++) {
+            sb.append(' ');
+        }
+    }
+
+    public static String formatMatrix(String[][] mat) {
+        return formatMatrix(mat, new int[0]);
+    }
+
+    public static String formatMatrix(String[][] mat, int[] setWidth) {
+        int column = 0;
+        for (String[] aMat : mat) {
+            column = Math.max(column, aMat.length);
+        }
+        if (setWidth.length < column) {
+            setWidth = Arrays.copyOf(setWidth, column);
+        }
+        for (String[] aMa : mat) {
+            for (int j = 0; j < aMa.length; ++j) {
+                //get the String stored and calculate the best length
+                setWidth[j] = Math.max(aMa[j].length(), setWidth[j]);
+            }
+        }
+
+        int len = getSum(setWidth) + column + 1 << 3;// add up to it: both side of the line should have bracket and space
+
+        StringBuilder sb = new StringBuilder(len * mat.length);
+        int t0;
+        for (int i = 0; i < mat.length; i++) {
+            if (i == 0)
+                sb.append('┌');
+            else if (i == mat.length - 1)
+                sb.append('└');
+            else
+                sb.append('│');
+
+            int j = 0;
+            for (; j < mat[i].length; j++) {
+                int t = setWidth[j] - mat[i][j].length();
+                fillBlank(sb, t + 1);
+                sb.append(mat[i][j]);
+            }
+
+            t0 = getSum(setWidth, j, setWidth.length) + setWidth.length - j + 1;
+            if (t0 != 0) {
+                fillBlank(sb, t0);
+            }
+
+            if (i == 0)
+                sb.append('┐');
+            else if (i == mat.length - 1)
+                sb.append('┘');
+            else
+                sb.append('│');
+            sb.append(System.lineSeparator());
+        }
+        return sb.toString();
     }
 }

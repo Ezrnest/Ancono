@@ -1082,7 +1082,7 @@ public class ComputeExpression{
 //		print(ce.compute(mc, 0.5d));
 //		print(ce.compute(mc, 0.75d));
 //		
-//		Printer.reSet(ec.getOutput());
+//		Printer.reset(ec.getOutput());
 //		while(true){
 //			expr = ec.nextLine();
 //			try{

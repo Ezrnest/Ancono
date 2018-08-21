@@ -1127,7 +1127,7 @@ public class CodePlace {
 ////		Circle<Expression> AEK = Circle.threePoints(A, E, K);
 ////		print("3");
 //////		print(dealWith(AEK));
-//////		Printer.reSet(Files.newOutputStream(
+//////		Printer.reset(Files.newOutputStream(
 //////				new File("E:\\Temp\\result.txt").toPath(),
 //////				StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.CREATE));
 //////

@@ -24,7 +24,7 @@ public interface SVFunction<T> extends MathFunction<T, T>, Mappable<T> {
 	 */
     @NotNull
     @Override
-	T apply(T x);
+    T apply(@NotNull T x);
 
     @Override
     @NotNull
@@ -38,7 +38,7 @@ public interface SVFunction<T> extends MathFunction<T, T>, Mappable<T> {
             @SuppressWarnings("SuspiciousNameCombination")
             @NotNull
             @Override
-            public S apply(S x) {
+            public S apply(@NotNull S x) {
                 return mapper.apply(f.apply(mapper.deply(x)));
             }
 
@@ -59,7 +59,7 @@ public interface SVFunction<T> extends MathFunction<T, T>, Mappable<T> {
         return new SVFunction<>() {
             @NotNull
             @Override
-            public T apply(T x) {
+            public T apply(@NotNull T x) {
                 return f.apply(x);
             }
 

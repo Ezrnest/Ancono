@@ -180,6 +180,7 @@ public final class Expression implements Computable,Serializable {
          * @return
          */
 		Node partAdd(String str, int offset, Node.NodeWithChildren parent) {
+            str = str.trim();
 		    if(!str.contains("(")){
                 return partPoly(str,offset,parent);
             }
@@ -211,6 +212,7 @@ public final class Expression implements Computable,Serializable {
 		}
 
         Node partMultiply(String str, int offset, Node.NodeWithChildren parent) {
+		    str = str.trim();
             if(!str.contains("(")){
                 return partPoly(str,offset,parent);
             }
@@ -222,7 +224,10 @@ public final class Expression implements Computable,Serializable {
                 int nextLeft = findLeftFrac(str,pos);
                 if(nextLeft < 0){
                     //failed to find, no bracket
-                    String expr = str.substring(pos);
+                    String expr = str.substring(pos).trim();
+                    if(expr.isEmpty()){
+                        break;
+                    }
                     nume = nume.multiply(parseRemaining(expr,pos));
                     break;
                 }
@@ -241,7 +246,7 @@ public final class Expression implements Computable,Serializable {
                     nextDeno = true;
                 }
                 if(endPos>pos){
-                    Multinomial m = parseRemaining(str.substring(pos,endPos),pos);
+                    Multinomial m = parseRemaining(str.substring(pos,endPos),offset+pos);
                     nume = nume.multiply(m);
                 }
 

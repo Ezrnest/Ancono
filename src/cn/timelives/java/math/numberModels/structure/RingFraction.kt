@@ -9,7 +9,6 @@ import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberModels.api.Simplifier
-import org.hamcrest.core.AnyOf
 
 import java.util.Objects
 import java.util.function.Function

@@ -36,6 +36,11 @@ public final class Pair<T,S> {
 	public void setSecond(S second) {
 		this.second = second;
 	}
+
+	public Pair<S,T> swapped(){
+	    return new Pair<>(second,first);
+    }
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

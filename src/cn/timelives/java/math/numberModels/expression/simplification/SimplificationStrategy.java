@@ -1,7 +1,12 @@
 /**
  * 2017-11-25
  */
-package cn.timelives.java.math.numberModels.expression;
+package cn.timelives.java.math.numberModels.expression.simplification;
+
+import cn.timelives.java.math.numberModels.expression.ExprCalculator;
+import cn.timelives.java.math.numberModels.expression.Node;
+import cn.timelives.java.math.numberModels.expression.SimpleStrategy;
+import cn.timelives.java.math.numberModels.expression.anno.AllowModify;
 
 /**
  * A simplification strategy deals with the simplification of expressions. To apply a strategy, it should be 
@@ -23,11 +28,11 @@ public interface SimplificationStrategy {
 	 * Simplifies the node, returns a non-null value as the substitution 
 	 * for the original node if any simplification is done(returning the original one is also acceptable), otherwise 
 	 * returns {@code null} if NO simplification is done.<p>
-	 * The expression node should be simplified again, then corresponding methods can be called from the ExprCalculator.
+	 * If the expression node should be simplified again, then corresponding methods can be called from the ExprCalculator.
 	 * @param node a node
 	 * @param mc an ExprCalculator to support the simplification
 	 * @return a node or {@code null}
 	 */
-	public Node simplifyNode(Node node, ExprCalculator mc);
+	public Node simplifyNode(@AllowModify Node node, ExprCalculator mc);
 	
 }

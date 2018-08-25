@@ -5,8 +5,8 @@ package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
+import cn.timelives.java.math.numberModels.expression.simplification.SimplificationStrategy;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -50,21 +50,21 @@ public class ExprFunction {
 	private final Object polyFunction;
 
 	/**
-	 * @param name
-	 * @param paramNumber
-	 * @param paramOrdered
+	 * @param name the name of the function
+	 * @param paramNumber the size of parameter
+	 * @param paramOrdered whether the parameters are ordered
 	 * @param description
 	 *            a string(or null) to indicate the details of each parameter
-	 * @param polyFunction
+	 * @param polyFunction a function
 	 */
-	ExprFunction(String name, int paramNumber, boolean paramOrdered, String description, Object polyFunction) {
+	private ExprFunction(String name, int paramNumber, boolean paramOrdered, String description, Object polyFunction) {
 		super();
 		if (paramNumber <= 0) {
 			throw new IllegalArgumentException();
 		}
-		this.paramNumber = Objects.requireNonNull(paramNumber);
+		this.paramNumber = paramNumber;
 		this.name = Objects.requireNonNull(name);
-		this.paramOrdered = Objects.requireNonNull(paramOrdered);
+		this.paramOrdered = paramOrdered;
 		this.description = Objects.requireNonNull(description);
 		this.polyFunction = polyFunction;
 	}
@@ -167,7 +167,7 @@ public class ExprFunction {
         fs[6] = createSingle(FUNCTION_NAME_NEGATE, pc::negate, "Returns -x.");
         fs[7] = createSingle(FUNCTION_NAME_RECIPROCAL, pc::reciprocal, "Returns 1/x.");
         fs[8] = createSingle(FUNCTION_NAME_SIN, pc::sin, "Returns the sin value of the polynomial:sin(x)");
-        fs[9] = createSingle(FUNCTION_NAME_SQR, pc::squareRoot, "Returns the square root of the polynomial:sqr(x)");
+        fs[9] = createSingle(FUNCTION_NAME_SQR, pc::squareRoot, "Returns the square origin of the polynomial:sqr(x)");
         fs[10] = createSingle(FUNCTION_NAME_TAN, pc::tan, "Returns the tan value of the polynomial:tan(x)");
         fs[11] = createSingle(FUNCTION_NAME_EXP, pc::exp, "Returns the exp value of the polynomial:exp(x)");
         fs[12] = createSingle(FUNCTION_NAME_LN, pc::ln, "Returns ln(x).");
@@ -196,19 +196,19 @@ public class ExprFunction {
 		try {
 			Method md = mc.getClass().getMethod(name,argClass);
             md.setAccessible(true);
-			return (T) md.invoke(mc,args);
+			return (T) md.invoke(mc, (Object[]) args);
 		} catch (Exception e) {
 			throw new UnsupportedCalculationException("Failed to invoke method",e);
 		}
 	}
 
 
-	public static void main(String[] args){
-		var list = createBasicCalculatorFunctions(Multinomial.getCalculator());
-		for(var f : list){
-			String name = f.getName();
-			print("public static final String FUNCTION_NAME_"+name.toUpperCase()+" = "+"\""+name+"\";");
-		}
-	}
+//	public static void main(String[] args){
+//		var list = createBasicCalculatorFunctions(Multinomial.getCalculator());
+//		for(var f : list){
+//			String name = f.getName();
+//			print("public static final String FUNCTION_NAME_"+name.toUpperCase()+" = "+"\""+name+"\";");
+//		}
+//	}
 
 }

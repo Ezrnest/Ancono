@@ -35,7 +35,7 @@ import static cn.timelives.java.utilities.Printer.print;
  *
  */
 public final class CodePlace {
-    static final ExprCalculator mc = ExprCalculator.Companion.getInstance();
+    static final ExprCalculator mc = ExprCalculator.Companion.getNewInstance();
 	static final MathCalculator<Double> mcd = Calculators.getCalculatorDoubleDev();
 	Point<Expression> A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T;
 	PVector<Expression> v1,v2,v3,v4,v5,v6;

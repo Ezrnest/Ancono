@@ -10,8 +10,6 @@ import java.util.function.Function
  * The corresponding math calculator should be given when such an object is created and the calculator may
  * be used. For example, an interval may extend this abstract class and the type of bound can be switched from
  * Integer to Double , or other kind of math number.
- *
- *
  * @author lyc
  * @param <T> the kind of object used, usually a subclass of number
  * @see MathCalculator

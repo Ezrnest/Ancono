@@ -1,9 +1,12 @@
 /**
  * 2017-11-26
  */
-package cn.timelives.java.math.numberModels.expression;
+package cn.timelives.java.math.numberModels.expression.simplification;
 
+import cn.timelives.java.math.numberModels.expression.ExprCalculator;
+import cn.timelives.java.math.numberModels.expression.Node;
 import cn.timelives.java.math.numberModels.expression.Node.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -37,7 +40,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 		this.description = "";
 	}
 	/*
-	 * @see cn.timelives.java.math.numberModels.expression.TaggedStrategy#isAcceptable(java.util.Set)
+	 * @see cn.timelives.java.math.numberModels.expression.simplification.TaggedStrategy#isAcceptable(java.util.Set)
 	 */
 	@Override
 	public boolean isAcceptable(Set<String> tags) {
@@ -50,7 +53,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.numberModels.expression.SpecificStrategy#registerFunctionName()
+	 * @see cn.timelives.java.math.numberModels.expression.simplification.SpecificStrategy#registerFunctionName()
 	 */
 	@Override
 	public String registerFunctionName() {
@@ -58,7 +61,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.numberModels.expression.SpecificStrategy#registerType()
+	 * @see cn.timelives.java.math.numberModels.expression.simplification.SpecificStrategy#registerType()
 	 */
 	@Override
 	public Set<Type> registerTypes() {
@@ -66,7 +69,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	}
 	
 	/*
-	 * @see cn.timelives.java.math.numberModels.expression.TaggedStrategy#getTags()
+	 * @see cn.timelives.java.math.numberModels.expression.simplification.TaggedStrategy#getTags()
 	 */
 	@Override
 	public Set<String> getTags() {
@@ -85,6 +88,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @see cn.timelives.java.math.numberModels.expression.SimplificationStrategy#simplifyNode(cn.timelives.java.math.numberModels.expression.Node)
 	 */
 	@Override
+	@Nullable
     public Node simplifyNode(Node node, ExprCalculator mc) {
 		Type t = node.getType();
 		if(!types.contains(t)) {
@@ -126,6 +130,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @param node a node
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
+	@Nullable
     protected Node simplifyAdd(Add node, ExprCalculator mc) {
 		return node;
 	}
@@ -135,6 +140,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @param node a node
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
+    @Nullable
     protected Node simplifyMultiply(Multiply node, ExprCalculator mc) {
 		return node;
 	}
@@ -144,6 +150,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @param node a node
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
+    @Nullable
     protected Node simplifyFraction(Fraction node, ExprCalculator mc) {
 		return node;
 	}
@@ -153,6 +160,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @param node a node
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
+    @Nullable
     protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
 		return node;
 	}
@@ -162,6 +170,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @param node a node
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
+    @Nullable
     protected Node simplifyDFunction(DFunction node, ExprCalculator mc) {
 		return node;
 	}
@@ -171,6 +180,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @param node a node
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
+    @Nullable
     protected Node simplifyMFunction(MFunction node, ExprCalculator mc) {
 		return node;
 	}

@@ -204,7 +204,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
             return false;
         }
         //use the equals() method
-        return CollectionSup.collectionEqualSorted(terms, ((Multinomial) obj).terms, (x, y) -> x.equals(y));
+        return CollectionSup.collectionEqualSorted(terms, ((Multinomial) obj).terms, Term::equals);
     }
 
     private int hashCode = 0;

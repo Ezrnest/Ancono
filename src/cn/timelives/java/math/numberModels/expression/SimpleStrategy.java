@@ -5,7 +5,11 @@ package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
+import cn.timelives.java.math.numberModels.expression.ExprCalculator;
+import cn.timelives.java.math.numberModels.expression.Node;
 import cn.timelives.java.math.numberModels.expression.Node.*;
+import cn.timelives.java.math.numberModels.expression.simplification.SimStraImpl;
+import cn.timelives.java.math.numberModels.expression.simplification.SimplificationStrategy;
 
 import java.util.List;
 import java.util.Set;

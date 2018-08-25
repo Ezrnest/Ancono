@@ -3,6 +3,7 @@ package cn.timelives.java.math.numberModels.expression;
 import cn.timelives.java.math.algebra.calculus.Calculus;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.Multinomial;
+import cn.timelives.java.math.numberModels.expression.anno.DisallowModify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class DerivativeHelper {
      * @param variableName the variable to derive
      * @return a new node representing the derivative
      */
-    public static Node derivativeNode(Node node, String variableName) {
+    public static Node derivativeNode(@DisallowModify Node node, String variableName) {
         switch (node.getType()) {
             case POLYNOMIAL: {
                 Node.Poly poly = (Node.Poly) node;
@@ -52,7 +53,7 @@ public class DerivativeHelper {
     }
 
 
-    private static Node dNodeAdd(Node.Add node, String variableName) {
+    private static Node dNodeAdd(@DisallowModify Node.Add node, String variableName) {
         var np = node.p == null ? null : Calculus.derivation(node.p, variableName);
         var list = new ArrayList<Node>(node.children.size());
         for (Node n : node.children) {
@@ -61,7 +62,7 @@ public class DerivativeHelper {
         return Node.wrapNodeAM(true, list, np);
     }
 
-    private static Node dNodeMultiply(Node.Multiply node, String variableName) {
+    private static Node dNodeMultiply(@DisallowModify Node.Multiply node, String variableName) {
         //multiply rules :
         // (f(x) * g(x))' = f'(x)*g(x) + f(x)*g'(x)
         var poly = node.p;
@@ -109,7 +110,7 @@ public class DerivativeHelper {
         return Node.wrapNodeAM(true, partA, partB);
     }
 
-    private static Node dNodeFraction(Node.Fraction node, String variableName) {
+    private static Node dNodeFraction(@DisallowModify Node.Fraction node, String variableName) {
         //(f(x)/g(x))' = ( f'(x)g(x) - f(x)g'(x) )/g(x)^2
         Node f = node.c1.cloneNode(null);
         Node g = node.c2.cloneNode(null);
@@ -140,12 +141,8 @@ public class DerivativeHelper {
         /**
          * Computes the derivation of the node, the node is always an
          * instance of FunctionNode
-         *
-         * @param node
-         * @param variableName
-         * @return
          */
-        Node derivation(Node node, String variableName);
+        Node derivation(@DisallowModify Node node, String variableName);
     }
 
     private static Node unsupportedDerivatorFunction(String functionName, int parameterLength) {
@@ -153,14 +150,14 @@ public class DerivativeHelper {
                 " with " + parameterLength + " parameter(s)");
     }
 
-    private static Node dSin(Node.SFunction node, String variableName) {
+    private static Node dSin(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
         Node cos = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_COS, fx);
         return Node.wrapNodeAM(false, fx_, cos);
     }
 
-    private static Node dCos(Node.SFunction node, String variableName) {
+    private static Node dCos(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
         Node sin = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_SIN, fx);
@@ -169,7 +166,7 @@ public class DerivativeHelper {
         return result;
     }
 
-    private static Node dTan(Node.SFunction node, String variableName) {
+    private static Node dTan(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
         Node cos = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_COS, fx);
@@ -178,20 +175,20 @@ public class DerivativeHelper {
         return Node.wrapNodeAM(false, fx_, result);
     }
 
-    private static Node dLn(Node.SFunction node, String variableName) {
+    private static Node dLn(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
         Node result = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_RECIPROCAL, fx);
         return Node.wrapNodeAM(false, fx_, result);
     }
 
-    private static Node dExp(Node.SFunction node, String variableName) {
+    private static Node dExp(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
         return Node.wrapNodeAM(false, fx_, node);
     }
 
-    private static Node dSquareRoot(Node.SFunction node, String variableName) {
+    private static Node dSquareRoot(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
         Node result = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_RECIPROCAL, node);
@@ -200,14 +197,13 @@ public class DerivativeHelper {
         return r;
     }
 
-    private static Node dNegate(Node.SFunction node, String variableName) {
+    private static Node dNegate(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
-        Node result = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_NEGATE, fx_);
-        return result;
+        return Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_NEGATE, fx_);
     }
 
-    private static Node dExp2(Node.DFunction node, String variableName) {
+    private static Node dExp2(@DisallowModify Node.DFunction node, String variableName) {
         Node base = node.c1;
         Node exponent = node.c2;
         //a^b = e^(b * ln(a))
@@ -217,7 +213,7 @@ public class DerivativeHelper {
         return derivativeNode(expart, variableName);
     }
 
-    private static Node dArcsin(Node.SFunction node, String variableName) {
+    private static Node dArcsin(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child.cloneNode(null);
         Node fx_ = derivativeNode(fx, variableName);
         //arcsin(x)' = 1/sqr(1-x^2)
@@ -230,13 +226,13 @@ public class DerivativeHelper {
         return Node.wrapNodeAM(false, fx_, sqr);
     }
 
-    private static Node dArccos(Node.SFunction node, String variableName) {
+    private static Node dArccos(@DisallowModify Node.SFunction node, String variableName) {
         var result = dArcsin(node, variableName);
         Node.setPolynomialPart(result, Multinomial.NEGATIVE_ONE);
         return result;
     }
 
-    private static Node dArctan(Node.SFunction node, String variableName) {
+    private static Node dArctan(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child.cloneNode(null);
         Node fx_ = derivativeNode(fx, variableName);
         //arcsin(x)' = 1/(1+x^2)
@@ -246,7 +242,7 @@ public class DerivativeHelper {
         return Node.wrapNodeAM(false, fx_, fraction);
     }
 
-    private static Node dLog2(Node.DFunction node, String variableName) {
+    private static Node dLog2(@DisallowModify Node.DFunction node, String variableName) {
         //log(a,b) = ln(b) / ln(a)
         Node a = node.c1;
         Node b = node.c2;
@@ -259,10 +255,10 @@ public class DerivativeHelper {
         //initialize the derivators
         addSingles();
         addDoubles();
-        addBackups();
+        addExtensions();
     }
 
-    private static void addBackups() {
+    private static void addExtensions() {
         addDerivator(new FunctionDerivator() {
             @Override
             public boolean accept(String functionName, int parameterLength) {
@@ -444,7 +440,7 @@ public class DerivativeHelper {
     }
 
     public static void main(String[] args) {
-        ExprCalculator ec = ExprCalculator.Companion.getInstance();
+        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
         Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
         SimplificationStrategies.setCalRegularization(ec);
         expr = ec.simplify(expr);

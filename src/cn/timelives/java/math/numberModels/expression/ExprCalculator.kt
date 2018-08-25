@@ -10,6 +10,7 @@ import cn.timelives.java.math.numberModels.MultinomialCalculator
 import cn.timelives.java.math.numberModels.Term
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.math.numberModels.expression.Node.*
+import cn.timelives.java.math.numberModels.expression.simplification.SimStraHolder
 
 import java.util.*
 import cn.timelives.java.utilities.Printer.print
@@ -348,7 +349,7 @@ class ExprCalculator
             val p2 = toPolynomial(y.root).p
             return Expression(Node.newPolyNode(multinomialCalculator.multiply(p1, p2), null))
         }
-        var root = Node.wrapCloneNodeAM(false, x.root, y.root)
+        var root:Node = Node.wrapCloneNodeAM(false, x.root, y.root)
         root = simplify(root)
         return Expression(root)
     }
@@ -941,8 +942,12 @@ class ExprCalculator
          * Gets a default instance of the ExprCalculator.
          * @return
          */
-        val instance: ExprCalculator
-            get() = ExprCalculator()
+        val newInstance: ExprCalculator
+            get() {
+                val ec = ExprCalculator()
+                SimplificationStrategies.setCalRegularization(ec)
+                return ec;
+            }
 
         internal var debugEnabled = false
     }

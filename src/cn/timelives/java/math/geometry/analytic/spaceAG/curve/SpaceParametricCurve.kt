@@ -5,16 +5,11 @@ import cn.timelives.java.math.algebra.calculus.derivation
 import cn.timelives.java.math.function.*
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector
-import cn.timelives.java.math.geometry.analytic.spaceAG.SpacePointSet
 import cn.timelives.java.math.minus
 import cn.timelives.java.math.numberModels.expression.ExprCalculator
 import cn.timelives.java.math.numberModels.expression.Expression
 import cn.timelives.java.math.numberModels.expression.SimplificationStrategies
 import cn.timelives.java.math.plus
-import cn.timelives.java.math.set.Interval
-import cn.timelives.java.math.set.MathSet
-import cn.timelives.java.math.set.MathSets
-import java.util.function.Function
 import java.util.function.UnaryOperator
 
 typealias VectorFunction<T> = MathFunction<T, SVector<T>>
@@ -50,7 +45,7 @@ interface SpaceParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolde
 }
 
 fun main(args: Array<String>) {
-    val mc = ExprCalculator.instance
+    val mc = ExprCalculator.newInstance
     SimplificationStrategies.setCalRegularization(mc)
     proof1(mc)
     proof2(mc)

@@ -1,7 +1,9 @@
 /**
  * 2017-11-26
  */
-package cn.timelives.java.math.numberModels.expression;
+package cn.timelives.java.math.numberModels.expression.simplification;
+
+import cn.timelives.java.math.numberModels.expression.simplification.SimplificationStrategy;
 
 import java.util.Set;
 

@@ -3,7 +3,6 @@
  */
 package test.math.numberModels;
 
-import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.Calculators;

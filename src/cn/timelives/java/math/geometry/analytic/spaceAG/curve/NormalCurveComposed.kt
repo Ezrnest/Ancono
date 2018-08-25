@@ -54,7 +54,6 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
 
     override fun asFunctionZ(): DerivableSVFunction<T> = c
 
-
     override fun asPointFunction(): DerivableFunction<T, SPoint<T>> = this.andThenMap { SPoint.valueOf(it) }
 
     override fun substituteX(t: T): T = a(t)
@@ -66,7 +65,7 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
 }
 
 fun main(args: Array<String>) {
-    val mc = ExprCalculator.instance
+    val mc = ExprCalculator.newInstance
     SimplificationStrategies.setCalRegularization(mc)
     val xt = Expression.valueOf("-a*cos(t)").asFunction(mc, "t")
     val yt = Expression.valueOf("a*sin(t)").asFunction(mc, "t")

@@ -1,9 +1,12 @@
 /**
  * 2017-11-26
  */
-package cn.timelives.java.math.numberModels.expression;
+package cn.timelives.java.math.numberModels.expression.simplification;
 
+import cn.timelives.java.math.numberModels.expression.ExprCalculator;
+import cn.timelives.java.math.numberModels.expression.Node;
 import cn.timelives.java.math.numberModels.expression.Node.Type;
+import cn.timelives.java.math.numberModels.expression.SimplificationStrategies;
 import cn.timelives.java.utilities.structure.Pair;
 
 import java.util.*;
@@ -24,16 +27,16 @@ public final class SimStraHolder {
 	 */
 	public SimStraHolder() {
 		generalTypes = new ArrayList<>();
-		specifices = new EnumMap<>(Node.Type.class);
+		specifices = new EnumMap<>(Type.class);
 		for(Type ty : Node.Type.values()) {
 			List<SpecificStrategy> list = new ArrayList<>();
 			Map<String,List<SpecificStrategy>> map = new HashMap<>();
-			specifices.put(ty, new Pair<List<SpecificStrategy>, Map<String,List<SpecificStrategy>>>(list, map));
+			specifices.put(ty, new Pair<>(list, map));
 		}
 		tagged = new ArrayList<>();
 	}
 	
-	void addStrategy(SimplificationStrategy ss) {
+	public void addStrategy(SimplificationStrategy ss) {
 		if(ss instanceof SpecificStrategy) {
 			addSpecificStrategy((SpecificStrategy)ss);
 			return;
@@ -44,14 +47,14 @@ public final class SimStraHolder {
 		}
 		generalTypes.add(ss);
 	}
-	
-	void addStrategy(List<? extends SimplificationStrategy> list) {
+
+	public void addStrategy(List<? extends SimplificationStrategy> list) {
 		for(SimplificationStrategy ss : list) {
 			addStrategy(ss);
 		}
 	}
-	
-	void addSpecificStrategy(SpecificStrategy ss) {
+
+	public void addSpecificStrategy(SpecificStrategy ss) {
 		String name = ss.registerFunctionName();
 		if(name == null) {
 			for(Type ty : ss.registerTypes()) {
@@ -182,33 +185,31 @@ public final class SimStraHolder {
 	}
 	/**
 	 * Performs a single simplification.
-	 * @param n
-	 * @param tags
 	 * @return
 	 */
-	Node performSimplification(final Node node, Set<String> tags, ExprCalculator mc) {
-		Node result = node;
+	public Node performSimplification(final Node node, Set<String> tags, ExprCalculator mc) {
+		Node result;
 		Type ty = node.getType();
 		Pair<List<SpecificStrategy>, Map<String, List<SpecificStrategy>>> p = specifices.get(ty);
 		String name = Node.getFunctionName(node);
 		if (name != null) {
 			List<SpecificStrategy> candidates = p.getSecond().get(name);
 			if (candidates != null) {
-				result = performAfterCheckTags(tags,candidates,result,mc);
+				result = performAfterCheckTags(tags,candidates,node,mc);
 				if(result != null) {
 					return result;
 				}
 			}
 		}
-		result = performAfterCheckTags(tags,p.getFirst(),result,mc);
+		result = performAfterCheckTags(tags,p.getFirst(),node,mc);
 		if(result != null) {
 			return result;
 		}
-		result = performAfterCheckTags(tags,tagged,result,mc);
+		result = performAfterCheckTags(tags,tagged,node,mc);
 		if(result != null) {
 			return result;
 		}
-		result = performAfterCheckTags(tags,generalTypes,result,mc);
+		result = performAfterCheckTags(tags,generalTypes,node,mc);
 		if(result != null) {
 			return result;
 		}

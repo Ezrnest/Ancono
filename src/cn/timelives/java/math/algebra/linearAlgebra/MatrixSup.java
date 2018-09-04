@@ -122,7 +122,7 @@ public class MatrixSup {
 				mat[i][j] = mc.getOne();
 			}
 		}
-		return new DMatrix<T>(mat, n, n,mc);
+		return new DMatrix<>(mat, n, n, mc);
 		
 	}
 	/**
@@ -177,7 +177,7 @@ public class MatrixSup {
 	 * the constant part.
 	 * @return the solution of the equation.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "ConstantConditions"})
 	public static <T> LinearEquationSolution<T> solveLinearEquation(Matrix<T> expandedMatrix){
 		MathCalculator<T> mc = expandedMatrix.getMathCalculator();
 		Matrix.MatResult<T> matRe = expandedMatrix.toStepMatrix();
@@ -248,7 +248,7 @@ public class MatrixSup {
 					}
 				}
 				solution[curCol] = mc.getOne();
-				vs[s] = new DVector<T>(solution,false,mc);
+				vs[s] = new DVector<>(solution, false, mc);
 				curCol++;
 			}
 			sb.setVariableSolution(vs);

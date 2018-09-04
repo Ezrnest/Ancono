@@ -166,7 +166,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
         }
         T d1 = A.distanceSq(p),
                 d2 = B.distanceSq(p);
-        return Utils.min(d1, d2, getMc());
+        return CalculatorUtils.min(d1, d2, getMc());
     }
 
     public T distanceSq(T x,T y){

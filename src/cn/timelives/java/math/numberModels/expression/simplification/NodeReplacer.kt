@@ -9,7 +9,7 @@ import java.util.*
 /**
  * The node provided in the map must not be modified.
  */
-typealias ReplacementBuilder = (Map<String, Node>, ExprCalculator) -> Node
+typealias ReplacementBuilder = (Map<String, ()->Node>, ExprCalculator) -> Node?
 
 interface NodeReplacer {
     /**
@@ -18,10 +18,15 @@ interface NodeReplacer {
     fun replace(n: Node, ec: ExprCalculator): Node?
 }
 
-class MatcherReplacer(val matcher: NodeMatcher, val replacementBuilder: (Map<String, Node>, ExprCalculator) -> Node) : NodeReplacer {
+class MatcherReplacer(val matcher: NodeMatcher, val replacementBuilder: ReplacementBuilder) : NodeReplacer {
     override fun replace(n: Node, ec: ExprCalculator): Node? {
-        val matchResult = matcher.matches(n, emptyMap(), ec) ?: return null
-        return replacementBuilder(matchResult.refMapping, ec)
+        try {
+            val matchResult = matcher.matches(n, emptyMap(), ec) ?: return null
+            return replacementBuilder(matchResult.refMapping.mapValues { en -> { en.value.cloneNode() } }, ec)
+        }catch (e : Exception){
+            e.printStackTrace()
+            return null
+        }
     }
 }
 
@@ -29,20 +34,30 @@ class MatcherReplacer(val matcher: NodeMatcher, val replacementBuilder: (Map<Str
  * Wraps the add/multiply matcher, transform the strict matcher to partly matcher of add/multiply. It is
  * required that the mather's remaining matcher is [NoneMatcher].
  */
-fun wrapAM(matcher: SimpleAMMatcher, replacementBuilder: (Map<String, Node>, ExprCalculator) -> Node)
-        : Pair<SimpleAMMatcher, (Map<String, Node>, ExprCalculator) -> Node> {
+fun wrapAM(matcher: SimpleAMMatcher, replacementBuilder: ReplacementBuilder)
+        : Pair<SimpleAMMatcher, ReplacementBuilder> {
     if (matcher.remainingMatcher != NoneMatcher) {
         throw IllegalArgumentException()
     }
     val generatedRefName = "#${Random().nextInt()}"
     val nMatcher = SimpleAMMatcher(matcher.isAdd, matcher.polyMatcher, matcher.matchers, SingleRefMatcher(generatedRefName))
-    val nBuilder: (Map<String, Node>, ExprCalculator) -> Node = { refMap, ec ->
-        replacementBuilder(refMap, ec) + refMap[generatedRefName]!!.cloneNode(null)
+    val nBuilder: ReplacementBuilder = { refMap, ec ->
+        val t = refMap[generatedRefName]?.invoke()
+        val base = replacementBuilder(refMap, ec)
+        if (t == null || base == null) {
+            base
+        } else {
+            if (matcher.isAdd) {
+                base + t
+            } else {
+                base * t
+            }
+        }
     }
     return nMatcher to nBuilder
 }
 
-fun wrapAMReplacer(matcher: SimpleAMMatcher, replacementBuilder: (Map<String, Node>, ExprCalculator) -> Node): MatcherReplacer {
+fun wrapAMReplacer(matcher: SimpleAMMatcher, replacementBuilder: ReplacementBuilder): MatcherReplacer {
     val (m, b) = wrapAM(matcher, replacementBuilder)
     return MatcherReplacer(m, b)
 }
@@ -76,7 +91,7 @@ class MatchReplaceStrategy(val nr: NodeReplacer,
                            fname: String?, description: String? = null) : SimpleStrategy(tags, types, fname, description) {
 
     override fun simplifyNode(node: Node, mc: ExprCalculator): Node? {
-        return mc.simplify(nr.replace(node, mc)?:return null,Integer.MAX_VALUE)
+        return mc.simplify(nr.replace(node, mc) ?: return null, Integer.MAX_VALUE)
     }
 }
 

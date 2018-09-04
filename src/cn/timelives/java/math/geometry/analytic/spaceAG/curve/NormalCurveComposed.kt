@@ -8,6 +8,7 @@ import cn.timelives.java.math.numberModels.expression.ExprCalculator
 import cn.timelives.java.math.numberModels.expression.Expression
 import cn.timelives.java.math.numberModels.expression.SimplificationStrategies
 import cn.timelives.java.math.set.Interval
+import java.net.SocketImpl
 
 class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
                                    val b: DerivableSVFunction<T>,
@@ -65,6 +66,7 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
 }
 
 fun main(args: Array<String>) {
+    SimplificationStrategies.setEnableSpi(true)
     val mc = ExprCalculator.newInstance
     SimplificationStrategies.setCalRegularization(mc)
     val xt = Expression.valueOf("-a*cos(t)").asFunction(mc, "t")
@@ -72,6 +74,8 @@ fun main(args: Array<String>) {
     val zt = Expression.valueOf("bt").asFunction(mc, "t")
     val t = Expression.valueOf("t")
     val curve = NormalCurveComposed(xt, yt, zt, Interval.universe(mc), mc)
-    println(curve.tangentVector(t))
-    println(curve.curvature(t))
+//    println(curve.tangentVector(t))
+//    println(curve.curvature(t))
+//    println(curve.tangentVector(t))
+    println(mc.simplify(curve.curvature(t)))
 }

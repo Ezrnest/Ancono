@@ -37,7 +37,14 @@ public interface Polynomial<T> extends Iterable<T>{
 	 * @return
 	 */
 	T getCoefficient(int n);
-	
+
+    /**
+     * Determines whether this polynomial is a constant.
+     */
+	default boolean isConstant(){
+	    return getDegree() == 0;
+    }
+
 	/** 
 	 * Iterators the coefficient from the lowest one(a0).
 	 */
@@ -140,7 +147,12 @@ public interface Polynomial<T> extends Iterable<T>{
         if (!mc.isZero(m.getCoefficient(0))) {
 			sb.append(nf.format(m.getCoefficient(0), mc));
 		}else{
-			sb.delete(sb.length()-3, sb.length());
+        	try {
+				sb.delete(sb.length()-3, sb.length());
+
+			}catch (Exception e){
+        		throw e;
+			}
 		}
 		return sb.toString();
 	}

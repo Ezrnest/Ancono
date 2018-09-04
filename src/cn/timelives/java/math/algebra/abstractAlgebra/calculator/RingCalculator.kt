@@ -4,7 +4,6 @@
 package cn.timelives.java.math.algebra.abstractAlgebra.calculator
 
 import cn.timelives.java.utilities.ModelPatterns
-import java.util.function.BinaryOperator
 
 /**
  * The ring calculator defines some basic operations in a group.
@@ -60,7 +59,7 @@ interface RingCalculator<T : Any> : GroupCalculator<T> {
      * @return `x ^ n`
      */
     fun pow(x: T, n: Long): T {
-        return ModelPatterns.binaryReduce(n, x) { a, b -> this.multiply(a, b) }
+        return ModelPatterns.binaryProduce(n, x) { a, b -> this.multiply(a, b) }
     }
 
     /**

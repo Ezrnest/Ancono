@@ -12,7 +12,7 @@ import static cn.timelives.java.utilities.Printer.printnb;
  */
 public class LinearEquationSolution<T> {
 	
-	public static enum Situation{
+	public enum Situation{
 		NO_SOLUTION,
 		SINGLE_SOLUTION,
 		UNBOUNDED_SOLUTION,
@@ -35,7 +35,6 @@ public class LinearEquationSolution<T> {
 	
 	/**
 	 * Return a LinearEquationSolution that represent no solution
-	 * @return
 	 */
 	public static <T> LinearEquationSolution<T> noSolution(Matrix<T> equ){
 		return new LinearEquationSolution<T>(equ,Situation.NO_SOLUTION,null,null);
@@ -86,7 +85,7 @@ public class LinearEquationSolution<T> {
 	}
 	/**
 	 * Show the solution through printer .
-	 * @see {@link cn.timelives.java.utilities.Printer}
+	 * @see cn.timelives.java.utilities.Printer
 	 */
 	public void printSolution(){
 		switch(sit){

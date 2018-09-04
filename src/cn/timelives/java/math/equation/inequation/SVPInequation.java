@@ -11,7 +11,7 @@ import cn.timelives.java.math.function.AbstractSVPFunction.LinearFunction;
 import cn.timelives.java.math.function.QuadraticFunction;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
-import cn.timelives.java.math.numberModels.Utils;
+import cn.timelives.java.math.numberModels.CalculatorUtils;
 import cn.timelives.java.math.property.Solveable;
 import cn.timelives.java.math.set.Interval;
 import cn.timelives.java.math.set.IntervalUnion;
@@ -80,7 +80,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			return false;
 		}
 		SVPInequation<N> sv = (SVPInequation<N>) obj;
-        return op == sv.op && Polynomial.isEqual(this, sv, Utils.mappedIsEqual(getMc(), mapper));
+        return op == sv.op && Polynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
 	}
 
 	/*

@@ -185,7 +185,6 @@ public final class SimStraHolder {
 	}
 	/**
 	 * Performs a single simplification.
-	 * @return
 	 */
 	public Node performSimplification(final Node node, Set<String> tags, ExprCalculator mc) {
 		Node result;

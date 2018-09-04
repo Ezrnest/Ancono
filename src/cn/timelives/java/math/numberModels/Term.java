@@ -204,7 +204,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Determines whether this term is an integer without any character.
-     * @return
      */
     public boolean isInteger(){
         if(signum==0){
@@ -214,9 +213,24 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                 denominator.equals(BigInteger.ONE) &&
                 radical.equals(BigInteger.ONE);
     }
+
+    /**
+     * Converts the numerator and denominator of this term to a Fraction.
+     * @return a Fraction
+     */
+    public Fraction toFraction(){
+        if(signum == 0){
+            return Fraction.Companion.getZERO();
+        }
+        return Fraction.Companion.valueOf(signum,numerator.longValueExact(),denominator.longValueExact());
+    }
+
+
+
+
+
     /**
      * Returns this term's character as an unmodifiable map.
-     * @return
      */
     public NavigableMap<String, Fraction> getCharacter() {
         return Collections.unmodifiableNavigableMap(character);
@@ -224,7 +238,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Return this.character, this method is specialized for package classes.
-     * @return
      */
     final NavigableMap<String, Fraction> getCharacterNoCopy() {
         return this.character;
@@ -233,8 +246,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     /**
      * Gets the power of the character, if the character is not contained
      * in this formula, then zero will be returned.
-     * @param cha
-     * @return
      */
     public Fraction getCharacterPower(String cha) {
         Fraction pow =  character.get(cha);
@@ -909,7 +920,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         for(var en : character.entrySet()){
             String ch = en.getKey();
             Fraction f = en.getValue();
-            T exp = Utils.valueOfFraction(f,mc);
+            T exp = CalculatorUtils.valueOfFraction(f,mc);
             T val = valueMap.apply(ch);
             if(val == null){
                 val = mc.getOne();
@@ -930,7 +941,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
      * @return
      */
     public <T> T compute(Function<String,T> valueMap, MathCalculator<T> mc){
-        return compute(valueMap,mc, Utils.parserBigInteger(mc));
+        return compute(valueMap,mc, CalculatorUtils.parserBigInteger(mc));
     }
 
     /**
@@ -1026,6 +1037,14 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             }
         }
         return sameNumber0(map);
+    }
+
+    public Term sameChar(Fraction fraction){
+        return new Term(fraction.getSignum(),BigInteger.valueOf(fraction.getNumerator()),BigInteger.valueOf(fraction.getDenominator()),BigInteger.ONE,this.character);
+    }
+
+    public Term sameChar(int signum,BigInteger numerator,BigInteger denominator,BigInteger radical){
+        return newInstance(signum,numerator,denominator,radical,character);
     }
 
     private Term sameNumber0(NavigableMap<String,Fraction> map){
@@ -1217,7 +1236,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                 pos = tpos;
                 continue;
             } else {
-                throw new NumberFormatException("Unspported Character");
+                throw new NumberFormatException("Unsupported Character in  " +str);
             }
 
         }
@@ -1251,6 +1270,16 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     static Term newInstanceP(int signum, BigInteger[] ndr, NavigableMap<String, Fraction> character) {
         return newInstanceP(signum, ndr[0], ndr[1], ndr[2], character);
     }
+
+    /**
+     *
+     * @param signum raw
+     * @param numerator raw
+     * @param denominator raw
+     * @param radical raw
+     * @param character must be a copy, may be modified in the method later
+     * @return
+     */
     static Term newInstanceP(int signum, BigInteger numerator, BigInteger denominator, BigInteger radical,
                              NavigableMap<String, Fraction> character) {
         if (signum == 0) {// first check

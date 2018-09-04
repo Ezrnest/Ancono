@@ -10,9 +10,18 @@ val Int.p: Node.Poly
 val String.p: Node.Poly
     get() = Node.newPolyNode(Multinomial.valueOf(this))
 
+val Multinomial.p : Node.Poly
+    get() = Node.newPolyNode(this)
+
+fun identityOfAM(isAdd : Boolean) = if(isAdd){
+    0.p
+}else{
+    1.p
+}
+
 operator fun Node.plus(n: Node): Node.Add = Node.wrapNodeAM(true, this, n) as Node.Add
 
-operator fun Node.minus(n: Node): Node.Add = Node.wrapNodeAM(false, this,
+operator fun Node.minus(n: Node): Node.Add = Node.wrapNodeAM(true, this,
         Node.wrapNodeMultiply(n, Multinomial.NEGATIVE_ONE)) as Node.Add
 
 operator fun Node.times(n: Node): Node.Multiply = Node.wrapNodeAM(false, this, n) as Node.Multiply
@@ -29,8 +38,8 @@ fun arcsin(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME
 fun arctan(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_ARCTAN, x)
 fun cos(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_COS, x)
 fun cot(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_COT, x)
-fun negate(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_NEGATE, x)
-fun reciprocal(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_RECIPROCAL, x)
+//fun negate(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_NEGATE, x)
+//fun reciprocal(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_RECIPROCAL, x)
 fun sin(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_SIN, x)
 fun sqr(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_SQR, x)
 fun tan(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_TAN, x)
@@ -38,6 +47,8 @@ fun exp(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_EX
 fun ln(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_LN, x)
 fun exp(a: Node, b: Node): Node.DFunction = Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP, a, b)
 fun log(a: Node, b: Node): Node.DFunction = Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_LOG, a, b)
+
+fun square(x : Node) : Node.DFunction = exp(x,Node.newPolyNode(Multinomial.TWO))
 
 fun sfun(fname: String, x : Node) : Node.SFunction = Node.wrapNodeSF(fname,x)
 

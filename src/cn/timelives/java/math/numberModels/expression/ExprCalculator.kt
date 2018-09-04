@@ -8,12 +8,15 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.numberModels.Multinomial
 import cn.timelives.java.math.numberModels.MultinomialCalculator
 import cn.timelives.java.math.numberModels.Term
+import cn.timelives.java.math.numberModels.api.NumberFormatter
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.math.numberModels.expression.Node.*
 import cn.timelives.java.math.numberModels.expression.simplification.SimStraHolder
+import cn.timelives.java.math.numberModels.expression.simplification.p
 
 import java.util.*
 import cn.timelives.java.utilities.Printer.print
+import cn.timelives.java.utilities.Printer.printnb
 
 @Suppress("NAME_SHADOWING")
 /**
@@ -349,7 +352,7 @@ class ExprCalculator
             val p2 = toPolynomial(y.root).p
             return Expression(Node.newPolyNode(multinomialCalculator.multiply(p1, p2), null))
         }
-        var root:Node = Node.wrapCloneNodeAM(false, x.root, y.root)
+        var root: Node = Node.wrapCloneNodeAM(false, x.root, y.root)
         root = simplify(root)
         return Expression(root)
     }
@@ -462,6 +465,12 @@ class ExprCalculator
         return Expression(root)
     }
 
+    private fun mFunction(name : String, vararg p : Expression) : Expression{
+        var root: Node = wrapCloneNodeMF(name,p.toList().map { it.root },false)
+        root = simplify(root)
+        return Expression(root)
+    }
+
     /*
 	 * @see cn.timelives.java.math.MathCalculator#exp(java.lang.Object)
 	 */
@@ -537,6 +546,13 @@ class ExprCalculator
         return sfunction("tan", x)
     }
 
+    /**
+     * Returns an expression representing the result of substituting [ch] in [expr] with all
+     * values between [start] and [end] (inclusive).
+     */
+    fun sigma(expr : Expression, start: Expression, end : Expression, ch : String = "x") : Expression{
+        return mFunction(ExprFunction.FUNCTION_NAME_SIGMA,expr,Expression(ch.p),start,end)
+    }
 
     fun simplify(x: Expression): Expression {
         var root = x.root.cloneNode(null)
@@ -584,9 +600,16 @@ class ExprCalculator
         }
         node = simplifyPolynomial(node, 0)
         doSort(node, 0)//very important
-        node = simplifyWithStrategyNoRecur(node)
-        node.simIdentifier = simplificationIdentifier
-        return node
+        val re = simplifyWithStrategyNoRecur(node)
+        if (showSimSteps) {
+            try {
+                println("$node -> $re")
+            }catch (e : Exception){
+                println("?? -> $re")
+            }
+        }
+        re.simIdentifier = simplificationIdentifier
+        return re
     }
 
     /**
@@ -950,6 +973,8 @@ class ExprCalculator
             }
 
         internal var debugEnabled = false
+
+        internal var showSimSteps = true
     }
 
 

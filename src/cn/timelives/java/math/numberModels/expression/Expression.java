@@ -12,6 +12,7 @@ import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.StringSup;
 import cn.timelives.java.utilities.structure.Pair;
 import cn.timelives.java.utilities.structure.WithInt;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -106,14 +107,15 @@ public final class Expression implements Computable,Serializable {
 	/**
 	 * Creates an expression from a string without performing any simplification.
 	 * <h3>Variables:</h3>
-	 * The expression
+	 * The expression supports variables of single characters.
 	 * <h3>Functions:</h3>
      * All the basic math functions are included and will be recognized. Also, customized functions can
      * be recognized with a '_' suffix, such as myFunction_(x). All the letter in front of _ directly will
      * be parsed to the name of the function.
-	 * @param expr
-	 * @return
+	 * @param expr a string
+	 * @return a new Expression
 	 */
+	@NotNull
 	public static Expression valueOf(String expr) {
 		return new ExprParser(expr).parse();
 	}
@@ -142,8 +144,7 @@ public final class Expression implements Computable,Serializable {
 
 		public Expression parse(){
 		    Node root = partAdd(expr,0,null);
-		    Expression re = new Expression(root);
-		    return re;
+            return new Expression(root);
         }
 
 		void throwFor(String msg, int index) {
@@ -195,7 +196,7 @@ public final class Expression implements Computable,Serializable {
 				try {
 					Multinomial l = Multinomial.valueOf(s);
 					return new Node.Poly(parent, p.getSecond() ? l : l.negate());
-				} catch (NumberFormatException e) {
+				} catch (NumberFormatException ignored) {
 				}
 				return negateOrNot(partMultiply(s, offset,parent), p.getSecond());
 			} else {

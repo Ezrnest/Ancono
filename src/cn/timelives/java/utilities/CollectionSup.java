@@ -140,6 +140,8 @@ public final class CollectionSup {
 			return coll;
 		});
 	}
+
+
 	
 	/**
 	 * Determines whether the two collection is equal through {@code isEqual}.

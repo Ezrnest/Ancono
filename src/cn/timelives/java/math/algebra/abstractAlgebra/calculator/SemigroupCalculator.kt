@@ -37,6 +37,6 @@ interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T
      * @return
      */
     fun gpow(x: T, n: Long): T {
-        return ModelPatterns.binaryReduce(n, x) { a, b -> this.apply(a, b) }
+        return ModelPatterns.binaryProduce(n, x) { a, b -> this.apply(a, b) }
     }
 }

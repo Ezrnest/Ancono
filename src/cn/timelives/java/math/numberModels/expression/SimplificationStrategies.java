@@ -892,7 +892,7 @@ public final class SimplificationStrategies {
                 }
                 Node n = Node.wrapNodeDF("exp", node.child, Node.newPolyNode(mc.getMultinomialCalculator().divideLong(mc.getPOne(), 2l), null));
                 n.parent = node;
-                return n;
+                return mc.simplify(n,1);
             }
         });
     }
@@ -1140,7 +1140,7 @@ public final class SimplificationStrategies {
         addBasicAlgebra(list);
         addSqrStrategies(list);
         addExpStrategies(list);
-//        addTriStrategies(list);
+        addTriStrategies(list);
         return list;
     }
 

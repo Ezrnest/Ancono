@@ -5,9 +5,12 @@ package cn.timelives.java.math.numberTheory.combination;
 
 import cn.timelives.java.math.exceptions.NumberValueException;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.Printer;
 
 import java.util.*;
 import java.util.function.Predicate;
+
+import static cn.timelives.java.utilities.Printer.print;
 
 /**
  * A ordered enumerationer which returns an 
@@ -259,12 +262,29 @@ public abstract class Enumer implements Iterable<int[]>{
 			return total;
 		}
 	}
-	
+
+    /**
+     * Returns an enumer that enumerates all the m-size permutations of n numbers.
+     * @param n the count of elements
+     * @param m the length of the int array returned by the enumer
+     * @return
+     */
 	public static Enumer permutation(int n,int m){
 		return new LEnumer(n, m);
 	}
-	
-	
+    /**
+     * Returns an enumer that enumerates all the m-size combinations of n numbers.
+     * The elements in the int array returned by the enumer represent the index of the elements and
+     * are ordered.
+     * @param n the count of elements
+     * @param m the length of the int array returned by the enumer
+     * @return
+     */
+    public static Enumer combination(int n,int m){
+	    return new CEnumer(n,m);
+    }
+
+
 	public static EnumBuilder getBuilder(int n,int m){
 		return new EnumBuilder(n, m);
 	}
@@ -298,9 +318,7 @@ public abstract class Enumer implements Iterable<int[]>{
 	}
 	
 	
-//	public static void main(String[] args) {
-//		Enumer en ;
-//		en = getBuilder(4, 3).addRule(a->a[0]!=0).build();
-//		en.forEach(Printer::print);
-//	}
+	public static void main(String[] args) {
+        combination(5,2).enumration().forEach(Printer::print);
+	}
 }

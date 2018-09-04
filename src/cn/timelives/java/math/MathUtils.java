@@ -2,7 +2,11 @@ package cn.timelives.java.math;
 
 import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.equation.inequation.SVPInequation;
+import cn.timelives.java.math.exceptions.ExceptionUtil;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.math.numberModels.Fraction;
+import cn.timelives.java.math.numberModels.expression.ExprCalculator;
+import cn.timelives.java.math.numberModels.expression.Expression;
 import cn.timelives.java.math.numberTheory.Primes;
 import cn.timelives.java.math.set.IntervalUnion;
 import cn.timelives.java.utilities.ArraySup;
@@ -961,8 +965,6 @@ public class MathUtils {
 	 * Returns a two-dimension array representing the 
 	 * number's prime factors and the corresponding times.
 	 * <P>For example, <text> factorReduce(6)={{2,1},{3,1}} </text>
-	 * @param n
-	 * @return
 	 */
 	public static long[][] factorReduce(long n) {
 		Primes pr = Primes.getInstance();
@@ -970,6 +972,9 @@ public class MathUtils {
 		long[][] factors = new long[primes.length/4+1][];
 		int count=0;
 		for(long p : primes) {
+		    if(n < p){
+		        break;
+            }
 			if(n % p == 0) {
 				long[] pair = new long[] {p,0};
 				factors = ArraySup.ensureCapacityAndAdd(factors, pair,count);
@@ -980,14 +985,96 @@ public class MathUtils {
 				count++;
 			}
 		}
+		if(n!=1){
+		    factors = ArraySup.ensureCapacityAndAdd(factors,new long[]{n,1},count);
+		    count++;
+        }
 		if(factors.length>count) {
 			factors = Arrays.copyOf(factors, count);
 		}
 		return factors;
 	}
 
+    /**
+     * Computes the biggest factor {@code result} of {@code n} that satisfies {@code p^exp = result}, where
+     * {@code p} is an integer. This method will return an array composed of the biggest factor described ahead,
+     * the integer {@code p}.
+     * <p></p>For example, {@code integerExp(81,1/3) = (27,3)}, because {@code 3^3 = 27}.
+     * @param n a non-negative number
+     * @param exp a positive fraction
+     * @return an array of the biggest factor {@code result} and the base {@code p}
+     */
+	public static long[] integerExpFloor(long n, Fraction exp){
+	    var t = integerExpCheck(n,exp);
+	    if(t !=null){
+	        return t;
+        }
+        long[][] factors = factorReduce(n);
+        long base = 1;
+        long result = 1;
+        for(long[] factor : factors){
+            long pow = factor[1];
+            int basePow = Math.toIntExact(exp.multiply(pow).floor());
+            base *= power(factor[0],basePow);
+            int rePow = Fraction.Companion.valueOf(basePow).divide(exp).toInt();
+            result *= power(factor[0],rePow);
+        }
+        return new long[]{result,base};
+    }
+    private static long[] integerExpCheck(long n,Fraction exp){
+        if(n < 0){
+            throw new IllegalArgumentException("n<0");
+        }
+        if(!exp.isPositive()){
+            throw new IllegalArgumentException("exp < 0");
+        }
+        if(n == 0){
+            if(exp.isZero()){
+                ExceptionUtil.INSTANCE.zeroExponent();
+                return null;
+            }
+            return new long[]{0,0};
+        }
+        if(n == 1){
+            return new long[]{1,1};
+        }
+        return null;
+    }
+    /**
+     * Computes the smallest multiple {@code result} of {@code n} that satisfies {@code p^exp = result}, where
+     * {@code p} is an integer. This method will return an array composed of the smallest multiple described ahead,
+     * the integer {@code p}.
+     * <p></p>For example, {@code integerExp(81,1/3) = (3^6,3)}.
+     * @param n a non-negative number
+     * @param exp a positive fraction
+     * @return an array of the biggest factor {@code result} and the base {@code p}
+     */
+    public static long[] integerExpCeil(long n, Fraction exp){
+        var t = integerExpCheck(n,exp);
+        if(t !=null){
+            return t;
+        }
+        long[][] factors = factorReduce(n);
+        long base = 1;
+        long result = 1;
+        for(long[] factor : factors){
+            long pow = factor[1];
+            int basePow = Math.toIntExact(exp.multiply(pow).ceil());
+            base *= power(factor[0],basePow);
+            int rePow = Fraction.Companion.valueOf(basePow).divide(exp).toInt();
+            result *= power(factor[0],rePow);
+        }
+        return new long[]{result,base};
+    }
+
+    public static String simplifyExpression(String expr){
+    	var ex = Expression.valueOf(expr);
+    	var mc = ExprCalculator.Companion.getNewInstance();
+    	return mc.simplify(ex).toString();
+	}
 
 	public static void main(String[] args) {
-		MathObject mo = null;
+//	    print(integerExpCeil(81,Fraction.Companion.valueOf("1/3")));
+        print(simplifyExpression("exp(n(n+1)/2,2)"));
 	}
 }

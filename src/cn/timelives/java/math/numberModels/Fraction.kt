@@ -277,7 +277,9 @@ internal constructor(
      * @return `this + frac`
      */
     override fun add(y: Fraction): Fraction {
-        var num = this.signum.toLong() * this.numerator * y.denominator + y.signum.toLong() * y.numerator * this.denominator
+        val den = MathUtils.lcm(denominator, y.denominator)
+        var num = this.signum.toLong() * this.numerator * den / this.denominator +
+                y.signum.toLong() * y.numerator * den / y.denominator
         if (num == 0L) {
             return ZERO
         }
@@ -288,7 +290,6 @@ internal constructor(
         } else {
             signum = 1
         }
-        val den = MathUtils.lcm(denominator, y.denominator)
         val nAd = gcdNumAndDen(num, den)
         return Fraction(nAd[0], nAd[1], signum)
     }
@@ -319,9 +320,11 @@ internal constructor(
 
     operator fun times(y: Long) = multiply(y)
 
+    operator fun times(y : Fraction) = multiply(y)
 
     operator fun div(y: Long) = divide(y)
 
+    operator fun div(y : Fraction) = divide(y)
 
     operator fun plus(y: Long) = add(y)
 
@@ -459,7 +462,46 @@ internal constructor(
         }
         val re = this.divide(divisor)
         return Fraction.valueOf(re.toLong())
+    }
 
+    /**
+     * Returns the largest (closest to positive infinity) value that is
+     * less than or equal to the argument and is equal to a mathematical integer. Special cases:
+     * If the argument value is already equal to a mathematical integer, then the result is the same as the argument.
+     */
+    fun floor(): Long {
+        if (isInteger) {
+            return when {
+                signum == 0 -> 0L
+                signum > 0 -> numerator
+                else -> -numerator
+            }
+        }
+        val value = numerator / denominator
+        return if (signum > 0)
+            value
+        else
+            -value - 1
+    }
+
+    /**
+     * Returns the smallest (closest to negative infinity) value that is
+     * greater than or equal to the argument and is equal to a mathematical integer. Special cases:
+     * If the argument value is already equal to a mathematical integer, then the result is the same as the argument.
+     */
+    fun ceil(): Long {
+        if (isInteger) {
+            return when {
+                signum == 0 -> 0L
+                signum > 0 -> numerator
+                else -> -numerator
+            }
+        }
+        val value = numerator / denominator
+        return if (signum > 0)
+            value + 1
+        else
+            -value
     }
 
     fun divideAndRemainder(divisor: Fraction): Array<Fraction> {
@@ -997,6 +1039,17 @@ internal constructor(
             return if (d < 0) -1 else if (d == 0.0) 0 else 1
         }
 
+        fun valueOf(signum: Int, numerator: Long, denominator: Long): Fraction {
+            if (signum == 0) {
+                return ZERO
+            }
+            return valueOf(if (signum > 0) {
+                numerator
+            } else {
+                -numerator
+            }, denominator)
+        }
+
 
         //	public static void main(String[] args) {
         ////		print(computeContinuousFraction(new long[] {2,3,3,11,2}, 4));
@@ -1027,4 +1080,12 @@ internal constructor(
 
         internal val fs = FractionSimplifier()
     }
+
+
+}
+
+fun main(args: Array<String>) {
+    val f1 = Fraction.valueOf(-4, 3)
+    println(f1.floor())
+    println(f1.ceil())
 }

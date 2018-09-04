@@ -8,7 +8,7 @@ import cn.timelives.java.math.MathCalculatorHolder
 import cn.timelives.java.math.MathObject
 import cn.timelives.java.math.algebra.Polynomial
 import cn.timelives.java.math.algebra.calculus.*
-import cn.timelives.java.math.numberModels.Utils
+import cn.timelives.java.math.numberModels.CalculatorUtils
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.utilities.ArraySup
 import java.util.*
@@ -110,7 +110,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             return true
         }
         val f = obj as SVPFunction<N>
-        return Polynomial.isEqual(this, f, Utils.mappedIsEqual(mc, mapper))
+        return Polynomial.isEqual(this, f, CalculatorUtils.mappedIsEqual(mc, mapper))
     }
 
     /* (non-Javadoc)

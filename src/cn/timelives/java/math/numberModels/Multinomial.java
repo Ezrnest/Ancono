@@ -475,7 +475,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
             else
                 return ONE;
         }
-        NavigableSet<Term> result = ModelPatterns.binaryReduce(pow, terms, Multinomial::mergingMultiply);
+        NavigableSet<Term> result = ModelPatterns.binaryProduce(pow, terms, Multinomial::mergingMultiply);
         return new Multinomial(result);
     }
 
@@ -495,8 +495,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     /**
      * Returns the count of the terms that have the character of {@code targer}.
-     * @param target
-     * @return
      */
     public int containsCharCount(String target){
         int count = 0;
@@ -584,7 +582,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         }
         NavigableSet<Term> terms = getSet();
         char c;
-        String temp = "";
+        StringBuilder temp = new StringBuilder();
         for (int i = 0; i < expr.length(); i++) {
             c = expr.charAt(i);
             if (c == '+' || c == '-') {
@@ -592,14 +590,14 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
                 if (i != 0) {
                     char cr = expr.charAt(i - 1);
                     if (cr != '+' && cr != '-' && cr != '^') {
-                        mergingAdd(terms, Term.valueOf(temp));
-                        temp = "";
+                        mergingAdd(terms, Term.valueOf(temp.toString()));
+                        temp = new StringBuilder();
                     }
                 }
             }
-            temp += c;
+            temp.append(c);
         }
-        mergingAdd(terms, Term.valueOf(temp));
+        mergingAdd(terms, Term.valueOf(temp.toString()));
         return new Multinomial(terms);
     }
 
@@ -741,6 +739,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return new Multinomial(result);
     }
 
+
     /**
      * Returns a term if the {@link Multinomial} can be convert to a term, or null if it cannot.
      * @param p a multinomial
@@ -773,6 +772,15 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * @return
      */
     public static Multinomial valueOf(long n){
+        if(n == 0){
+            return ZERO;
+        }else if(n == -1){
+            return NEGATIVE_ONE;
+        }else if(n == 1){
+            return ONE;
+        }else if(n == 2){
+            return TWO;
+        }
         return monomial(Term.valueOf(n));
     }
 

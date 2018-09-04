@@ -92,7 +92,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			return true;
 		}
 		SVPEquation<N> sv = (SVPEquation<N>) obj;
-        return Polynomial.isEqual(this, sv, Utils.mappedIsEqual(getMc(), mapper));
+        return Polynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
 	}
 	
 	/* (non-Javadoc)

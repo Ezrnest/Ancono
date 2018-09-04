@@ -94,13 +94,13 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * recommended to be literally the identity to the method `compareTo()` if the
      * object `T` is comparable.
      *
-     * @param para1 a number
-     * @param para2 another number
+     * @param x a number
+     * @param y another number
      * @return -1 if `para1 < para2 `, 0 if `para1==para2` , or 1 if
      * `para1 > para2`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
-    override fun compare(para1: T, para2: T): Int
+    override fun compare(x: T, y: T): Int
 
     /**
      * Add two parameters, this method is required to be commutative, so is it
@@ -475,6 +475,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     fun arctan(x: T): T {
         return arcsin(divide(x, squareRoot(add(one, multiply(x, x)))))
     }
+
 
     companion object {
 

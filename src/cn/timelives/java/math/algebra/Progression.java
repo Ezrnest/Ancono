@@ -3,8 +3,10 @@ package cn.timelives.java.math.algebra;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.function.BiMathFunction;
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.structure.WithLong;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
@@ -995,9 +997,15 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 	 * @param mc a math calculator
 	 * @return a newly created progression.
 	 */
-	public static <T> Progression<T> createProgressionRecur(BiMathFunction<Progression<T>,Long, T> recur, long length, MathCalculator<T> mc, T...firstSeveral){
+	public static <T> Progression<T> createProgressionRecur(BiMathFunction<Progression<T>,Long, T> recur, long length,
+                                                            MathCalculator<T> mc, T...firstSeveral){
 		return new FillingCachedProgression<>(mc,length,recur,firstSeveral);
 	}
+
+	public static <T> Progression<T> createProgressionRecur1WithIndex(MathFunction<WithLong<T>,T> recur, long length,
+                                                                      MathCalculator<T> mc, T...firstSeveral){
+	    return createProgressionRecur((Progression<T> p,Long l)->recur.apply(new WithLong<>(l,p.get(l-1))),length,mc,firstSeveral);
+    }
 
 
 

@@ -384,6 +384,14 @@ public abstract class Node implements Computable, Serializable {
         return root;
     }
 
+    public static MFunction wrapCloneNodeMF(String fname, List<Node> nodes, boolean sortable) {
+        MFunction root = new MFunction(null, CollectionSup.mapList(nodes, Node::cloneNode), fname, sortable);
+        for (Node n : nodes) {
+            n.parent = root;
+        }
+        return root;
+    }
+
     public static DFunction wrapNodeDF(String fname, Node n1, Node n2) {
         return wrapNodeDF(fname, n1, n2, false);
     }
@@ -401,6 +409,8 @@ public abstract class Node implements Computable, Serializable {
         }
         return root;
     }
+
+
 
     public static Pair<Multinomial, Node> unwrapMultiply(Node node, ExprCalculator ec) {
         if (node.getType() != Type.MULTIPLY) {
@@ -545,6 +555,10 @@ public abstract class Node implements Computable, Serializable {
      * cloned as well. The parent of the new node will be set as given.
      */
     public abstract Node cloneNode(NodeWithChildren parent);
+
+    public Node cloneNode(){
+        return cloneNode(null);
+    }
 
     /**
      * The type of the nodes. Each type is associated with a specific class of Node.
@@ -1329,7 +1343,7 @@ public abstract class Node implements Computable, Serializable {
                 n.toString(sb, nf, false);
                 sb.append('+');
             }
-            sb.deleteCharAt(sb.length() - 1);
+                sb.deleteCharAt(sb.length() - 1);
             if (braketRecommended) {
                 sb.append(')');
             }

@@ -4,13 +4,21 @@
 package cn.timelives.java.math.numberTheory.combination;
 
 import cn.timelives.java.math.MathUtils;
+import cn.timelives.java.math.algebra.Progression;
+import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberTheory.Primes;
 import cn.timelives.java.math.exceptions.NumberValueException;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.Printer;
+import cn.timelives.java.utilities.structure.WithLong;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
 import static cn.timelives.java.math.MathUtils.degFactorial;
+import static cn.timelives.java.utilities.Printer.print;
+
 /**
  * A utility class providing some functions in combination mathematics.
  * @author liyicheng
@@ -22,7 +30,7 @@ public final class CFunctions {
 			MAX_SUBFAC = 20;
 	
 	//from 0 to 19 is in the range of long
-	static final long[] fac_temp = new long[MAX_FAC+1];
+	private static final long[] fac_temp = new long[MAX_FAC+1];
 	static{
 		int n=0;
 		long l=1;
@@ -31,7 +39,7 @@ public final class CFunctions {
 			l *= n;
 		}while(n<fac_temp.length);
 	}
-	static final long[] subfac_temp = new long[MAX_SUBFAC+1];
+	private static final long[] subfac_temp = new long[MAX_SUBFAC+1];
 	static{
 		subfac_temp[0] = 1;
 		subfac_temp[1] = 0;
@@ -534,12 +542,6 @@ public final class CFunctions {
 		return integerPartitionRecur(n, m);
 	}
 //	static final long PARTITION_RECUR_THREHOLD = 100; 
-	/**
-	 * 
-	 * @param n
-	 * @param m
-	 * @return
-	 */
 	static long integerPartitionRecur(long n,long m) {
 		if(n<=0||m<=0) {
 			return 0;
@@ -559,6 +561,19 @@ public final class CFunctions {
 		return integerPartitionRecur(n, m-1)+
 				integerPartitionRecur(n-m, m);
 	}
+
+    /**
+     * Returns a progression <code>a(m) = C(n,m)</code>
+     */
+	public static Progression<Long> binomialsOf(int n){
+	    //C(n,m) = n!/(m!*(n-m)!) = n! / (m-1)!*(n-m+1)! * (n-m+1)/m
+	    return Progression.createProgressionRecur1WithIndex(with -> {
+            long prev = with.getObj();
+            long m = with.getLong();
+            return prev * (n-m+1) / m;
+        },n+1, Calculators.getCalculatorLong(),1L);
+    }
+
 //	static long integerPartitionDp(long n,long m) {
 //		
 //	}

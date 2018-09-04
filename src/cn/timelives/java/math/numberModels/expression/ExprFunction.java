@@ -7,6 +7,7 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
 import cn.timelives.java.math.numberModels.expression.simplification.SimplificationStrategy;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -49,7 +50,8 @@ public class ExprFunction {
 	private final String description;
 	private final Object polyFunction;
 
-	/**
+
+    /**
 	 * @param name the name of the function
 	 * @param paramNumber the size of parameter
 	 * @param paramOrdered whether the parameters are ordered
@@ -148,7 +150,7 @@ public class ExprFunction {
 	public static final String FUNCTION_NAME_EXP = "exp";
 	public static final String FUNCTION_NAME_LN = "ln";
 	public static final String FUNCTION_NAME_LOG = "log";
-
+	public static final String FUNCTION_NAME_SIGMA = "sigma";
 	/**
 	 * Returns the basic calculator functions.
 	 * 
@@ -174,6 +176,8 @@ public class ExprFunction {
 
         fs[13] = createDouble(FUNCTION_NAME_EXP, false, pc::exp, "Returns exp(x,y) = x^y");
         fs[14] = createDouble(FUNCTION_NAME_LOG, false, pc::log, "Returns log(x,y). (exp(x,log(x,y)) = y) ");
+
+
 		return Arrays.asList(fs);
 	}
 

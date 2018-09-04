@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.logging.Logger;
 
 /**
  * Provides some utility methods for {@link MathCalculator}
@@ -19,6 +20,8 @@ import java.math.MathContext;
  *
  */
 public final class Calculators {
+//    private static final Logger log = Logger.getLogger(Calculators.class.getSimpleName());
+
 	/**
 	 * 
 	 */
@@ -638,7 +641,10 @@ public final class Calculators {
 		@NotNull
 		@Override
         public Long divide(@NotNull Long x, @NotNull Long y) {
-            return x / y;
+            if(x % y != 0){
+                throw new ArithmeticException("Cannot divide exactly: "+x+"/"+y);
+            }
+		    return x / y;
 		}
 
 		@NotNull
@@ -843,7 +849,7 @@ public final class Calculators {
 		@NotNull
 		@Override
         public Long divide(@NotNull Long x, @NotNull Long y) {
-            return x / y;
+            return divideLong(x,y);
 		}
 
 		@NotNull

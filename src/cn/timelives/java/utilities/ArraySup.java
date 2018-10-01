@@ -110,7 +110,6 @@ public class ArraySup {
 	 * fill an array with random double 
 	 * @param arr
 	 * @param mutilplier
-	 * @param negate : 
 	 */
 	public static void ranFillArrNe(double[] arr,double mutilplier){
 		Random rd = new Random();
@@ -827,6 +826,15 @@ public class ArraySup {
 		arr[index] = x;
 		return arr;
 	}
+
+	public static int[] ensureCapacityAndAdd(int[] arr, int x,int index){
+		if(index>=arr.length){
+			arr = Arrays.copyOf(arr, arr.length*3/2);
+		}
+		arr[index] = x;
+		return arr;
+	}
+
 	/**
 	 * Set the given index to {@code x}, lengthen the array by 1.5x when needed.
 	 * @param arr

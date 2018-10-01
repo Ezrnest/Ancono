@@ -9,8 +9,9 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException
  * This class also provides some basic calculators for the frequently-used number classes.
  * @author lyc
  *
- * @param <T> the type of number to deal with
-</T> */
+ * @param T the type of number to deal with
+ *
+ */
 abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
 
     override val one: T
@@ -36,7 +37,7 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         throwFor()
     }
 
-    override fun compare(para1: T, para2: T): Int {
+    override fun compare(x: T, y: T): Int {
         throwFor()
     }
 

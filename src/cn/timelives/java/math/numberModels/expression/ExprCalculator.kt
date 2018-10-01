@@ -974,7 +974,7 @@ class ExprCalculator
 
         internal var debugEnabled = false
 
-        internal var showSimSteps = true
+        internal var showSimSteps = false
     }
 
 

@@ -11,4 +11,5 @@ package cn.timelives.java.math.algebra.abstractAlgebra.structure;
  */
 public interface AbelianGroup<T,G extends AbelianGroup<T, G>> extends AbelianSemigroup<T>, Group<T,G> {
 
+
 }

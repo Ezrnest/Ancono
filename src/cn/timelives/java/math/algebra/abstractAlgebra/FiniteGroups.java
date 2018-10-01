@@ -11,7 +11,6 @@ import cn.timelives.java.math.function.MathBinaryOperator;
 import cn.timelives.java.math.numberTheory.combination.Permutation;
 import cn.timelives.java.math.numberTheory.combination.Permutations;
 import cn.timelives.java.math.set.FiniteSet;
-import cn.timelives.java.math.set.MathSet;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.CollectionSup;
@@ -204,6 +203,8 @@ public final class FiniteGroups {
         FiniteSet<T> set = MathSets.fromCollection(list, GroupCalculators.INSTANCE.toMathCalculatorAdd(f));
         return new FiniteGroupImpl<>(f, set);
     }
+
+
 
     private static <T> void listGenerate(List<T> list,GroupCalculator<T> f){
         for(int i=1;i<list.size();i++) {

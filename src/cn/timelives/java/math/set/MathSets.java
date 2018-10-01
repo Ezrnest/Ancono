@@ -7,6 +7,8 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.numberModels.Calculators;
+import cn.timelives.java.utilities.structure.Pair;
+import cn.timelives.java.utilities.structure.Triple;
 
 import java.math.BigInteger;
 import java.sql.Array;
@@ -20,9 +22,6 @@ import java.util.stream.Stream;
  */
 public final class MathSets {
 	
-	/**
-	 * 
-	 */
 	private MathSets() {
 		throw new AssertionError("No instance!");
 	}
@@ -35,11 +34,12 @@ public final class MathSets {
 	@SafeVarargs
 	public static <T> CollectionSet<T> asSet(EqualPredicate<T> mc, T...ts){
 		List<T> list = new ArrayList<>(ts.length);
+		Outer:
 		for(T t : ts){
 			for(T t0 : list) {
 				if(mc.isEqual(t, t0)) {
 					//equal
-					continue;
+					continue Outer;
 				}
 			}
 			list.add(t);
@@ -51,17 +51,15 @@ public final class MathSets {
 	/**
 	 * Returns a CollectionSet created from the given Collection.
 	 * A copy of {@code coll} will be created. 
-	 * @param coll
-	 * @param mc
-	 * @return
 	 */
 	public static <T> CollectionSet<T> fromCollection(Collection<T> coll,EqualPredicate<T> mc){
 		List<T> list = new ArrayList<>(coll.size());
+        Outer:
 		for(T t : coll){
 			for(T t0 : list) {
 				if(mc.isEqual(t, t0)) {
 					//equal
-					continue;
+					continue Outer;
 				}
 			}
 			list.add(t);
@@ -203,7 +201,6 @@ public final class MathSets {
 
     /**
      * Determines whether the set contains all the elements in s2.
-     * @return
      */
 	public static <T> boolean containsAll(MathSet<T> set, FiniteSet<T> s2) {
 	    for(T t : s2){
@@ -251,6 +248,54 @@ public final class MathSets {
         }
         return new CombinedSet<>(Arrays.asList(sets), CombinedSet.OperatorType.INTERSECT);
     }
+
+    /**
+     * Returns the descarts product of s1 and s2.
+     * @param s1 a set
+     * @param s2 another set
+     */
+    public static <T,S> MathSet<Pair<T,S>> descartesProduct(MathSet<T> s1, MathSet<S> s2){
+	    return p -> s1.contains(p.getFirst()) && s2.contains(p.getSecond());
+    }
+    /**
+     * Returns the descarts product of s1, s2 and s3.
+     */
+    public static <T,S,R> MathSet<Triple<T,S,R>> descartesProduct(MathSet<T> s1, MathSet<S> s2, MathSet<R> s3){
+        return p -> s1.contains(p.getFirst()) && s2.contains(p.getSecond()) && s3.contains(p.getThird());
+    }
+
+
+
+    @SafeVarargs
+    public static <T> MathSet<List<T>> descartesProduct(MathSet<T>...sets){
+        if(sets.length == 0){
+            throw new IllegalArgumentException("sets.length == 0");
+        }
+
+        return list -> {
+            if(list.size()!=sets.length){
+                return false;
+            }
+            int i=0;
+            for(T t : list){
+                if(!sets[i].contains(t)){
+                    return false;
+                }
+                i++;
+            }
+            return true;
+        };
+    }
+
+//    /**
+//     * Returns the descarts product of s1 and s2.
+//     * @param s1 a set
+//     * @param s2 another set
+//     */
+//    public static <T,S> MathSet<Pair<T,S>> descartesProduct(MathSet<T> s1, MathSet<S> s2){
+//        return p -> s1.contains(p.getFirst()) && s2.contains(p.getSecond());
+//    }
+
 
     static final class CombinedSet<T> implements MathSet<T> {
 

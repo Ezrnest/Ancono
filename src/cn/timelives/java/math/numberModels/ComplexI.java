@@ -535,15 +535,13 @@ public final class ComplexI {
 	/**
 	 * Format the given complex with the given precision.
 	 * @param precision indicate the precision.
-	 * @return
 	 */
 	public static String format(ComplexI z,int precision){
 		return format(z);
 	}
 	/**
 	 * Format the given complex with default precision.
-	 * @param z
-	 * @return
+	 * @param z a complex number
 	 */
 	public static String format(ComplexI z){
 		StringBuilder sb = new StringBuilder();

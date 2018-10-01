@@ -1,17 +1,15 @@
-/**
- * 2018-03-05
- */
 package cn.timelives.java.math.algebra.abstractAlgebra.group.finite;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.numberTheory.combination.Permutation;
 import cn.timelives.java.math.numberTheory.combination.Permutations;
 import cn.timelives.java.math.set.FiniteSet;
+import cn.timelives.java.math.set.MathSets;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static cn.timelives.java.utilities.Printer.print;
 
@@ -126,4 +124,58 @@ public class PermutationGroup extends AbstractFiniteGroup<Permutation> {
 		return new PermutationGroup(n, set);
 	}
 
+
+    /**
+     * Returns a permutation group that is generated from the given permutations.
+     * @param ps permutations
+     */
+	public static PermutationGroup generateFrom(Permutation...ps){
+	    int size = ps[0].size();
+		var set = new TreeSet<Permutation>();
+        set.add(Permutations.identity(size));
+        var waitings = new TreeSet<Permutation>();
+        for(Permutation p : ps){
+            if(p.size()!= size){
+                throw new IllegalArgumentException("Size mismatch!");
+            }
+            waitings.add(p);
+        }
+		while (!waitings.isEmpty()){
+		    var n = waitings.pollFirst();
+		    if(n==null){
+		        break;
+            }
+		    if(set.contains(n)){
+		        continue;
+            }
+            for(Permutation m : set){
+                var t = m.compose(n);
+                addToWaitingsIfNotExist(set, waitings, n, t);
+                t = m.andThen(n);
+                addToWaitingsIfNotExist(set, waitings, n, t);
+            }
+            set.add(n);
+            addToWaitingsIfNotExist(set,waitings,n,n.inverse());
+        }
+        return new PermutationGroup(size, MathSets.fromCollection(set,EqualPredicate.Companion.naturalEqual()));
+	}
+
+//	private static int[] MATH_INDEXED_ARRAY = new int[]{1,2,3,4};
+//
+//	static Set<Permutation> tempSet = new TreeSet<>();
+
+    private static void addToWaitingsIfNotExist(TreeSet<Permutation> set, TreeSet<Permutation> waitings, Permutation n, Permutation t) {
+        if (!set.contains(t) && !waitings.contains(t) && !n.equals(t)) {
+//            if(tempSet.contains(t)){
+//                print("?");
+//            }
+//            tempSet.add(t);
+//            print(t.apply(MATH_INDEXED_ARRAY));
+            waitings.add(t);
+        }
+    }
+
+
 }
+
+

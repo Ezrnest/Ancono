@@ -37,7 +37,7 @@ public class LinearEquationSolution<T> {
 	 * Return a LinearEquationSolution that represent no solution
 	 */
 	public static <T> LinearEquationSolution<T> noSolution(Matrix<T> equ){
-		return new LinearEquationSolution<T>(equ,Situation.NO_SOLUTION,null,null);
+		return new LinearEquationSolution<>(equ, Situation.NO_SOLUTION, null, null);
 	}
 	
 	/**
@@ -85,7 +85,6 @@ public class LinearEquationSolution<T> {
 	}
 	/**
 	 * Show the solution through printer .
-	 * @see cn.timelives.java.utilities.Printer
 	 */
 	public void printSolution(){
 		switch(sit){

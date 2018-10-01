@@ -12,6 +12,19 @@ import cn.timelives.java.utilities.ModelPatterns
  */
 interface RingCalculator<T : Any> : GroupCalculator<T> {
     /**
+     * Returns `true` because a ring is always an abelian group by its
+     * addition.
+     */
+    override val isCommutative: Boolean
+        get() = true
+
+    /**
+     * Determines whether the multiplication is commutative. It is false by default.
+     */
+    val multiplyIsCommutative : Boolean
+        get() = false
+
+    /**
      * Gets the zero element in this ring, which is the identity element of the addition group.
      * @return `0`
      */
@@ -70,7 +83,7 @@ interface RingCalculator<T : Any> : GroupCalculator<T> {
      * @return
      */
     fun multiplyLong(x: T, n: Long): T {
-        return gpow(x, n)
+        return super.gpow(x, n)
     }
 
 

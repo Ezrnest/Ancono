@@ -1,8 +1,8 @@
 package cn.timelives.java.math.algebra.linearAlgebra;
 
+import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import static cn.timelives.java.utilities.Printer.print;
 
 /**
  * A vector is a matrix but one dimension (row or column) is one in length.
@@ -31,7 +33,6 @@ public abstract class Vector<T> extends Matrix<T> {
 	}
 	/**
 	 * Returns the number of dimension of this vector.
-	 * @return
 	 */
 	public int getSize() {
 		return isRow ? row : column;
@@ -109,11 +110,12 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return |this|^2
 	 */
 	public T calLengthSq(){
-        T re = getMc().getZero();
+	    var mc = getMc();
+        T re = mc.getZero();
 		int size = getSize();
 		for(int i=0;i<size;i++){
 			T t = getNumber(i);
-            re = getMc().add(getMc().multiply(t, t), re);
+            re = mc.add(mc.multiply(t, t), re);
 		}
 		return re;
 	}
@@ -134,10 +136,11 @@ public abstract class Vector<T> extends Matrix<T> {
 	 */
 	public T innerProduct(Vector<T> v) {
 		checkSameSize(v);
+		var mc = getMc();
 		final int size = getSize();
-        T re = getMc().getZero();
+        T re = mc.getZero();
 		for(int i=0;i<size;i++){
-            re = getMc().add(getMc().multiply(getNumber(i), v.getNumber(i)), re);
+            re = mc.add(mc.multiply(getNumber(i), v.getNumber(i)), re);
 		}
 		return re;
 	}
@@ -174,16 +177,24 @@ public abstract class Vector<T> extends Matrix<T> {
 	
 	/**
 	 * Determines whether this vector is a zero vector.
-	 * @return
 	 */
 	public boolean isZeroVector(){
+	    var mc = getMc();
 		for(int i=0,size=getSize();i<size;i++) {
-            if (!getMc().isZero(getNumber(i))) {
+            if (!mc.isZero(getNumber(i))) {
 				return false;
 			}
 		}
 		return true;
 	}
+
+    /**
+     * Determines whether this vector is an unit vector.
+     */
+	public boolean isUnitVector(){
+	    var mc = getMc();
+	    return mc.isEqual(calLengthSq(),mc.getOne());
+    }
 	
 	/**
 	 * Determines whether the two vectors are parallel. 
@@ -226,7 +237,6 @@ public abstract class Vector<T> extends Matrix<T> {
 	public abstract Vector<T> applyFunction(MathFunction<T, T> f);
 	/**
 	 * Gets whether it is a row vector.
-	 * @return
 	 */
 	public boolean isRow(){
 		return isRow;
@@ -255,10 +265,23 @@ public abstract class Vector<T> extends Matrix<T> {
 	 */
 	@Override
 	public abstract Vector<T> transportMatrix();
-	
-	/* (non-Javadoc)
-	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#toString(cn.timelives.java.math.number_models.NumberFormatter)
-	 */
+
+	public Vector<T> toRowVector(){
+	    if(isRow){
+	        return this;
+        }else{
+	        return transportMatrix();
+        }
+    }
+
+    public Vector<T> toColumnVector(){
+	    if(isRow){
+	        return transportMatrix();
+        }else{
+	        return this;
+        }
+    }
+	@NotNull
 	@Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
@@ -292,8 +315,9 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return a newly created vector 
 	 * @see DVector#createVector(boolean, long[])
 	 */
-	public static <T> Vector<T> createVector(MathCalculator<T> mc,boolean isRow,
-			@SuppressWarnings("unchecked") T...fs){
+	@SafeVarargs
+    public static <T> Vector<T> createVector(MathCalculator<T> mc, boolean isRow,
+                                             @SuppressWarnings("unchecked") T...fs){
 		@SuppressWarnings("unchecked")
 		T[] vec = (T[]) new Object[fs.length];
 		for(int i=0;i<vec.length;i++){
@@ -360,7 +384,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		for(int i=0;i<re.length;i++){
 			re[i] = mc.add(v1.getNumber(i), v2.getNumber(i));
 		}
-		return new DVector<T>(re,false,mc);
+		return new DVector<>(re, false, mc);
 	}
 	
 	/**
@@ -377,7 +401,7 @@ public abstract class Vector<T> extends Matrix<T> {
 		for(int i=0;i<re.length;i++){
 			re[i] = mc.subtract(v1.getNumber(i), v2.getNumber(i));
 		}
-		return new DVector<T>(re,false,mc);
+		return new DVector<>(re, false, mc);
 	}
 	/**
 	 * Provides a better efficiency for adding several vectors without creating 
@@ -414,7 +438,7 @@ public abstract class Vector<T> extends Matrix<T> {
 				re[i] = mc.add(re[i], v.getNumber(i));
 			}
 		}
-		return new DVector<T>(re,false,mc);
+		return new DVector<>(re, false, mc);
 	}
 	/**
 	 * Provides a better efficiency for adding several vectors without creating 
@@ -436,14 +460,13 @@ public abstract class Vector<T> extends Matrix<T> {
 				re[i] = mc.add(re[i], vt.getNumber(i));
 			}
 		}
-		return new DVector<T>(re,false,mc);
+		return new DVector<>(re, false, mc);
 	}
 	
 	/**
 	 * Calculate the intersection angle of the two vector.Which is usually shown as {@literal <v1,v2>}.
-	 * 
-	 * @param v1
-	 * @param v2
+	 * @param v1 a vector
+     * @param v2 another vector
 	 * @param arccos a function to calculate arccos value of T 
 	 * @return {@literal <v1,v2>}.
 	 * @throws ArithmeticException if one of the vectors is zero vector
@@ -456,8 +479,8 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * Which is usually shown as {@literal cos<v1,v2>}.
 	 * The value will be in [-1,1].
 	 * 
-	 * @param v1
-	 * @param v2
+	 * @param v1 a vector
+	 * @param v2 another vector
 	 * @return cos{@literal <v1,v2>}.
 	 * @throws ArithmeticException if one of the vectors is zero vector
 	 */
@@ -479,7 +502,6 @@ public abstract class Vector<T> extends Matrix<T> {
 	
 	/**
 	 * Return a zero vector of the given length.The length of 
-	 * @param length
 	 * @return zero vector
 	 */
 	public static <T> Vector<T> zeroVector(int length,boolean isRow,MathCalculator<T> mc){
@@ -490,16 +512,32 @@ public abstract class Vector<T> extends Matrix<T> {
 		for(int i=0;i<length;i++){
 			f[i] = zero;
 		}
-		return new DVector<T>(f,isRow,mc);
+		return new DVector<>(f, isRow, mc);
 	}
 	/**
-	 * Return a zero vector of the given length.The length of 
-	 * @param length
-	 * @return
+	 * Return a zero vector of the given length.
 	 */
 	public static <T> Vector<T> zeroVector(int length,MathCalculator<T> mc){
 		return zeroVector(length, false,mc);
 	}
+
+    /**
+     * Returns a unit column vector of the given length.
+     */
+	public static <T> Vector<T> unitVector(int length,int unitIndex, MathCalculator<T> mc){
+        if(length<1){
+            throw new IllegalArgumentException("length < 1");
+        }
+	    @SuppressWarnings("unchecked") T[] arr = (T[]) new Object[length];
+	    T zero = mc.getZero();
+	    T one = mc.getOne();
+	    Arrays.fill(arr,zero);
+	    arr[unitIndex] = one;
+	    return new DVector<>(arr,false,mc);
+    }
+
+
+
 	/**
      * Returns a vector that is filled with the identity value.
 	 * @param length
@@ -512,9 +550,36 @@ public abstract class Vector<T> extends Matrix<T> {
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[]) new Object[length];
 		Arrays.fill(arr, value);
-		return new DVector<T>(arr,isRow,mc);
+		return new DVector<>(arr, isRow, mc);
 	}
-	
+
+
+	public static <T> Vector<T> resizeOf(Vector<T> v,int leftExpansion,int rightExpansion){
+	    if(leftExpansion+v.getSize()<= 0 || rightExpansion + v.getSize()<=0 ){
+	        throw new IllegalArgumentException();
+        }
+	    var z = v.getMathCalculator().getZero();
+	    int size = v.getSize();
+	    int nSize = leftExpansion+rightExpansion+size;
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[nSize];
+	    for(int i=0;i<leftExpansion;i++){
+            arr[i] = z;
+        }
+        for(int i=leftExpansion;i<leftExpansion+size;i++){
+            if(i-leftExpansion<0 || i < 0){
+                continue;
+            }
+            if(i >= nSize){
+                break;
+            }
+            arr[i] = v.getNumber(i-leftExpansion);
+        }
+        for(int i=leftExpansion+size;i<nSize;i++){
+            arr[i] = z;
+        }
+        return new DVector<>(arr,v.isRow,v.getMathCalculator());
+    }
 
 	/**
 	 * Returns a column vector from the matrix. 
@@ -523,15 +588,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return
 	 */
 	public static <T> Vector<T> column(Matrix<T> mat,int column){
-		if(column < 0 || mat.column <= column){
-			throw new IndexOutOfBoundsException("column = "+column);
-		}
-		@SuppressWarnings("unchecked")
-		T[] arr = (T[]) new Object[mat.row];
-		for(int i=0;i<arr.length;i++){
-			arr[i] = mat.getNumber(i, column);
-		}
-		return new DVector<>(arr, false, mat.getMathCalculator());
+		return mat.getColumn(column);
 	}
 	/**
 	 * Returns a row vector from the matrix. 
@@ -540,15 +597,7 @@ public abstract class Vector<T> extends Matrix<T> {
 	 * @return
 	 */
 	public static <T> Vector<T> row(Matrix<T> mat,int row){
-		if(row < 0 || mat.row <= row){
-			throw new IndexOutOfBoundsException("row = "+row);
-		}
-		@SuppressWarnings("unchecked")
-		T[] arr = (T[]) new Object[mat.row];
-		for(int i=0;i<arr.length;i++){
-			arr[i] = mat.getNumber(row,i);
-		}
-		return new DVector<>(arr, true, mat.getMathCalculator());
+        return mat.getRow(row);
 	}
 	/**
 	 * Orthogonalizes the given vectors by using Schmidt method.
@@ -662,8 +711,57 @@ public abstract class Vector<T> extends Matrix<T> {
         }
         return new DVector<>(result, false, mc);
     }
-	
+
+
+    /**
+     * Determines whether the given vectors are linear relevant. It is required that
+     * all the given vectors haves the same size.
+     * @param vectors a series of vectors of the same size
+     * @return <code>true</code> if they are linear relevant
+     */
+    @SafeVarargs
+    public static <T> boolean isLinearRelevant(Vector<T>...vectors){
+        int size = vectors[0].getSize();
+        for(var v : vectors){
+            if(v.getSize()!=size){
+                throw new IllegalArgumentException("Different size!");
+            }
+        }
+        if(vectors.length > size){
+            return true;
+        }
+        var mat =  fromVectors(true,vectors);
+        int rank = mat.calRank();
+        return rank < vectors.length;
+//        return mat.calRank() >= size;
+    }
+
+
+	/**
+	 * Determines whether the given vectors are linear relevant. It is required that
+	 * all the given vectors haves the same size.
+	 * @param vectors a series of vectors of the same size
+	 * @return <code>true</code> if they are linear relevant
+	 */
+	public static <T> boolean isLinearRelevant(List<Vector<T>> vectors){
+		int size = vectors.get(0).getSize();
+		for(var v : vectors){
+			if(v.getSize()!=size){
+				throw new IllegalArgumentException("Different size!");
+			}
+		}
+		if(vectors.size() > size){
+			return true;
+		}
+		var mat =  fromVectors(true,vectors);
+		int rank = mat.calRank();
+		return rank < vectors.size();
+	}
+
 //	public static void main(String[] args) {
+//	    var v1 = Vector.createVector(new long[]{1,3,14});
+//	    v1 = Vector.resizeOf(v1,-1,1);
+//	    print(v1);
 //		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 //		@SuppressWarnings("unchecked")
 //		Vector<Double>[] vecs = new Vector[3];

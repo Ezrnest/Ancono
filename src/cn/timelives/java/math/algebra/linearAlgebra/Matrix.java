@@ -12,6 +12,7 @@ import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.structure.PolynomialX;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.Printer;
+import cn.timelives.java.utilities.StringSup;
 import cn.timelives.java.utilities.structure.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,10 +44,11 @@ import java.util.function.Function;
  *
 
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertible<Matrix<T>> {
 
 	/**
-	 * Row count
+	 * Row count:
 	 */
 	protected final int row;
 	/**
@@ -125,7 +127,27 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		}
 		return arr;
 	}
-	
+
+	public Vector<T> getColumn(int column){
+	    columnRangeCheck(column);
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[this.row];
+        for(int i=0;i<arr.length;i++){
+            arr[i] = getNumber(i, column);
+        }
+        return new DVector<>(arr, false, getMathCalculator());
+    }
+
+    public Vector<T> getRow(int row){
+        rowRangeCheck(row);
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[this.column];
+        for(int i=0;i<arr.length;i++){
+            arr[i] = getNumber(row,i);
+        }
+        return new DVector<>(arr, true, getMathCalculator());
+    }
+
 	/**
      * Check if the numbers in {@code this} and {@code obj} are the identity.
 	 */
@@ -485,6 +507,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             throw new ArithmeticException("Too small for cofactor");
 
         // check for edge situation which can use sub-matrix instead
+        //noinspection Duplicates
         if (r == 0) {
             if (c == 0) {
                 return subMatrix(1, 1, row - 1, column - 1);
@@ -550,8 +573,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	}
 	/**
 	 * A basic operation to transform this matrix to upper triangle
-	 * @param mat
-	 * @return
 	 */
 	List<MatrixOperation<T>> toUpperTri0(T[][] mat,int row,int column){
         List<MatrixOperation<T>> ops = new LinkedList<>();
@@ -628,13 +649,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * <li>1.The first number in a non-zero line is ONE.
      * <li>2.Except the first number in a non-zero line,the other numbers in the identity column are ZERO.
 	 * </ul> 
-	 * @param mat
-	 * @param row
-	 * @param column
+	 * @param row row count
+	 * @param column column count
 	 * @return a list of operations with which the matrix can be transformed to normative step-matrix.
 	 */
 	List<MatrixOperation<T>> toStepMatrix(T[][] mat,int row,int column){
 		List<MatrixOperation<T>> ops = toUpperTri0(mat,row,column);
+		var mc = getMc();
 //		Printer.print("TRI :: ");
 //		Printer.printMatrix(mat);
 		//transform to step matrix first.
@@ -646,7 +667,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		for(int i=0;i<row;i++){
 			int tar = -1 ;
 			for(int c=lastTar+1;c<column;c++){
-                if (!getMc().isZero(mat[i][c])) {
+                if (!mc.isZero(mat[i][c])) {
 					//non-zero
 					tar = c;
 					break;
@@ -658,24 +679,15 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			}
 			//turn to 1 
 
-            if (!getMc().isEqual(mat[i][tar], getMc().getOne())) {
-                T f = getMc().reciprocal(mat[i][tar]);
-                mat[i][tar] = getMc().getOne();
-				for(int j=tar+1;j<column;j++){
-                    mat[i][j] = getMc().multiply(mat[i][j], f);
-				}
-				ops.add(MatrixOperation.multiplyRow(i, f));
-//				Printer.print(ops.get(ops.size()-1).toDetail());
-//				Printer.printMatrix(mat);
-			}
-			
+			performOperations(mat, column, ops, i, tar);
+
 			for(int r=0;r<i;r++){
-                if (!getMc().isZero(mat[r][tar])) {
-                    T fra = getMc().negate(mat[r][tar]);
+                if (!mc.isZero(mat[r][tar])) {
+                    T fra = mc.negate(mat[r][tar]);
 					for(int j = tar+1;j<column;j++){
-                        mat[r][j] = getMc().add(mat[r][j], getMc().multiply(mat[i][j], fra));
+                        mat[r][j] = mc.add(mat[r][j], mc.multiply(mat[i][j], fra));
 					}
-                    mat[r][tar] = getMc().getZero();
+                    mat[r][tar] = mc.getZero();
 					ops.add(MatrixOperation.multiplyAddRow(i, r, fra));
 //					Printer.print(ops.get(ops.size()-1).toDetail());
 //					Printer.printMatrix(mat);
@@ -686,44 +698,47 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		
 		return ops;
 	}
-	
-	
-	
-	
-	
-	
+
+	private void performOperations(T[][] mat, int column, List<MatrixOperation<T>> ops, int i, int tar) {
+	    var mc = getMc();
+		if (!mc.isEqual(mat[i][tar], mc.getOne())) {
+			T f = mc.reciprocal(mat[i][tar]);
+			mat[i][tar] = mc.getOne();
+			for(int j=tar+1;j<column;j++){
+				mat[i][j] = mc.multiply(mat[i][j], f);
+			}
+			ops.add(MatrixOperation.multiplyRow(i, f));
+//				Printer.print(ops.get(ops.size()-1).toDetail());
+//				Printer.printMatrix(mat);
+		}
+	}
+
+
 	/**
 	 * A basic operation to transform this matrix to like identity
 	 * @param mat will be changed by this method
-	 * @return
 	 * @throws ArithmeticException if cannot
 	 */
 	List<MatrixOperation<T>> toIdentity(T[][] mat,int row,int column){
+        var mc = getMc();
 		List<MatrixOperation<T>> ops = toUpperTri0(mat,row,column);
 		int bound = Math.min(column, row);
 		//check for ability
 		for(int i=0;i<bound;i++){
-            if (getMc().isEqual(mat[i][i], getMc().getZero())) {
+            if (mc.isEqual(mat[i][i], mc.getZero())) {
 				throw new ArithmeticException("Cannot trans to Identity:Not Full Rank");
 			}
 		}
 		for(int i=0;i<bound;i++){
-            if (!getMc().isEqual(mat[i][i], getMc().getOne())) {
-                T f = getMc().reciprocal(mat[i][i]);
-                mat[i][i] = getMc().getOne();
-				for(int j=i+1;j<column;j++){
-                    mat[i][j] = getMc().multiply(mat[i][j], f);
-				}
-				ops.add(MatrixOperation.multiplyRow(i, f));
-			}
-			
+			performOperations(mat, column, ops, i, i);
+
 		}
 		
 		for(int i=bound-1;i>-1;i--){
 			for(int j=i+1;j<column;j++){
-                if (mat[i][j].equals(getMc().getZero()) == false) {
-                    T f = getMc().negate(mat[i][j]);
-                    mat[i][j] = getMc().getZero();
+                if (!mat[i][j].equals(mc.getZero())) {
+                    T f = mc.negate(mat[i][j]);
+                    mat[i][j] = mc.getZero();
 					ops.add(MatrixOperation.multiplyAddRow(j, i, f));
 				}
 				
@@ -732,17 +747,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		}
 		return ops;
 	}
-	/**
-	 * 
-	 * @param mat
-	 * @param row
-	 * @param column
-	 * @return
-	 */
-	List<MatrixOperation<T>> toNormativeStep(T[][] mat,int row,int column){
-		List<MatrixOperation<T>> list = toStepMatrix(mat, row, column);
-		return list;
-	}
+//	List<MatrixOperation<T>> toNormativeStep(T[][] mat,int row,int column){
+//        return toStepMatrix(mat, row, column);
+//	}
 	/**
 	 * Return a List of operation with which the matrix can be transformed to identity matrix.
 	 * The sufficient and necessary condition is that this matrix is a full-rank matrix.(Firstly,this matrix should
@@ -801,11 +808,12 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		if(column != row){
 			throw new ArithmeticException("Not square");
 		}
+        var mc = getMc();
 		//transform to a temporary matrix to compute the determinant
 		//in multinomial
-        MathCalculator<PolynomialX<T>> mct = PolynomialX.getCalculator(getMc());
-        Matrix<PolynomialX<T>> tmat = this.mapTo(x -> PolynomialX.constant(getMc(), x), mct),
-                eigen = Matrix.diag(PolynomialX.oneX(getMc()), row, mct);
+        MathCalculator<PolynomialX<T>> mct = PolynomialX.getCalculator(mc);
+        Matrix<PolynomialX<T>> tmat = this.mapTo(x -> PolynomialX.constant(mc, x), mct),
+                eigen = Matrix.diag(PolynomialX.oneX(mc), row, mct);
 		tmat = minusMatrix(eigen, tmat);
 		PolynomialX<T> expr = tmat.calDet();
         return SVPEquation.fromPolynomial(expr);
@@ -814,9 +822,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
 	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
 	 * the degree of the equation.
-	 * @return 
 	 */
-	
 	public Matrix<T> similarDiag(EquationSolver<T,SVPEquation<T>> equationSolver){
 		List<T> eigenvalues = eigenvalues(equationSolver);
 		@SuppressWarnings("unchecked")
@@ -831,7 +837,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * then this method will return a list of {@code [1,1]}
 	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
 	 * the degree of the equation.
-	 * @return
+	 * @return a list of eigenvalues
 	 */
 	public List<T> eigenvalues(EquationSolver<T,SVPEquation<T>> equationSolver){
 		SVPEquation<T> equation = eigenvalueEquation();
@@ -841,7 +847,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * Computes the eigenvalues of this matrix and their corresponding vectors.
 	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
 	 * the degree of the equation.
-	 * @return
 	 */
 	public List<Pair<T,Vector<T>>> eigenvaluesAndVectors(EquationSolver<T,SVPEquation<T>> equationSolver){
 		List<T> eigenvalues = eigenvalues(equationSolver);
@@ -881,7 +886,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			this.value = value;
 		}
 		@Override
-		public int compareTo(Entry o) {
+		public int compareTo(@NotNull Entry o) {
 			return this.value - o.value;
 		}
 		final int key;
@@ -952,14 +957,14 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     /**
      * Determines whether this matrix is invertible.
      */
-    public boolean isInvertiable() {
+    public boolean isInvertible() {
         return getMc().isZero(calDet());
     }
 	
 	/**
 	 * Operate the given operation to this Matrix.If a series of operations should be done,then use 
 	 * {@link #doOperation(List)} method.
-	 * @param op
+	 * @param op an operation
 	 * @return a new Matrix
 	 */
 	public Matrix<T> doOperation(MatrixOperation<T> op){
@@ -983,8 +988,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	/**
 	 * Operate the given operations to this Matrix.This method is expected to be used with 
 	 * {@link #toUpperTriangleWay()}
-	 * @param ops
-	 * @return
+	 * @param ops a list of matrix operations
+	 * @return a new matrix after transformation
 	 */
 	public Matrix<T> doOperation(List<MatrixOperation<T>> ops){
 		@SuppressWarnings("unchecked")
@@ -1116,8 +1121,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * Replaces the Matrix with a column vector. The length of this vector must be 
      * the identity as the row count in this matrix.
 	 * @param column the column to replace, starts from 0.
-	 * @param v
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Matrix<T> replaceColumn(int column,Vector<T> v){
@@ -1190,7 +1193,15 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		return "Matrix:row="+row+",column="+column;
 	}
-	
+
+    /**
+     * Returns a string representation of this matrix in detail.
+     */
+	public String contentToString(@NotNull  FlexibleNumberFormatter<T,MathCalculator<T>> nf){
+        //noinspection unchecked
+        return StringSup.formatMatrix(ArraySup.mapTo2(getValues(),(Object n) -> nf.format((T)n,getMc()),String.class));
+    }
+
 
 	/**
 	 * SubMatrix is a matrix base on another Matrix.To reduce memory,the data in
@@ -1270,7 +1281,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			@SuppressWarnings("unchecked")
 			T[][] re = (T[][])new Object[row][column];
 			for (int i = 0; i < row; i++) {
-				System.arraycopy(data[i + dx], dy, re[i], 0, column);
+                //noinspection SuspiciousSystemArraycopy
+                System.arraycopy(data[i + dx], dy, re[i], 0, column);
 			}
 			return re;
 		}
@@ -1293,9 +1305,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 				return this;
 			// override to reduce memory cost
 			Object[][] re = new Object[row][];
-			for (int l = 0; l < row; ++l) {
-				re[l] = data[l + dx];
-			}
+            System.arraycopy(data, dx, re, 0, row);
 			re[r1] = data[r2 + dx];
 			re[r2] = data[r1 + dx];
             return new DMatrix<>(re, column, row, getMc());
@@ -1309,9 +1319,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 throw new IllegalArgumentException("The identity row:" + r1);
 			}
 			Object[][] re = new Object[row][];
-			for (int l = 0; l < row; ++l) {
-				re[l] = data[l + dx];
-			}
+            System.arraycopy(data, dx, re, 0, row);
 
 			re[r2] = new Object[column];
 			// just create this row as a new array
@@ -1331,9 +1339,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 throw new IllegalArgumentException("The identity row:" + r1);
 			}
 			Object[][] re = new Object[row][];
-			for (int l = 0; l < row; ++l) {
-				re[l] = data[l + dx];
-			}
+            System.arraycopy(data, dx, re, 0, row);
 
 			re[r2] = new Object[column];
 			// just create this row as a new array
@@ -1377,27 +1383,20 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			
 			//upper-left
 			for(int i=0;i<r;i++){
-				for(int j=0;j<c;j++){
-					ma[i][j] = data[i+dx][j+dy];
-				}
+                if (c >= 0) System.arraycopy(data[i + dx], dy, ma[i], 0, c);
 			}
 			//upper-right
 			for(int i=0;i<r;i++){
-				for(int j=c+1;j<column;j++){
-					ma[i][j-1] = data[i+dx][j+dy];
-				}
+                if (column - c + 1 >= 0) System.arraycopy(data[i + dx], c + 1 + dy, ma[i], c + 1 - 1, column - c + 1);
 			}
 			//downer-left
 			for(int i=r+1;i<row;i++){
-				for(int j=0;j<c;j++){
-					ma[i-1][j] = data[i+dx][j+dy];
-				}
+                if (c >= 0) System.arraycopy(data[i + dx], dy, ma[i - 1], 0, c);
 			}
 			//downer-right
 			for(int i=r+1;i<row;i++){
-				for(int j=c+1;j<column;j++){
-					ma[i-1][j-1] = data[i+dx][j+dy];
-				}
+                if (column - c + 1 >= 0)
+                    System.arraycopy(data[i + dx], c + 1 + dy, ma[i - 1], c + 1 - 1, column - c + 1);
 			}
 			//copy ends
             return new DMatrix<>(ma, row - 1, column - 1, getMc());
@@ -1425,12 +1424,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 						&& sm.dx ==this.dx &&sm.dy ==this.dy){
 					return true;
 				}
-				int dx2 = sm.dx;
-				int dy2 = sm.dy;
-				Object[][] mData = sm.data;
-				for(int i=0;i<row;i++){
+                for(int i=0;i<row;i++){
 					for(int j=0;j<column;j++){
-						if(!data[i+dx][j+dy].equals(mData[i+dx2][j+dy2])){
+						if(!data[i+dx][j+dy].equals(sm.data[i+ sm.dx][j+ sm.dy])){
 							return false;
 						}
 					}
@@ -1454,7 +1450,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	}
 	/**
      * Fill the data with 0 if null
-	 * @param data
 	 */
 	@SuppressWarnings("unused")
 	private static <T> void fillDataForNull(T[][] data,MathCalculator<T> mc){
@@ -1514,9 +1509,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * will be the first dimension's length of the array,and the column count of
 	 * the matrix will be the second dimension's maximum length of the array.<p>
 	 * The returned matrix will hold the type Long.
-	 * <p><b>This kind of matrix may not usually support some methods. </b>
-	 * @param mat
-	 * @return
+	 * <p><b>This kind of matrix may not support some methods usually. </b>
 	 */
 	public static Matrix<Long> valueOf(long[][] mat) {
 		Objects.requireNonNull(mat);
@@ -1544,8 +1537,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * the matrix will be the second dimension's maximum length of the array.<p>
 	 * The returned matrix will hold the type Double.<p>
      * The {@link MathCalculator} will be assigned through method {@link Calculators#getCalculatorDouble()}.
-	 * @param mat
-	 * @return
 	 */
 	public static Matrix<Double> valueOf(double[][] mat) {
 		Objects.requireNonNull(mat);
@@ -1574,8 +1565,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 * will be the first dimension's length of the array,and the column count of
 	 * the matrix will be the second dimension's maximum length of the array.<p>
 	 * This method only overload the similar method  {@link #valueOf(long[][])}
-	 * @param mat
-	 * @return
 	 */
 	public static Matrix<Integer> valueOf(int[][] mat) {
 		Objects.requireNonNull(mat);
@@ -1592,7 +1581,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		Integer[][] mat2 = new Integer[row][column];
 		for (int i = 0; i < row; i++) {
 			for(int j=0;j<column;j++){
-				mat2[i][j] = Integer.valueOf(mat[i][j]);
+				mat2[i][j] = mat[i][j];
 			}
 		}
         return new DMatrix<>(mat2, row, column, Calculators.getCalculatorInteger());
@@ -1602,8 +1591,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	/**
 	 * Return a diagonal matrix containing the given numbers. M[i][i] = arr[i]
 	 * 
-	 * @param arr
-	 * @return
 	 */
 	public static <T> Matrix<T> diag(T[] arr,MathCalculator<T> mc) {
 		Objects.requireNonNull(arr);
@@ -1780,32 +1767,28 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		if (m1 instanceof DMatrix && m2 instanceof DMatrix) {
 			T[][] d1 = (T[][]) ((DMatrix<T>) m1).data;
 			T[][] d2 = (T[][]) ((DMatrix<T>) m2).data;
-			for (int i = 0; i < row; i++) {
-				for (int j = 0; j < column; j++) {
-					T sum = mc.getZero();
-					for (int k = 0; k < n; k++) {
-						sum = mc.add(sum, mc.multiply(d1[i][k], d2[k][j])) ;
-					}
-					re[i][j] = sum;
-				}
-			}
-		} else {
+            multiplyToArray(n, row, column, mc, re, d1, d2);
+        } else {
 			T[][] fs1 = (T[][]) m1.getValues();
 			T[][] fs2 = (T[][]) m2.getValues();
-			for (int i = 0; i < row; i++) {
-				for (int j = 0; j < column; j++) {
-					T sum = mc.getZero();
-					for (int k = 0; k < n; k++) {
-						sum = mc.add(sum, mc.multiply(fs1[i][k], fs2[k][j])) ;  
-					}
-					re[i][j] = sum;
-				}
-			}
-		}
+            multiplyToArray(n, row, column, mc, re, fs1, fs2);
+        }
         return new DMatrix<>(re, row, column, mc);
 	}
 
-	/**
+    private static <T> void multiplyToArray(int n, int row, int column, MathCalculator<T> mc, Object[][] re, T[][] fs1, T[][] fs2) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                T sum = mc.getZero();
+                for (int k = 0; k < n; k++) {
+                    sum = mc.add(sum, mc.multiply(fs1[i][k], fs2[k][j])) ;
+                }
+                re[i][j] = sum;
+            }
+        }
+    }
+
+    /**
 	 * Calculate the result of {@code mat^pow},the given matrix must have the
      * identity column and column count.Negative power values are illegal and if
      * {@code pow==0} then this method is the identity as call
@@ -1878,9 +1861,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	}
 	/**
 	 * Creates a Matrix from several vectors, the vector should have 
-     * the identity size and be either all row vector or column vector.
-	 * @param vs at least one vector
-	 * @return
+     * the same size and be either all row vector or column vector.
+     * @param v a vector
+	 * @param vs remaining vectors
+	 * @return a new matrix
 	 */
 	@SafeVarargs
 	public static <T> Matrix<T> fromVectors(Vector<T> v,Vector<T>...vs){
@@ -1905,7 +1889,57 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		System.arraycopy(vs, 0, arr, 1, vs.length);
 		return new VMatrix<>(arr, row, column, v.getMathCalculator(), isRow);
 	}
-	
+
+    /**
+     * Creates a Matrix from several vectors, the vector should have
+     * the same size.
+     * @param asRowVector determines whether to treat all the vectors as row vector
+     */
+	@SafeVarargs
+    public static <T> Matrix<T> fromVectors(boolean asRowVector, Vector<T>...vectors){
+	    int size = vectors[0].getSize();
+        var mc = vectors[0].getMc();
+        @SuppressWarnings("unchecked")
+        Vector<T>[] arr = (Vector<T>[])new Vector[vectors.length];
+        for (int i = 0; i < vectors.length; i++) {
+            var v = vectors[i];
+            if(v.getSize()!=size){
+                throw new IllegalArgumentException("Different size!");
+            }
+            if(asRowVector ^ v.isRow){
+                v = v.transportMatrix();
+            }
+            arr[i] = v;
+        }
+	    if(asRowVector){
+	        return new VMatrix<>(arr,vectors.length,size,mc,true);
+        }else{
+	        return new VMatrix<>(arr,size,vectors.length,mc,false);
+        }
+    }
+
+    public static <T> Matrix<T> fromVectors(boolean asRowVector,List<Vector<T>> vectors){
+		int size = vectors.get(0).getSize();
+		var mc = vectors.get(0).getMc();
+		@SuppressWarnings("unchecked")
+		Vector<T>[] arr = (Vector<T>[])new Vector[vectors.size()];
+		int index = 0;
+		for(var v : vectors){
+			if(v.getSize()!=size){
+				throw new IllegalArgumentException("Different size!");
+			}
+			if(asRowVector ^ v.isRow){
+				v = v.transportMatrix();
+			}
+			arr[index++] = v;
+		}
+		if(asRowVector){
+			return new VMatrix<>(arr,vectors.size(),size,mc,true);
+		}else{
+			return new VMatrix<>(arr,size,vectors.size(),mc,false);
+		}
+	}
+
 	public static <T> MatrixBuilder<T> getBuilder(int row,int column,MathCalculator<T> mc){
 		return new MatrixBuilder<>(row,column,mc);
 	}
@@ -1915,11 +1949,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		final int row,column;
 		final Object[][] data;
 		boolean disposed = false;
-		/**
-		 * @param mc
-		 * @param row
-		 * @param column
-		 */
 		MatrixBuilder( int row, int column,MathCalculator<T> mc) {
 			super();
 			this.mc = mc;
@@ -1929,11 +1958,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			fillData(data,mc.getZero());
 		}
 		
-		/**
-		 * @param mc
-		 * @param row
-		 * @param column
-		 */
 		private MatrixBuilder(int row, int column, MathCalculator<T> mc, Object[][] data) {
 			super();
 			this.mc = mc;
@@ -1976,6 +2000,43 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			}
 			return this;
 		}
+
+		public MatrixBuilder<T> fillArea(int i,int j,Matrix<T> mat){
+		    checkDisposed();
+		    rowRangeCheck(i);
+            rowRangeCheck(i+mat.row-1);
+            columnRangeCheck(j);
+		    columnRangeCheck( j + mat.column-1);
+		    for(int i0 = 0;i0< mat.row;i0++){
+                for (int j0 = 0; j0 < mat.column; j0++) {
+                    data[i0+i][j0+j] = mat.getNumber(i,j);
+                }
+            }
+            return this;
+        }
+
+        public MatrixBuilder<T> fillRowVector(int row,int columnStart,Vector<T> v){
+		    checkDisposed();
+		    rowRangeCheck(row);
+            columnRangeCheck(columnStart);
+            columnRangeCheck(columnStart+v.getSize()-1);
+		    for(int i=0;i<v.getSize();i++){
+		        data[row][i+columnStart] = v.getNumber(i);
+            }
+            return this;
+        }
+
+        public MatrixBuilder<T> fillColumnVector(int column,int rowStart,Vector<T> v){
+            checkDisposed();
+            columnRangeCheck(column);
+            rowRangeCheck(rowStart);
+            rowRangeCheck(rowStart+v.getSize()-1);
+            for(int i=0;i<v.getSize();i++){
+                data[i+rowStart][column] = v.getNumber(i);
+            }
+            return this;
+        }
+
 		
 		public MatrixBuilder<T> fillColumn(T x,int column){
 			checkDisposed();
@@ -1986,8 +2047,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			return this;
 		}
 		
-		public MatrixBuilder<T> clone(){
-			Object[][] ndata = ArraySup.deepCopy(data); 
+		@SuppressWarnings("MethodDoesntCallSuperMethod")
+        public MatrixBuilder<T> clone(){
+            Object[][] ndata = ArraySup.deepCopy(data);
 			return new MatrixBuilder<>(row, column, mc,ndata);
 		}
 		

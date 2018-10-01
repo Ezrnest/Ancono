@@ -219,15 +219,15 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
+	@NotNull
 	@Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[[");
-        sb.append(nf.format(data[0][0], getMc())).append(",");
-        sb.append(nf.format(data[0][1], getMc())).append("],[");
-        sb.append(nf.format(data[1][0], getMc())).append(",");
-        sb.append(nf.format(data[1][1], getMc())).append("]]");
-		return sb.toString();
+		var mc = getMc();
+		return "[[" +
+				nf.format(data[0][0], mc) + "," +
+				nf.format(data[0][1], mc) + "],[" +
+				nf.format(data[1][0], mc) + "," +
+				nf.format(data[1][1], mc) + "]]";
 	}
 	
 	/**

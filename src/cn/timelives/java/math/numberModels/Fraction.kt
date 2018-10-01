@@ -6,6 +6,7 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix
 import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
 import cn.timelives.java.math.numberModels.api.Simplifier
+import cn.timelives.java.math.numberTheory.NaiveNumberTheory
 import cn.timelives.java.utilities.ArraySup
 import java.io.Serializable
 
@@ -930,7 +931,7 @@ internal constructor(
          * @param bound the bound of the fraction, must be at least one.
          * @return a fraction that is the best approximate
          */
-        fun bestApproximate(x: Double, bound: Long): Fraction {
+        fun bestApproximate(x: Double, bound: Long = 10000_0000, conFraLenBound : Int = 16): Fraction {
             var x1 = x
             if (bound < 1) {
                 throw IllegalArgumentException("Bad bound: $bound")
@@ -967,13 +968,23 @@ internal constructor(
                 }
                 i++
                 f = ft
+                if(i >= conFraLenBound){
+                    break
+                }
             }
             return if (f == null) {
                 Fraction.ZERO
             } else Fraction(f[0], f[1], signum)
         }
 
-        private fun computeContinuousFraction(array: LongArray, index: Int): LongArray {
+        fun continuousFraction(x : Double, len : Int) : LongArray{
+            return NaiveNumberTheory.continuousFractionReduce(x,len)
+        }
+
+        /**
+         * @param index the highest element in the array to compute from
+         */
+        fun computeContinuousFraction(array: LongArray, index: Int = array.lastIndex): LongArray {
             var index1 = index
             var nume = array[index1]
             var deno: Long = 1
@@ -1085,7 +1096,19 @@ internal constructor(
 }
 
 fun main(args: Array<String>) {
-    val f1 = Fraction.valueOf(-4, 3)
-    println(f1.floor())
-    println(f1.ceil())
+//    val f1 = Fraction.valueOf(-4, 3)
+//    println(f1.floor())
+//    println(f1.ceil())
+    val t = Math.sqrt(1.7)
+    for(len in 1 .. 5){
+        val frac = Fraction.bestApproximate(t, conFraLenBound = len)
+        println(frac)
+        val diff = Math.abs(t-frac.toDouble())
+        for(f in NaiveNumberTheory.fareySequence(frac.denominator-1)){
+            if(Math.abs(f.toDouble()-(t-Math.floor(t)))<diff){
+                println("! $f")
+            }
+        }
+    }
+
 }

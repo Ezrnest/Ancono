@@ -1,11 +1,9 @@
-/**
- * 
- */
 package cn.timelives.java.math.algebra.linearAlgebra;
 
-import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.utilities.Printer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -20,8 +18,6 @@ class DMatrix<T> extends Matrix<T> {
 	/**
 	 * This method won't check mat's size and all the changed to the mat will be
 	 * reflected to this Matrix.
-	 * 
-	 * @param mat
 	 */
 	DMatrix(Object[][] mat, int row, int column, MathCalculator<T> mc) {
 		super(row, column, mc);
@@ -41,9 +37,10 @@ class DMatrix<T> extends Matrix<T> {
 
 	@Override
 	public int hashCode() {
-		return data.hashCode();
+		return Arrays.deepHashCode(data);
 	}
 
+	@NotNull
 	@Override
 	public String toString() {
 		return Arrays.deepToString(data);
@@ -58,7 +55,7 @@ class DMatrix<T> extends Matrix<T> {
                 ne[i][j] = getMc().negate((T) data[i][j]);
 			}
 		}
-        return new DMatrix<T>(ne, row, column, getMc());
+        return new DMatrix<>(ne, row, column, getMc());
 	}
 
 	/**
@@ -75,7 +72,7 @@ class DMatrix<T> extends Matrix<T> {
                 re[i][j] = getMc().multiplyLong((T) data[i][j], n);
 			}
 		}
-        return new DMatrix<T>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,8 +85,7 @@ class DMatrix<T> extends Matrix<T> {
 	public Matrix<T> subMatrix(int i1, int j1, int i2, int j2) {
         subMatrixRangeCheck(i1, j1, i2, j2);
 		// range check
-        SubMatrix<T> sm = new SubMatrix<T>(data, i1, j1, i2 - i1 + 1, j2 - j1 + 1, getMc());
-		return sm;
+		return new SubMatrix<>(data, i1, j1, i2 - i1 + 1, j2 - j1 + 1, getMc());
 	}
 
 	@Override
@@ -97,6 +93,7 @@ class DMatrix<T> extends Matrix<T> {
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) new Object[row][column];
 		for (int i = 0; i < row; i++) {
+			//noinspection SuspiciousSystemArraycopy
 			System.arraycopy(data[i], 0, re[i], 0, column);
 		}
 		return re;
@@ -123,12 +120,10 @@ class DMatrix<T> extends Matrix<T> {
 			return this;
 		// override to reduce memory cost
 		Object[][] re = new Object[row][];
-		for (int l = 0; l < row; ++l) {
-			re[l] = data[l];
-		}
+		System.arraycopy(data, 0, re, 0, row);
 		re[r1] = data[r2];
 		re[r2] = data[r1];
-        return new DMatrix<T>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -136,15 +131,13 @@ class DMatrix<T> extends Matrix<T> {
 	public Matrix<T> multiplyNumberRow(T n, int l) {
 		rowRangeCheck(l);
 		Object[][] re = new Object[row][];
-		for (int i = 0; i < row; ++i) {
-			re[i] = data[i];
-		}
+		System.arraycopy(data, 0, re, 0, row);
 
 		re[l] = new Object[column];
 		for (int i = 0; i < column; ++i) {
             re[l][i] = getMc().multiply((T) data[l][i], n);
         }
-        return new DMatrix<T>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -152,15 +145,13 @@ class DMatrix<T> extends Matrix<T> {
 	public Matrix<T> multiplyNumberRow(long n, int l) {
 		rowRangeCheck(l);
 		Object[][] re = new Object[row][];
-		for (int i = 0; i < row; ++i) {
-			re[i] = data[i];
-		}
+		System.arraycopy(data, 0, re, 0, row);
 
 		re[l] = new Object[column];
 		for (int i = 0; i < column; ++i) {
             re[l][i] = getMc().multiplyLong((T) data[l][i], n);
         }
-        return new DMatrix<T>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -171,9 +162,7 @@ class DMatrix<T> extends Matrix<T> {
             throw new IllegalArgumentException("The identity row:" + r1);
 		}
 		Object[][] re = new Object[row][];
-		for (int l = 0; l < row; ++l) {
-			re[l] = data[l];
-		}
+		System.arraycopy(data, 0, re, 0, row);
 
 		re[r2] = new Object[column];
 		// just copy this row
@@ -182,7 +171,7 @@ class DMatrix<T> extends Matrix<T> {
 
             re[r2][i] = getMc().add((T) data[r2][i], getMc().multiplyLong((T) data[r1][i], k));
         }
-        return new DMatrix<T>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -193,9 +182,7 @@ class DMatrix<T> extends Matrix<T> {
             throw new IllegalArgumentException("The identity row:" + r1);
 		}
 		Object[][] re = new Object[row][];
-		for (int l = 0; l < row; ++l) {
-			re[l] = data[l];
-		}
+		System.arraycopy(data, 0, re, 0, row);
 
 		re[r2] = new Object[column];
 		// just copy this row
@@ -203,7 +190,7 @@ class DMatrix<T> extends Matrix<T> {
 		for (int i = 0; i < column; ++i) {
             re[r2][i] = getMc().add((T) data[r2][i], getMc().multiply((T) data[r1][i], k));
         }
-        return new DMatrix<T>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -215,13 +202,11 @@ class DMatrix<T> extends Matrix<T> {
                 re[i][j] = getMc().multiply((T) data[i][j], n);
 			}
 		}
-        return new DMatrix<T>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, getMc());
 	}
 
 	/**
 	 * Print the matrix using the Printer
-	 * 
-	 * @param ma
 	 */
 	@Override
 	public void printMatrix() {
@@ -247,6 +232,7 @@ class DMatrix<T> extends Matrix<T> {
 			throw new ArithmeticException("Too small for cofactor");
 
 		// check for edge situation which can use sub-matrix instead
+		//noinspection Duplicates
 		if (r == 0) {
 			if (c == 0) {
 				return subMatrix(1, 1, row - 1, column - 1);
@@ -268,30 +254,22 @@ class DMatrix<T> extends Matrix<T> {
 
 		// upper-left
 		for (int i = 0; i < r; i++) {
-			for (int j = 0; j < c; j++) {
-				ma[i][j] = data[i][j];
-			}
+			if (c >= 0) System.arraycopy(data[i], 0, ma[i], 0, c);
 		}
 		// upper-right
 		for (int i = 0; i < r; i++) {
-			for (int j = c + 1; j < column; j++) {
-				ma[i][j - 1] = data[i][j];
-			}
+			if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i], c + 1 - 1, column - c + 1);
 		}
 		// downer-left
 		for (int i = r + 1; i < row; i++) {
-			for (int j = 0; j < c; j++) {
-				ma[i - 1][j] = data[i][j];
-			}
+			if (c >= 0) System.arraycopy(data[i], 0, ma[i - 1], 0, c);
 		}
 		// downer-right
 		for (int i = r + 1; i < row; i++) {
-			for (int j = c + 1; j < column; j++) {
-				ma[i - 1][j - 1] = data[i][j];
-			}
+			if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i - 1], c + 1 - 1, column - c + 1);
 		}
 		// copy ends
-        return new DMatrix<T>(ma, row - 1, column - 1, getMc());
+        return new DMatrix<>(ma, row - 1, column - 1, getMc());
 	}
 
 }

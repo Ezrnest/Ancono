@@ -169,7 +169,7 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>) : FlexibleMathObje
          * @param <T>
          * @return
         </T> */
-        fun <T : Any> getCalculator(ringCalculator: RingCalculator<T>, simplifier: Simplifier<T>, noneZero: T): RFCalculator<T> {
+        fun <T : Any> getCalculator(ringCalculator: RingCalculator<T>, simplifier: Simplifier<T>?, noneZero: T): RFCalculator<T> {
             return RFCalculator(ringCalculator, simplifier, noneZero)
         }
 

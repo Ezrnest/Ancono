@@ -67,7 +67,7 @@ public interface Group<T,G extends Group<T,G>> extends Monoid<T> {
 	 * @param isLeft determines whether it is a left coset.
 	 * @return
 	 */
-	default Coset<T,G> getCoset(T x,boolean isLeft){
+	default Coset<T,G> getCoset(T x, boolean isLeft){
 		@SuppressWarnings("unchecked")
 		G g = (G)this;
 		return getCoset(x,g,isLeft);

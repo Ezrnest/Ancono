@@ -3,8 +3,8 @@
  */
 package cn.timelives.java.math.algebra.abstractAlgebra.structure.finite;
 
-import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
 import cn.timelives.java.math.algebra.abstractAlgebra.structure.Group;
+import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
 import cn.timelives.java.math.set.FiniteSet;
 
 /**

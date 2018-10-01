@@ -150,6 +150,11 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
         public Integer gpow(@NotNull Integer x, long n) {
             return (Integer) GroupCalculator.DefaultImpls.gpow(this, x, n);
         }
+
+        @Override
+        public boolean isCommutative() {
+            return true;
+        }
     }
 
     private static final CyclicGroup IDENTITY = new CyclicGroup(1);

@@ -464,11 +464,11 @@ public final class Permutations {
 		 */
 		@Override
 		public boolean containsElement(int x) {
-			for(int i=0;i<elements.length;i++) {
-				if(elements[i]==x) {
-					return true;
-				}
-			}
+            for (int element : elements) {
+                if (element == x) {
+                    return true;
+                }
+            }
 			return false;
 		}
 
@@ -683,8 +683,7 @@ public final class Permutations {
 	 * written as {@code (n-shift,n-shift-1,...n-1,0,1,2,...n-shift-n)}. For
 	 * example, {@code rotate(5,2)=(3,4,0,1,2)}
 	 * 
-	 * @param n
-	 * @return
+	 * @param n the size of the permutation
 	 */
 	public static Permutation rotateAll(int n, int shift) {
 		sizeCheck(n);
@@ -694,6 +693,13 @@ public final class Permutations {
 		}
 		return new RotateAll(n, shift);
 	}
+
+    /**
+     * A left-version of {@link #rotateAll(int, int)}
+     */
+    public static Permutation rotateAllLeft(int n, int shift) {
+	    return rotateAll(n,n-shift);
+    }
 	
 	public static Cycle rotate(int size,int[] elements) {
 		sizeCheck(size);
@@ -852,11 +858,11 @@ public final class Permutations {
         return composeAll(list);
     }
 
-    public static void main(String[] args) {
-        var p1 = valueOf(new int[]{1,2,0});
-        var p2 = valueOf(new int[]{0,1,2});
-        print(p1.compose(p2));
-        print(p2.compose(p1));
-        print(p1.apply(p2.getArray()));
-    }
+//    public static void main(String[] args) {
+//        var p1 = valueOf(new int[]{1,2,0});
+//        var p2 = valueOf(new int[]{0,1,2});
+//        print(p1.compose(p2));
+//        print(p2.compose(p1));
+//        print(p1.apply(p2.getArray()));
+//    }
 }

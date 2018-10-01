@@ -437,4 +437,9 @@ public final class ProgressionSup {
 	public static <T> Collector<T,?,Progression<T>> getCollector(MathCalculator<T> mc){
 		return Collectors.collectingAndThen(Collectors.toList(),list ->  Progression.fromList(list, mc));
 	}
+
+	public static <T> Progression<T> fibonacci(T first,T second,MathCalculator<T> mc){
+        return Progression.createProgressionRecur2(mc::add, first, second,
+                Progression.UNLIMITED, mc);
+    }
 }

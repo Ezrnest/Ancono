@@ -255,7 +255,7 @@ public class MatrixSup {
 			return sb.build();
 		}
 	}
-	
+
 	/**
 	 * Solves the linear equation 
 	 * <pre><b>A</b><b>X</b> = 0</pre>
@@ -346,16 +346,48 @@ public class MatrixSup {
 		
 		
 	}
-	
-	
-	
+
+	@SuppressWarnings("unchecked")
+	public static <T> LinearEquationSolution.Situation determineSolutionType(Matrix<T> expandedMatrix){
+	    //TODO NEED simplification
+		MathCalculator<T> mc = expandedMatrix.getMathCalculator();
+		Matrix.MatResult<T> matRe = expandedMatrix.toStepMatrix();
+		DMatrix<T> step = (DMatrix<T>)matRe.result;
+//		step.printMatrix();
+		T[][] data = (T[][]) step.data;
+		//seek rows to get rank
+		int rank = 0;
+		final int len = step.column - 1;
+//		printMatrix(mat);
+		for(int i=0;i<step.row;i++){
+			//column-1 avoid the constant part
+			for(int j=0;j<len;j++){
+				if(!mc.isZero(data[i][j])){
+					break;
+				}
+			}
+		}
+		//test whether the equation has solution
+		if(rank<step.row&& !mc.isZero(data[rank][len])){
+			//the rank of the expanded matrix is bigger.
+			//NO SOLUTION
+			return Situation.NO_SOLUTION;
+		}
+        final int numberOfKSolution = len-rank;
+		if(numberOfKSolution==0){
+			return Situation.SINGLE_SOLUTION;
+		}else {
+            return Situation.UNBOUNDED_SOLUTION;
+        }
+//        Matrix<T> coeMatrix = expandedMatrix.subMatrix(0,0,expandedMatrix.row-1,expandedMatrix.column-2);
+//        boolean isHomogeneous = expandedMatrix.getColumn(expandedMatrix.column-1).isZeroVector();
+//        int coeMatrixRank = coeMatrix.calRank();
+	}
 	
 	
 	/**
 	 * Computes the determinant of a 3*3 matrix given as an array, make sure the 
 	 * array contains right type of element.
-	 * @param mat
-	 * @param mc
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -391,7 +423,6 @@ public class MatrixSup {
 	 * @param mat a matrix
 	 * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to 
 	 * the degree of the equation.
-	 * @return 
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> Matrix<T> similarDiag(Matrix<T> mat,MathFunction<SVPEquation<T>,List<T>> equationSolver){

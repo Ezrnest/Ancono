@@ -41,6 +41,11 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
             }
         }
 
+//    val torsion : VectorFunction<T>
+//        get(){
+//
+//        }
+
     /**
      * The tangent vector of this normal curve as a vector function.
      * The vector returned this not a unit vector.

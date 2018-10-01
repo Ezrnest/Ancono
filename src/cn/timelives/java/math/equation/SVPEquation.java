@@ -628,7 +628,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		@Override
         public <N> QEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 			return new QEquation<>(newCalculator,mapper.apply(a),mapper.apply(b),mapper.apply(c)
-					,mapper.apply(x1),mapper.apply(x2),mapper.apply(delta),d);
+					,x1==null ? null : mapper.apply(x1),x2==null ? null : mapper.apply(x2),delta==null ? null : mapper.apply(delta),d);
 		}
 
 		@Override

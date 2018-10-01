@@ -22,7 +22,7 @@ import java.util.List;
  * 2018-03-01 19:26
  * @see Permutations
  */
-public interface Permutation extends Composable<Permutation>,Invertible<Permutation>{
+public interface Permutation extends Composable<Permutation>,Invertible<Permutation>,Comparable<Permutation>{
 	
 	/**
 	 * Returns the size of this permutation, which is equal to the 
@@ -544,5 +544,14 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 			array[earr[earr.length-1]] = t;
 			return array;
 		}
+	}
+
+	@Override
+	default int compareTo(@NotNull Permutation o){
+		var comp = size() - o.size();
+		if(comp!=0){
+			return comp;
+		}
+		return MathUtils.signum(index()-o.index());
 	}
 }

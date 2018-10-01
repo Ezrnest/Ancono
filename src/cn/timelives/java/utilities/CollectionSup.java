@@ -3,6 +3,8 @@
  */
 package cn.timelives.java.utilities;
 
+import cn.timelives.java.utilities.structure.Pair;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.*;
@@ -86,6 +88,10 @@ public final class CollectionSup {
 		}
 		return 0;
 	}
+
+    public static <T extends Comparable<T>> int compareCollection(Collection<? extends T> list1,Collection<? extends T> list2) {
+        return compareCollection(list1,list2,Comparator.naturalOrder());
+    }
 	
 	/**
 	 * Creates a hash set from the array.
@@ -213,4 +219,76 @@ public final class CollectionSup {
 		}
 		return arr;
 	}
+
+    /**
+     * Returns the descartes product of s1 and s2.
+     * @param s1 a set
+     * @param s2 another set
+     */
+    public static <T,R> Set<Pair<T,R>> descartesProductSet(Set<T> s1,Set<R> s2){
+        return descartesProduct(s1,s2,new HashSet<>(s1.size()*s2.size()));
+    }
+
+    /**
+     * Returns the descartes product of s1 and s2.
+     * @param s1 a set
+     * @param s2 another set
+     */
+    public static <T,R> List<Pair<T,R>> descartesProductList(Collection<T> s1, Collection<R> s2){
+        return descartesProduct(s1,s2, new ArrayList<>(s1.size() * s2.size()));
+    }
+
+
+    /**
+     * Computes the descartes product of the two given iterable and adds the result elements to <code>re</code>
+     * @param c1 an iterable
+     * @param c2 another iterable
+     * @param re a collection
+     */
+    public static <T,R,S extends Collection<Pair<T,R>>> S descartesProduct(Collection<T> c1,Collection<R> c2,S re){
+        for(T t : c1){
+            for(R r : c2){
+                re.add(new Pair<>(t, r));
+            }
+        }
+        return re;
+    }
+    /*
+    int size = 1;
+        for(var c : collections){
+            size *= c.size();
+        }
+     */
+
+    /**
+     * Computes the descartes product of the two given iterable and adds the result elements to <code>re</code>
+     */
+    public static <T,S extends Collection<List<T>>> S descartesProductMultiple(S dest,Collection<T>...collections){
+
+        appendAndAdd(dest,collections,0,new ArrayList<>(collections.length),collections.length);
+        return dest;
+    }
+    @SuppressWarnings("unchecked")
+    private static <T> void appendAndAdd(Collection<List<T>> dest,Collection<T>[] cs,int index,ArrayList<T> current, int size){
+
+        var curColl = cs[index];
+        for (Iterator<T> it = curColl.iterator(); it.hasNext(); ) {
+            T t =  it.next();
+            ArrayList<T> copy;
+            if(it.hasNext()){
+                copy = new ArrayList<>(size);
+                copy.addAll(current);
+            }else{
+                copy = current;
+            }
+            copy.add(t);
+            if(index == cs.length-1){
+                dest.add(copy);
+            }else{
+                appendAndAdd(dest,cs,index+1,copy,size);
+            }
+        }
+    }
+
+
 }

@@ -4,11 +4,13 @@
 package cn.timelives.java.math.algebra.abstractAlgebra;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
+import cn.timelives.java.math.set.MathSet;
 
+import java.util.List;
 import java.util.function.BiPredicate;
 
 /**
- * EqualRelation describes the equivalent relation between two non-null objects.
+ * EqualRelation describes the equivalence relation between two non-null objects.
  * <ul>
  * <li>It is <i>reflexive</i>: for any non-null reference value {@code x},
  * {@code test(x,x)} should return {@code true}.
@@ -30,7 +32,7 @@ import java.util.function.BiPredicate;
  * @author liyicheng 2018-01-31 17:20
  *
  */
-public interface EqualRelation<T> extends BiPredicate<T, T>{
+public interface EqualRelation<T> extends Relation<T>{
 	
 	/**
 	 * Evaluates whether the two objects have this equal relation.
@@ -59,10 +61,51 @@ public interface EqualRelation<T> extends BiPredicate<T, T>{
 	
 	/**
 	 * Returns an EqualRelation based on the EqualPredicate.
-	 * @param p
-	 * @return
 	 */
-	public static <T> EqualRelation<T> fromEqualPredicate(EqualPredicate<T> p){
+	static <T> EqualRelation<T> fromEqualPredicate(EqualPredicate<T> p){
 		return p::isEqual;
 	}
+
+	EqualRelation<?> BY_EQUAL = Object::equals;
+
+    /**
+     * Returns an equivalence relation that represents {@link Object#equals(Object)}.
+     */
+	@SuppressWarnings("unchecked")
+    static <T> EqualRelation<T> objectEquals(){
+	    return (EqualRelation<T>) BY_EQUAL;
+    }
+
+    /**
+     * Returns an equivalence relation that considers all the elements in the same sets are the same.
+     * @param sets a series of sets, it is required the sets are mutually independent.
+     */
+    @SafeVarargs
+    @SuppressWarnings("Duplicates")
+    static <T> EqualRelation<T> byPartition(MathSet<T>...sets){
+        return (x, y) -> {
+            for(var set : sets){
+                if(set.contains(x) && set.contains(y)){
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
+    /**
+     * Returns an equivalence relation that considers all the elements in the same sets are the same.
+     * @param sets a series of sets, it is required the sets are mutually independent.
+     */
+    @SuppressWarnings("Duplicates")
+    static <T> EqualRelation<T> byPartition(List<MathSet<T>> sets){
+        return (x, y) -> {
+            for(var set : sets){
+                if(set.contains(x) && set.contains(y)){
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
 }

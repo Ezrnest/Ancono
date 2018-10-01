@@ -63,18 +63,18 @@ fun func(fname : String,sortable: Boolean = false, vararg x : Node) : Node{
         else -> Node.wrapNodeMF(fname,x.toList(),sortable)
     }
 }
-fun main(args: Array<String>) {
-    for (f in ExprFunction.createBasicCalculatorFunctions(Multinomial.getCalculator())) {
-        when (f.paramNumber) {
-            1 -> {
-                println("fun ${f.name}(x : NodeMatcher) : SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_${f.name.toUpperCase()},x)")
-            }
-            2 -> {
-                println("fun ${f.name}(a : NodeMatcher, b : NodeMatcher) : DFunctionMatcher = DFunctionMatcher(ExprFunction.FUNCTION_NAME_${f.name.toUpperCase()},a,b)")
-            }
-            else -> {
-
-            }
-        }
-    }
-}
+//fun main(args: Array<String>) {
+//    for (f in ExprFunction.createBasicCalculatorFunctions(Multinomial.getCalculator())) {
+//        when (f.paramNumber) {
+//            1 -> {
+//                println("fun ${f.name}(x : NodeMatcher) : SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_${f.name.toUpperCase()},x)")
+//            }
+//            2 -> {
+//                println("fun ${f.name}(a : NodeMatcher, b : NodeMatcher) : DFunctionMatcher = DFunctionMatcher(ExprFunction.FUNCTION_NAME_${f.name.toUpperCase()},a,b)")
+//            }
+//            else -> {
+//
+//            }
+//        }
+//    }
+//}

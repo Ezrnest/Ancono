@@ -357,7 +357,8 @@ public final class DVector<T> extends Vector<T> {
 	/*
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Vector#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
 	 */
-	@Override
+	@NotNull
+    @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');

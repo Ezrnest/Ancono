@@ -1,6 +1,9 @@
 package cn.timelives.java.utilities;
 
 import java.util.BitSet;
+
+import static cn.timelives.java.utilities.Printer.print;
+
 public class BinarySup {
 	private static final byte MASK = 0x0F;
 	private static final char[] list_hex = 
@@ -125,7 +128,28 @@ public class BinarySup {
 		}
 		return re;
 	}
-	
+
+	public static void bitSetInc(BitSet bs){
+	    int index = 0;
+	    while(bs.get(index)){
+	        index++;
+        }
+        bs.set(index);
+	    bs.clear(0,index);
+    }
+
+
+    public static boolean bitOf(long n,int index){
+	    return (n & (1<<index)) != 0;
+    }
+
+    public static long setBitOf(long n,int index){
+	    return (n | (1<<index));
+    }
+
+//    public static void main(String[] args) {
+//        print(bitOf(8,4));
+//    }
 	
 	
 //	public static void main(String[] args) {

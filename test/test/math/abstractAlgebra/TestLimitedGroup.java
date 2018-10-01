@@ -36,7 +36,12 @@ public class TestLimitedGroup {
 	public void test1() {
 		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
 		GroupCalculator<TransMatrix<Integer>> matmc = new GroupCalculator<TransMatrix<Integer>>() {
-			@NotNull
+            @Override
+            public boolean isCommutative() {
+                return false;
+            }
+
+            @NotNull
 			@Override
 			@SuppressWarnings("unchecked")
 			public TransMatrix<Integer> gpow(@NotNull TransMatrix<Integer> x, long n) {

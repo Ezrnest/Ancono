@@ -537,7 +537,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         while (coes[max] == null || mc.isZero(coes[max])) {
             max--;
         }
-        if (max == -1) {
+        if (max <= 0) {
             return zero(mc);
         }
         TreeMap<Integer, T> map = new TreeMap<>();
@@ -567,10 +567,6 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 
     /**
      * Converts the given polynomial to a polynomial of the given character {@code ch}.
-     *
-     * @param p
-     * @param ch
-     * @return
      * @throws ArithmeticException if the polynomial has a fraction power or a negative power for the character
      *                             (such as x^0.5 or x^(-2)).
      */
@@ -792,9 +788,6 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         /**
          * Returns a pair of quotient and the reminder of the division of two PolynomialX.
          * <pre>p1 = k*p2 + r</pre> The degree of {@code r} is smaller than {@code p2}.
-         *
-         * @param p1
-         * @param p2
          * @return a pair of the quotient and the reminder.
          */
         public Pair<PolynomialX<T>, PolynomialX<T>> divideAndReminder(PolynomialX<T> p1, PolynomialX<T> p2) {
@@ -881,6 +874,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
                 return negate(p);
             }
             NavigableMap<Integer, T> nmap = p.getCoefficientMap();
+            //noinspection SuspiciousNameCombination
             CollectionSup.modifyMap(nmap, (x, y) -> mc.multiplyLong(y, l));
             return new PolynomialX<>(mc, nmap, p.degree);
         }
@@ -901,6 +895,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
                 return negate(p);
             }
             NavigableMap<Integer, T> nmap = p.getCoefficientMap();
+            //noinspection SuspiciousNameCombination
             CollectionSup.modifyMap(nmap, (x, y) -> mc.divideLong(y, n));
             return new PolynomialX<>(mc, nmap, p.degree);
         }
@@ -1031,16 +1026,16 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 
     }
 
-    public static void main(String[] args) {
-        var mc = Fraction.Companion.getCalculator();
-        var p1 = Point.valueOf(Fraction.Companion.valueOf("-1"),Fraction.Companion.valueOf("1"),mc);
-        var p2 = Point.valueOf(Fraction.Companion.valueOf("0"),Fraction.Companion.valueOf("0"),mc);
-        var p3 = Point.valueOf(Fraction.Companion.valueOf("1"),Fraction.Companion.valueOf("1"),mc);
-        var p = PolynomialX.valueOf(Calculators.getCalculatorLongExact(), 1L, 1L).mapTo(Fraction.Companion::valueOf,mc);
-//        print(lagrangeInterpolation(p1,p2,p3));
-        print(p);
-        print(p.difference().sumOfN());
-    }
+//    public static void main(String[] args) {
+//        var mc = Fraction.Companion.getCalculator();
+//        var p1 = Point.valueOf(Fraction.Companion.valueOf("-1"),Fraction.Companion.valueOf("1"),mc);
+//        var p2 = Point.valueOf(Fraction.Companion.valueOf("0"),Fraction.Companion.valueOf("0"),mc);
+//        var p3 = Point.valueOf(Fraction.Companion.valueOf("1"),Fraction.Companion.valueOf("1"),mc);
+//        var p = PolynomialX.valueOf(Calculators.getCalculatorLongExact(), 1L, 1L).mapTo(Fraction.Companion::valueOf,mc);
+////        print(lagrangeInterpolation(p1,p2,p3));
+//        print(p);
+//        print(p.difference().sumOfN());
+//    }
 //		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
 //		PolynomialX<Integer> p1 = PolynomialX.valueOf(mc, 6,7,1);
 //		PolynomialX<Integer> p2 = PolynomialX.valueOf(mc, -6,-5,1);

@@ -23,6 +23,12 @@ interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T
     override fun apply(x: T, y: T): T
 
     /**
+     * Determines whether the operation is commutative. It is false by default.
+     */
+    val isCommutative : Boolean
+        get() = false
+
+    /**
      * Determines whether the two elements are equal.
      * @param x
      * @param y

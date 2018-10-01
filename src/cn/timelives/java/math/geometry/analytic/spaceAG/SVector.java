@@ -1,12 +1,9 @@
 package cn.timelives.java.math.geometry.analytic.spaceAG;
 
 import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.algebra.linearAlgebra.*;
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.Situation;
-import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
-import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
@@ -729,7 +726,7 @@ public final class SVector<T> extends Vector<T> {
 	 *
 	 * @param <T>
 	 */
-	public static final class SVectorBase<T> extends MathObject<T> {
+	public static final class SVectorBase<T> extends VectorBase<T>{
 		private final SVector<T> x,y,z;
 		public SVectorBase(SVector<T> x,SVector<T> y,SVector<T> z,T[][] mat,T D,
 				MathCalculator<T> mc) {
@@ -742,21 +739,43 @@ public final class SVector<T> extends Vector<T> {
 		}
 		private final T D ;
 		private T[][] mat;
-		public SVector<T> reduce(SVector<T> s){
+
+        @Override
+        public int getVectorDimension() {
+            return 3;
+        }
+
+        @NotNull
+        @Override
+        public List<Vector<T>> getVectors() {
+            return Arrays.asList(x,y,z);
+        }
+
+        @NotNull
+        @Override
+        public Vector<T> reduce(@NotNull Vector<T> v) {
+            if(v.getSize()!=3){
+                throw new IllegalArgumentException("v.size != 3");
+            }
+            return reduce(SVector.fromVector(v));
+        }
+
+        public SVector<T> reduce(SVector<T> s){
+			var mc = getMc();
 			@SuppressWarnings("unchecked")
 			T[] v = (T[]) new Object[]{s.x,s.y,s.z};
 			T[][] mt2 = mat.clone();
 			T[] t = mt2[0];
 			mt2[0] = v;
-            T D1 = MatrixSup.det3(mt2, getMc());
+            T D1 = MatrixSup.det3(mt2, mc);
 			mt2[0] = t;
 			t = mt2[1];
 			mt2[1] = v;
-            T D2 = MatrixSup.det3(mt2, getMc());
+            T D2 = MatrixSup.det3(mt2, mc);
 			mt2[1] = t;
 			mt2[2] = v;
-            T D3 = MatrixSup.det3(mt2, getMc());
-            return new SVector<>(getMc().divide(D1, D), getMc().divide(D2, D), getMc().divide(D3, D), getMc());
+            T D3 = MatrixSup.det3(mt2, mc);
+            return new SVector<>(mc.divide(D1, D), mc.divide(D2, D), mc.divide(D3, D), mc);
 		}
 		
 		
@@ -791,7 +810,7 @@ public final class SVector<T> extends Vector<T> {
 				SVectorBase<T> svb = (SVectorBase<T>) obj;
 				return x.valueEquals(svb.x) && y.valueEquals(svb.y) && z.valueEquals(svb.z);
 			}
-			return false;
+			return super.valueEquals(obj);
 		}
 		@Override
         public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
@@ -799,7 +818,7 @@ public final class SVector<T> extends Vector<T> {
 				SVectorBase<N> svb = (SVectorBase<N>) obj;
 				return x.valueEquals(svb.x,mapper) && y.valueEquals(svb.y,mapper) && z.valueEquals(svb.z,mapper);
 			}
-			return false;
+			return super.valueEquals(obj,mapper);
 		}
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
@@ -809,7 +828,7 @@ public final class SVector<T> extends Vector<T> {
 			return "SVectorBase";
 		}
 
-	}
+    }
 	public static class SVectorGenerator<T> extends MathObject<T> {
 
 		/**

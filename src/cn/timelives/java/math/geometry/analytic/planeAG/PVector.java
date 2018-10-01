@@ -336,7 +336,8 @@ public final class PVector<T> extends Vector<T> {
 	}
 	
 	
-	@Override
+	@NotNull
+    @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
         sb.append('(').append(nf.format(x, getMc()))

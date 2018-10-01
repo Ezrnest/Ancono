@@ -272,8 +272,6 @@ public final class CFunctions {
 	/**
 	 * Returns the combination of {@code m,n}.<br/>
 	 * <b>C</b><sub>n</sub><sup>m</sup><br/>
-	 * @param n
-	 * @param m
 	 * @return combination of {@code m,n}.
 	 */
 	public static long combination(int n,int m){
@@ -291,9 +289,25 @@ public final class CFunctions {
 		if(t < m){
 			return combination(n, t);
 		}
-		//TODO better implement required.
-		return permutation(n, t) / factorial(m);
+        try{
+            return permutation(n, t) / factorial(m);
+        }catch (ArithmeticException ae){
+            return combinationDeg(n,m,t);
+        }
 	}
+
+	private static long combinationDeg(int n,int m,int t){
+        Primes pr = Primes.getInstance();
+        pr.enlargePrime(n);
+        final int len = pr.getCount(n);
+        int[] pp = new int[len];
+        for(int i=0;i<len;i++){
+            long p = pr.getPrime(i);
+            pp[i] = intOrTooBig(degFactorial(p,n)-degFactorial(p, t) - degFactorial(p, m));
+        }
+        return MathUtils.fromFactorPowers(pp);
+    }
+
 	/**
 	 * Returns the binomial of (n,k), which is 
 	 * the coefficient of {@code x^k} in the expression 

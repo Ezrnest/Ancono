@@ -7,13 +7,10 @@ import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
-import cn.timelives.java.math.algebra.abstractAlgebra.structure.finite.FiniteGroup;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.function.Bijection;
-import cn.timelives.java.math.numberModels.Calculators;
+import cn.timelives.java.math.algebra.abstractAlgebra.structure.finite.FiniteGroup;
 import cn.timelives.java.math.numberTheory.combination.Permutation;
 import cn.timelives.java.math.numberTheory.combination.Permutations;
-import cn.timelives.java.math.set.CollectionSet;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSet;
 import cn.timelives.java.math.set.MathSets;
@@ -21,10 +18,7 @@ import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.CollectionSup;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 
 import static cn.timelives.java.utilities.Printer.print;

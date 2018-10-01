@@ -1679,8 +1679,10 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             return x.pow((int)n);
         }
 
-
-
+        @Override
+        public boolean isCommutative() {
+            return true;
+        }
     }
 
     private static final TermCalculator TERM_CALCULATOR = new TermCalculator();

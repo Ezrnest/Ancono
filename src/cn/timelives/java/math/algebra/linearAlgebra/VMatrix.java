@@ -76,7 +76,7 @@ final class VMatrix<T> extends Matrix<T> {
 	 */
 	@Override
 	public Matrix<T> negative() {
-		return mapTo0(v -> v.negative());
+		return mapTo0(Vector::negative);
 	}
 
 	/* (non-Javadoc)

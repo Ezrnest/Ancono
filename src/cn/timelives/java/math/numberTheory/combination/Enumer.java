@@ -6,6 +6,7 @@ package cn.timelives.java.math.numberTheory.combination;
 import cn.timelives.java.math.exceptions.NumberValueException;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.Printer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -36,7 +37,8 @@ public abstract class Enumer implements Iterable<int[]>{
 	/**
 	 * Returns an iterator, this iterator will always returns an copy of the array.
 	 */
-	@Override
+	@NotNull
+    @Override
 	public abstract Iterator<int[]> iterator();
 	
 	public int getElementCount(){
@@ -125,7 +127,8 @@ public abstract class Enumer implements Iterable<int[]>{
 		/* (non-Javadoc)
 		 * @see cn.timelives.java.math.prob.Enumer#iterator()
 		 */
-		@Override
+		@NotNull
+        @Override
 		public Iterator<int[]> iterator() {
 			return new Lit();
 		}
@@ -318,7 +321,7 @@ public abstract class Enumer implements Iterable<int[]>{
 	}
 	
 	
-	public static void main(String[] args) {
-        combination(5,2).enumration().forEach(Printer::print);
-	}
+//	public static void main(String[] args) {
+//        combination(5,2).enumration().forEach(Printer::print);
+//	}
 }

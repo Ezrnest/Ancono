@@ -286,6 +286,7 @@ class PolyMatcher(val m: Multinomial) : NodeMatcher {
         return NodeMatchResultImpl(refMapping, n, this)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun matchesPoly(poly: Multinomial, refMapping: Map<String, Node>, ec: ExprCalculator): Boolean {
         return m == poly
     }

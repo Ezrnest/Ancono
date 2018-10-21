@@ -7,13 +7,14 @@ import cn.timelives.java.math.MathUtils
 import cn.timelives.java.math.equation.inequation.Inequation
 import cn.timelives.java.math.equation.inequation.SVPInequation
 import cn.timelives.java.math.MathCalculator
-import cn.timelives.java.math.numberModels.Calculators
+import cn.timelives.java.math.calculus.DEFAULT_DELTA
+import cn.timelives.java.math.calculus.DEFAULT_RANGE
+import cn.timelives.java.math.function.SVFunction
 import cn.timelives.java.math.numberModels.Fraction
-import cn.timelives.java.math.numberModels.expression.Node
-import cn.timelives.java.math.numberModels.structure.RingFraction
-import cn.timelives.java.math.set.FiniteSet
 import cn.timelives.java.math.set.Interval
 import cn.timelives.java.math.set.IntervalUnion
+import cn.timelives.java.math.set.MathSet
+import cn.timelives.java.math.set.MathSets
 import java.util.*
 import java.util.function.Function
 
@@ -33,6 +34,7 @@ object EquationSup {
      * @return a list of solutions,including imaginary roots.
      * @throws ArithmeticException if `n>=5`
      */
+    @JvmStatic
     fun <T> solveUsingFormula(sv: SVPEquation<T>): List<T> {
         val mc = sv.mathCalculator
         when (sv.mp) {
@@ -76,6 +78,7 @@ object EquationSup {
      * @param mc a [MathCalculator]
      * @return the solution
      */
+    @JvmStatic
     fun <T:Any> solveQInequation(a: T, b: T, c: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveLInequation(b, c, op, mc)
@@ -85,21 +88,21 @@ object EquationSup {
             } else {
                 val solution = MathUtils.solveEquation(a, b, c, mc)
                 if (op === Type.EQUAL) {
-                    if (solution.isEmpty()) {
-                        return IntervalUnion.empty(mc)
+                    return if (solution.isEmpty()) {
+                        IntervalUnion.empty(mc)
                     } else if (solution.size == 1) {
-                        return IntervalUnion.single(solution[0], mc)
+                        IntervalUnion.single(solution[0], mc)
                     } else {
                         val x1 = solution[0]
                         val x2 = solution[1]
-                        return IntervalUnion.valueOf(Interval.single(x1, mc), Interval.single(x2, mc))
+                        IntervalUnion.valueOf(Interval.single(x1, mc), Interval.single(x2, mc))
                     }
                 } else {
                     // NOT_EQUAL
-                    if (solution.isEmpty()) {
-                        return IntervalUnion.universe(mc)
+                    return if (solution.isEmpty()) {
+                        IntervalUnion.universe(mc)
                     } else if (solution.size == 1) {
-                        return IntervalUnion.except(solution[0], mc)
+                        IntervalUnion.except(solution[0], mc)
                     } else {
                         var x1 = solution[0]
                         var x2 = solution[1]
@@ -108,7 +111,7 @@ object EquationSup {
                             x1 = x2
                             x2 = t
                         }
-                        return IntervalUnion.valueOf(Interval.fromNegativeInf(x1, false, mc),
+                        IntervalUnion.valueOf(Interval.fromNegativeInf(x1, false, mc),
                                 Interval.openInterval(x1, x2, mc), Interval.toPositiveInf(x2, false, mc))
                     }
                 }
@@ -128,6 +131,7 @@ object EquationSup {
      * @param mc a [MathCalculator]
      * @return the solution
      */
+    @JvmStatic
     fun <T:Any> solveLInequation(a: T, b: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveCInequation(b, op, mc)
@@ -155,6 +159,7 @@ object EquationSup {
      * @param mc a [MathCalculator]
      * @return the solution
      */
+    @JvmStatic
     fun <T:Any> solveCInequation(a: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         val universe = op.matches(mc.compare(a, mc.zero))
         return if (universe) IntervalUnion.universe(mc) else IntervalUnion.empty(mc)
@@ -162,8 +167,9 @@ object EquationSup {
 
 
     /**
-     * Returns all the quotient solutions of the equation.
+     * Returns all the rational solutions of the equation.
      */
+    @JvmStatic
     fun solutionsFraction(equation : SVPEquation<Fraction>) : Set<Fraction>{
         var equa = equation.simplify(Fraction.fractionSimplifier)
 
@@ -204,6 +210,21 @@ object EquationSup {
 
         return result
 
+    }
+
+    /**
+     * Find a root of [f].
+     * @see cn.timelives.java.math.calculus.findRoot
+     */
+    fun findRoot(f: SVEquation<Double>,
+                 initialX: Double,
+                 deriveDelta: Double = DEFAULT_DELTA,
+                 rootDelta: Double = DEFAULT_DELTA,
+                 maxSearchRange: Double = DEFAULT_RANGE,
+                 maxIterateTimes: Int = 25): Double?{
+        return cn.timelives.java.math.calculus.findRoot(
+                SVFunction.fromFunction(MathSets.universe(),f.asFunction()),
+                initialX, deriveDelta, rootDelta, maxSearchRange, maxIterateTimes)
     }
 
 }

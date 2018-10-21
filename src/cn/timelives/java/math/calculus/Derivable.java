@@ -1,10 +1,9 @@
 /**
  * 2017-10-07
  */
-package cn.timelives.java.math.algebra.calculus;
+package cn.timelives.java.math.calculus;
 
 import cn.timelives.java.math.function.MathFunction;
-import cn.timelives.java.math.function.SVFunction;
 import org.jetbrains.annotations.NotNull;
 
 /**

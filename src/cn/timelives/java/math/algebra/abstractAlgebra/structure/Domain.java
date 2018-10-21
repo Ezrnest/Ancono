@@ -10,6 +10,6 @@ package cn.timelives.java.math.algebra.abstractAlgebra.structure;
  * 2018-02-28 18:38
  *
  */
-public interface Domain<T,R extends Domain<T, R>> extends Ring<T,R>{
+public interface Domain<T> extends Ring<T>{
 	
 }

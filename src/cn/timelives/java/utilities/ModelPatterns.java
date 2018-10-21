@@ -2,6 +2,9 @@ package cn.timelives.java.utilities;
 
 import cn.timelives.java.math.MathUtils;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.*;
 
 /**
@@ -98,7 +101,8 @@ public final class ModelPatterns {
     /**
      * Solve a 'problem' with binary search method. For example, to find a function's zero point,
      * assuming the function is {@code f(x)} and the range to search is {@code [0,1]}, then
-     * {@code binarySolve(0d,1d,(a,b)->(a+b)/2,x->signum(f(x)),100)} will try to find the zero point and iterate for 100 times.
+     * {@code binarySolve(0d,1d,(a,b)->(a+b)/2,x->signum(f(x)),100)} will try to find the zero point and iterate for 100
+     * times.
      *
      * @param low        the initial downer bound
      * @param high       the initial upper bound
@@ -140,7 +144,8 @@ public final class ModelPatterns {
     /**
      * Solve a 'problem' with binary search method. For example, to find a function's zero point,
      * assuming the function is {@code f(x)} and the range to search is {@code [0,1]}, then
-     * {@code binarySolve(0d,1d,(a,b)->(a+b)/2,x->signum(f(x)),100)} will try to find the zero point and iterate for 100 times.
+     * {@code binarySolve(0d,1d,(a,b)->(a+b)/2,x->signum(f(x)),100)} will try to find the zero point and iterate for 100
+     * times.
      *
      * @param low        the initial downer bound
      * @param high       the initial upper bound
@@ -412,11 +417,170 @@ public final class ModelPatterns {
         return re;
     }
 
-//	public static void main(String[] args) {
+    /**
+     * Performs reduction operation on the given range of objects using dynamic programming to
+     * minimize the time cost. This method computes the time cost via 'model', which is defined by the user and
+     * given by <code>toModel</code>. The user should also provide the function <code>modelOperation</code> to
+     * reduce on the model and the function <code>modelTimeCost</code> to tell the time cost of a model.
+     *
+     * @param startInclusive an integer
+     * @param endExclusive   an integer
+     * @param get            a function to get the value to reduce
+     * @param operation      a binary operation to reduce two values to one, must be associative
+     * @param toModel        a function to covert a real object to an abstract model for computing time cost
+     * @param modelTimeCost  a function to compute the time cost of a model
+     */
+    public static <T, R> T reduceDP(int startInclusive, int endExclusive, IntFunction<T> get,
+                                    BinaryOperator<T> operation,
+                                    Function<T, R> toModel,
+                                    BinaryOperator<R> modelOperation,
+                                    ToIntBiFunction<R, R> modelTimeCost) {
+        //dynamic programming
+        int size = endExclusive - startInclusive;
+        if (size <= 0) {
+            throw new IllegalArgumentException("startInclusive>=endExclusive");
+        }
+        if (size == 1) {
+            return get.apply(startInclusive);
+        } else if (size == 2) {
+            return operation.apply(get.apply(startInclusive), get.apply(startInclusive + 1));
+        }
+        @SuppressWarnings("unchecked")
+        R[][] models = (R[][]) new Object[size][size];
+        for (int i = 0; i < size; i++) {
+            models[i][i] = toModel.apply(get.apply(i));
+        }
+        int[][] partitions = computeTimeCost(size, models, modelOperation, modelTimeCost);
+        return recurReduce(partitions, 0, size - 1, get, operation);
+    }
+
+    /**
+     * Computes the time cost and returns an array contains the best partition.
+     */
+    private static <R> int[][] computeTimeCost(int size, R[][] models,
+                                               BinaryOperator<R> modelOp, ToIntBiFunction<R, R> timeCost) {
+
+        int[][] partitions = new int[size][size];
+        int[][] costs = new int[size][size];
+        //costs : cost[x][y] = min cost of get(x)get(x+1)...get(y)
+        //partitions : partitions[x][y] = split = split point of get(x)get(x+1)...get(y) ->
+        // (get(x)get(x+1)...get(x+split))(get(x+split+1)...get(y))
+
+        for (int d = 1; d < size; d++) {
+            for (int i = 0; i < size - d; i++) {
+                int j = i + d;
+                //find the cost
+                int minCost = Integer.MAX_VALUE;
+                int minSplit = 0;
+                R minModel = null;
+                for (int r = 0; r < d; r++) {
+                    R modelLeft = models[i][i + r];
+                    R modelRight = models[i + r + 1][j];
+                    int cost = timeCost.applyAsInt(modelLeft, modelRight) + costs[i][i + r] + costs[i + r + 1][j];
+                    if (minModel == null || cost < minCost) {
+                        R combined = modelOp.apply(modelLeft, modelRight);
+                        minCost = cost;
+                        minSplit = r;
+                        minModel = combined;
+                    }
+                }
+                partitions[i][j] = minSplit;
+                models[i][j] = minModel;
+                costs[i][j] = minCost;
+            }
+        }
+//        Printer.printMatrix(costs);
+//        Printer.printMatrix(partitions);
+//        Printer.printMatrix(ArraySup.mapTo2(models, x -> Arrays.toString((int[])x),String.class));
+        return partitions;
+    }
+
+    private static <T> T recurReduce(int[][] partitions,
+                                     int startInclusive,
+                                     int endInclusive,
+                                     IntFunction<T> get,
+                                     BinaryOperator<T> combine) {
+        if (startInclusive == endInclusive) {
+            return get.apply(startInclusive);
+        }
+        if (startInclusive == endInclusive - 1) {
+            return combine.apply(get.apply(startInclusive), get.apply(endInclusive));
+        }
+        int split = partitions[startInclusive][endInclusive];
+        T left = recurReduce(partitions, startInclusive, startInclusive + split, get, combine);
+        T right = recurReduce(partitions, startInclusive + split + 1, endInclusive, get, combine);
+        return combine.apply(left, right);
+    }
+
+    /**
+     * Performs a recursively reducing operation with caching. The results of function <code>reducing</code>
+     * will be cached and when the same input appears again, the cached value will be used instead of calling
+     * <code>reducing</code> again.
+     * <p></p>
+     * For example, the following code computes fibonacci number of n:
+     * <pre>
+     * BiFunction&lt;Integer,Function&lt;Integer,Long>,Long> fib = (x,f) ->{
+     *             if(x == 1 || x == 2) {
+     *                 return 1L;
+     *             }
+     *             return f.apply(x-1) + f.apply(x-2);
+     * };
+     * long result = cachedReduce(n,fib);</pre>
+     *
+     * @param x        the input of the problem
+     * @param reducing a reducing function that may call recursively by its second argument
+     * @param <T> the input of the problem
+     * @param <R> the result of the problem
+     * @return the result of computation
+     */
+    public static <T, R> R cachedReduce(T x, BiFunction<T, Function<T, R>, R> reducing) {
+        Function<T,R> cached = FunctionSup.cachedRecurFunction(reducing);
+        return cached.apply(x);
+    }
+
+
+
+
+
+
+
+
+//    public <T,R> R recurBuild(int index,T initial,)
+
+//    public static class TimeCostModel<R>{
+//        private final int timeCost;
+//        private final R model;
+//        public TimeCostModel(int timeCost, R model){
+//            this.timeCost = timeCost;
+//            this.model = model;
+//        }
+//
+//        public int getTimeCost() {
+//            return timeCost;
+//        }
+//
+//        public R getModel() {
+//            return model;
+//        }
+//    }
 //		DoubleUnaryOperator f = d -> d*d-d;
 //		print(binarySolve(0.5d, 3d, (a,b)->(a+b)/2,x-> {
 //			double t = f.applyAsDouble(x);
 //			return t < 0 ? -1 : t == 0 ? 0 : 1;
 //		}, 10));
-//	}
+//        int[][] matrix = new int[][]{
+//                {4,3},
+//                {3,5},
+//                {5,4},
+//                {4,6},
+//                {6,7},
+//                {7,2},
+//                {2,3}
+//        };
+//        final int size = matrix.length;
+//        BinaryOperator<int[]> compose = (x,y)->new int[]{x[0],y[1]};
+//        int[] re = reduceDP(0,size,
+//                x -> matrix[x],compose,
+//                Function.identity(),compose,(x,y)->x[0]*y[0]*y[1] );
+//        Printer.print(re);
 }

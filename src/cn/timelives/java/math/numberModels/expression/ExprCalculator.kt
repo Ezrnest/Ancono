@@ -265,7 +265,7 @@ class ExprCalculator
 	 * cn.timelives.java.math.MathCalculator#compare(java.lang.Object,
 	 * java.lang.Object)
 	 */
-    override fun compare(para1: Expression, para2: Expression): Int {
+    override fun compare(x: Expression, y: Expression): Int {
         throw UnsupportedCalculationException()
         //		return nc.compare(para1.root, para2.root);
     }
@@ -931,6 +931,14 @@ class ExprCalculator
         return simplify(expression)
     }
 
+    /**
+     * Returns the differential of an expression.
+     */
+    fun differential(expr : Expression, variableName : String) : Expression{
+        val nroot = DerivativeHelper.derivativeNode(expr.root,variableName)
+        return Expression(simplify(nroot))
+    }
+
     companion object {
 
         private val DEFAULT_CALCULATOR = Multinomial.getCalculator()
@@ -969,7 +977,7 @@ class ExprCalculator
             get() {
                 val ec = ExprCalculator()
                 SimplificationStrategies.setCalRegularization(ec)
-                return ec;
+                return ec
             }
 
         internal var debugEnabled = false
@@ -979,6 +987,13 @@ class ExprCalculator
 
 
 }
+
+//fun main(args: Array<String>) {
+//    val mc = ExprCalculator.newInstance
+//    var f = Expression.valueOf("exp(2,-1)")
+//    f = mc.simplify(f)
+//    println(f)
+//}
 /**
  *
  */

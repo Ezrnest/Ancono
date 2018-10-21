@@ -1,6 +1,7 @@
 package cn.timelives.java.math.numberModels
 
 import cn.timelives.java.math.MathCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.structure.DivisionRing
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 
 
@@ -175,4 +176,39 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         get() = zero.javaClass
 
 
+    override fun T.div(y: T): T {
+        return divide(this,y)
+    }
+
+    override fun T.div(y: Long): T {
+        return divideLong(this,y)
+    }
+
+    override fun T.times(y: T): T {
+        return multiply(this,y)
+    }
+
+    override fun Long.times(x: T): T {
+        return multiplyLong(x,this)
+    }
+
+    override fun T.times(n: Long): T {
+        return multiplyLong(this,n)
+    }
+
+    override fun T.unaryMinus(): T {
+        return negate(this)
+    }
+
+    override fun T.minus(y: T): T {
+        return subtract(this,y)
+    }
+
+    override fun T.plus(y: T): T {
+        return add(this,y)
+    }
+
+    override fun T.compareTo(y: T): Int {
+        return compare(this,y)
+    }
 }

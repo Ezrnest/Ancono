@@ -183,7 +183,7 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	public Pair<TransMatrix<T>, ConicSection<T>> normalizeAndTrans() {
 		Matrix<T> mat = createQuadraticFormMatrix();
 		List<Pair<T,Vector<T>>> eigenvaluesAndVectors =  mat.eigenvaluesAndVectors(
-				EquationSup.INSTANCE::solveUsingFormula);
+				EquationSup::solveUsingFormula);
 		Vector<T> v1 = eigenvaluesAndVectors.get(0).getSecond(),
 				v2 = eigenvaluesAndVectors.get(1).getSecond();
 		List<Vector<T>> list = Vector.orthogonalizeAndUnit(v1,v2);

@@ -1292,7 +1292,7 @@ public class MathUtils {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).floor());
             base *= power(factor[0], basePow);
-            int rePow = Fraction.Companion.valueOf(basePow).divide(exp).toInt();
+            int rePow = Fraction.valueOf(basePow).divide(exp).toInt();
             result *= power(factor[0], rePow);
         }
         return new long[]{result, base};
@@ -1340,7 +1340,7 @@ public class MathUtils {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).ceil());
             base *= power(factor[0], basePow);
-            int rePow = Fraction.Companion.valueOf(basePow).divide(exp).toInt();
+            int rePow = Fraction.valueOf(basePow).divide(exp).toInt();
             result *= power(factor[0], rePow);
         }
         return new long[]{result, base};

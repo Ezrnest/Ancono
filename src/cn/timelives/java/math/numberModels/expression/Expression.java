@@ -7,7 +7,9 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.ParserUtils;
+import cn.timelives.java.math.numberModels.Term;
 import cn.timelives.java.math.numberModels.api.Computable;
+import cn.timelives.java.math.numberModels.structure.PolynomialX;
 import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.StringSup;
 import cn.timelives.java.utilities.structure.Pair;
@@ -36,7 +38,7 @@ public final class Expression implements Computable,Serializable {
 	final Node root;
 
 	/**
-	 *
+	 * Construct an expression with its root node.
 	 */
     public Expression(Node root) {
 		this.root = Objects.requireNonNull(root);
@@ -103,6 +105,13 @@ public final class Expression implements Computable,Serializable {
 	public static Expression fromMultinomial(Multinomial p) {
 		return new Expression(Node.newPolyNode(p, null));
 	}
+
+	public static Expression fromPolynomialT(PolynomialX<Term> p, String variableName){
+	    return fromMultinomial(Multinomial.fromPolynomial(p,variableName));
+    }
+
+    public static Expression from
+
 
 	/**
 	 * Creates an expression from a string without performing any simplification.

@@ -1,6 +1,6 @@
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.algebra.calculus.Calculus;
+import cn.timelives.java.math.calculus.Calculus;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.expression.anno.DisallowModify;
@@ -439,15 +439,15 @@ public class DerivativeHelper {
 
     }
 
-    public static void main(String[] args) {
-        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
-        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
-        SimplificationStrategies.setCalRegularization(ec);
-        expr = ec.simplify(expr);
-        print("Expression is: " + expr);
-        var re = Calculus.derivation(expr, "x");
-//        re.listNode();
-        re = ec.simplify(re);
-        print(re);
-    }
+//    public static void main(String[] args) {
+//        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
+//        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
+//        SimplificationStrategies.setCalRegularization(ec);
+//        expr = ec.simplify(expr);
+//        print("Expression is: " + expr);
+//        var re = Calculus.derivation(expr, "x");
+////        re.listNode();
+//        re = ec.simplify(re);
+//        print(re);
+//    }
 }

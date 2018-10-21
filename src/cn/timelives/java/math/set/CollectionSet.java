@@ -5,9 +5,11 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.function.Bijection;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.CollectionSup;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -23,7 +25,7 @@ import java.util.function.Function;
  * 2017-09-08 17:01
  *
  */
-public final class CollectionSet<T> extends AbstractLimitedSet<T> {
+public class CollectionSet<T> extends AbstractLimitedSet<T> {
 	private final List<T> list;
 	/**
 	 * Creates a collection set, the collection can be modified after this method.
@@ -82,7 +84,8 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 	/**
 	 * @see MathObject#mapTo(java.util.function.Function, MathCalculator)
 	 */
-	@Override
+	@NotNull
+    @Override
     public <N> CollectionSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		List<N> nlist = new ArrayList<>(list.size());
 		for(T t : list){
@@ -132,9 +135,6 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 		return super.valueEquals(obj,mapper);
 	}
 	
-	/**
-	 * @see MathObject#toString(NumberFormatter)
-	 */
 	@Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
@@ -147,7 +147,11 @@ public final class CollectionSet<T> extends AbstractLimitedSet<T> {
 		sb.append('}');
 		return sb.toString();
 	}
-	
-	
 
+    @NotNull
+    @Override
+    public <S> CollectionSet<S> mapTo(@NotNull Bijection<T, S> f) {
+        return new CollectionSet<>(MathCalculator.Companion.mappedCalculator(getMathCalculator(),f),
+                CollectionSup.mapList(list,f));
+    }
 }

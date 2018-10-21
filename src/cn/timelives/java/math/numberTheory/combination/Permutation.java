@@ -187,9 +187,8 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	}
 	/**
 	 * Applies this permutation to an integer array.
-	 * @param array
-	 * @return
 	 */
+	@NotNull
 	default int[] apply(int[] array) {
 		if(array.length<size()) {
 			throw new IllegalArgumentException("array's length!="+size());
@@ -363,7 +362,8 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int[])
 		 */
-		@Override
+		@NotNull
+        @Override
 		default int[] apply(int[] array) {
 			ArraySup.swap(array, getFirst(), getSecond());
 			return array;
@@ -465,7 +465,8 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int[])
 		 */
-		@Override
+		@NotNull
+        @Override
 		default int[] apply(int[] array) {
 			if(length()==1) {
 				return array;

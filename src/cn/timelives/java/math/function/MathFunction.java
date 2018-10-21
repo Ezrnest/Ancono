@@ -65,20 +65,24 @@ public interface MathFunction<P,R> extends Function<P,R>{
         };
     }
 
-    static <T, S, R> MathFunction<T, R> compose(MathFunction<T, S> f, MathFunction<S, R> g) {
+    static <T, S, R> MathFunction<T, R> compose(MathFunction<S, R> f, MathFunction<T, S> g) {
         return new MathFunction<>() {
             @NotNull
             @Override
             public R apply(T x) {
-                return g.apply(f.apply(x));
+                return f.apply(g.apply(x));
             }
 
             @NotNull
             @Override
             public MathSet<T> domain() {
-                return f.domain();
+                return g.domain();
             }
         };
+    }
+
+    static <T, S, R> MathFunction<T, R> andThen(MathFunction<T,S> f, MathFunction<S, R> g) {
+	    return compose(g,f);
     }
 
     static <T, S> SVFunction<T> composeSV(MathFunction<T, S> f, MathFunction<S, T> g) {
@@ -96,4 +100,5 @@ public interface MathFunction<P,R> extends Function<P,R>{
             }
         };
     }
+
 }

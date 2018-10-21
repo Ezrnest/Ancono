@@ -813,52 +813,52 @@ infix fun Formula.valueEquals(another: Formula): Boolean {
     return toMainDisjunctiveNorm(props) == another.toMainDisjunctiveNorm(props)
 }
 
-fun main(args: Array<String>) {
-//    println(p and (q or true.f) equalTo p)
-    val prop = (((p implies q) and (q implies r)) and p)
-    println(r.toMainDisjunctiveNorm(prop.propositions))
-//    val prop = !((q and r) or (r and !p) or (!q and !p))
-////    val dmorgan = Rule.ruleDeMorgan1
-////    println(dmorgan.matches(prop))
-////    println(dmorgan.tryApply(prop))
-//    val steps = ArrayList<SimplificationStep>()
-//    val re = prop.toDisjunctiveNorm(steps)
-//    println(re)
-
-//    val prop = (((p implies q) and (q implies r)) and p) implies r
-//    println(prop)
+//fun main(args: Array<String>) {
+////    println(p and (q or true.f) equalTo p)
+//    val prop = (((p implies q) and (q implies r)) and p)
+//    println(r.toMainDisjunctiveNorm(prop.propositions))
+////    val prop = !((q and r) or (r and !p) or (!q and !p))
+//////    val dmorgan = Rule.ruleDeMorgan1
+//////    println(dmorgan.matches(prop))
+//////    println(dmorgan.tryApply(prop))
+////    val steps = ArrayList<SimplificationStep>()
+////    val re = prop.toDisjunctiveNorm(steps)
+////    println(re)
 //
+////    val prop = (((p implies q) and (q implies r)) and p) implies r
+////    println(prop)
+////
+////
+////
+////
+//    println(prop.toMainDisjunctiveNorm())
+////    println(dmorgan.matches(re))
+////    steps.forEach { println(it) }
+////    println((!(!p or q)).simplifyWithSteps())
+////    val t = (q or !((!p or q)and p)).simplifyWithSteps()
+////    println(t.first)
+////    t.second.forEach { println(it) }
+////    println(rule3().matches(p or p))
+////    println((((p or q) implies r) implies p).toConjunctiveNorm())
+////    val form = p or q
+////    val matcher = A or B
+////    println(matcher.matches(form))
 //
-//
-//
-    println(prop.toMainDisjunctiveNorm())
-//    println(dmorgan.matches(re))
-//    steps.forEach { println(it) }
-//    println((!(!p or q)).simplifyWithSteps())
-//    val t = (q or !((!p or q)and p)).simplifyWithSteps()
-//    println(t.first)
-//    t.second.forEach { println(it) }
-//    println(rule3().matches(p or p))
-//    println((((p or q) implies r) implies p).toConjunctiveNorm())
-//    val form = p or q
-//    val matcher = A or B
-//    println(matcher.matches(form))
-
-//    println((orAll(!p,!q,r)).minimalNormIndex())
-//    val re =f1.toMainDisjunctiveNorm()
-//    println(re.simplify())
-//    println(re.simplify())
-//    println(Rule.basicRules)
-//    assert((p implies q) valueEquals (!p or (p and q)))
-//    val f2 = (!(p implies q))and q
-//    println(f2.simplify())
-//    println()
-//    val f3 = ((p implies q)and p) implies q
-//    val steps = ArrayList<SimplificationStep>()
-//    println(f3.toMainDisjunctiveNorm(steps))
-//    println(steps.joinToString(separator = System.lineSeparator()))
-//    println((!r).compareTo(q))
-//    println((q).compareTo(!r))
-//    println(andAll(listOf(p,q,!r)))
-//    println(andAll(listOf(!r,p,q)))
-}
+////    println((orAll(!p,!q,r)).minimalNormIndex())
+////    val re =f1.toMainDisjunctiveNorm()
+////    println(re.simplify())
+////    println(re.simplify())
+////    println(Rule.basicRules)
+////    assert((p implies q) valueEquals (!p or (p and q)))
+////    val f2 = (!(p implies q))and q
+////    println(f2.simplify())
+////    println()
+////    val f3 = ((p implies q)and p) implies q
+////    val steps = ArrayList<SimplificationStep>()
+////    println(f3.toMainDisjunctiveNorm(steps))
+////    println(steps.joinToString(separator = System.lineSeparator()))
+////    println((!r).compareTo(q))
+////    println((q).compareTo(!r))
+////    println(andAll(listOf(p,q,!r)))
+////    println(andAll(listOf(!r,p,q)))
+//}

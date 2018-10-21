@@ -658,6 +658,17 @@ public class ArraySup {
 		return re;
 	}
 
+    public static <T> int[][] mapTo2(T[][] arr,ToIntFunction<T> mapper){
+        int[][] re = new int[arr.length][];
+        for(int i=0;i<arr.length;i++){
+            re[i] = new int[arr[i].length];
+            for(int j=0;j<re[i].length;j++) {
+                re[i][j] = mapper.applyAsInt(arr[i][j]);
+            }
+        }
+        return re;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<T> mapper, Class<T> clazz) {
         Class<?> narrayType = Array.newInstance(clazz, 0).getClass();

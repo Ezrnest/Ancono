@@ -108,7 +108,8 @@ public final class Permutations {
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int[])
 		 */
-		@Override
+		@NotNull
+        @Override
 		public int[] apply(int[] array) {
 			if (array.length < size) {
 				throw new IllegalArgumentException("array's length!=" + size);
@@ -278,7 +279,8 @@ public final class Permutations {
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int[])
 		 */
-		@Override
+		@NotNull
+        @Override
 		public int[] apply(int[] array) {
 			return array;
 		}
@@ -502,7 +504,8 @@ public final class Permutations {
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int[])
 		 */
-		@Override
+		@NotNull
+        @Override
 		public int[] apply(int[] array) {
 			if(elements.length==1) {
 				return array;

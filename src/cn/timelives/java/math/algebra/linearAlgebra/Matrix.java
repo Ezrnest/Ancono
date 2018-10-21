@@ -11,6 +11,7 @@ import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.structure.PolynomialX;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.StringSup;
 import cn.timelives.java.utilities.structure.Pair;
@@ -1093,6 +1094,36 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new SubMatrix<>(getValues(), i1, j1, i2 - i1 + 1, j2 - j1 + 1, getMc());
     }
 
+    /**
+     * Converts this matrix to a chuncked matrix.
+     * @param rows the split lines of rows
+     * @param columns the split lines of columns
+     * @return
+     */
+    public Matrix<T>[][] chuncked(int[] rows,int[] columns){
+	    @SuppressWarnings("unchecked")
+        Matrix<T>[][] data = new Matrix[rows.length+1][columns.length+1];
+	    for(int i=0;i<rows.length;i++){
+            for (int j = 0; j < columns.length; j++) {
+                int i1 = getIfNotExceed(rows,i,0,row-1);
+                int j1 = getIfNotExceed(columns,j,0,column-1);
+                int i2 = getIfNotExceed(rows,i+1,0,row)-1;
+                int j2 = getIfNotExceed(columns,j+1,0,column)-1;
+                data[i][j] = subMatrix(i1,j1,i2,j2);
+            }
+        }
+        return data;
+    }
+    private int getIfNotExceed(int[] eles,int index, int downer, int upper){
+        if(index < 0){
+            return downer;
+        }
+        if(index >= eles.length){
+            return upper;
+        }
+        return eles[index];
+    }
+
     protected void subMatrixRangeCheck(int i1, int j1, int i2, int j2) {
         if (i1 < 0 || j1 < 0 || i2 >= row || j2 >= column || i1 > i2 || j1 > j2) {
             throw new IllegalArgumentException(
@@ -1839,6 +1870,32 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		}
 		return re;
 	}
+
+
+    /**
+     * Multiplies several matrix, using dynamic programming to minimize time cost.
+     */
+	@SafeVarargs
+    public static <T> Matrix<T> multiplyMatrix(Matrix<T>...mats){
+        if(mats.length == 0){
+            throw new IllegalArgumentException("mats is empty!");
+        }
+        for(Matrix<T> mat : mats){
+            Objects.requireNonNull(mat);
+        }
+        Function<Matrix<T>,int[]> toModel = x -> new int[]{x.row,x.column};
+        return ModelPatterns.reduceDP(0,mats.length, x -> mats[x],Matrix::multiplyMatrix,toModel,(x,y)->
+                new int[]{x[0],y[1]},(x,y)->x[0]*y[0]*y[1]);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Matrix<T> multiplyMatrix(List<Matrix<T>> mats){
+	    return multiplyMatrix(mats.toArray(new Matrix[]{}));
+    }
+
+
+
+
 	/**
 	 * Apply the function to this matrix and returns the result.
 	 */
@@ -2060,5 +2117,69 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		}
 	}
 	
+    public static class MatrixCal<T> extends MathCalculatorAdapter<Matrix<T>>{
+        private final MathCalculator<T> mc;
+        private final int n;
+
+        public MatrixCal(MathCalculator<T> mc, int n) {
+            this.mc = mc;
+            this.n = n;
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> getOne() {
+            return Matrix.identityMatrix(n,mc);
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> getZero() {
+            return Matrix.zeroMatrix(n,mc);
+        }
+
+        @Override
+        public boolean isZero(@NotNull Matrix<T> para) {
+            var mc = para.getMc();
+            for(int i=0;i<para.row;i++){
+                for(int j=0;j<para.column;j++){
+                    if(!mc.isZero(para.getNumber(i,j))){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean isEqual(@NotNull Matrix<T> x, @NotNull Matrix<T> y) {
+            return x.valueEquals(y);
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> add(@NotNull Matrix<T> x, @NotNull Matrix<T> y) {
+            return Matrix.addMatrix(x,y);
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> negate(@NotNull Matrix<T> x) {
+            return x.negative();
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> subtract(@NotNull Matrix<T> x, @NotNull Matrix<T> y) {
+            return Matrix.minusMatrix(x,y);
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> multiply(@NotNull Matrix<T> x, @NotNull Matrix<T> y) {
+            return Matrix.multiplyMatrix(x,y);
+        }
+    }
+
 
 }

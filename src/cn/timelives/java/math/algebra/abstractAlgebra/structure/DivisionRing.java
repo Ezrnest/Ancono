@@ -16,7 +16,7 @@ import cn.timelives.java.math.algebra.abstractAlgebra.calculator.DivisionRingCal
  * 2018-02-28 18:57
  *
  */
-public interface DivisionRing<T,R extends DivisionRing<T, R>> extends UnitRing<T,R> {
+public interface DivisionRing<T> extends UnitRing<T> {
 	/**
 	 * Returns the division ring's calculator.
 	 */

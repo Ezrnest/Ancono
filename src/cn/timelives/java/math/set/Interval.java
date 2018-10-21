@@ -1,6 +1,7 @@
 package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,12 +44,16 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return the upper bound of this interval, or {@code null}
 	 */
 	public abstract T upperBound();
+
 	/**
 	 * Returns whether is upper bound is included in this interval.
 	 * @return {@code true} if upper bound is includes, otherwise {@code false}
 	 */
 	public abstract boolean isUpperBoundInclusive();
-	
+
+	public boolean isBoundedAbove(){
+	    return upperBound() != null;
+    }
 	
 	/**
 	 * Returns the downer bound of this interval, which means for any number {@code n in this} , {@code n >= downerBound}.
@@ -62,7 +67,15 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return {@code true} if downer bound is includes, otherwise {@code false}
 	 */
 	public abstract boolean isDownerBoundInclusive();
-	
+
+    public boolean isBoundedBelow(){
+        return downerBound() != null;
+    }
+
+    public boolean isBounded(){
+        return isBoundedAbove() && isBoundedBelow();
+    }
+
 	/**
 	 * Returns the length of this interval , the length of this interval is equal to {@code upperBound - downerBound}.
 	 * If either upper bound or downer bound does not exist, {@code null} will be returned.
@@ -187,21 +200,24 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	/**
 	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
-	@Override
+	@NotNull
+    @Override
     public abstract <N> Interval<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	/**
 	 * Returns the mathematical expression of this interval. Like {@literal (0,2)} or {@literal [2,3)}.
 	 * @return a String representing this interval.
 	 */
-	@Override
+	@NotNull
+    @Override
 	public abstract String toString();
 	
 	/**
 	 * Returns the mathematical expression of this interval. Like {@literal (0,2)} or {@literal [2,3)}.
 	 * @return a String representing this interval.
 	 */
-	@Override
+	@NotNull
+    @Override
     public abstract String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf);
 	
 	
@@ -257,8 +273,8 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return (-∞,upper) or (-∞,upper]
 	 */
 	public static <T> Interval<T> fromNegativeInf(T upper,boolean closed,MathCalculator<T> mc){
-		return new IntervalI<T>(mc, null, Objects.requireNonNull(upper), 
-				IntervalI.LEFT_OPEN_MASK | (closed ? 0 : IntervalI.RIGHT_OPEN_MASK));
+		return new IntervalI<>(mc, null, Objects.requireNonNull(upper),
+                IntervalI.LEFT_OPEN_MASK | (closed ? 0 : IntervalI.RIGHT_OPEN_MASK));
 	}
 	/**
 	 * Returns an interval from the downer bound to positive infinity.
@@ -268,8 +284,8 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	 * @return (downer,+∞) or [downer,+∞)
 	 */
 	public static <T> Interval<T> toPositiveInf(T downer,boolean closed,MathCalculator<T> mc){
-		return new IntervalI<T>(mc, Objects.requireNonNull(downer), null, 
-				IntervalI.RIGHT_OPEN_MASK | (closed ? 0 : IntervalI.LEFT_OPEN_MASK));
+		return new IntervalI<>(mc, Objects.requireNonNull(downer), null,
+                IntervalI.RIGHT_OPEN_MASK | (closed ? 0 : IntervalI.LEFT_OPEN_MASK));
 	}
 	/**
 	 * Returns the interval representing the whole real number, whose downer bound 
@@ -294,8 +310,8 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	/**
 	 * Create a new Interval with the given arguments. 
 	 * @param mc the math calculator,only compare methods will be used.
-	 * @param downerBound the downer bound of this interval, or {@code null} to indicate unlimited.
-	 * @param upperBound  the upper bound of this interval, or {@code null} to indicate unlimited.
+	 * @param downer the downer bound of this interval, or {@code null} to indicate unlimited.
+	 * @param upper  the upper bound of this interval, or {@code null} to indicate unlimited.
 	 * @param downerInclusive determines whether downer should be inclusive
 	 * @param upperInclusive  determines whether upper should be inclusive
 	 */
@@ -349,6 +365,15 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 	static <T> Interval<T> instanceNonNull(T a,T b,boolean dc,boolean uc, MathCalculator<T> mc){
 		return new IntervalI<T>(mc, Objects.requireNonNull(a), Objects.requireNonNull(b), dc, uc);
 	}
+
+    /**
+     * Returns an interval of integer.
+     * @param downerBound inclusive
+     * @param upperBound exclusive
+     */
+	public static FiniteInterval<Integer> rangeOf(int downerBound, int upperBound){
+	    return new FiniteInterval<>(Calculators.getCalculatorInteger(),downerBound,upperBound-1);
+    }
 	
 	
 }

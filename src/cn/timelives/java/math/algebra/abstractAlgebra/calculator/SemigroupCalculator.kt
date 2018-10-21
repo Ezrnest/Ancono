@@ -22,6 +22,8 @@ interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T
      */
     override fun apply(x: T, y: T): T
 
+
+
     /**
      * Determines whether the operation is commutative. It is false by default.
      */
@@ -45,4 +47,24 @@ interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T
     fun gpow(x: T, n: Long): T {
         return ModelPatterns.binaryProduce(n, x) { a, b -> this.apply(a, b) }
     }
+
+    /**
+     * Operator function of add for [T].
+     * @see apply
+     */
+    operator fun T.plus(y : T) = apply(this,y)
+    /**
+     * Operator function for [T].
+     * @see gpow
+     */
+    operator fun Long.times(x : T) = gpow(x,this)
+
+    /**
+     * Operator function for [T].
+     * @see gpow
+     */
+    operator fun T.times(n : Long) = n * this
 }
+
+
+inline fun <T:Any,C:SemigroupCalculator<T>,R> C.eval(block : C.()->R) : R = this.run(block)

@@ -6,4 +6,4 @@
  * 2017-10-05 13:13
  *
  */
-package cn.timelives.java.math.algebra.calculus;
+package cn.timelives.java.math.calculus;

@@ -15,5 +15,7 @@ public class RegexSup {
 	public static final Pattern SPACE = Pattern.compile(" +");
 	
 	public static final Pattern LINE = Pattern.compile("^.*?$");
+
+	public static final Pattern LINE_SEPARATOR = Pattern.compile("(\r\n)|(\r)|(\n)");
 	
 }

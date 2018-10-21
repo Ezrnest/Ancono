@@ -7,7 +7,8 @@ import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.MathCalculatorHolder
 import cn.timelives.java.math.MathObject
 import cn.timelives.java.math.algebra.Polynomial
-import cn.timelives.java.math.algebra.calculus.*
+import cn.timelives.java.math.calculus.*
+import cn.timelives.java.math.calculus.Calculus.derivation
 import cn.timelives.java.math.numberModels.CalculatorUtils
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.utilities.ArraySup
@@ -52,10 +53,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     }
 
     /*
-	 * @see cn.timelives.java.math.algebra.calculus.Integrable#integrate()
+	 * @see cn.timelives.java.math.calculus.Integrable#integrate()
 	 */
     override fun integrate(): AbstractSVPFunction<T> {
-        return integration(this)
+        return Calculus.integration(this)
     }
 
     /* (non-Javadoc)

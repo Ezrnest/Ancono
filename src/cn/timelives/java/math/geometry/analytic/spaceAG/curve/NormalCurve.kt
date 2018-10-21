@@ -74,7 +74,7 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
      * `alpha(t)`,which is a unit vector parallel to tangent vector.
      */
     val alpha: VectorFunction<T>
-        get() = MathFunction.compose(tangentVector, MathFunction<SVector<T>, SVector<T>> { x -> x.unitVector() })
+        get() = MathFunction.andThen(tangentVector, MathFunction<SVector<T>, SVector<T>> { x -> x.unitVector() })
 
     /**
      * `beta(t)`,which is a unit vector parallel to main normal vector.

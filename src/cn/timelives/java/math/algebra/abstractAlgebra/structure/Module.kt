@@ -16,9 +16,9 @@ import cn.timelives.java.math.algebra.abstractAlgebra.calculator.ModuleCalculato
  * @author  liyicheng
  *
  */
-interface Module<T : Any, V : Any,G:Module<T,V,G>> : AbelianGroup<V, G> {
+interface Module<T : Any, V : Any> : AbelianGroup<V> {
 
-    val ring : Ring<T, *>
+    val basis : Ring<T>
 
     override fun getCalculator(): ModuleCalculator<T,V>
 

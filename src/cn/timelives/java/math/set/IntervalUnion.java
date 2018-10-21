@@ -428,7 +428,8 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	/**
 	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
-	@Override
+	@NotNull
+    @Override
     public <N> IntervalUnion<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new IntervalUnion<>(newCalculator, CollectionSup.mapList(is, x -> x.mapTo(mapper, newCalculator)));
 	}
@@ -701,8 +702,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	}
 	/**
 	 * Creates an IntervalUnion that only contains one interval:(-∞,+∞). This 
-	 * is equal to create an symmetricGroups.
-	 * @param interval an interval
+	 * is equal to create an universe math set.
 	 * @return {@literal (-∞,+∞)}
 	 */
 	public static <T> IntervalUnion<T> universe(MathCalculator<T> mc){

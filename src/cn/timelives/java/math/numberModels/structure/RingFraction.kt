@@ -2,11 +2,9 @@ package cn.timelives.java.math.numberModels.structure
 
 
 import cn.timelives.java.math.FlexibleMathObject
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.DivisionRingCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.RingCalculator
 import cn.timelives.java.math.exceptions.ExceptionUtil
-import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberModels.api.Simplifier
 
@@ -57,14 +55,14 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>) : FlexibleMathObje
         return RingFraction(mapper.apply(nume), mapper.apply(deno), ringCalculator)
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj === this) {
+    override fun equals(other: Any?): Boolean {
+        if (other === this) {
             return true
         }
-        if (obj !is RingFraction<*>) {
+        if (other !is RingFraction<*>) {
             return false
         }
-        val rf = obj as RingFraction<*>?
+        val rf = other as RingFraction<*>?
         return nume == rf!!.nume && deno == rf.deno
     }
 
@@ -81,17 +79,17 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>) : FlexibleMathObje
         override val one: RingFraction<T> = RingFraction(nonZero, nonZero, mc)
 
         fun valueOf(nume: T, deno: T): RingFraction<T> {
-            var nume = nume
-            var deno = deno
-            if (mc.isEqual(deno, mc.zero)) {
+            var nume1 = nume
+            var deno1 = deno
+            if (mc.isEqual(deno1, mc.zero)) {
                 ExceptionUtil.divideByZero()
             }
             if (sim != null) {
-                val pair = sim.simplify(nume, deno)
-                nume = pair.first
-                deno = pair.second
+                val pair = sim.simplify(nume1, deno1)
+                nume1 = pair.first
+                deno1 = pair.second
             }
-            return RingFraction(nume, deno, mc)
+            return RingFraction(nume1, deno1, mc)
         }
 
         override fun add(x: RingFraction<T>, y: RingFraction<T>): RingFraction<T> {

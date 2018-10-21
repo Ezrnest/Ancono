@@ -1,12 +1,15 @@
 /**
  * 2017-09-09
  */
-package cn.timelives.java.math.numberModels;
+package cn.timelives.java.math.numberTheory;
 
 
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.NotNull;
+
+import java.math.BigInteger;
 
 /**
  * NTCalculator represents number theory calculator, which provides some
@@ -22,7 +25,15 @@ import cn.timelives.java.utilities.structure.Pair;
  */
 public interface NTCalculator<T> extends MathCalculator<T> {
 
-	/**
+    /**
+     * Returns the "minimal" element in the type T.
+     * @return
+     */
+    @NotNull
+    @Override
+    T getOne();
+
+    /**
 	 * The number model used for number theory should be comparable.
 	 * @return
 	 */
@@ -114,6 +125,19 @@ public interface NTCalculator<T> extends MathCalculator<T> {
 	 *         {@code false}.
 	 */
 	boolean isInteger(T x);
+
+    /**
+     * Converts a value of type T to long, throws {@link UnsupportedOperationException} if
+     * this cannot be done.
+     */
+	default long asLong(T x){
+	    return asBigInteger(x).longValueExact();
+    }
+    /**
+     * Converts a value of type T to BigInteger, throws {@link UnsupportedOperationException} if
+     * this cannot be done.
+     */
+	BigInteger asBigInteger(T x);
 
 	/**
 	 * Determines whether the number is a quotient, which can be represented by

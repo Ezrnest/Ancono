@@ -436,20 +436,17 @@ class Test {
 	}
 	
 	static void progressionSum(){
-		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
+		MathCalculator<Fraction> mc = Fraction.getCalculator();
 		Progression<Fraction> a = Progression.createProgression(
-				l -> Fraction.Companion.valueOf(l).add(Fraction.Companion.getONE()).squareOf().reciprocal(),-1,mc);
+				l -> Fraction.valueOf(l).add(Fraction.ONE).squareOf().reciprocal(),-1,mc);
 		Progression<Fraction> b = Progression.createProgression(
-				new LongFunction<Fraction>(){
-					@Override
-					public Fraction apply(long value) {
-						Fraction sum = Fraction.Companion.getONE();
-						for(long l = 1; l < value;l++){
-							sum = sum.multiply(Fraction.Companion.getONE().minus(a.get(l)));
-						}
-						return sum;
-					}
-				},-1 , mc);
+                value -> {
+                    Fraction sum = Fraction.ONE;
+                    for(long l = 1; l < value;l++){
+                        sum = sum.multiply(Fraction.ONE.minus(a.get(l)));
+                    }
+                    return sum;
+                },-1 , mc);
 		a.limit(20).forEach(Printer::print);
 		b.limit(20).forEach(Printer::print);
 	}
@@ -458,7 +455,7 @@ class Test {
 		
 		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
 		Progression<Double> ps = Progression.
-				createProgression(l -> Math.sqrt(l), -1, mc);
+				createProgression(Math::sqrt, -1, mc);
 //		Progression<Long> p2 = ps.mapTo(d -> Math.round(d),
 //				Calculators.getCalculatorLong());
 //		p2.limit(100).forEach(Printer::print);

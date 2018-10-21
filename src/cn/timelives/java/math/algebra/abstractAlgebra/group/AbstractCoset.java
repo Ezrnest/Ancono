@@ -11,7 +11,7 @@ import cn.timelives.java.math.algebra.abstractAlgebra.structure.Group;
  * 2018-03-05 19:56
  *
  */
-public abstract class AbstractCoset<T, G extends Group<T,G>> implements Coset<T, G> {
+public abstract class AbstractCoset<T, G extends Group<T>> implements Coset<T, G> {
 	protected final G g,sub;
 	/**
 	 * 

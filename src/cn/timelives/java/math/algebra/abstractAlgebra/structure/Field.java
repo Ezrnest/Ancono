@@ -12,7 +12,7 @@ import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
  * @see <a href="https://en.wikipedia.org/wiki/Field_(mathematics)">Field</a>
  *
  */
-public interface Field<T,F extends Field<T, F>> extends IntegralDomain<T,F>, DivisionRing<T,F> {
+public interface Field<T> extends IntegralDomain<T>, DivisionRing<T> {
 	/**
 	 * Returns the field's calculator.
 	 */

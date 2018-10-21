@@ -1,4 +1,4 @@
-package cn.timelives.java.math.algebra.calculus
+package cn.timelives.java.math.calculus
 
 import cn.timelives.java.math.function.SVFunction
 

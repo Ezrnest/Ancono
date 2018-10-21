@@ -13,6 +13,7 @@ import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.RingNumberModel;
+import cn.timelives.java.math.numberTheory.NTCalculator;
 import cn.timelives.java.math.numberTheory.combination.CFunctions;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
@@ -20,6 +21,7 @@ import cn.timelives.java.utilities.structure.Pair;
 import cn.timelives.java.utilities.structure.WithInt;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -231,6 +233,10 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         return re;
     }
 
+    public boolean isZero(){
+        return isConstant() && getMc().isZero(getCoefficient(0));
+    }
+
     /**
      * Divides this polynomial by a number to get a new polynomial whose leading coefficient is one.
      */
@@ -270,6 +276,60 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         return new PolynomialX<>(mc, nmap, degree);
     }
 
+    public Pair<PolynomialX<T>,PolynomialX<T>> divideAndRemainder(PolynomialX<T> p2){
+        var p1 = this;
+        var mc = getMc();
+        if (p2.isZero()) {
+            throw new ArithmeticException("divide by zero!");
+        }
+        int mp1 = p1.degree, mp2 = p2.degree;
+        if (mp2 > mp1) {
+            return new Pair<>(zero(mc), p1);
+        }
+        if (isZero()) {
+            var zero = zero(mc);
+            return new Pair<>(zero, zero);
+        }
+        NavigableMap<Integer, T> remains = p1.getCoefficientMap();
+        TreeMap<Integer, T> quotient = new TreeMap<>();
+        T first = p2.getCoefficient(mp2);
+        List<WithInt<T>> toSubtract = new ArrayList<>(p2.map.size() - 1);
+        for (Entry<Integer, T> en : p2.map.entrySet()) {
+            int n = en.getKey();
+            if (n != mp2) {
+                toSubtract.add(new WithInt<>(n, en.getValue()));
+            }
+        }
+        //noinspection Duplicates
+        while (!remains.isEmpty()) {
+            Entry<Integer, T> en = remains.pollLastEntry();
+            int p = en.getKey() - mp2;
+            if (p < 0) {
+                remains.put(en.getKey(), en.getValue());
+                break;
+            }
+            T k = mc.divide(en.getValue(), first);
+            quotient.put(p, k);
+            for (WithInt<T> w : toSubtract) {
+                int n = p + w.getInt();
+                T a = mc.multiply(k, w.getObj());
+                remains.compute(n, (x, t) -> {
+                    if (t == null) {
+                        return mc.negate(a);
+                    }
+                    t = mc.subtract(t, a);
+                    if (mc.isZero(t)) {
+                        return null;
+                    }
+                    return t;
+                });
+            }
+        }
+        PolynomialX<T> qm = new PolynomialX<>(mc, quotient, mp1 - mp2);
+        PolynomialX<T> rm = remains.isEmpty() ? zero(mc) : new PolynomialX<>(mc, remains, remains.lastKey());
+        return new Pair<>(qm, rm);
+    }
+
     /**
      * Returns the difference of this polynomial. Assuming this is <code>f(x)</code>, then
      * the result is <code>f(x)-f(x-1)</code>.
@@ -304,7 +364,29 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
                 });
             }
         }
-        return new PolynomialX<>(mc, nmap, getDegree() - 1);
+        return new PolynomialX<>(mc, nmap, degree - 1);
+    }
+
+    /**
+     * Returns the derivative of this polynomial(formally), that is
+     * <text>sigma(n*a<sub>n</sub>x<sup>n-1</sup>, n from 1 to (<i>degree of this</i>-1))</text>
+     * @return the derivative of this polynomial(formally)
+     */
+    public PolynomialX<T> derivative(){
+        var mc = getMc();
+        if(degree == 0){
+            return zero(mc);
+        }
+        NavigableMap<Integer,T> nmap = new TreeMap<>();
+        for(var en : map.entrySet()){
+            int n = en.getKey();
+            if(n == 0){
+                continue;
+            }
+            T coe = en.getValue();
+            nmap.put(n-1,mc.multiplyLong(coe,n));
+        }
+        return new PolynomialX<>(mc, nmap, degree - 1);
     }
 
 
@@ -359,16 +441,16 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
 
     private static <T> PolynomialX<T> sumOfX2(MathCalculator<T> mc) {
         //1^2+2^2+...n^2 = n(n+1)(2n+1)/6 = 1/3*n^3+1/2*n^2+1/6*n
-        var c1 = CalculatorUtils.valueOfFraction(Fraction.Companion.valueOf(1, 3), mc);
-        var c2 = CalculatorUtils.valueOfFraction(Fraction.Companion.valueOf(1, 2), mc);
-        var c3 = CalculatorUtils.valueOfFraction(Fraction.Companion.valueOf(1, 6), mc);
+        var c1 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 3), mc);
+        var c2 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 2), mc);
+        var c3 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 6), mc);
         return PolynomialX.valueOf(mc, mc.getZero(), c3, c2, c1);
     }
 
     private static <T> PolynomialX<T> sumOfX3(MathCalculator<T> mc) {
         //1^2+2^2+...n^2 = (n(n+1)/2)^2 = 1/4*n^4+1/2*n^3+1/4*n^2
-        var c1 = CalculatorUtils.valueOfFraction(Fraction.Companion.valueOf(1, 4), mc);
-        var c2 = CalculatorUtils.valueOfFraction(Fraction.Companion.valueOf(1, 2), mc);
+        var c1 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 4), mc);
+        var c2 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 2), mc);
         var o = mc.getZero();
         return PolynomialX.valueOf(mc, o, o, c1, c2, c1);
     }
@@ -595,6 +677,35 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
     }
 
     /**
+     * Converts a polynomial to a PolynomialX.
+     */
+    public static <T> PolynomialX<T> fromPolynomial(Polynomial<T> p,MathCalculator<T> mc){
+        if(p instanceof PolynomialX){
+            return (PolynomialX<T>) p;
+        }
+        int degree = p.getDegree();
+        if(degree == 0){
+            return zero(mc);
+        }
+        NavigableMap<Integer,T> map = new TreeMap<>();
+        for(int i=0;i<degree;i++){
+            T coe = p.getCoefficient(i);
+            if(!mc.isZero(coe)){
+                map.put(i,coe);
+            }
+        }
+        T lead = p.getCoefficient(degree);
+        if(mc.isZero(lead)){
+            throw new ArithmeticException("The top term of a polynomial is zero!");
+        }
+        map.put(degree,lead);
+        if(map.isEmpty()){
+            throw new ArithmeticException("All terms of a polynomial of non-zero degree are zero!");
+        }
+        return new PolynomialX<>(mc,map,degree);
+    }
+
+    /**
      * Returns a polynomial that is equal to <code>multiplyAll(x-roots[i])</code>.
      * If <code>roots.length==0</code>, then the result is <code>1</code>
      * @param mc a MathCalculator
@@ -701,6 +812,8 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
             return mc;
         }
 
+
+
         /*
          * @see cn.timelives.java.math.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
          */
@@ -715,6 +828,12 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         @Override
         public int compare(@NotNull PolynomialX<T> para1, @NotNull PolynomialX<T> para2) {
             return para1.compareTo(para2);
+        }
+
+
+        @Override
+        public BigInteger asBigInteger(PolynomialX<T> x) {
+            throw new UnsupportedOperationException();
         }
 
         /*
@@ -791,14 +910,14 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
          * @return a pair of the quotient and the reminder.
          */
         public Pair<PolynomialX<T>, PolynomialX<T>> divideAndReminder(PolynomialX<T> p1, PolynomialX<T> p2) {
-            if (isZero(p2)) {
+            if (p2.isZero()) {
                 throw new ArithmeticException("divide by zero!");
             }
             int mp1 = p1.degree, mp2 = p2.degree;
             if (mp2 > mp1) {
-                return new Pair<>(zero, p1);
+                return new Pair<>(zero(mc), p1);
             }
-            if (isZero(p1)) {
+            if (p1.isZero()) {
                 return new Pair<>(zero, zero);
             }
             NavigableMap<Integer, T> remains = p1.getCoefficientMap();
@@ -811,6 +930,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
                     toSubtract.add(new WithInt<>(n, en.getValue()));
                 }
             }
+            //noinspection Duplicates
             while (!remains.isEmpty()) {
                 Entry<Integer, T> en = remains.pollLastEntry();
                 int p = en.getKey() - mp2;
@@ -992,7 +1112,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         }
 
         /*
-         * @see cn.timelives.java.math.numberModels.NTCalculator#isInteger(java.lang.Object)
+         * @see cn.timelives.java.math.numberTheory.NTCalculator#isInteger(java.lang.Object)
          */
         @Override
         public boolean isInteger(PolynomialX<T> x) {
@@ -1000,7 +1120,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         }
 
         /*
-         * @see cn.timelives.java.math.numberModels.NTCalculator#isQuotient(java.lang.Object)
+         * @see cn.timelives.java.math.numberTheory.NTCalculator#isQuotient(java.lang.Object)
          */
         @Override
         public boolean isQuotient(PolynomialX<T> x) {
@@ -1008,7 +1128,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         }
 
         /*
-         * @see cn.timelives.java.math.numberModels.NTCalculator#mod(java.lang.Object, java.lang.Object)
+         * @see cn.timelives.java.math.numberTheory.NTCalculator#mod(java.lang.Object, java.lang.Object)
          */
         @Override
         public PolynomialX<T> mod(PolynomialX<T> a, PolynomialX<T> b) {
@@ -1016,22 +1136,20 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         }
 
         /*
-         * @see cn.timelives.java.math.numberModels.NTCalculator#divideToInteger(java.lang.Object, java.lang.Object)
+         * @see cn.timelives.java.math.numberTheory.NTCalculator#divideToInteger(java.lang.Object, java.lang.Object)
          */
         @Override
         public PolynomialX<T> divideToInteger(PolynomialX<T> a, PolynomialX<T> b) {
             return divideAndReminder(a, b).getFirst();
         }
-
-
     }
 
 //    public static void main(String[] args) {
-//        var mc = Fraction.Companion.getCalculator();
-//        var p1 = Point.valueOf(Fraction.Companion.valueOf("-1"),Fraction.Companion.valueOf("1"),mc);
-//        var p2 = Point.valueOf(Fraction.Companion.valueOf("0"),Fraction.Companion.valueOf("0"),mc);
-//        var p3 = Point.valueOf(Fraction.Companion.valueOf("1"),Fraction.Companion.valueOf("1"),mc);
-//        var p = PolynomialX.valueOf(Calculators.getCalculatorLongExact(), 1L, 1L).mapTo(Fraction.Companion::valueOf,mc);
+//        var mc = Fraction.getCalculator();
+//        var p1 = Point.valueOf(Fraction.valueOf("-1"),Fraction.valueOf("1"),mc);
+//        var p2 = Point.valueOf(Fraction.valueOf("0"),Fraction.valueOf("0"),mc);
+//        var p3 = Point.valueOf(Fraction.valueOf("1"),Fraction.valueOf("1"),mc);
+//        var p = PolynomialX.valueOf(Calculators.getCalculatorLongExact(), 1L, 1L).mapTo(Fraction::valueOf,mc);
 ////        print(lagrangeInterpolation(p1,p2,p3));
 //        print(p);
 //        print(p.difference().sumOfN());

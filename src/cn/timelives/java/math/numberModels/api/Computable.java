@@ -3,6 +3,7 @@ package cn.timelives.java.math.numberModels.api;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
 
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
@@ -28,16 +29,56 @@ public interface Computable {
      * The default implement of this method is <pre>
      *     return compute(x -> valueMap.applyAsDouble(x),Calculators.getCalculatorDoubleDev());
      * </pre>
-     * @param valueMap a value mao
-     * @return
+     * @param valueMap a value map
+     * @return the result as double
      * @throws ArithmeticException if the result exceeds double
      */
     default double computeDouble(ToDoubleFunction<String> valueMap){
         return compute(valueMap::applyAsDouble,Calculators.getCalculatorDoubleDev());
     }
 
+
+
     ToDoubleFunction<String> ASSIGN_ONE = ch -> 1d;
 
+    ToDoubleFunction<String> DEFAULT_ASSIGNMENT = name -> {
+        switch (name){
+            case MathCalculator.STR_E: return Math.E;
+            case MathCalculator.STR_PI: return Math.PI;
+        }
+        return 1d;
+    };
 
+    /**
+     * Returns a composed function which will apply default values to variables if
+     * the given valueMap assigns the value to NaN. The default values assign {@linkplain MathCalculator#STR_PI}
+     * to {@linkplain Math#PI}, {@linkplain MathCalculator#STR_E}
+     * to {@linkplain Math#E}, and remaining variables to one.
+     * @param valueMap a mapping function which can return NaN.
+     */
+    static ToDoubleFunction<String> withDefault(ToDoubleFunction<String> valueMap){
+        return name -> {
+            double re = valueMap.applyAsDouble(name);
+            if(!Double.isNaN(re)){
+                return re;
+            }
+            return DEFAULT_ASSIGNMENT.applyAsDouble(name);
+        };
+    }
+
+    /**
+     * Returns a composed function which will apply default values to variables if
+     * the given valueMap doesn't contain the variable name.
+     * @param valueMap a map
+     */
+    static ToDoubleFunction<String> withDefault(Map<String,Double> valueMap){
+        return name -> {
+            Double d = valueMap.get(name);
+            if(d != null){
+                return d;
+            }
+            return DEFAULT_ASSIGNMENT.applyAsDouble(name);
+        };
+    }
 
 }

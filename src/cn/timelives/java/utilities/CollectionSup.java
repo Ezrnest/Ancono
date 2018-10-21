@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.utilities;
 
+import cn.timelives.java.math.algebra.abstractAlgebra.EqualRelation;
 import cn.timelives.java.utilities.structure.Pair;
 
 import java.util.*;
@@ -35,6 +36,59 @@ public final class CollectionSup {
 		}
 		return re;
 	}
+
+
+	public static <T,S> ListIterator<S> mappedListIterator(ListIterator<T> lit, Function<T,S> mapper){
+	    return new ListIterator<S>() {
+            @Override
+            public boolean hasNext() {
+                return lit.hasNext();
+            }
+
+            @Override
+            public S next() {
+                return mapper.apply(lit.next());
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return lit.hasPrevious();
+            }
+
+            @Override
+            public S previous() {
+                return  mapper.apply(lit.previous());
+            }
+
+            @Override
+            public int nextIndex() {
+                return lit.nextIndex();
+            }
+
+            @Override
+            public int previousIndex() {
+                return lit.previousIndex();
+            }
+
+            @Override
+            public void remove() {
+                lit.remove();
+            }
+
+            @Override
+            public void set(S s) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void add(S s) {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+
+
 	/**
 	 * Applies {@code mapper} to the list and then add the result to {@code dest}. 
 	 * @param list
@@ -263,7 +317,8 @@ public final class CollectionSup {
     /**
      * Computes the descartes product of the two given iterable and adds the result elements to <code>re</code>
      */
-    public static <T,S extends Collection<List<T>>> S descartesProductMultiple(S dest,Collection<T>...collections){
+    @SafeVarargs
+    public static <T,S extends Collection<List<T>>> S descartesProductMultiple(S dest, Collection<T>...collections){
 
         appendAndAdd(dest,collections,0,new ArrayList<>(collections.length),collections.length);
         return dest;
@@ -290,5 +345,23 @@ public final class CollectionSup {
         }
     }
 
+
+    public static <T> List<List<T>> partition(Iterable<T> collection, EqualRelation<T> er){
+        List<List<T>> result = new ArrayList<>();
+        OUTER:
+        for(var t : collection){
+            for(var equalClass : result){
+                T rep = equalClass.get(0);
+                if(er.test(t,rep)){
+                    equalClass.add(t);
+                    continue OUTER;
+                }
+            }
+            var list = new ArrayList<T>();
+            list.add(t);
+            result.add(list);
+        }
+        return result;
+    }
 
 }

@@ -19,9 +19,10 @@ import java.util.function.BiPredicate;
 /**
  * A polynomial is an math expression of a variable, usually called {@code x}, with
  * defined operations <i>add</i> and <i>multiply</i>. Generally, a polynomial can be shown as
- * <pre>a_n*x^n + ... + a_1*x + a0 , (a_n!=0,n>=0)</pre> The operator {@literal x^n} represents
+ * <pre>a<sub>n</sub>*x<sup>n</sup> + ... + a<sub>1</sub>*x + a<sub>0</sub>, (a<sub>n</sub>!=0,n>=0)</pre>
+ * The operator <code>x<sup>n</sup></code> represents
  * for multiply {@code x} for {@code n} times. {@code n} is called the power of {@code x} and
- * {@code a_n} is called the coefficient.
+ * <code>a<sub>n</sub></code> is called the coefficient.
  *
  * @author liyicheng
  * 2017-10-06 16:51
@@ -76,11 +77,6 @@ public interface Polynomial<T> extends Iterable<T> {
 
     /**
      * Determines whether the two polynomial are equal.
-     *
-     * @param m1
-     * @param m2
-     * @param equal
-     * @return
      */
     public static <T, S> boolean isEqual(Polynomial<T> m1, Polynomial<S> m2, BiPredicate<T, S> equal) {
         if (m1.getDegree() != m2.getDegree()) {
@@ -98,10 +94,6 @@ public interface Polynomial<T> extends Iterable<T> {
     /**
      * Determines whether the two polynomial are equal, using the
      * equals() method in object.
-     *
-     * @param m1
-     * @param m2
-     * @return
      */
     public static boolean isEqual(Polynomial<?> m1, Polynomial<?> m2) {
         if (m1.getDegree() != m2.getDegree()) {
@@ -126,7 +118,6 @@ public interface Polynomial<T> extends Iterable<T> {
      * return hash;</code>
      *
      * @param m a Polynomial
-     * @return
      */
     public static int hashCodeOf(Polynomial<?> m) {
         int hash = 0;
@@ -189,8 +180,6 @@ public interface Polynomial<T> extends Iterable<T> {
 
     /**
      * Returns the last non-zero term in this polynomial,
-     *
-     * @return
      */
     static <T, S extends Polynomial<T> & MathCalculatorHolder<T>> T last(S s) {
         var mc = s.getMathCalculator();

@@ -103,11 +103,11 @@ public class TestSet {
 		v2 = Interval.openInterval(2, 6, mc);
 		v3 = Interval.closedInterval(2, 2, mc);
 		IntervalUnion<Integer> in2 = IntervalUnion.valueOf(v1, v2,v3);
-		assertTrue("S union complement(S) is symmetricGroups", IntervalUnion.universe(mc).valueEquals(in1.union(in1.complement())));
-		assertTrue("S union complement(S) is symmetricGroups", IntervalUnion.universe(mc).valueEquals(in2.union(in2.complement())));
-		assertTrue("The complement of symmetricGroups is empty", IntervalUnion.universe(mc).complement().valueEquals(IntervalUnion.empty(mc)));
+		assertTrue("S union complement(S) is symmetric", IntervalUnion.universe(mc).valueEquals(in1.union(in1.complement())));
+		assertTrue("S union complement(S) is symmetric", IntervalUnion.universe(mc).valueEquals(in2.union(in2.complement())));
+		assertTrue("The complement of symmetric is empty", IntervalUnion.universe(mc).complement().valueEquals(IntervalUnion.empty(mc)));
 //		print(IntervalUnion.empty(mc).complement());
-		assertTrue("The complement of empty is symmetricGroups", IntervalUnion.empty(mc).complement().valueEquals(IntervalUnion.universe(mc)));
+		assertTrue("The complement of empty is symmetric", IntervalUnion.empty(mc).complement().valueEquals(IntervalUnion.universe(mc)));
 	}
 	
 	@SafeVarargs

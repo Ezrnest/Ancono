@@ -6,12 +6,12 @@ package cn.timelives.java.math.numberModels;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.math.numberTheory.NTCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
-import java.util.logging.Logger;
 
 /**
  * Provides some utility methods for {@link MathCalculator}
@@ -281,7 +281,7 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
@@ -479,7 +479,7 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#divideToInteger(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#divideToInteger(java.lang.Object, java.lang.Object)
 		 */
 		@NotNull
 		@Override
@@ -487,7 +487,7 @@ public final class Calculators {
 			return a/b;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#mod(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#mod(java.lang.Object, java.lang.Object)
 		 */
 		@NotNull
 		@Override
@@ -497,14 +497,14 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isInteger(java.lang.Object)
+		 * @see NTCalculator#isInteger(java.lang.Object)
 		 */
 		@Override
 		public boolean isInteger(Integer x) {
 			return true;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isQuotient(java.lang.Object)
+		 * @see NTCalculator#isQuotient(java.lang.Object)
 		 */
 		@Override
 		public boolean isQuotient(Integer x) {
@@ -512,21 +512,21 @@ public final class Calculators {
 		}
 
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#gcd(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#gcd(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public Integer gcd(Integer a, Integer b) {
 			return MathUtils.gcd(a,b);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#decrease(java.lang.Object)
+		 * @see NTCalculator#decrease(java.lang.Object)
 		 */
 		@Override
 		public Integer decrease(Integer x) {
 			return x-1;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#increase(java.lang.Object)
+		 * @see NTCalculator#increase(java.lang.Object)
 		 */
 		@Override
 		public Integer increase(Integer x) {
@@ -534,28 +534,28 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isEven(java.lang.Object)
+		 * @see NTCalculator#isEven(java.lang.Object)
 		 */
 		@Override
 		public boolean isEven(Integer x) {
 			return (x&1) == 0;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isOdd(java.lang.Object)
+		 * @see NTCalculator#isOdd(java.lang.Object)
 		 */
 		@Override
 		public boolean isOdd(Integer x) {
 			return (x&1) != 0;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isPositive(java.lang.Object)
+		 * @see NTCalculator#isPositive(java.lang.Object)
 		 */
 		@Override
 		public boolean isPositive(Integer x) {
 			return x>0;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#reminder(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#reminder(java.lang.Object, java.lang.Object)
 		 */
 		@NotNull
 		@Override
@@ -563,29 +563,40 @@ public final class Calculators {
 			return a%b;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#deg(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#deg(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public Integer deg(Integer a, Integer b) {
 			return MathUtils.deg(a, b);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public boolean isExactDivide(Integer a, Integer b) {
 			return a%b==0;
 		}
-		
+
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public Integer powerAndMod(Integer a, Integer n, Integer m) {
 			return MathUtils.powerAndMod(a, n, m);
 		}
 
-		@NotNull
+
+        @Override
+        public BigInteger asBigInteger(Integer x) {
+            return BigInteger.valueOf(x);
+        }
+
+        @Override
+        public long asLong(Integer x) {
+            return x;
+        }
+
+        @NotNull
 		@Override
 		public Class<Integer> getNumberClass() {
 			return Integer.class;
@@ -800,7 +811,7 @@ public final class Calculators {
 	public static class LongCalculator extends MathCalculatorAdapter<Long> implements NTCalculator<Long> {
 		private static final LongCalculator cal = new LongCalculator();
 		
-		LongCalculator(){};
+		LongCalculator(){}
 		
 		@Override
         public boolean isEqual(@NotNull Long x, @NotNull Long y) {
@@ -966,7 +977,7 @@ public final class Calculators {
 			return true;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isQuotient(java.lang.Object)
+		 * @see NTCalculator#isQuotient(java.lang.Object)
 		 */
 		@Override
 		public boolean isQuotient(Long x) {
@@ -974,21 +985,21 @@ public final class Calculators {
 		}
 
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#gcd(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#gcd(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public Long gcd(Long a, Long b) {
 			return MathUtils.gcd(a,b);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#decrease(java.lang.Object)
+		 * @see NTCalculator#decrease(java.lang.Object)
 		 */
 		@Override
 		public Long decrease(Long x) {
 			return x-1;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#increase(java.lang.Object)
+		 * @see NTCalculator#increase(java.lang.Object)
 		 */
 		@Override
 		public Long increase(Long x) {
@@ -996,28 +1007,28 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isEven(java.lang.Object)
+		 * @see NTCalculator#isEven(java.lang.Object)
 		 */
 		@Override
 		public boolean isEven(Long x) {
 			return (x&1) == 0;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isOdd(java.lang.Object)
+		 * @see NTCalculator#isOdd(java.lang.Object)
 		 */
 		@Override
 		public boolean isOdd(Long x) {
 			return (x&1) != 0;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isPositive(java.lang.Object)
+		 * @see NTCalculator#isPositive(java.lang.Object)
 		 */
 		@Override
 		public boolean isPositive(Long x) {
 			return x>0;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#reminder(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#reminder(java.lang.Object, java.lang.Object)
 		 */
 		@NotNull
 		@Override
@@ -1025,7 +1036,7 @@ public final class Calculators {
 			return a%b;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#deg(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#deg(java.lang.Object, java.lang.Object)
 		 */
 		@NotNull
 		@Override
@@ -1033,12 +1044,22 @@ public final class Calculators {
 			return (long) MathUtils.deg(a, b);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public boolean isExactDivide(Long a, Long b) {
 			return a%b==0;
 		}
+
+        @Override
+        public BigInteger asBigInteger(Long x) {
+            return BigInteger.valueOf(x);
+        }
+
+        @Override
+        public long asLong(Long x) {
+            return x;
+        }
 
 
 		@NotNull
@@ -1189,7 +1210,7 @@ public final class Calculators {
 			return a.divide(b);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#mod(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#mod(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
@@ -1203,7 +1224,7 @@ public final class Calculators {
 			return true;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isQuotient(java.lang.Object)
+		 * @see NTCalculator#isQuotient(java.lang.Object)
 		 */
 		@Override
 		public boolean isQuotient(BigInteger x) {
@@ -1211,21 +1232,21 @@ public final class Calculators {
 		}
 
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#gcd(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#gcd(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public BigInteger gcd(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.gcd(b);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#decrease(java.lang.Object)
+		 * @see NTCalculator#decrease(java.lang.Object)
 		 */
 		@Override
 		public BigInteger decrease(@NotNull BigInteger x) {
 			return x.subtract(BigInteger.ONE);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#increase(java.lang.Object)
+		 * @see NTCalculator#increase(java.lang.Object)
 		 */
 		@Override
 		public BigInteger increase(@NotNull BigInteger x) {
@@ -1233,47 +1254,52 @@ public final class Calculators {
 		}
 		
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isEven(java.lang.Object)
+		 * @see NTCalculator#isEven(java.lang.Object)
 		 */
 		@Override
 		public boolean isEven(@NotNull BigInteger x) {
 			return !x.testBit(0);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isOdd(java.lang.Object)
+		 * @see NTCalculator#isOdd(java.lang.Object)
 		 */
 		@Override
 		public boolean isOdd(@NotNull BigInteger x) {
 			return x.testBit(0);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isPositive(java.lang.Object)
+		 * @see NTCalculator#isPositive(java.lang.Object)
 		 */
 		@Override
 		public boolean isPositive(@NotNull BigInteger x) {
 			return x.signum()>0;
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#reminder(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#reminder(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public BigInteger reminder(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.remainder(b);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public boolean isExactDivide(@NotNull BigInteger a, @NotNull BigInteger b) {
 			return a.mod(b).equals(BigInteger.ZERO);
 		}
 		/**
-		 * @see cn.timelives.java.math.numberModels.NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+		 * @see NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public BigInteger powerAndMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
 			return a.modPow(n, mod);
 		}
+
+        @Override
+        public BigInteger asBigInteger(BigInteger x) {
+            return x;
+        }
 
 		@NotNull
 		@Override

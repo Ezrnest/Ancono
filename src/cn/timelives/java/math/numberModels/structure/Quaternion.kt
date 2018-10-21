@@ -3,7 +3,10 @@ package cn.timelives.java.math.numberModels.structure
 import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.MathObject
 import cn.timelives.java.math.MathObjectExtend
+import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.DivisionRingCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.asGroupCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector
 import cn.timelives.java.math.numberModels.Calculators
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
@@ -146,8 +149,43 @@ class Quaternion<T : Any>(mc: MathCalculator<T>, val a: T, val b: T, val c: T, v
             return mc.zero.let { Quaternion(mc, it, it, it, it) }
         }
 
+        fun <T : Any> one(mc: MathCalculator<T>): Quaternion<T> {
+            return mc.run { Quaternion(mc,one,zero,zero,zero) }
+        }
+
+        fun <T : Any> baseI(mc : MathCalculator<T>) : Quaternion<T>{
+            return mc.run { Quaternion(mc,zero,one,zero,zero) }
+        }
+
+        fun <T : Any> baseJ(mc : MathCalculator<T>) : Quaternion<T>{
+            return mc.run { Quaternion(mc,zero,zero,one,zero) }
+        }
+
+        fun <T : Any> baseK(mc : MathCalculator<T>) : Quaternion<T>{
+            return mc.run { Quaternion(mc,zero,zero,zero,one) }
+        }
+
+
         fun <T : Any> getCalculator(mc: MathCalculator<T>): QuaternionCalculator<T> {
             return QuaternionCalculator(mc)
+        }
+
+        /**
+         * Returns the quaternion eight-group, whose elements are `1,-1,i,j,k,-i,-j,-k` and
+         * the group operation is multiplication.
+         */
+        fun <T:Any> quaternionGroup(mc : MathCalculator<T>) : AbstractFiniteGroup<Quaternion<T>>{
+            val qc = getCalculator(mc)
+            val gc = qc.asGroupCalculator()
+            val e = one(mc)
+            val i = baseI(mc)
+            val j = baseJ(mc)
+            val k = baseK(mc)
+            val _e = -e
+            val _i = -i
+            val _j = -j
+            val _k = -k
+            return FiniteGroups.createGroupWithoutCheck(gc,e,i,j,k,_e,_i,_j,_k)
         }
     }
 }

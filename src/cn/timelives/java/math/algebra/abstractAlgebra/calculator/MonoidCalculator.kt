@@ -26,4 +26,7 @@ interface MonoidCalculator<T : Any> : SemigroupCalculator<T> {
             identity
         } else super.gpow(x, n)
     }
+
+    val numberClass : Class<*>
+        get() = identity.javaClass
 }

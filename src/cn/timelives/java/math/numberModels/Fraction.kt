@@ -615,8 +615,8 @@ internal constructor(
             return x == y
         }
 
-        override fun compare(para1: Fraction, para2: Fraction): Int {
-            return para1.compareTo(para2)
+        override fun compare(x: Fraction, y: Fraction): Int {
+            return x.compareTo(y)
         }
 
         override val isComparable: Boolean = true
@@ -835,14 +835,17 @@ internal constructor(
          * A Fraction representing `0` with zero as numerator ,
          * one as denominator and zero for sign number.
          */
+        @JvmField
         val ZERO = Fraction(0, 1, 0)
         /**
          * A Fraction representing `1`.
          */
+        @JvmField
         val ONE = Fraction(1, 1, 1)
         /**
          * A Fraction representing `-1`
          */
+        @JvmField
         val NEGATIVE_ONE = Fraction(1, 1, -1)
 
 
@@ -853,7 +856,7 @@ internal constructor(
             re[1] = den / g
             return re
         }
-
+        @JvmStatic
         fun valueOf(number: Long): Fraction {
             return when {
                 number == 0L -> ZERO
@@ -871,6 +874,7 @@ internal constructor(
          * @param denominator the denominator of the fraction, non-zero
          * @return a new fraction
          */
+        @JvmStatic
         fun valueOf(numerator: Long, denominator: Long): Fraction {
             var numerator1 = numerator
             var denominator1 = denominator
@@ -900,6 +904,7 @@ internal constructor(
          * @param d a number
          * @return a fraction
          */
+        @JvmStatic
         fun valueOfDouble(d: Double, precision: Int): Fraction {
             var d1 = d
             if (precision <= 0 || precision > maxPrecision) {
@@ -931,6 +936,7 @@ internal constructor(
          * @param bound the bound of the fraction, must be at least one.
          * @return a fraction that is the best approximate
          */
+        @JvmStatic
         fun bestApproximate(x: Double, bound: Long = 10000_0000, conFraLenBound : Int = 16): Fraction {
             var x1 = x
             if (bound < 1) {
@@ -976,7 +982,7 @@ internal constructor(
                 Fraction.ZERO
             } else Fraction(f[0], f[1], signum)
         }
-
+        @JvmStatic
         fun continuousFraction(x : Double, len : Int) : LongArray{
             return NaiveNumberTheory.continuousFractionReduce(x,len)
         }
@@ -984,6 +990,7 @@ internal constructor(
         /**
          * @param index the highest element in the array to compute from
          */
+        @JvmStatic
         fun computeContinuousFraction(array: LongArray, index: Int = array.lastIndex): LongArray {
             var index1 = index
             var nume = array[index1]
@@ -1003,6 +1010,7 @@ internal constructor(
         /**
          * Identify the given expression
          */
+        @JvmStatic
         val EXPRESSION_PATTERN: Pattern = Pattern.compile("[+\\-]?\\d+(/\\d+)?")
         // *([\\+\\-]?\\d+(\\/\\d+)?) * another replacement which
         /**
@@ -1011,6 +1019,7 @@ internal constructor(
          * @param expr the expression
          * @return
          */
+        @JvmStatic
         fun valueOf(expr: String): Fraction {
             val m = EXPRESSION_PATTERN.matcher(expr)
             if (m.matches()) {
@@ -1035,6 +1044,7 @@ internal constructor(
          * @param n a number
          * @return a positive number , 0 , a negative number if the given fraction is bigger than , equal to or smaller than `n`.
          */
+        @JvmStatic
         fun compareFraction(f: Fraction, n: Long): Int {
             return java.lang.Long.signum(f.signum * f.numerator - f.denominator * n)
         }
@@ -1045,11 +1055,12 @@ internal constructor(
          * @param n a number
          * @return a positive number , 0 , a negative number if the given fraction is bigger than , equal to or smaller than `n`.
          */
+        @JvmStatic
         fun compareFraction(f: Fraction, n: Double): Int {
             val d = f.toDouble() - n
             return if (d < 0) -1 else if (d == 0.0) 0 else 1
         }
-
+        @JvmStatic
         fun valueOf(signum: Int, numerator: Long, denominator: Long): Fraction {
             if (signum == 0) {
                 return ZERO
@@ -1075,6 +1086,7 @@ internal constructor(
          * The calculator does not have any constant values.
          * @return a fraction calculator
          */
+        @JvmStatic
         val calculator: FractionCalculator
             get() = FractionCalculator.cal
 
@@ -1086,6 +1098,7 @@ internal constructor(
          * This simplifier will ignore overflows.
          * @return a simplifier
          */
+        @JvmStatic
         val fractionSimplifier: Simplifier<Fraction>
             get() = fs
 
@@ -1095,20 +1108,20 @@ internal constructor(
 
 }
 
-fun main(args: Array<String>) {
-//    val f1 = Fraction.valueOf(-4, 3)
-//    println(f1.floor())
-//    println(f1.ceil())
-    val t = Math.sqrt(1.7)
-    for(len in 1 .. 5){
-        val frac = Fraction.bestApproximate(t, conFraLenBound = len)
-        println(frac)
-        val diff = Math.abs(t-frac.toDouble())
-        for(f in NaiveNumberTheory.fareySequence(frac.denominator-1)){
-            if(Math.abs(f.toDouble()-(t-Math.floor(t)))<diff){
-                println("! $f")
-            }
-        }
-    }
-
-}
+//fun main(args: Array<String>) {
+////    val f1 = Fraction.valueOf(-4, 3)
+////    println(f1.floor())
+////    println(f1.ceil())
+//    val t = Math.sqrt(1.7)
+//    for(len in 1 .. 5){
+//        val frac = Fraction.bestApproximate(t, conFraLenBound = len)
+//        println(frac)
+//        val diff = Math.abs(t-frac.toDouble())
+//        for(f in NaiveNumberTheory.fareySequence(frac.denominator-1)){
+//            if(Math.abs(f.toDouble()-(t-Math.floor(t)))<diff){
+//                println("! $f")
+//            }
+//        }
+//    }
+//
+//}

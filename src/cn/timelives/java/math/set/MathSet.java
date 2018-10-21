@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package cn.timelives.java.math.set;
 
@@ -8,17 +8,19 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.function.Bijection;
 import cn.timelives.java.math.function.MathFunction;
+import cn.timelives.java.math.property.Mappable;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Math set is a type of set that contains elements which are unique from each other, but 
+ * Math set is a type of set that contains elements which are unique from each other, but
  * only provides {@link #contains(Object)} method. The MathSet should always uses {@link MathCalculator#isEqual(Object, Object)}
  * method to test whether the two elements is the identity.<p>
  * A MathSet should always be immutable, which is the identity as the general idea for {@link MathObject}.
- * Therefore, add, remove union and intersect operations are not provided. 
+ * Therefore, add, remove union and intersect operations are not provided.
  * @author liyicheng
  *
  */
-public interface MathSet<T>{
+public interface MathSet<T> extends Mappable<T> {
 
 	/**
 	 * Determines whether this set contains this set.
@@ -34,7 +36,8 @@ public interface MathSet<T>{
 	 * @param <S> the new type S
 	 * @return a MathSet of type S
 	 */
-	default <S> MathSet<S> mapTo(Bijection<T, S> f) {
+	@NotNull
+    default <S> MathSet<S> mapTo(@NotNull Bijection<T, S> f) {
 		return s -> this.contains(f.deply(s));
 	}
 }

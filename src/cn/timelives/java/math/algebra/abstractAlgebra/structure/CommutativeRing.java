@@ -9,6 +9,6 @@ package cn.timelives.java.math.algebra.abstractAlgebra.structure;
  * 2018-02-28 18:39
  *
  */
-public interface CommutativeRing<T,R extends CommutativeRing<T,R>> extends Ring<T,R> {
+public interface CommutativeRing<T> extends Ring<T> {
 	
 }

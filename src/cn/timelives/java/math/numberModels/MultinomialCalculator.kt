@@ -208,10 +208,20 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     }
 
     override fun log(a: Multinomial, b: Multinomial): Multinomial {
-        throw UnsupportedCalculationException()
+        throw UnsupportedCalculationException()//TODO
     }
 
     override fun ln(x: Multinomial): Multinomial {
+        if(!x.isMonomial){
+            throw UnsupportedCalculationException()
+        }
+        val t = x.first
+        if(t == Term.ONE){
+            return ZERO
+        }
+        if(t.haveSameChar(Term.E) && t.isCoefficientOne){
+            return monomial(Term.valueOf(t.getCharacterPower(MathCalculator.STR_E)))
+        }
         throw UnsupportedCalculationException()
     }
 
@@ -278,12 +288,12 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
             return ONE
         }
         if (f.haveSameChar(Term.PI)) {
-            if (f.radical == BigInteger.ONE == false) {
+            if (f.radical != BigInteger.ONE) {
                 return null
             }
             // ... pi
             var nega = false
-            if (f.isPositive == false) {
+            if (!f.isPositive) {
                 f = f.negate()
             }
 

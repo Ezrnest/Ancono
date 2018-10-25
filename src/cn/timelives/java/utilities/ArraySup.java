@@ -746,15 +746,13 @@ public class ArraySup {
 	
 	/**
 	 * Test that this array contains no {@code null} element.
-	 * @param arr
-	 * @return
 	 */
 	public static <T> T[] notEmpty(T[] arr){
-		for(int i=0;i<arr.length;i++){
-			if(arr[i] == null){
-				throw new NullPointerException();
-			}
-		}
+        for (T anArr : arr) {
+            if (anArr == null) {
+                throw new NullPointerException();
+            }
+        }
 		return arr;
 	}
 	/**

@@ -5,6 +5,7 @@ package cn.timelives.java.utilities;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.EqualRelation;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -87,6 +88,23 @@ public final class CollectionSup {
         };
     }
 
+    public static <T,S> Iterator<S> mappedIterator(Iterator<T> it, Function<T,S> mapper){
+	    return new Iterator<S>() {
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
+
+            @Override
+            public S next() {
+                return mapper.apply(it.next());
+            }
+        };
+    }
+
+    public static <T,S> Iterable<S> mappedIterable(Iterable<T> iterable, Function<T,S> mapper){
+	    return () -> mappedIterator(iterable.iterator(),mapper);
+    }
 
 
 	/**

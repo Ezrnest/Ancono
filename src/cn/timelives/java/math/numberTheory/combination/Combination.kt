@@ -53,9 +53,9 @@ fun enumComb(n: Int, m: Int): MutableIterator<IntArray> {
         }
 
         private fun findNextPos(arr: BooleanArray, pos: Int): Int {
-            val n = pos+1
-            if(n < arr.size && !arr[n]){
-                return n
+            val next = pos+1
+            if(next < arr.size && !arr[next]){
+                return next
             }
             return -1
         }

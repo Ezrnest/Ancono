@@ -7,8 +7,9 @@ import cn.timelives.java.math.MathUtils
 import cn.timelives.java.math.equation.inequation.Inequation
 import cn.timelives.java.math.equation.inequation.SVPInequation
 import cn.timelives.java.math.MathCalculator
-import cn.timelives.java.math.calculus.DEFAULT_DELTA
-import cn.timelives.java.math.calculus.DEFAULT_RANGE
+import cn.timelives.java.math.calculus.Calculus
+import cn.timelives.java.math.calculus.Calculus.DEFAULT_DELTA
+import cn.timelives.java.math.calculus.Calculus.DEFAULT_RANGE
 import cn.timelives.java.math.function.SVFunction
 import cn.timelives.java.math.numberModels.Fraction
 import cn.timelives.java.math.set.Interval
@@ -214,7 +215,7 @@ object EquationSup {
 
     /**
      * Find a root of [f].
-     * @see cn.timelives.java.math.calculus.findRoot
+     * @see cn.timelives.java.math.calculus.Calculus.findRoot
      */
     fun findRoot(f: SVEquation<Double>,
                  initialX: Double,
@@ -222,7 +223,7 @@ object EquationSup {
                  rootDelta: Double = DEFAULT_DELTA,
                  maxSearchRange: Double = DEFAULT_RANGE,
                  maxIterateTimes: Int = 25): Double?{
-        return cn.timelives.java.math.calculus.findRoot(
+        return Calculus.findRoot(
                 SVFunction.fromFunction(MathSets.universe(),f.asFunction()),
                 initialX, deriveDelta, rootDelta, maxSearchRange, maxIterateTimes)
     }

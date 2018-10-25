@@ -421,15 +421,16 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     @SuppressWarnings("unused")
     public Matrix<T> multiplyAndAddColumn(long k, int c1, int c2) {
 		columnRangeCheck(c1, c1);
+		var mc = getMc();
 		if (c1 == c2) {
             throw new IllegalArgumentException("The identity column:" + c1);
 		}
 		@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for (int i = 0; i < row; i++) {
-            re[i][c2] = getMc().add(re[i][c2], getMc().multiplyLong(re[i][c1], k));
+            re[i][c2] = mc.add(re[i][c2], mc.multiplyLong(re[i][c1], k));
         }
-        return new DMatrix<>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, mc);
 	}
 	/**
 	 * Multiply one column in this matrix with k and add the result to another column.
@@ -444,14 +445,15 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 	 */
 	public Matrix<T> multiplyAndAddColumn(T k, int c1, int c2) {
 		columnRangeCheck(c1, c1);
+		var mc = getMc();
 		if (c1 == c2) {
             throw new IllegalArgumentException("The identity column:" + c1);
 		}@SuppressWarnings("unchecked")
 		T[][] re = (T[][]) getValues();
 		for (int i = 0; i < row; i++) {
-            re[i][c2] = getMc().add(re[i][c2], getMc().multiply(re[i][c1], k));
+            re[i][c2] = mc.add(re[i][c2], mc.multiply(re[i][c1], k));
         }
-        return new DMatrix<>(re, row, column, getMc());
+        return new DMatrix<>(re, row, column, mc);
 	}
 
 	
@@ -466,30 +468,30 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 		if(row!=column){
 			throw new ArithmeticException("Cannot calculate det for: "+ row + "��" + column);
 		}
-		
+		var mc = getMc();
 		//some fast implement when the order is below 4
 		if(row==3){
-            T sum = getMc().multiply(getMc().multiply(getNumber(0, 0), getNumber(1, 1)), getNumber(2, 2));
-            sum = getMc().add(sum, getMc().multiply(getMc().multiply(getNumber(0, 1), getNumber(1, 2)), getNumber(2, 0)));
-            sum = getMc().add(sum, getMc().multiply(getMc().multiply(getNumber(0, 2), getNumber(1, 0)), getNumber(2, 1)));
-            sum = getMc().subtract(sum, getMc().multiply(getMc().multiply(getNumber(0, 0), getNumber(1, 2)), getNumber(2, 1)));
-            sum = getMc().subtract(sum, getMc().multiply(getMc().multiply(getNumber(0, 1), getNumber(1, 0)), getNumber(2, 2)));
-            sum = getMc().subtract(sum, getMc().multiply(getMc().multiply(getNumber(0, 2), getNumber(1, 1)), getNumber(2, 0)));
+            T sum = mc.multiply(mc.multiply(getNumber(0, 0), getNumber(1, 1)), getNumber(2, 2));
+            sum = mc.add(sum, mc.multiply(mc.multiply(getNumber(0, 1), getNumber(1, 2)), getNumber(2, 0)));
+            sum = mc.add(sum, mc.multiply(mc.multiply(getNumber(0, 2), getNumber(1, 0)), getNumber(2, 1)));
+            sum = mc.subtract(sum, mc.multiply(mc.multiply(getNumber(0, 0), getNumber(1, 2)), getNumber(2, 1)));
+            sum = mc.subtract(sum, mc.multiply(mc.multiply(getNumber(0, 1), getNumber(1, 0)), getNumber(2, 2)));
+            sum = mc.subtract(sum, mc.multiply(mc.multiply(getNumber(0, 2), getNumber(1, 1)), getNumber(2, 0)));
 			return sum;
 		}else if(row==1){
 			return getNumber(0, 0);
 		}else if(row == 2){
-            return getMc().subtract(getMc().multiply(getNumber(0, 0), getNumber(1, 1)), getMc().multiply(getNumber(0, 1), getNumber(1, 0)));
+            return mc.subtract(mc.multiply(getNumber(0, 0), getNumber(1, 1)), mc.multiply(getNumber(0, 1), getNumber(1, 0)));
         }
-        T sum = getMc().getZero();
+        T sum = mc.getZero();
 		//calculate by separating first row
 		boolean turn = false;
 		for(int i=0;i<column;i++){
-            T det = getMc().multiply(getNumber(0, i), cofactor(0, i).calDet());
+            T det = mc.multiply(getNumber(0, i), cofactor(0, i).calDet());
 			if(turn){
-                sum = getMc().subtract(sum, det);
+                sum = mc.subtract(sum, det);
 			}else{
-                sum = getMc().add(sum, det);
+                sum = mc.add(sum, det);
 			}
 			turn = !turn;
 		}
@@ -528,27 +530,27 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         columnRangeCheck(c);
         Object[][] ma = new Object[row - 1][column - 1];
 
-        // upper-left
-        for (int i = 0; i < r; i++) {
-            if (c >= 0) System.arraycopy(data[i], 0, ma[i], 0, c);
-        }
-        // upper-right
-        for (int i = 0; i < r; i++) {
-            if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i], c + 1 - 1, column - c + 1);
-        }
-        // downer-left
-        for (int i = r + 1; i < row; i++) {
-            if (c >= 0) System.arraycopy(data[i], 0, ma[i - 1], 0, c);
-        }
-        // downer-right
-        for (int i = r + 1; i < row; i++) {
-            if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i - 1], c + 1 - 1, column - c + 1);
-        }
+        copyCofactor(row,column,r, c, data, ma);
         // copy ends
         return new DMatrix<>(ma, row - 1, column - 1, getMc());
     }
-	
-	/**
+
+    static void copyCofactor(int row,int column,int r, int c, Object[][] data, Object[][] ma) {
+        for (int i = 0; i < r; i++) {
+            // upper-left
+            if (c > 0) System.arraycopy(data[i], 0, ma[i], 0, c);
+            // upper-right
+            if (c < column - 1) System.arraycopy(data[i], c + 1, ma[i], c, column - c - 1);
+        }
+        for (int i = r + 1; i < row; i++) {
+            // downer-left
+            if (c > 0) System.arraycopy(data[i], 0, ma[i - 1], 0, c);
+            // downer-right
+            if (c < column - 1) System.arraycopy(data[i], c + 1, ma[i - 1], c, column - c - 1);
+        }
+    }
+
+    /**
 	 * Use elementary operations that don't change the det of this matrix to transform this
 	 * matrix to an upper triangle matrix.
 	 * @return a new upper triangle matrix
@@ -1098,7 +1100,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * Converts this matrix to a chuncked matrix.
      * @param rows the split lines of rows
      * @param columns the split lines of columns
-     * @return
      */
     public Matrix<T>[][] chuncked(int[] rows,int[] columns){
 	    @SuppressWarnings("unchecked")
@@ -1114,7 +1115,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         }
         return data;
     }
-    private int getIfNotExceed(int[] eles,int index, int downer, int upper){
+
+    @SuppressWarnings("SameParameterValue")
+    private int getIfNotExceed(int[] eles, int index, int downer, int upper){
         if(index < 0){
             return downer;
         }
@@ -1390,7 +1393,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 			if(row==1||column==1)
 				throw new ArithmeticException("Too small for cofactor");
 			//check for edge situation which can use sub-matrix instead
-			if(r==0){
+            //noinspection Duplicates
+            if(r==0){
 				if(c==0){
 					return subMatrix(1, 1, row-1, column-1);
 				}else if(c==column-1){
@@ -2180,6 +2184,4 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             return Matrix.multiplyMatrix(x,y);
         }
     }
-
-
 }

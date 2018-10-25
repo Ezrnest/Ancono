@@ -7,7 +7,9 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.addableSet.MathAdder;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
+import cn.timelives.java.math.numberTheory.combination.CFunctions;
 import cn.timelives.java.math.property.Mergeable;
+import cn.timelives.java.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -16,6 +18,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -191,14 +194,12 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Determines whether this term contains no character.
-     * @return
      */
     public boolean hasNoChar(){
         return character.isEmpty();
     }
     /**
      * Determines whether this term is rational.
-     * @return
      */
     public boolean isRational(){
         return signum == 0 || radical.equals(BigInteger.ONE);
@@ -217,6 +218,16 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     /**
+     * Determines whether this term is a fraction without any character.
+     */
+    public boolean isFraction(){
+        if(signum == 0){
+            return true;
+        }
+        return character.isEmpty() && radical.equals(BigInteger.ONE);
+    }
+
+    /**
      * Converts the numerator and denominator of this term to a Fraction.
      * @return a Fraction
      */
@@ -227,6 +238,14 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         return Fraction.valueOf(signum,numerator.longValueExact(),denominator.longValueExact());
     }
 
+    /**
+     * Determines whether this term have coefficient of one.
+     */
+    public boolean isCoefficientOne(){
+        return signum == 0 || (numerator.equals(BigInteger.ONE) &&
+                denominator.equals(BigInteger.ONE) &&
+                radical.equals(BigInteger.ONE));
+    }
 
 
 
@@ -259,7 +278,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Gets a set of character's name in this term.
-     * @return
      */
     public Set<String> getCharacterName(){
         return getCharacter().keySet();
@@ -365,8 +383,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     /**
      * Appends the string representing the characters in this term to the
      * StringBuilder and return it.
-     *
-     * @return
      */
     public StringBuilder appendCharStr(StringBuilder sb) {
         for (Map.Entry<String,Fraction> t : character.entrySet()) {
@@ -389,7 +405,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Returns a String representation of this term.
-     * @return
      */
     @Override
     public String toString() {
@@ -468,8 +483,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     /**
      * Determines whether this term is equal to another term regardless of
      * their signum.
-     * @param t
-     * @return
+     * @param t another term
      */
     public boolean absEquals(Term t){
         if(this == t){
@@ -508,8 +522,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Compares the two term using the dictionary order.
-     * @param another
-     * @return
      */
     @Override
     public int compareTo(@NotNull Term another) {
@@ -577,6 +589,9 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         }
     }
 
+    /**
+     * Compares the number part of this term with another's.
+     */
     public int compareNumber(Term another){
         int comp = signum - another.signum;
         if(comp!=0){
@@ -996,17 +1011,14 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     /**
-     * Returns a term who has the identity character as this but has the number part of 1.
-     * @return
+     * Returns a term which has the identity character as this but has the number part of 1.
      */
     public Term characterPart(){
         return ONE.sameNumber0(character);
     }
 
     /**
-     * Returns a term who has the identity number part as this and has the
-     * @param charcters
-     * @return
+     * Returns a term who has the identity number part as this and has the given character part.
      */
     public Term sameNumber(Map<String,Fraction> charcters){
         var map = new TreeMap<String,Fraction>();
@@ -1026,7 +1038,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         return newInstance(signum,numerator,denominator,radical,character);
     }
 
-    private Term sameNumber0(NavigableMap<String,Fraction> map){
+    Term sameNumber0(NavigableMap<String,Fraction> map){
         if(signum == 0){
             return ZERO;
         }
@@ -1040,6 +1052,20 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         var nmap = new TreeMap<>(character);
         Fraction pow = nmap.remove(ch);
         addChar(nmap,after,pow);
+        return sameNumber0(nmap);
+    }
+
+    /**
+     * Replace all the characters in this term by the given replacer.
+     */
+    public Term replaceChar(UnaryOperator<String> replacer){
+        if(character.isEmpty()){
+            return this;
+        }
+        var nmap = new TreeMap<String,Fraction>();
+        for(var en : character.entrySet()){
+            addChar(nmap,replacer.apply(en.getKey()),en.getValue());
+        }
         return sameNumber0(nmap);
     }
 
@@ -1074,7 +1100,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
      * <h3>Character</h3>
      * The power of a character can only be an integer in the string representation.
      * @param str a string representing the term
-     * @return
      */
     public static Term valueOf(String str) {
         str = str.trim();
@@ -1099,7 +1124,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             c = str.charAt(pos);
             if (c == '-') {
                 signum = -signum;
-            } else if (c != '+') {
+            } else if (c != '+' && c != ' ') {
                 break;
             }
             pos++;
@@ -1294,11 +1319,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Regulates ndr
-     * @param signum
-     * @param numerator
-     * @param denominator
-     * @param radical
-     * @return
      */
     static Term newInstanceNdr(int signum,BigInteger numerator, BigInteger denominator, BigInteger radical){
         if(signum == 0){
@@ -1322,12 +1342,10 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      *
-     * @param signum
+     * @param signum the signum
      * @param numerator >0
      * @param denominator >0
      * @param radical >0
-     * @param character
-     * @return
      */
     static Term sortNdrAndCreate(int signum,BigInteger numerator,BigInteger denominator,BigInteger radical,
                                  NavigableMap<String, Fraction> character){
@@ -1398,7 +1416,6 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
             rad[2] = rad[2].add(BigInteger.ONE);
             // temp = i.pow(2);
         }
-        return;
     }
 
     static BigInteger[] sortRad(BigInteger radical){
@@ -1418,10 +1435,78 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         map.put(character, Fraction.ONE);
         return new Term(map);
     }
+
+    private static void checkCharacters(String...character){
+        for(String c : character){
+            if(c.isEmpty()){
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    /**
+     * Returns a term as the multiplication of all the given characters.
+     * @param character a
+     * @return
+     */
+    public static Term multiplyOf(String...character){
+        checkCharacters(character);
+        TreeMap<String,Fraction> map = new TreeMap<>();
+        for(String c : character){
+            NumberModelUtils.accumulateMapAdd(map,c,Fraction.ONE);
+        }
+        return new Term(map);
+    }
+
     public static Term characters(NavigableMap<String,Fraction> characters){
         TreeMap<String,Fraction> map = new TreeMap<>(characters);
         return new Term(map);
     }
+
+    /**
+     * Returns an array of terms containing <code>r</code> of the given characters.
+     * @param r the number of characters in each term
+     * @param characters all the
+     * @return
+     * @see Multinomial#primarySymmetry(int, String...)
+     */
+    public static Term[] symmetryTerms(int r, String... characters){
+        checkCharacters(characters);
+        int n = characters.length;
+        if(r <= 0 || r > n){
+            throw new IllegalArgumentException("r <=0 || r > n");
+        }
+        if(r == n){
+            return new Term[]{multiplyOf(characters)};
+        }
+        int size = Math.toIntExact(CFunctions.combination(n,r));
+        Term[] arr = new Term[size];
+        fillSymmetryTerms(r,characters,0,0,new TreeMap<>(),arr,0);
+        return arr;
+    }
+
+
+    private static int fillSymmetryTerms(int r,String[] characters,int index,int nextSelect,TreeMap<String,Fraction> map,
+                                          Term[] arr,int arrPos){
+        if(index == r){
+            //finished
+            arr[arrPos] = new Term(map);
+            return arrPos + 1;
+        }
+        int bound = characters.length - r + index;
+        //leave the last one non-copy
+        for(int i = nextSelect;i<bound;i++){
+            @SuppressWarnings("unchecked")
+            TreeMap<String,Fraction> nmap = (TreeMap<String, Fraction>) map.clone();
+            nmap.put(characters[i],Fraction.ONE);
+            arrPos = fillSymmetryTerms(r,characters,index+1,i+1,nmap,arr,arrPos);
+        }
+        map.put(characters[bound],Fraction.ONE);
+        arrPos = fillSymmetryTerms(r, characters, index+1, bound+1, map, arr, arrPos);
+        return arrPos;
+    }
+
+
 
     public static Term gcd(Term...ts){
         if(ts.length<=1){

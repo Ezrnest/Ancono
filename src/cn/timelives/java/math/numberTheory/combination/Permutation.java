@@ -172,8 +172,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default <T> T[] apply(T[] array) {
 		if(array.length<size()) {
@@ -202,8 +200,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default double[] apply(double[] array) {
 		if(array.length<size()) {
@@ -217,8 +213,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	}
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default boolean[] apply(boolean[] array) {
 		if(array.length<size()) {
@@ -233,8 +227,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default long[] apply(long[] array) {
 		if(array.length<size()) {
@@ -246,6 +238,15 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		}
 		return array;
 	}
+
+	default boolean isIdentity(){
+	    for(int i=0;i<size();i++){
+	        if(apply(i) != i){
+	            return false;
+            }
+        }
+        return true;
+    }
 	
 	/**
 	 * An transposition permutation is a permutation that only swap two elements.

@@ -554,7 +554,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
      */
     @SafeVarargs
     public static <T> PolynomialX<T> addAll(PolynomialX<T>...ps){
-        return NumberModelUtilsKt.sigma(ps,0,ps.length);
+        return NumberModelUtils.sigma(ps,0,ps.length);
     }
 
     /**
@@ -563,7 +563,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
      */
     @SafeVarargs
     public static <T> PolynomialX<T> multiplyAll(PolynomialX<T>...ps){
-        return NumberModelUtilsKt.multiplyAll(ps,0,ps.length);
+        return NumberModelUtils.multiplyAll(ps,0,ps.length);
     }
 
     /**
@@ -767,8 +767,8 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
             if(mc.isZero(t)){
                 continue;
             }
-            var m1 = i == 0 ? one(mc) : NumberModelUtilsKt.multiplyAll(rootPoly,0,i);
-            var m2 = i == points.length-1 ? one(mc) : NumberModelUtilsKt.multiplyAll(rootPoly,i+1,points.length);
+            var m1 = i == 0 ? one(mc) : NumberModelUtils.multiplyAll(rootPoly,0,i);
+            var m2 = i == points.length-1 ? one(mc) : NumberModelUtils.multiplyAll(rootPoly,i+1,points.length);
             var single = m1.multiply(m2);
             var curRoot = roots[i];
             IntFunction<T> f = (int j) -> mc.subtract(curRoot,roots[j]);
@@ -779,6 +779,28 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
             re = re.add(single);
         }
         return re;
+    }
+
+    /**
+     * Returns the polynomial of <code>(x-x0)<sup>n</sup></code>
+     */
+    public static <T> PolynomialX<T> binomialPower(T x0, int n, MathCalculator<T> mc){
+        if(mc.isZero(x0)){
+            return powerX(n,mc);
+        }
+        var map = new TreeMap<Integer,T>();
+        var x0Power = mc.getOne();
+        var binomialCoes = CFunctions.binomialsOf(n);
+        for(int i=n;i>=0;i--){
+            T coe = mc.multiplyLong(x0Power,binomialCoes.get(n));
+            if(mc.isZero(coe)){
+                continue;
+            }
+            map.put(n,coe);
+            //noinspection SuspiciousNameCombination
+            x0Power = mc.multiply(x0Power,x0);
+        }
+        return new PolynomialX<>(mc,map,n);
     }
 
     /**

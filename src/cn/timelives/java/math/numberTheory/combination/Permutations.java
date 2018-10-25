@@ -12,9 +12,11 @@ import cn.timelives.java.math.numberModels.MathCalculatorAdapter;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.utilities.ArraySup;
+import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.Printer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static cn.timelives.java.utilities.Printer.print;
@@ -815,6 +817,15 @@ public final class Permutations {
 		}
 		return MathSets.asSet(mc, list);
 	}
+
+	public static Iterable<Permutation> universeIterable(int n){
+        if(n <= 0) {
+            throw new IllegalArgumentException("Invalid n="+n);
+        }
+        var en = Enumer.permutation(n,n);
+        return CollectionSup.mappedIterable(en,Permutations::valueOf);
+    }
+
 
 	public static FiniteSet<Permutation> even(int n){
 		if(n <= 0 || n > 12) {

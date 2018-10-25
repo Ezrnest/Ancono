@@ -150,6 +150,15 @@ public class DerivativeHelper {
                 " with " + parameterLength + " parameter(s)");
     }
 
+    private static Node dReciprocal(@DisallowModify Node.SFunction node, String variableName) {
+        // 1/f(x) -> f'(x) / (f(x))^2
+        Node fx = node.child;
+        Node fx_ = derivativeNode(fx, variableName);
+        Node cos = Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, fx, Node.newPolyNode(Multinomial.valueOf(-2L)));
+        return Node.wrapNodeAM(false, fx_, cos);
+    }
+
+
     private static Node dSin(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
@@ -281,6 +290,7 @@ public class DerivativeHelper {
     }
 
     private static void addSingles() {
+        addSFunctionDerivator(ExprFunction.FUNCTION_NAME_RECIPROCAL,DerivativeHelper::dReciprocal);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_SIN, DerivativeHelper::dSin);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_COS, DerivativeHelper::dCos);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_TAN, DerivativeHelper::dTan);

@@ -3,6 +3,7 @@ package cn.timelives.java.utilities;
 import cn.timelives.java.math.MathUtils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.*;
@@ -545,7 +546,7 @@ public final class ModelPatterns {
 
 
 
-//    public <T,R> R recurBuild(int index,T initial,)
+//    public <T,C extends Collection<T>> C recurBuild(int index, T initial, C collection, )
 
 //    public static class TimeCostModel<R>{
 //        private final int timeCost;

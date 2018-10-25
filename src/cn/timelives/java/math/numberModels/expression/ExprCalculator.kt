@@ -8,15 +8,19 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.numberModels.Multinomial
 import cn.timelives.java.math.numberModels.MultinomialCalculator
 import cn.timelives.java.math.numberModels.Term
+import cn.timelives.java.math.numberModels.api.Computable
 import cn.timelives.java.math.numberModels.api.NumberFormatter
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.math.numberModels.expression.Node.*
+import cn.timelives.java.math.numberModels.expression.anno.AllowModify
 import cn.timelives.java.math.numberModels.expression.simplification.SimStraHolder
 import cn.timelives.java.math.numberModels.expression.simplification.p
 
 import java.util.*
 import cn.timelives.java.utilities.Printer.print
 import cn.timelives.java.utilities.Printer.printnb
+import java.lang.UnsupportedOperationException
+import java.util.function.ToDoubleFunction
 
 @Suppress("NAME_SHADOWING")
 /**
@@ -125,19 +129,22 @@ class ExprCalculator
 	 * @see cn.timelives.java.math.MathCalculator#getZero()
 	 */
     override val zero: Expression
+        get() = Expression.ZERO
     /*
 	 * @see cn.timelives.java.math.MathCalculator#getOne()
 	 */
     override val one: Expression
+        get() = Expression.ONE
 
     private var simplificationIdentifier: Int = 0
 
     override val isComparable: Boolean
-        get() = false
+        get() = true
+
 
     /*
-	 * @see cn.timelives.java.math.MathCalculator#getNumberClass()
-	 */
+     * @see cn.timelives.java.math.MathCalculator#getNumberClass()
+     */
     override val numberClass: Class<*>
         get() = Expression::class.java
 
@@ -147,8 +154,6 @@ class ExprCalculator
         pOne = multinomialCalculator.one
         pZero = multinomialCalculator.zero
         pMinusOne = multinomialCalculator.negate(pOne)
-        zero = Expression.fromMultinomial(pZero)
-        one = Expression.fromMultinomial(pOne)
         updateSimplificationIdentifier()
     }
 
@@ -260,14 +265,22 @@ class ExprCalculator
         return x.root.equalNode(y.root, multinomialCalculator)
     }
 
+
+    private val compareCompute : ToDoubleFunction<String> = ToDoubleFunction{  x ->
+        when(x){
+            MathCalculator.STR_E -> Math.E
+            MathCalculator.STR_PI -> Math.PI
+            else -> throw UnsupportedOperationException("Cannot compare with unassigned character: $x")
+        }
+    }
+
     /*
 	 * @see
 	 * cn.timelives.java.math.MathCalculator#compare(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun compare(x: Expression, y: Expression): Int {
-        throw UnsupportedCalculationException()
-        //		return nc.compare(para1.root, para2.root);
+        return x.computeDouble(compareCompute).compareTo(y.computeDouble(compareCompute))
     }
 
     /*
@@ -465,8 +478,8 @@ class ExprCalculator
         return Expression(root)
     }
 
-    private fun mFunction(name : String, vararg p : Expression) : Expression{
-        var root: Node = wrapCloneNodeMF(name,p.toList().map { it.root },false)
+    private fun mFunction(name: String, vararg p: Expression): Expression {
+        var root: Node = wrapCloneNodeMF(name, p.toList().map { it.root }, false)
         root = simplify(root)
         return Expression(root)
     }
@@ -550,8 +563,8 @@ class ExprCalculator
      * Returns an expression representing the result of substituting [ch] in [expr] with all
      * values between [start] and [end] (inclusive).
      */
-    fun sigma(expr : Expression, start: Expression, end : Expression, ch : String = "x") : Expression{
-        return mFunction(ExprFunction.FUNCTION_NAME_SIGMA,expr,Expression(ch.p),start,end)
+    fun sigma(expr: Expression, start: Expression, end: Expression, ch: String = "x"): Expression {
+        return mFunction(ExprFunction.FUNCTION_NAME_SIGMA, expr, Expression(ch.p), start, end)
     }
 
     fun simplify(x: Expression): Expression {
@@ -570,7 +583,7 @@ class ExprCalculator
      */
     @JvmName("simplify")
     @JvmOverloads
-    internal fun simplify(root: Node, depth: Int = Integer.MAX_VALUE): Node {
+    internal fun simplify(@AllowModify root: Node, depth: Int = Integer.MAX_VALUE): Node {
         checkValidTree(root)
         root.resetSimIdentifier()
         return if (depth == 0) {
@@ -591,7 +604,7 @@ class ExprCalculator
      * @param node
      * @return
      */
-    private fun simplifyNode(node: Node): Node {
+    private fun simplifyNode(@AllowModify node: Node): Node {
         var node = node
         if (debugEnabled) {
             count++
@@ -599,15 +612,17 @@ class ExprCalculator
                 print("Simplify: " + node.type + " : " + node.hashCode())//TODO
         }
         node = simplifyPolynomial(node, 0)
-        doSort(node, 0)//very important
+        node = doSort(node, 0)//very important
         val re = simplifyWithStrategyNoRecur(node)
         if (showSimSteps) {
             try {
                 println("$node -> $re")
-            }catch (e : Exception){
+            } catch (e: Exception) {
                 println("?? -> $re")
             }
         }
+//        re = simplifyPolynomial(re,0)
+//        re = doSort(re,0)
         re.simIdentifier = simplificationIdentifier
         return re
     }
@@ -620,7 +635,7 @@ class ExprCalculator
      * @return
      */
     @JvmName("simplifyPolynomial")
-    internal fun simplifyPolynomial(node: Node, depth: Int): Node {
+    internal fun simplifyPolynomial(@AllowModify node: Node, depth: Int): Node {
         var node = node
         if (node.simIdentifier == simplificationIdentifier) {
             return node
@@ -652,12 +667,12 @@ class ExprCalculator
         return node
     }
 
-    internal fun setParentAndReturn(original: Node, returned: Node): Node {
+    internal fun setParentAndReturn(@AllowModify original: Node, returned: Node): Node {
         returned.parent = original.parent
         return returned
     }
 
-    internal fun polySimplifyAdd(node: Add, depth: Int): Node {
+    internal fun polySimplifyAdd(@AllowModify node: Add, depth: Int): Node {
         var p: Multinomial? = node.p
         if (p == null) {
             p = multinomialCalculator.zero
@@ -691,7 +706,7 @@ class ExprCalculator
         return node
     }
 
-    internal fun polySimplifyMultiply(node: Multiply, depth: Int): Node {
+    internal fun polySimplifyMultiply(@AllowModify node: Multiply, depth: Int): Node {
         var p: Multinomial? = node.p
         if (p == null) {
             p = multinomialCalculator.one
@@ -729,7 +744,7 @@ class ExprCalculator
         return node
     }
 
-    internal fun polySimplifyFraction(node: Fraction, depth: Int): Node {
+    internal fun polySimplifyFraction(@AllowModify node: Fraction, depth: Int): Node {
         var nume = if (depth > 0) simplifyPolynomial(node.c1, depth - 1) else node.c1
         var deno = if (depth > 0) simplifyPolynomial(node.c2, depth - 1) else node.c2
         if (nume.type == Type.POLYNOMIAL) {
@@ -774,7 +789,7 @@ class ExprCalculator
         return node
     }
 
-    internal fun polySimplifySFunction(node: SFunction, depth: Int): Node {
+    internal fun polySimplifySFunction(@AllowModify node: SFunction, depth: Int): Node {
         val c = if (depth > 0) simplifyPolynomial(node.child, depth - 1) else node.child
         if (c.type == Type.POLYNOMIAL) {
             val p = c as Poly
@@ -787,7 +802,7 @@ class ExprCalculator
         return node
     }
 
-    internal fun polySimplifyDFunction(node: DFunction, depth: Int): Node {
+    internal fun polySimplifyDFunction(@AllowModify node: DFunction, depth: Int): Node {
         val c1 = if (depth > 0) simplifyPolynomial(node.c1, depth - 1) else node.c1
         val c2 = if (depth > 0) simplifyPolynomial(node.c2, depth - 1) else node.c2
         if (c1.type == Type.POLYNOMIAL && c2.type == Type.POLYNOMIAL) {
@@ -803,7 +818,7 @@ class ExprCalculator
         return node
     }
 
-    internal fun polySimplifyMFunction(node: MFunction, depth: Int): Node {
+    internal fun polySimplifyMFunction(@AllowModify node: MFunction, depth: Int): Node {
         var allPoly = true
         val children = node.children
         val lit = children.listIterator()
@@ -832,18 +847,18 @@ class ExprCalculator
     }
 
     @JvmName("simplifyWithStrategy")
-    internal fun simplifyWithStrategy(node: Node, depth: Int): Node {
+    internal fun simplifyWithStrategy(@AllowModify node: Node, depth: Int): Node {
         return if (depth == 0) {
             simStraHolder.performSimplification(node, enabledTags, this)
         } else node.recurApply({ x -> simStraHolder.performSimplification(x, enabledTags, this) }, depth)
     }
 
-    internal fun simplifyWithStrategyNoRecur(node: Node): Node {
+    internal fun simplifyWithStrategyNoRecur(@AllowModify node: Node): Node {
         return simStraHolder.performSimplification(node, enabledTags, this)
     }
 
     @JvmName("doSort")
-    internal fun doSort(node: Node, depth: Int): Node {
+    internal fun doSort(@AllowModify node: Node, depth: Int): Node {
         return node.recurApply({ x ->
             if (x is NodeWithChildren) {
                 x.doSort(nodeComparator)
@@ -852,7 +867,7 @@ class ExprCalculator
         }, depth)
     }
 
-    internal fun simplifyPolyAndSort(n: Node): Node {
+    internal fun simplifyPolyAndSort(@AllowModify n: Node): Node {
         var n = n
         n = simplifyPolynomial(n, Integer.MAX_VALUE)
         n = doSort(n, Integer.MAX_VALUE)
@@ -882,6 +897,7 @@ class ExprCalculator
     fun substitute(expr: Expression, ch: String, `val`: Multinomial): Expression {
         var root = expr.root.cloneNode(null)
         root = root.recurApply({ x ->
+            x.resetSimIdentifier()
             var p = Node.getPolynomialPart(x, this)
             if (p != null) {
                 p = p.replace(ch, `val`)
@@ -906,6 +922,7 @@ class ExprCalculator
     fun substitute(expr: Expression, ch: String, sub: Expression): Expression {
         var root = expr.root.cloneNode(null)
         root = root.recurApply({ x ->
+            x.resetSimIdentifier()
             val p = Node.getPolynomialPart(x, this) ?: return@recurApply x
             val afterSub = replaceMultinomial(p, ch, sub)
                     ?: //not changed
@@ -926,6 +943,9 @@ class ExprCalculator
     }
 
 
+    /**
+     * Parses an expression from String and simplifies it.
+     */
     fun parseExpr(expr: String): Expression {
         val expression = Expression.valueOf(expr)
         return simplify(expression)
@@ -934,8 +954,8 @@ class ExprCalculator
     /**
      * Returns the differential of an expression.
      */
-    fun differential(expr : Expression, variableName : String) : Expression{
-        val nroot = DerivativeHelper.derivativeNode(expr.root,variableName)
+    fun differential(expr: Expression, variableName: String): Expression {
+        val nroot = DerivativeHelper.derivativeNode(expr.root, variableName)
         return Expression(simplify(nroot))
     }
 

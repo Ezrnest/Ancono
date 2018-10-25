@@ -91,7 +91,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param p a polynomial, or null.
 	 * @return a node, either of type Add or Multiply.
 	 */
-	protected final CombinedNode wrapNodeAM(boolean isAdd, List<Node> nodes, Multinomial p) {
+	protected final Node wrapNodeAM(boolean isAdd, List<Node> nodes, Multinomial p) {
 		return Node.wrapNodeAM(isAdd, nodes, p);
 	}
 	/**

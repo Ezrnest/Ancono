@@ -25,8 +25,8 @@ import java.util.function.ToDoubleFunction;
 import static cn.timelives.java.math.numberModels.expression.ExprFunction.createBasicCalculatorFunctions;
 
 /**
- * Expression is the most universal number model to show a number.
- * 
+ * Expression is the most universal number model to show a number or a complex
+ * algebraic expression.
  * @author liyicheng 2017-11-23 21:31
  *
  */
@@ -98,19 +98,27 @@ public final class Expression implements Computable,Serializable {
 
     /**
 	 * Creates an expression from a multinomial.
-	 *
-	 * @param p
-	 * @return
 	 */
 	public static Expression fromMultinomial(Multinomial p) {
 		return new Expression(Node.newPolyNode(p, null));
 	}
 
-	public static Expression fromPolynomialT(PolynomialX<Term> p, String variableName){
-	    return fromMultinomial(Multinomial.fromPolynomial(p,variableName));
+	public static Expression fromTerm(Term t){
+	    return fromMultinomial(Multinomial.monomial(t));
     }
 
-    public static Expression from
+    /**
+     * Returns an expression that represents a polynomial.
+     */
+	public static Expression fromPolynomialT(PolynomialX<Term> p, String variableName){
+	    return fromMultinomial(Multinomial.fromPolynomialT(p,variableName));
+    }
+    /**
+     * Returns an expression that represents a polynomial.
+     */
+    public static Expression fromPolynomialM(PolynomialX<Multinomial> p, String variableName){
+	    return fromMultinomial(Multinomial.fromPolynomialM(p,variableName));
+    }
 
 
 	/**
@@ -129,6 +137,9 @@ public final class Expression implements Computable,Serializable {
 		return new ExprParser(expr).parse();
 	}
 
+    /**
+     * The identifier for a function as a suffix
+     */
 	public static final char FUNCTION_IDENTIFIER = '_';
 
 	private static final Set<String> FUNCTION_NAMES;
@@ -400,6 +411,39 @@ public final class Expression implements Computable,Serializable {
         }
 	}
 
+    /**
+     * Expression constant zero
+     */
+    public static final Expression ZERO = fromMultinomial(Multinomial.ZERO);
+    /**
+     * Expression constant one.
+     */
+    public static final Expression ONE = fromMultinomial(Multinomial.ONE);
+
+    /**
+     * Expression constant ten.
+     */
+    public static final Expression TEN = fromMultinomial(Multinomial.valueOf(10L));
+
+    /**
+     * Expression constant negative one
+     */
+    public static final Expression NEGATIVE_ONE = fromMultinomial(Multinomial.NEGATIVE_ONE);
+
+    /**
+     * Expression constant <code>pi</code>, the ratio of the circumference of a circle to its diameter.
+     */
+    public static final Expression PI = fromMultinomial(Multinomial.PI);
+
+    /**
+     * Expression constant <code>e</code>, the base of natural logarithm.
+     */
+    public static final Expression E = fromMultinomial(Multinomial.E);
+
+    /**
+     * Expression constant <code>i</code>, the square root of <code>-1</code>.
+     */
+    public static final Expression I = fromMultinomial(Multinomial.I);
 
 //    public static void main(String[] args){
 //	    Expression expr = valueOf("(a+b)/(a-b)+(a+2b)/(a-b)");

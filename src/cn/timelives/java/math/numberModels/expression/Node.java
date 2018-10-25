@@ -110,16 +110,32 @@ public abstract class Node implements Computable, Serializable {
         }
         return root;
     }
-
+    private static Node amPolyOrDefault(boolean isAdd, Multinomial p){
+        if(p==null){
+            if(isAdd){
+                return newPolyNode(Multinomial.ZERO);
+            }else{
+                return newPolyNode(Multinomial.ONE);
+            }
+        }else{
+            return newPolyNode(p);
+        }
+    }
     /**
      * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
-     *
-     * @param isAdd
-     * @param ns
-     * @return
      */
     public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns) {
-        NodeWithChildren root;
+        return wrapCloneNodeAM(isAdd, ns,null);
+    }
+
+    /**
+     * Wraps the nodes  with either Add or Multiply. The newly created node has no parent node.
+     */
+    public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
+        if(ns.isEmpty()){
+            return amPolyOrDefault(isAdd,p);
+        }
+        CombinedNode root;
         List<Node> list = new ArrayList<>(ns.size());
         if (isAdd) {
             root = new Add(null, null, list);
@@ -136,23 +152,17 @@ public abstract class Node implements Computable, Serializable {
      * Wraps the nodes with either Add or Multiply. The newly created node has no parent node.
      */
     public static Node wrapNodeAM(boolean isAdd, List<Node> ns) {
-        NodeWithChildren root;
-        if (isAdd) {
-            root = new Add(null, null, ns);
-        } else {
-            root = new Multiply(null, null, ns);
-        }
-        for (Node n : ns) {
-            n.parent = root;
-        }
-        return root;
+        return wrapNodeAM(isAdd,ns,null);
     }
 
     /**
      * Wraps the nodes  with either Add or Multiply. The newly created node has no parent node.
      * @return
      */
-    public static CombinedNode wrapNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
+    public static Node wrapNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
+        if(ns.isEmpty()){
+            return amPolyOrDefault(isAdd,p);
+        }
         CombinedNode root;
         if (isAdd) {
             root = new Add(null, null, ns);
@@ -551,7 +561,7 @@ public abstract class Node implements Computable, Serializable {
     }
 
     /**
-     * Returns the clone of the node, all its child nodes will be
+     * Returns the deep clone of the node, all its child nodes will be
      * cloned as well. The parent of the new node will be set as given.
      */
     public abstract Node cloneNode(NodeWithChildren parent);

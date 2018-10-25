@@ -1,7 +1,7 @@
 package cn.timelives.java.math.geometry.analytic.spaceAG.curve
 
 import cn.timelives.java.math.MathCalculatorHolder
-import cn.timelives.java.math.calculus.derivation
+import cn.timelives.java.math.calculus.Calculus.derivation
 import cn.timelives.java.math.function.*
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector

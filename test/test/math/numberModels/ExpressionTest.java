@@ -171,5 +171,21 @@ public class ExpressionTest {
         assertMathEquals(mc.parseExpr("sin(x)").computeDouble(f2),1d,Calculators.getCalculatorDoubleDev());
 	}
 
+	@Test
+	public void testSubstitute2(){
+	    SimplificationStrategies.setCalRegularization(mc);
+	    Expression expr = mc.parseExpr("acos(x)");
+	    expr = mc.substitute(expr,"x",Expression.ZERO);
+	    assertEquals("The result of substituting acos(x)|x=0 should be a",expr.toString(),"a");
+    }
+
+    @Test
+    public void test(){
+        SimplificationStrategies.setCalRegularization(mc);
+        Expression expr = mc.parseExpr("acos(exp(sin(x),2)+exp(cos(x),2)-1)");
+        assertEquals(expr.toString(),"a");
+    }
+
+
 
 }

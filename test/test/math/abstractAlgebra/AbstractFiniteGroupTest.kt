@@ -15,7 +15,7 @@ class AbstractFiniteGroupTest{
 //        println(G.set.joinToString())
 //        println(H.set.joinToString())
 //        println(G.normalizer(H))
-        assertSame(G.indexOf(G.normalizer(H)),3)
+        assertSame(3,G.indexOf(G.normalizer(H)))
     }
     @Test
     fun testNormalSubgroup(){

@@ -42,11 +42,21 @@ public interface Computable {
     ToDoubleFunction<String> ASSIGN_ONE = ch -> 1d;
 
     ToDoubleFunction<String> DEFAULT_ASSIGNMENT = name -> {
+        //noinspection Duplicates
         switch (name){
             case MathCalculator.STR_E: return Math.E;
             case MathCalculator.STR_PI: return Math.PI;
         }
         return 1d;
+    };
+
+    ToDoubleFunction<String> DEFAULT_OR_EXCEPTION = name ->{
+        //noinspection Duplicates
+        switch (name){
+            case MathCalculator.STR_E: return Math.E;
+            case MathCalculator.STR_PI: return Math.PI;
+        }
+        throw new IllegalArgumentException();
     };
 
     /**

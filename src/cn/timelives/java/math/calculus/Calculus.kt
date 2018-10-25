@@ -4,23 +4,22 @@
 package cn.timelives.java.math.calculus
 
 import cn.timelives.java.math.MathCalculator
-import cn.timelives.java.math.MathUtils
 import cn.timelives.java.math.algebra.Polynomial
-import cn.timelives.java.math.calculus.expression.*
 import cn.timelives.java.math.function.AbstractSVPFunction
 import cn.timelives.java.math.function.SVFunction
 import cn.timelives.java.math.function.SVPFunction
 import cn.timelives.java.math.function.invoke
 import cn.timelives.java.math.numberModels.Multinomial
 import cn.timelives.java.math.numberModels.Term
-import cn.timelives.java.math.numberModels.api.Computable
 import cn.timelives.java.math.numberModels.expression.DerivativeHelper
 import cn.timelives.java.math.numberModels.expression.ExprCalculator
 import cn.timelives.java.math.numberModels.expression.Expression
 import cn.timelives.java.math.numberModels.expression.Node
 import cn.timelives.java.math.numberModels.structure.PolynomialX
+import cn.timelives.java.math.numberTheory.combination.CFunctions
 import java.util.function.DoubleUnaryOperator
-
+import kotlin.coroutines.experimental.buildSequence
+import cn.timelives.java.math.numberModels.api.plus
 
 object Calculus {
     /**
@@ -301,56 +300,39 @@ object Calculus {
         }
     }
 
-    fun tylorSeries(expr : Expression, variableName: String = "x")
+    fun taylorSeriesSeq(expr : Expression, variableName: String = "x", point : Expression = Expression.ZERO,
+                       mc : ExprCalculator = ExprCalculator.newInstance)
+            : Sequence<Expression> = buildSequence {
+        var n = 0
+        var deno = 1L
+        var f = expr
+        while(true){
+            val nume = mc.substitute(f,variableName,point)
+            val coe = mc.divideLong(nume,deno)
+            yield(coe)
+            n++
+            deno *= n
+            f = mc.differential(f,variableName)
+        }
+    }
 
-    /**
-     * Computes the limit
-     */
-    @JvmStatic
-    fun limit(expr : Multinomial, process : LimitProcess<Expression>, mc : ExprCalculator = ExprCalculator.newInstance) : LimitResult<Expression>{
-        val variable = process.variableName
-        if(!expr.containsChar(variable)){
-            return LimitResult.finiteValueOf(Expression.fromMultinomial(expr))
+//    fun taylorSeries
+
+    fun taylorSeries(expr : Expression, variableName: String = "x",
+                     point : Expression = Expression.ZERO, degree : Int = 3,
+                     mc : ExprCalculator = ExprCalculator.newInstance) : PolynomialX<Expression>{
+        var re = PolynomialX.zero(mc)
+        var f = expr
+        for(n in 0..degree){
+            val nume = mc.substitute(f,variableName,point)
+            val deno = CFunctions.factorial(n)
+            val coe = mc.divideLong(nume,deno)
+            var t = PolynomialX.binomialPower(point,n,mc)
+            t = t.multiply(coe)
+            re += t
+            f = mc.differential(f,variableName)
         }
-        val (f, constant) = expr.terms.partition { it.containsChar(variable) }
-        val top = f.maxBy { t -> t.getCharacterPower(variable) }!! // x^666
-        val bot = f.minBy { it.getCharacterPower(variable) }!!// x ^ (-666)
-        if(!process.value.isFinite){
-            if(top.getCharacterPower(variable).isPositive){
-                val t = top.computeDouble(Computable.DEFAULT_ASSIGNMENT)
-                return if(t > 0){
-                    LimitResult.positiveInf()
-                }else{
-                    LimitResult.negativeInf()
-                }
-            }else{
-                val t = top.computeDouble(Computable.DEFAULT_ASSIGNMENT)
-                val re = FiniteValue(Expression.fromMultinomial(Multinomial.fromTerms(constant)))
-                return if(t>0){
-                    LimitResult(re,LimitDirection.RIGHT)
-                }else{
-                    LimitResult(re,LimitDirection.LEFT)
-                }
-            }
-        }
-        val value = process.value.value
-        val signum0 = process.direction.signum()
-        if(!mc.isZero(value)){
-            val derivated = Calculus.derivation(Multinomial.fromTerms(f),variable)
-            val signum = MathUtils.signum(derivated.computeDouble(Computable.DEFAULT_ASSIGNMENT))
-            val re = mc.substitute(
-                    Expression.fromMultinomial(expr),variable, value)
-            return LimitResult.finiteValueOf(re,signum * signum0)
-        }
-        val t = bot.computeDouble(Computable.DEFAULT_ASSIGNMENT)
-        val signum1 = MathUtils.signum(t)
-        val reSignum = signum0 * signum1
-        return if(bot.getCharacterPower(variable).isNegative){
-            LimitResult.infiniteFromSignum(reSignum)
-        }else{
-            val re = FiniteValue(Expression.fromMultinomial(Multinomial.fromTerms(constant)))
-            LimitResult(re, LimitDirection.fromSignum(reSignum))
-        }
+        return re
     }
 
 }
@@ -359,9 +341,12 @@ object Calculus {
 fun main(args: Array<String>) {
 //    val f : SVFunction<Double> = AbstractSVPFunction.quadratic(1.0,-2.0,-3.0,Calculators.getCalculatorDoubleDev())
 //    println(findRoot(f,0.0))
-
-    val m = Multinomial.valueOf("1/x")
+    val mc = ExprCalculator.newInstance
+    val m = Multinomial.valueOf("1/x+x")
     println(m)
-    val process = LimitProcess<Expression>("x",LimitValue.valueOf(Expression.valueOf("2")),LimitDirection.LEFT)
-    println(Calculus.limit(m,process))
+    val p1 = LimitProcess("x", LimitValue.valueOf(Expression.valueOf("2")), LimitDirection.LEFT)
+    val p2 = LimitProcess<Expression>("x", LimitValue.infinity(),LimitDirection.LEFT)
+    println(Limit.limitOf(m,p1,mc))
+    val t = Limit.limitOf(m,p2,mc)
+    println(t)
 }

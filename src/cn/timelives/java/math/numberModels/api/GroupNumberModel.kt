@@ -6,9 +6,6 @@ interface GroupNumberModel<T : GroupNumberModel<T>> {
     fun negate(): T
 
     fun subtract(y: T): T = add(y.negate())
-
-
-
 }
 
 operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.plus(y: T): T = add(y)

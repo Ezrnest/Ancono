@@ -11,6 +11,7 @@ import cn.timelives.java.math.numberModels.expression.simplification.NodeHelper;
 import cn.timelives.java.math.numberModels.expression.spi.SimplificationService;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -170,7 +171,7 @@ public final class SimplificationStrategies {
         }
 
         /**
-         * If a fraction is contained in the multiply, then turns the multiply into a fraction.
+         * If a fraction is contained in the multiplication, then turns the multiplication into a fraction.
          */
         @Override
         protected Node simplifyMultiply(Multiply node, ExprCalculator mc) {
@@ -192,9 +193,11 @@ public final class SimplificationStrategies {
                 if (n.getType() == Type.FRACTION) {
                     Fraction f = (Fraction) n;
                     numes.add(f.c1);
+                    f.c1.parent = node;
                     denos.add(f.c2);
                 } else {
                     numes.add(n);
+                    n.parent = node;
                 }
             }
             NodeWithChildren parent = node.parent;
@@ -573,7 +576,7 @@ public final class SimplificationStrategies {
                 return null;
             }
             List<Pair<Node, Multinomial>> result = simplify(collect, mc);
-            if(result == null){
+            if (result == null) {
                 return null;
             }
             addToTheList(list, result, node, mc);
@@ -892,7 +895,7 @@ public final class SimplificationStrategies {
                 }
                 Node n = Node.wrapNodeDF("exp", node.child, Node.newPolyNode(mc.getMultinomialCalculator().divideLong(mc.getPOne(), 2l), null));
                 n.parent = node;
-                return mc.simplify(n,1);
+                return mc.simplify(n, 1);
             }
         });
     }
@@ -920,8 +923,24 @@ public final class SimplificationStrategies {
             protected Node simplifyDFunction(DFunction node, ExprCalculator mc) {
                 Node c1 = node.c1,
                         c2 = node.c2;
-                if (Node.isPolynomial(c1, mc.getMultinomialCalculator().constantValue(MathCalculator.STR_E), mc)) {
+                if (Node.isPolynomial(c1, Multinomial.E, mc)) {
                     return Node.wrapNodeSF("exp", c2);
+                }
+                if (c2.getType() == Type.POLYNOMIAL) {
+                    var exp = ((Poly) c2).p;
+                    var mulCal = mc.getMultinomialCalculator();
+                    if (mulCal.isEqual(exp, Multinomial.ZERO)) {
+                        return Node.newPolyNode(Multinomial.ONE);
+                    } else if (mulCal.isEqual(exp, Multinomial.ONE)) {
+                        return c1.cloneNode();
+                    } else if (mulCal.isEqual(exp, Multinomial.NEGATIVE_ONE)) {
+                        if(c1.getType() == Type.FRACTION){
+                            var temp = (Fraction)c1;
+                            var nume = temp.c2;
+                            var deno = temp.c1;
+                            return Node.wrapCloneNodeFraction(nume,deno);
+                        }
+                    }
                 }
                 if (Node.isFunctionNode(c1, "exp", 2)) {
                     DFunction df = (DFunction) c1;
@@ -934,7 +953,7 @@ public final class SimplificationStrategies {
                     return mc.simplify(node, 1);
                 } else if (Node.isFunctionNode(c1, "exp", 1)) {
                     SFunction sf = (SFunction) c1;
-                    //exp(exp(x,p1),p2) = exp(x,p1*p2)
+                    //exp(exp(p1),p2) = exp(p1*p2)
                     CombinedNode mul = Node.wrapNodeAM(false, sf.child, c2);
                     mul.parent = sf;
                     sf.child = mul;
@@ -945,7 +964,6 @@ public final class SimplificationStrategies {
                 }
             }
         });
-
         list.add(new SimplifyMultiplyStruct(TAG_PRIMARY_SET) {
             //x * exp(x,y) * exp(x,z) = exp(x,1+y+z)
             @Override
@@ -1006,18 +1024,25 @@ public final class SimplificationStrategies {
 //			    return Node.isFunctionNode(n, "exp", 2);
             }
         });
+        list.add(new SimplifyFunction(TAG_PRIMARY_SET, ExprFunction.FUNCTION_NAME_RECIPROCAL, "") {
+            @Nullable
+            @Override
+            protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
+                return Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP, node.child.cloneNode(), Node.newPolyNode(Multinomial.NEGATIVE_ONE));
+            }
+        });
     }
 
     public static void addTriStrategies(List<SimpleStrategy> list) {
         list.add(new SimplifyAddStruct(TAG_TRIGONOMETRIC_SET) {
             @Override
             protected boolean firstGlance(List<Node> nodes, ExprCalculator ec) {
-                for(Node n : nodes){
-                    if(NodeHelper.isExp2(n,ec)){
+                for (Node n : nodes) {
+                    if (NodeHelper.isExp2(n, ec)) {
                         return true;
-                    }else if(n.getType() == Type.MULTIPLY){
+                    } else if (n.getType() == Type.MULTIPLY) {
                         var mul = (Multiply) n;
-                        if(mul.containMatches(x -> NodeHelper.isExp2(x,ec))){
+                        if (mul.containMatches(x -> NodeHelper.isExp2(x, ec))) {
                             return true;
                         }
                     }
@@ -1026,79 +1051,78 @@ public final class SimplificationStrategies {
             }
 
 
-
             @Override
             protected boolean accept(Node n, Multinomial pow, ExprCalculator ec) {
-                if(!NodeHelper.isExp2(n, ec)){
+                if (!NodeHelper.isExp2(n, ec)) {
                     return false;
                 }
-                var exp = (DFunction)n;
+                var exp = (DFunction) n;
                 var sc = exp.c1;
-                return Node.isFunctionNode(sc, ExprFunction.FUNCTION_NAME_SIN,1) ||
-                        Node.isFunctionNode(sc,ExprFunction.FUNCTION_NAME_COS,1);
+                return Node.isFunctionNode(sc, ExprFunction.FUNCTION_NAME_SIN, 1) ||
+                        Node.isFunctionNode(sc, ExprFunction.FUNCTION_NAME_COS, 1);
             }
 
             @Override
             protected List<Pair<Node, Multinomial>> simplify(List<Pair<Node, Multinomial>> nodes, ExprCalculator ec) {
                 //must be forms of exp(sin(node),2) or exp(cos(node),2)
-                NavigableMap<Node,Pair<Multinomial,Multinomial>> map = new TreeMap<>(ec.getNodeComparator());
+                NavigableMap<Node, Pair<Multinomial, Multinomial>> map = new TreeMap<>(ec.getNodeComparator());
                 boolean[] accumulated = new boolean[]{false};
-                for(var p : nodes){
-                    var sc = (SFunction) ((DFunction)p.getFirst()).c1;
+                for (var p : nodes) {
+                    var sc = (SFunction) ((DFunction) p.getFirst()).c1;
                     var coe = p.getSecond();
                     boolean isSin = sc.functionName.equals(ExprFunction.FUNCTION_NAME_SIN);
-                    map.compute(sc.child,(key,val) -> {
-                        if(val == null){
-                            return pairOf(coe,isSin);
-                        }else{
+                    map.compute(sc.child, (key, val) -> {
+                        if (val == null) {
+                            return pairOf(coe, isSin);
+                        } else {
                             accumulated[0] = true;
-                            return addPair(coe,isSin,val);
+                            return addPair(coe, isSin, val);
                         }
                     });
                 }
-                if(!accumulated[0]){
+                if (!accumulated[0]) {
                     return null;
                 }
                 Multinomial constResults = Multinomial.ZERO;
-                List<Pair<Node,Multinomial>> result = new ArrayList<>(map.size());
+                List<Pair<Node, Multinomial>> result = new ArrayList<>(map.size());
                 var mc = ec.getMultinomialCalculator();
-                for(var entry : map.entrySet()){
+                for (var entry : map.entrySet()) {
                     Node n = entry.getKey();
                     var p = entry.getValue();
                     var sinCoe = p.getFirst();
                     var cosCoe = p.getSecond();
-                    if(mc.isZero(sinCoe)){
+                    if (mc.isZero(sinCoe)) {
                         //exp(cos(node),2)
-                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_COS,n),BigInteger.TWO,ec);
-                        result.add(new Pair<>(exp,cosCoe));
-                    }else{
+                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_COS, n), BigInteger.TWO, ec);
+                        result.add(new Pair<>(exp, cosCoe));
+                    } else {
                         sinCoe = sinCoe.subtract(cosCoe);
                         constResults = constResults.add(cosCoe);
-                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_SIN,n),BigInteger.TWO,ec);
-                        result.add(new Pair<>(exp,sinCoe));
+                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_SIN, n), BigInteger.TWO, ec);
+                        result.add(new Pair<>(exp, sinCoe));
                     }
                 }
-                result.add(new Pair<>(Node.newPolyNode(constResults),Multinomial.ONE));
+                result.add(new Pair<>(Node.newPolyNode(constResults), Multinomial.ONE));
                 return result;
             }
 
-            private Pair<Multinomial,Multinomial> pairOf(Multinomial m,boolean isFirst){
-                Multinomial f,s;
-                if(isFirst){
+            private Pair<Multinomial, Multinomial> pairOf(Multinomial m, boolean isFirst) {
+                Multinomial f, s;
+                if (isFirst) {
                     f = m;
                     s = Multinomial.ZERO;
-                }else{
+                } else {
                     f = Multinomial.ZERO;
                     s = m;
                 }
-                return new Pair<>(f,s);
+                return new Pair<>(f, s);
             }
 
-            private Pair<Multinomial,Multinomial> addPair(Multinomial m, boolean isFirst, Pair<Multinomial,Multinomial> p){
-                if(isFirst){
-                    return new Pair<>(m.add(p.getFirst()),p.getSecond());
-                }else{
-                    return new Pair<>(p.getFirst(),m.add(p.getSecond()));
+            private Pair<Multinomial, Multinomial> addPair(Multinomial m, boolean isFirst, Pair<Multinomial, Multinomial> p) {
+                if (isFirst) {
+                    return new Pair<>(m.add(p.getFirst()), p.getSecond());
+                } else {
+                    return new Pair<>(p.getFirst(), m.add(p.getSecond()));
                 }
             }
 
@@ -1122,12 +1146,12 @@ public final class SimplificationStrategies {
         addSpiSimplification(ec);
     }
 
-    private static void addSpiSimplification(ExprCalculator ec){
-        if(!enableSpi){
+    private static void addSpiSimplification(ExprCalculator ec) {
+        if (!enableSpi) {
             return;
         }
         loadService();
-        for(SimplificationService ss : serviceLoader){
+        for (SimplificationService ss : serviceLoader) {
 //            print(ss.getClass());
             ec.tagAddAll(ss.getTags());
             ss.getProperties().forEach(ec::setProperty);
@@ -1151,8 +1175,8 @@ public final class SimplificationStrategies {
         return set;
     }
 
-    private static void loadService(){
-        if(serviceLoader == null){
+    private static void loadService() {
+        if (serviceLoader == null) {
             serviceLoader = ServiceLoader.load(SimplificationService.class);
         }
     }
@@ -1160,7 +1184,7 @@ public final class SimplificationStrategies {
     /**
      * Sets whether to load spi for simplification. {@link SimplificationService}
      */
-    public static void setEnableSpi(boolean enable){
+    public static void setEnableSpi(boolean enable) {
         enableSpi = enable;
     }
 

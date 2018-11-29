@@ -5,7 +5,6 @@ import cn.timelives.java.math.algebra.linearAlgebra.FullVectorBase
 import cn.timelives.java.math.algebra.linearAlgebra.IFullVectorBase
 import cn.timelives.java.math.algebra.linearAlgebra.Vector
 import cn.timelives.java.math.algebra.linearAlgebra.VectorBase
-import cn.timelives.java.math.minus
 import cn.timelives.java.math.plus
 import cn.timelives.java.math.property.Composable
 import java.util.function.Function
@@ -25,11 +24,6 @@ interface IAffineCoordinateSystem<T : Any> : ILinearSpace<T> {
      */
     override fun contains(v: Vector<T>): Boolean = v.size == dimension
 
-    /**
-     * Returns the linear transformation that transforms this to another affine coordinate system,
-     * it is required that both coordinate systems have the same dimension.
-     */
-    fun transformationTo(affineCoordinateSystem: IAffineCoordinateSystem<T>): ILinearTrans<T>
 }
 
 abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final override val dimension: Int,
@@ -39,7 +33,7 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
 
     init {
         require(dimension == originVector.size)
-        require(dimension == vectorBase.baseSize)
+        require(dimension == vectorBase.rank)
     }
 
     @Suppress("CanBePrimaryConstructorProperty")
@@ -72,12 +66,17 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
         return DAffineCoordinateSystem(mc, dimension, nOriginVector, nVectorBase)
     }
 
-    override fun transformationTo(affineCoordinateSystem: IAffineCoordinateSystem<T>): LinearTrans<T> {
-        require(dimension == affineCoordinateSystem.dimension)
-        val translation = affineCoordinateSystem.originVector - originVector
-        val transMatrix = vectorBase.transformationTo(affineCoordinateSystem.vectorBase)
-        return DLinearTrans(mc, dimension, transMatrix, translation)
-    }
+    //TODO
+//    /**
+//     * Returns the linear transformation that transforms this to another affine coordinate system,
+//     * it is required that both coordinate systems have the same dimension.
+//     */
+//    fun transformationTo(affineCoordinateSystem: AffineCoordinateSystem<T>): AffineTrans<T> {
+//        require(dimension == affineCoordinateSystem.dimension)
+//        val translation = affineCoordinateSystem.originVector - originVector
+//        val transMatrix = vectorBase.transMatrix(affineCoordinateSystem.vectorBase)
+//        return DLinearTrans(mc, dimension, transMatrix, translation)
+//    }
 
     companion object {
         /**
@@ -97,21 +96,21 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
     }
 }
 
-/**
- * Returns the linear transformation that transforms the standard coordinate system to
- * this affine coordinate system.
- */
-fun <T:Any> IAffineCoordinateSystem<T>.toLinearTrans(mathCalculator: MathCalculator<T>): LinearTrans<T> {
-    return DLinearTrans(mathCalculator, dimension, vectorBase.getVectorsAsMatrix(), originVector)
-}
+///**
+// * Returns the linear transformation that transforms the standard coordinate system to
+// * this affine coordinate system.
+// */
+//fun <T:Any> IAffineCoordinateSystem<T>.toLinearTrans(mathCalculator: MathCalculator<T>): LinearTrans<T> {
+//    return DLinearTrans(mathCalculator, dimension, vectorBase.getVectorsAsMatrix(), originVector)
+//}
 
-/**
- * Returns the linear transformation that transforms the standard coordinate system to
- * this affine coordinate system.
- */
-fun <T:Any> AffineCoordinateSystem<T>.toLinearTrans(): LinearTrans<T> {
-    return DLinearTrans(mathCalculator, dimension, vectorBase.getVectorsAsMatrix(), originVector)
-}
+///**
+// * Returns the linear transformation that transforms the standard coordinate system to
+// * this affine coordinate system.
+// */
+//fun <T:Any> AffineCoordinateSystem<T>.toLinearTrans(): LinearTrans<T> {
+//    return DLinearTrans(mathCalculator, dimension, vectorBase.getVectorsAsMatrix(), originVector)
+//}
 
 internal class DAffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension: Int, originVector: Vector<T>, vectorBase: FullVectorBase<T>) :
         AffineCoordinateSystem<T>(mc, dimension, originVector, vectorBase) {
@@ -145,8 +144,8 @@ class StandardCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension: Int) :
 
     override fun toStandardCord(v: Vector<T>): Vector<T> = v
 
-    override fun transformationTo(affineCoordinateSystem: IAffineCoordinateSystem<T>): LinearTrans<T> {
-        return affineCoordinateSystem.toLinearTrans(mathCalculator)
-    }
+//    override fun transformationTo(affineCoordinateSystem: IAffineCoordinateSystem<T>): LinearTrans<T> {
+//        return affineCoordinateSystem.toLinearTrans(mathCalculator)
+//    }
 
 }

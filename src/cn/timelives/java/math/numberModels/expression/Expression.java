@@ -45,19 +45,31 @@ public final class Expression implements Computable,Serializable {
 	}
 
 	private String expr;
+    /*
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        if (expr == null) {
+            expr = root.toString();
+        }
+        return expr;
+    }
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		if (expr == null) {
-			expr = root.toString();
-		}
-		return expr;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Expression)) return false;
+        Expression that = (Expression) o;
+        return Objects.equals(root, that.root);
+    }
 
-	public void listNode(PrintWriter out) {
+    @Override
+    public int hashCode() {
+        return Objects.hash(root);
+    }
+
+    public void listNode(PrintWriter out) {
 		PrintWriter pw = Printer.getOutput();
         Printer.reset(out);
 		root.listNode(0);

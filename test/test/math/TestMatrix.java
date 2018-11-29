@@ -64,8 +64,8 @@ public class TestMatrix {
 			Matrix<Double> matrix = Matrix.valueOf(mat).mapTo(x -> x, mcd);
 			LinearEquationSolution<Double> solution = MatrixSup.solveLinearEquation(matrix);
 			if (solution.getSolutionSituation() != LinearEquationSolution.Situation.NO_SOLUTION) {
-				Vector<Double> base = solution.getBase();
-				Vector<Double>[] ks = solution.getSolution();
+				Vector<Double> base = solution.getSpecialSolution();
+				Vector<Double>[] ks = solution.getBaseSolutions();
 				if (ks != null) {
 					base = Vector.addVectors(base, ks);
 				}
@@ -89,8 +89,8 @@ public class TestMatrix {
 			Matrix<Double> matrix = Matrix.valueOf(mat).mapTo(x -> x, mcd);
 			LinearEquationSolution<Double> solution = MatrixSup.solveHomogeneousLinearEquation(matrix);
 			if (solution.getSolutionSituation() != LinearEquationSolution.Situation.NO_SOLUTION) {
-				Vector<Double> base = solution.getBase();
-				Vector<Double>[] ks = solution.getSolution();
+				Vector<Double> base = solution.getSpecialSolution();
+				Vector<Double>[] ks = solution.getBaseSolutions();
 				if (ks != null) {
 					base = Vector.addVectors(base, ks);
 				}
@@ -121,4 +121,23 @@ public class TestMatrix {
 		assertTrue("",mcd.isEqual(afterTrans.getA(),2.5)&&mcd.isEqual(afterTrans.getC(),0.5));
 		assertEquals("",cs.determineType(),ConicSection.Type.ELLIPSE);
 	}
+
+	@Test
+    public void testDeterminant(){
+	    Matrix<Integer> mat = Matrix.valueOf(new int[][]{
+                {1,2,3,4},
+                {0,3,4,5},
+                {0,0,5,6},
+                {0,0,0,4}
+        });
+	    assertEquals(mat.calDet().intValue(), 3 * 5 * 4);
+	    var mat2 = Matrix.valueOf(new double[][]{
+                {1,2,3,4,5},
+                {8,0,3,4,5},
+                {27,1.3,5,5,6},
+                {3,4,6,7,4},
+                {1,11,3,-4,3}
+        });
+	    assertTrue(Math.abs(mat2.calDet()-MatrixSup.fastDet(mat2)) < 0.00001);
+    }
 }

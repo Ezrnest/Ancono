@@ -194,7 +194,7 @@ public class DerivativeHelper {
     private static Node dExp(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
-        return Node.wrapNodeAM(false, fx_, node);
+        return Node.wrapNodeAM(false, fx_, node.cloneNode());
     }
 
     private static Node dSquareRoot(@DisallowModify Node.SFunction node, String variableName) {

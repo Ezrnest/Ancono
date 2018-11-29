@@ -13,9 +13,7 @@ import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Cube;
 import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Tetrahedron;
 import cn.timelives.java.utilities.ArraySup;
 
-import java.util.List;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 import static cn.timelives.java.utilities.Printer.print;
 @Deprecated
@@ -267,7 +265,7 @@ public class SpaceAGTest {
 			}
 			Matrix<Double> matrix = Matrix.valueOf(mat);
 			LinearEquationSolution<Double> so = MatrixSup.solveLinearEquation(matrix);
-			Vector<Double> x = so.getBase();
+			Vector<Double> x = so.getSpecialSolution();
 			Matrix<Double> cofactor = matrix.subMatrix(0, 0,row-1,row-1);
 			Vector<Double> v = Vector.column(matrix, row);
 			Vector<Double> v1 =  Vector.column(Matrix.multiplyMatrix(cofactor, x),0);

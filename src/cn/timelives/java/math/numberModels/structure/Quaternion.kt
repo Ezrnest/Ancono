@@ -19,6 +19,10 @@ class Quaternion<T : Any>( val a: T, val b: T, val c: T, val d: T,mc: MathCalcul
         a * a + b * b + c * c + d * d
     }
 
+    fun real() : Quaternion<T>{
+        return real(a,mc)
+    }
+
     operator fun plus(y: Quaternion<T>): Quaternion<T> {
         return Quaternion(a + y.a, b + y.b, c + y.c, d + y.d,mc)
     }

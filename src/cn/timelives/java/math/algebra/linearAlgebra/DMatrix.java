@@ -5,6 +5,7 @@ import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.utilities.Printer;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Arrays;
  *
  * @author liyicheng
  */
-class DMatrix<T> extends Matrix<T> {
+class DMatrix<T> extends Matrix<T> implements Serializable {
     final Object[][] data;
 
     /**
@@ -225,6 +226,7 @@ class DMatrix<T> extends Matrix<T> {
         return new DMatrix<>(mat, row, column, getMc());
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public Matrix<T> cofactor(int r, int c) {
 
@@ -257,4 +259,42 @@ class DMatrix<T> extends Matrix<T> {
         return new DMatrix<>(ma, row - 1, column - 1, getMc());
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Vector<T> getRow(int row) {
+        // special simplification for row vectors
+        rowRangeCheck(row);
+        return new DVector<>((T[])data[row],true,getMathCalculator());
+    }
+
+
+
+
+    private transient T det;
+    private transient int rank = -1;
+    private transient Matrix<T> inverse;
+
+    @Override
+    public T calDet() {
+        if(det == null){
+            det = super.calDet();
+        }
+        return det;
+    }
+
+    @Override
+    public int calRank() {
+        if(rank < 0){
+            rank = super.calRank();
+        }
+        return rank;
+    }
+
+    @Override
+    public Matrix<T> inverse() {
+        if(inverse == null){
+            inverse = super.inverse();
+        }
+        return inverse;
+    }
 }

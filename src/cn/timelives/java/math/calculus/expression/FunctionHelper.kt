@@ -1,11 +1,10 @@
 package cn.timelives.java.math.calculus.expression
 
-import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup
 import cn.timelives.java.math.calculus.*
 import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
-import cn.timelives.java.math.numberModels.Fraction
 import cn.timelives.java.math.numberModels.Multinomial
+import cn.timelives.java.math.numberModels.api.Computable
 import cn.timelives.java.math.numberModels.expression.*
 import cn.timelives.java.math.numberModels.expression.anno.DisallowModify
 import cn.timelives.java.math.numberModels.expression.simplification.*
@@ -20,8 +19,8 @@ typealias LimitResultE = LimitResult<Expression>
  * Created at 2018/10/20 12:04
  * @author  liyicheng
  */
-object LimitHelper {
-    var hopitalThrehold = 4
+object FunctionHelper {
+    var hopitalThrehold = 3
         set(value) {
             field = if (value < 0) {
                 0
@@ -47,6 +46,10 @@ object LimitHelper {
         DISPATCHER.addProcessor(ExpProcessor1)
         DISPATCHER.addProcessor(ExpProcessor2)
         DISPATCHER.addProcessor(LnProcessor)
+        DISPATCHER.addProcessor(LogProcessor)
+        DISPATCHER.addProcessor(SinProcessor)
+        DISPATCHER.addProcessor(CosProcessor)
+        DISPATCHER.addProcessor(TanProcessor)
     }
 
 
@@ -57,11 +60,11 @@ object LimitHelper {
 
 
 
-    internal class FunctionLimitDispatcher : FunctionLimitProcessor {
-        private val sFunction = HashMap<String, FunctionLimitProcessor>()
-        private val dFunction = HashMap<String, FunctionLimitProcessor>()
-        private val mFunction = HashMap<String, FunctionLimitProcessor>()
-        private val wildcards = ArrayList<FunctionLimitProcessor>()
+    internal class FunctionLimitDispatcher : ContinuousFunctionProcessor {
+        private val sFunction = HashMap<String, ContinuousFunctionProcessor>()
+        private val dFunction = HashMap<String, ContinuousFunctionProcessor>()
+        private val mFunction = HashMap<String, ContinuousFunctionProcessor>()
+        private val wildcards = ArrayList<ContinuousFunctionProcessor>()
 
         override fun accept(functionName: String, parameterLength: Int): Boolean {
             return true
@@ -69,7 +72,7 @@ object LimitHelper {
 
         override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
             val type = node.type
-            var result: LimitResultE? = when (type) {
+            var (result, found) = when (type) {
                 Node.Type.S_FUNCTION -> {
                     dSFunction(node as Node.SFunction, handler)
                 }
@@ -89,7 +92,7 @@ object LimitHelper {
             val fnode = node as Node.FunctionNode
             val fName = fnode.functionName
             val pLen = fnode.parameterLength
-            var found = false
+
             for (fd in wildcards) {
                 if (fd.accept(fName, pLen)) {
                     found = true
@@ -107,65 +110,45 @@ object LimitHelper {
             }
         }
 
-        override fun equivalentInf(node: Node,handler: LimitHandler) {
-            TODO()
-        }
 
 
-        private fun dSFunction(node: Node.SFunction,handler: LimitHandler): LimitResultE? {
+        private fun dSFunction(node: Node.SFunction,handler: LimitHandler): Pair<LimitResultE?,Boolean> {
             val name = node.functionName
-            val derivator = sFunction[name] ?: return null
+            val derivator = sFunction[name] ?: return null to false
 //            if(derivator == null){
 //                println("?")
 //                return null
 //            }
-            return derivator.limit(node,handler)
+            return derivator.limit(node,handler) to true
         }
 
-        private fun dDFunction(node: Node.DFunction, handler: LimitHandler): LimitResultE? {
+        private fun dDFunction(node: Node.DFunction, handler: LimitHandler): Pair<LimitResultE?,Boolean> {
             val name = node.functionName
-            val derivator = dFunction[name] ?: return null
-            return derivator.limit(node,handler)
+            val derivator = dFunction[name] ?: return null to false
+            return derivator.limit(node,handler) to true
         }
 
-        private fun dMFunction(node: Node.MFunction,handler: LimitHandler): LimitResultE? {
+        private fun dMFunction(node: Node.MFunction,handler: LimitHandler): Pair<LimitResultE?,Boolean> {
             val name = node.functionName
-            val derivator = mFunction[name] ?: return null
-            return derivator.limit(node,handler)
+            val derivator = mFunction[name] ?: return null to false
+            return derivator.limit(node,handler) to true
         }
 
-        fun addProcessor(processor: FLPAdapter) {
+        fun addProcessor(processor: CFPAdapter) {
             when (processor.parameterLength) {
                 1 -> sFunction[processor.functionName] = processor
                 2 -> dFunction[processor.functionName] = processor
                 else -> mFunction[processor.functionName] = processor
             }
         }
-
-        fun addSFunction(functionName: String,
-                         derivator: FunctionLimitProcessor) {
-            sFunction[functionName] = derivator
-        }
-
-        fun addDFunction(functionName: String,
-                         derivator: FunctionLimitProcessor) {
-            dFunction[functionName] = derivator
-        }
-
-        fun addMFunction(functionName: String,
-                         derivator: FunctionLimitProcessor) {
-            mFunction[functionName] = derivator
-        }
-
-        fun addDerivator(fd: FunctionLimitProcessor) {
-            wildcards.add(fd)
-        }
-
-
     }
 }
+
+/**
+ * A handler for computing limit of a function.
+ */
 class LimitHandler
-internal constructor(val process: LimitProcessE, val mc : ExprCalculator, hopitalThrehold : Int = LimitHelper.hopitalThrehold){
+internal constructor(val process: LimitProcessE, val mc : ExprCalculator, hopitalThrehold : Int = FunctionHelper.hopitalThrehold){
     private var hopital : Int = hopitalThrehold
 
 
@@ -187,7 +170,7 @@ internal constructor(val process: LimitProcessE, val mc : ExprCalculator, hopita
                 return limitNodeFraction(node as Node.Fraction)
             }
             Node.Type.S_FUNCTION, Node.Type.D_FUNCTION, Node.Type.M_FUNCTION ->
-                return LimitHelper.DISPATCHER.limit(node,this)
+                return FunctionHelper.DISPATCHER.limit(node,this)
             else -> throw AssertionError()
         }
     }
@@ -216,9 +199,9 @@ internal constructor(val process: LimitProcessE, val mc : ExprCalculator, hopita
         // f(x) + g(x), where f(x) -> positive infinite
         // and f(x)(1+g(x)/f(x)) = f(x) + g(x)
         // computes the limit separately as multiply
-        if(node.polynomial !=null){
-
-        }
+//        if(node.polynomial !=null){
+//
+//        }
         val positiveInfP: Multinomial?
         val remainsP: Multinomial?
         if (pLimit != null && pLimit.isPositiveInf) {
@@ -309,6 +292,9 @@ internal constructor(val process: LimitProcessE, val mc : ExprCalculator, hopita
                     .let { mc.simplify(it) }
             return limitNodeFractionTwo(g,null,poly,null)
         }
+        if(deno.isEmpty() && denoP == null){
+            return null//TODO
+        }
         val f = Node.wrapCloneNodeAM(false, infinity, infinityP).let { mc.simplify(it) }
         val g = Node.wrapCloneNodeAM(false, deno, denoP)
         val denominator = mc.simplify(Node.wrapNodeFraction(Node.newPolyNode(Multinomial.ONE), g))
@@ -365,13 +351,19 @@ internal constructor(val process: LimitProcessE, val mc : ExprCalculator, hopita
         // use l'hospital rule
         val n = DerivativeHelper.derivativeNode(nume, process.variableName)
         val d = DerivativeHelper.derivativeNode(deno, process.variableName)
-        val frac = mc.simplify(n / d)
+//        try{
+//            mc.checkValidTree(n)
+//            mc.checkValidTree(d)
+//        }catch (e : Exception){
+//            print("?")
+//        }
+        val frac = mc.simplify(n / d) //TODO delete clone
         val re = limitNode(frac)
         hopital++
         return re
     }
 }
-private object ExpProcessor1 : FLPAdapter(ExprFunction.FUNCTION_NAME_EXP, 1) {
+private object ExpProcessor1 : CFPAdapter(ExprFunction.FUNCTION_NAME_EXP, 1) {
     override fun limit(node: Node,handler: LimitHandler): LimitResultE? {
         // e^(node)
         val exponent = (node as Node.SFunction).child
@@ -380,7 +372,7 @@ private object ExpProcessor1 : FLPAdapter(ExprFunction.FUNCTION_NAME_EXP, 1) {
     }
 }
 
-private object ExpProcessor2 : FLPAdapter(ExprFunction.FUNCTION_NAME_EXP, 2) {
+private object ExpProcessor2 : CFPAdapter(ExprFunction.FUNCTION_NAME_EXP, 2) {
     override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
         val mc = handler.mc
         val base = (node as Node.DFunction).c1
@@ -514,7 +506,7 @@ private object ExpProcessor2 : FLPAdapter(ExprFunction.FUNCTION_NAME_EXP, 2) {
 
 }
 
-private object LnProcessor : FLPAdapter(ExprFunction.FUNCTION_NAME_LN,1){
+private object LnProcessor : CFPAdapter(ExprFunction.FUNCTION_NAME_LN,1){
     override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
         //ln(x)
         val mc = handler.mc
@@ -536,7 +528,7 @@ private object LnProcessor : FLPAdapter(ExprFunction.FUNCTION_NAME_LN,1){
 
 }
 
-private object ReciprocalProcessor : FLPAdapter(ExprFunction.FUNCTION_NAME_RECIPROCAL,1){
+private object ReciprocalProcessor : CFPAdapter(ExprFunction.FUNCTION_NAME_RECIPROCAL,1){
     override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
         val sub = (node as Node.SFunction).child
         val lim = handler.limitNode(sub) ?: return null
@@ -549,58 +541,83 @@ private object ReciprocalProcessor : FLPAdapter(ExprFunction.FUNCTION_NAME_RECIP
 
 }
 
-interface FunctionLimitProcessor {
-    /**
-     * Determines whether this FunctionDerivator supports the function of
-     * the functionName and parameterLength.
-     *
-     * @param functionName    the name of the function
-     * @param parameterLength the length of the parameter
-     * @return true if it supports the function
-     */
-    fun accept(functionName: String, parameterLength: Int): Boolean
-
-    /**
-     * Computes the limit of the node, the node is always an
-     * instance of FunctionNode
-     */
-    fun limit(@DisallowModify node: Node, handler : LimitHandler): LimitResultE?
-
-    /**
-     * Returns an equivalent infinitesimal of the function.
-     * instance of FunctionNode
-     */
-    fun equivalentInf(@DisallowModify node: Node, handler : LimitHandler)
-}
-
-abstract class FLPAdapter(val functionName: String, val parameterLength: Int) : FunctionLimitProcessor {
-    override fun accept(functionName: String, parameterLength: Int): Boolean {
-        return functionName == this.functionName && parameterLength == this.parameterLength
-    }
-
-    override fun equivalentInf(node: Node, handler: LimitHandler) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+private object SinProcessor : CFPAdapter(ExprFunction.FUNCTION_NAME_SIN,1){
+    override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
+        val sub = (node as Node.SFunction).child
+        val limit = handler.limitNode(sub) ?: return null
+        if(!limit.isFinite){
+            return null
+        }
+        val v = limit.value.value
+        try{
+            val limitD = limit.map { it.computeDouble(Computable.DEFAULT_OR_EXCEPTION) }
+            val mono = Monotonicity.sin(limitD)
+            val f : (Expression) -> Expression = {x -> handler.mc.sin(x)}
+            if(mono>0){
+                return Limit.composeMonoIncrease(limit,f)
+            }else if(mono <0){
+                return Limit.composeMonoDecrease(limit,f)
+            }
+        }catch (e : Exception){
+        }
+        return LimitResult.finiteValueOf(handler.mc.sin(v))
     }
 }
 
-fun main(args: Array<String>) {
+private object CosProcessor : CFPAdapter(ExprFunction.FUNCTION_NAME_COS,1){
+    override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
+        val sub = (node as Node.SFunction).child
+        val limit = handler.limitNode(sub) ?: return null
+        if(!limit.isFinite){
+            return null
+        }
+        val v = limit.value.value
+        try{
+            val limitD = limit.map { it.computeDouble(Computable.DEFAULT_OR_EXCEPTION) }
+            val mono = Monotonicity.cos(limitD)
+            val f : (Expression) -> Expression = {x -> handler.mc.cos(x)}
+            if(mono>0){
+                return Limit.composeMonoIncrease(limit,f)
+            }else if(mono <0){
+                return Limit.composeMonoDecrease(limit,f)
+            }
+        }catch (e : Exception){
+        }
+        return LimitResult.finiteValueOf(handler.mc.cos(v))
+    }
+}
+
+private object TanProcessor : CFPAdapter(ExprFunction.FUNCTION_NAME_TAN,1){
+    override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
+        val sub = (node as Node.SFunction).child
+        val lim = handler.limitNode(sub) ?:return null
+        if(lim.isFinite){
+            return Limit.composeMonoIncrease(lim,handler.mc::tan)
+        }
+        return null
+    }
+}
+
+private object LogProcessor : CFPAdapter(ExprFunction.FUNCTION_NAME_LOG,2){
+    override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
+        val c1 = (node as Node.DFunction).c1
+        val c2 = node.c2
+        val nume = ln(c1)
+        val deno = ln(c2)
+        return handler.limitNode(nume / deno)
+    }
+}
+
+
+
+
+
+
+
+//fun main(args: Array<String>) {
 //    val mc = ExprCalculator.newInstance
-//    val expr = mc.parseExpr("exp(1+1/x,2x)")
-//    val process = LimitProcess.toPositiveInf<Expression>()
+//    val expr = mc.parseExpr("(sin(x)-x)/(x*(cos(x)-1))")
+//    val process = LimitProcess.toPositiveZero(mc)
 //    val limit = LimitHelper.limitNode(expr.root,process, mc)
-//    println("The expression is $expr, when $process, the limit is $limit")
-    val str = """
-        1 -1 2 0 7
-        2 -2 2 -4 12
-        -1 1 -1 2 -4
-        -3 1 -8 -10 -29
-    """.trimIndent()
-    val mat = MatrixSup.parseMatrixD(str,Fraction.calculator,Fraction.Companion::valueOf)
-    var t = mat
-    val re = mat.toStepMatrix()
-    for(step in re.ops){
-        t = t.doOperation(step)
-        t.printMatrix()
-    }
-    println(MatrixSup.solveLinearEquation(mat).solutionSituation)
-}
+//    println("The limit of $expr when $process is $limit")
+//}

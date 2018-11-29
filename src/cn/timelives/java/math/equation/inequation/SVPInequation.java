@@ -295,7 +295,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 		}
 		private IntervalUnion<T> solution;
 		/*
-		 * @see cn.timelives.java.math.property.Solveable#getSolution()
+		 * @see cn.timelives.java.math.property.Solveable#getBaseSolutions()
 		 */
 		@Override
 		public IntervalUnion<T> getSolution() {

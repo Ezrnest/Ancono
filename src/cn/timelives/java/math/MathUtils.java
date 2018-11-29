@@ -499,6 +499,7 @@ public class MathUtils {
         }
         long ans = 1;
         a = a % mod;
+        //noinspection Duplicates
         while (n > 0) {
             if ((n & 1) == 1) {
                 ans = (a * ans) % mod;
@@ -516,8 +517,7 @@ public class MathUtils {
      *
      * @param a   a number, positive
      * @param n   must be >=0, if n < 0, than it is taken as 0 and 1 will be returned.
-     * @param mod the modular, must be less than 2<<63, or overflow may happen.
-     * @return
+     * @param mod the modular, must be less than 2<<31, or overflow may happen.
      */
     public static int powerAndMod(int a, int n, int mod) {
         if (a < 0) {
@@ -531,6 +531,7 @@ public class MathUtils {
         }
         int ans = 1;
         a = a % mod;
+        //noinspection Duplicates
         while (n > 0) {
             if ((n & 1) == 1) {
                 ans = (a * ans) % mod;
@@ -540,6 +541,17 @@ public class MathUtils {
             n >>= 1;
         }
         return ans;
+    }
+
+    /**
+     * {@code (a^n) % mod}, with number as int. For example, {@code powerAndMod(2,2,3) = 1}.
+     * This method will not check overflow.
+     * @param a   a number, positive
+     * @param n   must be >=0, if n < 0, than it is taken as 0 and 1 will be returned.
+     * @param mod the modular, must be less than 2<<31, or overflow may happen.
+     */
+    public static int powerAndMod(int a, long n, int mod){
+        return (int)powerAndMod((long)a,n,(long)mod);
     }
 
     /**

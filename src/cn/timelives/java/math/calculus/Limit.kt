@@ -2,6 +2,7 @@ package cn.timelives.java.math.calculus
 
 import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.MathUtils
+import cn.timelives.java.math.calculus.expression.FunctionHelper
 import cn.timelives.java.math.calculus.expression.LimitProcessE
 import cn.timelives.java.math.calculus.expression.LimitResultE
 import cn.timelives.java.math.exceptions.ExceptionUtil
@@ -13,10 +14,13 @@ import cn.timelives.java.math.numberModels.expression.ExprCalculator
 import cn.timelives.java.math.numberModels.expression.Expression
 import java.lang.Exception
 
-private fun constNotSuppportInf(): Nothing {
+private fun constNotSupportInf(): Nothing {
     throw ArithmeticException("CONST doesn't apply for infinity!")
 }
 
+/**
+ * Provides basic utility functions for calculating limits.
+ */
 object Limit {
 
     /**
@@ -42,6 +46,7 @@ object Limit {
     /**
      * Returns the limit of a term by the process.
      */
+    @JvmStatic
     fun limitOf(x: Term, process: LimitProcessE, mc: ExprCalculator = ExprCalculator.newInstance): LimitResultE {
         val variable = process.variableName
         if (!x.containsChar(variable)) {
@@ -54,7 +59,7 @@ object Limit {
     }
 
     /**
-     * Computes the limit
+     * Computes the limit of a multinomial.
      */
     @JvmStatic
     fun limitOf(expr: Multinomial, process: LimitProcessE, mc: ExprCalculator = ExprCalculator.newInstance)
@@ -87,6 +92,9 @@ object Limit {
         return Limit.addConst(lim, mc) { Expression.fromMultinomial(Multinomial.fromTerms(constant)) }
     }
 
+    /**
+     * Returns the limit of a fraction of multinomial.
+     */
     @JvmStatic
     fun fractionPoly(nume: Multinomial, deno: Multinomial, process: LimitProcessE,
                      mc: ExprCalculator = ExprCalculator.newInstance): LimitResultE {
@@ -113,6 +121,13 @@ object Limit {
             fractionPoly0(nume, deno, process, mc)
         }
 
+    }
+
+    /**
+     * Returns the limit of an expression.
+     */
+    fun limitOf(expr : Expression, process: LimitProcessE, mc : ExprCalculator = ExprCalculator.newInstance) : LimitResultE?{
+        return FunctionHelper.limitNode(expr.root,process,mc)
     }
 
     private fun fractionPoly0(nume: Multinomial, deno: Multinomial, process: LimitProcessE, mc: ExprCalculator)
@@ -161,6 +176,9 @@ object Limit {
     }
 
 
+    /**
+     * Returns the sum of two limit result if possible, otherwise returns `null`.
+     */
     @JvmStatic
     fun <T : Any> add(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
         if (x.isFinite) {
@@ -181,6 +199,9 @@ object Limit {
         }
     }
 
+    /**
+     * Returns the sum of a limit result and a constant.
+     */
     @JvmStatic
     inline fun <T : Any> addConst(x: LimitResult<T>, mc: MathCalculator<T>, y: () -> T): LimitResult<T> {
         return if (x.isFinite) {
@@ -377,7 +398,7 @@ object Limit {
             LimitResult.finiteValueOf(f(x.value.value))
         } else {
             when (x.direction) {
-                LimitDirection.CONST -> constNotSuppportInf()
+                LimitDirection.CONST -> constNotSupportInf()
                 LimitDirection.LEFT -> positiveInfLimit()
                 LimitDirection.RIGHT -> negativeInfLimit()
                 LimitDirection.BOTH -> infLimit()
@@ -393,7 +414,7 @@ object Limit {
             LimitResult.finiteValueOf(f(x.value.value), x.direction)
         } else {
             when (x.direction) {
-                LimitDirection.CONST -> constNotSuppportInf()
+                LimitDirection.CONST -> constNotSupportInf()
                 LimitDirection.LEFT -> LimitResult(positiveInfLimit(), LimitDirection.LEFT)
                 LimitDirection.RIGHT -> LimitResult(negativeInfLimit(), LimitDirection.RIGHT)
                 LimitDirection.BOTH -> {
@@ -415,7 +436,7 @@ object Limit {
             LimitResult.finiteValueOf(f(x.value.value), -x.direction)
         } else {
             when (x.direction) {
-                LimitDirection.CONST -> constNotSuppportInf()
+                LimitDirection.CONST -> constNotSupportInf()
                 LimitDirection.LEFT -> LimitResult(positiveInfLimit(), LimitDirection.RIGHT)
                 LimitDirection.RIGHT -> LimitResult(negativeInfLimit(), LimitDirection.LEFT)
                 LimitDirection.BOTH -> {
@@ -431,6 +452,9 @@ object Limit {
 
 
 }
+
+fun ExprCalculator.limit(expr: Expression, process: LimitProcessE):LimitResultE? =
+        Limit.limitOf(expr,process,this)
 
 /**
  * Describes the direction of a limit.
@@ -535,6 +559,8 @@ sealed class LimitValue<T> {
     abstract val isFinite: Boolean
     abstract val value: T
 
+    abstract fun <R> map(f : (T)->R): LimitValue<R>
+
     companion object {
         fun <T> infinity(): LimitValue<T> {
             @Suppress("UNCHECKED_CAST")
@@ -550,6 +576,10 @@ sealed class LimitValue<T> {
 data class FiniteValue<T>(override val value: T) : LimitValue<T>() {
     override val isFinite: Boolean
         get() = true
+
+    override fun <R> map(f : (T)->R): LimitValue<R>{
+        return FiniteValue(f(value))
+    }
 }
 
 
@@ -558,6 +588,11 @@ object InfiniteValue : LimitValue<Any>() {
         get() = false
     override val value: Expression
         get() = throw UnsupportedOperationException()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <R> map(f: (Any) -> R): LimitValue<R> {
+        return this as LimitValue<R>
+    }
 }
 
 
@@ -588,7 +623,7 @@ class LimitProcess<T>(val variableName: String, value: LimitValue<T>, direction:
                     LimitDirection.LEFT -> "+∞"
                     LimitDirection.RIGHT -> "-∞"
                     LimitDirection.BOTH -> "∞"
-                    LimitDirection.CONST -> constNotSuppportInf()
+                    LimitDirection.CONST -> constNotSupportInf()
                 })
             }
         }
@@ -640,9 +675,13 @@ internal constructor(val value: LimitValue<T>, val direction: LimitDirection) {
                 LimitDirection.LEFT -> "+∞"
                 LimitDirection.RIGHT -> "-∞"
                 LimitDirection.BOTH -> "∞"
-                LimitDirection.CONST -> constNotSuppportInf()
+                LimitDirection.CONST -> constNotSupportInf()
             }
         }
+    }
+
+    fun <R> map(f : (T)->R) : LimitResult<R>{
+        return LimitResult(value.map(f),direction)
     }
 
     companion object {
@@ -717,11 +756,9 @@ internal constructor(val value: LimitValue<T>, val direction: LimitDirection) {
                 LimitDirection.LEFT -> POSITIVE_INF
                 LimitDirection.RIGHT -> NEGATIVE_INF
                 LimitDirection.BOTH -> INFINITY
-                LimitDirection.CONST -> constNotSuppportInf()
+                LimitDirection.CONST -> constNotSupportInf()
             } as LimitResult<T>
         }
-
-
     }
 }
 
@@ -749,7 +786,11 @@ fun <T : Any> LimitResult<T>.signum(mc: MathCalculator<T>): Int {
     }
 }
 
-fun main(args: Array<String>) {
-
-}
-
+///**
+// * Describes equivalent infinitesimal
+// */
+//data class PolyEqualInf<T:Any>(val pow : Fraction, val coe : T){
+//    fun add(y : PolyEqualInf<T>, mc : MathCalculator<T>){
+//
+//    }
+//}

@@ -169,12 +169,12 @@ internal object SimplificationKotlin {
 
 }
 
-fun main(args: Array<String>) {
-    setEnableSpi(true)
-    val ec = ExprCalculator.newInstance
-//    val matcher = "k".mulR(exp(x,"exp1".ref))
-//    println(matcher.matches(ec.simplify(Expression.valueOf("exp(x,a)")).root, emptyMap(),ec))
-
-    val expr = Expression.valueOf("a*exp(a^2+b^2,1/2)/exp(a^2+b^2,3/2) ")
-    println(ec.simplify(expr))
-}
+//fun main(args: Array<String>) {
+//    setEnableSpi(true)
+//    val ec = ExprCalculator.newInstance
+////    val matcher = "k".mulR(exp(x,"exp1".ref))
+////    println(matcher.matches(ec.simplify(Expression.valueOf("exp(x,a)")).root, emptyMap(),ec))
+//
+//    val expr = Expression.valueOf("a*exp(a^2+b^2,1/2)/exp(a^2+b^2,3/2) ")
+//    println(ec.simplify(expr))
+//}

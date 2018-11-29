@@ -1,8 +1,10 @@
 package cn.timelives.java.math.calculus
 
 import cn.timelives.java.math.MathCalculator
+import cn.timelives.java.math.numberModels.Calculators
 import cn.timelives.java.math.numberModels.Fraction
 import cn.timelives.java.math.numberModels.api.unaryMinus
+import java.lang.IllegalArgumentException
 
 
 enum class MonoType{
@@ -33,6 +35,44 @@ object Monotonicity{
         }else{
             1
         }
+    }
+
+    /**
+     * Determines the monotonicity of `sin(x)`, it is required the given
+     * limit result is finite.
+     */
+    fun sin(x : LimitResult<Double>) : Int{
+        if(!x.isFinite){
+            throw IllegalArgumentException()
+        }
+        val pi = Math.PI
+        val t = x.value.value % (2*pi)
+        fun determineInPi(x : Double, d : LimitDirection) : Int{
+            val halfPi = pi /2
+            return when{
+                x < halfPi -> 1
+                x > halfPi -> -1
+                else -> {
+                    when(d){
+                        LimitDirection.LEFT -> 1
+                        LimitDirection.RIGHT -> 1
+                        else -> 0
+                    }
+                }
+            }
+        }
+        return if(t >= pi){
+            -determineInPi(t-pi,x.direction)
+        }else{
+            determineInPi(t,x.direction)
+        }
+    }
+    /**
+     * Determines the monotonicity of `cos(x)`, it is required the given
+     * limit result is finite.
+     */
+    fun cos(x : LimitResult<Double>) : Int{
+        return sin(Limit.addConst(x,Calculators.getCalculatorDouble()){Math.PI/2})
     }
 
 

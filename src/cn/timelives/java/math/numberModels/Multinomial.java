@@ -1,11 +1,11 @@
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.math.MathSymbol;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
-import cn.timelives.java.math.numberModels.structure.PolynomialX;
 import cn.timelives.java.math.numberTheory.combination.Permutation;
 import cn.timelives.java.math.numberTheory.combination.Permutations;
 import cn.timelives.java.utilities.CollectionSup;
@@ -962,7 +962,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      */
     public Multinomial primarySymmetryReduce(){
         return primarySymmetryReduce(x ->
-            "σ"+Integer.toString(x+1));
+            MathSymbol.GREEK_SIGMA +Integer.toString(x+1));
     }
 
     /**

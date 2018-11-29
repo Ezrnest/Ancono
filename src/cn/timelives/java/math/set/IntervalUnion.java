@@ -2,6 +2,7 @@ package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathObject;
+import cn.timelives.java.math.MathSymbol;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.utilities.CollectionSup;
@@ -426,7 +427,6 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	
 	
 	/**
-	 * @see cn.timelives.java.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
 	 */
 	@NotNull
     @Override
@@ -469,17 +469,17 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 		return CollectionSup.listEqual(is, in.is, (v1,v2)->v1.valueEquals(v2,mapper));
 	}
 	/**
-	 * @see MathObject#toString(NumberFormatter)
 	 */
-	@Override
+	@NotNull
+    @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		if(is.isEmpty()) {
-			return "∅";
+			return MathSymbol.EMPTY_SET;
 		}else {
 			StringBuilder sb = new StringBuilder();
 			for(Interval<T> in : is){
 				sb.append(in.toString(nf));
-				sb.append('∪');
+				sb.append(MathSymbol.UNION);
 			}
 			sb.deleteCharAt(sb.length()-1);
 			return sb.toString();
@@ -612,9 +612,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 	private static <T> boolean shouldUnionWithThePrevInterval0(Interval<T> v,int downer,List<Interval<T>> is,MathCalculator<T> mc) {
 		if(v.isDownerBoundInclusive() && downer>0) {
 			Interval<T> prev = is.get(downer-1);
-			if(!prev.isUpperBoundInclusive() && mc.isEqual(v.downerBound(), prev.upperBound())) {
-				return true;
-			}
+            return !prev.isUpperBoundInclusive() && mc.isEqual(v.downerBound(), prev.upperBound());
 		}
 		return false;
 	}
@@ -730,7 +728,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T>{
 			list[n++] = t;
 		}
 		MathCalculator<T> mc = set.getMathCalculator();
-		Arrays.sort(list, mc::compare);
+		Arrays.sort(list, mc);
 		List<Interval<T>> ins = new ArrayList<>(n);
 		for(int i=0;i<n;i++) {
 			ins.add(Interval.single(list[i],mc));

@@ -266,8 +266,8 @@ class ExprCalculator
     }
 
 
-    private val compareCompute : ToDoubleFunction<String> = ToDoubleFunction{  x ->
-        when(x){
+    private val compareCompute: ToDoubleFunction<String> = ToDoubleFunction { x ->
+        when (x) {
             MathCalculator.STR_E -> Math.E
             MathCalculator.STR_PI -> Math.PI
             else -> throw UnsupportedOperationException("Cannot compare with unassigned character: $x")
@@ -570,7 +570,7 @@ class ExprCalculator
     fun simplify(x: Expression): Expression {
         var root = x.root.cloneNode(null)
         root = simplify(root)
-
+        checkValidTree(root)
         return Expression(root)
     }
 
@@ -589,13 +589,15 @@ class ExprCalculator
         return if (depth == 0) {
             //special case: avoid recursion.
             simplifyNode(root)
-        } else root.recurApply({ x ->
-            if (simplificationIdentifier == x.simIdentifier) {
-                //simplified
-                return@recurApply x
-            }
-            simplifyNode(x)
-        }, depth)
+        } else {
+            root.recurApply({ x ->
+                if (simplificationIdentifier == x.simIdentifier) {
+                    //simplified
+                    return@recurApply x
+                }
+                simplifyNode(x)
+            }, depth)
+        }
     }
 
     /**
@@ -611,6 +613,7 @@ class ExprCalculator
             if (count % 100 == 0L)
                 print("Simplify: " + node.type + " : " + node.hashCode())//TODO
         }
+//        checkValidTree(node)
         node = simplifyPolynomial(node, 0)
         node = doSort(node, 0)//very important
         val re = simplifyWithStrategyNoRecur(node)
@@ -624,6 +627,7 @@ class ExprCalculator
 //        re = simplifyPolynomial(re,0)
 //        re = doSort(re,0)
         re.simIdentifier = simplificationIdentifier
+//        checkValidTree(re)
         return re
     }
 
@@ -875,14 +879,14 @@ class ExprCalculator
     }
 
     fun checkValidTree(n: Node) {
-        n.recurApply({ x ->
+        n.recurApplyConsumer({ x ->
             if (x !== n) {
                 if (x.parent == null) {
                     throw AssertionError("For node: " + x.toString())
                 }
             }
-            x
         }, Integer.MAX_VALUE)
+
     }
 
 
@@ -951,13 +955,23 @@ class ExprCalculator
         return simplify(expression)
     }
 
-    /**
-     * Returns the differential of an expression.
-     */
-    fun differential(expr: Expression, variableName: String): Expression {
+
+    private fun differential0(expr: Expression, variableName: String): Expression {
         val nroot = DerivativeHelper.derivativeNode(expr.root, variableName)
         return Expression(simplify(nroot))
     }
+
+    /**
+     * Returns the differential of an expression.
+     */
+    fun differential(expr: Expression, variableName: String = "x", times: Int = 1): Expression {
+        var re = expr
+        repeat(times) {
+            re = differential0(re, variableName)
+        }
+        return re
+    }
+
 
     companion object {
 

@@ -1,5 +1,6 @@
 package cn.timelives.java.math.algebra.linearAlgebra;
 
+import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.function.MathFunction;
@@ -8,6 +9,8 @@ import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.Solut
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.numberModels.expression.ExprCalculator;
+import cn.timelives.java.math.numberModels.structure.PolynomialX;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.RegexSup;
 
@@ -56,23 +59,24 @@ public class MatrixSup {
      * @param mat a square Matrix
      * @return det(mat)
      */
-    public static Fraction fastDet(Matrix<Fraction> mat) {
+    public static <T> T fastDet(Matrix<T> mat) {
         if (mat.row != mat.column) {
-            throw new ArithmeticException("Cannot calculate det for: " + mat.row + "��" + mat.column);
+            throw new ArithmeticException("Cannot calculate det for: " + mat.row + "*" + mat.column);
         }
-        Fraction[][] mar = (Fraction[][]) mat.getValues();
-        List<MatrixOperation<Fraction>> ops = mat.toUpperTri0(mar, mat.row, mat.column);
+        @SuppressWarnings("unchecked") T[][] mar = (T[][]) mat.getValues();
+        List<MatrixOperation<T>> ops = mat.toUpperTri0(mar, mat.row, mat.column);
         boolean nega = false;
-        for (MatrixOperation<Fraction> mo : ops) {
+        for (MatrixOperation<T> mo : ops) {
             if (mo.ope == MatrixOperation.Operation.EXCHANGE_ROW) {
                 nega = !nega;
             }
         }
-        Fraction re = mar[0][0];
+        var mc = mat.getMathCalculator();
+        T re = mar[0][0];
         for (int i = 1; i < mat.row; i++) {
-            re = re.multiply(mar[i][i]);
+            re = mc.multiply(re, mar[i][i]);
         }
-        return nega ? re.negate() : re;
+        return nega ? mc.negate(re) : re;
     }
 
     /**
@@ -166,78 +170,113 @@ public class MatrixSup {
     /**
      * Parse a two-dimension string array to a matrix.
      */
-    public static <T> Matrix<T> parseMatrix(String[][] mat, MathCalculator<T> mc, Function<String,? extends T> parser){
+    public static <T> Matrix<T> parseMatrix(String[][] mat, MathCalculator<T> mc, Function<String, ? extends T> parser) {
         Objects.requireNonNull(mc);
         int rowCount = mat.length;
         int columnCount = mat[0].length;
         Object[][] data = new Object[rowCount][columnCount];
         for (int i = 0; i < mat.length; i++) {
             String[] row = mat[i];
-            if(row.length != columnCount){
+            if (row.length != columnCount) {
                 throw new IllegalArgumentException("Column counts aren't the same!");
             }
             for (int j = 0; j < columnCount; j++) {
                 data[i][j] = Objects.requireNonNull(parser.apply(row[j]));
             }
         }
-        return new DMatrix<>(data,rowCount,columnCount,mc);
+        return new DMatrix<>(data, rowCount, columnCount, mc);
     }
 
-    private static final Pattern ROW_PATTERN = Pattern.compile("\\[(.+?)\\]");
+    private static final Pattern ROW_PATTERN = Pattern.compile("\\[(.+?)]");
+
     /**
      * Parse a string to matrix, each row should be wrapped with a pair of '[]' and the matrix can be optionally
      * wrapped. The deliminator of elements in a row is one or more spaces.
      * <p>
      * For example, <pre>[[1 2 3][4 5 6][7 8 9]]</pre> is a valid matrix.
      */
-    public static <T> Matrix<T> parseMatrix(String str, MathCalculator<T> mc,Function<String,? extends T> parser){
-        if(str.startsWith("[")){
-            str = str.substring(1,str.length()-1);
+    public static <T> Matrix<T> parseMatrix(String str, MathCalculator<T> mc, Function<String, ? extends T> parser) {
+        if (str.startsWith("[")) {
+            str = str.substring(1, str.length() - 1);
         }
         int column = -1;
         List<Object[]> mat = new ArrayList<>();
         var matcher = ROW_PATTERN.matcher(str);
-        while(matcher.find()){
+        while (matcher.find()) {
             String row = matcher.group(1);
             String[] rowElements = RegexSup.SPACE.split(row);
-            if(column == -1){
+            if (column == -1) {
                 column = rowElements.length;
-            }else{
-                if(column != rowElements.length){
+            } else {
+                if (column != rowElements.length) {
                     throw new IllegalArgumentException("Column counts aren't the same!");
                 }
             }
-            mat.add(ArraySup.mapTo(rowElements,parser));
+            mat.add(ArraySup.mapTo(rowElements, parser));
         }
-        if(mat.isEmpty() || column == 0){
+        if (mat.isEmpty() || column == 0) {
             throw new IllegalArgumentException("Empty!");
         }
         Object[][] data = mat.toArray(new Object[0][]);
-        return new DMatrix<>(data,data.length,column,mc);
+        return new DMatrix<>(data, data.length, column, mc);
     }
 
     public static <T> Matrix<T> parseMatrix(String str, String rowDeliminator, String columnDeliminator,
-                                            MathCalculator<T> mc, Function<String,? extends T> parser){
+                                            MathCalculator<T> mc, Function<String, ? extends T> parser) {
         String[] rows = str.split(rowDeliminator);
         String[][] data = new String[rows.length][];
         for (int i = 0; i < rows.length; i++) {
             data[i] = rows[i].split(columnDeliminator);
         }
-        return parseMatrix(data,mc,parser);
+        return parseMatrix(data, mc, parser);
     }
 
     /**
      * Parse a matrix by default deliminator: for row is line separator and for column is several spaces.
+     *
      * @param str a string of matrix to parse
      */
     public static <T> Matrix<T> parseMatrixD(String str,
-                                            MathCalculator<T> mc, Function<String,? extends T> parser){
+                                             MathCalculator<T> mc, Function<String, ? extends T> parser) {
         String[] rows = RegexSup.LINE_SEPARATOR.split(str);
         String[][] data = new String[rows.length][];
         for (int i = 0; i < rows.length; i++) {
             data[i] = RegexSup.SPACE.split(rows[i]);
         }
-        return parseMatrix(data,mc,parser);
+        return parseMatrix(data, mc, parser);
+    }
+
+    public static Matrix<Fraction> parseFMatrix(String str){
+        return parseMatrixD(str,Fraction.getCalculator(), Fraction::valueOf);
+    }
+
+    /**
+     * Parse a string to vector. The deliminator of elements in a row is one or more spaces.
+     * <p>
+     * For example, <pre>1 2 3</pre> is a valid vector.
+     */
+    public static <T> Vector<T> parseVector(String str, MathCalculator<T> mc, Function<String, ? extends T> parser) {
+        return parseVector0(str, RegexSup.SPACE, mc, parser);
+    }
+
+    private static <T> Vector<T> parseVector0(String str, Pattern deliminator,MathCalculator<T> mc,Function<String,? extends T> parser){
+        if (str.startsWith("[")) {
+            str = str.substring(1, str.length() - 1);
+        }
+        String[] elements = deliminator.split(str);
+        @SuppressWarnings("unchecked")
+        T[] data = (T[])ArraySup.mapTo(elements,parser,Object.class);
+
+        return new DVector<>(data,false,mc);
+    }
+
+    /**
+     * Parses a vector with the given deliminator.
+     * @param deliminator the deliminator which will be treated as regex
+     */
+    public static <T> Vector<T> parseVector(String str, String deliminator,
+                                            MathCalculator<T> mc, Function<String, ? extends T> parser) {
+        return parseVector0(str,Pattern.compile(deliminator),mc,parser);
     }
 
     /**
@@ -382,7 +421,7 @@ public class MatrixSup {
         DVector<T>[] vs = new DVector[numberOfKSolution];
         int searchPos = 0;
         int curCol = 0;
-        T netagiveOne = mc.negate(mc.getOne());
+        T negativeOne = mc.negate(mc.getOne());
         T zero = mc.getZero();
         for (int s = 0; s < numberOfKSolution; s++) {
             // find the next column
@@ -401,7 +440,7 @@ public class MatrixSup {
                     solution[i] = zero;
                 }
             }
-            solution[curCol] = netagiveOne;
+            solution[curCol] = negativeOne;
             vs[s] = new DVector<T>(solution, false, mc);
             curCol++;
         }
@@ -443,12 +482,14 @@ public class MatrixSup {
         //seek rows to get rank
         int rank = 0;
         final int len = step.column - 1;
-//		printMatrix(mat);
-        for (int i = 0; i < step.row; i++) {
-            //column-1 avoid the constant part
-            for (int j = 0; j < len; j++) {
+        //column-1 to avoid the constant part
+        OUTER:
+        for (int i = step.row-1; i > -1; i--) {
+
+            for (int j = len-1; j > -1 ; j--) {
                 if (!mc.isZero(data[i][j])) {
-                    break;
+                    rank = Math.min(i+1,len);
+                    break OUTER;
                 }
             }
         }
@@ -469,12 +510,21 @@ public class MatrixSup {
 //        int coeMatrixRank = coeMatrix.calRank();
     }
 
+    /**
+     * Returns the solution of ax = b, where <code>a, x, b</code> are all matrices. It
+     * is required that the row count of <code>a</code> and <code>b</code> is the same.
+     */
+    public static <T> Matrix<T> solveMatrixEquation(Matrix<T> a, Matrix<T> b){
+        if(a.row != b.row){
+            throw new IllegalArgumentException("The row count of a and b isn't the same!");
+        }
+        var steps = a.toIdentityWay();
+        return b.doOperation(steps);
+    }
 
     /**
      * Computes the determinant of a 3*3 matrix given as an array, make sure the
      * array contains right type of element.
-     *
-     * @return
      */
     @SuppressWarnings("unchecked")
     public static <T> T det3(Object[][] mat, MathCalculator<T> mc) {
@@ -497,7 +547,6 @@ public class MatrixSup {
      * @param mat            a matrix
      * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to
      *                       the degree of the equation.
-     * @return
      */
     @SuppressWarnings("unchecked")
     public static <T> Matrix<T> similarDiag(Matrix<T> mat, EquationSolver<T, SVPEquation<T>> equationSolver) {
@@ -519,8 +568,31 @@ public class MatrixSup {
         List<T> eigenvalues = equationSolver.apply(equation);
         return Matrix.diag((T[]) eigenvalues.toArray(), mat.getMathCalculator());
     }
+
+    public static <T> Matrix<T> sylvesterDet(PolynomialX<T> p1, PolynomialX<T> p2) {
+        int n = p1.getDegree();
+        int m = p2.getDegree();
+        int size = m + n;
+        var builder = Matrix.getBuilder(size, size, p1.getMathCalculator());
+        for (int row = 0; row < m; row++) {
+            for (int i = 0; i <= n; i++) {
+                builder.set(p1.getCoefficient(n - i), row, i + row);
+            }
+        }
+        for (int row = m; row < size; row++) {
+            for (int i = 0; i <= n; i++) {
+                builder.set(p2.getCoefficient(m - i), row, i + row - m);
+            }
+        }
+        return builder.build();
+    }
 //
 //    public static void main(String[] args) {
+//        var mc = Calculators.getCalculatorInteger();
+////        var mc = ExprCalculator.Companion.getNewInstance();
+//        PolynomialX<Integer> p1 = PolynomialX.valueOf(mc,1,2,3);
+//        PolynomialX<Integer> p2 = PolynomialX.valueOf(mc,4,5,6);
+//        sylvesterDet(p1,p2).printMatrix();
 //        printMatrix(parseMatrix("[[1 2][1 4]]", Fraction.Companion.getCalculator(),Fraction.Companion::valueOf));
 //        printMatrix(parseMatrixD("1 2\n1 4", Fraction.Companion.getCalculator(),Fraction.Companion::valueOf));
 //    }

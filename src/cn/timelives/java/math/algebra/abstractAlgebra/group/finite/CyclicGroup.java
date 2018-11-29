@@ -5,6 +5,8 @@ import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.structure.AbelianGroup;
+import cn.timelives.java.math.algebra.abstractAlgebra.structure.Group;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
@@ -20,7 +22,7 @@ import static cn.timelives.java.utilities.Printer.printMatrix;
 /**
  * An implementation of cyclic group using the type of Integer.
  */
-public class CyclicGroup extends AbstractFiniteGroup<Integer>{
+public class CyclicGroup extends AbstractFiniteGroup<Integer> implements AbelianGroup<Integer> {
     /**
      * number of elements
      */
@@ -76,10 +78,11 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
         return MathSets.fromCollection(list,Calculators.getCalculatorInteger());
     }
 
+    @NotNull
     @Override
-    public FiniteSet<AbstractFiniteGroup<Integer>> getSubgroups() {
+    public FiniteSet<CyclicGroup> getSubgroups() {
         int num = Math.toIntExact(MathUtils.factorCount(size));
-        var list = new ArrayList<AbstractFiniteGroup<Integer>>(num);
+        var list = new ArrayList<CyclicGroup>(num);
         list.add(IDENTITY);
         list.add(this);
         for(int i=2,n=2*generator;i<size;i++){
@@ -89,6 +92,12 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
             n+= generator;
         }
         return MathSets.fromCollection(list, EqualPredicate.Companion.naturalEqual());
+    }
+
+    @NotNull
+    @Override
+    public FiniteSet<CyclicGroup> getNormalSubgroups() {
+        return getSubgroups();
     }
 
     public FiniteSet<CyclicGroup> getSubgroupsAsCyclic(){

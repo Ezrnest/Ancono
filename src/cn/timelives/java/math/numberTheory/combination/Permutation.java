@@ -96,17 +96,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	 * @return
 	 */
 	default int inverseCount() {
-		int[] arr = getArray();
-		int count = 0;
-		for(int i=0;i<arr.length;i++) {
-			int t = arr[i];
-			for(int j=i+1;j<arr.length;j++) {
-				if(arr[j]<t) {
-					count ++;
-				}
-			}
-		}
-		return count;
+		return CFunctions.inverseCount(getArray());
 	}
 	/**
 	 * Determines whether this permutation is an even permutation.

@@ -37,7 +37,6 @@ public final class ModelPatterns {
         // the code copied from Arrays.binarySearch
         long low = fromIndex;
         long high = toIndex - 1;
-
         while (low <= high) {
             long mid = (low + high) >>> 1;
             int cmp = comparator.applyAsInt(mid);
@@ -539,7 +538,7 @@ public final class ModelPatterns {
         return cached.apply(x);
     }
 
-
+    
 
 
 

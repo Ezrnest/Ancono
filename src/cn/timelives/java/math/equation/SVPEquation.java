@@ -748,7 +748,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.property.Solveable#getSolution()
+		 * @see cn.timelives.java.math.property.Solveable#getBaseSolutions()
 		 */
 		@Override
 		public SingletonSet<T> getSolution() {

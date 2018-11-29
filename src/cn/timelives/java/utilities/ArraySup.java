@@ -575,23 +575,22 @@ public class ArraySup {
 			return false;
 		}
 		boolean[] mapped = new boolean[length];
-		for(int i=0;i<length;i++){
-			T t = a1[i];
-			boolean suc = false;
-			for(int j=0;j<length;j++){
-				if(mapped[j])
-					continue;
-				T t2 = a2[j];
-				if(t==null ? t2==null : t.equals(t2)){
-					mapped[j] = true;
-					suc = true;
-					break;
-				}
-			}
-			if(!suc){
-				return false;
-			}
-		}
+        for (T t : a1) {
+            boolean suc = false;
+            for (int j = 0; j < length; j++) {
+                if (mapped[j])
+                    continue;
+                T t2 = a2[j];
+                if (t == null ? t2 == null : t.equals(t2)) {
+                    mapped[j] = true;
+                    suc = true;
+                    break;
+                }
+            }
+            if (!suc) {
+                return false;
+            }
+        }
 		return true;
 	}
 	
@@ -604,20 +603,48 @@ public class ArraySup {
 	 * @return 
 	 */
 	public static <T,S> boolean arrayContains(T[] arr,S element,BiFunction<T, S, Boolean> testEqual){
-		for(int i=0;i<arr.length;i++){
-			if(testEqual.apply(arr[i], element)){
-				return true;
-			}
-		}
+        for (T anArr : arr) {
+            if (testEqual.apply(anArr, element)) {
+                return true;
+            }
+        }
 		return false;
 	}
+
+	public static boolean arrayContains(int[] arr, int element){
+	    for(int t : arr){
+	        if(t == element){
+	            return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param element
+     * @param arr
+     * @param from
+     * @param to exclusive
+     * @return
+     */
+    public static boolean arrayContains( int element,int[] arr, int from, int to){
+        for (int i = from; i < to; i++) {
+            int t = arr[i];
+            if (t == element) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * Return an array of the mapped elements, the actual returned type is an array of object.
 	 * @param arr
 	 * @param mapper
 	 * @return
 	 */
-	public static <N,T> N[] mapTo(T[] arr,Function<T,N> mapper){
+	public static <N,T> N[] mapTo(T[] arr,Function<? super T,? extends N> mapper){
 		@SuppressWarnings("unchecked")
 		N[] re = (N[]) new Object[arr.length];
 		for(int i=0;i<arr.length;i++){
@@ -631,7 +658,7 @@ public class ArraySup {
 	 * @param mapper
 	 * @return
 	 */
-	public static <N,T> N[] mapTo(T[] arr,Function<T,N> mapper,Class<N> clazz){
+	public static <N,T> N[] mapTo(T[] arr,Function<? super T,? extends N> mapper,Class<N> clazz){
 		@SuppressWarnings("unchecked")
 		N[] re = (N[]) Array.newInstance(clazz, arr.length);
 		for(int i=0;i<arr.length;i++){
@@ -646,7 +673,7 @@ public class ArraySup {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <N,T> N[][] mapTo2(T[][] arr,Function<T,N> mapper,Class<N> clazz){
+	public static <N,T> N[][] mapTo2(T[][] arr,Function<? super T,? extends N> mapper,Class<N> clazz){
 		Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
 		N[][] re = (N[][]) Array.newInstance(narrayType, arr.length);
 		for(int i=0;i<arr.length;i++){
@@ -658,7 +685,7 @@ public class ArraySup {
 		return re;
 	}
 
-    public static <T> int[][] mapTo2(T[][] arr,ToIntFunction<T> mapper){
+    public static <T> int[][] mapTo2(T[][] arr,ToIntFunction<? super T> mapper){
         int[][] re = new int[arr.length][];
         for(int i=0;i<arr.length;i++){
             re[i] = new int[arr[i].length];
@@ -669,8 +696,8 @@ public class ArraySup {
         return re;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<T> mapper, Class<T> clazz) {
+    @SuppressWarnings({"unchecked", "Duplicates"})
+    public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<? extends T> mapper, Class<T> clazz) {
         Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
         T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);
         for (int i = 0; i < arr.length; i++) {
@@ -682,7 +709,7 @@ public class ArraySup {
         return re;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "Duplicates"})
     public static <T> T[][] mapTo2(int[][] arr, IntFunction<T> mapper, Class<T> clazz) {
         Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
         T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);

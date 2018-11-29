@@ -128,7 +128,7 @@ abstract class AbstractFiniteGroup<T:Any>
     /*
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.structure.Group#getNormalSubgroups()
 	 */
-    override fun getNormalSubgroups(): FiniteSet<AbstractFiniteGroup<T>> {
+    override fun getNormalSubgroups(): FiniteSet<out AbstractFiniteGroup<T>> {
         throw UnsupportedOperationException()
     }
 

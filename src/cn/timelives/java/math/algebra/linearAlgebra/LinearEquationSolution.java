@@ -1,6 +1,11 @@
 package cn.timelives.java.math.algebra.linearAlgebra;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.algebra.linearAlgebra.space.LinearSpace;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 import static cn.timelives.java.utilities.Printer.print;
 import static cn.timelives.java.utilities.Printer.printnb;
@@ -10,7 +15,7 @@ import static cn.timelives.java.utilities.Printer.printnb;
  * @author lyc
  *
  */
-public class LinearEquationSolution<T> {
+public class LinearEquationSolution<T>{
 	
 	public enum Situation{
 		NO_SOLUTION,
@@ -20,19 +25,37 @@ public class LinearEquationSolution<T> {
 	
 	
 	private final Matrix<T> equation;
-	private final Situation sit ;
+	private final Situation sit;
 	
 	
-	private final Vector<T> base ;
-	private final Vector<T>[] solution;
+	private final Vector<T> specialSolution;
+	private final Vector<T>[] baseSolutions;
 	
-	LinearEquationSolution(Matrix<T> equ,Situation sit,Vector<T> base,Vector<T>[] solution){
+	LinearEquationSolution(Matrix<T> equ, Situation sit, Vector<T> specialSolution, Vector<T>[] baseSolutions){
 		equation = equ;
 		this.sit = sit;
-		this.base = base;
-		this.solution = solution;
+		this.specialSolution = specialSolution;
+		this.baseSolutions = baseSolutions;
 	}
-	
+    @Nullable
+	public LinearSpace<T> asLinearSpace(){
+	    if(sit == Situation.NO_SOLUTION){
+	        return null;
+        }
+	    return LinearSpace.Companion.valueOf(specialSolution, Objects.requireNonNull(solutionSpace()));
+    }
+    @Nullable
+    public VectorBase<T> solutionSpace(){
+	    if(sit == Situation.NO_SOLUTION){
+	        return null;
+        }
+        if(baseSolutions == null){
+            //only one solution
+            return VectorBase.zeroBase(specialSolution.getSize(),specialSolution.getMathCalculator());
+        }
+	    return VectorBase.createBaseWithoutCheck(baseSolutions);
+    }
+
 	/**
 	 * Return a LinearEquationSolution that represent no solution
 	 */
@@ -43,12 +66,9 @@ public class LinearEquationSolution<T> {
 	/**
 	 * Returns a LinearEquationSolution representing the only solution is all zero.
 	 * @param n the number of variables.
-	 * @param equation
-	 * @return
 	 */
 	public static <T> LinearEquationSolution<T> zeroSolution(int n,Matrix<T> equation,MathCalculator<T> mc){
-		LinearEquationSolution<T> so = new LinearEquationSolution<T>(equation,Situation.SINGLE_SOLUTION,Vector.zeroVector(n, mc),null);
-		return so;
+        return new LinearEquationSolution<T>(equation,Situation.SINGLE_SOLUTION,Vector.zeroVector(n, mc),null);
 	}
 	
 	
@@ -70,19 +90,22 @@ public class LinearEquationSolution<T> {
 	}
 
 	/**
+     * Gets the base solution.
 	 * @return the base
 	 */
-	public Vector<T> getBase() {
-		return base;
+	public Vector<T> getSpecialSolution() {
+		return specialSolution;
 	}
 
 	/**
 	 * Get the part of k*vector
 	 * @return the solution
 	 */
-	public Vector<T>[] getSolution() {
-		return solution;
+	public Vector<T>[] getBaseSolutions() {
+		return baseSolutions;
 	}
+
+
 	/**
 	 * Show the solution through printer .
 	 */
@@ -93,7 +116,7 @@ public class LinearEquationSolution<T> {
 			break;
 		case SINGLE_SOLUTION:
 			//print the solution
-			base.printMatrix();
+			specialSolution.printMatrix();
 			break;
 		case UNBOUNDED_SOLUTION:
 			printSolu0();
@@ -105,10 +128,10 @@ public class LinearEquationSolution<T> {
 	}
 	
 	private void printSolu0(){
-		base.transportMatrix().printMatrix();
-		for(int k=0;k<solution.length;k++){
+		specialSolution.transportMatrix().printMatrix();
+		for(int k = 0; k< baseSolutions.length; k++){
 			printnb("+k"+k);
-			solution[k].transportMatrix().printMatrix();
+			baseSolutions[k].transportMatrix().printMatrix();
 		}
 	}
 	
@@ -184,9 +207,9 @@ public class LinearEquationSolution<T> {
 				}
 				if(pass){
 					isBuilding = false;
-					return new LinearEquationSolution<T>(equation,
-														situation,
-														base,ss);
+					return new LinearEquationSolution<>(equation,
+                            situation,
+                            base, ss);
 				}
 				
 			}

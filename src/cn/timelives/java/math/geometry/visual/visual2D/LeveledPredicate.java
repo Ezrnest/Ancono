@@ -31,11 +31,11 @@ public class LeveledPredicate extends SimpleDrawPointPredicate {
 	@Override
 	public boolean shouldDraw(double[][] data, int x, int y) {
 		boolean should = false;
-		for(int i=0;i<levels.length;i++) {
-			should = shouldDraw(data, x, y, levels[i]);
-			if(should)
-				break;
-		}
+        for (double level : levels) {
+            should = shouldDraw(data, x, y, level);
+            if (should)
+                break;
+        }
 		
 		return should;
 	}
@@ -47,26 +47,26 @@ public class LeveledPredicate extends SimpleDrawPointPredicate {
 		if (Math.abs(cur) <= precision) {
 			should = true;
 		}
-		if (!should && cur != Double.NaN) {
+		if (!should && !Double.isNaN(cur)) {
 			double f = data[x - 1][y] - level;
-			if (f != Double.NaN && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
+			if (!Double.isNaN(f) && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
 				should = true;
 			}
 			if (!should) {
 				f = data[x + 1][y] - level;
-				if (f != Double.NaN && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
+				if (!Double.isNaN(f) && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
 					should = true;
 				}
 			}
 			if (!should) {
 				f = data[x][y - 1] - level;
-				if (f != Double.NaN && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
+				if (!Double.isNaN(f) && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
 					should = true;
 				}
 			}
 			if (!should) {
 				f = data[x][y + 1] - level;
-				if (f != Double.NaN && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
+				if (!Double.isNaN(f) && MathUtils.oppositeSignum(cur, f) && curAbs < Math.abs(f)) {
 					should = true;
 				}
 			}

@@ -145,9 +145,9 @@ public class CoordinateDrawer implements ImageDecorator {
 		}
 		return df1;
 	}
-	private static final DecimalFormat df1 = new DecimalFormat("0");
+	private static final DecimalFormat df1 = new DecimalFormat("#.####");
 	private static final DecimalFormat df2 = new DecimalFormat("0.#E0");
-	private static final double MAX_PLAIN = 950,MIN_PLAIN = 1/950;
+	private static final double MAX_PLAIN = 950,MIN_PLAIN = 1d/950;
 	
 	private static final double MIN_GAP = 1E-10;
 	

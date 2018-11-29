@@ -8,7 +8,6 @@ import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.Situa
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
-import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.geometry.analytic.planeAG.Circle;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.geometry.analytic.planeAG.Triangle;
@@ -198,11 +197,11 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 			return null;
 		}
 //		so.printSolution();
-		Vector<T>[] ks = so.getSolution();
+		Vector<T>[] ks = so.getBaseSolutions();
 		if(ks.length == 2){
 			throw new ArithmeticException("Coincide");
 		}
-		Vector<T> base = so.getBase();
+		Vector<T> base = so.getSpecialSolution();
         return new Line<>(getMc(),
                 new SPoint<>(getMc(), base.getNumber(0), base.getNumber(1), base.getNumber(2)),
 				SVector.fromVector(ks[0]));

@@ -28,6 +28,9 @@ object AlgebraUtil{
         }
     }
 
+    /**
+     * Determines whether the given polynomial has duplicated roots.
+     */
     fun <T:Any> hasDuplicatedRoots(polynomial: PolynomialX<T>) : Boolean{
         val derivated = polynomial.derivative()
         val mc = PolynomialX.getCalculator(polynomial.mathCalculator)

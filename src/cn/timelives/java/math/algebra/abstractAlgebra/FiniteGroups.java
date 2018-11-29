@@ -360,7 +360,7 @@ public final class FiniteGroups {
             list.add(x);
         }
         listGenerate(list, f);
-        FiniteSet<T> set = MathSets.fromCollection(list, GroupCalculators.INSTANCE.toMathCalculatorAdd(f));
+        FiniteSet<T> set = MathSets.fromCollection(list, GroupCalculators.toMathCalculatorAdd(f));
         return new FiniteGroupImpl<>(f, set);
     }
 
@@ -663,7 +663,7 @@ public final class FiniteGroups {
             }
 
             @Override
-            public T deply(R y) {
+            public T deply(@NotNull R y) {
                 int idx2 = ArraySup.firstIndexOf(arr2, x -> g2.getCalculator().isEqual(x, y));
                 int idx1 = ArraySup.firstIndexOf(idx2, fmap);
                 return arr1[idx1];

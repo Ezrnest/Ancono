@@ -213,9 +213,16 @@ public final class Point<T> extends MathObject<T> {
 	 * @return a column vector with two dimensions.
 	 */
 	public PVector<T> directVector(Point<T> p){
+        @SuppressWarnings("SuspiciousNameCombination")
         T vx = getMc().subtract(p.x, x);
+        @SuppressWarnings("SuspiciousNameCombination")
         T vy = getMc().subtract(p.y, y);
         return PVector.valueOf(vx, vy, getMc());
 	}
+
+	public static <T> Point<T> fromVector(PVector<T>v){
+	    return new Point<>(v.getMathCalculator(),v.x,v.y);
+    }
+
 
 }

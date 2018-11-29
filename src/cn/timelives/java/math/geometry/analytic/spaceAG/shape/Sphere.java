@@ -17,8 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-import static cn.timelives.java.math.MathCalculator.STR_PI;
-
 ;
 /**
  * @author liyicheng
@@ -427,7 +425,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 		if(sov.getSolutionSituation() == Situation.UNBOUNDED_SOLUTION){
             throw new IllegalArgumentException("Four points identity plane");
 		}
-		Vector<T> vec = sov.getBase();
+		Vector<T> vec = sov.getSpecialSolution();
 		SPoint<T> o = SPoint.valueOf(vec.getNumber(0), vec.getNumber(1), vec.getNumber(2), mc);
 		T r2 = a.distanceSq(o);
 		return new Sphere<T>(mc, null, r2, o);

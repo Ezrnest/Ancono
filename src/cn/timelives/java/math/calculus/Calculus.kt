@@ -338,15 +338,15 @@ object Calculus {
 }
 
 
-fun main(args: Array<String>) {
-//    val f : SVFunction<Double> = AbstractSVPFunction.quadratic(1.0,-2.0,-3.0,Calculators.getCalculatorDoubleDev())
-//    println(findRoot(f,0.0))
-    val mc = ExprCalculator.newInstance
-    val m = Multinomial.valueOf("1/x+x")
-    println(m)
-    val p1 = LimitProcess("x", LimitValue.valueOf(Expression.valueOf("2")), LimitDirection.LEFT)
-    val p2 = LimitProcess<Expression>("x", LimitValue.infinity(),LimitDirection.LEFT)
-    println(Limit.limitOf(m,p1,mc))
-    val t = Limit.limitOf(m,p2,mc)
-    println(t)
-}
+//fun main(args: Array<String>) {
+////    val f : SVFunction<Double> = AbstractSVPFunction.quadratic(1.0,-2.0,-3.0,Calculators.getCalculatorDoubleDev())
+////    println(findRoot(f,0.0))
+//    val mc = ExprCalculator.newInstance
+//    val m = Multinomial.valueOf("1/x+x")
+//    println(m)
+//    val p1 = LimitProcess("x", LimitValue.valueOf(Expression.valueOf("2")), LimitDirection.LEFT)
+//    val p2 = LimitProcess<Expression>("x", LimitValue.infinity(),LimitDirection.LEFT)
+//    println(Limit.limitOf(m,p1,mc))
+//    val t = Limit.limitOf(m,p2,mc)
+//    println(t)
+//}

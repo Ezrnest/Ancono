@@ -29,7 +29,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
      * @param y the parameter
 	 * @return <pre>f<sup>-1</sup>(y)</pre>
 	 */
-	P deply(R y);
+	P deply(@NotNull R y);
 
 
     /**
@@ -52,7 +52,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
 
             @SuppressWarnings("SuspiciousNameCombination")//inverse
             @Override
-            public R deply(P y) {
+            public R deply(@NotNull P y) {
                 return f.apply(y);
             }
 
@@ -69,7 +69,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
     @SuppressWarnings("rawtypes")
     Bijection IDENTITY = new Bijection() {
         @Override
-        public Object deply(Object y) {
+        public Object deply(@NotNull Object y) {
             return y;
         }
 
@@ -99,7 +99,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
         Bijection<P, R> after = this;
         return new Bijection<>() {
             @Override
-            public V deply(R y) {
+            public V deply(@NotNull R y) {
                 return before.deply(after.deply(y));
             }
 
@@ -145,7 +145,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
             }
 
             @Override
-            public P deply(R y) {
+            public P deply(@NotNull R y) {
                 //noinspection SuspiciousNameCombination
                 return inverse.apply(y);
             }

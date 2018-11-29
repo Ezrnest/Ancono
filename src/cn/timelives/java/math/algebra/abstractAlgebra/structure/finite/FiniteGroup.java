@@ -4,17 +4,12 @@
 package cn.timelives.java.math.algebra.abstractAlgebra.structure.finite;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculatorKt;
 import cn.timelives.java.math.algebra.abstractAlgebra.group.Homomorphism;
 import cn.timelives.java.math.algebra.abstractAlgebra.group.NotASubgroupException;
+import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
 import cn.timelives.java.math.algebra.abstractAlgebra.structure.Coset;
 import cn.timelives.java.math.algebra.abstractAlgebra.structure.Group;
-import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
 import cn.timelives.java.math.set.FiniteSet;
-import cn.timelives.java.math.set.MathSet;
-
-import java.util.ArrayList;
 
 /**
  * A limited group is a group with limited elements.
@@ -96,7 +91,7 @@ public interface FiniteGroup<T> extends Group<T> {
 
     @Override
     FiniteGroup<T> conjugateSubgroup(Group<T> h, T x);
-
+    @Override
     FiniteGroup<T> normalizer(Group<T> h);
 
 	FiniteGroup<T> centralizer(T a);

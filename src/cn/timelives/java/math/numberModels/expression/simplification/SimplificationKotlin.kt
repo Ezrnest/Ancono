@@ -22,7 +22,7 @@ internal object SimplificationKotlin {
                     it.name.startsWith("sim")
                 }
                 .forEach { list.add(it.call(SimplificationKotlin) as SimpleStrategy) }
-        println()
+//        println()
     }
 
     internal fun simTri1(): SimpleStrategy {

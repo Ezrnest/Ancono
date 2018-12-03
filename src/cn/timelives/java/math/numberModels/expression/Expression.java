@@ -4,7 +4,9 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.function.SVFunction;
+import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.ParserUtils;
 import cn.timelives.java.math.numberModels.Term;
@@ -130,6 +132,27 @@ public final class Expression implements Computable,Serializable {
      */
     public static Expression fromPolynomialM(PolynomialX<Multinomial> p, String variableName){
 	    return fromMultinomial(Multinomial.fromPolynomialM(p,variableName));
+    }
+
+    public static Expression fromPolynomialE(Polynomial<Expression> p, String variableName){
+        List<Node> terms = new ArrayList<>();
+        for(int i=0;i<p.getDegree();i++){
+            Expression coeExpr = p.getCoefficient(i);
+            Node root = coeExpr.root;
+            if(root.getType() == Node.Type.POLYNOMIAL){
+                if(((Node.Poly)root).p.isZero()){
+                    //skip zeros
+                    continue;
+                }
+            }
+            var variable = Term.characterPower(variableName, Fraction.valueOf(i));
+            Node pow = Node.newPolyNode(Multinomial.monomial(variable));
+            Node coe = root.cloneNode();
+            Node term = Node.wrapNodeAM(false,coe,pow);
+            terms.add(term);
+        }
+        Node root = Node.wrapNodeAM(true,terms);
+        return new Expression(root);
     }
 
 

@@ -676,8 +676,11 @@ public abstract class Node implements Computable, Serializable {
             if (depth > 0) {
                 c1 = c1.recurApply(f, depth - 1);
                 try {
-                    c2 = c2.recurApply(f, depth - 1);
+                    var t = c2.recurApply(f, depth - 1);
+                    Objects.requireNonNull(t);
+                    c2 = t;
                 } catch (Exception e) {
+
                     e.printStackTrace();
                 }
                 c1.parent = c2.parent = this;
@@ -1274,9 +1277,17 @@ public abstract class Node implements Computable, Serializable {
         @Override
         protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
             sb.append(functionName).append('(');
-            c1.toString(sb, nf, false);
+            if(c1==null){
+                sb.append("null");
+            }else{
+                c1.toString(sb, nf, false);
+            }
             sb.append(',');
-            c2.toString(sb, nf, false);
+            if(c2 == null){
+                sb.append("null");
+            }else{
+                c2.toString(sb, nf, false);
+            }
             sb.append(')');
         }
 
@@ -1725,11 +1736,9 @@ public abstract class Node implements Computable, Serializable {
     }
 
     /**
-     * Gets the polynomial part in the node, returns {@code null} if there is
-     *
-     * @param node
-     * @param mc
-     * @return
+     * Gets the polynomial part in the node, returns {@code null} if the node doesn't
+     * contain the polynomial part. If this node is Add, returns 0 if the actual part is null, and
+     * if this node is Multiply, returns 1 if null.
      */
     public static Multinomial getPolynomialPart(Node node, ExprCalculator mc) {
         if (node instanceof CombinedNode) {

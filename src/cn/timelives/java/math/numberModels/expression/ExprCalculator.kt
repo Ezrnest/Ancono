@@ -616,13 +616,17 @@ class ExprCalculator
 //        checkValidTree(node)
         node = simplifyPolynomial(node, 0)
         node = doSort(node, 0)//very important
-        val re = simplifyWithStrategyNoRecur(node)
-        if (showSimSteps) {
+        val re : Node
+        if(showSimSteps){
+            val snapshot = node.cloneNode()
+            re = simplifyWithStrategyNoRecur(node)
             try {
-                println("$node -> $re")
+                println("$snapshot -> $re")
             } catch (e: Exception) {
                 println("?? -> $re")
             }
+        }else{
+            re = simplifyWithStrategyNoRecur(node)
         }
 //        re = simplifyPolynomial(re,0)
 //        re = doSort(re,0)
@@ -882,11 +886,28 @@ class ExprCalculator
         n.recurApplyConsumer({ x ->
             if (x !== n) {
                 if (x.parent == null) {
-                    throw AssertionError("For node: " + x.toString())
+                    throw AssertionError("Null parent: " + x.toString())
                 }
             }
         }, Integer.MAX_VALUE)
+    }
 
+    fun checkValidTreeStrict(n : Node){
+        val set = hashSetOf<Node>()
+        n.recurApplyConsumer({ x ->
+            if (x !== n) {
+                if (x.parent == null) {
+                    throw AssertionError("Null parent: " + x.toString())
+                }
+                if(!x.parent.contains(x)){
+                    throw AssertionError("Fake child: " + x.toString())
+                }
+            }
+            if(set.contains(x) && x.type != Type.POLYNOMIAL){
+                throw AssertionError("Duplicated node: " + x.toString())
+            }
+            set.add(x)
+        }, Integer.MAX_VALUE)
     }
 
 
@@ -964,6 +985,7 @@ class ExprCalculator
     /**
      * Returns the differential of an expression.
      */
+    @JvmOverloads
     fun differential(expr: Expression, variableName: String = "x", times: Int = 1): Expression {
         var re = expr
         repeat(times) {
@@ -1007,6 +1029,7 @@ class ExprCalculator
          * Gets a default instance of the ExprCalculator.
          * @return
          */
+        @JvmStatic
         val newInstance: ExprCalculator
             get() {
                 val ec = ExprCalculator()
@@ -1018,8 +1041,6 @@ class ExprCalculator
 
         internal var showSimSteps = false
     }
-
-
 }
 
 //fun main(args: Array<String>) {

@@ -4,6 +4,8 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.calculus.Calculus;
+import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
 import cn.timelives.java.math.numberModels.expression.Node.*;
@@ -25,6 +27,7 @@ import static cn.timelives.java.utilities.Printer.print;
  *
  * @author liyicheng 2017-11-26 15:22
  */
+@SuppressWarnings("Duplicates")
 public final class SimplificationStrategies {
 
     /**
@@ -377,6 +380,7 @@ public final class SimplificationStrategies {
      * @author liyicheng
      * 2017-12-01 20:14
      */
+    @SuppressWarnings("Duplicates")
     public static abstract class SimplifyMultiplyStruct extends SimpleStrategy {
         public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.MULTIPLY, Type.FRACTION));
 
@@ -547,7 +551,7 @@ public final class SimplificationStrategies {
          */
         protected abstract List<Pair<Node, BigInteger>> simplify(List<Pair<Node, BigInteger>> nodes, ExprCalculator ec);
     }
-
+    @SuppressWarnings("Duplicates")
     public static abstract class SimplifyAddStruct extends SimpleStrategy {
         public static final Set<Type> TYPES = CollectionSup.unmodifiableEnumSet(Type.ADD);
 
@@ -908,11 +912,29 @@ public final class SimplificationStrategies {
              */
             @Override
             protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
-                if (Node.isFunctionNode(node.child, "ln", 1)) {
-                    SFunction ln = (SFunction) node.child;
+                Node child = node.child;
+                if (Node.isFunctionNode(child, "ln", 1)) {
+                    SFunction ln = (SFunction) child;
                     //exp(ln(x)) = x
-                    return ln.child;
+                    return ln.child; //no need to simplify further
                 }
+                if(child.getType() == Type.MULTIPLY){
+                    var mul = (Node.Multiply)child;
+                    Node ln = null;
+                    for (Iterator<Node> iterator = mul.children.iterator(); iterator.hasNext(); ) {
+                        Node n = iterator.next();
+                        if (Node.isFunctionNode(n, ExprFunction.FUNCTION_NAME_LN, 1)) {
+                            ln = n;
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                    if(ln != null){
+                        mul.resetSimIdentifier();
+                        return mc.simplify(Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP,ln,mul));
+                    }
+                }
+
                 return null;
             }
 
@@ -959,7 +981,7 @@ public final class SimplificationStrategies {
                     sf.child = mul;
                     sf.parent = node.parent;
                     return mc.simplify(sf, 1);
-                } else {
+                }else{
                     return null;
                 }
             }
@@ -1192,11 +1214,25 @@ public final class SimplificationStrategies {
     private static ServiceLoader<SimplificationService> serviceLoader;
 
 
-    public static void main(String[] args) {
-        enableSpi = true;
-        var mc = ExprCalculator.Companion.getNewInstance();
-        mc.tagAdd(SimplificationStrategies.TRIGONOMETRIC_FUNCTION);
-        var expr = Expression.valueOf(" sin(f(x)) * sin(f(x)) + 2cos(f(x)) * cos(f(x)) ");
-        print(mc.simplify(expr));
-    }
+//    public static void main(String[] args) {
+////        enableSpi = true;
+//        var mc = ExprCalculator.getNewInstance();
+////        mc.tagAdd(SimplificationStrategies.TRIGONOMETRIC_FUNCTION);
+//        var f = mc.parseExpr("cos(cos(cos(cos(x))))");
+////        var re = mc.simplify(expr);
+////        re.listNode();
+////        print(re);
+////        re.root.recurApplyConsumer(Node::resetSimIdentifier,100);
+////        print(mc.simplify(re));
+//        var f_6 = mc.differential(f,"x",1);
+//        print(f_6);
+//        var f_7 = Calculus.derivation(f_6,"x");
+//        print(f_7);
+//        mc.checkValidTreeStrict(f_7.root);
+//        print(mc.simplify(f_7));
+////        ExprCalculator.Companion.setShowSimSteps$AnconoKotlin(true);
+//        print(mc.simplify(f_7.root));
+////        var f_6 = mc.differential(f_5);
+////        print(f_6);
+//    }
 }

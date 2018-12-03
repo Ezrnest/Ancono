@@ -5,10 +5,7 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.expression.anno.DisallowModify;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import static cn.timelives.java.math.numberModels.expression.ExprFunction.FUNCTION_NAME_EXP;
@@ -69,7 +66,7 @@ public class DerivativeHelper {
         if (poly == null || !poly.containsChar(variableName)) {
             //constant
             var result = dMultiply(node.children, variableName);
-            return poly == null ? result : Node.wrapCloneNodeMultiply(result, poly);
+            return poly == null ? result : Node.wrapNodeMultiply(result, poly); // no clone
         }
         var p_ = Calculus.derivation(node.p, variableName);
         if (node.children.isEmpty()) {
@@ -77,8 +74,8 @@ public class DerivativeHelper {
         }
         Node n_ = dMultiply(node.children, variableName);
         Node partA = Node.wrapNodeMultiply(n_, poly);
-        Node partB = Node.wrapNodeMultiply(Node.wrapNodeAM(false, node.children), p_);
-        return Node.wrapNodeAM(true, partA, partB);
+        Node partB = Node.wrapNodeMultiply(Node.wrapCloneNodeAM(false, node.children), p_);
+        return Node.wrapNodeAM(true, partA, partB); // no clone
     }
 
 
@@ -101,7 +98,7 @@ public class DerivativeHelper {
         } else {
             a = nodes.get(0).cloneNode(null);
             List<Node> remains = nodes.subList(1, nodes.size());
-            b = Node.wrapNodeAM(false, remains);
+            b = Node.wrapCloneNodeAM(false, remains);
             a_ = derivativeNode(a, variableName);
             b_ = dMultiply(remains, variableName);
         }
@@ -193,6 +190,7 @@ public class DerivativeHelper {
 
     private static Node dExp(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
+//        Objects.requireNonNull(fx);
         Node fx_ = derivativeNode(fx, variableName);
         return Node.wrapNodeAM(false, fx_, node.cloneNode());
     }
@@ -215,6 +213,9 @@ public class DerivativeHelper {
     private static Node dExp2(@DisallowModify Node.DFunction node, String variableName) {
         Node base = node.c1;
         Node exponent = node.c2;
+        Objects.requireNonNull(base);
+        Objects.requireNonNull(exponent);
+
         //a^b = e^(b * ln(a))
         Node lna = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_LN, base);
         Node newExponent = Node.wrapCloneNodeAM(false, exponent, lna);

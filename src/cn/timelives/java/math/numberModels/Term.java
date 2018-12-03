@@ -7,9 +7,8 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.addableSet.MathAdder;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
-import cn.timelives.java.math.numberTheory.combination.CFunctions;
+import cn.timelives.java.math.numberTheory.combination.CombUtils;
 import cn.timelives.java.math.property.Mergeable;
-import cn.timelives.java.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -1479,7 +1478,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         if(r == n){
             return new Term[]{multiplyOf(characters)};
         }
-        int size = Math.toIntExact(CFunctions.combination(n,r));
+        int size = Math.toIntExact(CombUtils.combination(n,r));
         Term[] arr = new Term[size];
         fillSymmetryTerms(r,characters,0,0,new TreeMap<>(),arr,0);
         return arr;

@@ -14,7 +14,7 @@ import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.RingNumberModel;
 import cn.timelives.java.math.numberTheory.NTCalculator;
-import cn.timelives.java.math.numberTheory.combination.CFunctions;
+import cn.timelives.java.math.numberTheory.combination.CombUtils;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.structure.Pair;
@@ -346,7 +346,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         for (var en : map.entrySet()) {
             int n = en.getKey();
             T coe = en.getValue();
-            var binomials = CFunctions.binomialsOf(n).iterator();
+            var binomials = CombUtils.binomialsOf(n).iterator();
             for (int i = 0; i < n; i++) {
                 var t1 = mc.multiplyLong(coe, binomials.next());
                 T t2;
@@ -634,6 +634,30 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         return new PolynomialX<>(mc, map, max);
     }
 
+    public static <T> PolynomialX<T> valueOf(MathCalculator<T> mc, List<T> coes){
+        if (coes.isEmpty()) {
+            return zero(mc);
+        }
+        int max = coes.size() - 1;
+        while (coes.get(max) == null || mc.isZero(coes.get(max))) {
+            max--;
+        }
+        if (max <= 0) {
+            return zero(mc);
+        }
+        TreeMap<Integer, T> map = new TreeMap<>();
+        for (int i = max; i > -1; i--) {
+            T t = coes.get(i);
+            if (t != null && !mc.isZero(t)) {
+                map.put(i, t);
+            }
+        }
+        if (map.isEmpty()) {
+            return zero(mc);
+        }
+        return new PolynomialX<>(mc, map, max);
+    }
+
 
     /**
      * Returns <code>x^p</code>, where p is a non-negative integer.
@@ -790,7 +814,7 @@ public final class PolynomialX<T> extends MathObject<T> implements Polynomial<T>
         }
         var map = new TreeMap<Integer,T>();
         var x0Power = mc.getOne();
-        var binomialCoes = CFunctions.binomialsOf(n);
+        var binomialCoes = CombUtils.binomialsOf(n);
         for(int i=n;i>=0;i--){
             T coe = mc.multiplyLong(x0Power,binomialCoes.get(n));
             if(mc.isZero(coe)){

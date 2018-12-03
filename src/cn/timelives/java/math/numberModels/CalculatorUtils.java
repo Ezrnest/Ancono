@@ -79,6 +79,9 @@ public final class CalculatorUtils {
 	}
 
 
+
+
+
 	public static <T> T valueOfLong(long x,MathCalculator<T> mc){
 		return mc.multiplyLong(mc.getOne(),x);
 	}
@@ -145,7 +148,7 @@ public final class CalculatorUtils {
      * Computes the result of multiplying all the elements in a arithmetic progression which starts from {@code start} and has the difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T multiplyAll(T start, T end, T step,MathCalculator<T> mc){
+    public static <T> T multiplyAll(T start, T end, T step, MathCalculator<T> mc){
         if(!mc.isComparable()){
             throw new ArithmeticException("MathCalculator of type "+mc.getNumberClass()+" is not comparable.");
         }
@@ -167,7 +170,7 @@ public final class CalculatorUtils {
      * which starts from {@code start} and has the difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T multiplyAll(T start, T end, T step,MathCalculator<T> mc, SVFunction<T> f){
+    public static <T> T multiplyAll(T start, T end, T step, MathCalculator<T> mc, SVFunction<T> f){
         if(!mc.isComparable()){
             throw new ArithmeticException("MathCalculator of type "+mc.getNumberClass()+" is not comparable.");
         }

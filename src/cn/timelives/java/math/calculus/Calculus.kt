@@ -16,7 +16,7 @@ import cn.timelives.java.math.numberModels.expression.ExprCalculator
 import cn.timelives.java.math.numberModels.expression.Expression
 import cn.timelives.java.math.numberModels.expression.Node
 import cn.timelives.java.math.numberModels.structure.PolynomialX
-import cn.timelives.java.math.numberTheory.combination.CFunctions
+import cn.timelives.java.math.numberTheory.combination.CombUtils
 import java.util.function.DoubleUnaryOperator
 import kotlin.coroutines.experimental.buildSequence
 import cn.timelives.java.math.numberModels.api.plus
@@ -325,7 +325,7 @@ object Calculus {
         var f = expr
         for(n in 0..degree){
             val nume = mc.substitute(f,variableName,point)
-            val deno = CFunctions.factorial(n)
+            val deno = CombUtils.factorial(n)
             val coe = mc.divideLong(nume,deno)
             var t = PolynomialX.binomialPower(point,n,mc)
             t = t.multiply(coe)

@@ -16,7 +16,7 @@ class CEnumer(n: Int, val m: Int) : Enumer(n){
     }
 
     override fun getEnumCount(): Long {
-        return CFunctions.combination(n,m)
+        return CombUtils.combination(n,m)
     }
 
 }

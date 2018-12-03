@@ -50,19 +50,21 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		List<Point<T>> list = new ArrayList<>(2);
         T zero = mc.getZero();
 		if(onX){
-            list.add(new Point<>(mc, a, zero));
-            list.add(new Point<>(mc, mc.negate(a), zero));
-            list.add(new Point<>(mc, zero, b));
-            list.add(new Point<>(mc, zero, mc.negate(b)));
-		}else{
-            list.add(new Point<>(mc, b, zero));
-            list.add(new Point<>(mc, mc.negate(b), zero));
-            list.add(new Point<>(mc, zero, a));
-            list.add(new Point<>(mc, zero, mc.negate(a)));
-		}
+            addVertices(mc, list, zero, a, b);
+        }else{
+            addVertices(mc, list, zero, b, a);
+        }
 		return list;
 	}
-	private int comp0 = 0;
+
+    private void addVertices(MathCalculator<T> mc, List<Point<T>> list, T zero, T a, T b) {
+        list.add(new Point<>(mc, a, zero));
+        list.add(new Point<>(mc, mc.negate(a), zero));
+        list.add(new Point<>(mc, zero, b));
+        list.add(new Point<>(mc, zero, mc.negate(b)));
+    }
+
+    private int comp0 = 0;
 	private void computeComp(){
         comp0 = -getMc().compare(substitute(Point.pointO(getMc())), getMc().getZero());
 	}
@@ -526,7 +528,8 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T>{
 		return false;
 	}
 	
-	@Override
+	@NotNull
+    @Override
     public <N> EllipseV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		EllipseV<N> nell = new EllipseV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
 				, mapper.apply(a), mapper.apply(b), mapper.apply(c)

@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public abstract class EasyConsole {
 	
-	private static final Pattern intPattern = Pattern.compile("[+-]?\\d+{1,10}"),
+	private static final Pattern intPattern = Pattern.compile("[+-]?\\d{1,10}"),
 			emptyLinePattern = Pattern.compile(" *\\z");
 	
 	public static final Pattern COMMENT_PATTERN = Pattern.compile("//");
@@ -63,7 +63,7 @@ public abstract class EasyConsole {
 	/**
 	 * Append the given text to the console, the given String should not contain any line separator such 
 	 * as {@code \n}. No flush operation is needed.
-	 * @param line
+	 * @param text
 	 */
 	public abstract void append(String text);
 	
@@ -407,21 +407,21 @@ public abstract class EasyConsole {
 	}
 	
 	
-	public static void main(String[] args) {
-		EasyConsole con = getSwingImpl("ALLLLLL");
-		con.setOutputPrefix("   ");
-		con.setLineFilter(COMMENT_PATTERN);
-		con.open();
-		con.setLineFilterActivated(true);
-		int i=0;
-		while(true){
-			String line = con.nextLine();
-//			con.print(line);
-			con.setInputPrefix((i%2) == 0 ? "==":"----");
-			i++;
-//			con.beep();
-			System.out.println(line);
-		}
-	}
+//	public static void main(String[] args) {
+//		EasyConsole con = getSwingImpl("ALLLLLL");
+//		con.setOutputPrefix("   ");
+//		con.setLineFilter(COMMENT_PATTERN);
+//		con.open();
+//		con.setLineFilterActivated(true);
+//		int i=0;
+//		while(true){
+//			String line = con.nextLine();
+////			con.print(line);
+//			con.setInputPrefix((i%2) == 0 ? "==":"----");
+//			i++;
+////			con.beep();
+//			System.out.println(line);
+//		}
+//	}
 	
 }

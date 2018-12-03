@@ -9,6 +9,7 @@ import cn.timelives.java.utilities.CollectionSup
 import java.lang.UnsupportedOperationException
 import java.util.*
 import java.util.function.Function
+import kotlin.collections.ArrayList
 
 
 /**
@@ -98,9 +99,10 @@ interface IVectorBase<T : Any> {
         return Vector.createVector(cordInThisBase.mathCalculator, *result)
     }
 
-    fun canReduce(vb : IVectorBase<T>) : Boolean{
+    fun canReduce(vb: IVectorBase<T>): Boolean {
         return vb.vectors.all {
-            canReduce(it) }
+            canReduce(it)
+        }
     }
 
     /**
@@ -108,10 +110,9 @@ interface IVectorBase<T : Any> {
      * this vector base can reduce all vectors in [vb] and [vb] can also reduce
      * all vectors in this.
      */
-    fun equivalentTo(vb : IVectorBase<T>) : Boolean{
+    fun equivalentTo(vb: IVectorBase<T>): Boolean {
         return this.canReduce(vb) and vb.canReduce(this)
     }
-
 
 
 }
@@ -241,7 +242,7 @@ abstract class VectorBase<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>(
         requireSameVectorDimention(vb)
         val a = getVectorsAsMatrix()
         val b = vb.getVectorsAsMatrix()
-        return MatrixSup.solveMatrixEquation(a,b)
+        return MatrixSup.solveMatrixEquation(a, b)
     }
 
 
@@ -432,11 +433,11 @@ abstract class VectorBase<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>(
          * @param dimension the dimension(length) of all the vectors
          * @param baseSize the number of vectors that this base will have, must not exceed [dimension]
          */
-        fun <T:Any> identityBase(dimension : Int, baseSize : Int, mc : MathCalculator<T>) : VectorBase<T>{
-            require(baseSize >0)
+        fun <T : Any> identityBase(dimension: Int, baseSize: Int, mc: MathCalculator<T>): VectorBase<T> {
+            require(baseSize > 0)
             require(dimension >= baseSize)
-            val list = (0 until baseSize).map { Vector.unitVector(dimension,it,mc) }
-            return DVectorBase(dimension,list)
+            val list = (0 until baseSize).map { Vector.unitVector(dimension, it, mc) }
+            return DVectorBase(dimension, list)
         }
 
         /**
@@ -524,14 +525,31 @@ abstract class VectorBase<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>(
                 DVectorBase(dimension, copy)
             }
         }
+
         @JvmStatic
-        fun <T:Any> generate(vararg vectors : Vector<T>) : VectorBase<T>{
+        fun <T : Any> generate(vararg vectors: Vector<T>): VectorBase<T> {
             return Vector.maximumLinearIrrelevant(*vectors)
         }
 
         @JvmStatic
-        fun <T:Any> generate(vectors : List<Vector<T>>) : VectorBase<T>{
+        fun <T : Any> generate(vectors: List<Vector<T>>): VectorBase<T> {
             return Vector.maximumLinearIrrelevant(vectors)
+        }
+
+        @JvmStatic
+        fun <T : Any> directSumAll(vectors: List<VectorBase<T>>): VectorBase<T> {
+            val rankSum = vectors.sumBy { it.rank }
+            val ves  = vectors.flatMapTo(ArrayList(rankSum)) { it.vectors }
+            val sum = generate(ves)
+            if(sum.rank != rankSum){
+                throw IllegalArgumentException("Not direct sum!")
+            }
+            return sum
+        }
+
+        @JvmStatic
+        fun <T : Any> directSumAll(vararg vectors: VectorBase<T>): VectorBase<T> {
+            return directSumAll(vectors.asList())
         }
 
 
@@ -620,7 +638,7 @@ open class FullVectorBase<T : Any> internal constructor(mc: MathCalculator<T>,
      * are (α1 α2 ... αn), and the returned matrix is **P**, the relation can be denoted as:
      * > (α1 α2 ... αn) = (e1 e2 ... en)**P**
      */
-    fun transMatrixFromStandard() : Matrix<T> = vectorMatrix
+    fun transMatrixFromStandard(): Matrix<T> = vectorMatrix
 
     /**
      * Returns the transformation matrix from standard vector base to this vector base.
@@ -629,11 +647,7 @@ open class FullVectorBase<T : Any> internal constructor(mc: MathCalculator<T>,
      * are (α1 α2 ... αn), and the returned matrix is **P**, the relation can be denoted as:
      * > (e1 e2 ... en) = (α1 α2 ... αn)**P**
      */
-    fun transMatrixToStandard() : Matrix<T> = vectorMatrixInverse
-
-
-
-
+    fun transMatrixToStandard(): Matrix<T> = vectorMatrixInverse
 
 
     override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): FullVectorBase<N> {

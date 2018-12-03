@@ -10,8 +10,10 @@ import cn.timelives.java.math.numberModels.api.NumberFormatter
 import java.util.Objects
 
 /**
+ * Describes a flexible math object which holds a subclass of EqualPredicate as it 'calculator'. Almost
+ * all classes in this module is a subclass of it.
  * @author liyicheng
- * 2018-03-05 20:19
+ * at 2018-03-05 20:19
  */
 abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>
 (mc: S) : CalculatorHolder<T, S> {
@@ -37,6 +39,7 @@ abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>
     override fun hashCode(): Int {
         return super.hashCode()
     }
+
     /**
      * Returns a String representing this object, the [NumberFormatter] should
      * be used whenever a number is presented.

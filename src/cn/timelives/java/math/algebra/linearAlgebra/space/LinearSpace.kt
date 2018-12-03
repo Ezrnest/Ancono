@@ -97,31 +97,31 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
         return super.innerProduce(v1, v2)
     }
 
-    override fun intersect(s: ILinearSpace<T>): ILinearSpace<T>? {
+    override fun intersect(s: ILinearSpace<T>): LinearSpace<T>? {
         require(this.standardDimension == s.standardDimension) { "The standard dimension must be the same!" }
 
         val list = ArrayList<Vector<T>>(this.dimension + s.dimension + 1)
         list.addAll(this.vectorBase.vectors)
         list.addAll(s.vectorBase.vectors)
-        list.add( s.originVector - this.originVector)
+        list.add(s.originVector - this.originVector)
         val mat = Matrix.fromVectors(false, list)
         val solution = MatrixSup.solveLinearEquation(mat)
-        if (solution.solutionSituation== LinearEquationSolution.Situation.NO_SOLUTION) {
+        if (solution.solutionSituation == LinearEquationSolution.Situation.NO_SOLUTION) {
             //no intersection
             return null
         }
         val v = solution.specialSolution
         val vs = vectorBase.vectors
-        var ori =  this.originVector
-        for( i in vs.indices){
+        var ori = this.originVector
+        for (i in vs.indices) {
             ori += vs[i] * v[i]
         }
-        if(solution.baseSolutions == null){
+        if (solution.baseSolutions == null) {
             return singlePoint(ori)
         }
         val nBases = solution.baseSolutions.map {
             var base = vs[0] * it[0]
-            for(i in 1..vs.lastIndex){
+            for (i in 1..vs.lastIndex) {
                 base += vs[i] * it[i]
             }
             base
@@ -139,8 +139,8 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
         if (obj !is LinearSpace) {
             return false
         }
-        return dimension == obj.dimension && standardDimension == obj.standardDimension
-                && originVector.valueEquals(obj.originVector) && vectorBase.valueEquals(obj.vectorBase)
+        return dimension == obj.dimension && standardDimension == obj.standardDimension &&
+                originVector.valueEquals(obj.originVector) && vectorBase.valueEquals(obj.vectorBase)
     }
 
     override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
@@ -162,21 +162,25 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
         fun <T : Any> valueOf(originVector: Vector<T>, vectorBase: VectorBase<T>): LinearSpace<T> {
             require(originVector.size == vectorBase.vectorDimension)
             val mc = originVector.mathCalculator
-            return DLinearSpace(mc, originVector, vectorBase)
+            return DLinearSpace(mc, originVector.toColumnVector(), vectorBase)
         }
 
         /**
          * Creates a new linear space from the given origin vector and base vectors.
          */
         @JvmStatic
-        fun <T : Any> valueOf(originVector: Vector<T>, vararg baseVectors: Vector<T>): LinearSpace<T> = valueOf(originVector, VectorBase.createBase(*baseVectors))
+        fun <T : Any> valueOf(originVector: Vector<T>, vararg baseVectors: Vector<T>): LinearSpace<T> = valueOf(originVector, baseVectors.asList())
 
         /**
          * Creates a new linear space from the given origin vector and base vectors.
          */
         @JvmStatic
-        fun <T : Any> valueOf(originVector: Vector<T>, baseVectors: List<Vector<T>>): LinearSpace<T> =
-                valueOf(originVector, VectorBase.createBase(baseVectors))
+        fun <T : Any> valueOf(originVector: Vector<T>, baseVectors: List<Vector<T>>): LinearSpace<T> {
+            if (baseVectors.isEmpty()) {
+                return singlePoint(originVector)
+            }
+            return valueOf(originVector, VectorBase.createBase(baseVectors))
+        }
 
         /**
          * Creates a linear space which only contains a single point. The linear space returned
@@ -184,7 +188,7 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
          */
         @JvmStatic
         fun <T : Any> singlePoint(originVector: Vector<T>): LinearSpace<T> {
-            return valueOf(originVector, VectorBase.zeroBase(originVector.size, originVector.mathCalculator))
+            return valueOf(originVector.toColumnVector(), VectorBase.zeroBase(originVector.size, originVector.mathCalculator))
         }
 
     }

@@ -6,11 +6,15 @@ import cn.timelives.java.math.algebra.linearAlgebra.Vector
 import cn.timelives.java.math.algebra.linearAlgebra.VectorBase
 import cn.timelives.java.math.algebra.linearAlgebra.space.LinearSpace
 import cn.timelives.java.math.algebra.linearAlgebra.space.VectorSpace
+import cn.timelives.java.math.get
 import cn.timelives.java.math.numberModels.Fraction
 import org.junit.Assert.*
 import org.junit.Test
 import kotlin.test.assert
 
+/**
+ * Contains tests for vector base and linear space.
+ */
 class VectorBaseTest{
     val mc = Fraction.calculator
     val par : (String) -> Fraction = Fraction.Companion::valueOf
@@ -54,6 +58,30 @@ class VectorBaseTest{
         val sp2 = LinearSpace.valueOf(p2,v2)
         val re = sp1.intersect(sp2)!!
         assert(re.originVector.valueEquals(p2))
+    }
+
+    @Test
+    fun testIntersect3(){
+        val str = """
+            5 -3 0 0
+            -6 5 1 0
+            -5 4 0 1
+            -11 3 0 0
+            8 -1 1 0
+            10 -2 0 1
+            1 0 -1 2
+        """.trimIndent()
+        val mat = MatrixSup.parseFMatrix(str)
+        val (s1,a1,a2,s2,b1) = mat.rowVectors()
+        val b2 = mat[5] // no component6()
+        val sp1 = LinearSpace.valueOf(s1,a1,a2)
+        val sp2 = LinearSpace.valueOf(s2,b1,b2)
+        val re = sp1.intersect(sp2)!!
+        val desired = LinearSpace.valueOf(mat[6])
+//        val s1 = MatrixSup.parseFMatrix()
+//        println(re)
+//        println(desired)
+        assert(re.valueEquals(desired))
     }
 
     @Test

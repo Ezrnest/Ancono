@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package cn.timelives.java.math.numberModels.api
 
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator
@@ -28,9 +30,10 @@ interface GroupNumberModel<T : GroupNumberModel<T>> : MonoidNumberModel<T>{
     fun subtract(y: T): T = add(y.negate())
 }
 
-operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.plus(y: T): T = add(y)
+inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.plus(y: T): T = add(y)
 
-operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.unaryMinus(): T = negate()
+inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.unaryMinus(): T = negate()
+inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.minus(y : T): T = subtract(y)
 
 /**
  * Describes a number model which is suitable for a ring.
@@ -39,7 +42,7 @@ interface RingNumberModel<T : RingNumberModel<T>> : GroupNumberModel<T> {
     fun multiply(y: T): T
 }
 
-operator fun <T : RingNumberModel<T>> RingNumberModel<T>.times(y: T): T = multiply(y)
+inline operator fun <T : RingNumberModel<T>> RingNumberModel<T>.times(y: T): T = multiply(y)
 
 /**
  * Describes a number model which is suitable for a division ring.
@@ -50,7 +53,7 @@ interface DivisionRingNumberModel<T : DivisionRingNumberModel<T>> : RingNumberMo
     fun divide(y: T): T = multiply(y.reciprocal())
 }
 
-operator fun <T : DivisionRingNumberModel<T>> DivisionRingNumberModel<T>.div(y: T): T = divide(y)
+inline operator fun <T : DivisionRingNumberModel<T>> DivisionRingNumberModel<T>.div(y: T): T = divide(y)
 /**
  * Describes a number model which is suitable for a field.
  * @see cn.timelives.java.math.algebra.abstractAlgebra.structure.Field

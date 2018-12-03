@@ -8,6 +8,7 @@ import cn.timelives.java.math.MathObject;
 import cn.timelives.java.utilities.SNFSupport;
 
 import java.text.NumberFormat;
+import java.util.Objects;
 
 /**
  * The formatter for a type of number. This is use by the output of 
@@ -32,7 +33,7 @@ public interface NumberFormatter<T> extends FlexibleNumberFormatter<T,MathCalcul
 		NumberFormat nf = SNFSupport.dfByDigit(digit);
 		return (n,mc)-> nf.format(n);
 	}
-	static final NumberFormatter<?> toString = (x,mc) -> x.toString();
+	static final NumberFormatter<?> toString = (x,mc) -> Objects.toString(x);
 	@SuppressWarnings("unchecked")
 	public static <T> NumberFormatter<T> getToStringFormatter(){
 		return (NumberFormatter<T>)toString;

@@ -33,6 +33,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
         xZero = mc.isZero(v.x);
     }
 
+    @NotNull
     @Override
     public <N> AbstractPlaneCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
         var nline = line.mapTo(mapper,newCalculator);

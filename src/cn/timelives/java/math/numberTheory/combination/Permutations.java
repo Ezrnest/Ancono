@@ -3,8 +3,6 @@
  */
 package cn.timelives.java.math.numberTheory.combination;
 
-import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
-import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
 import cn.timelives.java.math.numberTheory.combination.Permutation.Cycle;
 import cn.timelives.java.math.numberTheory.combination.Permutation.Transposition;
 import cn.timelives.java.math.MathCalculator;
@@ -13,10 +11,8 @@ import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.CollectionSup;
-import cn.timelives.java.utilities.Printer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
 import java.util.List;
 
 import static cn.timelives.java.utilities.Printer.print;
@@ -743,12 +739,12 @@ public final class Permutations {
 			throw new IllegalArgumentException("Negative index="+index);
 		}
 		sizeCheck(size);
-		if(index >= CFunctions.factorial(size)) {
+		if(index >= CombUtils.factorial(size)) {
 			throw new IllegalArgumentException("Invalid index="+index +" for size="+size);
 		}
 		int[] arr = new int[size];
 		for(int i=0;i<size;i++) {
-			long f = CFunctions.factorial(size-i-1);
+			long f = CombUtils.factorial(size-i-1);
 			int t=0;
 			while(index>=f) {
 				index -= f;
@@ -810,7 +806,7 @@ public final class Permutations {
 		if(n <= 0 || n > 12) {
 			throw new IllegalArgumentException("Invalid n="+n);
 		}
-		Permutation[] list = new Permutation[(int) CFunctions.factorial(n)];
+		Permutation[] list = new Permutation[(int) CombUtils.factorial(n)];
 		int i = 0;
 		for(int[] arr : Enumer.permutation(n, n)) {
 			list[i++] = new ArrPermutation(arr);
@@ -831,7 +827,7 @@ public final class Permutations {
 		if(n <= 0 || n > 12) {
 			throw new IllegalArgumentException("Invalid n="+n);
 		}
-        Permutation[] list = new Permutation[(int) CFunctions.factorial(n) /2];
+        Permutation[] list = new Permutation[(int) CombUtils.factorial(n) /2];
         int i = 0;
         for(int[] arr : Enumer.permutation(n, n)) {
             Permutation p  = new ArrPermutation(arr);

@@ -719,7 +719,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 
 
 
-	@Override
+	@NotNull
+    @Override
     public <N> Line<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new Line<>(newCalculator,mapper.apply(a),mapper.apply(b),mapper.apply(c));
 	}

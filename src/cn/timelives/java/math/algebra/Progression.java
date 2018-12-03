@@ -798,9 +798,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 			super(mc, length);
 			this.rf = recursiveFormula;
 			storage = (T[]) new Object[Math.max(arraySize,firstSeveral.length)];
-			for(int i=0;i<firstSeveral.length;i++){
-				storage[i] = firstSeveral[i];
-			}
+            System.arraycopy(firstSeveral, 0, storage, 0, firstSeveral.length);
 			maxKnownIndex = firstSeveral.length-1;
 		}
 		@SuppressWarnings("unchecked")
@@ -822,7 +820,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 		private T fillArrayTo(int pos){
 			T t = storage[maxKnownIndex];
 			for(int i=maxKnownIndex+1;i< pos+1;i++){
-				storage[i] = (t = rf.apply(this,Long.valueOf(i)));
+				storage[i] = (t = rf.apply(this, (long) i));
 			}
 			maxKnownIndex = pos;
 			return t;
@@ -1014,12 +1012,14 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 	 * @param mc a math calculator
 	 * @return a newly created progression.
 	 */
-	public static <T> Progression<T> createProgressionRecur(BiMathFunction<Progression<T>,Long, T> recur, long length,
+    @SafeVarargs
+    public static <T> Progression<T> createProgressionRecur(BiMathFunction<Progression<T>,Long, T> recur, long length,
                                                             MathCalculator<T> mc, T...firstSeveral){
 		return new FillingCachedProgression<>(mc,length,recur,firstSeveral);
 	}
 
-	public static <T> Progression<T> createProgressionRecur1WithIndex(MathFunction<WithLong<T>,T> recur, long length,
+	@SafeVarargs
+    public static <T> Progression<T> createProgressionRecur1WithIndex(MathFunction<WithLong<T>,T> recur, long length,
                                                                       MathCalculator<T> mc, T...firstSeveral){
 	    return createProgressionRecur((Progression<T> p,Long l)->recur.apply(new WithLong<>(l,p.get(l-1))),length,mc,firstSeveral);
     }

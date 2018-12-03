@@ -198,10 +198,9 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     override fun exp(x: Multinomial): Multinomial {
         if (x.isMonomial) {
             val t = x.first
-            if (t.isInteger && t.isPositive) {
-                val p = t.numerator.longValueExact()
+            if (t.isFraction) {
                 //                    throw new ArithmeticException("Too big for pow = "+p);
-                return monomial(Term.E.pow(Math.toIntExact(p)))
+                return monomial(Term.characterPower(Term.E_STR,t.toFraction()))
             }
         }
         throw UnsupportedCalculationException()

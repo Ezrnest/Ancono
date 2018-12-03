@@ -31,7 +31,6 @@ import java.util.function.Function;
  * <pre>x^2/b^2 - y^2/a^2 = -1</pre>
  * determined by whether foci are on X axis.
  * @author lyc
- * @param <T>
  */
 public final class HyperbolaV<T> extends EHSection<T> {
 	
@@ -285,7 +284,8 @@ public final class HyperbolaV<T> extends EHSection<T> {
 		return false;
 	}
 	
-	@Override
+	@NotNull
+    @Override
     public <N> HyperbolaV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		HyperbolaV<N> nell = new HyperbolaV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
 				, mapper.apply(a), mapper.apply(b), mapper.apply(c)

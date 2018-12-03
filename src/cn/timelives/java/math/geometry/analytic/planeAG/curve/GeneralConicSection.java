@@ -32,7 +32,8 @@ public final class GeneralConicSection<T> extends ConicSection<T>{
 	}
 	
 	
-	@Override
+	@NotNull
+    @Override
     public <N> GeneralConicSection<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		N a = mapper.apply(A);
 		N b = mapper.apply(B);

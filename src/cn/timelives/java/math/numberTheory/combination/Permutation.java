@@ -70,7 +70,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		long sum = 0;
 		int[] arr = getArray();
 		for(int i=0;i<arr.length;i++) {
-			sum += arr[i] * CFunctions.factorial(arr.length-i-1);
+			sum += arr[i] * CombUtils.factorial(arr.length-i-1);
 			for(int j=i+1;j<arr.length;j++) {
 				if(arr[j]>arr[i]) {
 					arr[j]--;
@@ -96,7 +96,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	 * @return
 	 */
 	default int inverseCount() {
-		return CFunctions.inverseCount(getArray());
+		return CombUtils.inverseCount(getArray());
 	}
 	/**
 	 * Determines whether this permutation is an even permutation.

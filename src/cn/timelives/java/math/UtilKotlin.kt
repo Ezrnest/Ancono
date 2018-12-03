@@ -15,8 +15,13 @@ import cn.timelives.java.utilities.CollectionSup
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+ * Provides extension methods for convenience.
+ */
+
 operator fun <T> Vector<T>.get(i: Int) = this.getNumber(i)!!
 operator fun <T> Matrix<T>.get(i: Int, j: Int) = this.getNumber(i, j)!!
+operator fun <T> Matrix<T>.get(row : Int) = getRow(row)!!
 
 operator fun <T> Matrix<T>.times(mat : Matrix<T>) = Matrix.multiplyMatrix(this,mat)!!
 operator fun <T> Matrix<T>.minus(mat : Matrix<T>) = Matrix.minusMatrix(this,mat)!!

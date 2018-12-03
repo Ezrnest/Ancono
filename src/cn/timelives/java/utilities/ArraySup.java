@@ -666,6 +666,16 @@ public class ArraySup {
 		}
 		return re;
 	}
+
+	public static <T> T[] mapTo(long[] arr, LongFunction<T> f, Class<T> clazz){
+        @SuppressWarnings("unchecked")
+	    T[] re = (T[]) Array.newInstance(clazz,arr.length);
+        for(int i=0;i<arr.length;i++){
+            re[i] = f.apply(arr[i]);
+        }
+        return re;
+    }
+
 	/**
 	 * Return an array of the mapped elements, creates a new array.
 	 * @param arr

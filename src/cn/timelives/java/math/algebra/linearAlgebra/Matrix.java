@@ -6,7 +6,7 @@ import cn.timelives.java.math.MathObjectExtend;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.ModuleCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
-import cn.timelives.java.math.numberTheory.combination.CFunctions;
+import cn.timelives.java.math.numberTheory.combination.CombUtils;
 import cn.timelives.java.math.property.Invertible;
 import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.SVPEquation;
@@ -515,7 +515,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     private T det0(int[] selected, int index, T mulTemp) {
         var mc = getMc();
         if (index == row) {
-            if (CFunctions.inverseCount(selected) % 2 == 0) {
+            if (CombUtils.inverseCount(selected) % 2 == 0) {
                 return mulTemp;
             } else {
                 return mc.negate(mulTemp);

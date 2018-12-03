@@ -203,12 +203,14 @@ abstract class LinearMapping<T : Any> internal constructor(
             return DLinearMapping(mat)
         }
 
+        @JvmStatic
         fun <T : Any> zeroMapping(dimSrc: Int, dimDest: Int, mc: MathCalculator<T>): LinearMapping<T> {
             return DLinearMapping(Matrix.zeroMatrix(dimDest, dimSrc, mc), dimSrc, dimDest, mc)
         }
 
-        fun <T:Any> getCalculator(dimSrc: Int, dimDest: Int, mc: MathCalculator<T>) : LinearMapCal<T>{
-            return LinearMapCal(mc,dimSrc,dimDest);
+        @JvmStatic
+        fun <T : Any> getCalculator(dimSrc: Int, dimDest: Int, mc: MathCalculator<T>): LinearMapCal<T> {
+            return LinearMapCal(mc, dimSrc, dimDest);
         }
     }
 
@@ -319,6 +321,7 @@ internal constructor(
          * Creates a linear transformation from a matrix, the matrix will
          * be consider as the transformation matrix under the standard base.
          */
+        @JvmStatic
         fun <T : Any> fromMatrix(mat: Matrix<T>): LinearTrans<T> {
             return DLinearTrans(mat)
         }
@@ -329,6 +332,7 @@ internal constructor(
          * is **P**, then the actual transformation matrix is:
          * > P^-1 * A * P
          */
+        @JvmStatic
         fun <T : Any> underBase(transMatrix: Matrix<T>, base: FullVectorBase<T>): LinearTrans<T> {
             val pInv = base.getVectorsAsMatrix()
             val p = pInv.inverse()
@@ -339,18 +343,21 @@ internal constructor(
         /**
          * Creates a linear transformation from a function.
          */
+        @JvmStatic
         fun <T : Any> fromFunction(dim: Int, mc: MathCalculator<T>, f: SVFunction<Vector<T>>): LinearTrans<T> {
             val transMatrix = Matrix.fromVectors(false,
                     Vector.unitVectors(dim, mc).map { f(it) })
             return fromMatrix(transMatrix)
         }
 
-        fun <T:Any> zeroTrans(dim : Int,mc : MathCalculator<T>) : LinearTrans<T>{
-            return fromMatrix(Matrix.zeroMatrix(dim,mc))
+        @JvmStatic
+        fun <T : Any> zeroTrans(dim: Int, mc: MathCalculator<T>): LinearTrans<T> {
+            return fromMatrix(Matrix.zeroMatrix(dim, mc))
         }
 
-        fun <T:Any> getCalculator(dim : Int, mc : MathCalculator<T>) : LinearTransCal<T>{
-            return LinearTransCal(mc,dim)
+        @JvmStatic
+        fun <T : Any> getCalculator(dim: Int, mc: MathCalculator<T>): LinearTransCal<T> {
+            return LinearTransCal(mc, dim)
         }
 
     }
@@ -397,7 +404,7 @@ class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimD
     }
 }
 
-class LinearTransCal<T:Any>(val mc:MathCalculator<T>, val dim : Int) : AlgebraCalculator<T,LinearTrans<T>>{
+class LinearTransCal<T : Any>(val mc: MathCalculator<T>, val dim: Int) : AlgebraCalculator<T, LinearTrans<T>> {
 
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
@@ -411,7 +418,7 @@ class LinearTransCal<T:Any>(val mc:MathCalculator<T>, val dim : Int) : AlgebraCa
     }
 
     override val zero: LinearTrans<T>
-        get() = LinearTrans.zeroTrans(dim,mc)
+        get() = LinearTrans.zeroTrans(dim, mc)
 
     override fun add(x: LinearTrans<T>, y: LinearTrans<T>): LinearTrans<T> {
         return x.add(y)

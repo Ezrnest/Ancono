@@ -11,12 +11,12 @@ import java.util.function.Function
  * be used. For example, an interval may extend this abstract class and the type of bound can be switched from
  * Integer to Double , or other kind of math number.
  * @author lyc
- * @param <T> the kind of object used, usually a subclass of number
+ * @param T the kind of object used, usually a subclass of number
  * @see MathCalculator
-</T> */
+ */
 abstract class MathObject<T : Any>
 /**
- * Create a flexible math object with the given MathCalculator,the MathCalculator should not
+ * Create a flexible math object with the given MathCalculator, the MathCalculator should not
  * be null.
  * @param mc
  */

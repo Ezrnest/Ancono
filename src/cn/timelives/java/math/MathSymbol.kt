@@ -4,6 +4,7 @@ package cn.timelives.java.math
 @Suppress("unused")
 /**
  * A file containing useful math symbols.
+ *
  * Created at 2018/10/25 21:49
  * @author  liyicheng
  */

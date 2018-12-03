@@ -5,7 +5,6 @@ package cn.timelives.java.math.numberTheory.combination;
 
 import cn.timelives.java.math.exceptions.NumberValueException;
 import cn.timelives.java.utilities.ArraySup;
-import cn.timelives.java.utilities.Printer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -60,7 +59,7 @@ public abstract class Enumer implements Iterable<int[]>{
 		public LEnumer(int n,int m) {
 			super(m);
 			toSelect = n;
-			total = CFunctions.permutation(n, m);
+			total = CombUtils.permutation(n, m);
 			filter = (a)->true;
 		}
 		/**
@@ -69,7 +68,7 @@ public abstract class Enumer implements Iterable<int[]>{
 		public LEnumer(int n,int m,Predicate<int[]> filter) {
 			super(m);
 			toSelect = n;
-			total = CFunctions.permutation(n, m);
+			total = CombUtils.permutation(n, m);
 			this.filter = filter;
 		}
 		

@@ -5,6 +5,7 @@ import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix
 import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
+import cn.timelives.java.math.numberModels.api.FieldNumberModel
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.math.numberTheory.NaiveNumberTheory
 import cn.timelives.java.utilities.ArraySup
@@ -12,6 +13,7 @@ import java.io.Serializable
 
 import java.util.ArrayList
 import java.util.regex.Pattern
+import kotlin.math.sign
 
 
 /**
@@ -52,7 +54,7 @@ internal constructor(
          * Gets the sign number of this Fraction.
          * @return sign number
          */
-        val signum: Int) : Number(), DivisionRingNumberModel<Fraction>, Comparable<Fraction>, Serializable {
+        val signum: Int) : Number(), FieldNumberModel<Fraction>, Comparable<Fraction>, Serializable {
 
     /**
      * Determines whether this fraction is an integer.
@@ -318,6 +320,7 @@ internal constructor(
         return Fraction(nAd[0], nAd[1], signum)
     }
 
+    operator fun unaryMinus() = negate()
 
     operator fun times(y: Long) = multiply(y)
 
@@ -598,12 +601,13 @@ internal constructor(
      * @return -1,0 or 1 if this is smaller than,equal to or bigger than f.
      */
     override fun compareTo(other: Fraction): Int {
-        val num = this.signum.toLong() * this.numerator * other.denominator - other.signum.toLong() * other.numerator * this.denominator
-        return when {
-            num > 0 -> 1
-            num == 0L -> 0
-            else -> -1
+        val comp = signum.compareTo(other.signum)
+        if (comp != 0) {
+            return comp
         }
+
+        val num = this.numerator * other.denominator - other.numerator * this.denominator
+        return num.sign * signum
 
     }
 
@@ -848,6 +852,11 @@ internal constructor(
         @JvmField
         val NEGATIVE_ONE = Fraction(1, 1, -1)
 
+        @JvmField
+        val TWO = Fraction(2,1,1)
+
+        @JvmField
+        val HALF = Fraction(1,2,1)
 
         private fun gcdNumAndDen(num: Long, den: Long): LongArray {
             val re = LongArray(2)
@@ -1107,6 +1116,11 @@ internal constructor(
 
 
 }
+
+fun Long.toFrac() : Fraction = Fraction.valueOf(this)
+
+fun Int.toFrac() : Fraction = Fraction.valueOf(this.toLong())
+
 
 //fun main(args: Array<String>) {
 ////    val f1 = Fraction.valueOf(-4, 3)

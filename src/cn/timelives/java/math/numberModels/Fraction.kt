@@ -997,6 +997,8 @@ internal constructor(
         }
 
         /**
+         * Computes the result of the continuous fraction stored in the array and
+         * returns an array of the numerator and denominator.
          * @param index the highest element in the array to compute from
          */
         @JvmStatic

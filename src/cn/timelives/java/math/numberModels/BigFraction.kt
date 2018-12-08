@@ -1,17 +1,10 @@
-
 package cn.timelives.java.math.numberModels
 
-import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.numberModels.BigFraction.Companion.ONE
-import cn.timelives.java.math.numberModels.BigFraction.Companion.TWO
 import cn.timelives.java.math.numberModels.BigFraction.Companion.ZERO
-import cn.timelives.java.math.numberModels.BigFraction.Companion.valueOf
 import cn.timelives.java.math.numberModels.Fraction.Companion.EXPRESSION_PATTERN
 import cn.timelives.java.math.numberModels.api.FieldNumberModel
-import cn.timelives.java.math.numberModels.api.minus
-import cn.timelives.java.math.numberModels.api.plus
-import cn.timelives.java.math.numberModels.api.unaryMinus
 import java.io.Serializable
 import java.math.BigInteger
 
@@ -53,13 +46,13 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
         } to denominator
     }
 
-    fun abs() : BigFraction{
-        if(isZero()){
+    fun abs(): BigFraction {
+        if (isZero()) {
             return ZERO
         }
-        return if(signum>0){
+        return if (signum > 0) {
             this
-        }else{
+        } else {
             negate()
         }
     }
@@ -305,12 +298,13 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
         }
 
         @JvmStatic
-        fun fromFraction(f : Fraction) : BigFraction{
-            if(f.isZero){
+        fun fromFraction(f: Fraction): BigFraction {
+            if (f.isZero) {
                 return ZERO
             }
-            return BigFraction(f.signum,f.numerator.toBigInteger(),f.denominator.toBigInteger())
+            return BigFraction(f.signum, f.numerator.toBigInteger(), f.denominator.toBigInteger())
         }
+
         /**
          * Return a fraction representing the value of the given expression.The text given should be like :
          * `"[\\+\\-]?\\d+(\\/\\d+)?"` as regular expression
@@ -338,7 +332,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
          * The calculator for BigFraction.
          */
         @JvmStatic
-        val calculator : BigFractionCalculator = BigFractionCalculator
+        val calculator: BigFractionCalculator = BigFractionCalculator
     }
 }
 

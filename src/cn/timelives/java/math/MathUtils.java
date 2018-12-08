@@ -24,7 +24,13 @@ import static cn.timelives.java.utilities.Printer.print;
  *
  * @author lyc
  */
+@SuppressWarnings("Duplicates")
 public class MathUtils {
+
+//    public static void main(String[] args) {
+//        print(gcdUV(5,13));
+//    }
+
     /**
      * Calculate two numbers' GCD.Make sure that these two numbers are both bigger than zero.
      *
@@ -35,7 +41,7 @@ public class MathUtils {
     public static long gcd(long n1, long n2) {
         //use Euclid's gcd algorithm
         long t;
-        while (n2 > 0) {
+        while (n2 != 0) {
             t = n2;
             n2 = n1 % n2;
             n1 = t;
@@ -53,7 +59,7 @@ public class MathUtils {
     public static int gcd(int n1, int n2) {
         //use Euclid's gcd algorithm
         int t;
-        while (n2 > 0) {
+        while (n2 != 0) {
             t = n2;
             n2 = n1 % n2;
             n1 = t;
@@ -61,6 +67,96 @@ public class MathUtils {
         return n1;
     }
 
+    /**
+     * Computes the greatest common divisor of two numbers and a pair of number (u,v) such that
+     * <pre>ua+vb=gcd(a,b)</pre>
+     * If one of a or b is zero, then gcd(a,b) is another one.
+     *
+     * @return an int array of <code>{gcd(a,b), u, v}</code>.
+     */
+    public static int[] gcdUV(int a, int b) {
+        if (a == 0) {
+            return new int[]{b, 0, 1};
+        }
+        if (b == 0) {
+            return new int[]{a, 1, 0};
+        }
+        return gcdUV0(a,b);
+    }
+
+    static int[] gcdUV0(int a,int b){
+        int[] quotients = new int[4];
+        int n = 0;
+        while (true) {
+            int q = a / b;
+            int r = a % b;
+            if(r == 0){
+                break;
+            }
+            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+            a = b;
+            b = r;
+        }
+        // computes u and v
+        int u0 = 1, u1 = 0,
+                v0 = 0, v1 = 1;
+        // u[s] = u[s-2]-q[s-2]*u[s-1]
+        for(int i=0;i<n;i++){
+            int nextU = u0 - quotients[i] * u1;
+            int nextV = v0 - quotients[i] * v1;
+            u0 = u1;
+            u1 = nextU;
+            v0 = v1;
+            v1 = nextV;
+        }
+        return new int[]{b, u1, v1};
+    }
+
+
+    /**
+     * Computes the greatest common divisor of two numbers and a pair of number (u,v) such that
+     * <pre>ua+vb=gcd(a,b)</pre>
+     * If one of a or b is zero, then gcd(a,b) is another one.
+     *
+     * @return an long array of <code>{gcd(a,b), u, v}</code>.
+     */
+    public static long[] gcdUV(long a, long b) {
+        if (a == 0) {
+            return new long[]{b, 0, 1};
+        }
+        if (b == 0) {
+            return new long[]{a, 1, 0};
+        }
+        return gcdUV0(a,b);
+    }
+
+    static long[] gcdUV0(long a,long b){
+        long[] quotients = new long[4];
+        int n = 0;
+        while (true) {
+            long q = a / b;
+            long r = a % b;
+            if(r == 0){
+                break;
+            }
+            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+            a = b;
+            b = r;
+        }
+        // computes u and v
+        long u0 = 1, u1 = 0,
+                v0 = 0, v1 = 1;
+        // u[s] = u[s-2]-q[s-2]*u[s-1]
+        for(int i=0;i<n;i++){
+            long nextU = u0 - quotients[i] * u1;
+            long nextV = v0 - quotients[i] * v1;
+            u0 = u1;
+            u1 = nextU;
+            v0 = v1;
+            v1 = nextV;
+        }
+        return new long[]{b, u1, v1};
+    }
 
     /**
      * Calculate the two numbers' least common multiple.The parameters are required to be positive,
@@ -216,7 +312,7 @@ public class MathUtils {
         while (p <= b) {
             p *= a;
             re++;
-            print(p + ",re=" + re);
+//            print(p + ",re=" + re);
         }
         return --re;
     }
@@ -378,11 +474,6 @@ public class MathUtils {
 
     /**
      * Turn the vector = (x,y) anticlockwise for {@code rad}.
-     *
-     * @param x
-     * @param y
-     * @param rad
-     * @return
      */
     public static double[] turnRad(double x, double y, double rad) {
         // x' = x cos - y sin
@@ -546,12 +637,13 @@ public class MathUtils {
     /**
      * {@code (a^n) % mod}, with number as int. For example, {@code powerAndMod(2,2,3) = 1}.
      * This method will not check overflow.
+     *
      * @param a   a number, positive
      * @param n   must be >=0, if n < 0, than it is taken as 0 and 1 will be returned.
      * @param mod the modular, must be less than 2<<31, or overflow may happen.
      */
-    public static int powerAndMod(int a, long n, int mod){
-        return (int)powerAndMod((long)a,n,(long)mod);
+    public static int powerAndMod(int a, long n, int mod) {
+        return (int) powerAndMod((long) a, n, (long) mod);
     }
 
     /**
@@ -768,11 +860,11 @@ public class MathUtils {
      * <pre>result[i] * radix^i</pre>
      *
      * @param number a positive integer
-     * @param radix an integer bigger than one
+     * @param radix  an integer bigger than one
      * @return an array containing corresponding digits.
      */
     public static int[] radix(int number, int radix) {
-        if(number < 0){
+        if (number < 0) {
             throw new IllegalArgumentException("number < 0");
         }
         checkValidRadix(radix);
@@ -791,8 +883,8 @@ public class MathUtils {
         return res;
     }
 
-    private static void checkValidRadix(int radix){
-        if( radix <= 1){
+    private static void checkValidRadix(int radix) {
+        if (radix <= 1) {
             throw new IllegalArgumentException("radix <= 1");
         }
     }
@@ -800,23 +892,25 @@ public class MathUtils {
     /**
      * Returns a number that is equal to the sum of
      * <pre>digits[i] * radix^i</pre>
+     *
      * @param digits an array of digits.
-     * @param radix an integer bigger than one
+     * @param radix  an integer bigger than one
      */
-    public static int fromRadix(int[] digits, int radix){
+    public static int fromRadix(int[] digits, int radix) {
         checkValidRadix(radix);
-        if(digits.length == 0){
+        if (digits.length == 0) {
             return 0;
         }
-        int result = digits[digits.length-1];
-        for(int i=digits.length-2;i>-1;i--){
+        int result = digits[digits.length - 1];
+        for (int i = digits.length - 2; i > -1; i--) {
             result *= radix;
             result += digits[i];
         }
         return result;
     }
-    private static void checkValidRadix(long radix){
-        if( radix <= 1){
+
+    private static void checkValidRadix(long radix) {
+        if (radix <= 1) {
             throw new IllegalArgumentException("radix <= 1");
         }
     }
@@ -827,11 +921,11 @@ public class MathUtils {
      * <pre>result[i] * radix^i</pre>
      *
      * @param number a positive integer
-     * @param radix an integer bigger than one
+     * @param radix  an integer bigger than one
      * @return an array containing corresponding digits.
      */
     public static long[] radix(long number, long radix) {
-        if(number < 0){
+        if (number < 0) {
             throw new IllegalArgumentException("number < 0");
         }
         checkValidRadix(radix);
@@ -853,16 +947,17 @@ public class MathUtils {
     /**
      * Returns a number that is equal to the sum of
      * <pre>digits[i] * radix^i</pre>
+     *
      * @param digits an array of digits.
-     * @param radix an integer bigger than one
+     * @param radix  an integer bigger than one
      */
-    public static long fromRadix(long[] digits, long radix){
+    public static long fromRadix(long[] digits, long radix) {
         checkValidRadix(radix);
-        if(digits.length == 0){
+        if (digits.length == 0) {
             return 0;
         }
-        long result = digits[digits.length-1];
-        for(int i=digits.length-2;i>-1;i--){
+        long result = digits[digits.length - 1];
+        for (int i = digits.length - 2; i > -1; i--) {
             result *= radix;
             result += digits[i];
         }
@@ -1218,12 +1313,13 @@ public class MathUtils {
     /**
      * Returns the sum of
      * <code>factorsAndPower[i][0] ^ factorsAndPower[i][1]</code>
+     *
      * @param factorsAndPower an two-dimension array containing the factors and its corresponding power.
      */
-    public static long fromFactors(long[][] factorsAndPower){
-       long re = 1;
-        for(long[] f : factorsAndPower){
-            re *= power(f[0],Math.toIntExact(f[1]));
+    public static long fromFactors(long[][] factorsAndPower) {
+        long re = 1;
+        for (long[] f : factorsAndPower) {
+            re *= power(f[0], Math.toIntExact(f[1]));
         }
         return re;
     }
@@ -1233,13 +1329,13 @@ public class MathUtils {
      * <code>p[i] ^ factorPower[i]</code>, where p[i] is the
      * i-th prime number starting from p[0] = 2.
      */
-    public static long fromFactorPowers(int[] factorPower){
-        if(factorPower.length == 0){
+    public static long fromFactorPowers(int[] factorPower) {
+        if (factorPower.length == 0) {
             return 1;
         }
         long re = 1;
         Primes pr = Primes.getInstance();
-        pr.ensurePrimesNumber(factorPower.length-1);
+        pr.ensurePrimesNumber(factorPower.length - 1);
         for (int i = 0; i < factorPower.length; i++) {
             re *= power(pr.getPrime(i), factorPower[i]);
         }
@@ -1250,15 +1346,16 @@ public class MathUtils {
      * The radical of n, rad(n),
      * is the product of distinct prime factors of n.
      * For example, 504 = 23 × 32 × 7, so rad(504) = 2 × 3 × 7 = 42.
+     *
      * @return rad(n)
      */
-    public static long rad(long n){
-       long[][] pfactors = factorReduce(n);
-       long re = 1;
-       for(long[] f : pfactors){
-           re *= f[0];
-       }
-       return re;
+    public static long rad(long n) {
+        long[][] pfactors = factorReduce(n);
+        long re = 1;
+        for (long[] f : pfactors) {
+            re *= f[0];
+        }
+        return re;
     }
 
     /**
@@ -1270,7 +1367,7 @@ public class MathUtils {
         long[][] factors = factorReduce(n);
         long sum = 1;
         for (long[] factor : factors) {
-            if(factor[0] == 1){
+            if (factor[0] == 1) {
                 sum += 1;
                 continue;
             }

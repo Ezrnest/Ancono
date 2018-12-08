@@ -9,6 +9,7 @@ import cn.timelives.java.math.exceptions.ExceptionUtil;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberTheory.NTCalculator;
 import cn.timelives.java.math.numberTheory.Primes;
+import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ public final class Calculators {
      */
     public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, MathCalculator<T> mc) {
         T z = mc.getZero();
+        //noinspection SuspiciousNameCombination
         return mc.compare(x, z) == mc.compare(y, z);
     }
 
@@ -239,6 +241,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public Integer decrease(Integer x) {
@@ -246,6 +249,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public Integer increase(Integer x) {
@@ -496,6 +500,17 @@ public final class Calculators {
             return MathUtils.gcd(a, b);
         }
 
+        @Override
+        public Triple<Integer, Integer, Integer> gcdUV(Integer a, Integer b) {
+            int[] arr = MathUtils.gcdUV(a, b);
+            return new Triple<>(arr[0], arr[1], arr[2]);
+        }
+
+        @Override
+        public Integer lcm(Integer a, Integer b) {
+            return MathUtils.lcm(a,b);
+        }
+
         /**
          * @see NTCalculator#decrease(java.lang.Object)
          */
@@ -571,7 +586,7 @@ public final class Calculators {
 
         @Override
         public Integer powerAndMod(Integer a, long n, Integer m) {
-            return MathUtils.powerAndMod(a,n,m);
+            return MathUtils.powerAndMod(a, n, m);
         }
 
         @Override
@@ -744,6 +759,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public Long decrease(Long x) {
@@ -751,6 +767,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public Long increase(Long x) {
@@ -758,6 +775,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public Long powerAndMod(Long at, Long nt, Long mt) {
@@ -952,6 +970,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @NotNull
         @Override
@@ -960,6 +979,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @NotNull
         @Override
@@ -969,6 +989,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public boolean isInteger(Long x) {
@@ -989,6 +1010,17 @@ public final class Calculators {
         @Override
         public Long gcd(Long a, Long b) {
             return MathUtils.gcd(a, b);
+        }
+
+        @Override
+        public Triple<Long, Long, Long> gcdUV(Long a, Long b) {
+            long[] arr = MathUtils.gcdUV(a,b);
+            return new Triple<>(arr[0],arr[1],arr[2]);
+        }
+
+        @Override
+        public Long lcm(Long a, Long b) {
+            return MathUtils.lcm(a,b);
         }
 
         /**
@@ -1212,6 +1244,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public BigInteger divideToInteger(@NotNull BigInteger a, @NotNull BigInteger b) {
@@ -1227,6 +1260,7 @@ public final class Calculators {
         }
 
         /**
+         *
          */
         @Override
         public boolean isInteger(BigInteger x) {
@@ -1900,11 +1934,11 @@ public final class Calculators {
             this.p = p;
             inversed = new int[p];
             for (int i = 1; i < p; i++) {
-                if (inversed[i] != 0){
+                if (inversed[i] != 0) {
                     continue;
                 }
-                for(int j=1;j<p;j++){
-                    if(multiply(i,j) == 1){
+                for (int j = 1; j < p; j++) {
+                    if (multiply(i, j) == 1) {
                         inversed[i] = j;
                         inversed[j] = i;
                         break;
@@ -2009,7 +2043,7 @@ public final class Calculators {
 
         @Override
         public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
-            return powerAndMod(at,nt.longValue(),mt);
+            return powerAndMod(at, nt.longValue(), mt);
         }
 
         @Override
@@ -2049,7 +2083,7 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer divideToInteger(Integer a, Integer b) {
-            return divide(a,b);
+            return divide(a, b);
         }
     }
 

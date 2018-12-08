@@ -5,7 +5,9 @@ package cn.timelives.java.math.numberTheory;
 
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.structure.Pair;
+import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -307,12 +309,72 @@ public interface NTCalculator<T> extends MathCalculator<T> {
         a = abs(a);
         b = abs(b);
         T t;
-        while (isPositive(b)) {
+        while (!isZero(b)) {
             t = b;
             b = mod(a, b);
             a = t;
         }
         return a;
+    }
+
+    /**
+     * Returns the greatest common divisor of two numbers and a pair of number (u,v) such that
+     * <pre>ua+vb=gcd(a,b)</pre>
+     * The returned greatest common divisor is the same as {@link NTCalculator#gcd(Object, Object)}.
+     * Note that the pair of <code>u</code> and <code>v</code> returned is not unique and different implementation
+     * may return differently when a,b is the same.<P></P>
+     * The default implementation is based on the Euclid's algorithm.
+     *
+     * @return a tuple of <code>{gcd(a,b), u, v}</code>.
+     */
+    default Triple<T, T, T> gcdUV(T a, T b) {
+        if (isZero(a)) {
+            return new Triple<>(b, getZero(), getOne());
+        }
+        if (isZero(b)) {
+            return new Triple<>(a, getOne(), getZero());
+        }
+        return gcdUV0(a, b);
+    }
+
+    /**
+     * Determines whether the two numbers <code>a</code> and <code>b</code>
+     * are co-prime.
+     */
+    default boolean isCoprime(T a, T b){
+        return isEqual(gcd(a,b),getOne());
+    }
+
+    @SuppressWarnings("unchecked")
+    private Triple<T, T, T> gcdUV0(T a, T b) {
+        T[] quotients = (T[]) new Object[4];
+        int n = 0;
+        while (true) {
+            var t = divideAndReminder(a, b);
+            T q = t.getFirst();
+            T r = t.getSecond();
+            if (isZero(r)) {
+                break;
+            }
+            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+            a = b;
+            b = r;
+        }
+        // computes u and v
+        T one = getOne();
+        T zero = getZero();
+        T u0 = one, u1 = zero,
+                v0 = zero, v1 = one;
+        // u[s] = u[s-2]-q[s-2]*u[s-1]
+        for (int i = 0; i < n; i++) {
+            T nextU = subtract(u0, multiply(quotients[i], u1));
+            T nextV = subtract(v0, multiply(quotients[i], v1));
+            u0 = u1;
+            u1 = nextU;
+            v0 = v1;
+            v1 = nextV;
+        }
+        return new Triple<>(b,u1,v1);
     }
 
     /**

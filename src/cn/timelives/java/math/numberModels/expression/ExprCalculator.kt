@@ -180,7 +180,8 @@ class ExprCalculator
     }
 
     /**
-     * Sets a property for this calculator.
+     * Sets a property for this calculator. This method is used to change the behavior of the
+     * calculator.
      * @param key
      * @return
      */
@@ -209,9 +210,9 @@ class ExprCalculator
     }
 
     /**
+     * Adds a tag to the calculator, enabling some types of simplification.
      * @param e
      * @return
-     * @see Set.add
      */
     fun tagAdd(e: String): Boolean {
         val b = enabledTags.add(e)
@@ -790,9 +791,9 @@ class ExprCalculator
 
         }
         node.c1 = nume
-        if (deno.parent == null) {
-            deno.javaClass
-        }
+//        if (deno.parent == null) {
+//            deno.javaClass
+//        }
         node.c2 = deno
         return node
     }

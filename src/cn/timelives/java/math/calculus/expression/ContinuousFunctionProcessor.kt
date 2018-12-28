@@ -1,7 +1,5 @@
 package cn.timelives.java.math.calculus.expression
 
-import cn.timelives.java.math.algebra.Polynomial
-import cn.timelives.java.math.numberModels.expression.Expression
 import cn.timelives.java.math.numberModels.expression.Node
 import cn.timelives.java.math.numberModels.expression.anno.DisallowModify
 

@@ -1,16 +1,13 @@
 package cn.timelives.java.math.algebra.linearAlgebra;
 
-import cn.timelives.java.math.algebra.Polynomial;
 import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.Situation;
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.SolutionBuilder;
-import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.expression.ExprCalculator;
-import cn.timelives.java.math.numberModels.structure.PolynomialX;
+import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.RegexSup;
 
@@ -569,7 +566,7 @@ public class MatrixSup {
         return Matrix.diag((T[]) eigenvalues.toArray(), mat.getMathCalculator());
     }
 
-    public static <T> Matrix<T> sylvesterDet(PolynomialX<T> p1, PolynomialX<T> p2) {
+    public static <T> Matrix<T> sylvesterDet(Polynomial<T> p1, Polynomial<T> p2) {
         int n = p1.getDegree();
         int m = p2.getDegree();
         int size = m + n;
@@ -580,7 +577,7 @@ public class MatrixSup {
             }
         }
         for (int row = m; row < size; row++) {
-            for (int i = 0; i <= n; i++) {
+            for (int i = 0; i <= m; i++) {
                 builder.set(p2.getCoefficient(m - i), row, i + row - m);
             }
         }

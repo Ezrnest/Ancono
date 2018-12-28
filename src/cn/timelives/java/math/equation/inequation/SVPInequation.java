@@ -4,7 +4,7 @@
 package cn.timelives.java.math.equation.inequation;
 
 import cn.timelives.java.math.*;
-import cn.timelives.java.math.algebra.Polynomial;
+import cn.timelives.java.math.algebra.IPolynomial;
 import cn.timelives.java.math.equation.Type;
 import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.function.AbstractSVPFunction.LinearFunction;
@@ -29,7 +29,7 @@ import java.util.function.Function;
  * 2017-10-06 09:33
  *
  */
-public abstract class SVPInequation<T> extends SVInquation<T> implements Polynomial<T> {
+public abstract class SVPInequation<T> extends SVInquation<T> implements IPolynomial<T> {
 	protected final int mp;
 
 	/**
@@ -65,7 +65,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			return false;
 		}
 		SVPInequation<T> sv = (SVPInequation<T>) obj;
-        return op == sv.op && Polynomial.isEqual(this, sv, getMc()::isEqual);
+        return op == sv.op && IPolynomial.isEqual(this, sv, getMc()::isEqual);
 	}
 
 	/*
@@ -80,7 +80,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			return false;
 		}
 		SVPInequation<N> sv = (SVPInequation<N>) obj;
-        return op == sv.op && Polynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
+        return op == sv.op && IPolynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
 	}
 
 	/*
@@ -95,7 +95,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 			return false;
 		}
 		SVPInequation<?> sv = (SVPInequation<?>)obj;
-		return op == sv.op && Polynomial.isEqual(this, sv);
+		return op == sv.op && IPolynomial.isEqual(this, sv);
 	}
 
 	/*
@@ -103,7 +103,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 */
 	@Override
 	public int hashCode() {
-		return op.hashCode()*31 + Polynomial.hashCodeOf(this);
+		return op.hashCode()*31 + IPolynomial.hashCodeOf(this);
 	}
 
 
@@ -112,7 +112,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements Polynom
 	 */
 	@Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        StringBuilder sb = new StringBuilder(Polynomial.stringOf(this, getMc(), nf));
+        StringBuilder sb = new StringBuilder(IPolynomial.stringOf(this, getMc(), nf));
 		sb.append(' ').append(op.toString());
 		sb.append(" 0");
 		return sb.toString();

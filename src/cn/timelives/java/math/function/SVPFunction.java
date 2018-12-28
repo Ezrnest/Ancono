@@ -5,7 +5,7 @@ package cn.timelives.java.math.function;
 
 
 import cn.timelives.java.math.MathCalculatorHolder;
-import cn.timelives.java.math.algebra.Polynomial;
+import cn.timelives.java.math.algebra.IPolynomial;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 
 import java.util.function.BiPredicate;
@@ -17,7 +17,7 @@ import java.util.function.BiPredicate;
  * @author liyicheng
  *
  */
-public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, Polynomial<T> {
+public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, IPolynomial<T> {
 	
 	/**
 	 * Returns the coefficient {@code x^n},if {@code n==0} then the 
@@ -37,7 +37,7 @@ public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, P
 	int getDegree();
 
 	public default Vector<T> coefficientVector(){
-		return Polynomial.coefficientVector(this,getMathCalculator());
+		return IPolynomial.coefficientVector(this,getMathCalculator());
 	}
 
 	/**
@@ -49,6 +49,6 @@ public interface SVPFunction<T> extends SVFunction<T>,MathCalculatorHolder<T>, P
 	 * @return
 	 */
 	public static <T,S> boolean isEqual(SVPFunction<T> f1,SVPFunction<S> f2,BiPredicate<T, S> equal) {
-		return Polynomial.isEqual(f1, f2, equal);
+		return IPolynomial.isEqual(f1, f2, equal);
 	}
 }

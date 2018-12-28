@@ -704,6 +704,16 @@ public abstract class Node implements Computable, Serializable {
             n2.parent = this;
         }
 
+        void setFirst(Node n){
+            c1 = n;
+            n.parent = this;
+        }
+
+        void setSecond(Node n){
+            c2 = n;
+            n.parent = this;
+        }
+
 
         /*
          * @see cn.timelives.java.math.numberModels.expression.Node.NodeWithChildren#contains(cn.timelives.java.math.numberModels.expression.Node)
@@ -1752,11 +1762,7 @@ public abstract class Node implements Computable, Serializable {
     }
 
     /**
-     * Gets the polynomial part in the node, returns {@code null} if there is
-     *
-     * @param node
-     * @param p
-     * @return
+     * Sets the polynomial part in the node
      */
     static Node setPolynomialPart(Node node, Multinomial p) {
         if (node instanceof CombinedNode) {

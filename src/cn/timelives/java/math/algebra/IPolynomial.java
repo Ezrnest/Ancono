@@ -3,7 +3,6 @@
  */
 package cn.timelives.java.math.algebra;
 
-import cn.timelives.java.math.CalculatorHolder;
 import cn.timelives.java.math.MathCalculatorHolder;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.MathCalculator;
@@ -27,7 +26,7 @@ import java.util.function.BiPredicate;
  * @author liyicheng
  * 2017-10-06 16:51
  */
-public interface Polynomial<T> extends Iterable<T> {
+public interface IPolynomial<T> extends Iterable<T> {
     /**
      * Gets the degree of this polynomial, which is the max power of x.
      *
@@ -78,7 +77,7 @@ public interface Polynomial<T> extends Iterable<T> {
     /**
      * Determines whether the two polynomial are equal.
      */
-    public static <T, S> boolean isEqual(Polynomial<T> m1, Polynomial<S> m2, BiPredicate<T, S> equal) {
+    public static <T, S> boolean isEqual(IPolynomial<T> m1, IPolynomial<S> m2, BiPredicate<T, S> equal) {
         if (m1.getDegree() != m2.getDegree()) {
             return false;
         }
@@ -95,7 +94,7 @@ public interface Polynomial<T> extends Iterable<T> {
      * Determines whether the two polynomial are equal, using the
      * equals() method in object.
      */
-    public static boolean isEqual(Polynomial<?> m1, Polynomial<?> m2) {
+    public static boolean isEqual(IPolynomial<?> m1, IPolynomial<?> m2) {
         if (m1.getDegree() != m2.getDegree()) {
             return false;
         }
@@ -119,7 +118,7 @@ public interface Polynomial<T> extends Iterable<T> {
      *
      * @param m a Polynomial
      */
-    public static int hashCodeOf(Polynomial<?> m) {
+    public static int hashCodeOf(IPolynomial<?> m) {
         int hash = 0;
         int mp = m.getDegree();
         for (int i = 0; i <= mp; i++) {
@@ -128,7 +127,7 @@ public interface Polynomial<T> extends Iterable<T> {
         return hash;
     }
 
-    public static <T> String stringOf(Polynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public static <T> String stringOf(IPolynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         int maxPower = m.getDegree();
         if (maxPower == 0) {
             return nf.format(m.getCoefficient(0), mc);
@@ -168,7 +167,7 @@ public interface Polynomial<T> extends Iterable<T> {
      * Returns a vector whose n-th element is the coefficient of x^n.
      *
      */
-    static <T> Vector<T> coefficientVector(Polynomial<T> fx, MathCalculator<T> mc) {
+    static <T> Vector<T> coefficientVector(IPolynomial<T> fx, MathCalculator<T> mc) {
         int length = fx.getDegree() + 1;
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[length];
@@ -181,7 +180,7 @@ public interface Polynomial<T> extends Iterable<T> {
     /**
      * Returns the last non-zero term in this polynomial,
      */
-    static <T, S extends Polynomial<T> & MathCalculatorHolder<T>> T last(S s) {
+    static <T, S extends IPolynomial<T> & MathCalculatorHolder<T>> T last(S s) {
         var mc = s.getMathCalculator();
         int p = 0;
         T re;
@@ -194,14 +193,14 @@ public interface Polynomial<T> extends Iterable<T> {
 }
 
 class It<T> implements ListIterator<T> {
-    private final Polynomial<T> f;
+    private final IPolynomial<T> f;
     private final int max;
     private int n;
 
     /**
      *
      */
-    public It(Polynomial<T> f) {
+    public It(IPolynomial<T> f) {
         this.f = f;
         this.max = f.getDegree();
     }

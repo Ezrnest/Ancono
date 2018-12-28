@@ -2,7 +2,7 @@ package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathSymbol;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.algebra.Polynomial;
+import cn.timelives.java.math.algebra.IPolynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.api.Computable;
 import cn.timelives.java.math.numberModels.api.Simplifier;
@@ -32,6 +32,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         Term low = base.floor(e);
         if (low != null && low.canMerge(e)) {
             base.remove(low);
+
             return mergingAdd(base, low.merge(e));
         }
         Term high = base.higher(e);
@@ -52,7 +53,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         }
     }
 
-    private static final Comparator<Term> charComp = Term::compareChar;
+    private static final Comparator<Term> charComp = Term::compareCharAndRadical;
 
     static NavigableSet<Term> getSet() {
         return new TreeSet<>(charComp);
@@ -146,6 +147,14 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      */
     public boolean isZero() {
         return isMonomial() && getFirst().isZero();
+    }
+
+    public boolean isOne() {
+        if(!isMonomial()){
+            return false;
+        }
+        var t = getFirst();
+        return t.isInteger() && t.signum == 1 && t.numerator.equals(BigInteger.ONE);
     }
 
     public NavigableSet<Term> getTerms() {
@@ -387,6 +396,10 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return new Multinomial(terms.first().reciprocal());
     }
 
+    /**
+     * Tries the divide this multinomial with the given multinomial, throws an UnsupportedCalculationException
+     * if the result cannot be represented by a multinomial.
+     */
     public Multinomial divide(Multinomial p2) {
         int num = p2.getNumOfTerms();
         if (num == 1) {
@@ -455,7 +468,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         Set<String> remainChars = getCharacters(m);
         Term divisorHead = divisor.first();
         Set<String> divisorChars = getCharacters(divisor);
-        List<Term> extraRemainders = new ArrayList<>(2);
+//        List<Term> extraRemainders = new ArrayList<>(2);
 
         //while(true){
         while (remainChars.containsAll(divisorChars)) {
@@ -478,7 +491,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
             mergingAddAll(m, multiplyToSet(divisor, q.negate()));
             remainChars = getCharacters(m);
         }
-        mergingAddAll(m, extraRemainders);
+//        mergingAddAll(m, extraRemainders);
     }
 
     private static void reduceGcd(NavigableSet<Term> m1, NavigableSet<Term> m2) {
@@ -717,7 +730,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return new Multinomial(set);
     }
 
-    public static Multinomial fromPolynomialT(Polynomial<Term> p, String variableName) {
+    public static Multinomial fromPolynomialT(IPolynomial<Term> p, String variableName) {
         NavigableSet<Term> set = getSet();
         for (int i = 0; i <= p.getDegree(); i++) {
             Term t = p.getCoefficient(i);
@@ -733,7 +746,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return new Multinomial(set);
     }
 
-    public static Multinomial fromPolynomialM(Polynomial<Multinomial> p, String variableName) {
+    public static Multinomial fromPolynomialM(IPolynomial<Multinomial> p, String variableName) {
         NavigableSet<Term> set = getSet();
         for (int i = 0; i <= p.getDegree(); i++) {
             Multinomial t = p.getCoefficient(i);
@@ -791,7 +804,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
             }
             re.add(po);
         }
-        assert gcd != null;
         if (!gcd.isMonomial()) {
             for (int j = 0; j < len; j++) {
                 re.set(j, re.get(j).divide(gcd));
@@ -1019,7 +1031,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
 
 //    public static void main(String[] args) {
-//
+//        print(Multinomial.valueOf("Sqr18-1"));
+//        print(Term.valueOf(1).canMerge(Term.valueOf("Sqr18")));
 //    }
 //        print(cal.gcd(valueOf("a-b"), valueOf("a+b")));
 //        var re = simplifyFraction(Multinomial.monomial(

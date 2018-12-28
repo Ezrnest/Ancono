@@ -39,11 +39,16 @@ import java.util.function.Function
  * @param <T>
 </T> */
 class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : MathObject<T>(mc), DivisionRingNumberModel<Complex<T>> {
+
+
     private val a: T = Objects.requireNonNull(a)
     private val b: T = Objects.requireNonNull(b)
     private var m: T? = null
     private var arg: T? = null
 
+    override fun isZero(): Boolean {
+        return mc.isZero(a) && mc.isZero(b)
+    }
     /**
      * Returns the real part of this,which is
      * equal to `Re(this)`.

@@ -68,8 +68,9 @@ internal constructor(
     val isPositive: Boolean
         get() = signum > 0
 
-    val isZero: Boolean
-        get() = signum == 0
+    override fun isZero(): Boolean {
+        return signum == 0
+    }
 
     init {
         if (denominator == 0L)

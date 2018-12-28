@@ -34,8 +34,16 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	public SimpleStrategy(Set<String> tags, Set<Type> types, String fname, String description) {
 		super(tags, types, fname, description);
 	}
-	
-	/**
+
+    @Override
+    public String toString() {
+        if(description.isBlank()){
+            return super.toString();
+        }
+        return description;
+    }
+
+    /**
 	 * Directly gets the children of the node, without getting a copy.
 	 * @param n a ListChildNode
 	 * @return the children

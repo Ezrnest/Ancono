@@ -382,5 +382,43 @@ public final class CollectionSup {
         return result;
     }
 
+    public static <K extends Comparable<K>,V extends Comparable<V>> int compareLexi(NavigableMap<K,V> m1, NavigableMap<K,V> m2){
+        if(m1.isEmpty() && m2.isEmpty()){
+            return 0;
+        }
+
+        var it1 = m1.entrySet().iterator();
+        var it2 = m2.entrySet().iterator();
+        while(true){
+            boolean hs1 = it1.hasNext(),
+                    hs2 = it2.hasNext();
+            if(hs1){
+                if(!hs2){
+                    return -1;
+                }
+            }else{
+                if(hs2){
+                    return 1;
+                }else{
+                    return 0;
+                }
+            }
+            var en1 = it1.next();
+            var en2 = it2.next();
+            K ch1 = en1.getKey();
+            K ch2 = en2.getKey();
+            int comp = ch1.compareTo(ch2);
+            if(comp<0){
+                return -1;
+            }else if(comp>0){
+                return 1;
+            }
+            comp = en2.getValue().compareTo(en1.getValue());
+            if(comp!=0){
+                return comp;
+            }
+        }
+    }
+
 
 }

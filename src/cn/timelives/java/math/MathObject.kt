@@ -20,8 +20,9 @@ abstract class MathObject<T : Any>
  * be null.
  * @param mc
  */
-protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalculator<T>>(mc) {
-
+protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalculator<T>>(mc),MathCalculatorHolder<T> {
+    override val mathCalculator: MathCalculator<T>
+        get() = super.mathCalculator
     /**
      * Map this object using the number type `T` to a new object using the number type `N`. This
      * method is a core method of [MathObject]. The subclasses can always changes the return

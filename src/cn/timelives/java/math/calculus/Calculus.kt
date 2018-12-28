@@ -4,22 +4,24 @@
 package cn.timelives.java.math.calculus
 
 import cn.timelives.java.math.MathCalculator
-import cn.timelives.java.math.algebra.Polynomial
-import cn.timelives.java.math.function.AbstractSVPFunction
-import cn.timelives.java.math.function.SVFunction
-import cn.timelives.java.math.function.SVPFunction
-import cn.timelives.java.math.function.invoke
+import cn.timelives.java.math.MathSymbol
+import cn.timelives.java.math.algebra.AlgebraUtil
+import cn.timelives.java.math.algebra.DecomposedPoly
+import cn.timelives.java.math.algebra.IPolynomial
+import cn.timelives.java.math.algebra.SinglePoly
+import cn.timelives.java.math.function.*
+import cn.timelives.java.math.get
+import cn.timelives.java.math.numberModels.Calculators
+import cn.timelives.java.math.numberModels.Fraction
 import cn.timelives.java.math.numberModels.Multinomial
 import cn.timelives.java.math.numberModels.Term
-import cn.timelives.java.math.numberModels.expression.DerivativeHelper
-import cn.timelives.java.math.numberModels.expression.ExprCalculator
-import cn.timelives.java.math.numberModels.expression.Expression
-import cn.timelives.java.math.numberModels.expression.Node
-import cn.timelives.java.math.numberModels.structure.PolynomialX
+import cn.timelives.java.math.numberModels.structure.Polynomial
 import cn.timelives.java.math.numberTheory.combination.CombUtils
 import java.util.function.DoubleUnaryOperator
 import kotlin.coroutines.experimental.buildSequence
 import cn.timelives.java.math.numberModels.api.plus
+import cn.timelives.java.math.numberModels.expression.*
+import cn.timelives.java.math.numberModels.expression.SimplificationStrategies.PROP_MERGE_FRACTION
 
 object Calculus {
     /**
@@ -145,13 +147,12 @@ object Calculus {
      * Returns the derivation of a polynomial.
      */
     @JvmStatic
-    fun <T : Any> derivation(f: Polynomial<T>, mc: MathCalculator<T>): Polynomial<T> {
-        if(f is PolynomialX){
+    fun <T : Any> derivation(f: IPolynomial<T>, mc: MathCalculator<T>): IPolynomial<T> {
+        if (f is Polynomial) {
             return f.derivative()
         }
-        return PolynomialX.fromPolynomial(f,mc).derivative()
+        return Polynomial.fromPolynomial(f, mc).derivative()
     }
-
 
 
     /**
@@ -160,7 +161,7 @@ object Calculus {
      * @return
      */
     @JvmStatic
-    fun <T : Any> integration(f: SVPFunction<T>): AbstractSVPFunction<T> {
+    fun <T : Any> integrate(f: SVPFunction<T>): AbstractSVPFunction<T> {
         @Suppress("UNCHECKED_CAST")
         val cns = arrayOfNulls<Any>(f.degree + 2) as Array<T>
         val mc = f.mathCalculator
@@ -237,14 +238,14 @@ object Calculus {
      * Returns the total differential of the given expression without performing any simplification.
      */
     @JvmStatic
-    fun Expression.totalDifferential(vararg variableNames : String) : Expression{
+    fun Expression.totalDifferential(vararg variableNames: String): Expression {
         val set = hashSetOf(*variableNames)
         val root = this.root
         val diffs = ArrayList<Node>(set.size)
-        for(name in set){
-            diffs += DerivativeHelper.derivativeNode(root,name)
+        for (name in set) {
+            diffs += DerivativeHelper.derivativeNode(root, name)
         }
-        val nroot = Node.wrapNodeAM(true,diffs)
+        val nroot = Node.wrapNodeAM(true, diffs)
         return Expression(nroot)
     }
 
@@ -253,22 +254,22 @@ object Calculus {
      * a total differential of the same variables. It is required that the names of variables in
      * the given list of are distinct.
      */
-    fun composeTotalDifferential(partialDiffs : List<Pair<Expression,String>>,
-                                 mc : ExprCalculator = ExprCalculator.newInstance) : Boolean{
-        for(p1 in partialDiffs){
-            for(p2 in partialDiffs){
-                if(p1 === p2){
+    fun composeTotalDifferential(partialDiffs: List<Pair<Expression, String>>,
+                                 mc: ExprCalculator = ExprCalculator.newInstance): Boolean {
+        for (p1 in partialDiffs) {
+            for (p2 in partialDiffs) {
+                if (p1 === p2) {
                     //the same
                     continue
                 }
-                if(p1.second == p2.second){
+                if (p1.second == p2.second) {
                     throw IllegalArgumentException("Variable name duplicated:${p1.second}")
                 }
                 var diff1 = p1.first.derivation(p2.second)
                 var diff2 = p2.first.derivation(p1.second)
                 diff1 = mc.simplify(diff1)
                 diff2 = mc.simplify(diff2)
-                if(!mc.isEqual(diff1,diff2)){
+                if (!mc.isEqual(diff1, diff2)) {
                     return false
                 }
             }
@@ -293,55 +294,291 @@ object Calculus {
     @JvmStatic
     fun derivation(term: Term, variableName: String = "x"): Term {
         return if (term.containsChar(variableName)) {
-            term.divide(Term.singleChar(variableName))
-                    .multiply(Term.valueOf(term.getCharacterPower(variableName)))
+            val t0 = Term.singleChar(variableName)
+            val t1 = term.divide(t0)
+            val t2 = t1.multiply(Term.valueOf(term.getCharacterPower(variableName)))
+            t2
         } else {
             Term.ZERO
         }
     }
 
-    fun taylorSeriesSeq(expr : Expression, variableName: String = "x", point : Expression = Expression.ZERO,
-                       mc : ExprCalculator = ExprCalculator.newInstance)
+    fun taylorSeriesSeq(expr: Expression, variableName: String = "x", point: Expression = Expression.ZERO,
+                        mc: ExprCalculator = ExprCalculator.newInstance)
             : Sequence<Expression> = buildSequence {
         var n = 0
         var deno = 1L
         var f = expr
-        while(true){
-            val nume = mc.substitute(f,variableName,point)
-            val coe = mc.divideLong(nume,deno)
+        while (true) {
+            val nume = mc.substitute(f, variableName, point)
+            val coe = mc.divideLong(nume, deno)
             yield(coe)
             n++
             deno *= n
-            f = mc.differential(f,variableName)
+            f = mc.differential(f, variableName)
         }
     }
 
 //    fun taylorSeries
 
-    fun taylorSeries(expr : Expression, variableName: String = "x",
-                     point : Expression = Expression.ZERO, degree : Int = 3,
-                     mc : ExprCalculator = ExprCalculator.newInstance) : PolynomialX<Expression>{
-        var re = PolynomialX.zero(mc)
+    fun taylorSeries(expr: Expression, variableName: String = "x",
+                     point: Expression = Expression.ZERO, degree: Int = 3,
+                     mc: ExprCalculator = ExprCalculator.newInstance): Polynomial<Expression> {
+        var re = Polynomial.zero(mc)
         var f = expr
-        for(n in 0..degree){
-            val nume = mc.substitute(f,variableName,point)
+        for (n in 0..degree) {
+            val nume = mc.substitute(f, variableName, point)
             val deno = CombUtils.factorial(n)
-            val coe = mc.divideLong(nume,deno)
-            var t = PolynomialX.binomialPower(point,n,mc)
+            val coe = mc.divideLong(nume, deno)
+            var t = Polynomial.binomialPower(point, n, mc)
             t = t.multiply(coe)
             re += t
-            f = mc.differential(f,variableName)
+            f = mc.differential(f, variableName)
         }
         return re
     }
 
+    fun <T : Any> integrate(p: Polynomial<T>): Polynomial<T> {
+        return p.integration()
+    }
+
+    /**
+     * Make substitute for `ax^2+bx+c`.
+     * Returns the substituted polynomial a*u^2 +(4ac-b^2)/4a and u = x + b/2a
+     */
+    private fun makeSubstitute(a: Expression, b: Expression, c: Expression, mc: ExprCalculator)
+            : Pair<Polynomial<Expression>, Polynomial<Expression>> {
+//        if(mc.isZero(a)){
+//            println("?")
+//        }
+        val t2 = mc.run { b / a / 2 }
+        val sub = Polynomial.valueOf(mc, t2, mc.one)
+        // a (x + b/2a)^2 +(4ac-b^2)/4a
+        val t = mc.run { c - t2 * t2 }
+        val re = Polynomial.valueOf(mc, t, mc.zero, a)
+        return re to sub
+    }
+
+
+    /**
+     * Returns the result of integrating a polynomial in the denominator part that has the degree of 1 or 2.
+     * If the degree of the polynomial is two, it must not have real roots.
+     */
+    fun integrationDeno(deno: SinglePoly<Expression>, mc: ExprCalculator = ExprCalculator.newInstance,
+                        variableName: String = "x"): Expression {
+        val d = deno.base
+        if (deno.pow == 1) {
+            when (d.degree) {
+                1 -> {
+                    // 1/(ax+b)
+                    // > ln(ax+b)/a
+                    return mc.run { ln(Expression.fromPolynomialE(d, variableName)) / d.getCoefficient(1) }
+                }
+                2 -> {
+                    // 1/(ax^2+bx+c)
+
+                    // 1/( ax^2 + c)
+                    val a = d[2]
+                    val b = d[1]
+                    val c = d[0]
+                    return integrationDeno2(a, b, c, mc, variableName)
+                }
+            }
+            throw ArithmeticException("Not supported: $d")
+//            return Expression(ln(deno.base))
+        }
+        if (d.degree == 1) {
+            // 1/(ax+b)^n
+            // > -1/(a(n-1)(ax+b)^(n-1))
+            val p = Expression.fromPolynomialE(d, variableName)
+            val nMinus1 = Expression.fromTerm(Term.valueOf(deno.pow - 1L))
+            return mc.run {
+                -mc.reciprocal(d[1] * nMinus1 * exp(p, nMinus1))
+            }
+        }
+        if (d.degree != 2) {
+            throw ArithmeticException("Not supported: $d")
+        }
+        //use step integration
+        if (!mc.isZero(d[1])) {
+            val (re, sub) = makeSubstitute(d[2], d[1], d[0], mc)
+            val subRe = integrationDeno(SinglePoly(null, re, deno.pow))
+            return mc.substitute(subRe, variableName, Expression.fromPolynomialE(sub, variableName))
+        }
+        val (p, q, sign) = getPQ(d[2], d[0], mc)
+        val result = integrationDeno2Pow(p, q, deno.pow, mc, variableName)
+        return if (deno.pow % 2 == 1) {
+            mc.multiply(result, sign)
+        } else {
+            result
+        }
+    }
+
+    /**
+     * Computes the integration of
+     * > 1/(p^2*x^2+q^2)^n
+     */
+    fun integrationDeno2Pow(p: Expression, q: Expression, n: Int, mc: ExprCalculator, variableName: String = "x"): Expression {
+        if (n == 1) {
+            return integrationDeno2PQ(p, q, mc, variableName)
+        }
+        val x = Expression.fromTerm(Term.singleChar(variableName))
+        val q2 = mc.multiply(q, q)
+        val poly = mc.run { p * p * x * x + q2 } // p^2*x^2+q^2
+        // formula:
+        // I_n = 1/2(n-1)q^2 * ( (2n-3)I_(n-1) + x / (p^2*x^2+q^2)^(n-1) )
+        var inte = integrationDeno2PQ(p, q, mc, variableName)
+        var polyT = poly //(p^2*x^2+q^2)^(n-1)
+        for (i in 2..n) {
+            val iMinusOne = Expression.fromTerm(Term.valueOf(i - 1L))
+
+            val coe = mc.run { mc.reciprocal(iMinusOne * 2 * q2) }
+            val twoIMinus3 = Expression.fromTerm(Term.valueOf(2L * i - 3))
+            val prev = inte
+            val backPart = mc.run { x / polyT }
+            polyT = mc.multiply(polyT, poly)
+            inte = mc.run { coe * (twoIMinus3 * prev + backPart) }
+        }
+        return inte
+    }
+
+
+    private fun getPQ(a: Expression, c: Expression, mc: ExprCalculator): Array<Expression> {
+        val p: Expression
+        val q: Expression
+        val sign: Expression
+        if (mc.compare(a, mc.zero) < 0) {
+            p = mc.squareRoot(mc.negate(a))
+            q = mc.squareRoot(mc.negate(c))
+            sign = mc.negate(mc.one)
+        } else {
+            p = mc.squareRoot(a)
+            q = mc.squareRoot(c)
+            sign = mc.one
+        }
+        return arrayOf(p, q, sign)
+    }
+
+    /**
+     * Returns the integration of
+     * > 1/(p^2*x^2+q^2)
+     */
+    fun integrationDeno2PQ(p: Expression, q: Expression, mc: ExprCalculator, variableName: String = "x"): Expression {
+        return mc.run { arctan(p / q * Expression.fromTerm(Term.singleChar(variableName))) / (p * q) }
+    }
+
+    fun integrationDeno2(a: Expression, b: Expression, c: Expression, mc: ExprCalculator, variableName: String): Expression {
+        return if (mc.isZero(b)) {
+            val (p, q, sign) = getPQ(a, c, mc)
+            // 1/pq * arctan( p/q * x)
+            mc.multiply(sign, integrationDeno2PQ(p, q, mc, variableName))
+        } else {
+            val (re, sub) = makeSubstitute(a, b, c, mc)
+            val subRe = integrationDeno(SinglePoly(re), mc, variableName)
+            mc.substitute(subRe, variableName, Expression.fromPolynomialE(sub, variableName))
+        }
+    }
+
+    fun integrationDeno1(a: Expression, b: Expression, mc: ExprCalculator, variableName: String = "x"): Expression {
+        // 1/(ax+b)
+        // > ln(ax+b)/a
+        return mc.run { ln(Expression.fromPolynomialE(Polynomial.valueOf(mc, b, a), variableName)) / a }
+    }
+
+    /**
+     * Returns the integration of the form of
+     * > (Ax+B) / (ax^2+bx+c)^n
+     */
+    fun integrationFrac2Pow(nume: Polynomial<Expression>,
+                            deno: SinglePoly<Expression>,
+                            mc: ExprCalculator, variableName: String = "x"): Expression {
+        // substitute first and
+        if (nume.degree > 2) {
+            throw ArithmeticException("Not supported: $nume")
+        }
+        val d = deno.base
+        if (mc.isZero(d[1])) {
+            return integrationFrac2Pow0(nume[1], nume[0], d[2], d[0], deno.pow, mc, variableName)
+        }
+        val a = d[2]
+        val b = d[1]
+        val c = d[0]
+        val (nDeno, sub) = makeSubstitute(a, b, c, mc)
+        val nNume = nume.substitute(Polynomial.valueOf(mc, mc.negate(sub[0]), mc.one))// sub nume
+        val reSub = integrationFrac2Pow0(nNume[1], nNume[0], nDeno[2], nDeno[0], deno.pow, mc, variableName)
+        return mc.substitute(reSub, variableName, Expression.fromPolynomialE(sub, variableName))
+    }
+
+    /**
+     * Returns the integration of
+     * > (ax+b) / (p^2*x^2+q^2)
+     */
+    fun integrationFrac2Pow0(a: Expression, b: Expression,
+                             p: Expression, q: Expression, n: Int,
+                             mc: ExprCalculator,
+                             variableName: String): Expression {
+        val x = mc.multiply(a, integrationFrac2SingleX(p, q, n, mc, variableName))
+        val y = mc.multiply(b, integrationDeno2Pow(mc.squareRoot(p), mc.squareRoot(q), n, mc, variableName))
+        return mc.add(x, y)
+    }
+
+    /**
+     * Integration of x/(px^2+q)^n
+     */
+    private fun integrationFrac2SingleX(p: Expression, q: Expression, pow: Int, mc: ExprCalculator, variableName: String): Expression {
+        val deno = SinglePoly(null, Polynomial.valueOf(mc, q, p), pow)
+        val reX2 = integrationDeno(deno, mc, variableName)
+        val x2 = Expression.fromTerm(Term.characterPower(variableName, Fraction.TWO))
+        return mc.divideLong(mc.substitute(reX2, variableName, x2), 2L)
+    }
+
+    private fun integrationFracSingle(nume: Polynomial<Expression>,
+                                      deno: SinglePoly<Expression>,
+                                      mc: ExprCalculator, variableName: String): Expression {
+        return if (deno.base.degree == 2) {
+            integrationFrac2Pow(nume, deno, mc, variableName)
+        } else {
+            val t = integrationDeno(deno, mc, variableName)
+            mc.multiply(nume[0], t)
+        }
+    }
+
+
+    fun integrationFrac(nume: Polynomial<Expression>, deno: DecomposedPoly<Expression>,
+                        mc: ExprCalculator, variableName: String): Expression {
+        val (q, r) = nume.divideAndRemainder(deno.expanded)
+        val partA = Expression.fromPolynomialE(integrate(q), variableName)
+
+        val partials = AlgebraUtil.partialFraction(r, deno)
+        var partB = mc.zero
+        for ((n, d) in partials) {
+            val term = if(d.base.degree == 2){
+                integrationFrac2Pow(n, d, mc, variableName)
+            }else{
+                mc.multiply(n[0],integrationDeno(d,mc,variableName))
+            }
+            partB = mc.add(partB,term)
+        }
+        return mc.add(partA, partB)
+    }
+
+    fun integrateRational(nume: Polynomial<Long>, deno: Polynomial<Long>, mc: ExprCalculator, variableName: String = "x")
+            : Expression {
+        val decomposed = AlgebraUtil.decomposeInt(deno)
+        val eNume = nume.mapTo(java.util.function.Function { x -> Expression.valueOf(x) }, mc)
+        val eDeno = decomposed.map(Expression::valueOf, mc)
+        return integrationFrac(eNume, eDeno, mc, variableName)
+    }
 }
 
 
-//fun main(args: Array<String>) {
-////    val f : SVFunction<Double> = AbstractSVPFunction.quadratic(1.0,-2.0,-3.0,Calculators.getCalculatorDoubleDev())
-////    println(findRoot(f,0.0))
-//    val mc = ExprCalculator.newInstance
+fun main(args: Array<String>) {
+//    val f : SVFunction<Double> = AbstractSVPFunction.quadratic(1.0,-2.0,-3.0,Calculators.getCalculatorDoubleDev())
+//    println(findRoot(f,0.0))
+
+    val mc = ExprCalculator.newInstance
+//    val expr = mc.parseExpr("(x^6+3x^4+3x^2+1)/(x^12+6x^10+15x^8+20x^6+15x^4+6x^2+1)")
+//    println(expr)
 //    val m = Multinomial.valueOf("1/x+x")
 //    println(m)
 //    val p1 = LimitProcess("x", LimitValue.valueOf(Expression.valueOf("2")), LimitDirection.LEFT)
@@ -349,4 +586,31 @@ object Calculus {
 //    println(Limit.limitOf(m,p1,mc))
 //    val t = Limit.limitOf(m,p2,mc)
 //    println(t)
-//}
+
+    val mcl = Calculators.getCalculatorLongExact()
+//    val nume = Polynomial.valueOf(mc,1L,0L,0L,1L)
+//    val deno = Polynomial.valueOf(mc,0L,-1L,3L,-3L,1L)
+    val nume = Polynomial.valueOf(mcl,6L,5L)
+    val deno = Polynomial.valueOf(mcl,1L,1L,1L)
+
+    println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx")
+//    println(AlgebraUtil.partialFractionInt(nume,deno))
+    mc.setProperty(SimplificationStrategies.PROP_MERGE_FRACTION,"false")
+    mc.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND,"false")
+    mc.setProperty(SimplificationStrategies.PROP_FRACTION_TO_EXP,"true")
+
+    val inte = Calculus.integrateRational(nume,deno,mc,"x")
+    println(inte)
+    mc.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND,"true")
+//    println(mc.differential(inte))
+
+//    val p = mc.parseExpr("p")
+//    val q = mc.parseExpr("q")
+//    val re = Calculus.integrationDeno2Pow(p, q, 3, mc)
+//    mc.setProperty(PROP_MERGE_FRACTION, "true") // make it look better
+//    val diff = mc.differential(re)
+//    println("f(x) = $diff")
+//    println("${MathSymbol.INTEGRAL}f(x)dx = $re + c")
+
+
+}

@@ -5,6 +5,7 @@ import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
 import cn.timelives.java.math.numberModels.expression.ExprCalculator
 import cn.timelives.java.math.numberModels.expression.Expression
 import cn.timelives.java.math.calculus.Calculus.derivation
+import cn.timelives.java.math.numberModels.expression.Node
 import cn.timelives.java.math.property.Composable
 
 class ExprFunction(val expr: Expression,
@@ -17,6 +18,11 @@ class ExprFunction(val expr: Expression,
 
     init {
         require(variableName.isNotEmpty())
+    }
+
+    override fun isZero(): Boolean {
+        val rt = expr.root
+        return rt.type == Node.Type.POLYNOMIAL && Node.getPolynomialPart(rt,null).isZero
     }
 
     override fun add(y: ExprFunction): ExprFunction {

@@ -4,8 +4,10 @@
 package cn.timelives.java.math.numberModels;
 
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.function.SVFunction;
+import cn.timelives.java.math.numberTheory.EuclidRingNumberModel;
+import cn.timelives.java.utilities.ArraySup;
+import kotlin.Triple;
 
 import java.math.BigInteger;
 import java.util.Comparator;
@@ -185,5 +187,45 @@ public final class CalculatorUtils {
             t = mc.add(t,step);
         }while (mc.compare(t,end)<=0);
         return re;
+    }
+
+    public static <T extends EuclidRingNumberModel<T>> Triple<T,T,T> gcdUV(T a, T b, T zero, T one){
+        if (a.isZero()) {
+            return new Triple<>(b, zero, one);
+        }
+        if (b.isZero()) {
+            return new Triple<>(a, one,zero);
+        }
+        return gcdUV0(a, b,zero,one);
+    }
+
+    private static <T extends EuclidRingNumberModel<T>> Triple<T,T,T> gcdUV0(T a, T b, T zero, T one){
+        @SuppressWarnings({"unchecked", "ConstantConditions"})
+        T[] quotients = (T[]) new Object[4];
+        int n = 0;
+        while (true) {
+            var t = a.divideAndRemainder(b);
+            T q = t.getFirst();
+            T r = t.getSecond();
+            if (r.isZero()) {
+                break;
+            }
+            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+            a = b;
+            b = r;
+        }
+        // computes u and v
+        T u0 = one, u1 = zero,
+                v0 = zero, v1 = one;
+        // u[s] = u[s-2]-q[s-2]*u[s-1]
+        for (int i = 0; i < n; i++) {
+            T nextU = u0.subtract(quotients[i].multiply(u1));
+            T nextV = v0.subtract(quotients[i].multiply(v1));
+            u0 = u1;
+            u1 = nextU;
+            v0 = v1;
+            v1 = nextV;
+        }
+        return new Triple<>(b,u1,v1);
     }
 }

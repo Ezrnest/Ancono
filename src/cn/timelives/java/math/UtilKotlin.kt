@@ -1,5 +1,6 @@
 package cn.timelives.java.math
 
+import cn.timelives.java.math.algebra.IPolynomial
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix
 import cn.timelives.java.math.algebra.linearAlgebra.Vector
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector
@@ -62,7 +63,7 @@ operator fun <T> Vector<T>.times(mat: Matrix<T>) = Vector.multiplyByVector(this,
 
 operator fun <T : Any> Complex<T>.component2() = this.im()
 
-
+operator fun <T:Any> IPolynomial<T>.get(n : Int) = this.getCoefficient(n)!!
 operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)!!
 operator fun Multinomial.times(y: Multinomial) = this.multiply(y)!!
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!

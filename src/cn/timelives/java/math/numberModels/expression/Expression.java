@@ -4,14 +4,14 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.algebra.Polynomial;
+import cn.timelives.java.math.algebra.IPolynomial;
 import cn.timelives.java.math.function.SVFunction;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.ParserUtils;
 import cn.timelives.java.math.numberModels.Term;
 import cn.timelives.java.math.numberModels.api.Computable;
-import cn.timelives.java.math.numberModels.structure.PolynomialX;
+import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.StringSup;
 import cn.timelives.java.utilities.structure.Pair;
@@ -124,19 +124,19 @@ public final class Expression implements Computable,Serializable {
     /**
      * Returns an expression that represents a polynomial.
      */
-	public static Expression fromPolynomialT(PolynomialX<Term> p, String variableName){
+	public static Expression fromPolynomialT(Polynomial<Term> p, String variableName){
 	    return fromMultinomial(Multinomial.fromPolynomialT(p,variableName));
     }
     /**
      * Returns an expression that represents a polynomial.
      */
-    public static Expression fromPolynomialM(PolynomialX<Multinomial> p, String variableName){
+    public static Expression fromPolynomialM(Polynomial<Multinomial> p, String variableName){
 	    return fromMultinomial(Multinomial.fromPolynomialM(p,variableName));
     }
 
-    public static Expression fromPolynomialE(Polynomial<Expression> p, String variableName){
+    public static Expression fromPolynomialE(IPolynomial<Expression> p, String variableName){
         List<Node> terms = new ArrayList<>();
-        for(int i=0;i<p.getDegree();i++){
+        for(int i=0;i<=p.getDegree();i++){
             Expression coeExpr = p.getCoefficient(i);
             Node root = coeExpr.root;
             if(root.getType() == Node.Type.POLYNOMIAL){
@@ -171,6 +171,7 @@ public final class Expression implements Computable,Serializable {
 	public static Expression valueOf(String expr) {
 		return new ExprParser(expr).parse();
 	}
+
 
     /**
      * The identifier for a function as a suffix
@@ -445,6 +446,14 @@ public final class Expression implements Computable,Serializable {
             }
         }
 	}
+
+	public static Expression valueOf(long val){
+	    return fromTerm(Term.valueOf(val));
+    }
+
+    public static Expression valueOf(Fraction val){
+        return fromTerm(Term.valueOf(val));
+    }
 
     /**
      * Expression constant zero

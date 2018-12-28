@@ -32,7 +32,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
 
     fun isInteger() = denominator == BigInteger.ONE
 
-    fun isZero() = signum == 0
+    override fun isZero() = signum == 0
 
     fun isPositive() = signum > 0
 
@@ -299,7 +299,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
 
         @JvmStatic
         fun fromFraction(f: Fraction): BigFraction {
-            if (f.isZero) {
+            if (f.isZero()) {
                 return ZERO
             }
             return BigFraction(f.signum, f.numerator.toBigInteger(), f.denominator.toBigInteger())

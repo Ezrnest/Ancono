@@ -466,21 +466,32 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return false
     }
 
-    override fun gcd(a: Multinomial, b: Multinomial): Multinomial? {
-        var a = a
-        var b = b
-        if (ZERO == a) {
-            return b
+    override fun gcd(a: Multinomial, b: Multinomial): Multinomial {
+        val comp = a.compareTo(b)
+        if(comp == 0){
+            return a
         }
-        while (ZERO != b) {
-            val t = b
-            b = mod(a, b)
-            if (a == b) {
+        var a1 : Multinomial
+        var b1 : Multinomial
+        if(comp > 0){
+            a1 = a
+            b1 = b
+        }else{
+            a1 = b
+            b1 = a
+        }
+        if (ZERO == a1) {
+            return b1
+        }
+        while (ZERO != b1) {
+            val t = b1
+            b1 = mod(a1, b1)
+            if (a1 == b1) {
                 return ONE
             }
-            a = t
+            a1 = t
         }
-        return a
+        return a1
     }
 
     override fun divideAndReminder(a: Multinomial, b: Multinomial): cn.timelives.java.utilities.structure.Pair<Multinomial, Multinomial> {
@@ -493,6 +504,10 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         override fun simplify(numbers: List<Multinomial>): List<Multinomial> {
             var numbers = numbers
             numbers = Multinomial.reduceGcd(numbers)
+            if(numbers.size == 2){
+                val pair =  simplify(numbers[0],numbers[1])
+                return listOf(pair.first,pair.second)
+            }
             return numbers
         }
 

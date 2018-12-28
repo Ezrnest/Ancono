@@ -117,12 +117,9 @@ public final class Triple<T1,T2,T3> {
 		} else if (!second.equals(other.second))
 			return false;
 		if (third == null) {
-			if (other.third != null)
-				return false;
-		} else if (!third.equals(other.third))
-			return false;
-		return true;
-	}
+            return other.third == null;
+		} else return third.equals(other.third);
+    }
 	
 	
 }

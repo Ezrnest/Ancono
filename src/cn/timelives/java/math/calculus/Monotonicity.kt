@@ -23,7 +23,7 @@ object Monotonicity{
      * `-1` for decreasing.
      */
     fun <T:Any> power( x: LimitResult<T>,pow : Fraction,mc : MathCalculator<T>) : Int{
-        if(pow.isZero){
+        if(pow.isZero()){
             return 0
         }
         if(pow.isNegative){

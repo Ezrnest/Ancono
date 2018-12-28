@@ -25,9 +25,14 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         RingNumberModel<SRotateMatrix<T>> {
 
 
+
     init {
         require(mat.size == 3)
         require(mat[0].size == 3)
+    }
+
+    override fun isZero(): Boolean {
+        return mat.all { row -> row.all { mc.isZero(it as T) } }
     }
 
     private inline fun mapTo0(f: (T) -> T): SRotateMatrix<T> {

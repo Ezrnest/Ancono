@@ -12,7 +12,7 @@ import cn.timelives.java.math.equation.EquationSolver;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.*;
-import cn.timelives.java.math.numberModels.structure.PolynomialX;
+import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.ModelPatterns;
 import cn.timelives.java.utilities.Printer;
@@ -471,17 +471,47 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
 
     /**
-     * Return det(this), this method only provides that the result is correct but time performance may
+     * Return det(this).
+     * @return det(this)
+     * @throws ArithmeticException if this Matrix is not a square matrix.
+     */
+    public T calDet() {
+        if (row != column) {
+            throw new ArithmeticException("Cannot calculate det for: " + row + "*" + column);
+        }
+        if (row <= 3) {
+            return calDetDefault();
+        }
+        try {
+            return MatrixSup.fastDet(this);
+        } catch (UnsupportedOperationException ignore) {
+        }
+        return calDetDefault();
+        //calculate by separating first row
+//		boolean turn = false;
+//		for(int i=0;i<column;i++){
+//            T det = mc.multiply(getNumber(0, i), cofactor(0, i).calDet());
+//			if(turn){
+//                sum = mc.subtract(sum, det);
+//			}else{
+//                sum = mc.add(sum, det);
+//			}
+//			turn = !turn;
+//		}
+//		return sum;
+    }
+
+    /**
+     * Return det(this), this method computes the determinant of this
+     * matrix by the definition. It can only provide a correct result  but  its time performance may
      * not be the best and can vary a lot.
      *
      * @return det(this)
      * @throws ArithmeticException if this Matrix is not a square matrix.
      */
-    public T calDet() {
+    public T calDetDefault() {
         //just calculate the value by recursion definition.
-        if (row != column) {
-            throw new ArithmeticException("Cannot calculate det for: " + row + "*" + column);
-        }
+
         var mc = getMc();
         //some fast implement when the order is below 4
         if (row == 3) {
@@ -498,18 +528,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             return mc.subtract(mc.multiply(getNumber(0, 0), getNumber(1, 1)), mc.multiply(getNumber(0, 1), getNumber(1, 0)));
         }
         return det0(new int[row], 0, mc.getOne());
-        //calculate by separating first row
-//		boolean turn = false;
-//		for(int i=0;i<column;i++){
-//            T det = mc.multiply(getNumber(0, i), cofactor(0, i).calDet());
-//			if(turn){
-//                sum = mc.subtract(sum, det);
-//			}else{
-//                sum = mc.add(sum, det);
-//			}
-//			turn = !turn;
-//		}
-//		return sum;
     }
 
     private T det0(int[] selected, int index, T mulTemp) {
@@ -884,11 +902,11 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         var mc = getMc();
         //transform to a temporary matrix to compute the determinant
         //in multinomial
-        MathCalculator<PolynomialX<T>> mct = PolynomialX.getCalculator(mc);
-        Matrix<PolynomialX<T>> tmat = this.mapTo(x -> PolynomialX.constant(mc, x), mct),
-                eigen = Matrix.diag(PolynomialX.oneX(mc), row, mct);
+        MathCalculator<Polynomial<T>> mct = Polynomial.getCalculator(mc);
+        Matrix<Polynomial<T>> tmat = this.mapTo(x -> Polynomial.constant(mc, x), mct),
+                eigen = Matrix.diag(Polynomial.oneX(mc), row, mct);
         tmat = minusMatrix(eigen, tmat);
-        PolynomialX<T> expr = tmat.calDet();
+        Polynomial<T> expr = tmat.calDet();
         return SVPEquation.fromPolynomial(expr);
     }
 
@@ -1274,11 +1292,11 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     /**
      * Returns the column space of this matrix.
      */
-    public VectorBase<T> columnSpace(){
+    public VectorBase<T> columnSpace() {
         return VectorBase.generate(columnVectors());
     }
 
-    public VectorBase<T> rowSpace(){
+    public VectorBase<T> rowSpace() {
         return VectorBase.generate(rowVectors());
     }
 
@@ -1318,7 +1336,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     public boolean valueEquals(@NotNull MathObject<T> obj) {
         if (obj instanceof Matrix) {
             Matrix<T> m = (Matrix<T>) obj;
-            if(!m.getMathCalculator().equals(this.getMathCalculator())){
+            if (!m.getMathCalculator().equals(this.getMathCalculator())) {
                 return false;
             }
             if (m.row == this.row && m.column == this.column) {
@@ -1812,18 +1830,18 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * @param n the size
      */
     public static <T> Matrix<T> zeroMatrix(int n, MathCalculator<T> mc) {
-        return zeroMatrix(n,n,mc);
+        return zeroMatrix(n, n, mc);
     }
 
     /**
      * A zero matrix is a matrix filled with zero.
      *
-     * @param row the row count
+     * @param row    the row count
      * @param column the column count
      */
-    public static <T> Matrix<T> zeroMatrix(int row,int column, MathCalculator<T> mc) {
-        if (row <  1 || column < 1) {
-            throw new IllegalArgumentException("Illegal size:" + row +"*" + column);
+    public static <T> Matrix<T> zeroMatrix(int row, int column, MathCalculator<T> mc) {
+        if (row < 1 || column < 1) {
+            throw new IllegalArgumentException("Illegal size:" + row + "*" + column);
         }
         @SuppressWarnings("unchecked")
         T[][] mat = (T[][]) new Object[row][column];

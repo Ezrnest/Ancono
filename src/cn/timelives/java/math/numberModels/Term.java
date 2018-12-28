@@ -537,7 +537,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Compares the character according to the dictionary order.
-     * x < y < -1 < 1 < y^-1 < 0
+     * x < y < -1 = 1 < y^-1 < 0
      * Notice that
      * zero is considered to be the biggest.
      */
@@ -586,6 +586,20 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                 return comp;
             }
         }
+    }
+
+    /**
+     * Compares the character and the radical part, this method will return 0 if the
+     * character part and the number part of <code>this</code> and <code>another</code> are
+     * the same. Notice that the term 0 will be treated as special case and only zero is equal to zero.
+     * @param another a term
+     */
+    public int compareCharAndRadical(Term another){
+        int comp = compareChar(another);
+        if(comp != 0){
+            return comp;
+        }
+        return radical.compareTo(another.radical);
     }
 
     /**
@@ -994,8 +1008,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         }
 
         BigInteger nRad = numerator.multiply(denominator);
-
-        return new Term(1,BigInteger.ONE,denominator,nRad,nchars);
+        return sortNdrAndCreate(1,BigInteger.ONE,denominator,nRad,nchars);
     }
 
     /**
@@ -1259,14 +1272,33 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     private static void addChar(NavigableMap<String, Fraction> character, String cha, Fraction t) {
-        if (character.containsKey(cha)) {
-            t = t.add(character.get(cha));
-        }
-        if (t.equals(Fraction.ZERO)) {
-            character.remove(cha);
-        } else {
-            character.put(cha, t);
-        }
+        character.merge(cha,t,(ori, toMerge)->{
+            Fraction re = ori.add(toMerge);
+            if(re.isZero()){
+                return null;
+            }else{
+                return re;
+            }
+        });
+//        character.compute(cha,(ch,p)->{
+//            if(p == null){
+//                return t;
+//            }
+//            Fraction re = p.add(t);
+//            if(re.isZero()){
+//                return null;
+//            }else{
+//                return re;
+//            }
+//        });
+//        if (character.containsKey(cha)) {
+//            t = t.add(character.get(cha));
+//        }
+//        if (t.equals(Fraction.ZERO)) {
+//            character.remove(cha);
+//        } else {
+//            character.put(cha, t);
+//        }
     }
 
 
@@ -1801,6 +1833,13 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                 return I;
         }
         throw new UnsupportedCalculationException();
+    }
+
+    public static void main(String[] args) {
+        var t= Term.valueOf("Sqr3");
+        var t2 = Term.valueOf(12);
+        print(t2.squareRoot());
+        print(t);
     }
 
 

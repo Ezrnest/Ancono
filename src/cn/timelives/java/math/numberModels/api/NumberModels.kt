@@ -40,6 +40,8 @@ inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.minus(y : T): 
  */
 interface RingNumberModel<T : RingNumberModel<T>> : GroupNumberModel<T> {
     fun multiply(y: T): T
+
+    fun isZero() : Boolean
 }
 
 inline operator fun <T : RingNumberModel<T>> RingNumberModel<T>.times(y: T): T = multiply(y)
@@ -69,6 +71,17 @@ interface VectorModel<K, V : VectorModel<K,V>> : GroupNumberModel<V>{
      */
     fun multiply(k : K) : V
 }
+
+inline operator fun <K, V : VectorModel<K,V>> VectorModel<K,V>.times(k: K) = multiply(k)
+inline operator fun <K, V : VectorModel<K,V>> K.times(v : VectorModel<K,V>) = v.multiply(this)
+
+
+
+interface AlgebraModel<K, V : AlgebraModel<K,V>> : VectorModel<K,V>,RingNumberModel<V>{
+    override fun multiply(y : V) : V
+}
+
+inline operator fun <K, V : AlgebraModel<K,V>> AlgebraModel<K,V>.times(y : V) = multiply(y)
 
 object NumberModels{
     /**

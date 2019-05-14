@@ -51,7 +51,7 @@ public class EasyDrawingWindow extends Application {
         Scene s = new Scene(pane);
         stage.setScene(s);
 
-        can.setOnMouseClicked(event -> {
+        s.setOnMouseClicked(event -> {
             if(event.getButton() == MouseButton.SECONDARY){
                 Clipboard clipboard = Clipboard.getSystemClipboard();
                 ClipboardContent clipboardContent = new ClipboardContent();
@@ -64,6 +64,7 @@ public class EasyDrawingWindow extends Application {
                 alert.showAndWait();
             }
         });
+        can.setFocusTraversable(true);
         return new Pair<>(stage,can);
     }
 

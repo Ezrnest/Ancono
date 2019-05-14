@@ -452,6 +452,8 @@ public class DerivativeHelper {
 
 //    public static void main(String[] args) {
 //        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
+//        var f = ec.parseExpr("exp(sin(x),3)");
+//        print(ec.differential(f));
 //        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
 //        SimplificationStrategies.setCalRegularization(ec);
 //        expr = ec.simplify(expr);

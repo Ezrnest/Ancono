@@ -6,7 +6,9 @@ import cn.timelives.java.math.MathObjectExtend
 import cn.timelives.java.math.algebra.IMTerm
 import cn.timelives.java.math.algebra.IMultinomial
 import cn.timelives.java.math.exceptions.ExceptionUtil
+import cn.timelives.java.math.numberModels.BigFraction
 import cn.timelives.java.math.numberModels.CalculatorUtils
+import cn.timelives.java.math.numberModels.Multinomial
 import cn.timelives.java.math.numberModels.Term
 import cn.timelives.java.math.numberModels.api.AlgebraModel
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter

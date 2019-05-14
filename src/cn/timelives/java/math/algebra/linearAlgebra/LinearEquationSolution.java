@@ -37,6 +37,9 @@ public class LinearEquationSolution<T>{
 		this.specialSolution = specialSolution;
 		this.baseSolutions = baseSolutions;
 	}
+
+
+
     @Nullable
 	public LinearSpace<T> asLinearSpace(){
 	    if(sit == Situation.NO_SOLUTION){
@@ -55,6 +58,8 @@ public class LinearEquationSolution<T>{
         }
 	    return VectorBase.createBaseWithoutCheck(baseSolutions);
     }
+
+
 
 	/**
 	 * Return a LinearEquationSolution that represent no solution
@@ -90,7 +95,8 @@ public class LinearEquationSolution<T>{
 	}
 
 	/**
-     * Gets the base solution.
+     * Gets the base solution. If there is no solution, {@code null} will be
+     * returned.
 	 * @return the base
 	 */
 	public Vector<T> getSpecialSolution() {
@@ -106,8 +112,23 @@ public class LinearEquationSolution<T>{
 	}
 
 
+    /**
+     * Returns one solution(non-zero if possible) in the solution space. If there is no solution, {@code null} will be
+     * returned.
+     */
+	public Vector<T> getOneSolution(){
+	    if(sit == Situation.NO_SOLUTION){
+	        return null;
+        }
+	    if(sit == Situation.SINGLE_SOLUTION){
+	        return specialSolution;
+        }
+	    return specialSolution.isZeroVector() ? Vector.addVector(specialSolution,baseSolutions[0]) : specialSolution;
+    }
+
+
 	/**
-	 * Show the solution through printer .
+	 * Show the solution through printer.
 	 */
 	public void printSolution(){
 		switch(sit){

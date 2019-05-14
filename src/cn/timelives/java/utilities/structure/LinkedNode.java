@@ -23,7 +23,7 @@ class LinkedNode<E> extends DirectedGraphNode<E>{
 		connectBy = new HashSet<LinkedNode<E>>(connectBySize);
 	}
 
-	Set<LinkedNode<E>> getConncetedNodes() {
+	Set<LinkedNode<E>> getConnectedNodes() {
 		if(connectTo!=null)
 			return new HashSet<LinkedNode<E>>(connectTo);
 		return null;
@@ -32,11 +32,11 @@ class LinkedNode<E> extends DirectedGraphNode<E>{
 		return connectTo.contains(node);
 	}
 	
-	Set<LinkedNode<E>> getConncetTo(){
+	Set<LinkedNode<E>> getConnectTo(){
 		return connectTo;
 	}
 	
-	Set<LinkedNode<E>> getConncetBy(){
+	Set<LinkedNode<E>> getConnectBy(){
 		return connectBy;
 	}
 

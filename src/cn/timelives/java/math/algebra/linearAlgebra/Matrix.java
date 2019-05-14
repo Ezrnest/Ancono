@@ -3,6 +3,7 @@ package cn.timelives.java.math.algebra.linearAlgebra;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathObjectExtend;
+import cn.timelives.java.math.MathSymbol;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.ModuleCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
@@ -89,6 +90,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     public int getColumnCount() {
         return column;
+    }
+
+    /**
+     * Determines whether the matrix is a square matrix.
+     */
+    public boolean isSquare() {
+        return row == column;
     }
 
     /**
@@ -217,6 +225,21 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             }
         }
         return new DMatrix<>(re, column, row, getMc());
+    }
+
+    public Matrix<T> adjugateMatrix() {
+        Object[][] re = new Object[column][row];
+        var mc = getMc();
+        for (int l = 0; l < row; ++l) {
+            for (int c = 0; c < column; ++c) {
+                var t = cofactor(c, l).calDet();
+                if ((l + c) % 2 != 0) {
+                    t = mc.negate(t);
+                }
+                re[l][c] = t;
+            }
+        }
+        return new DMatrix<>(re, column, row, mc);
     }
 
     /**
@@ -392,10 +415,11 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         if (r1 == r2) {
             throw new IllegalArgumentException("The identity row:" + r1);
         }
+        var mc = getMc();
         @SuppressWarnings("unchecked")
         T[][] re = (T[][]) getValues();
         for (int i = 0; i < column; i++) {
-            re[r2][i] = getMc().add(re[r2][i], getMc().multiplyLong(re[r1][i], k));
+            re[r2][i] = mc.add(re[r2][i], getMc().multiplyLong(re[r1][i], k));
         }
         return new DMatrix<>(re, row, column, getMc());
     }
@@ -418,8 +442,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         }
         @SuppressWarnings("unchecked")
         T[][] re = (T[][]) getValues();
+        var mc = getMc();
         for (int i = 0; i < column; i++) {
-            re[r2][i] = getMc().add(re[r2][i], getMc().multiply(re[r1][i], k));
+            re[r2][i] = mc.add(re[r2][i], getMc().multiply(re[r1][i], k));
         }
         return new DMatrix<>(re, row, column, getMc());
     }
@@ -435,12 +460,12 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     @SuppressWarnings("unused")
     public Matrix<T> multiplyAndAddColumn(long k, int c1, int c2) {
         columnRangeCheck(c1, c1);
-        var mc = getMc();
         if (c1 == c2) {
             throw new IllegalArgumentException("The identity column:" + c1);
         }
         @SuppressWarnings("unchecked")
         T[][] re = (T[][]) getValues();
+        var mc = getMc();
         for (int i = 0; i < row; i++) {
             re[i][c2] = mc.add(re[i][c2], mc.multiplyLong(re[i][c1], k));
         }
@@ -457,10 +482,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     public Matrix<T> multiplyAndAddColumn(T k, int c1, int c2) {
         columnRangeCheck(c1, c1);
-        var mc = getMc();
         if (c1 == c2) {
             throw new IllegalArgumentException("The identity column:" + c1);
         }
+        var mc = getMc();
         @SuppressWarnings("unchecked")
         T[][] re = (T[][]) getValues();
         for (int i = 0; i < row; i++) {
@@ -472,6 +497,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
     /**
      * Return det(this).
+     *
      * @return det(this)
      * @throws ArithmeticException if this Matrix is not a square matrix.
      */
@@ -911,6 +937,34 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
     /**
+     * Returns the eigen-matrix:
+     * <pre>λI-this</pre>which is a matrix of polynomial.
+     */
+    public Matrix<Polynomial<T>> eigenmatrix() {
+        return MatrixSup.eigenmatrix(this);
+    }
+
+    /**
+     * Returns the matrix of subtracting this matrix by <code>tI</code>, a diagonal matrix.
+     */
+    public Matrix<T> eigenmatrix(T t) {
+        @SuppressWarnings("unchecked")
+        T[][] mat = (T[][]) new Object[row][column];
+        var mc = getMc();
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if(i == j){
+                    mat[i][j] = mc.subtract(getNumber(i,j),t);
+                }else{
+                    mat[i][j] = getNumber(i,j);
+                }
+
+            }
+        }
+        return new DMatrix<>(mat, row, column, mc);
+    }
+
+    /**
      * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
      *
      * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to
@@ -1134,27 +1188,30 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
     void multiplyAndAddColumn0(T[][] mat, int c1, int c2, T f) {
+        var mc = getMc();
         for (int i = 0; i < mat.length; i++) {
-            mat[i][c2] = getMc().add(mat[i][c2], getMc().multiply(mat[i][c1], f));
+            mat[i][c2] = mc.add(mat[i][c2], mc.multiply(mat[i][c1], f));
         }
     }
 
     void multiplyAndAddRow0(T[][] mat, int r1, int r2, T f) {
+        var mc = getMc();
         for (int i = 0; i < mat[r1].length; i++) {
-
-            mat[r2][i] = getMc().add(mat[r2][i], getMc().multiply(mat[r1][i], f));
+            mat[r2][i] = mc.add(mat[r2][i], mc.multiply(mat[r1][i], f));
         }
     }
 
     void multiplyNumberColumn0(T[][] mat, int c, T f) {
+        var mc = getMc();
         for (int i = 0; i < mat.length; i++) {
-            mat[i][c] = getMc().multiply(mat[i][c], f);
+            mat[i][c] = mc.multiply(mat[i][c], f);
         }
     }
 
     void multiplyNumberRow0(T[][] mat, int r, T f) {
+        var mc = getMc();
         for (int i = 0; i < mat[r].length; i++) {
-            mat[r][i] = getMc().multiply(mat[r][i], f);
+            mat[r][i] = mc.multiply(mat[r][i], f);
         }
     }
 
@@ -1299,6 +1356,142 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     public VectorBase<T> rowSpace() {
         return VectorBase.generate(rowVectors());
     }
+
+    /**
+     * Returns the frobenius form of this matrix.
+     *
+     * @return
+     */
+    public Matrix<T> frobeniusForm() {
+        return MatrixSup.frobeniusForm(this);
+    }
+
+    public kotlin.Pair<Matrix<T>, Matrix<T>> congruenceDiagForm() {
+        if (!isSquare()) {
+            throw new IllegalArgumentException("The matrix must be a square matrix!");
+        }
+        var mc = getMc();
+        @SuppressWarnings("unchecked")
+        T[][] arr = (T[][]) new Object[row * 2][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                arr[i][j] = getNumber(i, j);
+            }
+        }
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < i; j++) {
+                if (!mc.isEqual(arr[i][j], arr[j][i])) {
+                    throw new IllegalArgumentException("The matrix is not symmetric.");
+                }
+            }
+        }
+        var one = mc.getOne();
+        var zero = mc.getZero();
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (i == j) {
+                    arr[row + i][j] = one;
+                } else {
+                    arr[row + i][j] = zero;
+                }
+            }
+        }
+        doCongruenceOperations(arr);
+        T[][] m1 = Arrays.copyOf(arr, row);
+        @SuppressWarnings("unchecked") T[][] m2 = (T[][]) new Object[row][];
+        System.arraycopy(arr, row, m2, 0, row);
+        var mat1 = new DMatrix<>(m1, row, column, mc);
+        var mat2 = new DMatrix<>(m2, row, column, mc);
+        return new kotlin.Pair<>(mat1, mat2);
+    }
+
+    private void doCongruenceOperations(T[][] mat) {
+        var mc = getMc();
+        int pos = 0;
+        var one = mc.getOne();
+        while (pos < row) {
+            if (mc.isZero(mat[pos][pos])) {
+                int pi = -1;
+                int pj = -1;
+                SEARCH:
+                for (int i = pos; i < row; i++) {
+                    for (int j = pos; j <= i; j++) {
+                        if (!mc.isZero(mat[i][j])) {
+                            pi = i;
+                            pj = j;
+                            break SEARCH;
+                        }
+                    }
+                }
+                if (pj < 0) {
+                    break;
+                } else {
+                    if (pj != pos) {
+                        multiplyAndAddRow0(mat, pj, pos, one);
+                        multiplyAndAddColumn0(mat, pj, pos, one);
+                    }
+                    multiplyAndAddRow0(mat, pi, pos, one);
+                    multiplyAndAddColumn0(mat, pi, pos, one);
+                }
+            }
+            for (int i = pos + 1; i < row; i++) {
+                if (mc.isZero(mat[pos][i])) {
+                    continue;
+                }
+                var k = mc.negate(mc.divide(mat[pos][i], mat[pos][pos]));
+                multiplyAndAddRow0(mat, pos, i, k);
+                multiplyAndAddColumn0(mat, pos, i, k);
+            }
+            pos++;
+        }
+        return;
+    }
+
+    /**
+     * Returns the QR-decomposition of this square matrix. Q is an orthogonal matrix and R is an
+     * upper-triangle matrix. If this matrix is invertible, there is only one decomposition.
+     *
+     * @return (Q, R) as a pair
+     */
+    public kotlin.Pair<Matrix<T>, Matrix<T>> qrDecomposition() {
+        if (!isSquare()) {
+            throw new IllegalArgumentException();
+        }
+        var vecs = columnVectors();
+        var mc = getMc();
+        var RB = getBuilder(row, column, mc);
+        @SuppressWarnings("unchecked")
+        Vector<T>[] ws = new Vector[row];
+        @SuppressWarnings("unchecked")
+        Vector<T>[] temp = new Vector[row];
+        ws[0] = vecs.get(0);
+        if (!ws[0].isZeroVector()) {
+            var length = ws[0].calLength();
+            RB.set(length, 0, 0);
+            ws[0] = ws[0].multiplyNumber(mc.reciprocal(length));
+        }
+        for (int i = 1; i < row; i++) {
+            var u = vecs.get(i);
+            for (int j = 0; j < i; j++) {
+                var k = u.innerProduct(ws[j]);
+                temp[j] = ws[j].multiplyNumber(k);
+                RB.set(k, j, i);
+            }
+            var t = Vector.addVectors(i, temp);
+            var v = Vector.subtractVector(u, t);
+            if (v.isZeroVector()) {
+                ws[i] = v;
+            } else {
+                var length = v.calLength();
+                RB.set(length, i, i);
+                ws[i] = v.multiplyNumber(mc.reciprocal(length));
+            }
+        }
+        var Q = Matrix.fromVectors(false, ws);
+        var R = RB.build();
+        return new kotlin.Pair<>(Q, R);
+    }
+
 
     @NotNull
     @Override
@@ -1473,6 +1666,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             }
             return new DMatrix<>(re, column, row, getMc());
         }
+
 
         @Override
         public Matrix<T> exchangeRow(int r1, int r2) {
@@ -2058,6 +2252,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new DMatrix<>(mat, row, column, getMc());
     }
 
+//    public Matrix<T> applyFunctionWithIndex(BiFunction<T,>)
+
     /**
      * Print the matrix using the Printer
      */
@@ -2195,9 +2391,29 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new DMatrix<>(data, reRow, reCol, mc);
     }
 
+    public static <T> Matrix<T> concatRow(Matrix<T> m1, Matrix<T> m2) {
+        int row = m1.row + m2.row;
+        int column = Math.max(m1.column, m2.column);
+        var bd = getBuilder(row, column, m1.getMathCalculator());
+        bd.fillArea(0, 0, m1);
+        bd.fillArea(m1.row, 0, m2);
+        return bd.build();
+    }
+
+    public static <T> Matrix<T> concatColumn(Matrix<T> m1, Matrix<T> m2) {
+        int row = Math.max(m1.row, m2.row);
+        int column = m1.column + m2.column;
+        var bd = getBuilder(row, column, m1.getMathCalculator());
+        bd.fillArea(0, 0, m1);
+        bd.fillArea(0, m1.column, m2);
+        return bd.build();
+    }
+
+
     public static <T> MatrixBuilder<T> getBuilder(int row, int column, MathCalculator<T> mc) {
         return new MatrixBuilder<>(row, column, mc);
     }
+
 
     public static class MatrixBuilder<T> implements Cloneable {
         final MathCalculator<T> mc;
@@ -2265,7 +2481,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             columnRangeCheck(j + mat.column - 1);
             for (int i0 = 0; i0 < mat.row; i0++) {
                 for (int j0 = 0; j0 < mat.column; j0++) {
-                    data[i0 + i][j0 + j] = mat.getNumber(i, j);
+                    data[i0 + i][j0 + j] = mat.getNumber(i0, j0);
                 }
             }
             return this;

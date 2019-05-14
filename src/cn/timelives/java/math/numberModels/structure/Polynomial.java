@@ -14,6 +14,7 @@ import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
+import cn.timelives.java.math.numberModels.api.NumberFormatter;
 import cn.timelives.java.math.numberTheory.EuclidRingNumberModel;
 import cn.timelives.java.math.numberTheory.NTCalculator;
 import cn.timelives.java.math.numberTheory.combination.CombUtils;
@@ -238,9 +239,10 @@ public final class Polynomial<T> extends MathObject<T> implements IPolynomial<T>
      */
     public T compute(T x) {
         T re = getCoefficient(degree);
+        var mc = getMc();
         for (int i = degree - 1; i > -1; i--) {
-            re = getMc().multiply(x, re);
-            re = getMc().add(getCoefficient(i), re);
+            re = mc.multiply(re, x); // left-multiply x.
+            re = mc.add(getCoefficient(i), re);
         }
         return re;
     }
@@ -1382,41 +1384,45 @@ public final class Polynomial<T> extends MathObject<T> implements IPolynomial<T>
         }
     }
 
-    public static void main(String[] args) {
-//        var mc = Fraction.getCalculator();
-//        var p1 = Point.valueOf(Fraction.valueOf("-1"),Fraction.valueOf("1"),mc);
-//        var p2 = Point.valueOf(Fraction.valueOf("0"),Fraction.valueOf("0"),mc);
-//        var p3 = Point.valueOf(Fraction.valueOf("1"),Fraction.valueOf("1"),mc);
-//        var p = Polynomial.valueOf(Calculators.getCalculatorLongExact(), 1L, 1L).mapTo(Fraction::valueOf,mc);
-////        print(lagrangeInterpolation(p1,p2,p3));
-//        print(p);
-//        print(p.difference().sumOfN());
-//    }
-//		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
-//		Polynomial<Integer> p1 = Polynomial.valueOf(mc, 6,7,1);
-//		var pf = p1.mapTo(Fraction::valueOf,Fraction.getCalculator());
-//		print(pf);
-//		print(pf.integration());
-        var mc = Multinomial.getCalculator();
-        var f = valueOf(mc,Multinomial.valueOf("-x-3"),Multinomial.valueOf("2"),Multinomial.ZERO,Multinomial.ONE);
-        var g = valueOf(mc,Multinomial.valueOf("1-y"),Multinomial.valueOf("-1"),Multinomial.ONE);
-        print(f.sylvesterMatrix(g).calDet());
-//        print(f.determinant());
-//        var f2 = f.substitute(Polynomial.valueOf(Multinomial.getCalculator(),Multinomial.ZERO,Multinomial.ZERO,Multinomial.ONE));
-//        print(f2.determinant());
-//        print(f.determinant().pow(2).multiply(Multinomial.valueOf("16a^2*c")));
-//		Polynomial<Integer> p2 = Polynomial.valueOf(mc, -6,-5,1);
-//		PolynomialCalculator<Integer> mmc = getCalculator(mc);
-//		Polynomial<Integer> re = mmc.add(p1, p2);
-//		print(p1);
-//		print(p2);
-////		print(re);
-////		print(mmc.multiply(p1, p2));//
-//		print(mmc.divideAndReminder(p1, p2));
-////		print(mmc.pow(p2, 5));
-////		print(mmc.gcd(mmc.pow(p2, 5), mmc.pow(p2, 3)));
-//		print(mmc.gcd(p1, p2));
-	}
+    public static <T> NumberFormatter<Polynomial<T>> composedFormatter(NumberFormatter<T> formatter){
+        return (p,mc)->p.toString(formatter);
+    }
+
+//    public static void main(String[] args) {
+////        var mc = Fraction.getCalculator();
+////        var p1 = Point.valueOf(Fraction.valueOf("-1"),Fraction.valueOf("1"),mc);
+////        var p2 = Point.valueOf(Fraction.valueOf("0"),Fraction.valueOf("0"),mc);
+////        var p3 = Point.valueOf(Fraction.valueOf("1"),Fraction.valueOf("1"),mc);
+////        var p = Polynomial.valueOf(Calculators.getCalculatorLongExact(), 1L, 1L).mapTo(Fraction::valueOf,mc);
+//////        print(lagrangeInterpolation(p1,p2,p3));
+////        print(p);
+////        print(p.difference().sumOfN());
+////    }
+////		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
+////		Polynomial<Integer> p1 = Polynomial.valueOf(mc, 6,7,1);
+////		var pf = p1.mapTo(Fraction::valueOf,Fraction.getCalculator());
+////		print(pf);
+////		print(pf.integration());
+//        var mc = Multinomial.getCalculator();
+//        var f = valueOf(mc,Multinomial.valueOf("-x-3"),Multinomial.valueOf("2"),Multinomial.ZERO,Multinomial.ONE);
+//        var g = valueOf(mc,Multinomial.valueOf("1-y"),Multinomial.valueOf("-1"),Multinomial.ONE);
+//        print(f.sylvesterMatrix(g).calDet());
+////        print(f.determinant());
+////        var f2 = f.substitute(Polynomial.valueOf(Multinomial.getCalculator(),Multinomial.ZERO,Multinomial.ZERO,Multinomial.ONE));
+////        print(f2.determinant());
+////        print(f.determinant().pow(2).multiply(Multinomial.valueOf("16a^2*c")));
+////		Polynomial<Integer> p2 = Polynomial.valueOf(mc, -6,-5,1);
+////		PolynomialCalculator<Integer> mmc = getCalculator(mc);
+////		Polynomial<Integer> re = mmc.add(p1, p2);
+////		print(p1);
+////		print(p2);
+//////		print(re);
+//////		print(mmc.multiply(p1, p2));//
+////		print(mmc.divideAndReminder(p1, p2));
+//////		print(mmc.pow(p2, 5));
+//////		print(mmc.gcd(mmc.pow(p2, 5), mmc.pow(p2, 3)));
+////		print(mmc.gcd(p1, p2));
+//	}
 
 
 }

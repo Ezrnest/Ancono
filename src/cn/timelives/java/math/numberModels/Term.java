@@ -1836,10 +1836,11 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     public static void main(String[] args) {
-        var t= Term.valueOf("Sqr3");
-        var t2 = Term.valueOf(12);
-        print(t2.squareRoot());
-        print(t);
+       var t1 = Term.valueOf("6a");
+       var t2 = Term.valueOf("-3");
+       var t3 = Term.valueOf("9a");
+       var t4 = Term.valueOf("-6");
+       print(Term.getSimplifier().simplify(Arrays.asList(t1,t2,t3,t4)));
     }
 
 

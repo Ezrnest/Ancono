@@ -10,6 +10,8 @@ import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.ArraySup;
 import cn.timelives.java.utilities.RegexSup;
+import kotlin.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -103,6 +105,31 @@ public class MatrixSup {
             Object t = ma[i][c1];
             ma[i][c1] = ma[i][c2];
             ma[i][c2] = t;
+        }
+    }
+
+
+    public static <T> void multiplyAndAddColumn(T[][] mat, int c1, int c2, T f, MathCalculator<T> mc) {
+        for (int i = 0; i < mat.length; i++) {
+            mat[i][c2] = mc.add(mat[i][c2], mc.multiply(mat[i][c1], f));
+        }
+    }
+
+    public static <T> void multiplyAndAddRow(T[][] mat, int r1, int r2, T f, MathCalculator<T> mc) {
+        for (int i = 0; i < mat[r1].length; i++) {
+            mat[r2][i] = mc.add(mat[r2][i], mc.multiply(mat[r1][i], f));
+        }
+    }
+
+    public static <T> void multiplyNumberColumn(T[][] mat, int c, T f, MathCalculator<T> mc) {
+        for (int i = 0; i < mat.length; i++) {
+            mat[i][c] =  mc.multiply(mat[i][c], f);
+        }
+    }
+
+    public static <T> void multiplyNumberRow(T[][] mat, int r, T f, MathCalculator<T> mc) {
+        for (int i = 0; i < mat[r].length; i++) {
+            mat[r][i] = mc.multiply(mat[r][i], f);
         }
     }
 
@@ -243,8 +270,8 @@ public class MatrixSup {
         return parseMatrix(data, mc, parser);
     }
 
-    public static Matrix<Fraction> parseFMatrix(String str){
-        return parseMatrixD(str,Fraction.getCalculator(), Fraction::valueOf);
+    public static Matrix<Fraction> parseFMatrix(String str) {
+        return parseMatrixD(str, Fraction.getCalculator(), Fraction::valueOf);
     }
 
     /**
@@ -256,24 +283,25 @@ public class MatrixSup {
         return parseVector0(str, RegexSup.SPACE, mc, parser);
     }
 
-    private static <T> Vector<T> parseVector0(String str, Pattern deliminator,MathCalculator<T> mc,Function<String,? extends T> parser){
+    private static <T> Vector<T> parseVector0(String str, Pattern deliminator, MathCalculator<T> mc, Function<String, ? extends T> parser) {
         if (str.startsWith("[")) {
             str = str.substring(1, str.length() - 1);
         }
         String[] elements = deliminator.split(str);
         @SuppressWarnings("unchecked")
-        T[] data = (T[])ArraySup.mapTo(elements,parser,Object.class);
+        T[] data = (T[]) ArraySup.mapTo(elements, parser, Object.class);
 
-        return new DVector<>(data,false,mc);
+        return new DVector<>(data, false, mc);
     }
 
     /**
      * Parses a vector with the given deliminator.
+     *
      * @param deliminator the deliminator which will be treated as regex
      */
     public static <T> Vector<T> parseVector(String str, String deliminator,
                                             MathCalculator<T> mc, Function<String, ? extends T> parser) {
-        return parseVector0(str,Pattern.compile(deliminator),mc,parser);
+        return parseVector0(str, Pattern.compile(deliminator), mc, parser);
     }
 
     /**
@@ -374,6 +402,10 @@ public class MatrixSup {
             sb.setVariableSolution(vs);
             return sb.build();
         }
+    }
+
+    public static <T> LinearEquationSolution<T> solveLinearEquation(Matrix<T> coeMatrix,Vector<T> constance){
+        return solveLinearEquation(Matrix.concatColumn(coeMatrix,constance));
     }
 
     /**
@@ -481,11 +513,11 @@ public class MatrixSup {
         final int len = step.column - 1;
         //column-1 to avoid the constant part
         OUTER:
-        for (int i = step.row-1; i > -1; i--) {
+        for (int i = step.row - 1; i > -1; i--) {
 
-            for (int j = len-1; j > -1 ; j--) {
+            for (int j = len - 1; j > -1; j--) {
                 if (!mc.isZero(data[i][j])) {
-                    rank = Math.min(i+1,len);
+                    rank = Math.min(i + 1, len);
                     break OUTER;
                 }
             }
@@ -511,8 +543,8 @@ public class MatrixSup {
      * Returns the solution of ax = b, where <code>a, x, b</code> are all matrices. It
      * is required that the row count of <code>a</code> and <code>b</code> is the same.
      */
-    public static <T> Matrix<T> solveMatrixEquation(Matrix<T> a, Matrix<T> b){
-        if(a.row != b.row){
+    public static <T> Matrix<T> solveMatrixEquation(Matrix<T> a, Matrix<T> b) {
+        if (a.row != b.row) {
             throw new IllegalArgumentException("The row count of a and b isn't the same!");
         }
         var steps = a.toIdentityWay();
@@ -583,6 +615,71 @@ public class MatrixSup {
         }
         return builder.build();
     }
+
+    /**
+     * Returns the eigenmatrix of `M`, which is equal to `λI-M`
+     */
+    public static <T> Matrix<Polynomial<T>> eigenmatrix(Matrix<T> m, MathCalculator<Polynomial<T>> mcp) {
+        if (m.row != m.column) {
+            throw new IllegalArgumentException("M must be square!");
+        }
+        var mc = m.getMathCalculator();
+        @SuppressWarnings({"unchecked"})
+        Polynomial<T>[][] data = (Polynomial<T>[][]) new Polynomial[m.row][m.column];
+        for (int i = 0; i < m.row; i++) {
+            for (int j = 0; j < m.column; j++) {
+                if (i == j) {
+                    data[i][j] = Polynomial.ofRoot(mc, m.getNumber(i, j));
+                } else {
+                    data[i][j] = Polynomial.constant(mc, mc.negate(m.getNumber(i, j)));
+                }
+            }
+        }
+        return new DMatrix<>(data, m.row, m.column, mcp);
+
+    }
+
+    /**
+     * Returns the eigenmatrix of `M`, which is equal to `λI-M`
+     */
+    public static <T> Matrix<Polynomial<T>> eigenmatrix(Matrix<T> m) {
+        return eigenmatrix(m, Polynomial.getCalculator(m.getMathCalculator()));
+    }
+
+    /**
+     * Determines whether the two matrices are similar.
+     */
+    public static <T> boolean isSimilar(Matrix<T> a, Matrix<T> b) {
+        var pc = Polynomial.getCalculator(a.getMathCalculator());
+        var x = eigenmatrix(a, pc);
+        var y = eigenmatrix(b, pc);
+        x = LambdaMatrixKt.toNormalForm(x);
+        y = LambdaMatrixKt.toNormalForm(y);
+        return x.valueEquals(y);
+    }
+
+    /**
+     * Returns the Frobenius normal form of the given matrix, which is a
+     * matrix similar to the given matrix.
+     */
+    public static <T> Matrix<T> frobeniusForm(Matrix<T> mat) {
+        var pc = Polynomial.getCalculator(mat.getMathCalculator());
+        var x = eigenmatrix(mat, pc);
+        return LambdaMatrixKt.toFrobeniusForm(x, mat.getMathCalculator());
+    }
+
+    /**
+     * Returns the Jordan normal form of the given matrix and the transformation matrix.
+     * @param mat
+     * @return
+     */
+    public static @Nullable  Pair<Matrix<Fraction>,Matrix<Fraction>> jordanFormAndTrans(Matrix<Fraction> mat){
+        return LambdaMatrixSup.INSTANCE.jordanFormAndTrans(mat);
+    }
+
+
+
+
 //
 //    public static void main(String[] args) {
 //        var mc = Calculators.getCalculatorInteger();

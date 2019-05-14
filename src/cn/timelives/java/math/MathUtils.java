@@ -308,7 +308,7 @@ public class MathUtils {
             throw new IllegalArgumentException();
         }
         int re = 0;
-        int p = 1;
+        long p = 1;
         while (p <= b) {
             p *= a;
             re++;

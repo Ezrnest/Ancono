@@ -150,7 +150,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     public boolean isOne() {
-        if(!isMonomial()){
+        if (!isMonomial()) {
             return false;
         }
         var t = getFirst();
@@ -178,7 +178,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     /**
      * Gets the first term in this multinomial according to the dictionary order.
-     *
      */
     public Term getFirst() {
         return terms.first();
@@ -186,7 +185,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     /**
      * Gets the last term in this multinomial according to the dictionary order.
-     *
      */
     public Term getLast() {
         return terms.last();
@@ -436,7 +434,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-
     private static boolean containsNonInteger(NavigableSet<Term> s) {
         for (Term t : s) {
             for (Fraction p : t.getCharacterNoCopy().values()) {
@@ -510,6 +507,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      * Parameters will not be modified.
      * Throws an exception if it can't be done.
+     *
      * @return quotient
      */
     private static NavigableSet<Term> handleComplexDivision(NavigableSet<Term> m, NavigableSet<Term> divisor) {
@@ -580,7 +578,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      */
     public Multinomial replace(String target, Multinomial expr) {
         NavigableSet<Term> result = getSet();
-
         for (Term t1 : terms) {
             if (t1.containsChar(target)) {
                 Fraction power = t1.getCharacterPower(target);
@@ -610,9 +607,52 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return new Multinomial(result);
     }
 
-    public Multinomial replaceChar(UnaryOperator<String> replacer){
+    /**
+     * Replaces the occurred terms in the multinomial.
+     *
+     * @param sub  must be a term containing only characters.
+     * @param expr
+     * @return
+     */
+    public Multinomial replacePossible(Term sub, Multinomial expr) {
+        if (!sub.numberPart().equals(Term.ONE)) {
+            throw new IllegalArgumentException();
+        }
+        NavigableSet<Term> result = getSet();
+        for (Term t1 : terms) {
+            int power = getMaxPower(t1, sub);
+            if (power == 0) {
+                mergingAdd(result,t1);
+                continue;
+            }
+            Term f = t1.divide(sub.pow(power));
+            Multinomial temp = monomial(f);
+            temp = temp.multiply(expr.pow(power));
+            mergingAddAll(result, temp.terms);
+
+        }
+
+        return new Multinomial(result);
+
+    }
+
+    private static int getMaxPower(Term t, Term sub) {
+        int maxPower = 0;
+        for (var en : sub.character.entrySet()) {
+            String ch = en.getKey();
+            Fraction pow = en.getValue();
+            Fraction p0 = t.getCharacterPower(ch);
+            maxPower = Math.max(maxPower, p0.abs().divide(pow.abs()).toInt());
+            if (maxPower == 0) {
+                break;
+            }
+        }
+        return maxPower;
+    }
+
+    public Multinomial replaceChar(UnaryOperator<String> replacer) {
         var nterms = getSet();
-        for(Term t : terms){
+        for (Term t : terms) {
             nterms.add(t.replaceChar(replacer));
         }
         return new Multinomial(nterms);
@@ -639,20 +679,20 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      * Determines whether this multinomial is a symmetry multinomial.
      */
-    public boolean isSymmetry(){
+    public boolean isSymmetry() {
         // find all the characters in this multinomial
 
         var characters = getCharacters().toArray(new String[]{});
         int n = characters.length;
-        for(Permutation p : Permutations.universeIterable(n)){
-            if(p.isIdentity()){
+        for (Permutation p : Permutations.universeIterable(n)) {
+            if (p.isIdentity()) {
                 continue;
             }
-            var m = replaceChar( x -> {
-                int index = Arrays.binarySearch(characters,x);
+            var m = replaceChar(x -> {
+                int index = Arrays.binarySearch(characters, x);
                 return characters[p.apply(index)];
             });
-            if(!equals(m)){
+            if (!equals(m)) {
                 return false;
             }
         }
@@ -828,6 +868,9 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         m1 = new Multinomial(set1);
         m2 = new Multinomial(set2);
         var gcd = cal.gcd(m1, m2);
+        if (gcd.isMonomial() && gcd.getFirst().hasNoChar()) {
+            return new Multinomial[]{m1, m2};
+        }
         return new Multinomial[]{m1.divide(gcd), m2.divide(gcd)};
     }
 
@@ -929,6 +972,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * For example, <code>primarySymmetry(1,"a","b","c")</code> returns <code>a+b+c</code><br>
      * <code>primarySymmetry(2,"a","b","c")</code> returns <code>ab+bc+ca</code> and <br>
      * <code>primarySymmetry(3,"a","b","c")</code> returns <code>abc</code>.
+     *
      * @param r          the number of characters in each term, must be not bigger than characters' length.
      * @param characters different characters
      * @return primary symmetry multinomial of the given character
@@ -941,12 +985,13 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     /**
      * Returns an array of all the primary symmetry multinomial.
+     *
      * @param characters different characters
      */
-    public static Multinomial[] primarySymmetryAll(String...characters){
+    public static Multinomial[] primarySymmetryAll(String... characters) {
         Multinomial[] arr = new Multinomial[characters.length];
-        for(int i=0;i<characters.length;i++){
-            arr[i] = primarySymmetry(i+1,characters);
+        for (int i = 0; i < characters.length; i++) {
+            arr[i] = primarySymmetry(i + 1, characters);
         }
         return arr;
     }
@@ -954,43 +999,46 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      * Returns the newton multinomial of power <code>p</code> of the given characters.<p></p>
      * For example, <code>newtonMultinomial(2,"a","b","c")</code> returns <code>a^2+b^2+c^2</code>
-     * @param p the power of each characters
+     *
+     * @param p          the power of each characters
      * @param characters different characters.
      * @return a new newton multinomial
      */
-    public static Multinomial newtonMultinomial(int p, String... characters){
+    public static Multinomial newtonMultinomial(int p, String... characters) {
         var terms = getSet();
         Fraction power = Fraction.valueOf(p);
-        for(String c : characters){
-            terms.add(Term.characterPower(c,power));
+        for (String c : characters) {
+            terms.add(Term.characterPower(c, power));
         }
         return new Multinomial(terms);
     }
 
     /**
      * Reduces a symmetry multinomial to a multinomial of primary symmetry multinomial.
+     *
      * @see #primarySymmetryReduce(IntFunction)
      * @see #primarySymmetry(int, String...)
      */
-    public Multinomial primarySymmetryReduce(){
+    public Multinomial primarySymmetryReduce() {
         return primarySymmetryReduce(x ->
-            MathSymbol.GREEK_SIGMA +Integer.toString(x+1));
+                MathSymbol.GREEK_SIGMA + Integer.toString(x + 1));
     }
 
     /**
      * Reduces a symmetry multinomial to a multinomial of primary symmetry multinomial whose names are
      * given by <code>symNameList</code>.
+     *
      * @param symNameList a provider for primary symmetry multinomials, starting from zero.
      */
-    public Multinomial primarySymmetryReduce(IntFunction<String> symNameList){
-        if(!isSymmetry()){
+    public Multinomial primarySymmetryReduce(IntFunction<String> symNameList) {
+        if (!isSymmetry()) {
             throw new IllegalArgumentException("m is not symmetry!");
         }
-        for(Term t : terms){
-            for(var en : t.getCharacterNoCopy().entrySet()){
+        for (Term t : terms) {
+            for (var en : t.getCharacterNoCopy().entrySet()) {
                 Fraction pow = en.getValue();
-                if(pow.isNegative() || !pow.isInteger()){
-                    throw new ArithmeticException("Cannot reduce multinomial containing negative or fractional power: "+this);
+                if (pow.isNegative() || !pow.isInteger()) {
+                    throw new ArithmeticException("Cannot reduce multinomial containing negative or fractional power: " + this);
                 }
             }
         }
@@ -999,28 +1047,28 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         Multinomial m = this;
         var result = getSet();
         var top = m.getFirst();
-        while(!top.isZero()){
+        while (!top.isZero()) {
             Term coe = top.numberPart();
             Multinomial g = Multinomial.monomial(coe);
-            NavigableMap<String,Fraction> map = new TreeMap<>();
-            for (int i = 0; i < characters.length-1; i++) {
+            NavigableMap<String, Fraction> map = new TreeMap<>();
+            for (int i = 0; i < characters.length - 1; i++) {
                 String c = characters[i];
-                Fraction pow = top.getCharacterPower(c).subtract(top.getCharacterPower(characters[i+1]));
+                Fraction pow = top.getCharacterPower(c).subtract(top.getCharacterPower(characters[i + 1]));
                 g = g.multiply(syms[i].pow(pow.toInt()));
-                if(!pow.isZero()){
-                    map.put(symNameList.apply(i),pow);
+                if (!pow.isZero()) {
+                    map.put(symNameList.apply(i), pow);
                 }
             }
-            int last = characters.length-1;
+            int last = characters.length - 1;
             String c = characters[last];
             Fraction pow = top.getCharacterPower(c);
             g = g.multiply(syms[last].pow(pow.toInt()));
-            if(!pow.isZero()){
-                map.put(symNameList.apply(last),pow);
+            if (!pow.isZero()) {
+                map.put(symNameList.apply(last), pow);
             }
 
             m = m.subtract(g);
-            mergingAdd(result,coe.sameNumber0(map));
+            mergingAdd(result, coe.sameNumber0(map));
             top = m.getFirst();
         }
         return new Multinomial(result);
@@ -1028,12 +1076,11 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-
-
-//    public static void main(String[] args) {
-//        print(Multinomial.valueOf("Sqr18-1"));
-//        print(Term.valueOf(1).canMerge(Term.valueOf("Sqr18")));
-//    }
+    public static void main(String[] args) {
+        var m1 = Multinomial.valueOf("6a-3");
+        var m2 = Multinomial.valueOf("9a-6");
+        print(Multinomial.simplifyFraction(m1, m2));
+    }
 //        print(cal.gcd(valueOf("a-b"), valueOf("a+b")));
 //        var re = simplifyFraction(Multinomial.monomial(
 //                Term.singleChar("x",Fraction.Companion.valueOf("5/2"))),Multinomial.valueOf("-x+1"));

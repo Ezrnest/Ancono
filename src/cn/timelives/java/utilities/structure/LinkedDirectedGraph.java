@@ -43,7 +43,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	
 	
 	public LinkedDirectedGraph(){
-		nodes = new ArrayList<LinkedNode<E>>();
+		nodes = new ArrayList<>();
 	}
 	
 	private LinkedDirectedGraph(List<LinkedNode<E>> nodes){
@@ -274,7 +274,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 
 	@Override
 	public Set<DirectedGraphNode<E>> getConnectTo(DirectedGraphNode<E> node) {
-		return new HashSet<DirectedGraphNode<E>>(checkNode(node).getConncetTo());
+		return new HashSet<DirectedGraphNode<E>>(checkNode(node).getConnectTo());
 	}
 
 
@@ -284,7 +284,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	
 	@Override
 	public Set<DirectedGraphNode<E>> getConnectBy(DirectedGraphNode<E> node) {
-		return new HashSet<DirectedGraphNode<E>>(checkNode(node).getConncetBy());
+		return new HashSet<DirectedGraphNode<E>>(checkNode(node).getConnectBy());
 	}
 
 
@@ -302,14 +302,14 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 		LinkedDirectedGraph<E> newGraph = new LinkedDirectedGraph<E>(newList);
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<E> nn = new LinkedNode<E>(newGraph,n.ele,
-					n.getConncetTo().size(),
-					n.getConncetBy().size());
+					n.getConnectTo().size(),
+					n.getConnectBy().size());
 			newList.add(nn);
 			map.put(n, nn);
 		}
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<E> mapped = map.get(n);
-			for(LinkedNode<E> nt : n.getConncetTo()){
+			for(LinkedNode<E> nt : n.getConnectTo()){
 				LinkedNode<E> nt_mapped = map.get(nt);
 				mapped.addConnectTo(nt_mapped);
 				nt_mapped.addConnectBy(mapped);
@@ -330,14 +330,14 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 		LinkedDirectedGraph<T> newGraph = new LinkedDirectedGraph<T>(newList);
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<T> nn = new LinkedNode<T>(newGraph,mapper.apply(n.ele),
-					n.getConncetTo().size(),
-					n.getConncetBy().size());
+					n.getConnectTo().size(),
+					n.getConnectBy().size());
 			newList.add(nn);
 			map.put(n, nn);
 		}
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<T> mapped = map.get(n);
-			for(LinkedNode<E> nt : n.getConncetTo()){
+			for(LinkedNode<E> nt : n.getConnectTo()){
 				LinkedNode<T> nt_mapped = map.get(nt);
 				mapped.addConnectTo(nt_mapped);
 				nt_mapped.addConnectBy(mapped);
@@ -358,14 +358,14 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 		LinkedDirectedGraph<E> newGraph = new LinkedDirectedGraph<E>(newList);
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<E> nn = new LinkedNode<E>(newGraph,n.ele,
-					n.getConncetTo().size(),
-					n.getConncetBy().size());
+					n.getConnectTo().size(),
+					n.getConnectBy().size());
 			newList.add(nn);
 			map.put(n, nn);
 		}
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<E> mapped = map.get(n);
-			for(LinkedNode<E> nt : n.getConncetTo()){
+			for(LinkedNode<E> nt : n.getConnectTo()){
 				LinkedNode<E> nt_mapped = map.get(nt);
 				mapped.addConnectBy(nt_mapped);
 				nt_mapped.addConnectTo(mapped);
@@ -381,10 +381,10 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	@Override
 	public void removeNode(DirectedGraphNode<E> noded) {
 		LinkedNode<E> node=checkNode(noded);
-		for(LinkedNode<E> ct : node.getConncetTo()){
+		for(LinkedNode<E> ct : node.getConnectTo()){
 			ct.removeConnectBy(node);
 		}
-		for(LinkedNode<E> cb : node.getConncetBy()){
+		for(LinkedNode<E> cb : node.getConnectBy()){
 			cb.removeConnectTo(node);
 		}
 		nodes.remove(node);
@@ -397,7 +397,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 
 	@Override
 	public Set<DirectedGraphNode<E>> getConnectedNodes(DirectedGraphNode<E> node) {
-		return new HashSet<DirectedGraphNode<E>>(checkNode(node).getConncetTo());
+		return new HashSet<DirectedGraphNode<E>>(checkNode(node).getConnectTo());
 	}
 
 
@@ -408,7 +408,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	@Override
 	public Collection<E> getConncetedElements(DirectedGraphNode<E> noded) {
 		LinkedNode<E> node = checkNode(noded);
-		Set<LinkedNode<E>> set = node.getConncetTo();
+		Set<LinkedNode<E>> set = node.getConnectTo();
 		ArrayList<E> list = new ArrayList<E>(set.size());
 		for(LinkedNode<E> n : set){
 			list.add(n.ele);
@@ -425,7 +425,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	@Override
 	public Collection<E> getConnectByElements(DirectedGraphNode<E> noded) {
 		LinkedNode<E> node = checkNode(noded);
-		Set<LinkedNode<E>> set = node.getConncetBy();
+		Set<LinkedNode<E>> set = node.getConnectBy();
 		ArrayList<E> list = new ArrayList<E>(set.size());
 		for(LinkedNode<E> n : set){
 			list.add(n.ele);
@@ -476,7 +476,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	public void transfetConnection(DirectedGraphNode<E> holderD, DirectedGraphNode<E> toGiveD) {
 		LinkedNode<E>  holder = checkNode(holderD);
 		LinkedNode<E> toGive = checkNode(toGiveD);
-		for(LinkedNode<E> node : holder.getConncetTo()){
+		for(LinkedNode<E> node : holder.getConnectTo()){
 			node.removeConnectBy(holder);
 			connectNodeTo0(toGive, node);
 		}
@@ -493,7 +493,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	public void copyConnection(DirectedGraphNode<E> holderD, DirectedGraphNode<E> toGiveD) {
 		LinkedNode<E> holder = checkNode(holderD);
 		LinkedNode<E> toGive = checkNode(toGiveD);
-		for(LinkedNode<E> node : holder.getConncetTo()){
+		for(LinkedNode<E> node : holder.getConnectTo()){
 			connectNodeTo0(toGive, node);
 		}
 	}
@@ -556,7 +556,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	private void deepFirstSearch(Set<DirectedGraphNode<E>> set,LinkedNode<E> node){
 		set.add(node);
 		//use deep search to search the reachable nodes
-		for(LinkedNode<E> n : node.getConncetTo()){
+		for(LinkedNode<E> n : node.getConnectTo()){
 			if(set.contains(n)==false){
 				deepFirstSearch(set,n);
 			}
@@ -566,7 +566,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	private void deepFirstSearchBy(Set<DirectedGraphNode<E>> set,LinkedNode<E> node){
 		set.add(node);
 		//use deep search to search the reachable nodes
-		for(LinkedNode<E> n : node.getConncetBy()){
+		for(LinkedNode<E> n : node.getConnectBy()){
 			if(set.contains(n)==false){
 				deepFirstSearchBy(set,n);
 			}
@@ -581,17 +581,17 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 
 	@Override
 	public int getConnectionCount(DirectedGraphNode<E> node) {
-		return checkNode(node).getConncetTo().size();
+		return checkNode(node).getConnectTo().size();
 	}
 
 	@Override
 	public int getInDegree(DirectedGraphNode<E> node) {
-		return checkNode(node).getConncetBy().size();
+		return checkNode(node).getConnectBy().size();
 	}
 
 	@Override
 	public int getOutDegree(DirectedGraphNode<E> node) {
-		return checkNode(node).getConncetTo().size();
+		return checkNode(node).getConnectTo().size();
 	}
 
 	@Override
@@ -610,21 +610,21 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 		HashMap<LinkedNode<E>,LinkedNode<E>> mapper = new HashMap<LinkedNode<E>,LinkedNode<E>>();
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<E> nn = new LinkedNode<E>(re,n.ele,
-					n.getConncetTo().size(),
-					n.getConncetBy().size());
+					n.getConnectTo().size(),
+					n.getConnectBy().size());
 			list.add(nn);
 			mapper.put(n, nn);
 		}
 		
 		for(LinkedNode<E> n : nodes){
 			LinkedNode<E> mapped = mapper.get(n);
-			for(LinkedNode<E> nTo : n.getConncetTo()){
+			for(LinkedNode<E> nTo : n.getConnectTo()){
 				if(nodes.contains(nTo)){
 					mapped.addConnectTo(mapper.get(nTo));
 					
 				}
 			}
-			for(LinkedNode<E> nBy : n.getConncetBy()){
+			for(LinkedNode<E> nBy : n.getConnectBy()){
 				if(nodes.contains(nBy)){
 					mapped.addConnectBy(mapper.get(nBy));
 				}
@@ -639,7 +639,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	@Override
 	public DirectedGraph<E> subGraphOfTo(DirectedGraphNode<E> nodeD) {
 		LinkedNode<E> node = checkNode(nodeD);
-		Set<LinkedNode<E>> cTo = node.getConncetTo();
+		Set<LinkedNode<E>> cTo = node.getConnectTo();
 		ArrayList<LinkedNode<E>> list = new ArrayList<LinkedNode<E>>(cTo.size()+1);
 		LinkedDirectedGraph<E> gra = new LinkedDirectedGraph<E>(list);
 		LinkedNode<E> connect = new LinkedNode<E>(gra,node.ele,cTo.size(),0);
@@ -655,7 +655,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	@Override
 	public DirectedGraph<E> subGraphOfBy(DirectedGraphNode<E> nodeD) {
 		LinkedNode<E> node = checkNode(nodeD);
-		Set<LinkedNode<E>> cBy = node.getConncetBy();
+		Set<LinkedNode<E>> cBy = node.getConnectBy();
 		ArrayList<LinkedNode<E>> list = new ArrayList<LinkedNode<E>>(cBy.size()+1);
 		LinkedDirectedGraph<E> gra = new LinkedDirectedGraph<E>(list);
 		LinkedNode<E> connect = new LinkedNode<E>(gra,node.ele,0,cBy.size());
@@ -681,7 +681,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 	
 	private boolean deepFirstTestReachable(LinkedNode<E> node,Set<LinkedNode<E>> reached,LinkedNode<E> target){
 		reached.add(node);
-		for(LinkedNode<E> n : node.getConncetTo()){
+		for(LinkedNode<E> n : node.getConnectTo()){
 			if(n==target)
 				return true;
 			if(deepFirstTestReachable(n, reached, target)){
@@ -833,7 +833,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 		
 		private void deepFirst_1(LinkedNode<E> n,DeepFirstPair dfp){
 //			dfp.detected = time++;
-			for(LinkedNode<E> node : n.getConncetTo()){
+			for(LinkedNode<E> node : n.getConnectTo()){
 				if(map.containsKey(node)==false){
 					DeepFirstPair dfpN = new DeepFirstPair();
 					map.put(node, dfpN);
@@ -848,7 +848,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 				Set<DirectedGraphNode<E>> comp,LinkedNode<Set<DirectedGraphNode<E>>> graphNode){
 //			dfp.detected = time ++;
 			comp.add(n);
-			for(LinkedNode<E> node : n.getConncetBy()){
+			for(LinkedNode<E> node : n.getConnectBy()){
 				//transposition
 				if(map.containsKey(node)==false){
 //					DeepFirstPair dfpN = new DeepFirstPair();
@@ -870,7 +870,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 		private void deepFirst2_InRange(LinkedNode<E> n ,Set<DirectedGraphNode<E>> range,
 				Set<DirectedGraphNode<E>> comp,LinkedNode<Set<DirectedGraphNode<E>>> graphNode){
 			comp.add(n);
-			for(LinkedNode<E> node : n.getConncetBy()){
+			for(LinkedNode<E> node : n.getConnectBy()){
 				//transposition
 				if(range.contains(n)&&map.containsKey(node)==false){
 //					DeepFirstPair dfpN = new DeepFirstPair();

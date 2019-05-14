@@ -109,7 +109,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 	 * @param n1 a node 
 	 * @param n2 another node
 	 * @return {@code true} if n1 refers to n2 , otherwise {@code false}
-	 * @see #connectBy(DirectedGraph DirectedGraphNode<E>ode, DirectedGraph DirectedGraphNode<E>ode) 
+	 * @see #connectBy(DirectedGraphNode, DirectedGraphNode)
 	 */
 	public boolean isConnectBy( DirectedGraphNode<E> n1, DirectedGraphNode<E> n2){
 		return isConnected(n2, n1);
@@ -133,7 +133,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 	 * <p>{@literal n1 <- n2}
 	 * @param n1 the node that will be referred to
 	 * @param n2 the node that will hold reference
-	 * @see #isConnectBy(DirectedGraph DirectedGraphNode<E>ode, DirectedGraph DirectedGraphNode<E>ode)
+	 * @see #isConnectBy(DirectedGraphNode, DirectedGraphNode)
 	 */
 	public void connectBy( DirectedGraphNode<E> n1, DirectedGraphNode<E> n2){
 		connectNode(n2, n1);

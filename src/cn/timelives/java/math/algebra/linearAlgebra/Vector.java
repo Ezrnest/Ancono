@@ -450,7 +450,7 @@ public abstract class Vector<T> extends Matrix<T> {
      */
     @SafeVarargs
     public static <T> Vector<T> addVectors(int n, Vector<T>... vecs) {
-        if (n > vecs.length) {
+        if (n < 1 || n > vecs.length) {
             throw new IllegalArgumentException();
         }
         final int size = vecs[0].getSize();
@@ -653,7 +653,8 @@ public abstract class Vector<T> extends Matrix<T> {
     }
 
     /**
-     * Orthogonalizes the given vectors by using Schmidt method.
+     * Orthogonalizes the given vectors by using Schmidt method, it is required that the
+     * given vectors are linear irrelevant.
      *
      * @param vs an array of vectors
      * @return a new list of vectors

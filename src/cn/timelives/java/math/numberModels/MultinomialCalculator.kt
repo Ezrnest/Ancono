@@ -641,6 +641,4 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
 
         }
     }
-
-
 }

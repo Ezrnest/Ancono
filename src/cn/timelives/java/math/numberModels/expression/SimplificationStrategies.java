@@ -1057,18 +1057,18 @@ public final class SimplificationStrategies {
                 }
                 if (child.getType() == Type.MULTIPLY) {
                     var mul = (Node.Multiply) child;
-                    Node ln = null;
+                    Node x = null; // x in ln(x)
                     for (Iterator<Node> iterator = mul.children.iterator(); iterator.hasNext(); ) {
                         Node n = iterator.next();
                         if (Node.isFunctionNode(n, ExprFunction.FUNCTION_NAME_LN, 1)) {
-                            ln = n;
+                            x = ((SFunction)n).child;
                             iterator.remove();
                             break;
                         }
                     }
-                    if (ln != null) {
+                    if (x != null) {
                         mul.resetSimIdentifier();
-                        return mc.simplify(Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, ln, mul));
+                        return mc.simplify(Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, x, mul));
                     }
                 }
 
@@ -1197,7 +1197,7 @@ public final class SimplificationStrategies {
     static class ExpPossibleReduction extends SimpleStrategy {
 
         public ExpPossibleReduction() {
-            super(TAG_PRIMARY_SET, CollectionSup.unmodifiableEnumSet(Type.MULTIPLY), null, "(p*q) * exo(q,-1) -> p, where p,q are multinomial");
+            super(TAG_PRIMARY_SET, CollectionSup.unmodifiableEnumSet(Type.MULTIPLY), null, "(p*q) * exp(q,-1) -> p, where p,q are multinomial");
         }
 
         @Override
@@ -1427,17 +1427,17 @@ public final class SimplificationStrategies {
 
     //debugging code below:
 
-    public static void main(String[] args) {
-        var mc = ExprCalculator.getNewInstance();
-        mc.setProperty(PROP_ENABLE_EXPAND, "false");
-        var f = mc.parseExpr("x*exp(x+1,-1)+exp(x+1,-1)");
-        var f2 = mc.parseExpr("sin(y)/sin(x) + 1/sin(x)");
-        var f3 = mc.parseExpr("(1+sin(y))exp(sin(x),-1)");
-        print(f);
-
-        print(f2);
-        print(f3);
-    }
+//    public static void main(String[] args) {
+//        var mc = ExprCalculator.getNewInstance();
+//        mc.setProperty(PROP_ENABLE_EXPAND, "false");
+//        var f = mc.parseExpr("x*exp(x+1,-1)+exp(x+1,-1)");
+//        var f2 = mc.parseExpr("sin(y)/sin(x) + 1/sin(x)");
+//        var f3 = mc.parseExpr("(1+sin(y))exp(sin(x),-1)");
+//        print(f);
+//
+//        print(f2);
+//        print(f3);
+//    }
 
 //    public static void main(String[] args) {
 ////        enableSpi = true;

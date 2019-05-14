@@ -128,6 +128,17 @@ internal constructor(
     }
 
     /**
+     * Returns the absolute value of this fraction.
+     */
+    fun abs() : Fraction{
+        return if(isNegative){
+            this.negate()
+        }else{
+            this
+        }
+    }
+
+    /**
      * Return the value of `this * num`
      * @param num multiplier
      * @return `this * num`

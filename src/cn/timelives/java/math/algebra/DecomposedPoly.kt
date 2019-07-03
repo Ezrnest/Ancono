@@ -38,6 +38,15 @@ open class DecomposedPoly<T:Any>(val decomposed : List<Pair<Polynomial<T>,Int>>)
         re.expandedBackingField = expandedBackingField?.mapTo(mp,newCalculator)
         return re
     }
+
+    override fun toString(): String = decomposed.joinToString(separator = "*") { (x,p) ->
+        val t = "($x)"
+        if(p == 1){
+            t
+        }else{
+            "$t^$p"
+        }
+    }
 }
 
 /**
@@ -53,6 +62,4 @@ class SinglePoly<T:Any>(expanded : Polynomial<T>?, base : Polynomial<T>, pow : I
 
     val pow : Int
         get() = decomposed[0].second
-
-
 }

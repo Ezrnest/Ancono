@@ -423,7 +423,7 @@ public class PartialOrderSet<E> extends PartialOrderCollection<E> {
 	@Override
 	public PartialOrderCollection<E> getDirectUpperElements(E e) {
 		DirectedGraphNode<E> node = getNode(e);
-		Set<? extends DirectedGraphNode<E>> dUppers = graph.getConnectBy(node);
+		Set<? extends DirectedGraphNode<E>> dUppers = graph.getConnectTo(node);
 		//no relationship should these nodes have .
 		DirectedGraph<E> gp = new LinkedDirectedGraph<E>();
 		Map<E,DirectedGraphNode<E>> newMapper = new HashMap<E,DirectedGraphNode<E>>();

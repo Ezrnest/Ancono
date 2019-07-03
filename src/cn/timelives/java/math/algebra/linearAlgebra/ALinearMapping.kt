@@ -2,14 +2,13 @@ package cn.timelives.java.math.algebra.linearAlgebra
 
 import cn.timelives.java.math.CalculatorHolder
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.eval
 import cn.timelives.java.math.algebra.linearAlgebra.space.VectorSpace
 import cn.timelives.java.math.function.MathFunction
 import cn.timelives.java.math.function.SVFunction
 import cn.timelives.java.math.function.invoke
-import cn.timelives.java.math.numberModels.api.GroupNumberModel
-import java.util.function.Function
+import cn.timelives.java.math.numberModels.api.VectorModel
 
 
 /**
@@ -58,15 +57,16 @@ interface ILinearTrans<K : Any, V : Any> : ILinearMapping<K, V, V>, SVFunction<V
  * Created at 2018/10/8 17:41
  * @author  liyicheng
  */
-abstract class LinearMapping<K : Any, V : Any, U : Any> : ILinearMapping<K,V,U>, CalculatorHolder<K, FieldCalculator<K>>,
-        GroupNumberModel<LinearMapping<K, V, U>> {
+abstract class ALinearMapping<K : Any, V : Any, U : Any>
+    : ILinearMapping<K, V, U>, CalculatorHolder<K, FieldCalculator<K>>,
+        VectorModel<K, ALinearMapping<K, V, U>> {
     /**
      * Returns the math calculator for field `K`
      */
     override val mathCalculator: FieldCalculator<K>
         get() = vectorSpace.basis.calculator
 
-    val vectorCalculator: GroupCalculator<U>
+    val vectorCalculator: VectorSpaceCalculator<K,U>
         get() = vectorSpace.calculator
 
     /**
@@ -80,9 +80,9 @@ abstract class LinearMapping<K : Any, V : Any, U : Any> : ILinearMapping<K,V,U>,
      */
     abstract override fun apply(x: V): U
 
-    protected fun mappingOf(m: (V) -> U) = DLinearMapping(vectorSpace, m)
+    protected fun mappingOf(m: (V) -> U) = DALinearMapping(vectorSpace, m)
 
-    override fun add(y: LinearMapping<K, V, U>): LinearMapping<K, V, U> {
+    override fun add(y: ALinearMapping<K, V, U>): ALinearMapping<K, V, U> {
         val f = this
         @Suppress("UnnecessaryVariable")//To make the following code more clear
         val g = y
@@ -94,7 +94,7 @@ abstract class LinearMapping<K : Any, V : Any, U : Any> : ILinearMapping<K,V,U>,
         }
     }
 
-    override fun negate(): LinearMapping<K, V, U> {
+    override fun negate(): ALinearMapping<K, V, U> {
         val f = this
         return mappingOf { x ->
             vectorCalculator.eval {
@@ -103,16 +103,25 @@ abstract class LinearMapping<K : Any, V : Any, U : Any> : ILinearMapping<K,V,U>,
         }
     }
 
-
-    open fun <W : Any> composeLinear(g: LinearMapping<K, U, W>): LinearMapping<K, V, W> {
+    override fun multiply(k: K): ALinearMapping<K, V, U> {
         val f = this
-        return DLinearMapping(g.vectorSpace) { x ->
+        return mappingOf { x ->
+            vectorCalculator.scalarMultiply(k,f(x))
+        }
+    }
+
+
+    open fun <W : Any> composeLinear(g: ALinearMapping<K, U, W>): ALinearMapping<K, V, W> {
+        val f = this
+        return DALinearMapping(g.vectorSpace) { x ->
             g(f(x))
         }
     }
+
+
 }
 
-abstract class KLinearTrans<K : Any, V : Any>(override val vectorSpace: VectorSpace<K, V>) : LinearMapping<K, V, V>(), SVFunction<V> {
+abstract class KALinearTrans<K : Any, V : Any>(override val vectorSpace: VectorSpace<K, V>) : ALinearMapping<K, V, V>(), SVFunction<V> {
 
 }
 
@@ -125,12 +134,12 @@ abstract class KLinearTrans<K : Any, V : Any>(override val vectorSpace: VectorSp
 //    }
 //}
 
-class ZeroLinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: VectorSpace<K, U>) : LinearMapping<K, V, U>() {
+class ZeroALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: VectorSpace<K, U>) : ALinearMapping<K, V, U>() {
     override fun apply(x: V): U = vectorSpace.identity()
 }
 
-class DLinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: VectorSpace<K, U>, private val f: (V) -> U)
-    : LinearMapping<K, V, U>() {
+class DALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: VectorSpace<K, U>, private val f: (V) -> U)
+    : ALinearMapping<K, V, U>() {
     override fun apply(x: V): U {
         return f(x)
     }

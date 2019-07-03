@@ -539,7 +539,9 @@ public final class ModelPatterns {
     }
 
     
-
+//    public static <T> T binarySearchFloor(int fromIndex, int toIndex, IntUnaryOperator comparator){
+//
+//    }
 
 
 

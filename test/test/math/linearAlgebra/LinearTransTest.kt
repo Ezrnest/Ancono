@@ -3,12 +3,11 @@ package test.math.linearAlgebra
 import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup
 import cn.timelives.java.math.algebra.linearAlgebra.Vector
 import cn.timelives.java.math.algebra.linearAlgebra.VectorBase
-import cn.timelives.java.math.algebra.linearAlgebra.space.LinearMapping
-import cn.timelives.java.math.algebra.linearAlgebra.space.LinearTrans
+import cn.timelives.java.math.algebra.linearAlgebra.mapping.LinearMapping
+import cn.timelives.java.math.algebra.linearAlgebra.mapping.LinearTrans
 import cn.timelives.java.math.numberModels.Fraction
 import cn.timelives.java.math.numberModels.api.NumberFormatter
 import cn.timelives.java.math.plus
-import org.junit.Assert.*
 import org.junit.Test
 
 class LinearTransTest{

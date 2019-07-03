@@ -133,6 +133,22 @@ public class MatrixSup {
         }
     }
 
+    public static <T> void addMatrix(T[][] dest,T[][] toAdd, MathCalculator<T> mc){
+        for(int i=0;i<dest.length;i++){
+            for(int j=0;j<dest[i].length;j++){
+                dest[i][j] = mc.add(dest[i][j],toAdd[i][j]);
+            }
+        }
+    }
+
+    public static <T> void multiplyMatrix(T[][] dest,T k, MathCalculator<T> mc){
+        for(int i=0;i<dest.length;i++){
+            for(int j=0;j<dest[i].length;j++){
+                dest[i][j] = mc.multiply(k,dest[i][j]);
+            }
+        }
+    }
+
     /**
      * Return a upper triangle matrix filled with one.For example,the following matrix is
      * the result when n = 3 :
@@ -675,6 +691,12 @@ public class MatrixSup {
      */
     public static @Nullable  Pair<Matrix<Fraction>,Matrix<Fraction>> jordanFormAndTrans(Matrix<Fraction> mat){
         return LambdaMatrixSup.INSTANCE.jordanFormAndTrans(mat);
+    }
+
+    public static <T> Polynomial<Matrix<T>> matrixPolynomial(int n,Polynomial<T> p){
+        var cal = p.getMathCalculator();
+        var cm = Matrix.matrixCalculator(n,cal);
+        return p.mapTo(e -> Matrix.diag(e,n,cal),cm);
     }
 
 

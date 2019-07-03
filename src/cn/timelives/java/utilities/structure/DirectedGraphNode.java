@@ -22,7 +22,6 @@ public abstract class DirectedGraphNode<E> extends GraphNode<E,DirectedGraphNode
 	 */
 	void removeFrom(){
 		graph = null;
-		
 	}
 	
 }

@@ -99,6 +99,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return row == column;
     }
 
+    protected void requireSquare() {
+        if (!isSquare()) {
+            throw new ArithmeticException("The matrix is not square!");
+        }
+    }
+
+
     /**
      * Get the number of the matrix in position i,j.The index is start from 0.
      *
@@ -175,6 +182,21 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             list.add(getColumn(i));
         }
         return list;
+    }
+
+
+    /**
+     * Apply the function to this matrix and returns the result.
+     */
+    public Matrix<T> applyFunction(MathFunction<T, T> f) {
+        @SuppressWarnings("unchecked")
+        T[][] mat = (T[][]) new Object[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                mat[i][j] = f.apply(getNumber(i, j));
+            }
+        }
+        return new DMatrix<>(mat, row, column, getMc());
     }
 
     /**
@@ -495,6 +517,18 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
 
+    public Matrix<T> applyPolynomial(Polynomial<T> p) {
+        requireSquare();
+        var mc = getMc();
+        Matrix<T> re = Matrix.diag(p.constant(), column, mc);
+        for (int i = p.getDegree() - 1; i > -1; i--) {
+            re = multiplyMatrix(re, this);
+            re = addMatrix(Matrix.diag(p.getCoefficient(i), column, mc), re);
+        }
+        return re;
+    }
+
+
     /**
      * Return det(this).
      *
@@ -502,9 +536,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * @throws ArithmeticException if this Matrix is not a square matrix.
      */
     public T calDet() {
-        if (row != column) {
-            throw new ArithmeticException("Cannot calculate det for: " + row + "*" + column);
-        }
+        requireSquare();
         if (row <= 3) {
             return calDetDefault();
         }
@@ -873,9 +905,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     @SuppressWarnings("unchecked")
     public List<MatrixOperation<T>> toIdentityWay() {
-        if (this.row != this.column) {
-            throw new ArithmeticException("Cannot trans to Identity:Not a Square");
-        }
+        requireSquare();
         return toIdentity((T[][]) getValues(), row, column);
     }
 
@@ -922,6 +952,16 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * @return an equation
      */
     public SVPEquation<T> eigenvalueEquation() {
+        return SVPEquation.fromPolynomial(eigenPolynomial());
+    }
+
+    /**
+     * Creates the eigenvalue equation of this matrix. It is required that
+     * this matrix is a square matrix.
+     *
+     * @return an equation
+     */
+    public Polynomial<T> eigenPolynomial() {
         if (column != row) {
             throw new ArithmeticException("Not square");
         }
@@ -932,8 +972,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         Matrix<Polynomial<T>> tmat = this.mapTo(x -> Polynomial.constant(mc, x), mct),
                 eigen = Matrix.diag(Polynomial.oneX(mc), row, mct);
         tmat = minusMatrix(eigen, tmat);
-        Polynomial<T> expr = tmat.calDet();
-        return SVPEquation.fromPolynomial(expr);
+        return tmat.calDet();
     }
 
     /**
@@ -953,10 +992,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         var mc = getMc();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                if(i == j){
-                    mat[i][j] = mc.subtract(getNumber(i,j),t);
-                }else{
-                    mat[i][j] = getNumber(i,j);
+                if (i == j) {
+                    mat[i][j] = mc.subtract(getNumber(i, j), t);
+                } else {
+                    mat[i][j] = getNumber(i, j);
                 }
 
             }
@@ -1098,9 +1137,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     public Matrix<T> inverse() {
         //do size check first
-        if (row != column) {
-            throw new ArithmeticException("Cannot Inverse:Not a Square");
-        }
+        requireSquare();
         try {
             @SuppressWarnings("unchecked")
             List<MatrixOperation<T>> ops = toIdentity((T[][]) getValues(), row, column);
@@ -2178,8 +2215,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     public static <T> Matrix<T> matrixPower(Matrix<T> mat, int pow) {
         // do range check
-        if (mat.row != mat.column)
-            throw new IllegalArgumentException("Cannot calculate" + mat.row + "*" + mat.column);
+        mat.requireSquare();
         if (pow == 0)
             return identityMatrix(mat.row, mat.getMc());
         if (pow == 1)
@@ -2235,21 +2271,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     @SuppressWarnings("unchecked")
     public static <T> Matrix<T> multiplyMatrix(List<Matrix<T>> mats) {
         return multiplyMatrix(mats.toArray(new Matrix[]{}));
-    }
-
-
-    /**
-     * Apply the function to this matrix and returns the result.
-     */
-    public Matrix<T> applyFunction(MathFunction<T, T> f) {
-        @SuppressWarnings("unchecked")
-        T[][] mat = (T[][]) new Object[row][column];
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
-                mat[i][j] = f.apply(getNumber(i, j));
-            }
-        }
-        return new DMatrix<>(mat, row, column, getMc());
     }
 
 //    public Matrix<T> applyFunctionWithIndex(BiFunction<T,>)

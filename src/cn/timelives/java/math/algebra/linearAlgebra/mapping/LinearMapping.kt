@@ -1,18 +1,18 @@
-package cn.timelives.java.math.algebra.linearAlgebra.space
+package cn.timelives.java.math.algebra.linearAlgebra.mapping
 
 import cn.timelives.java.math.*
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.AlgebraCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator
 import cn.timelives.java.math.algebra.linearAlgebra.*
+import cn.timelives.java.math.algebra.linearAlgebra.ILinearMapping
+import cn.timelives.java.math.algebra.linearAlgebra.ILinearTrans
 import cn.timelives.java.math.function.Bijection
 import cn.timelives.java.math.function.SVFunction
 import cn.timelives.java.math.function.invoke
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberModels.api.VectorModel
-import cn.timelives.java.math.numberModels.expression.Node
 import cn.timelives.java.math.property.Composable
-import cn.timelives.java.math.property.Invertible
 import java.util.function.Function
 
 /**
@@ -212,6 +212,7 @@ abstract class LinearMapping<T : Any> internal constructor(
         fun <T : Any> getCalculator(dimSrc: Int, dimDest: Int, mc: MathCalculator<T>): LinearMapCal<T> {
             return LinearMapCal(mc, dimSrc, dimDest);
         }
+
     }
 
 

@@ -2,7 +2,6 @@ package cn.timelives.java.math.algebra.linearAlgebra
 
 import cn.timelives.java.math.numberModels.Fraction
 import cn.timelives.java.math.numberModels.Multinomial
-import cn.timelives.java.math.numberModels.structure.MultinomialX
 
 
 /*

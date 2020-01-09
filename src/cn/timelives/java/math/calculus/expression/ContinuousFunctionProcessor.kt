@@ -10,7 +10,7 @@ import cn.timelives.java.math.numberModels.expression.anno.DisallowModify
  */
 interface ContinuousFunctionProcessor {
     /**
-     * Determines whether this FunctionDerivator supports the function of
+     * Determines whether this ContinuousFunctionProcessor supports the function of
      * the functionName and parameterLength.
      *
      * @param functionName    the name of the function

@@ -128,10 +128,9 @@ public final class CombUtils {
 
     /**
      * Returns the subfactorial of n.
-     * <pre>!n</pre>
+     * <pre>!n = n! * (Σ<sub>k=0</sub><sup>n</sup> (-1)^k / k!)</pre>
      * Number {@code n} must be in [0,20], otherwise overflow will happen.
      * The result of subfactorial(0) will be 1.
-     * @throws ArithmeticException if overflow occurred.
      * @param n a number, must be in [0,20]
      * @return the subfactorial of n.
      * @throws ArithmeticException if overflow occurred.
@@ -145,9 +144,8 @@ public final class CombUtils {
 
     /**
      * Returns the subfactorial of n.
-     * <pre>!n</pre>
+     * <pre>!n = n! * (Σ<sub>k=0</sub><sup>n</sup> (-1)^k / k!)</pre>
      * The result of subfactorial(0) will be 1.
-     * @throws ArithmeticException if overflow occurred.
      * @param n a number, must be in [0,20]
      * @return the subfactorial of n.
      * @throws ArithmeticException if overflow occurred.

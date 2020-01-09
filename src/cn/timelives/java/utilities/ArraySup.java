@@ -1004,6 +1004,7 @@ public class ArraySup {
     }
 
 
+
 //	public static void main(String[] args) {
 //		Integer[] arr = new Integer[10]; 
 //		Arrays.setAll(arr, i -> i);  

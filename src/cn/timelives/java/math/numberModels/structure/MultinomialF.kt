@@ -6,24 +6,20 @@ import cn.timelives.java.math.MathObjectExtend
 import cn.timelives.java.math.algebra.IMTerm
 import cn.timelives.java.math.algebra.IMultinomial
 import cn.timelives.java.math.exceptions.ExceptionUtil
-import cn.timelives.java.math.numberModels.BigFraction
 import cn.timelives.java.math.numberModels.CalculatorUtils
-import cn.timelives.java.math.numberModels.Multinomial
-import cn.timelives.java.math.numberModels.Term
 import cn.timelives.java.math.numberModels.api.AlgebraModel
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberTheory.EuclidRingNumberModel
-import cn.timelives.java.math.property.Mergeable
 import cn.timelives.java.utilities.CollectionSup
 import java.util.*
 import java.util.function.Function
 import kotlin.Comparator
 
 typealias CharMap = NavigableMap<String, Int>
-typealias TermSet<T> = NavigableSet<TermX<T>>
+typealias TermSet<T> = NavigableSet<TermF<T>>
 
-object LexicographicalComparator : Comparator<TermX<*>> {
-    override fun compare(o1: TermX<*>, o2: TermX<*>): Int {
+object LexicographicalComparator : Comparator<TermF<*>> {
+    override fun compare(o1: TermF<*>, o2: TermF<*>): Int {
         return CollectionSup.compareLexi(o1.characters, o2.characters)
     }
 
@@ -33,12 +29,12 @@ object LexicographicalComparator : Comparator<TermX<*>> {
  * Created at 2018/12/12 18:49
  * @author  liyicheng
  */
-data class TermX<T : Any>
-(override val characters: CharMap, override val coefficient: T) : IMTerm<T>, Comparable<TermX<T>> {
+data class TermF<F : Any>
+(override val characters: CharMap, override val coefficient: F) : IMTerm<F>, Comparable<TermF<F>> {
 
-    constructor(coe: T) : this(Collections.emptyNavigableMap(), coe)
+    constructor(coe: F) : this(Collections.emptyNavigableMap(), coe)
 
-    override fun compareTo(other: TermX<T>): Int {
+    override fun compareTo(other: TermF<F>): Int {
         return LexicographicalComparator.compare(this, other)
     }
 
@@ -84,18 +80,18 @@ data class TermX<T : Any>
     }
 }
 
-class MultinomialX<T : Any>
+class MultinomialF<F : Any>
 internal constructor(
-        mc: MathCalculator<T>,
+        mc: MathCalculator<F>,
         /**
          * A navigable set, non-empty.
          */
-        val terms: NavigableSet<TermX<T>>) :
+        val terms: NavigableSet<TermF<F>>) :
 
-        MathObjectExtend<T>(mc),
-        IMultinomial<T>,
-        AlgebraModel<T, MultinomialX<T>>,
-        EuclidRingNumberModel<MultinomialX<T>> {
+        MathObjectExtend<F>(mc),
+        IMultinomial<F>,
+        AlgebraModel<F, MultinomialF<F>>,
+        EuclidRingNumberModel<MultinomialF<F>> {
 
     init {
         require(terms.isNotEmpty())
@@ -111,76 +107,76 @@ internal constructor(
 //        }
 //        this.terms = terms
 //    }
-    private fun fromTerms(ts: TermSet<T>): MultinomialX<T> = MultinomialX(mc, ts)
+    private fun fromTerms(ts: TermSet<F>): MultinomialF<F> = MultinomialF(mc, ts)
 
-    private fun getTS(): TermSet<T> {
+    private fun getTS(): TermSet<F> {
         return TreeSet(terms.comparator())
     }
 
-    private fun getTS(set: TermSet<T>): TermSet<T> {
+    private fun getTS(set: TermSet<F>): TermSet<F> {
         return TreeSet(set)
     }
 
-    private fun singleTerm(t: TermX<T>): TermSet<T> {
+    private fun singleTerm(t: TermF<F>): TermSet<F> {
         val ts = getTS()
         ts.add(t)
         return ts
     }
 
-    private fun TermX<T>.canMerge(tx: TermX<T>): Boolean {
+    private fun TermF<F>.canMerge(tx: TermF<F>): Boolean {
         if (this.isZero() || tx.isZero()) {
             return true
         }
         return this.characters == tx.characters
     }
 
-    private fun TermX<T>.isZero(): Boolean {
+    private fun TermF<F>.isZero(): Boolean {
         return mc.isZero(this.coefficient)
     }
 
-    private fun zeroTerm(): TermX<T> {
-        return TermX(mc.zero)
+    private fun zeroTerm(): TermF<F> {
+        return TermF(mc.zero)
     }
 
-    private fun zeroMul(): MultinomialX<T> {
+    private fun zeroMul(): MultinomialF<F> {
         val set = singleTerm(zeroTerm())
         return fromTerms(set)
     }
 
-    private fun oneMul(): MultinomialX<T> {
-        val set = singleTerm(TermX(mc.one))
+    private fun oneMul(): MultinomialF<F> {
+        val set = singleTerm(TermF(mc.one))
         return fromTerms(set)
     }
 
-    private operator fun TermX<T>.plus(tx: TermX<T>): TermX<T> {
-        return TermX(characters, coefficient + tx.coefficient)
+    private operator fun TermF<F>.plus(tx: TermF<F>): TermF<F> {
+        return TermF(characters, coefficient + tx.coefficient)
     }
 
-    private operator fun TermX<T>.times(tx: TermX<T>): TermX<T> {
+    private operator fun TermF<F>.times(tx: TermF<F>): TermF<F> {
         if (this.isZero()) {
             return this
         }
         if (tx.isZero()) {
             return tx
         }
-        return TermX(TermX.multiplyCharMap(this.characters, tx.characters), coefficient * tx.coefficient)
+        return TermF(TermF.multiplyCharMap(this.characters, tx.characters), coefficient * tx.coefficient)
     }
 
-    private operator fun TermX<T>.div(tx: TermX<T>): TermX<T> {
+    private operator fun TermF<F>.div(tx: TermF<F>): TermF<F> {
         if (this.isZero()) {
             return this
         }
         if (tx.isZero()) {
             ExceptionUtil.divideByZero()
         }
-        return TermX(TermX.divideCharMap(this.characters, tx.characters), coefficient / tx.coefficient)
+        return TermF(TermF.divideCharMap(this.characters, tx.characters), coefficient / tx.coefficient)
     }
 
-    private operator fun TermX<T>.unaryMinus(): TermX<T> {
+    private operator fun TermF<F>.unaryMinus(): TermF<F> {
         if (this.isZero()) {
             return this
         }
-        return TermX(characters, -coefficient)
+        return TermF(characters, -coefficient)
     }
 
 //    private fun mergeTwo(s1: TermSet<T>, s2: TermSet<T>) : TermSet<T> {
@@ -232,7 +228,7 @@ internal constructor(
 //    }
 
 
-    private fun mergingAdd(base: TermSet<T>, e: TermX<T>): Boolean {
+    private fun mergingAdd(base: TermSet<F>, e: TermF<F>): Boolean {
         val low = base.floor(e)
         if (low != null && low.canMerge(e)) {
             base.remove(low)
@@ -246,19 +242,19 @@ internal constructor(
         return base.add(e)
     }
 
-    private fun mergingAddAll(base: TermSet<T>, toAdd: Iterable<TermX<T>>) {
+    private fun mergingAddAll(base: TermSet<F>, toAdd: Iterable<TermF<F>>) {
         for (t in toAdd) {
             mergingAdd(base, t)
         }
     }
 
-    private inline fun mergingAddAllWith(base: TermSet<T>, toAdd: TermSet<T>, trans: (TermX<T>) -> TermX<T>) {
+    private inline fun mergingAddAllWith(base: TermSet<F>, toAdd: TermSet<F>, trans: (TermF<F>) -> TermF<F>) {
         for (t in toAdd) {
             mergingAdd(base, trans(t))
         }
     }
 
-    private fun mergeTwo(s1: TermSet<T>, s2: TermSet<T>): TermSet<T> {
+    private fun mergeTwo(s1: TermSet<F>, s2: TermSet<F>): TermSet<F> {
         return if (s1.size > s2.size) {
             val re = getTS(s1)
             mergingAddAll(re, s2)
@@ -270,7 +266,7 @@ internal constructor(
         }
     }
 
-    private inline fun mergeTwoWith(s1: TermSet<T>, s2: TermSet<T>, trans: (TermX<T>) -> TermX<T>): TermSet<T> {
+    private inline fun mergeTwoWith(s1: TermSet<F>, s2: TermSet<F>, trans: (TermF<F>) -> TermF<F>): TermSet<F> {
         return if (s1.size > s2.size) {
             val re = getTS(s1)
             mergingAddAllWith(re, s2, trans)
@@ -283,16 +279,16 @@ internal constructor(
     }
 
 
-    override fun add(y: MultinomialX<T>): MultinomialX<T> {
+    override fun add(y: MultinomialF<F>): MultinomialF<F> {
         return fromTerms(mergeTwo(terms, y.terms))
     }
 
-    override fun subtract(y: MultinomialX<T>): MultinomialX<T> {
+    override fun subtract(y: MultinomialF<F>): MultinomialF<F> {
         return fromTerms(mergeTwoWith(terms, y.terms) { -it })
     }
 
 
-    private inline fun applyAll(f: (TermX<T>) -> TermX<T>): MultinomialX<T> {
+    private inline fun applyAll(f: (TermF<F>) -> TermF<F>): MultinomialF<F> {
         val re = getTS()
         for (t in terms) {
             re.add(f(t))
@@ -300,15 +296,15 @@ internal constructor(
         return fromTerms(re)
     }
 
-    override fun negate(): MultinomialX<T> {
+    override fun negate(): MultinomialF<F> {
         return applyAll { -it }
     }
 
-    override fun multiply(k: T): MultinomialX<T> {
+    override fun multiply(k: F): MultinomialF<F> {
         if (mc.isZero(k)) {
             return zeroMul()
         }
-        return applyAll { TermX(it.characters, it.coefficient * k) }
+        return applyAll { TermF(it.characters, it.coefficient * k) }
     }
 
     /**
@@ -318,7 +314,7 @@ internal constructor(
      * @param s2
      * @return
      */
-    private fun mergingMultiply(s1: TermSet<T>, s2: TermSet<T>): TermSet<T> {
+    private fun mergingMultiply(s1: TermSet<F>, s2: TermSet<F>): TermSet<F> {
 //        if()
         val set = getTS()
         for (x in s1) {
@@ -329,7 +325,7 @@ internal constructor(
         return set
     }
 
-    internal fun multiplyToSet(set: TermSet<T>, t: TermX<T>): TermSet<T> {
+    internal fun multiplyToSet(set: TermSet<F>, t: TermF<F>): TermSet<F> {
         val nset = getTS()
         if (t.isZero()) {
             return nset
@@ -342,7 +338,7 @@ internal constructor(
     }
 
 
-    override fun multiply(y: MultinomialX<T>): MultinomialX<T> {
+    override fun multiply(y: MultinomialF<F>): MultinomialF<F> {
         return fromTerms(mergingMultiply(terms, y.terms))
     }
 
@@ -358,7 +354,7 @@ internal constructor(
         return terms.size == 1 && terms.first().run { characters.isEmpty() && coefficient == mc.one }
     }
 
-    override fun divideAndRemainder(y: MultinomialX<T>): Pair<MultinomialX<T>, MultinomialX<T>> {
+    override fun divideAndRemainder(y: MultinomialF<F>): Pair<MultinomialF<F>, MultinomialF<F>> {
         val m = getTS(terms)
         val q = singleTerm(zeroTerm())
         multinomialDivision(m, y.terms, q)
@@ -366,7 +362,7 @@ internal constructor(
     }
 
 
-    private fun getCharacters(ts: TermSet<T>): NavigableSet<String> {
+    private fun getCharacters(ts: TermSet<F>): NavigableSet<String> {
         val set = TreeSet<String>()
         for (t in ts) {
             set.addAll(t.characters.keys)
@@ -379,7 +375,7 @@ internal constructor(
      * @param divisor  remains the identity
      * @param quotient added
      */
-    private fun multinomialDivision(m: TermSet<T>, divisor: TermSet<T>, quotient: TermSet<T>) {
+    private fun multinomialDivision(m: TermSet<F>, divisor: TermSet<F>, quotient: TermSet<F>) {
         //multinomial division
 
         var remainChars: Set<String> = getCharacters(m)
@@ -412,21 +408,21 @@ internal constructor(
     }
 
 
-    override fun gcdUV(y: MultinomialX<T>): Triple<MultinomialX<T>, MultinomialX<T>, MultinomialX<T>> {
+    override fun gcdUV(y: MultinomialF<F>): Triple<MultinomialF<F>, MultinomialF<F>, MultinomialF<F>> {
         return CalculatorUtils.gcdUV(this, y, zeroMul(), oneMul())
     }
 
 
-    override fun isCoprime(y: MultinomialX<T>): Boolean {
+    override fun isCoprime(y: MultinomialF<F>): Boolean {
         return gcd(y).isOne()
     }
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): MultinomialX<N> {
-        return MultinomialX(newCalculator, terms.mapTo(getsDefaultTermsSet()) { TermX(it.characters, mapper.apply(it.coefficient)) })
+    override fun <N : Any> mapTo(mapper: Function<F, N>, newCalculator: MathCalculator<N>): MultinomialF<N> {
+        return MultinomialF(newCalculator, terms.mapTo(getsDefaultTermsSet()) { TermF(it.characters, mapper.apply(it.coefficient)) })
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
-        if (obj !is MultinomialX) {
+    override fun valueEquals(obj: MathObject<F>): Boolean {
+        if (obj !is MultinomialF) {
             return false
         }
         if (terms.size != obj.terms.size) {
@@ -450,24 +446,24 @@ internal constructor(
         return true
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<F, MathCalculator<F>>): String {
         return IMultinomial.stringOf(this, mc, nf)
     }
 
     override val size: Int
         get() = terms.size
 
-    override fun getCoefficient(characters: Map<String, Int>): T? {
+    override fun getCoefficient(characters: Map<String, Int>): F? {
         return terms.find { it.characters == characters }?.coefficient
     }
 
-    override fun iterator(): Iterator<IMTerm<T>> {
+    override fun iterator(): Iterator<IMTerm<F>> {
         return terms.iterator()
     }
 
 
     companion object {
-        internal fun <T : Any> getsDefaultTermsSet(): NavigableSet<TermX<T>> {
+        internal fun <T : Any> getsDefaultTermsSet(): NavigableSet<TermF<T>> {
             return TreeSet(LexicographicalComparator)
         }
 

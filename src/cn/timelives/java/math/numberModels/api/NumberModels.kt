@@ -4,6 +4,7 @@ package cn.timelives.java.math.numberModels.api
 
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.RingCalculator
+import java.lang.UnsupportedOperationException
 
 
 interface MonoidNumberModel<T : MonoidNumberModel<T>>{
@@ -70,6 +71,10 @@ interface VectorModel<K, V : VectorModel<K,V>> : GroupNumberModel<V>{
      * Performs the scalar multiplication.
      */
     fun multiply(k : K) : V
+
+    fun isLinearRelevant(v : V) : Boolean{
+        throw UnsupportedOperationException()
+    }
 }
 
 inline operator fun <K, V : VectorModel<K,V>> VectorModel<K,V>.times(k: K) = multiply(k)

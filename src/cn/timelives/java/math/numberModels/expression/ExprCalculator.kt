@@ -234,7 +234,6 @@ class ExprCalculator
     /**
      * @param c
      * @return
-     * @see Set.addAll
      */
     fun tagAddAll(c: Collection<String>): Boolean {
         val b = enabledTags.addAll(c)
@@ -244,7 +243,6 @@ class ExprCalculator
 
     /**
      *
-     * @see Set.clear
      */
     fun tagClear() {
         enabledTags.clear()
@@ -293,7 +291,7 @@ class ExprCalculator
         if (isPolynomial(x.root) && isPolynomial(y.root)) {
             val p1 = toPolynomial(x.root).p
             val p2 = toPolynomial(y.root).p
-            return Expression(Node.newPolyNode(multinomialCalculator.add(p1, p2), null))
+            return Expression(newPolyNode(multinomialCalculator.add(p1, p2), null))
         }
         val list = ArrayList<Node>(2)
         val nroot = Add(null, null, list)
@@ -312,9 +310,9 @@ class ExprCalculator
 	 */
     override fun negate(x: Expression): Expression {
         if (isPolynomial(x.root)) {
-            return Expression(Node.newPolyNode(multinomialCalculator.negate(toPolynomial(x.root).p), null))
+            return Expression(newPolyNode(multinomialCalculator.negate(toPolynomial(x.root).p), null))
         }
-        var nroot: Node = Node.wrapCloneNodeMultiply(x.root, pMinusOne)
+        var nroot: Node = wrapCloneNodeMultiply(x.root, pMinusOne)
         nroot = simplify(nroot)
         return Expression(nroot)
     }
@@ -323,7 +321,7 @@ class ExprCalculator
 	 * @see cn.timelives.java.math.MathCalculator#abs(java.lang.Object)
 	 */
     override fun abs(para: Expression): Expression {
-        var rt: Node = Node.wrapCloneNodeSF("abs", para.root)
+        var rt: Node = wrapCloneNodeSF("abs", para.root)
         rt = simplify(rt)
         return Expression(rt)
     }
@@ -337,12 +335,12 @@ class ExprCalculator
         if (isPolynomial(x.root) && isPolynomial(y.root)) {
             val p1 = toPolynomial(x.root).p
             val p2 = toPolynomial(y.root).p
-            return Expression(Node.newPolyNode(multinomialCalculator.subtract(p1, p2), null))
+            return Expression(newPolyNode(multinomialCalculator.subtract(p1, p2), null))
         }
         // para1 + (-1)*para2
         val p1 = x.root.cloneNode(null)
-        val p2 = Node.wrapCloneNodeMultiply(y.root, pMinusOne)
-        var root: Node = Node.wrapNodeAM(true, p1, p2)
+        val p2 = wrapCloneNodeMultiply(y.root, pMinusOne)
+        var root: Node = wrapNodeAM(true, p1, p2)
         root = simplify(root)
         return Expression(root)
     }
@@ -364,9 +362,9 @@ class ExprCalculator
         if (isPolynomial(x.root) && isPolynomial(y.root)) {
             val p1 = toPolynomial(x.root).p
             val p2 = toPolynomial(y.root).p
-            return Expression(Node.newPolyNode(multinomialCalculator.multiply(p1, p2), null))
+            return Expression(newPolyNode(multinomialCalculator.multiply(p1, p2), null))
         }
-        var root: Node = Node.wrapCloneNodeAM(false, x.root, y.root)
+        var root: Node = wrapCloneNodeAM(false, x.root, y.root)
         root = simplify(root)
         return Expression(root)
     }
@@ -377,7 +375,7 @@ class ExprCalculator
 	 * java.lang.Object)
 	 */
     override fun divide(x: Expression, y: Expression): Expression {
-        var root: Node = Node.wrapCloneNodeFraction(x.root, y.root)
+        var root: Node = wrapCloneNodeFraction(x.root, y.root)
         root = simplify(root)
         return Expression(root)
     }
@@ -387,7 +385,7 @@ class ExprCalculator
 	 * Object)
 	 */
     override fun reciprocal(x: Expression): Expression {
-        val root = Node.wrapNodeFraction(Node.newPolyNode(pOne, null), x.root.cloneNode(null))
+        val root = wrapNodeFraction(newPolyNode(pOne, null), x.root.cloneNode(null))
         val r = simplify(root)
         return Expression(r)
     }
@@ -401,7 +399,7 @@ class ExprCalculator
         // special case for both polynomial:
         if (isPolynomial(x.root)) {
             val p1 = toPolynomial(x.root).p
-            return Expression(Node.newPolyNode(multinomialCalculator.multiplyLong(p1, n), null))
+            return Expression(newPolyNode(multinomialCalculator.multiplyLong(p1, n), null))
         }
         var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.valueOf(n))
         root = simplify(root)
@@ -415,7 +413,7 @@ class ExprCalculator
     override fun divideLong(x: Expression, n: Long): Expression {
         if (isPolynomial(x.root)) {
             val p1 = toPolynomial(x.root).p
-            return Expression(Node.newPolyNode(multinomialCalculator.divideLong(p1, n), null))
+            return Expression(newPolyNode(multinomialCalculator.divideLong(p1, n), null))
         }
         var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.monomial(Term.valueOfRecip(n)))
         root = simplify(root)
@@ -650,26 +648,26 @@ class ExprCalculator
             return node
         }
         when (node.type!!) {
-            Node.Type.POLYNOMIAL -> {
+            Type.POLYNOMIAL -> {
                 return node
             }
-            Node.Type.ADD -> {
+            Type.ADD -> {
                 node = polySimplifyAdd(node as Add, depth)
             }
-            Node.Type.FRACTION -> {
+            Type.FRACTION -> {
                 node = polySimplifyFraction(node as Fraction, depth)
             }
-            Node.Type.MULTIPLY -> {
+            Type.MULTIPLY -> {
                 node = polySimplifyMultiply(node as Multiply, depth)
             }
 
-            Node.Type.S_FUNCTION -> {
+            Type.S_FUNCTION -> {
                 node = polySimplifySFunction(node as SFunction, depth)
             }
-            Node.Type.D_FUNCTION -> {
+            Type.D_FUNCTION -> {
                 node = polySimplifyDFunction(node as DFunction, depth)
             }
-            Node.Type.M_FUNCTION -> {
+            Type.M_FUNCTION -> {
                 node = polySimplifyMFunction(node as MFunction, depth)
             }
         }
@@ -759,20 +757,20 @@ class ExprCalculator
         if (nume.type == Type.POLYNOMIAL) {
             val pnume = nume as Poly
             if (multinomialCalculator.isZero(pnume.p)) {
-                return Node.newPolyNode(multinomialCalculator.zero, node.parent)
+                return newPolyNode(multinomialCalculator.zero, node.parent)
             }
             if (deno.type == Type.POLYNOMIAL) {
                 val pdeno = deno as Poly
                 try {
                     val quotient = multinomialCalculator.divide(pnume.p, pdeno.p)
-                    return Node.newPolyNode(quotient, node.parent)
+                    return newPolyNode(quotient, node.parent)
                 } catch (ex: UnsupportedCalculationException) {
                     // cannot compute
                 }
 
                 val list = polynomialSimplifier.simplify(Arrays.asList(pnume.p, pdeno.p))
-                nume = Node.newPolyNode(list[0], node)
-                deno = Node.newPolyNode(list[1], node)
+                nume = newPolyNode(list[0], node)
+                deno = newPolyNode(list[1], node)
             }
         } else if (deno.type == Type.POLYNOMIAL) {
             val pdeno = deno as Poly
@@ -783,7 +781,7 @@ class ExprCalculator
                     nume.parent = node.parent
                     return nume
                 }
-                val n = Node.wrapNodeMultiply(nume, _p)
+                val n = wrapNodeMultiply(nume, _p)
                 n.parent = node.parent
                 return n
             } catch (ex: UnsupportedCalculationException) {
@@ -804,7 +802,7 @@ class ExprCalculator
             val p = c as Poly
             val result = functionHolder.computeSingle(node.functionName, p.p)
             if (result != null) {
-                return Node.newPolyNode(result, node.parent)
+                return newPolyNode(result, node.parent)
             }
         }
         node.child = c
@@ -819,7 +817,7 @@ class ExprCalculator
             val p2 = c2 as Poly
             val result = functionHolder.computeDouble(node.functionName, p1.p, p2.p)
             if (result != null) {
-                return Node.newPolyNode(result, node.parent)
+                return newPolyNode(result, node.parent)
             }
         }
         node.c1 = c1
@@ -849,7 +847,7 @@ class ExprCalculator
             }
             val result = functionHolder.computeMultiple(node.functionName, ps)
             if (result != null) {
-                return Node.newPolyNode(result, node.parent)
+                return newPolyNode(result, node.parent)
             }
         }
         return node
@@ -887,7 +885,7 @@ class ExprCalculator
         n.recurApplyConsumer({ x ->
             if (x !== n) {
                 if (x.parent == null) {
-                    throw AssertionError("Null parent: " + x.toString())
+                    throw AssertionError("Null parent: $x")
                 }
             }
         }, Integer.MAX_VALUE)
@@ -898,14 +896,14 @@ class ExprCalculator
         n.recurApplyConsumer({ x ->
             if (x !== n) {
                 if (x.parent == null) {
-                    throw AssertionError("Null parent: " + x.toString())
+                    throw AssertionError("Null parent: $x")
                 }
                 if(!x.parent.contains(x)){
-                    throw AssertionError("Fake child: " + x.toString())
+                    throw AssertionError("Fake child: $x")
                 }
             }
             if(set.contains(x) && x.type != Type.POLYNOMIAL){
-                throw AssertionError("Duplicated node: " + x.toString())
+                throw AssertionError("Duplicated node: $x")
             }
             set.add(x)
         }, Integer.MAX_VALUE)
@@ -924,7 +922,7 @@ class ExprCalculator
         var root = expr.root.cloneNode(null)
         root = root.recurApply({ x ->
             x.resetSimIdentifier()
-            var p = Node.getPolynomialPart(x, this)
+            var p = getPolynomialPart(x, this)
             if (p != null) {
                 p = p.replace(ch, `val`)
                 //				if(n.parent == null) {
@@ -949,7 +947,7 @@ class ExprCalculator
         var root = expr.root.cloneNode(null)
         root = root.recurApply({ x ->
             x.resetSimIdentifier()
-            val p = Node.getPolynomialPart(x, this) ?: return@recurApply x
+            val p = getPolynomialPart(x, this) ?: return@recurApply x
             val afterSub = replaceMultinomial(p, ch, sub)
                     ?: //not changed
                     return@recurApply x
@@ -1017,13 +1015,13 @@ class ExprCalculator
                 }
                 val pow = t.getCharacterPower(ch)
                 val re = t.removeChar(ch)
-                val nodeExp = Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP,
+                val nodeExp = wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP,
                         sub.root.cloneNode(null),
-                        Node.newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null))
-                val nodeMul = Node.wrapNodeMultiply(nodeExp, Multinomial.monomial(re))
+                        newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null))
+                val nodeMul = wrapNodeMultiply(nodeExp, Multinomial.monomial(re))
                 nodes.add(nodeMul)
             }
-            return Node.wrapNodeAM(true, nodes, remains)
+            return wrapNodeAM(true, nodes, remains)
         }
 
         /**
@@ -1031,12 +1029,17 @@ class ExprCalculator
          * @return
          */
         @JvmStatic
-        val newInstance: ExprCalculator
-            get() {
-                val ec = ExprCalculator()
-                SimplificationStrategies.setCalRegularization(ec)
-                return ec
-            }
+        val instance: ExprCalculator = ExprCalculator()
+
+        init {
+            SimplificationStrategies.setCalRegularization(instance)
+        }
+
+        fun getNewInstance() : ExprCalculator{
+            val ec = ExprCalculator()
+            SimplificationStrategies.setCalRegularization(ec)
+            return ec
+        }
 
         internal var debugEnabled = false
 
@@ -1052,10 +1055,4 @@ class ExprCalculator
 //}
 /**
  *
- */
-/**
- * Performs simplify to the Expression
- *
- * @param root
- * @return
  */

@@ -33,17 +33,12 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>) : FlexibleMathObje
      * Gets the numerator of the fraction.
      * @return numerator
      */
-    val nume: T
+    val nume: T = Objects.requireNonNull(nume)
     /**
      * Gets the denominator of the fraction.
      * @return denominator
      */
-    val deno: T
-
-    init {
-        this.nume = Objects.requireNonNull(nume)
-        this.deno = Objects.requireNonNull(deno)
-    }
+    val deno: T = Objects.requireNonNull(deno)
 
     override fun toString(nf: FlexibleNumberFormatter<T, RingCalculator<T>>): String {
         return "(" + nf.format(nume, mc) +

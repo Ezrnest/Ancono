@@ -3,7 +3,6 @@ package cn.timelives.java.math.algebra.linearAlgebra;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.javaImpl.JVectorSpaceCalculator;
 import cn.timelives.java.math.function.MathFunction;
 import cn.timelives.java.math.numberModels.Calculators;
@@ -11,7 +10,6 @@ import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -207,6 +205,8 @@ public abstract class Vector<T> extends Matrix<T> {
         var mc = getMc();
         return mc.isEqual(calLengthSq(), mc.getOne());
     }
+
+
 
     /**
      * Determines whether the two vectors are parallel.
@@ -999,4 +999,15 @@ class VectorCalculator<T> implements JVectorSpaceCalculator<T, Vector<T>> {
     public boolean isEqual(@NotNull Vector<T> x, @NotNull Vector<T> y) {
         return x.valueEquals(y);
     }
+
+    @Override
+    public boolean isLinearRelevant(@NotNull Vector<T> u, @NotNull Vector<T> v) {
+        return u.isParallel(v);
+    }
+
+//    public static void main(String[] args) {
+//        var mc = Calculators.getCalculatorDouble();
+//        var vc = new VectorCalculator<Double>(mc, 2);
+//        Printer.print(vc);
+//    }
 }

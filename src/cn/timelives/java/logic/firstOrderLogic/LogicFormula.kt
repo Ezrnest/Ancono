@@ -2,7 +2,6 @@ package cn.timelives.java.logic.firstOrderLogic
 
 import cn.timelives.java.math.isSorted
 import cn.timelives.java.utilities.CollectionSup
-import java.lang.AssertionError
 
 enum class FormulaType {
     ATOMIC,
@@ -59,13 +58,13 @@ sealed class LogicFormula : Comparable<LogicFormula> {
      * Replaces a single individual term.
      */
     fun replaceTerm(term: IndividualTerm, replacement: IndividualTerm, checkValid: Boolean = false): LogicFormula {
-        return replaceTerms(mapOf(term to replacement), checkValid)
+        return replaceTerms(mapOf(term to replacement))
     }
 
     /**
      * Returns a new logic formula with terms replaced,
      */
-    fun replaceTerms(map: Map<IndividualTerm, IndividualTerm>, checkValid: Boolean = false): LogicFormula {
+    fun replaceTerms(map: Map<IndividualTerm, IndividualTerm>): LogicFormula {
 //        val terms = individualTerms
 //        val free = freeIndividualTerms
         //TODO enable check

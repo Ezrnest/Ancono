@@ -4,6 +4,7 @@ import cn.timelives.java.math.*
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.AlgebraCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.eval
 import cn.timelives.java.math.algebra.linearAlgebra.*
 import cn.timelives.java.math.algebra.linearAlgebra.ILinearMapping
 import cn.timelives.java.math.algebra.linearAlgebra.ILinearTrans
@@ -213,6 +214,26 @@ abstract class LinearMapping<T : Any> internal constructor(
             return LinearMapCal(mc, dimSrc, dimDest);
         }
 
+        fun <T : Any> isLinearRelevant(f: LinearMapping<T>, g: LinearMapping<T>): Boolean {
+            val m1 = f.transMatrix
+            val m2 = g.transMatrix
+            require(m1.sizeEquals(m2))
+            val mc = f.mc
+            val a = m1[0, 0]
+            val b = m2[0, 0]
+            for (i in 0 until m1.rowCount) {
+                for (j in 0 until m1.columnCount) {
+                    val t = mc.eval {
+                        m1[i, j] * b == a * m2[i, j]
+                    }
+                    if (!t) {
+                        return false
+                    }
+                }
+            }
+            return true
+        }
+
     }
 
 
@@ -296,6 +317,10 @@ internal constructor(
 
     override fun multiply(k: T): LinearTrans<T> {
         return DLinearTrans(transMatrix.multiplyNumber(k), dimension, mc)
+    }
+
+    override fun isLinearRelevant(v: LinearTrans<T>): Boolean {
+        return isLinearRelevant(this, v)
     }
 
     /**
@@ -397,6 +422,10 @@ class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimD
         return x.negate()
     }
 
+    override fun isLinearRelevant(u: LinearMapping<T>, v: LinearMapping<T>): Boolean {
+        return LinearMapping.isLinearRelevant(u, v)
+    }
+
     override val identity: LinearMapping<T>
         get() = LinearMapping.zeroMapping(dimSrc, dimDest, mc)
 
@@ -433,6 +462,9 @@ class LinearTransCal<T : Any>(val mc: MathCalculator<T>, val dim: Int) : Algebra
         return x.compose(y)
     }
 
+    override fun isLinearRelevant(u: LinearTrans<T>, v: LinearTrans<T>): Boolean {
+        return u.isLinearRelevant(v)
+    }
 }
 
 

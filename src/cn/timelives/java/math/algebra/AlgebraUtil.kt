@@ -101,7 +101,7 @@ object AlgebraUtil {
      */
     @JvmStatic
     fun <T : Any> tryFindSolutions(p: Polynomial<T>, mc: NTCalculator<T>) {
-
+        TODO()
     }
 
     @JvmStatic
@@ -325,10 +325,10 @@ fun main(args: Array<String>) {
 
     println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx")
 //    println(AlgebraUtil.partialFractionInt(nume,deno))
-    val ec = ExprCalculator.newInstance
+    val ec = ExprCalculator.instance
     ec.setProperty(SimplificationStrategies.PROP_MERGE_FRACTION, "false")
     ec.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "false")
-    val inte = Calculus.integrateRational(nume, deno, ec, "x")
+    val inte = Calculus.intRational(nume, deno, ec, "x")
     println(inte)
     ec.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "true")
     println(ec.differential(inte))

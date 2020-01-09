@@ -11,7 +11,7 @@ import org.junit.Test
 import test.math.TestUtils.assertMathEquals
 
 class FunctionHelperTestA{
-    val mc = ExprCalculator.newInstance
+    val mc = ExprCalculator.instance
 
     @Test
     fun testLimit0(){

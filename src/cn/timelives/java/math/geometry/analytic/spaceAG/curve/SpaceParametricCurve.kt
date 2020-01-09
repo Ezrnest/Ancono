@@ -45,7 +45,7 @@ interface SpaceParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolde
 }
 
 fun main(args: Array<String>) {
-    val mc = ExprCalculator.newInstance
+    val mc = ExprCalculator.instance
     SimplificationStrategies.setCalRegularization(mc)
     proof1(mc)
     proof2(mc)

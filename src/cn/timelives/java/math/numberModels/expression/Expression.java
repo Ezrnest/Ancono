@@ -117,8 +117,13 @@ public final class Expression implements Computable,Serializable {
 		return new Expression(Node.newPolyNode(p, null));
 	}
 
+
 	public static Expression fromTerm(Term t){
 	    return fromMultinomial(Multinomial.monomial(t));
+    }
+
+    public static Expression ofCharacter(String character){
+        return fromTerm(Term.singleChar(character));
     }
 
     /**

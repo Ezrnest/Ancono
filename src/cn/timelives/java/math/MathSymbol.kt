@@ -178,5 +178,8 @@ object MathSymbol {
     /** Greek capitalized character OMEGA. */
     const val GREEK_OMEGA_CAP = "Ω"
 
+    const val LOGIC_AND = "∧"
+
+    const val LOGIC_OR = "∨"
 
 }

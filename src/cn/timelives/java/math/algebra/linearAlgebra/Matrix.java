@@ -3,7 +3,6 @@ package cn.timelives.java.math.algebra.linearAlgebra;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathObject;
 import cn.timelives.java.math.MathObjectExtend;
-import cn.timelives.java.math.MathSymbol;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.ModuleCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
@@ -103,6 +102,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         if (!isSquare()) {
             throw new ArithmeticException("The matrix is not square!");
         }
+    }
+
+    public <S> boolean sizeEquals(Matrix<S> m){
+        return column == m.column && row == m.row;
     }
 
 
@@ -1396,8 +1399,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
     /**
      * Returns the frobenius form of this matrix.
-     *
-     * @return
      */
     public Matrix<T> frobeniusForm() {
         return MatrixSup.frobeniusForm(this);
@@ -1853,10 +1854,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * Fill the data with {@code t}
      */
     private static <T> void fillData(T[][] data, T t) {
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < data[i].length; j++) {
-                data[i][j] = t;
-            }
+        for (T[] datum : data) {
+            Arrays.fill(datum, t);
         }
     }
 

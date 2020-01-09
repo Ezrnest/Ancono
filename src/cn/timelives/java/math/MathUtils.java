@@ -1416,7 +1416,7 @@ public class MathUtils {
         }
         if (n == 0) {
             if (exp.isZero()) {
-                ExceptionUtil.INSTANCE.zeroExponent();
+                ExceptionUtil.zeroExponent();
                 return null;
             }
             return new long[]{0, 0};
@@ -1459,6 +1459,14 @@ public class MathUtils {
         var ex = Expression.valueOf(expr);
         var mc = ExprCalculator.Companion.getNewInstance();
         return mc.simplify(ex).toString();
+    }
+
+    public static int powMinusOne(int pow) {
+        if (pow % 2 == 0) {
+            return 1;
+        }else{
+            return -1;
+        }
     }
 
 }

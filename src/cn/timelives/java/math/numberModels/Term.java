@@ -105,16 +105,16 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     /**
      * The Term constant Pi
      */
-    public static final Term PI = singleCharacter(PI_STR);
+    public static final Term PI = singleChar(PI_STR);
 
     /**
      * The Term constant e
      */
-    public static final Term E = singleCharacter(E_STR);
+    public static final Term E = singleChar(E_STR);
     /**
      * The Term constant i
      */
-    public static final Term I = singleCharacter(I_STR);
+    public static final Term I = singleChar(I_STR);
 
 
     Term(int signum, BigInteger numerator, BigInteger denominator, BigInteger radical, NavigableMap<String, Fraction> character) {
@@ -1458,7 +1458,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
         return rad;
     }
 
-    public static Term singleCharacter(String character){
+    public static Term singleChar(String character){
         if(character.isEmpty()){
             throw new IllegalArgumentException();
         }
@@ -1701,11 +1701,11 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
                 ,BigInteger.valueOf(f.getDenominator()),BigInteger.ONE);
     }
 
-    public static Term singleChar(String ch){
-        NavigableMap<String,Fraction> map = new TreeMap<>();
-        map.put(ch, Fraction.ONE);
-        return ONE.sameNumber0(map);
-    }
+//    public static Term singleChar(String ch){
+//        NavigableMap<String,Fraction> map = new TreeMap<>();
+//        map.put(ch, Fraction.ONE);
+//        return ONE.sameNumber0(map);
+//    }
 
     public static Term valueOfRecip(long l){
         if(l == 0){

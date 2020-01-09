@@ -660,7 +660,7 @@ fun main(args: Array<String>) {
     val sin = exp(sin("refX".ref), 2.m) + exp(cos("refX".ref), 2.m)
     val expr = Expression.valueOf("exp(m,n)")
     val expr2 = Expression.valueOf("exp(sin(x),2)+exp(cos(x),2)")
-    val ec = ExprCalculator.newInstance
+    val ec = ExprCalculator.instance
     ec.tagRemove(SimplificationStrategies.TRIGONOMETRIC_FUNCTION)
     println(exp.matches(ec.simplify(expr).root, emptyMap(), ec)?.refMapping?.mapValues { n -> Expression(n.value) })
     println(sin.matches(ec.simplify(expr2).root, emptyMap(), ec)?.refMapping?.mapValues { n -> Expression(n.value) })

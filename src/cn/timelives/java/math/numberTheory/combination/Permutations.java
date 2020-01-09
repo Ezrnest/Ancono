@@ -1,6 +1,3 @@
-/**
- * 2018-03-02
- */
 package cn.timelives.java.math.numberTheory.combination;
 
 import cn.timelives.java.math.numberTheory.combination.Permutation.Cycle;

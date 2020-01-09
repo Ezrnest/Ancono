@@ -30,7 +30,7 @@ fun p2(){
 }
 
 fun p3(){
-    val mc = ExprCalculator.newInstance
+    val mc = ExprCalculator.instance
     val str = """
         a -1 c
         5 b 3

@@ -47,7 +47,7 @@ object Limit {
      * Returns the limit of a term by the process.
      */
     @JvmStatic
-    fun limitOf(x: Term, process: LimitProcessE, mc: ExprCalculator = ExprCalculator.newInstance): LimitResultE {
+    fun limitOf(x: Term, process: LimitProcessE, mc: ExprCalculator = ExprCalculator.instance): LimitResultE {
         val variable = process.variableName
         if (!x.containsChar(variable)) {
             return LimitResult.constantOf(Expression.fromTerm(x))
@@ -62,7 +62,7 @@ object Limit {
      * Computes the limit of a multinomial.
      */
     @JvmStatic
-    fun limitOf(expr: Multinomial, process: LimitProcessE, mc: ExprCalculator = ExprCalculator.newInstance)
+    fun limitOf(expr: Multinomial, process: LimitProcessE, mc: ExprCalculator = ExprCalculator.instance)
             : LimitResultE {
         if (process.direction == LimitDirection.CONST) {
             return LimitResult.constantOf(
@@ -97,7 +97,7 @@ object Limit {
      */
     @JvmStatic
     fun fractionPoly(nume: Multinomial, deno: Multinomial, process: LimitProcessE,
-                     mc: ExprCalculator = ExprCalculator.newInstance): LimitResultE {
+                     mc: ExprCalculator = ExprCalculator.instance): LimitResultE {
         if (deno.isZero) {
             ExceptionUtil.divideByZero()
         }
@@ -126,7 +126,7 @@ object Limit {
     /**
      * Returns the limit of an expression.
      */
-    fun limitOf(expr : Expression, process: LimitProcessE, mc : ExprCalculator = ExprCalculator.newInstance) : LimitResultE?{
+    fun limitOf(expr : Expression, process: LimitProcessE, mc : ExprCalculator = ExprCalculator.instance) : LimitResultE?{
         return FunctionHelper.limitNode(expr.root,process,mc)
     }
 

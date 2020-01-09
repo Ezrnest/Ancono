@@ -1,5 +1,7 @@
 package cn.timelives.java.math.algebra.abstractAlgebra.calculator.javaImpl;
 
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.ModuleCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,19 +20,20 @@ public interface JVectorSpaceCalculator<K,V> extends VectorSpaceCalculator<K,V> 
     @NotNull
     @Override
     default K rSubtract(@NotNull K r1, @NotNull K r2) {
-        return (K) DefaultImpls.rSubtract(this,r1,r2);
+
+        return (K) ModuleCalculator.DefaultImpls.rSubtract(this,r1,r2);
     }
 
     @NotNull
     @Override
     default K rNegate(@NotNull K k) {
-        return (K) DefaultImpls.rNegate(this,k);
+        return (K) ModuleCalculator.DefaultImpls.rNegate(this,k);
     }
 
     @NotNull
     @Override
     default K rMultiply(@NotNull K r1, @NotNull K r2) {
-        return (K) DefaultImpls.rMultiply(this,r1,r2);
+        return (K) ModuleCalculator.DefaultImpls.rMultiply(this,r1,r2);
     }
 
     @NotNull
@@ -44,25 +47,25 @@ public interface JVectorSpaceCalculator<K,V> extends VectorSpaceCalculator<K,V> 
     @NotNull
     @Override
     default V subtract(@NotNull V x, @NotNull V y) {
-        return (V) DefaultImpls.subtract(this,x,y);
+        return (V) GroupCalculator.DefaultImpls.subtract(this,x,y);
     }
 
     @NotNull
     @Override
     default V minus(@NotNull V $receiver, @NotNull V y) {
-        return (V) DefaultImpls.minus(this,$receiver,y);
+        return (V) GroupCalculator.DefaultImpls.minus(this,$receiver,y);
     }
 
     @NotNull
     @Override
     default V unaryMinus(@NotNull V $receiver) {
-        return (V) DefaultImpls.unaryMinus(this,$receiver);
+        return (V) GroupCalculator.DefaultImpls.unaryMinus(this,$receiver);
     }
 
     @NotNull
     @Override
     default V gpow(@NotNull V x, long n) {
-        return (V) DefaultImpls.gpow(this,x,n);
+        return (V) GroupCalculator.DefaultImpls.gpow(this,x,n);
     }
 
     @Override
@@ -92,5 +95,10 @@ public interface JVectorSpaceCalculator<K,V> extends VectorSpaceCalculator<K,V> 
     @Override
     default V times(@NotNull V $receiver, long n) {
         return (V) DefaultImpls.times(this,$receiver,n);
+    }
+
+    @Override
+    default boolean isLinearRelevant(@NotNull V u, @NotNull V v) {
+        throw new UnsupportedOperationException();
     }
 }

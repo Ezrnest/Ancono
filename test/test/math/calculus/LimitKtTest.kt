@@ -14,7 +14,7 @@ import org.junit.Test
 import kotlin.test.assertTrue
 
 class LimitKtTest{
-    val mc = ExprCalculator.newInstance
+    val mc = ExprCalculator.instance
 
     @Test
     fun testPowLimit(){

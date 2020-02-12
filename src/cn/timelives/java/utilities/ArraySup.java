@@ -603,7 +603,7 @@ public class ArraySup {
      * @param testEqual a function to determines whether the two objects are the identity.
 	 * @return 
 	 */
-	public static <T,S> boolean arrayContains(T[] arr,S element,BiFunction<? super T, ? super S, Boolean> testEqual){
+	public static <T,S> boolean arrayContains(T[] arr,S element,BiFunction<T, S, Boolean> testEqual){
 		for(int i=0;i<arr.length;i++){
 			if(testEqual.apply(arr[i], element)){
 				return true;
@@ -617,7 +617,7 @@ public class ArraySup {
 	 * @param mapper
 	 * @return
 	 */
-	public static <N,T> N[] mapTo(T[] arr,Function<? super T,? extends N> mapper){
+	public static <N,T> N[] mapTo(T[] arr,Function<T,N> mapper){
 		@SuppressWarnings("unchecked")
 		N[] re = (N[]) new Object[arr.length];
 		for(int i=0;i<arr.length;i++){
@@ -631,7 +631,7 @@ public class ArraySup {
 	 * @param mapper
 	 * @return
 	 */
-	public static <N,T> N[] mapTo(T[] arr,Function<? super T,? extends N> mapper,Class<N> clazz){
+	public static <N,T> N[] mapTo(T[] arr,Function<T,N> mapper,Class<N> clazz){
 		@SuppressWarnings("unchecked")
 		N[] re = (N[]) Array.newInstance(clazz, arr.length);
 		for(int i=0;i<arr.length;i++){
@@ -646,7 +646,7 @@ public class ArraySup {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <N,T> N[][] mapTo2(T[][] arr,Function<? super T,? extends N> mapper,Class<N> clazz){
+	public static <N,T> N[][] mapTo2(T[][] arr,Function<T,N> mapper,Class<N> clazz){
 		Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
 		N[][] re = (N[][]) Array.newInstance(narrayType, arr.length);
 		for(int i=0;i<arr.length;i++){
@@ -659,7 +659,7 @@ public class ArraySup {
 	}
 
     @SuppressWarnings("unchecked")
-    public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<? extends T> mapper, Class<T> clazz) {
+    public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<T> mapper, Class<T> clazz) {
         Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
         T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);
         for (int i = 0; i < arr.length; i++) {
@@ -672,7 +672,7 @@ public class ArraySup {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T[][] mapTo2(int[][] arr, IntFunction<? extends T> mapper, Class<T> clazz) {
+    public static <T> T[][] mapTo2(int[][] arr, IntFunction<T> mapper, Class<T> clazz) {
         Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
         T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);
         for (int i = 0; i < arr.length; i++) {
@@ -692,7 +692,9 @@ public class ArraySup {
 	 */
 	public static <T> Set<T> createSet(T[] arr){
 		Set<T> set = new HashSet<>(arr.length);
-        set.addAll(Arrays.asList(arr));
+		for(int i=0;i<arr.length;i++){
+			set.add(arr[i]);
+		}
 		return set;
 	}
 	/**
@@ -703,7 +705,9 @@ public class ArraySup {
 	 */
 	public static <T> Set<T> createSet(T[] arr,Supplier<Set<T>> sup){
 		Set<T> set = sup.get();
-        set.addAll(Arrays.asList(arr));
+		for(int i=0;i<arr.length;i++){
+			set.add(arr[i]);
+		}
 		return set;
 	}
 	/**

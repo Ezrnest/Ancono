@@ -7,20 +7,14 @@ import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.Situa
 import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution.SolutionBuilder;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.expression.ExprCalculator;
-import cn.timelives.java.math.numberModels.expression.Expression;
-import cn.timelives.java.utilities.ArraySup;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cn.timelives.java.utilities.Printer.print;
-import static cn.timelives.java.utilities.Printer.printMatrix;
 import static cn.timelives.java.utilities.Printer.printnb;
 
 /**
@@ -159,42 +153,9 @@ public class MatrixSup {
 		}
 		return Matrix.valueOf(ma, Fraction.Companion.getCalculator());
 	}
-
-    /**
-     * Parses a matrix from the given expression.
-     * @param expr a string containing all the elements of the matrix
-     * @param parser a parser
-     */
-	@SuppressWarnings("unchecked")
-    public static <T> Matrix<T> parseMatrix(String expr, MathCalculator<T> mc, Function<String,T> parser){
-	    String[] lines = expr.split(System.lineSeparator());
-        Object[][] matrix = new Object[lines.length][];
-        var regex = Pattern.compile(" +");
-        int size = -1;
-        for (int i = 0, linesLength = lines.length; i < linesLength; i++) {
-            String line = lines[i];
-            String[] eles = regex.split(line);
-            if (size == -1) {
-                size = eles.length;
-            } else {
-                if (size != eles.length) {
-                    throw new IllegalArgumentException("Row size doesn't match!");
-                }
-            }
-            Object[] row = new Object[eles.length];
-            for (int j = 0; j < eles.length; j++) {
-                String ele = eles[j];
-                row[j] = parser.apply(ele);
-            }
-            matrix[i] = row;
-        }
-        return Matrix.valueOf((T[][])matrix,mc);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> Matrix<T> parseMatrix(String[][] mat, MathCalculator<T> mc, Function<String,T> parser){
-	    return Matrix.valueOf((T[][])ArraySup.mapTo2(mat,parser, Object.class ),mc);
-    }
+	
+	
+	
 	
 	
 	/**
@@ -469,14 +430,4 @@ public class MatrixSup {
 		List<T> eigenvalues = equationSolver.apply(equation);
 		return Matrix.diag((T[])eigenvalues.toArray(), mat.getMathCalculator());
 	}
-
-    public static void main(String[] args) {
-        String mat =    "a  b  c  d" + System.lineSeparator()+
-                        "b -a  d -c" + System.lineSeparator()+
-                        "c -d -a  b" + System.lineSeparator()+
-                        "d  c -b -a";
-        Matrix<Expression> matrix = MatrixSup.parseMatrix(mat,ExprCalculator.Companion.getNewInstance(), Expression::valueOf);
-        printMatrix(matrix);
-        print(matrix.calDet());
-    }
 }

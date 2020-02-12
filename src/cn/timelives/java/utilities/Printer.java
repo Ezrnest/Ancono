@@ -219,7 +219,7 @@ public class Printer {
      *
      * @param mat
      */
-    public static void printMatrix(Matrix<Fraction> mat) {
+    public static void printMatrix(Matrix<?> mat) {
         if (mat != null)
             printMatrix(mat.getValues());
         else

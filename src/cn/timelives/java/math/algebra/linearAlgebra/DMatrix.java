@@ -258,7 +258,7 @@ class DMatrix<T> extends Matrix<T> {
 		}
 		// upper-right
 		for (int i = 0; i < r; i++) {
-			if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i], c + 1 - 1, column - c + 1);
+			if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i], c + 1 - 1, column - c - 1);
 		}
 		// downer-left
 		for (int i = r + 1; i < row; i++) {
@@ -266,7 +266,11 @@ class DMatrix<T> extends Matrix<T> {
 		}
 		// downer-right
 		for (int i = r + 1; i < row; i++) {
-			if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i - 1], c + 1 - 1, column - c + 1);
+		    try {
+                if (column - c + 1 >= 0) System.arraycopy(data[i], c + 1, ma[i - 1], c + 1 - 1, column - c - 1);
+            }catch (ArrayIndexOutOfBoundsException e){
+		        throw e;
+            }
 		}
 		// copy ends
         return new DMatrix<>(ma, row - 1, column - 1, getMc());

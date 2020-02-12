@@ -69,8 +69,10 @@ public final class TestUtils {
 		};
 	}
 
-
-	public static <T> void assertMathEquals(T x,T y, MathCalculator<T> mc){
-		assertTrue(mc.isEqual(x,y));
+	public static <T> void assertMathEquals(T expected,T actual, MathCalculator<T> mc){
+	    if(!mc.isEqual(expected,actual)){
+	        throw new AssertionError("Expected <"+expected+">, actual <"+actual+">");
+        }
 	}
+
 }

@@ -1,6 +1,6 @@
 package cn.timelives.java.math.function
 
-import cn.timelives.java.math.algebra.calculus.Derivable
+import cn.timelives.java.math.calculus.Derivable
 import cn.timelives.java.math.set.MathSet
 import cn.timelives.java.math.set.MathSets
 

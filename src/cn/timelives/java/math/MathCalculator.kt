@@ -73,7 +73,8 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      *
      * @return the class
      */
-    val numberClass: Class<*>
+    override val numberClass: Class<*>
+        get() = zero.javaClass
 
     /**
      * Compare the two numbers and determines whether these two numbers are the
@@ -476,6 +477,9 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
         return arcsin(divide(x, squareRoot(add(one, multiply(x, x)))))
     }
 
+    operator fun T.compareTo(y : T) = compare(this,y)
+
+
 
     companion object {
 
@@ -507,8 +511,8 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
                 override fun isEqual(x: S, y: S): Boolean = mc.isEqual(f.deply(x), f.deply(y))
 
-                override fun compare(para1: S, para2: S): Int {
-                    return mc.compare(f.deply(para1), f.deply(para2))
+                override fun compare(x: S, y: S): Int {
+                    return mc.compare(f.deply(x), f.deply(y))
                 }
 
                 override fun add(x: S, y: S): S {

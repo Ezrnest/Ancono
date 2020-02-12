@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static cn.timelives.java.utilities.ArraySup.fillArr;
 import static cn.timelives.java.utilities.ArraySup.getSum;
@@ -215,11 +216,9 @@ public class Printer {
     }
 
     /**
-     * Print the given matrix.The matrix will be printed properly and make sure number in each column is aligned.
-     *
-     * @param mat
+     * Print the given matrix. The matrix will be printed properly and make sure number in each column is aligned.
      */
-    public static void printMatrix(Matrix<Fraction> mat) {
+    public static void printMatrix(Matrix<?> mat) {
         if (mat != null)
             printMatrix(mat.getValues());
         else
@@ -327,7 +326,7 @@ public class Printer {
      * @param mat
      */
     public static void printMatrix(Object[][] mat) {
-        print(StringSup.formatMatrix(ArraySup.mapTo2(mat, Object::toString, String.class)));
+        print(StringSup.formatMatrix(ArraySup.mapTo2(mat, Objects::toString, String.class)));
 
     }
 
@@ -346,7 +345,7 @@ public class Printer {
         sb.append('[');
         getMiddle(sb, obj, shownDigit);
         sb.append(']');
-        print(sb.toString());
+        ps.println(sb.toString());
     }
 
 
@@ -509,9 +508,6 @@ public class Printer {
 
     /**
      * Gets an instance of the printer,which has all the static methods.
-     *
-     * @param ps a printer instance.
-     * @return
      */
     public static PrinterIns getInstance(Writer w) {
         return new PrinterIns(w);

@@ -55,7 +55,8 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
 	
-	@Override
+	@NotNull
+    @Override
     public <N> TransformedCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		// this should be assured that the returned type is a plane curve of type N.
 		AbstractPlaneCurve<N> npc = original.mapTo(mapper, newCalculator);

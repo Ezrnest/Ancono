@@ -4,6 +4,7 @@
 package cn.timelives.java.math.algebra.abstractAlgebra.calculator
 
 
+import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators
 import cn.timelives.java.math.exceptions.ExceptionUtil
 
 /**
@@ -26,7 +27,7 @@ interface DivisionRingCalculator<T : Any> : UnitRingCalculator<T> {
      * @param y another number
      * @return `x / y`
      */
-    fun divide(x: T, y: T): T
+    fun divide(x: T, y: T): T = multiply(x,reciprocal(y))
 
     /**
      * Returns the result of `x / n`. The default implement is
@@ -57,4 +58,21 @@ interface DivisionRingCalculator<T : Any> : UnitRingCalculator<T> {
         }
     }
 
+    /**
+     * Operator function divide.
+     * @see divide
+     */
+    operator fun T.div(y : T) = divide(this,y)
+
+    /**
+     * Operator function divideLong.
+     * @see divideLong
+     */
+    operator fun T.div(y : Long) = divideLong(this,y)
+
+
 }
+
+
+fun <T:Any> DivisionRingCalculator<T>.asGroupCalculator()
+    = GroupCalculators.asGroupCalculator(this)

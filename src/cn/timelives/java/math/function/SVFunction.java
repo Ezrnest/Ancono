@@ -5,6 +5,7 @@ package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.property.Mappable;
 import cn.timelives.java.math.set.MathSet;
+import cn.timelives.java.math.set.MathSets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -54,7 +55,7 @@ public interface SVFunction<T> extends MathFunction<T, T>, Mappable<T> {
         if (f instanceof SVFunction) {
             return (SVFunction<T>) f;
         }
-        Objects.requireNonNull(domain);
+        MathSet<T> dom = domain == null ? MathSets.universe() : domain;
         Objects.requireNonNull(f);
         return new SVFunction<>() {
             @NotNull
@@ -66,7 +67,7 @@ public interface SVFunction<T> extends MathFunction<T, T>, Mappable<T> {
             @NotNull
             @Override
             public MathSet<T> domain() {
-                return domain;
+                return dom;
             }
         };
     }

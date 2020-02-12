@@ -70,7 +70,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		long sum = 0;
 		int[] arr = getArray();
 		for(int i=0;i<arr.length;i++) {
-			sum += arr[i] * CFunctions.factorial(arr.length-i-1);
+			sum += arr[i] * CombUtils.factorial(arr.length-i-1);
 			for(int j=i+1;j<arr.length;j++) {
 				if(arr[j]>arr[i]) {
 					arr[j]--;
@@ -96,17 +96,7 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	 * @return
 	 */
 	default int inverseCount() {
-		int[] arr = getArray();
-		int count = 0;
-		for(int i=0;i<arr.length;i++) {
-			int t = arr[i];
-			for(int j=i+1;j<arr.length;j++) {
-				if(arr[j]<t) {
-					count ++;
-				}
-			}
-		}
-		return count;
+		return CombUtils.inverseCount(getArray());
 	}
 	/**
 	 * Determines whether this permutation is an even permutation.
@@ -172,8 +162,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default <T> T[] apply(T[] array) {
 		if(array.length<size()) {
@@ -187,9 +175,8 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	}
 	/**
 	 * Applies this permutation to an integer array.
-	 * @param array
-	 * @return
 	 */
+	@NotNull
 	default int[] apply(int[] array) {
 		if(array.length<size()) {
 			throw new IllegalArgumentException("array's length!="+size());
@@ -203,8 +190,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default double[] apply(double[] array) {
 		if(array.length<size()) {
@@ -218,8 +203,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	}
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default boolean[] apply(boolean[] array) {
 		if(array.length<size()) {
@@ -234,8 +217,6 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 	
 	/**
 	 * Applies this permutation to an array.
-	 * @param array
-	 * @return
 	 */
 	default long[] apply(long[] array) {
 		if(array.length<size()) {
@@ -247,6 +228,15 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		}
 		return array;
 	}
+
+	default boolean isIdentity(){
+	    for(int i=0;i<size();i++){
+	        if(apply(i) != i){
+	            return false;
+            }
+        }
+        return true;
+    }
 	
 	/**
 	 * An transposition permutation is a permutation that only swap two elements.
@@ -363,7 +353,8 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int[])
 		 */
-		@Override
+		@NotNull
+        @Override
 		default int[] apply(int[] array) {
 			ArraySup.swap(array, getFirst(), getSecond());
 			return array;
@@ -465,7 +456,8 @@ public interface Permutation extends Composable<Permutation>,Invertible<Permutat
 		/*
 		 * @see cn.timelives.java.math.numberTheory.combination.Permutation#apply(int[])
 		 */
-		@Override
+		@NotNull
+        @Override
 		default int[] apply(int[] array) {
 			if(length()==1) {
 				return array;

@@ -6,6 +6,7 @@ package cn.timelives.java.math.function;
 import cn.timelives.java.math.property.Invertible;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -28,7 +29,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
      * @param y the parameter
 	 * @return <pre>f<sup>-1</sup>(y)</pre>
 	 */
-	P deply(R y);
+	P deply(@NotNull R y);
 
 
     /**
@@ -51,7 +52,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
 
             @SuppressWarnings("SuspiciousNameCombination")//inverse
             @Override
-            public R deply(P y) {
+            public R deply(@NotNull P y) {
                 return f.apply(y);
             }
 
@@ -68,7 +69,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
     @SuppressWarnings("rawtypes")
     Bijection IDENTITY = new Bijection() {
         @Override
-        public Object deply(Object y) {
+        public Object deply(@NotNull Object y) {
             return y;
         }
 
@@ -98,7 +99,7 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
         Bijection<P, R> after = this;
         return new Bijection<>() {
             @Override
-            public V deply(R y) {
+            public V deply(@NotNull R y) {
                 return before.deply(after.deply(y));
             }
 
@@ -133,5 +134,37 @@ public interface Bijection<P,R> extends MathFunction<P, R>,Invertible<Bijection<
     @SuppressWarnings("unchecked")
     static <T> Bijection<T, T> identity() {
         return IDENTITY;
+    }
+
+    static <P,R> Bijection<P,R> of(MathFunction<P,R> f,MathFunction<R,P> inverse){
+        return new Bijection<>() {
+            @NotNull
+            @Override
+            public R apply(P x) {
+                return f.apply(x);
+            }
+
+            @Override
+            public P deply(@NotNull R y) {
+                //noinspection SuspiciousNameCombination
+                return inverse.apply(y);
+            }
+        };
+    }
+
+    /**
+     * Returns a bijection between Integer and type T. It is required that the given elements are
+     * mutually not equal.
+     */
+    @SafeVarargs
+    static <T> Bijection<Integer,T> indexMapping(T...elements){
+        HashMap<T, Integer> map = new HashMap<>(elements.length);
+        for (int i = 0; i < elements.length; i++) {
+            map.put(Objects.requireNonNull(elements[i]), i);
+        }
+        if(map.size() != elements.length){
+            throw new IllegalArgumentException();
+        }
+        return Bijection.of(x -> elements[x], y -> Objects.requireNonNull(map.get(y)));
     }
 }

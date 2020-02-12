@@ -575,23 +575,22 @@ public class ArraySup {
 			return false;
 		}
 		boolean[] mapped = new boolean[length];
-		for(int i=0;i<length;i++){
-			T t = a1[i];
-			boolean suc = false;
-			for(int j=0;j<length;j++){
-				if(mapped[j])
-					continue;
-				T t2 = a2[j];
-				if(t==null ? t2==null : t.equals(t2)){
-					mapped[j] = true;
-					suc = true;
-					break;
-				}
-			}
-			if(!suc){
-				return false;
-			}
-		}
+        for (T t : a1) {
+            boolean suc = false;
+            for (int j = 0; j < length; j++) {
+                if (mapped[j])
+                    continue;
+                T t2 = a2[j];
+                if (t == null ? t2 == null : t.equals(t2)) {
+                    mapped[j] = true;
+                    suc = true;
+                    break;
+                }
+            }
+            if (!suc) {
+                return false;
+            }
+        }
 		return true;
 	}
 	
@@ -604,20 +603,48 @@ public class ArraySup {
 	 * @return 
 	 */
 	public static <T,S> boolean arrayContains(T[] arr,S element,BiFunction<T, S, Boolean> testEqual){
-		for(int i=0;i<arr.length;i++){
-			if(testEqual.apply(arr[i], element)){
-				return true;
-			}
-		}
+        for (T anArr : arr) {
+            if (testEqual.apply(anArr, element)) {
+                return true;
+            }
+        }
 		return false;
 	}
+
+	public static boolean arrayContains(int[] arr, int element){
+	    for(int t : arr){
+	        if(t == element){
+	            return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param element
+     * @param arr
+     * @param from
+     * @param to exclusive
+     * @return
+     */
+    public static boolean arrayContains( int element,int[] arr, int from, int to){
+        for (int i = from; i < to; i++) {
+            int t = arr[i];
+            if (t == element) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * Return an array of the mapped elements, the actual returned type is an array of object.
 	 * @param arr
 	 * @param mapper
 	 * @return
 	 */
-	public static <N,T> N[] mapTo(T[] arr,Function<T,N> mapper){
+	public static <N,T> N[] mapTo(T[] arr,Function<? super T,? extends N> mapper){
 		@SuppressWarnings("unchecked")
 		N[] re = (N[]) new Object[arr.length];
 		for(int i=0;i<arr.length;i++){
@@ -631,7 +658,7 @@ public class ArraySup {
 	 * @param mapper
 	 * @return
 	 */
-	public static <N,T> N[] mapTo(T[] arr,Function<T,N> mapper,Class<N> clazz){
+	public static <N,T> N[] mapTo(T[] arr,Function<? super T,? extends N> mapper,Class<N> clazz){
 		@SuppressWarnings("unchecked")
 		N[] re = (N[]) Array.newInstance(clazz, arr.length);
 		for(int i=0;i<arr.length;i++){
@@ -639,6 +666,16 @@ public class ArraySup {
 		}
 		return re;
 	}
+
+	public static <T> T[] mapTo(long[] arr, LongFunction<T> f, Class<T> clazz){
+        @SuppressWarnings("unchecked")
+	    T[] re = (T[]) Array.newInstance(clazz,arr.length);
+        for(int i=0;i<arr.length;i++){
+            re[i] = f.apply(arr[i]);
+        }
+        return re;
+    }
+
 	/**
 	 * Return an array of the mapped elements, creates a new array.
 	 * @param arr
@@ -646,7 +683,7 @@ public class ArraySup {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <N,T> N[][] mapTo2(T[][] arr,Function<T,N> mapper,Class<N> clazz){
+	public static <N,T> N[][] mapTo2(T[][] arr,Function<? super T,? extends N> mapper,Class<N> clazz){
 		Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
 		N[][] re = (N[][]) Array.newInstance(narrayType, arr.length);
 		for(int i=0;i<arr.length;i++){
@@ -658,8 +695,19 @@ public class ArraySup {
 		return re;
 	}
 
-    @SuppressWarnings("unchecked")
-    public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<T> mapper, Class<T> clazz) {
+    public static <T> int[][] mapTo2(T[][] arr,ToIntFunction<? super T> mapper){
+        int[][] re = new int[arr.length][];
+        for(int i=0;i<arr.length;i++){
+            re[i] = new int[arr[i].length];
+            for(int j=0;j<re[i].length;j++) {
+                re[i][j] = mapper.applyAsInt(arr[i][j]);
+            }
+        }
+        return re;
+    }
+
+    @SuppressWarnings({"unchecked", "Duplicates"})
+    public static <T> T[][] mapTo2(double[][] arr, DoubleFunction<? extends T> mapper, Class<T> clazz) {
         Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
         T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);
         for (int i = 0; i < arr.length; i++) {
@@ -671,7 +719,7 @@ public class ArraySup {
         return re;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "Duplicates"})
     public static <T> T[][] mapTo2(int[][] arr, IntFunction<T> mapper, Class<T> clazz) {
         Class<?> narrayType = Array.newInstance(clazz, 0).getClass();
         T[][] re = (T[][]) Array.newInstance(narrayType, arr.length);
@@ -735,15 +783,13 @@ public class ArraySup {
 	
 	/**
 	 * Test that this array contains no {@code null} element.
-	 * @param arr
-	 * @return
 	 */
 	public static <T> T[] notEmpty(T[] arr){
-		for(int i=0;i<arr.length;i++){
-			if(arr[i] == null){
-				throw new NullPointerException();
-			}
-		}
+        for (T anArr : arr) {
+            if (anArr == null) {
+                throw new NullPointerException();
+            }
+        }
 		return arr;
 	}
 	/**
@@ -925,7 +971,40 @@ public class ArraySup {
 		}
 		return -1;
 	}
-	
+    /**
+     * Returns the index of the max element that is smaller or equal to target.
+     * If no such element exists, -1 will be returned.
+     */
+    public static int binarySearchFloor(int[] arr, int lo, int hi,  int target) {
+        while (lo < hi) {
+            int mid = (lo + hi) / 2;
+            if (target < arr[mid]) {
+                hi = mid;
+            } else {
+                lo = mid + 1;
+            }
+        }
+        return lo - 1;
+    }
+
+    /**
+     * Returns the index of the min element that is bigger or equal to target.
+     * If no such element exists, hi+1 will be returned.
+     */
+    public static int binarySearchCeiling(int[] arr, int lo, int hi, int target) {
+        while (lo < hi) {
+            int mid = (lo + hi) / 2;
+            if (arr[mid] < target) {
+                lo = mid+1;
+            } else {
+                hi = mid;
+            }
+        }
+        return lo; // lo == hi
+    }
+
+
+
 //	public static void main(String[] args) {
 //		Integer[] arr = new Integer[10]; 
 //		Arrays.setAll(arr, i -> i);  

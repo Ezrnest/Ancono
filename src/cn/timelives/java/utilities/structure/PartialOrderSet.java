@@ -1,5 +1,7 @@
 package cn.timelives.java.utilities.structure;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -51,9 +53,9 @@ public class PartialOrderSet<E> extends PartialOrderCollection<E> {
 	public PartialOrderSet(PartialOrderComparator<E> comparator) {
 		super(comparator);
 		graph = new LinkedDirectedGraph<E>();
-		mapper = new HashMap<E, DirectedGraphNode<E>>();
-		mostUpper = new HashSet<DirectedGraphNode<E>>();
-		mostDowner = new HashSet<DirectedGraphNode<E>>();
+		mapper = new HashMap<>();
+		mostUpper = new HashSet<>();
+		mostDowner = new HashSet<>();
 	}
 	
 	private PartialOrderSet(PartialOrderComparator<E> comparator,
@@ -79,7 +81,8 @@ public class PartialOrderSet<E> extends PartialOrderCollection<E> {
 		return n;
 	}
 
-	@Override
+	@NotNull
+    @Override
 	public Iterator<E> iterator() {
 		return new Itr(graph.iterator());
 	}
@@ -420,7 +423,7 @@ public class PartialOrderSet<E> extends PartialOrderCollection<E> {
 	@Override
 	public PartialOrderCollection<E> getDirectUpperElements(E e) {
 		DirectedGraphNode<E> node = getNode(e);
-		Set<? extends DirectedGraphNode<E>> dUppers = graph.getConnectBy(node);
+		Set<? extends DirectedGraphNode<E>> dUppers = graph.getConnectTo(node);
 		//no relationship should these nodes have .
 		DirectedGraph<E> gp = new LinkedDirectedGraph<E>();
 		Map<E,DirectedGraphNode<E>> newMapper = new HashMap<E,DirectedGraphNode<E>>();
@@ -585,14 +588,7 @@ public class PartialOrderSet<E> extends PartialOrderCollection<E> {
 	}
 	
 	public static void main(String[] args) {
-		PartialOrderSet<PairForDebug> set = new PartialOrderSet<>(new PartialOrderComparator<PairForDebug>() {
-
-			@Override
-			public boolean compareWith(PairForDebug A, PairForDebug B) {
-				return A.x <= B.x && A.y >= B.y;
-			}
-			
-		});
+		PartialOrderSet<PairForDebug> set = new PartialOrderSet<>((A, B) -> A.x <= B.x && A.y >= B.y);
 		Random rd = new Random();
 		PairForDebug[] arr = new PairForDebug[10];
 		for(int i=0;i<10;i++){
@@ -608,7 +604,7 @@ public class PartialOrderSet<E> extends PartialOrderCollection<E> {
 			arr[i] = p;
 			print(p);
 			if(!set.add(p)){
-				print("BReaked");
+				print("Break");
 				break;
 			}
 			

@@ -50,10 +50,12 @@ import cn.timelives.java.math.algebra.abstractAlgebra.calculator.RingCalculator;
  * @see <a href="https://en.wikipedia.org/wiki/Ring_(mathematics)">Ring</a>
  *
  */
-public interface Ring<T,R extends Ring<T,R>> extends AbelianGroup<T,R> {
+public interface Ring<T> extends AbelianGroup<T> {
 	/**
 	 * Returns the calculator of this ring.
 	 */
 	@Override
 	RingCalculator<T> getCalculator();
+
+
 }

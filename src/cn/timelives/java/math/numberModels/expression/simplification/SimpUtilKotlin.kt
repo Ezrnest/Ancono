@@ -28,9 +28,9 @@ operator fun Node.times(n: Node): Node.Multiply = Node.wrapNodeAM(false, this, n
 
 operator fun Node.div(n: Node): Node.Fraction = Node.wrapNodeFraction(this, n)
 
-fun addAll(vararg ns : Node) : Node.Add = Node.wrapNodeAM(true,ns.toList()) as Node.Add
+fun addAll(vararg ns : Node) : Node = Node.wrapNodeAM(true,ns.toList())
 
-fun multiplyAll(vararg ns : Node) : Node.Multiply = Node.wrapNodeAM(false,ns.toList()) as Node.Multiply
+fun multiplyAll(vararg ns : Node) : Node = Node.wrapNodeAM(false,ns.toList())
 
 fun abs(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_ABS, x)
 fun arccos(x: Node): Node.SFunction = Node.wrapNodeSF(ExprFunction.FUNCTION_NAME_ARCCOS, x)

@@ -4,7 +4,7 @@
 package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.MathObject;
-import cn.timelives.java.math.algebra.calculus.SDerivable;
+import cn.timelives.java.math.calculus.SDerivable;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
@@ -111,7 +111,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-         * @see cn.timelives.java.math.algebra.calculus.SDerivable#derive()
+         * @see cn.timelives.java.math.calculus.SDerivable#derive()
 		 */
         @NotNull
         @Override
@@ -206,7 +206,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-         * @see cn.timelives.java.math.algebra.calculus.SDerivable#derive()
+         * @see cn.timelives.java.math.calculus.SDerivable#derive()
 		 */
         @NotNull
         @Override
@@ -297,7 +297,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-         * @see cn.timelives.java.math.algebra.calculus.SDerivable#derive()
+         * @see cn.timelives.java.math.calculus.SDerivable#derive()
 		 */
         @NotNull
         @Override
@@ -395,7 +395,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-         * @see cn.timelives.java.math.algebra.calculus.SDerivable#derive()
+         * @see cn.timelives.java.math.calculus.SDerivable#derive()
 		 */
         @NotNull
         @Override
@@ -497,7 +497,7 @@ public abstract class CombinedFunction<T> extends AbstractSVFunction<T> {
 		}
 
 		/*
-         * @see cn.timelives.java.math.algebra.calculus.SDerivable#derive()
+         * @see cn.timelives.java.math.calculus.SDerivable#derive()
 		 */
         @NotNull
         @Override

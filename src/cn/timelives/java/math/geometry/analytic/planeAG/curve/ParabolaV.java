@@ -101,7 +101,8 @@ public final class ParabolaV<T> extends ConicSection<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
 	 */
-	@Override
+	@NotNull
+    @Override
     public <N> ParabolaV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new ParabolaV<>(newCalculator, mapper.apply(A), mapper.apply(B),
 				mapper.apply(C), mapper.apply(D), mapper.apply(E), mapper.apply(F), mapper.apply(p), onX);

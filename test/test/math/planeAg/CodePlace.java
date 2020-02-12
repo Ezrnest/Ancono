@@ -810,11 +810,11 @@ public class CodePlace {
 //		}
 //		LinearEquationSolution<Fraction> solution = MatrixSup.solveLinearEquation(mat, Fraction.Companion.getCalculator());
 //		print(solution.getSolutionSituation());
-//		print(solution.getBase());
-//		print(solution.getSolution());
+//		print(solution.getSpecialSolution());
+//		print(solution.getBaseSolutions());
 //		Fraction sum = Fraction.Companion.getZERO();
 //		for (int i = 0; i < 5; i++) {
-//			sum = sum.add(mat[0][i].multiply(solution.getBase().getNumber(i)));
+//			sum = sum.add(mat[0][i].multiply(solution.getSpecialSolution().getNumber(i)));
 //		}
 //		print("Sum = " + sum);
 //	}
@@ -856,7 +856,7 @@ public class CodePlace {
 //		Matrix<Fraction> mat2 = mat1.mapTo(l -> Fraction.Companion.valueOf(l), Fraction.Companion.getCalculator());
 //		LinearEquationSolution<Fraction> solution = MatrixSup.solveLinearEquation(mat2);
 //		print(solution);
-//		print(solution.getBase());
+//		print(solution.getSpecialSolution());
 //	}
 //
 //	public void m40() {

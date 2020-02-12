@@ -4,10 +4,14 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.algebra.IPolynomial;
 import cn.timelives.java.math.function.SVFunction;
+import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.ParserUtils;
+import cn.timelives.java.math.numberModels.Term;
 import cn.timelives.java.math.numberModels.api.Computable;
+import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.Printer;
 import cn.timelives.java.utilities.StringSup;
 import cn.timelives.java.utilities.structure.Pair;
@@ -23,8 +27,8 @@ import java.util.function.ToDoubleFunction;
 import static cn.timelives.java.math.numberModels.expression.ExprFunction.createBasicCalculatorFunctions;
 
 /**
- * Expression is the most universal number model to show a number.
- * 
+ * Expression is the most universal number model to show a number or a complex
+ * algebraic expression.
  * @author liyicheng 2017-11-23 21:31
  *
  */
@@ -36,26 +40,38 @@ public final class Expression implements Computable,Serializable {
 	final Node root;
 
 	/**
-	 *
+	 * Construct an expression with its root node.
 	 */
     public Expression(Node root) {
 		this.root = Objects.requireNonNull(root);
 	}
 
 	private String expr;
+    /*
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        if (expr == null) {
+            expr = root.toString();
+        }
+        return expr;
+    }
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		if (expr == null) {
-			expr = root.toString();
-		}
-		return expr;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Expression)) return false;
+        Expression that = (Expression) o;
+        return Objects.equals(root, that.root);
+    }
 
-	public void listNode(PrintWriter out) {
+    @Override
+    public int hashCode() {
+        return Objects.hash(root);
+    }
+
+    public void listNode(PrintWriter out) {
 		PrintWriter pw = Printer.getOutput();
         Printer.reset(out);
 		root.listNode(0);
@@ -96,13 +112,54 @@ public final class Expression implements Computable,Serializable {
 
     /**
 	 * Creates an expression from a multinomial.
-	 *
-	 * @param p
-	 * @return
 	 */
 	public static Expression fromMultinomial(Multinomial p) {
 		return new Expression(Node.newPolyNode(p, null));
 	}
+
+
+	public static Expression fromTerm(Term t){
+	    return fromMultinomial(Multinomial.monomial(t));
+    }
+
+    public static Expression ofCharacter(String character){
+        return fromTerm(Term.singleChar(character));
+    }
+
+    /**
+     * Returns an expression that represents a polynomial.
+     */
+	public static Expression fromPolynomialT(Polynomial<Term> p, String variableName){
+	    return fromMultinomial(Multinomial.fromPolynomialT(p,variableName));
+    }
+    /**
+     * Returns an expression that represents a polynomial.
+     */
+    public static Expression fromPolynomialM(Polynomial<Multinomial> p, String variableName){
+	    return fromMultinomial(Multinomial.fromPolynomialM(p,variableName));
+    }
+
+    public static Expression fromPolynomialE(IPolynomial<Expression> p, String variableName){
+        List<Node> terms = new ArrayList<>();
+        for(int i=0;i<=p.getDegree();i++){
+            Expression coeExpr = p.getCoefficient(i);
+            Node root = coeExpr.root;
+            if(root.getType() == Node.Type.POLYNOMIAL){
+                if(((Node.Poly)root).p.isZero()){
+                    //skip zeros
+                    continue;
+                }
+            }
+            var variable = Term.characterPower(variableName, Fraction.valueOf(i));
+            Node pow = Node.newPolyNode(Multinomial.monomial(variable));
+            Node coe = root.cloneNode();
+            Node term = Node.wrapNodeAM(false,coe,pow);
+            terms.add(term);
+        }
+        Node root = Node.wrapNodeAM(true,terms);
+        return new Expression(root);
+    }
+
 
 	/**
 	 * Creates an expression from a string without performing any simplification.
@@ -120,6 +177,10 @@ public final class Expression implements Computable,Serializable {
 		return new ExprParser(expr).parse();
 	}
 
+
+    /**
+     * The identifier for a function as a suffix
+     */
 	public static final char FUNCTION_IDENTIFIER = '_';
 
 	private static final Set<String> FUNCTION_NAMES;
@@ -391,6 +452,47 @@ public final class Expression implements Computable,Serializable {
         }
 	}
 
+	public static Expression valueOf(long val){
+	    return fromTerm(Term.valueOf(val));
+    }
+
+    public static Expression valueOf(Fraction val){
+        return fromTerm(Term.valueOf(val));
+    }
+
+    /**
+     * Expression constant zero
+     */
+    public static final Expression ZERO = fromMultinomial(Multinomial.ZERO);
+    /**
+     * Expression constant one.
+     */
+    public static final Expression ONE = fromMultinomial(Multinomial.ONE);
+
+    /**
+     * Expression constant ten.
+     */
+    public static final Expression TEN = fromMultinomial(Multinomial.valueOf(10L));
+
+    /**
+     * Expression constant negative one
+     */
+    public static final Expression NEGATIVE_ONE = fromMultinomial(Multinomial.NEGATIVE_ONE);
+
+    /**
+     * Expression constant <code>pi</code>, the ratio of the circumference of a circle to its diameter.
+     */
+    public static final Expression PI = fromMultinomial(Multinomial.PI);
+
+    /**
+     * Expression constant <code>e</code>, the base of natural logarithm.
+     */
+    public static final Expression E = fromMultinomial(Multinomial.E);
+
+    /**
+     * Expression constant <code>i</code>, the square root of <code>-1</code>.
+     */
+    public static final Expression I = fromMultinomial(Multinomial.I);
 
 //    public static void main(String[] args){
 //	    Expression expr = valueOf("(a+b)/(a-b)+(a+2b)/(a-b)");

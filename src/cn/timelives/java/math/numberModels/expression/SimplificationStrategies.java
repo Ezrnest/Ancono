@@ -3,14 +3,16 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.exceptions.UnsatisfiedCalculationResultException;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
 import cn.timelives.java.math.numberModels.expression.Node.*;
 import cn.timelives.java.math.numberModels.expression.simplification.NodeHelper;
 import cn.timelives.java.math.numberModels.expression.spi.SimplificationService;
+import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -24,6 +26,7 @@ import static cn.timelives.java.utilities.Printer.print;
  *
  * @author liyicheng 2017-11-26 15:22
  */
+@SuppressWarnings("Duplicates")
 public final class SimplificationStrategies {
 
     /**
@@ -41,6 +44,16 @@ public final class SimplificationStrategies {
      */
     public static final String PROP_ENABLE_EXPAND = "enableExpand";
 
+
+    /**
+     * Determines whether to converts all fractions/reciprocals to exponent.<p>
+     * For example, if this property is enabled, fraction <code>a/b</code> will
+     * be converted to <code>a*exp(b,-1)</code> and reciprocal function <code>reciprocal(a)</code>
+     * will be converted to <code>exp(a,-1)</code>.
+     */
+    public static final String PROP_FRACTION_TO_EXP = "fractionToExp";
+
+
     public static final String TAG_ALGEBRA = "algebra";
     public static final Set<String> TAG_ALGEBRA_SET = Collections
             .unmodifiableSet(CollectionSup.createHashSet(TAG_ALGEBRA));
@@ -49,6 +62,9 @@ public final class SimplificationStrategies {
 
     public static final Set<Type> TYPES_UNIVERSE = Collections.unmodifiableSet(EnumSet.allOf(Type.class));
 
+    /**
+     * Determines whether to regularize the expression, merging
+     */
     public static final String TAG_REGULARIZE = "regularize";
     public static final Set<String> TAG_REGULARIZE_SET = Collections
             .unmodifiableSet(CollectionSup.createHashSet(TAG_REGULARIZE));
@@ -101,10 +117,15 @@ public final class SimplificationStrategies {
         public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.ADD));
 
         /**
+         *
          */
         public Collect() {
             super(TAG_ALGEBRA_SET, types, null, "Collect expressions which have a common factor,"
                     + " which is shown as a series of function node multiplied.");
+        }
+
+        public Collect(Set<String> tags, String description) {
+            super(tags, types, null, description);
         }
 
         /*
@@ -117,13 +138,14 @@ public final class SimplificationStrategies {
         public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.ADD, Type.FRACTION, Type.MULTIPLY));
 
         /**
+         *
          */
         SimplifyFraction() {
             super(TAG_ALGEBRA_SET, types, null, "Simplifies fraction:Add, multiply and fraction.");
         }
 
-        /*
-         * @see cn.timelives.java.math.numberModels.expression.SimpleStrategy#simplifyAdd(cn.timelives.java.math.numberModels.expression.Node.Add, cn.timelives.java.math.numberModels.expression.ExprCalculator)
+        /**
+         * a/b + c/b -> (a+c)/b
          */
         @Override
         protected Node simplifyAdd(Add node, ExprCalculator mc) {
@@ -139,6 +161,7 @@ public final class SimplificationStrategies {
                 return null;
             }
             //try merge
+            //map : (denominator, numerators)
             TreeMap<Node, List<Node>> map = new TreeMap<>(mc.getNodeComparator());
             for (Node n : children) {
                 if (n.getType() == Type.FRACTION) {
@@ -150,6 +173,7 @@ public final class SimplificationStrategies {
                 //nothing can be merged.
                 return null;
             }
+            //remove singles
             map.entrySet().removeIf(en -> en.getValue().size() <= 1);
             children.removeIf(x -> {
                 if (x.getType() == Type.FRACTION) {
@@ -170,7 +194,7 @@ public final class SimplificationStrategies {
         }
 
         /**
-         * If a fraction is contained in the multiply, then turns the multiply into a fraction.
+         * If a fraction is contained in the multiplication, then turns the multiplication into a fraction.
          */
         @Override
         protected Node simplifyMultiply(Multiply node, ExprCalculator mc) {
@@ -192,9 +216,11 @@ public final class SimplificationStrategies {
                 if (n.getType() == Type.FRACTION) {
                     Fraction f = (Fraction) n;
                     numes.add(f.c1);
+                    f.c1.parent = node;
                     denos.add(f.c2);
                 } else {
                     numes.add(n);
+                    n.parent = node;
                 }
             }
             NodeWithChildren parent = node.parent;
@@ -208,7 +234,6 @@ public final class SimplificationStrategies {
         }
 
         /*
-         * @see cn.timelives.java.math.numberModels.expression.SimpleStrategy#simplifyFraction(cn.timelives.java.math.numberModels.expression.Node.Fraction, cn.timelives.java.math.numberModels.expression.ExprCalculator)
          */
         @Override
         protected Node simplifyFraction(Fraction node, ExprCalculator mc) {
@@ -276,6 +301,7 @@ public final class SimplificationStrategies {
         public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.MULTIPLY));
 
         /**
+         * Deals with the expansion of multiply when it has an Add.
          */
         public Expand() {
             super(TAG_ALGEBRA_SET, types, null);
@@ -374,6 +400,7 @@ public final class SimplificationStrategies {
      * @author liyicheng
      * 2017-12-01 20:14
      */
+    @SuppressWarnings("Duplicates")
     public static abstract class SimplifyMultiplyStruct extends SimpleStrategy {
         public static final Set<Type> types = Collections.unmodifiableSet(EnumSet.of(Type.MULTIPLY, Type.FRACTION));
 
@@ -545,6 +572,7 @@ public final class SimplificationStrategies {
         protected abstract List<Pair<Node, BigInteger>> simplify(List<Pair<Node, BigInteger>> nodes, ExprCalculator ec);
     }
 
+    @SuppressWarnings("Duplicates")
     public static abstract class SimplifyAddStruct extends SimpleStrategy {
         public static final Set<Type> TYPES = CollectionSup.unmodifiableEnumSet(Type.ADD);
 
@@ -573,7 +601,7 @@ public final class SimplificationStrategies {
                 return null;
             }
             List<Pair<Node, Multinomial>> result = simplify(collect, mc);
-            if(result == null){
+            if (result == null) {
                 return null;
             }
             addToTheList(list, result, node, mc);
@@ -614,6 +642,7 @@ public final class SimplificationStrategies {
 
         /**
          * Simplify the list, the list can be modified. Returns null if nothing is simplified.
+         * The list contains pairs of node with it coefficient.
          */
         protected abstract List<Pair<Node, Multinomial>> simplify(List<Pair<Node, Multinomial>> nodes, ExprCalculator mc);
 
@@ -646,7 +675,7 @@ public final class SimplificationStrategies {
     public static void addBasicAlgebra(List<SimpleStrategy> list) {
         list.add(new Merge(CollectionSup.unmodifiableEnumSet(Type.ADD, Type.MULTIPLY, Type.FRACTION)) {
             /**
-             * This method simplify
+             * Flatten several Adds in an Add: (a+b)+(c+d)+(e+f) -> a+b+c+d+e+f
              */
             @Override
             protected Node simplifyAdd(Add node, ExprCalculator mc) {
@@ -685,6 +714,9 @@ public final class SimplificationStrategies {
                 return mc.simplify(node, 0);
             }
 
+            /**
+             * Flatten several Multiplies in a Multiply: (a*b)*(c*d)*(e*f) -> a*b*c*d*e*f
+             */
             @Override
             protected Node simplifyMultiply(Multiply node, ExprCalculator mc) {
                 List<Node> children = node.children;
@@ -722,7 +754,8 @@ public final class SimplificationStrategies {
                 return mc.simplify(node, 0);
             }
 
-            /*
+            /**
+             * Flatten fraction: (a/b)/(c/d) -> ad / bc
              */
             @Override
             protected Node simplifyFraction(Fraction node, ExprCalculator mc) {
@@ -750,139 +783,250 @@ public final class SimplificationStrategies {
                 return null;
             }
         });
-        list.add(new Collect() {
-            @Override
-            protected Node simplifyAdd(Add node, ExprCalculator mc) {
-                if (node.getNumberOfChildren() <= 1) {
-                    return null;
-                }
-                List<Node> children = node.children;
-                TreeMap<List<Node>, Multinomial> map = new TreeMap<>(CollectionSup.collectionComparator(mc.getNodeComparator()));
-                boolean collected = false;
-                MultinomialCalculator pc = mc.getMultinomialCalculator();
-                Multinomial pOne = mc.getPOne();
-                // separate to
-                for (Node n : children) {
-                    Pair<Multinomial, List<Node>> p = Node.unwrapMultiplyList(n, mc);
-                    Multinomial pn = pOne;
-                    List<Node> list;
-                    if (p != null) {
-                        pn = p.getFirst();
-                        list = p.getSecond();
-                    } else {
-                        list = Collections.singletonList(n);
-                    }
-                    Multinomial poly = map.get(list);
-                    if (poly != null) {
-                        collected = true;
-                        map.put(list, pc.add(poly, pn));
-                    } else {
-                        map.put(list, pn);
-                    }
-                }
-                if (!collected) {
-                    return null;
-                }
-                children.clear();
-                for (Entry<List<Node>, Multinomial> en : map.entrySet()) {
-                    Multinomial p = en.getValue();
-                    if (pc.isZero(p)) {
-                        continue;
-                    }
-                    List<Node> list = en.getKey();
-                    Node n;
-                    if (list.size() == 1) {
-                        if (!pc.isEqual(p, pOne)) {
-                            n = Node.wrapNodeMultiply(list.get(0), p);
-                        } else {
-                            n = list.get(0);
-                        }
-                    } else {
-                        if (!pc.isEqual(p, pOne)) {
-                            n = Node.wrapNodeAM(false, list, p);
-                        } else {
-                            n = Node.wrapNodeAM(false, list);
-                        }
-                    }
-                    children.add(n);
-                    n.parent = node;
-                }
-                return mc.simplify(node, 0);
-            }
-        });
+        list.add(new CollectByMultinomial());
         list.add(new SimplifyFraction());
-        list.add(new Collect() {
-            @Override
-            protected Node simplifyAdd(Add node, ExprCalculator mc) {
-                if (node.getNumberOfChildren() <= 1 && node.p == null) {
-                    return null;
-                }
-                if (!Boolean.parseBoolean(mc.getProperty(PROP_MERGE_FRACTION))) {
-                    return null;
-                }
-                List<Node> children = node.children;
-                int count = 0;
-                for (Node n : children) {
-                    if (n.getType() == Type.FRACTION) {
-                        count++;
-                    }
-                }
-                if (count == 0) {
-                    return null;
-                }
-                List<Node> numes = new ArrayList<>(children.size()),
-                        denos = new ArrayList<>(count);
-                for (Node n : children) {
-                    if (n.getType() == Type.FRACTION) {
-                        Fraction f = (Fraction) n;
-                        denos.add(f.c2);
-                    }
-                }
-                for (Node n : children) {
-                    List<Node> mul = new ArrayList<>(count + 1);
-                    if (n.getType() == Type.FRACTION) {
-                        Fraction f = (Fraction) n;
-                        for (Node nd : denos) {
-                            if (nd != f.c2) {
-                                mul.add(nd.cloneNode(null));
-                            }
-                        }
-                        mul.add(f.c1);
-                    } else {
-                        for (Node nd : denos) {
-                            mul.add(nd.cloneNode(null));
-                        }
-                        mul.add(n);
-                    }
-                    Node m = Node.wrapNodeAM(false, mul);
-                    numes.add(m);
-                }
-                if (node.p != null) {
-                    Poly p = Node.newPolyNode(node.p, null);
-                    List<Node> mul = new ArrayList<>(count + 1);
-                    for (Node nd : denos) {
-                        mul.add(nd.cloneNode(null));
-                    }
-                    mul.add(p);
-                    Node m = Node.wrapNodeAM(false, mul);
-                    numes.add(m);
-                }
-                Node nume = Node.wrapNodeAM(true, numes);
-                Node deno = Node.wrapNodeAM(false, denos);
-                Fraction f = Node.wrapNodeFraction(nume, deno);
-                f.parent = node.parent;
-                return mc.simplify(f, 2);
-            }
-        });
+        list.add(new CollectFraction());
+        list.add(new CollectFactors());
         list.add(new Expand());
 
     }
 
+    /**
+     * n1*n2*a + n1*n2*b -> n1*n2*(a+b), where a,b are multinomial.
+     */
+    static class CollectByMultinomial extends Collect {
+        /**
+         * n1*n2*a + n1*n2*b -> n1*n2*(a+b), where a,b are multinomial.
+         */
+        CollectByMultinomial() {
+            super(TAG_ALGEBRA_SET, "n1*n2*a + n1*n2*b -> n1*n2*(a+b), where a,b are multinomial.");
+        }
+
+
+        @Override
+        protected Node simplifyAdd(Add node, ExprCalculator mc) {
+            if (node.getNumberOfChildren() <= 1) {
+                return null;
+            }
+            List<Node> children = node.children;
+            TreeMap<List<Node>, Multinomial> map = new TreeMap<>(CollectionSup.collectionComparator(mc.getNodeComparator()));
+            boolean collected = false;
+            MultinomialCalculator pc = mc.getMultinomialCalculator();
+            Multinomial pOne = mc.getPOne();
+            // separate to
+            for (Node n : children) {
+                Pair<Multinomial, List<Node>> p = Node.unwrapMultiplyList(n, mc);
+                Multinomial pn = pOne;
+                List<Node> list;
+                if (p != null) {
+                    pn = p.getFirst();
+                    list = p.getSecond();
+                } else {
+                    list = Collections.singletonList(n);
+                }
+                Multinomial poly = map.get(list);
+                if (poly != null) {
+                    collected = true;
+                    map.put(list, pc.add(poly, pn));
+                } else {
+                    map.put(list, pn);
+                }
+            }
+            if (!collected) {
+                return null;
+            }
+            children.clear();
+            for (Entry<List<Node>, Multinomial> en : map.entrySet()) {
+                Multinomial p = en.getValue();
+                if (pc.isZero(p)) {
+                    continue;
+                }
+                List<Node> list = en.getKey();
+                Node n;
+                if (list.size() == 1) {
+                    if (!pc.isEqual(p, pOne)) {
+                        n = Node.wrapNodeMultiply(list.get(0), p);
+                    } else {
+                        n = list.get(0);
+                    }
+                } else {
+                    if (!pc.isEqual(p, pOne)) {
+                        n = Node.wrapNodeAM(false, list, p);
+                    } else {
+                        n = Node.wrapNodeAM(false, list);
+                    }
+                }
+                children.add(n);
+                n.parent = node;
+            }
+            return mc.simplify(node, 0);
+        }
+    }
+
+    /**
+     * Collects: a*b*c + b*c*e -> (b*c)(a+c), requires not enableExpand
+     */
+    static class CollectFactors extends Collect {
+
+        private boolean containsNode(List<Node> list, Node target, MultinomialCalculator pc) {
+            for (Node m : list) {
+                if (target.equalNode(m, pc)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private List<Node> gcdNode(List<Node> dest, List<Node> nodes, MultinomialCalculator pc) {
+            if (dest == null) {
+                return new ArrayList<>(nodes);
+            }
+            dest.removeIf(n -> !containsNode(nodes, n, pc));
+            return dest;
+        }
+
+        private List<Node> gcdNode(List<Node> gcd, Node n, MultinomialCalculator pc) {
+            if (gcd == null) {
+                gcd = new ArrayList<>();
+                gcd.add(n);
+                return gcd;
+            }
+            boolean contains = containsNode(gcd, n, pc);
+            gcd.clear();
+            if (contains) {
+                gcd.add(n);
+            }
+            return gcd;
+        }
+
+        private Node removeFactor(Node n, List<Node> factor, MultinomialCalculator pc) {
+            if (n.getType() == Type.MULTIPLY) {
+                var m = (Multiply) n;
+                m.children.removeIf(x -> containsNode(factor, x, pc));
+                if (m.children.isEmpty()) {
+                    return Node.newPolyNode(Objects.requireNonNullElse(m.p, Multinomial.ONE));
+                }
+                m.resetSimIdentifier();
+                return m;
+            } else {
+                return Node.newPolyNode(Multinomial.ONE);
+            }
+        }
+
+        @Override
+        protected Node simplifyAdd(Add node, ExprCalculator mc) {
+            if (Boolean.parseBoolean(mc.getProperty(SimplificationStrategies.PROP_ENABLE_EXPAND))) {
+                return null;
+            }
+            if (node.children.size() <= 1) {
+                return null;
+            }
+            if (node.p != null && !node.p.isZero()) {
+                return null;
+            }
+            List<Node> children = node.children;
+            MultinomialCalculator pc = mc.getMultinomialCalculator();
+            List<Node> gcd = null;
+            // we find the maximum shared node, if there is not, return, take
+            for (Node n : children) {
+                if (n.getType() == Type.MULTIPLY) {
+                    var mul = (Multiply) n;
+                    gcd = gcdNode(gcd, mul.children, pc);
+                } else {
+                    gcd = gcdNode(gcd, n, pc);
+                }
+
+            }
+            if (gcd == null || gcd.isEmpty()) {
+                return null;
+            }
+            List<Node> newChildren = new ArrayList<>(node.children.size());
+            for (Node n : children) {
+                var t = removeFactor(n, gcd, pc);
+                newChildren.add(t);
+                t.parent = node;//we reuse the Add node
+            }
+            node.children = newChildren;
+            node.resetSimIdentifier();
+            // Add * gcd
+            gcd.add(node);
+
+            var result = Node.wrapNodeAM(false, gcd);
+
+            return mc.simplify(result, 1);
+        }
+    }
+
+    /**
+     * Merges several fractions in an Add node.
+     */
+    static class CollectFraction extends Collect {
+        @Override
+        protected Node simplifyAdd(Add node, ExprCalculator mc) {
+            if (node.getNumberOfChildren() <= 1 && node.p == null) {
+                return null;
+            }
+            if (!Boolean.parseBoolean(mc.getProperty(PROP_MERGE_FRACTION))) {
+                return null;
+            }
+            List<Node> children = node.children;
+            int count = 0;
+            for (Node n : children) {
+                if (n.getType() == Type.FRACTION) {
+                    count++;
+                }
+            }
+            if (count == 0) {
+                return null;
+            }
+            List<Node> numes = new ArrayList<>(children.size()),
+                    denos = new ArrayList<>(count);
+            for (Node n : children) {
+                if (n.getType() == Type.FRACTION) {
+                    Fraction f = (Fraction) n;
+                    denos.add(f.c2);
+                }
+            }
+            for (Node n : children) {
+                List<Node> mul = new ArrayList<>(count + 1);
+                if (n.getType() == Type.FRACTION) {
+                    Fraction f = (Fraction) n;
+                    for (Node nd : denos) {
+                        if (nd != f.c2) {
+                            mul.add(nd.cloneNode(null));
+                        }
+                    }
+                    mul.add(f.c1);
+                } else {
+                    for (Node nd : denos) {
+                        mul.add(nd.cloneNode(null));
+                    }
+                    mul.add(n);
+                }
+                Node m = Node.wrapNodeAM(false, mul);
+                numes.add(m);
+            }
+            if (node.p != null) {
+                Poly p = Node.newPolyNode(node.p, null);
+                List<Node> mul = new ArrayList<>(count + 1);
+                for (Node nd : denos) {
+                    mul.add(nd.cloneNode(null));
+                }
+                mul.add(p);
+                Node m = Node.wrapNodeAM(false, mul);
+                numes.add(m);
+            }
+            Node nume = Node.wrapNodeAM(true, numes);
+            Node deno = Node.wrapNodeAM(false, denos);
+            Fraction f = Node.wrapNodeFraction(nume, deno);
+            f.parent = node.parent;
+            return mc.simplify(f, 2);
+        }
+    }
 
     public static void addSqrStrategies(List<SimpleStrategy> list) {
         list.add(new SimplifyFunction(TAG_ALGEBRA_SET, "sqr", "convert sqr to exp") {
             /*
-             * @see cn.timelives.java.math.numberModels.expression.SimStraImpl#simplifySFunction(cn.timelives.java.math.numberModels.expression.Node.SFunction, cn.timelives.java.math.numberModels.expression.ExprCalculator)
              */
             @Override
             protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
@@ -890,26 +1034,44 @@ public final class SimplificationStrategies {
                 if (!node.getFunctionName().equals("sqr")) {
                     throw new AssertionError();
                 }
-                Node n = Node.wrapNodeDF("exp", node.child, Node.newPolyNode(mc.getMultinomialCalculator().divideLong(mc.getPOne(), 2l), null));
+                Node n = Node.wrapNodeDF("exp", node.child, Node.newPolyNode(mc.getMultinomialCalculator().divideLong(mc.getPOne(), 2L), null));
                 n.parent = node;
-                return mc.simplify(n,1);
+                return mc.simplify(n, 1);
             }
         });
     }
 
 
     public static void addExpStrategies(List<SimpleStrategy> list) {
-        list.add(new SimplifyFunction(TAG_PRIMARY_SET, "exp", "") {
-            /*
-             * @see cn.timelives.java.math.numberModels.expression.SimStraImpl#simplifySFunction(cn.timelives.java.math.numberModels.expression.Node.SFunction, cn.timelives.java.math.numberModels.expression.ExprCalculator)
+        list.add(new SimplifyFunction(TAG_PRIMARY_SET, "exp", "exp(ln(x))->x") {
+            /**
+             * exp(ln(x))->x
              */
             @Override
             protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
-                if (Node.isFunctionNode(node.child, "ln", 1)) {
-                    SFunction ln = (SFunction) node.child;
+                Node child = node.child;
+                if (Node.isFunctionNode(child, "ln", 1)) {
+                    SFunction ln = (SFunction) child;
                     //exp(ln(x)) = x
-                    return ln.child;
+                    return ln.child; //no need to simplify further
                 }
+                if (child.getType() == Type.MULTIPLY) {
+                    var mul = (Node.Multiply) child;
+                    Node x = null; // x in ln(x)
+                    for (Iterator<Node> iterator = mul.children.iterator(); iterator.hasNext(); ) {
+                        Node n = iterator.next();
+                        if (Node.isFunctionNode(n, ExprFunction.FUNCTION_NAME_LN, 1)) {
+                            x = ((SFunction)n).child;
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                    if (x != null) {
+                        mul.resetSimIdentifier();
+                        return mc.simplify(Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, x, mul));
+                    }
+                }
+
                 return null;
             }
 
@@ -920,8 +1082,24 @@ public final class SimplificationStrategies {
             protected Node simplifyDFunction(DFunction node, ExprCalculator mc) {
                 Node c1 = node.c1,
                         c2 = node.c2;
-                if (Node.isPolynomial(c1, mc.getMultinomialCalculator().constantValue(MathCalculator.STR_E), mc)) {
+                if (Node.isPolynomial(c1, Multinomial.E, mc)) {
                     return Node.wrapNodeSF("exp", c2);
+                }
+                if (c2.getType() == Type.POLYNOMIAL) {
+                    var exp = ((Poly) c2).p;
+                    var mulCal = mc.getMultinomialCalculator();
+                    if (mulCal.isEqual(exp, Multinomial.ZERO)) {
+                        return Node.newPolyNode(Multinomial.ONE);
+                    } else if (mulCal.isEqual(exp, Multinomial.ONE)) {
+                        return c1.cloneNode();
+                    } else if (mulCal.isEqual(exp, Multinomial.NEGATIVE_ONE)) {
+                        if (c1.getType() == Type.FRACTION) {
+                            var temp = (Fraction) c1;
+                            var nume = temp.c2;
+                            var deno = temp.c1;
+                            return Node.wrapCloneNodeFraction(nume, deno);
+                        }
+                    }
                 }
                 if (Node.isFunctionNode(c1, "exp", 2)) {
                     DFunction df = (DFunction) c1;
@@ -934,7 +1112,7 @@ public final class SimplificationStrategies {
                     return mc.simplify(node, 1);
                 } else if (Node.isFunctionNode(c1, "exp", 1)) {
                     SFunction sf = (SFunction) c1;
-                    //exp(exp(x,p1),p2) = exp(x,p1*p2)
+                    //exp(exp(p1),p2) = exp(p1*p2)
                     CombinedNode mul = Node.wrapNodeAM(false, sf.child, c2);
                     mul.parent = sf;
                     sf.child = mul;
@@ -945,7 +1123,6 @@ public final class SimplificationStrategies {
                 }
             }
         });
-
         list.add(new SimplifyMultiplyStruct(TAG_PRIMARY_SET) {
             //x * exp(x,y) * exp(x,z) = exp(x,1+y+z)
             @Override
@@ -1006,18 +1183,100 @@ public final class SimplificationStrategies {
 //			    return Node.isFunctionNode(n, "exp", 2);
             }
         });
+        list.add(new SimplifyFunction(TAG_PRIMARY_SET, ExprFunction.FUNCTION_NAME_RECIPROCAL, "reciprocal(x) -> exp(x,-1)") {
+            @Nullable
+            @Override
+            protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
+                return Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP, node.child.cloneNode(), Node.newPolyNode(Multinomial.NEGATIVE_ONE));
+            }
+        });
+        list.add(new ExpPossibleReduction());
+        list.add(new ExpConvertFraction());
+    }
+
+    static class ExpPossibleReduction extends SimpleStrategy {
+
+        public ExpPossibleReduction() {
+            super(TAG_PRIMARY_SET, CollectionSup.unmodifiableEnumSet(Type.MULTIPLY), null, "(p*q) * exp(q,-1) -> p, where p,q are multinomial");
+        }
+
+        @Override
+        protected @Nullable Node simplifyMultiply(Multiply node, ExprCalculator mc) {
+            if (node.p == null) {
+                return null;
+            }
+            Multinomial m = node.p;
+            if(m.isOne()){
+                return null;
+            }
+            List<Node> children = node.children;
+            boolean reduced = false;
+            for (Node n : children) {
+                if (!NodeHelper.isExpAsReciprocal(n, mc)) {
+                    continue;
+                }
+                DFunction exp = (DFunction) n;
+                Node base = exp.c1;
+                if (!Node.isPolynomial(base)) {
+                    continue;
+                }
+                Poly poly = (Poly) base;
+                Multinomial toDivide = poly.p;
+                var re = Multinomial.simplifyFraction(m, toDivide);
+                if(m.equals(re[0])){
+                    continue;
+                }
+                m = re[0];
+                exp.setFirst(Node.newPolyNode(re[1]));
+                exp.resetSimIdentifier();
+                reduced = true;
+                if (m.isOne()) {
+                    break;
+                }
+            }
+            if(!reduced){
+                return null;
+            }
+            node.p = m;
+            return mc.simplify(node,1);
+        }
+    }
+
+    static class ExpConvertFraction extends SimpleStrategy{
+
+        public ExpConvertFraction() {
+            super(TAG_ALGEBRA_SET, CollectionSup.unmodifiableEnumSet(Type.FRACTION),null, "1/x -> exp(x,-1)");
+        }
+
+        @Override
+        protected @Nullable Node simplifyFraction(Fraction node, ExprCalculator mc) {
+            if(!Boolean.parseBoolean(mc.getProperty(SimplificationStrategies.PROP_FRACTION_TO_EXP))){
+                return null;
+            }
+            Node nume = node.getC1();
+            if(!Node.isPolynomial(nume,Multinomial.ONE,mc)){
+                return null;
+            }
+            return Node.buildExpStructure(node.c2,BigInteger.ONE.negate(),mc);
+        }
     }
 
     public static void addTriStrategies(List<SimpleStrategy> list) {
-        list.add(new SimplifyAddStruct(TAG_TRIGONOMETRIC_SET) {
+
+        /*
+         * sin(x)^2+cos(x)^2 -> 1
+         */
+        list.add(new SimplifyAddStruct(TAG_TRIGONOMETRIC_SET, "sin(x)^2+cos(x)^2 -> 1") {
+
+
             @Override
             protected boolean firstGlance(List<Node> nodes, ExprCalculator ec) {
-                for(Node n : nodes){
-                    if(NodeHelper.isExp2(n,ec)){
+                for (Node n : nodes) {
+                    if (NodeHelper.isExp2(n, ec)) {
                         return true;
-                    }else if(n.getType() == Type.MULTIPLY){
+                    } else if (n.getType() == Type.MULTIPLY) {
                         var mul = (Multiply) n;
-                        if(mul.containMatches(x -> NodeHelper.isExp2(x,ec))){
+                        if (mul.containMatches(x -> NodeHelper.isExp2(x, ec))) {
                             return true;
                         }
                     }
@@ -1026,79 +1285,78 @@ public final class SimplificationStrategies {
             }
 
 
-
             @Override
             protected boolean accept(Node n, Multinomial pow, ExprCalculator ec) {
-                if(!NodeHelper.isExp2(n, ec)){
+                if (!NodeHelper.isExp2(n, ec)) {
                     return false;
                 }
-                var exp = (DFunction)n;
+                var exp = (DFunction) n;
                 var sc = exp.c1;
-                return Node.isFunctionNode(sc, ExprFunction.FUNCTION_NAME_SIN,1) ||
-                        Node.isFunctionNode(sc,ExprFunction.FUNCTION_NAME_COS,1);
+                return Node.isFunctionNode(sc, ExprFunction.FUNCTION_NAME_SIN, 1) ||
+                        Node.isFunctionNode(sc, ExprFunction.FUNCTION_NAME_COS, 1);
             }
 
             @Override
             protected List<Pair<Node, Multinomial>> simplify(List<Pair<Node, Multinomial>> nodes, ExprCalculator ec) {
                 //must be forms of exp(sin(node),2) or exp(cos(node),2)
-                NavigableMap<Node,Pair<Multinomial,Multinomial>> map = new TreeMap<>(ec.getNodeComparator());
+                NavigableMap<Node, Pair<Multinomial, Multinomial>> map = new TreeMap<>(ec.getNodeComparator());
                 boolean[] accumulated = new boolean[]{false};
-                for(var p : nodes){
-                    var sc = (SFunction) ((DFunction)p.getFirst()).c1;
+                for (var p : nodes) {
+                    var sc = (SFunction) ((DFunction) p.getFirst()).c1;
                     var coe = p.getSecond();
                     boolean isSin = sc.functionName.equals(ExprFunction.FUNCTION_NAME_SIN);
-                    map.compute(sc.child,(key,val) -> {
-                        if(val == null){
-                            return pairOf(coe,isSin);
-                        }else{
+                    map.compute(sc.child, (key, val) -> {
+                        if (val == null) {
+                            return pairOf(coe, isSin);
+                        } else {
                             accumulated[0] = true;
-                            return addPair(coe,isSin,val);
+                            return addPair(coe, isSin, val);
                         }
                     });
                 }
-                if(!accumulated[0]){
+                if (!accumulated[0]) {
                     return null;
                 }
                 Multinomial constResults = Multinomial.ZERO;
-                List<Pair<Node,Multinomial>> result = new ArrayList<>(map.size());
+                List<Pair<Node, Multinomial>> result = new ArrayList<>(map.size());
                 var mc = ec.getMultinomialCalculator();
-                for(var entry : map.entrySet()){
+                for (var entry : map.entrySet()) {
                     Node n = entry.getKey();
                     var p = entry.getValue();
                     var sinCoe = p.getFirst();
                     var cosCoe = p.getSecond();
-                    if(mc.isZero(sinCoe)){
+                    if (mc.isZero(sinCoe)) {
                         //exp(cos(node),2)
-                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_COS,n),BigInteger.TWO,ec);
-                        result.add(new Pair<>(exp,cosCoe));
-                    }else{
+                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_COS, n), BigInteger.TWO, ec);
+                        result.add(new Pair<>(exp, cosCoe));
+                    } else {
                         sinCoe = sinCoe.subtract(cosCoe);
                         constResults = constResults.add(cosCoe);
-                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_SIN,n),BigInteger.TWO,ec);
-                        result.add(new Pair<>(exp,sinCoe));
+                        var exp = Node.buildExpStructure(Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_SIN, n), BigInteger.TWO, ec);
+                        result.add(new Pair<>(exp, sinCoe));
                     }
                 }
-                result.add(new Pair<>(Node.newPolyNode(constResults),Multinomial.ONE));
+                result.add(new Pair<>(Node.newPolyNode(constResults), Multinomial.ONE));
                 return result;
             }
 
-            private Pair<Multinomial,Multinomial> pairOf(Multinomial m,boolean isFirst){
-                Multinomial f,s;
-                if(isFirst){
+            private Pair<Multinomial, Multinomial> pairOf(Multinomial m, boolean isFirst) {
+                Multinomial f, s;
+                if (isFirst) {
                     f = m;
                     s = Multinomial.ZERO;
-                }else{
+                } else {
                     f = Multinomial.ZERO;
                     s = m;
                 }
-                return new Pair<>(f,s);
+                return new Pair<>(f, s);
             }
 
-            private Pair<Multinomial,Multinomial> addPair(Multinomial m, boolean isFirst, Pair<Multinomial,Multinomial> p){
-                if(isFirst){
-                    return new Pair<>(m.add(p.getFirst()),p.getSecond());
-                }else{
-                    return new Pair<>(p.getFirst(),m.add(p.getSecond()));
+            private Pair<Multinomial, Multinomial> addPair(Multinomial m, boolean isFirst, Pair<Multinomial, Multinomial> p) {
+                if (isFirst) {
+                    return new Pair<>(m.add(p.getFirst()), p.getSecond());
+                } else {
+                    return new Pair<>(p.getFirst(), m.add(p.getSecond()));
                 }
             }
 
@@ -1122,12 +1380,12 @@ public final class SimplificationStrategies {
         addSpiSimplification(ec);
     }
 
-    private static void addSpiSimplification(ExprCalculator ec){
-        if(!enableSpi){
+    private static void addSpiSimplification(ExprCalculator ec) {
+        if (!enableSpi) {
             return;
         }
         loadService();
-        for(SimplificationService ss : serviceLoader){
+        for (SimplificationService ss : serviceLoader) {
 //            print(ss.getClass());
             ec.tagAddAll(ss.getTags());
             ss.getProperties().forEach(ec::setProperty);
@@ -1151,8 +1409,8 @@ public final class SimplificationStrategies {
         return set;
     }
 
-    private static void loadService(){
-        if(serviceLoader == null){
+    private static void loadService() {
+        if (serviceLoader == null) {
             serviceLoader = ServiceLoader.load(SimplificationService.class);
         }
     }
@@ -1160,19 +1418,46 @@ public final class SimplificationStrategies {
     /**
      * Sets whether to load spi for simplification. {@link SimplificationService}
      */
-    public static void setEnableSpi(boolean enable){
+    public static void setEnableSpi(boolean enable) {
         enableSpi = enable;
     }
 
     private static boolean enableSpi = false;
     private static ServiceLoader<SimplificationService> serviceLoader;
 
+    //debugging code below:
 
-    public static void main(String[] args) {
-        enableSpi = true;
-        var mc = ExprCalculator.Companion.getNewInstance();
-        mc.tagAdd(SimplificationStrategies.TRIGONOMETRIC_FUNCTION);
-        var expr = Expression.valueOf(" sin(f(x)) * sin(f(x)) + 2cos(f(x)) * cos(f(x)) ");
-        print(mc.simplify(expr));
-    }
+//    public static void main(String[] args) {
+//        var mc = ExprCalculator.getNewInstance();
+//        mc.setProperty(PROP_ENABLE_EXPAND, "false");
+//        var f = mc.parseExpr("x*exp(x+1,-1)+exp(x+1,-1)");
+//        var f2 = mc.parseExpr("sin(y)/sin(x) + 1/sin(x)");
+//        var f3 = mc.parseExpr("(1+sin(y))exp(sin(x),-1)");
+//        print(f);
+//
+//        print(f2);
+//        print(f3);
+//    }
+
+//    public static void main(String[] args) {
+////        enableSpi = true;
+//        var mc = ExprCalculator.getNewInstance();
+////        mc.tagAdd(SimplificationStrategies.TRIGONOMETRIC_FUNCTION);
+//        var f = mc.parseExpr("cos(cos(cos(cos(x))))");
+////        var re = mc.simplify(expr);
+////        re.listNode();
+////        print(re);
+////        re.root.recurApplyConsumer(Node::resetSimIdentifier,100);
+////        print(mc.simplify(re));
+//        var f_6 = mc.differential(f,"x",1);
+//        print(f_6);
+//        var f_7 = Calculus.derivation(f_6,"x");
+//        print(f_7);
+//        mc.checkValidTreeStrict(f_7.root);
+//        print(mc.simplify(f_7));
+////        ExprCalculator.Companion.setShowSimSteps$AnconoKotlin(true);
+//        print(mc.simplify(f_7.root));
+////        var f_6 = mc.differential(f_5);
+////        print(f_6);
+//    }
 }

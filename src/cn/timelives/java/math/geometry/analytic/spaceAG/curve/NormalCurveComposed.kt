@@ -67,7 +67,7 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
 
 fun main(args: Array<String>) {
     SimplificationStrategies.setEnableSpi(true)
-    val mc = ExprCalculator.newInstance
+    val mc = ExprCalculator.instance
     SimplificationStrategies.setCalRegularization(mc)
     val xt = Expression.valueOf("-a*cos(t)").asFunction(mc, "t")
     val yt = Expression.valueOf("a*sin(t)").asFunction(mc, "t")

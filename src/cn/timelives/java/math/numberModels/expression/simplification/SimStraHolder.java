@@ -7,6 +7,7 @@ import cn.timelives.java.math.numberModels.expression.ExprCalculator;
 import cn.timelives.java.math.numberModels.expression.Node;
 import cn.timelives.java.math.numberModels.expression.Node.Type;
 import cn.timelives.java.math.numberModels.expression.SimplificationStrategies;
+import cn.timelives.java.math.numberModels.expression.anno.AllowModify;
 import cn.timelives.java.utilities.structure.Pair;
 
 import java.util.*;
@@ -186,7 +187,7 @@ public final class SimStraHolder {
 	/**
 	 * Performs a single simplification.
 	 */
-	public Node performSimplification(final Node node, Set<String> tags, ExprCalculator mc) {
+	public Node performSimplification(@AllowModify final Node node, Set<String> tags, ExprCalculator mc) {
 		Node result;
 		Type ty = node.getType();
 		Pair<List<SpecificStrategy>, Map<String, List<SpecificStrategy>>> p = specifices.get(ty);

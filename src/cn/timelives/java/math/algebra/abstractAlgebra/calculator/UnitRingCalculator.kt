@@ -3,6 +3,8 @@
  */
 package cn.timelives.java.math.algebra.abstractAlgebra.calculator
 
+import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators
+
 /**
  * @author liyicheng
  * 2018-02-28 19:05
@@ -23,3 +25,6 @@ interface UnitRingCalculator<T : Any> : RingCalculator<T> {
         } else super.pow(x, n)
     }
 }
+
+fun <T : Any> UnitRingCalculator<T>.asMonoidCalculator()
+    =GroupCalculators.asMonoidCalculator(this)

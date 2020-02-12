@@ -11,7 +11,7 @@ import cn.timelives.java.math.algebra.abstractAlgebra.calculator.UnitRingCalcula
  * 2018-02-28 18:47
  *
  */
-public interface UnitRing<T,R extends UnitRing<T, R>> extends Ring<T,R> {
+public interface UnitRing<T> extends Ring<T> {
 	/**
 	 * Gets the unit element of this ring.
 	 * @return {@code 1}
@@ -23,4 +23,5 @@ public interface UnitRing<T,R extends UnitRing<T, R>> extends Ring<T,R> {
 	 */
 	@Override
 	UnitRingCalculator<T> getCalculator();
+
 }

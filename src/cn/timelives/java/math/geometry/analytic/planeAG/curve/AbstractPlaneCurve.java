@@ -1,5 +1,5 @@
 package cn.timelives.java.math.geometry.analytic.planeAG.curve;
-/**
+/*
  * An equation of a curve in a plane.
  * @author lyc
  *
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 /**
- * An abstract class for 
+ * An abstract class for plane curves.
  * @author liyicheng
  *
  * @param <T>
@@ -60,7 +60,8 @@ public abstract class AbstractPlaneCurve<T> extends MathObject<T> implements Pla
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.number_models.MathCalculator)
 	 */
-	@Override
+	@NotNull
+    @Override
     public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	

@@ -13,30 +13,30 @@ class LinkedNode<E> extends DirectedGraphNode<E>{
 	
 	LinkedNode(DirectedGraph<E> graph) {
 		super(graph);
-		connectTo = new HashSet<LinkedNode<E>>();
-		connectBy = new HashSet<LinkedNode<E>>();
+		connectTo = new HashSet<>();
+		connectBy = new HashSet<>();
 	}
 	LinkedNode(DirectedGraph<E> graph,E element,int connectToSize,int connectBySize) {
 		super(graph);
 		ele = element;
-		connectTo = new HashSet<LinkedNode<E>>(connectToSize);
-		connectBy = new HashSet<LinkedNode<E>>(connectBySize);
+		connectTo = new HashSet<>(connectToSize);
+		connectBy = new HashSet<>(connectBySize);
 	}
 
-	Set<LinkedNode<E>> getConncetedNodes() {
+	Set<LinkedNode<E>> getConnectedNodes() {
 		if(connectTo!=null)
-			return new HashSet<LinkedNode<E>>(connectTo);
+			return new HashSet<>(connectTo);
 		return null;
 	}
 	boolean isConnected(LinkedNode<E> node) {
 		return connectTo.contains(node);
 	}
 	
-	Set<LinkedNode<E>> getConncetTo(){
+	Set<LinkedNode<E>> getConnectTo(){
 		return connectTo;
 	}
 	
-	Set<LinkedNode<E>> getConncetBy(){
+	Set<LinkedNode<E>> getConnectBy(){
 		return connectBy;
 	}
 

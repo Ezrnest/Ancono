@@ -13,6 +13,7 @@ import java.util.Objects
  * @author liyicheng
  * 2018-02-28 17:33
  */
+@FunctionalInterface
 interface EqualPredicate<T : Any> {
     /**
      * Evaluates whether the two objects are equal.
@@ -44,9 +45,28 @@ interface EqualPredicate<T : Any> {
             }
         }
 
+        private val REF_EQUAL : EqualPredicate<*> = object : EqualPredicate<Any>{
+            override fun isEqual(x: Any, y: Any): Boolean {
+                return x === y
+            }
+        }
+
+        /**
+         * Returns a equal predicate that considers two elements are equal if and only if
+         * the two objects are equal by [Any.equals].
+         */
         @Suppress("UNCHECKED_CAST")
         fun <T : Any> naturalEqual(): EqualPredicate<T> {
             return NATURAL_EQUAL as EqualPredicate<T>
+        }
+
+        /**
+         * Returns a equal predicate that considers two elements are equal if and only if
+         * the two objects are equal by reference.
+         */
+        @Suppress("UNCHECKED_CAST")
+        fun <T:Any> referenceEqual() : EqualPredicate<T>{
+            return REF_EQUAL as EqualPredicate<T>
         }
     }
 }

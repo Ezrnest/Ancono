@@ -3,24 +3,32 @@ package cn.timelives.java.math.numberModels.structure
 import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.MathObject
 import cn.timelives.java.math.MathObjectExtend
+import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.DivisionRingCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.asGroupCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector
 import cn.timelives.java.math.numberModels.Calculators
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
+import cn.timelives.java.utilities.RegexSup
 import java.util.function.Function
 
 
-class Quaternion<T : Any>(mc: MathCalculator<T>, val a: T, val b: T, val c: T, val d: T) : MathObjectExtend<T>(mc) {
+class Quaternion<T : Any>( val a: T, val b: T, val c: T, val d: T,mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
     val tensor: T by lazy(LazyThreadSafetyMode.NONE) {
         a * a + b * b + c * c + d * d
     }
 
+    fun real() : Quaternion<T>{
+        return real(a,mc)
+    }
+
     operator fun plus(y: Quaternion<T>): Quaternion<T> {
-        return Quaternion(mc, a + y.a, b + y.b, c + y.c, d + y.d)
+        return Quaternion(a + y.a, b + y.b, c + y.c, d + y.d,mc)
     }
 
     operator fun minus(y: Quaternion<T>): Quaternion<T> {
-        return Quaternion(mc, a - y.a, b - y.b, c - y.c, d - y.d)
+        return Quaternion(a - y.a, b - y.b, c - y.c, d - y.d,mc)
     }
 
     operator fun times(y: Quaternion<T>): Quaternion<T> {
@@ -35,10 +43,10 @@ class Quaternion<T : Any>(mc: MathCalculator<T>, val a: T, val b: T, val c: T, v
         val nb = b * y.a + a * y.b + c * y.d - d * y.c
         val nc = c * y.a + a * y.c - b * y.d + d * y.b
         val nd = d * y.a + a * y.d + b * y.c - c * y.b
-        return Quaternion(mc, na, nb, nc, nd)
+        return Quaternion( na, nb, nc, nd,mc)
     }
 
-    operator fun unaryMinus(): Quaternion<T> = Quaternion(mc, -a, -b, -c, -d)
+    operator fun unaryMinus(): Quaternion<T> = Quaternion(-a, -b, -c, -d,mc)
 
     /**
      * Returns the reciprocal of this quaternion:
@@ -60,15 +68,15 @@ class Quaternion<T : Any>(mc: MathCalculator<T>, val a: T, val b: T, val c: T, v
      * a - bi - cj - dk
      */
     fun conjugate(): Quaternion<T> {
-        return Quaternion(mc, a, -b, -c, -d)
+        return Quaternion(a, -b, -c, -d,mc)
     }
 
     operator fun times(y: T): Quaternion<T> {
-        return Quaternion(mc, y * a, y * b, y * c, y * d)
+        return Quaternion(y * a, y * b, y * c, y * d,mc)
     }
 
     operator fun div(y: T): Quaternion<T> {
-        return Quaternion(mc, a / y, b / y, c / y, d / y)
+        return Quaternion(a / y, b / y, c / y, d / y,mc)
     }
 
     operator fun div(y: Quaternion<T>): Quaternion<T> {
@@ -129,26 +137,68 @@ class Quaternion<T : Any>(mc: MathCalculator<T>, val a: T, val b: T, val c: T, v
             k 	k 	j 	−i 	−1
      */
     override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Quaternion<N> {
-        return Quaternion(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d))
+        return Quaternion(mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d),newCalculator)
     }
 
     companion object {
 
         fun <T : Any> real(a: T, mc: MathCalculator<T>): Quaternion<T> {
-            return mc.zero.let { Quaternion(mc, a, it, it, it) }
+            return mc.zero.let { Quaternion( a, it, it, it,mc) }
         }
 
         fun <T : Any> valueOf(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): Quaternion<T> {
-            return Quaternion(mc, a, b, c, d)
+            return Quaternion( a, b, c, d,mc)
+        }
+
+        fun <T:Any> parse(str : String, mc : MathCalculator<T>, deliminator : Regex = Regex(","), parser : (String)->T) : Quaternion<T>{
+            val arr = deliminator.split(str).map(parser)
+            return valueOf(arr[0],arr[1],arr[2],arr[3],mc)
         }
 
         fun <T : Any> zero(mc: MathCalculator<T>): Quaternion<T> {
-            return mc.zero.let { Quaternion(mc, it, it, it, it) }
+            return mc.zero.let { Quaternion(it, it, it, it,mc) }
         }
+
+        fun <T : Any> one(mc: MathCalculator<T>): Quaternion<T> {
+            return mc.run { Quaternion(one,zero,zero,zero,mc) }
+        }
+
+        fun <T : Any> baseI(mc : MathCalculator<T>) : Quaternion<T>{
+            return mc.run { Quaternion(zero,one,zero,zero,mc) }
+        }
+
+        fun <T : Any> baseJ(mc : MathCalculator<T>) : Quaternion<T>{
+            return mc.run { Quaternion(zero,zero,one,zero,mc) }
+        }
+
+        fun <T : Any> baseK(mc : MathCalculator<T>) : Quaternion<T>{
+            return mc.run { Quaternion(zero,zero,zero,one,mc) }
+        }
+
 
         fun <T : Any> getCalculator(mc: MathCalculator<T>): QuaternionCalculator<T> {
             return QuaternionCalculator(mc)
         }
+
+        /**
+         * Returns the quaternion eight-group, whose elements are `1,-1,i,j,k,-i,-j,-k` and
+         * the group operation is multiplication.
+         */
+        fun <T:Any> quaternionGroup(mc : MathCalculator<T>) : AbstractFiniteGroup<Quaternion<T>>{
+            val qc = getCalculator(mc)
+            val gc = qc.asGroupCalculator()
+            val e = one(mc)
+            val i = baseI(mc)
+            val j = baseJ(mc)
+            val k = baseK(mc)
+            val _e = -e
+            val _i = -i
+            val _j = -j
+            val _k = -k
+            return FiniteGroups.createGroupWithoutCheck(gc,e,i,j,k,_e,_i,_j,_k)
+        }
+
+
     }
 }
 

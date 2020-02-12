@@ -8,6 +8,8 @@ import java.math.BigInteger
 import java.util.*
 
 import cn.timelives.java.math.numberModels.Multinomial.*
+import cn.timelives.java.math.numberTheory.NTCalculator
+import java.lang.UnsupportedOperationException
 
 @Suppress("NAME_SHADOWING")
 class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinomial> {
@@ -23,6 +25,19 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
 
     override val numberClass: Class<Multinomial>
         get() = Multinomial::class.java
+
+    override fun asBigInteger(x: Multinomial): BigInteger {
+        if(x.isMonomial && x.first.isInteger){
+            return x.first.let { t ->
+                val n = x.first.numerator
+                when{
+                    t.signum >=0 -> n
+                    else -> -n
+                }
+            }
+        }
+        throw UnsupportedOperationException()
+    }
 
 
     private class Pair internal constructor(internal val n: BigInteger, internal val d: BigInteger) {
@@ -74,8 +89,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return Multinomial(result)
     }
 
-    override fun negate(para: Multinomial): Multinomial {
-        return para.negate()
+    override fun negate(x: Multinomial): Multinomial {
+        return x.negate()
     }
 
     override fun abs(para: Multinomial): Multinomial {
@@ -95,7 +110,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     }
 
     override fun multiplyX(vararg ps: Any): Multinomial {
-        if (ps.size == 0) {
+        if (ps.isEmpty()) {
             return ONE
         }
         var result = singleTerm(Term.ONE)
@@ -109,16 +124,16 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return x.divide(y)
     }
 
-    override fun reciprocal(p: Multinomial): Multinomial {
-        return p.reciprocal()
+    override fun reciprocal(x: Multinomial): Multinomial {
+        return x.reciprocal()
     }
 
-    override fun multiplyLong(p: Multinomial, l: Long): Multinomial {
-        return p.multiply(Term.valueOf(l))
+    override fun multiplyLong(x: Multinomial, n: Long): Multinomial {
+        return x.multiply(Term.valueOf(n))
     }
 
-    override fun divideLong(p: Multinomial, n: Long): Multinomial {
-        return p.divide(Term.valueOf(n))
+    override fun divideLong(x: Multinomial, n: Long): Multinomial {
+        return x.divide(Term.valueOf(n))
     }
 
     override fun squareRoot(x: Multinomial): Multinomial {
@@ -147,8 +162,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         throw UnsupportedCalculationException("Too complex")
     }
 
-    override fun pow(p: Multinomial, exp: Long): Multinomial {
-        return p.pow(Math.toIntExact(exp))
+    override fun pow(x: Multinomial, n: Long): Multinomial {
+        return x.pow(Math.toIntExact(n))
     }
 
     override fun constantValue(name: String): Multinomial {
@@ -172,8 +187,9 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         }
         if (b.isMonomial) {
             val t = b.first
-            if (t.isInteger && t.isPositive) {
-                return pow(a, t.numerator.longValueExact())
+            if (t.isInteger) {
+                val l = t.numerator.toLong()
+                return pow(a, if(t.isNegative){-l}else{l})
             }
         }
         throw UnsupportedCalculationException()
@@ -182,20 +198,29 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     override fun exp(x: Multinomial): Multinomial {
         if (x.isMonomial) {
             val t = x.first
-            if (t.isInteger && t.isPositive) {
-                val p = t.numerator.longValueExact()
+            if (t.isFraction) {
                 //                    throw new ArithmeticException("Too big for pow = "+p);
-                return monomial(Term.E.pow(Math.toIntExact(p)))
+                return monomial(Term.characterPower(Term.E_STR,t.toFraction()))
             }
         }
         throw UnsupportedCalculationException()
     }
 
     override fun log(a: Multinomial, b: Multinomial): Multinomial {
-        throw UnsupportedCalculationException()
+        throw UnsupportedCalculationException()//TODO
     }
 
     override fun ln(x: Multinomial): Multinomial {
+        if(!x.isMonomial){
+            throw UnsupportedCalculationException()
+        }
+        val t = x.first
+        if(t == Term.ONE){
+            return ZERO
+        }
+        if(t.haveSameChar(Term.E) && t.isCoefficientOne){
+            return monomial(Term.valueOf(t.getCharacterPower(MathCalculator.STR_E)))
+        }
         throw UnsupportedCalculationException()
     }
 
@@ -262,12 +287,12 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
             return ONE
         }
         if (f.haveSameChar(Term.PI)) {
-            if (f.radical == BigInteger.ONE == false) {
+            if (f.radical != BigInteger.ONE) {
                 return null
             }
             // ... pi
             var nega = false
-            if (f.isPositive == false) {
+            if (!f.isPositive) {
                 f = f.negate()
             }
 
@@ -441,21 +466,32 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return false
     }
 
-    override fun gcd(a: Multinomial, b: Multinomial): Multinomial? {
-        var a = a
-        var b = b
-        if (ZERO == a) {
-            return b
+    override fun gcd(a: Multinomial, b: Multinomial): Multinomial {
+        val comp = a.compareTo(b)
+        if(comp == 0){
+            return a
         }
-        while (ZERO != b) {
-            val t = b
-            b = mod(a, b)
-            if (a == b) {
+        var a1 : Multinomial
+        var b1 : Multinomial
+        if(comp > 0){
+            a1 = a
+            b1 = b
+        }else{
+            a1 = b
+            b1 = a
+        }
+        if (ZERO == a1) {
+            return b1
+        }
+        while (ZERO != b1) {
+            val t = b1
+            b1 = mod(a1, b1)
+            if (a1 == b1) {
                 return ONE
             }
-            a = t
+            a1 = t
         }
-        return a
+        return a1
     }
 
     override fun divideAndReminder(a: Multinomial, b: Multinomial): cn.timelives.java.utilities.structure.Pair<Multinomial, Multinomial> {
@@ -468,6 +504,10 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         override fun simplify(numbers: List<Multinomial>): List<Multinomial> {
             var numbers = numbers
             numbers = Multinomial.reduceGcd(numbers)
+            if(numbers.size == 2){
+                val pair =  simplify(numbers[0],numbers[1])
+                return listOf(pair.first,pair.second)
+            }
             return numbers
         }
 
@@ -601,6 +641,4 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
 
         }
     }
-
-
 }

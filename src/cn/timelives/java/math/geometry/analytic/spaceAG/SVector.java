@@ -488,7 +488,7 @@ public final class SVector<T> extends Vector<T> {
 		if(sol.getSolutionSituation()!= Situation.SINGLE_SOLUTION){
 			throw new ArithmeticException("Not single?");
 		}
-		return fromVector(sol.getBase());
+		return fromVector(sol.getSpecialSolution());
 	}
 //	/**
 //	 * Reduce this vector, but in two vectors, which means the three vectors must be on the 

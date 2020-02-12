@@ -4,6 +4,9 @@ import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.structure.AbelianGroup;
+import cn.timelives.java.math.algebra.abstractAlgebra.structure.Group;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.set.FiniteSet;
 import cn.timelives.java.math.set.MathSets;
@@ -19,7 +22,7 @@ import static cn.timelives.java.utilities.Printer.printMatrix;
 /**
  * An implementation of cyclic group using the type of Integer.
  */
-public class CyclicGroup extends AbstractFiniteGroup<Integer>{
+public class CyclicGroup extends AbstractFiniteGroup<Integer> implements AbelianGroup<Integer> {
     /**
      * number of elements
      */
@@ -75,10 +78,11 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
         return MathSets.fromCollection(list,Calculators.getCalculatorInteger());
     }
 
+    @NotNull
     @Override
-    public FiniteSet<AbstractFiniteGroup<Integer>> getSubgroups() {
+    public FiniteSet<CyclicGroup> getSubgroups() {
         int num = Math.toIntExact(MathUtils.factorCount(size));
-        var list = new ArrayList<AbstractFiniteGroup<Integer>>(num);
+        var list = new ArrayList<CyclicGroup>(num);
         list.add(IDENTITY);
         list.add(this);
         for(int i=2,n=2*generator;i<size;i++){
@@ -88,6 +92,12 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
             n+= generator;
         }
         return MathSets.fromCollection(list, EqualPredicate.Companion.naturalEqual());
+    }
+
+    @NotNull
+    @Override
+    public FiniteSet<CyclicGroup> getNormalSubgroups() {
+        return getSubgroups();
     }
 
     public FiniteSet<CyclicGroup> getSubgroupsAsCyclic(){
@@ -113,15 +123,16 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
         return size % cg.size == 0;
     }
 
-    static class CyclicCalInt implements GroupCalculator<Integer>{
+    static class CyclicCalInt implements JGroupCalculator<Integer> {
         final int mod;
         //int range: 0<=x < mod
         CyclicCalInt(int mod){
             this.mod = mod;
         }
 
+        @NotNull
         @Override
-        public Integer inverse(Integer x) {
+        public Integer inverse(@NotNull Integer x) {
             int _x = x;
             if(_x == 0){
                 return x;
@@ -130,18 +141,20 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
             }
         }
 
+        @NotNull
         @Override
         public Integer getIdentity() {
             return 0;
         }
 
+        @NotNull
         @Override
-        public Integer apply(Integer x, Integer y) {
+        public Integer apply(@NotNull Integer x, @NotNull Integer y) {
             return (x+y) % mod;
         }
 
         @Override
-        public boolean isEqual(Integer x, Integer y) {
+        public boolean isEqual(@NotNull Integer x, @NotNull Integer y) {
             return x.equals(y);
         }
 
@@ -172,12 +185,12 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer>{
         return new CyclicGroup(size);
     }
 
-    public static void main(String[] args) {
-        createGroup(12).getSubgroupsAsCyclic().forEach( x -> Printer.print(CollectionSup.iteratorToArray(x.getSet().iterator(),x.size)));
-//        printMatrix(new CyclicGroup(3).groupTable());
-//        PermutationGroup.alternatingGroups(3).getSet().forEach(Printer::print);
-//        printMatrix(PermutationGroup.alternatingGroups(3).groupTable());
-//        print(FiniteGroups.homoEquals(new CyclicGroup(3),PermutationGroup.alternatingGroups(3)));
-
-    }
+//    public static void main(String[] args) {
+//        createGroup(12).getSubgroupsAsCyclic().forEach( x -> Printer.print(CollectionSup.iteratorToArray(x.getSet().iterator(),x.size)));
+////        printMatrix(new CyclicGroup(3).groupTable());
+////        PermutationGroup.alternatingGroups(3).getSet().forEach(Printer::print);
+////        printMatrix(PermutationGroup.alternatingGroups(3).groupTable());
+////        print(FiniteGroups.homoEquals(new CyclicGroup(3),PermutationGroup.alternatingGroups(3)));
+//
+//    }
 }

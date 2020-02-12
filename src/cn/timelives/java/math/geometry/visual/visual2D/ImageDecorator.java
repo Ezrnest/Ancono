@@ -18,7 +18,6 @@ public interface ImageDecorator {
 	 * Decorates this image. 
 	 * @param image an image to draw into
 	 * @param rect the rectangle in the actual coordinate system. 
-	 * @return
 	 */
 	BufferedImage process(BufferedImage image,Graphics2D g,Rectangle2D.Double rect);
 	

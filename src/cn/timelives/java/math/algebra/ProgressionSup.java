@@ -74,7 +74,8 @@ public final class ProgressionSup {
 			return arr;
 		}
 
-		@Override
+		@NotNull
+        @Override
 		public Iterator<T> iterator() {
 			return new AddIterator(0);
 		}
@@ -223,7 +224,8 @@ public final class ProgressionSup {
 			return arr;
 		}
 
-		@Override
+		@NotNull
+        @Override
 		public Iterator<T> iterator() {
 			return new ConsIterator<T>(0,this);
 		}
@@ -317,7 +319,8 @@ public final class ProgressionSup {
 			throw new IndexOutOfBoundsException("For index : "+index);
 		}
 		
-		@Override
+		@NotNull
+        @Override
 		public Iterator<T> iterator() {
 			return new MulIterator(0);
 		}

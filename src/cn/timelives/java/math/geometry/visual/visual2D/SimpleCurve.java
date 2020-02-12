@@ -90,12 +90,9 @@ public class SimpleCurve extends BufferedCurve {
 		} else if (!f.equals(other.f))
 			return false;
 		if (pre == null) {
-			if (other.pre != null)
-				return false;
-		} else if (!pre.equals(other.pre))
-			return false;
-		return true;
-	}
+            return other.pre == null;
+		} else return pre.equals(other.pre);
+    }
 	
 	public static SimpleCurve of(SubstitutableCurve f,Color c) {
 		return of(f,SimpleDrawPointPredicate.getDefault(),c);

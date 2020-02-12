@@ -1,7 +1,7 @@
 package cn.timelives.java.math.geometry.analytic.spaceAG.curve
 
 import cn.timelives.java.math.MathCalculatorHolder
-import cn.timelives.java.math.algebra.calculus.derivation
+import cn.timelives.java.math.calculus.Calculus.derivation
 import cn.timelives.java.math.function.*
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector
@@ -30,7 +30,7 @@ interface SpaceParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolde
 
     fun substituteAsPoint(t: T): SPoint<T> = SPoint.valueOf(substitute(t))
 
-    fun asPointFunction(): MathFunction<T, SPoint<T>> = MathFunction.compose(this, MathFunction { x: SVector<T> -> SPoint.valueOf(x) })
+    fun asPointFunction(): MathFunction<T, SPoint<T>> = MathFunction.andThen(this, MathFunction { x: SVector<T> -> SPoint.valueOf(x) })
 
     fun substituteX(t: T): T = substitute(t).x
 
@@ -45,7 +45,7 @@ interface SpaceParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolde
 }
 
 fun main(args: Array<String>) {
-    val mc = ExprCalculator.newInstance
+    val mc = ExprCalculator.instance
     SimplificationStrategies.setCalRegularization(mc)
     proof1(mc)
     proof2(mc)

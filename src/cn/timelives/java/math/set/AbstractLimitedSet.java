@@ -67,7 +67,8 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 	/**
 	 * @see cn.timelives.java.math.set.CountableSet#iterator()
 	 */
-	@Override
+	@NotNull
+    @Override
 	public Iterator<T> iterator() {
 		return listIterator();
 	}
@@ -83,7 +84,8 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 		return null;
 	}
 	
-	@Override
+	@NotNull
+    @Override
     public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 	
 	

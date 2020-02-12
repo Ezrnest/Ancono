@@ -17,7 +17,6 @@ import static java.util.Objects.requireNonNull;
  * @author lyc
  *
  * @param <T>
- * @param <S>
  */
 public abstract class EHSection<T> extends ConicSection<T> {
 	protected final T a,b,c;

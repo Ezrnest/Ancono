@@ -14,8 +14,7 @@ public interface SubstitutableCurve {
 	 * Computes the value of {@code f(x,y)} as double
 	 * @param x
 	 * @param y
-	 * @return
 	 */
-	public double compute(double x,double y);
+	double compute(double x,double y);
 	
 }

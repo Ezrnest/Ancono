@@ -5,7 +5,7 @@ package cn.timelives.java.math.algebra.abstractAlgebra.calculator
  * Describes the calculator for a module.
  * Created at 2018/9/20 19:31
  * @author  liyicheng
- * @see cn.timelives.java.math.algebra.abstractAlgebra.structure.Module
+ * @see Module(cn.timelives.java.math.algebra.abstractAlgebra.structure.Module)
  */
 interface ModuleCalculator<R:Any,V:Any> : GroupCalculator<V> {
 

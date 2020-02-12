@@ -39,11 +39,16 @@ import java.util.function.Function
  * @param <T>
 </T> */
 class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : MathObject<T>(mc), DivisionRingNumberModel<Complex<T>> {
+
+
     private val a: T = Objects.requireNonNull(a)
     private val b: T = Objects.requireNonNull(b)
     private var m: T? = null
     private var arg: T? = null
 
+    override fun isZero(): Boolean {
+        return mc.isZero(a) && mc.isZero(b)
+    }
     /**
      * Returns the real part of this,which is
      * equal to `Re(this)`.
@@ -151,21 +156,21 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     }
 
     /**
-     * Returns `this+z`.
-     * @param z
-     * @return `this+z`
+     * Returns `this+y`.
+     * @param y
+     * @return `this+y`
      */
-    override fun add(z: Complex<T>): Complex<T> {
-        return Complex(mc, mc.add(a, z.a), mc.add(b, z.b))
+    override fun add(y: Complex<T>): Complex<T> {
+        return Complex(mc, mc.add(a, y.a), mc.add(b, y.b))
     }
 
     /**
-     * Returns `this-z`.
-     * @param z
-     * @return `this-z`
+     * Returns `this-y`.
+     * @param y
+     * @return `this-y`
      */
-    override fun subtract(z: Complex<T>): Complex<T> {
-        return Complex(mc, mc.subtract(a, z.a), mc.subtract(b, z.b))
+    override fun subtract(y: Complex<T>): Complex<T> {
+        return Complex(mc, mc.subtract(a, y.a), mc.subtract(b, y.b))
     }
 
     /**
@@ -178,21 +183,18 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
     /**
      * Returns the conjugate complex number of `this`.
-     * @return
-     * <pre>____
-     * this
-    </pre> *
+     * @return conjugate of this
      */
     fun conjugate(): Complex<T> {
         return Complex(mc, a, mc.negate(b))
     }
 
     /**
-     * Returns this*z.
-     * @param z
-     * @return the result of `this*z`.
+     * Returns this*y.
+     * @param y
+     * @return the result of `this*y`.
      */
-    override fun multiply(z: Complex<T>): Complex<T> {
+    override fun multiply(y: Complex<T>): Complex<T> {
         //(a+bi)*(c+di) =
         // ac-bd + (ad+bc)i
         //but we can use a trick to reduce calculation:
@@ -200,9 +202,9 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         //2.ac , 3. bd
         //and 1 - 2 - 3 = ad + bc
         //    2 - 3 = ac - bd
-        val t1 = mc.multiply(mc.add(a, b), mc.add(z.a, z.b))
-        val t2 = mc.multiply(a, z.a)
-        val t3 = mc.multiply(b, z.b)
+        val t1 = mc.multiply(mc.add(a, b), mc.add(y.a, y.b))
+        val t2 = mc.multiply(a, y.a)
+        val t3 = mc.multiply(b, y.b)
         val an = mc.subtract(t2, t3)
         val bn = mc.subtract(t1, mc.add(t2, t3))
         return Complex(mc, an, bn)
@@ -219,17 +221,17 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
     /**
      * Returns this/z,throw ArithmeticException if z = 0.
-     * @param z
+     * @param y
      * @return the result of `this*z`.
      */
-    override fun divide(z: Complex<T>): Complex<T> {
+    override fun divide(y: Complex<T>): Complex<T> {
         //                _
         //z1 / z2 = (z1 * z2) / |z2|^2
-        val sq = mc.add(mc.multiply(z.a, z.a), mc.multiply(z.b, z.b))
+        val sq = mc.add(mc.multiply(y.a, y.a), mc.multiply(y.b, y.b))
         //copy code here
-        val tb = mc.negate(z.b)
-        val t1 = mc.multiply(mc.add(a, b), mc.add(z.a, tb))
-        val t2 = mc.multiply(a, z.a)
+        val tb = mc.negate(y.b)
+        val t1 = mc.multiply(mc.add(a, b), mc.add(y.a, tb))
+        val t2 = mc.multiply(a, y.a)
         val t3 = mc.multiply(b, tb)
         var an = mc.subtract(t2, t3)
         var bn = mc.subtract(t1, mc.add(t2, t3))
@@ -257,27 +259,27 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
      * @throws ArithmeticException if `p==0 && this==0`
      */
     fun pow(p: Long): Complex<T> {
-        var p = p
-        if (p < 0) {
+        var p1 = p
+        if (p1 < 0) {
             throw IllegalArgumentException("Cannot calculate:p<0")
         }
 
         //we use this way to reduce the calculation to log(p)
         var re = Complex.real(mc.one, mc)
-        if (p == 0L) {
+        if (p1 == 0L) {
             if (mc.isZero(a) && mc.isZero(b)) {
                 throw ArithmeticException("0^0")
             }
             return re
         }
         var th = this
-        while (p != 0L) {
+        while (p1 != 0L) {
             //which means need to multiple this one
-            if (p and 1L != 0L) {
+            if (p1 and 1L != 0L) {
                 re = re.multiply(th)
             }
             th = th.multiply(th)
-            p = p shr 1
+            p1 = p1 shr 1
         }
         return re
     }
@@ -288,9 +290,9 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         return Complex(newCalculator, mapper.apply(a), mapper.apply(b))
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj is Complex<*>) {
-            val com = obj as Complex<*>?
+    override fun equals(other: Any?): Boolean {
+        if (other is Complex<*>) {
+            val com = other as Complex<*>?
             return a == com!!.a && b == com.b
         }
         return false
@@ -352,7 +354,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
             return x.valueEquals(y)
         }
 
-        override fun compare(para1: Complex<T>, para2: Complex<T>): Int {
+        override fun compare(x: Complex<T>, y: Complex<T>): Int {
             throw UnsupportedCalculationException("Complex Number")
         }
 
@@ -434,8 +436,8 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
             return mc.compare(t, mc.zero) > 0
         }
 
-        override fun pow(p: Complex<T>, exp: Long): Complex<T> {
-            return p.pow(exp)
+        override fun pow(x: Complex<T>, n: Long): Complex<T> {
+            return x.pow(n)
         }
 
         override fun constantValue(name: String): Complex<T>? {

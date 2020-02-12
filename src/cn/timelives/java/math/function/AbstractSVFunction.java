@@ -4,8 +4,7 @@
 package cn.timelives.java.math.function;
 
 import cn.timelives.java.math.MathObject;
-import cn.timelives.java.math.algebra.calculus.Derivable;
-import cn.timelives.java.math.algebra.calculus.SDerivable;
+import cn.timelives.java.math.calculus.SDerivable;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.Fraction;
 import cn.timelives.java.math.MathCalculator;
@@ -75,11 +74,12 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		}
 
 		/*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.calculus.Derivable#derive()
 		 */
-		@Override
+		@NotNull
+        @Override
 		public Power<T> derive() {
-            return new Power<>(getMc(), getMc().getOne(), Fraction.Companion.getNEGATIVE_ONE());
+            return new Power<>(getMc(), getMc().getOne(), Fraction.NEGATIVE_ONE);
 		}
 		
 		/*
@@ -149,11 +149,12 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
             return getMc().log(a, x);
 		}
 		/*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.calculus.Derivable#derive()
 		 */
-		@Override
+		@NotNull
+        @Override
 		public Power<T> derive() {
-            return new Power<>(getMc(), getMc().reciprocal(getMc().ln(a)), Fraction.Companion.getNEGATIVE_ONE());
+            return new Power<>(getMc(), getMc().reciprocal(getMc().ln(a)), Fraction.NEGATIVE_ONE);
 		}
 		/*
 		 * @see cn.timelives.java.math.function.MathFunction#domain()
@@ -227,7 +228,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 		 * 
 		 */
 		Power(MathCalculator<T> mc) {
-			this(mc,mc.getZero(), Fraction.Companion.getONE());
+			this(mc,mc.getZero(), Fraction.ONE);
 		}
 		
 		private final T a;
@@ -258,7 +259,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
             return getMc().multiply(a, t);
 		}
 		/*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.calculus.Derivable#derive()
 		 */
         @NotNull
         @Override
@@ -267,9 +268,9 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
 				return this;
 			}
 			if(n.getSignum() == 0) {
-                return new Power<>(getMc(), getMc().getZero(), Fraction.Companion.getONE());
+                return new Power<>(getMc(), getMc().getZero(), Fraction.ONE);
 			}
-			Fraction _n = n.minus(Fraction.Companion.getONE());
+			Fraction _n = n.minus(Fraction.ONE);
             T _a = getMc().divideLong(getMc().multiplyLong(a, n.getNumerator()), n.getDenominator());
             return new Power<T>(getMc(), _a, _n);
 		}
@@ -396,9 +397,10 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
             return getMc().multiply(c, getMc().exp(a, x));
 		}
 		/*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.calculus.Derivable#derive()
 		 */
-		@Override
+		@NotNull
+        @Override
 		public Exp<T> derive() {
             return new Exp<>(getMc(), getMc().multiply(c, getMc().ln(a)), a);
 		}
@@ -488,7 +490,7 @@ public abstract class AbstractSVFunction<T> extends MathObject<T> implements SVF
             return getMc().exp(x);
 		}
 		/*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.timelives.java.math.calculus.Derivable#derive()
 		 */
         @NotNull
         @Override

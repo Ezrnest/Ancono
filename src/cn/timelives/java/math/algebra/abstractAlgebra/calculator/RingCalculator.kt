@@ -3,6 +3,7 @@
  */
 package cn.timelives.java.math.algebra.abstractAlgebra.calculator
 
+import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators
 import cn.timelives.java.utilities.ModelPatterns
 
 /**
@@ -46,14 +47,6 @@ interface RingCalculator<T : Any> : GroupCalculator<T> {
      * @return `-x`
      */
     fun negate(x: T): T
-
-    /**
-     * Returns the result of `x-y`, which is equal to `x+negate(y)`.
-     * @param x
-     * @param y
-     * @return `x-y`
-     */
-    fun subtract(x: T, y: T): T
 
     /**
      * Returns the result of `x*y`. This operation may be not commutative.
@@ -107,4 +100,21 @@ interface RingCalculator<T : Any> : GroupCalculator<T> {
     override fun gpow(x: T, n: Long): T {
         return super.gpow(x, n)
     }
+
+    /**
+     * Operator function multiply.
+     * @see multiply
+     */
+    operator fun T.times(y : T) = multiply(this,y)
+
+    override fun Long.times(x: T): T {
+        return multiplyLong(x,this)
+    }
+
+    override fun T.times(n: Long): T {
+        return multiplyLong(this,n)
+    }
 }
+
+fun <T:Any> RingCalculator<T>.asSemigroupCalculator()
+        = GroupCalculators.asSemigroupCalculator(this)

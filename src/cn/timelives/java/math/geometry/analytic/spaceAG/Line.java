@@ -149,7 +149,7 @@ public final class Line<T>  extends SpacePointSet<T> implements Simplifiable<T, 
 		}
 		
 		//here shows the advantage of naming the vector in space as SVector 
-		Vector<T> base = sov.getBase();
+		Vector<T> base = sov.getSpecialSolution();
 		T k = base.getNumber(0);
 
         return new SPoint<T>(getMc(), getMc().add(p0.x, getMc().multiply(k, vec.x)),

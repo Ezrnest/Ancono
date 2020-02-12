@@ -6,6 +6,7 @@ package cn.timelives.java.math.numberModels.expression.simplification;
 import cn.timelives.java.math.numberModels.expression.ExprCalculator;
 import cn.timelives.java.math.numberModels.expression.Node;
 import cn.timelives.java.math.numberModels.expression.Node.*;
+import cn.timelives.java.math.numberModels.expression.anno.AllowModify;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -89,7 +90,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 */
 	@Override
 	@Nullable
-    public Node simplifyNode(Node node, ExprCalculator mc) {
+    public Node simplifyNode(@AllowModify Node node, ExprCalculator mc) {
 		Type t = node.getType();
 		if(!types.contains(t)) {
 			return node;
@@ -120,7 +121,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @param node a node
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
-	protected Node simplifyPolynomial(Poly node, ExprCalculator mc) {
+	protected Node simplifyPolynomial(@AllowModify Poly node, ExprCalculator mc) {
 		return node;
 	}
 
@@ -131,7 +132,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
 	@Nullable
-    protected Node simplifyAdd(Add node, ExprCalculator mc) {
+    protected Node simplifyAdd(@AllowModify Add node, ExprCalculator mc) {
 		return node;
 	}
 	/**
@@ -141,7 +142,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
     @Nullable
-    protected Node simplifyMultiply(Multiply node, ExprCalculator mc) {
+    protected Node simplifyMultiply(@AllowModify Multiply node, ExprCalculator mc) {
 		return node;
 	}
 	/**
@@ -151,7 +152,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
     @Nullable
-    protected Node simplifyFraction(Fraction node, ExprCalculator mc) {
+    protected Node simplifyFraction(@AllowModify Fraction node, ExprCalculator mc) {
 		return node;
 	}
 	/**
@@ -161,7 +162,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
     @Nullable
-    protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
+    protected Node simplifySFunction(@AllowModify SFunction node, ExprCalculator mc) {
 		return node;
 	}
 	/**
@@ -171,7 +172,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
     @Nullable
-    protected Node simplifyDFunction(DFunction node, ExprCalculator mc) {
+    protected Node simplifyDFunction(@AllowModify DFunction node, ExprCalculator mc) {
 		return node;
 	}
 	/**
@@ -181,7 +182,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
 	 * @return the node after simplification, or {@code null} to indicate no simplification is done.
 	 */
     @Nullable
-    protected Node simplifyMFunction(MFunction node, ExprCalculator mc) {
+    protected Node simplifyMFunction(@AllowModify MFunction node, ExprCalculator mc) {
 		return node;
 	}
 }

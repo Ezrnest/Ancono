@@ -69,15 +69,15 @@ public final class IntervalI<T> extends Interval<T>{
             int t = getMc().compare(n, right);
 			if((type & RIGHT_OPEN_MASK) == RIGHT_OPEN_MASK){
 				// right open
-				return t == -1;
+				return t < 0;
 			}else{
-				return t == -1 || t == 0;
+				return t < 0 || t == 0;
 			}
 		}else if(right == null){
             int t = getMc().compare(left, n);
 			if((type & LEFT_OPEN_MASK) == LEFT_OPEN_MASK){
 				//left open
-				return t == -1;
+				return t < 0;
 			}else{
 				return t != 1;
 			}
@@ -88,13 +88,13 @@ public final class IntervalI<T> extends Interval<T>{
 				return false;
 			}
 		}else{
-			if(rl == 1){
+			if(rl > 0){
 				return false;
 			}
 		}
         int rr = getMc().compare(n, right);
 		if((type & RIGHT_OPEN_MASK) == RIGHT_OPEN_MASK){
-			return rr == -1;
+			return rr < 0;
 		}else{
 			return rr != 1;
 		}
@@ -139,10 +139,10 @@ public final class IntervalI<T> extends Interval<T>{
 			if(left == null){
 				return true;
 			}
-            return getMc().compare(left, n) == -1;
+            return getMc().compare(left, n) < 0;
 		}
 		if(left == null){
-            return getMc().compare(n, right) == -1;
+            return getMc().compare(n, right) < 0;
 		}
 
         int t = getMc().compare(left, n);
@@ -154,7 +154,7 @@ public final class IntervalI<T> extends Interval<T>{
 	}
 	
 	
-	private final void thr(T n) throws IllegalArgumentException{
+	private void thr(T n) throws IllegalArgumentException{
 		throw new IllegalArgumentException("n = "+n);
 	}
 	
@@ -162,7 +162,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> downerPart(T n) {
 		if(inRangeExclusive(n)){
-            return new IntervalI<T>(getMc(), left, n, type);
+            return new IntervalI<>(getMc(), left, n, type);
 		}
 		thr(n);
 		return null;
@@ -172,7 +172,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> downerPart(T n, boolean include) {
 		if(inRangeExclusive(n)){
-            return new IntervalI<T>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
+            return new IntervalI<>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -182,7 +182,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> upperPart(T n) {
 		if(inRangeExclusive(n)){
-            return new IntervalI<T>(getMc(), n, right, type);
+            return new IntervalI<>(getMc(), n, right, type);
 		}
 		thr(n);
 		return null;
@@ -192,7 +192,7 @@ public final class IntervalI<T> extends Interval<T>{
 	@Override
 	public Interval<T> upperPart(T n, boolean include) {
 		if(inRangeExclusive(n)){
-            return new IntervalI<T>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
+            return new IntervalI<>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -201,8 +201,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandUpperBound(T n) {
-        if (getMc().compare(right, n) == -1) {
-            return new IntervalI<T>(getMc(), left, n, type);
+        if (getMc().compare(right, n) < 0) {
+            return new IntervalI<>(getMc(), left, n, type);
 		}
 		thr(n);
 		return null;
@@ -211,8 +211,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandUpperBound(T n, boolean include) {
-        if (getMc().compare(right, n) == -1) {
-            return new IntervalI<T>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
+        if (getMc().compare(right, n) < 0) {
+            return new IntervalI<>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -221,8 +221,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandDownerBound(T n) {
-        if (getMc().compare(left, n) == -1) {
-            return new IntervalI<T>(getMc(), n, right, type);
+        if (getMc().compare(left, n) < 0) {
+            return new IntervalI<>(getMc(), n, right, type);
 		}
 		thr(n);
 		return null;
@@ -231,8 +231,8 @@ public final class IntervalI<T> extends Interval<T>{
 
 	@Override
 	public Interval<T> expandDownerBound(T n, boolean include) {
-        if (getMc().compare(left, n) == -1) {
-            return new IntervalI<T>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
+        if (getMc().compare(left, n) < 0) {
+            return new IntervalI<>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
 		}
 		thr(n);
 		return null;
@@ -255,19 +255,19 @@ public final class IntervalI<T> extends Interval<T>{
 		//left side judge
 		if(left != null){
             int t = getMc().compare(left, iL);
-			if(t == 1){
+			if(t > 0){
 				return false;
 			}
-			if(t == 0 && iv.isDownerBoundInclusive() && isDownerBoundInclusive()== false){
+			if(t == 0 && iv.isDownerBoundInclusive() && !isDownerBoundInclusive()){
 				return false;
 			}
 		}
 		if(right != null){
             int t = getMc().compare(iR, right);
-			if(t == 1){
+			if(t > 0){
 				return false;
 			}
-			if(t == 0 && iv.isUpperBoundInclusive() && isUpperBoundInclusive()== false){
+			if(t == 0 && iv.isUpperBoundInclusive() && !isUpperBoundInclusive()){
 				return false;
 			}
 		}
@@ -281,7 +281,7 @@ public final class IntervalI<T> extends Interval<T>{
 		T iR = iv.upperBound();
         if ((right == null || iL == null || getMc().compare(right, iL) >= 0) &&
                 (iR == null || left == null || getMc().compare(iR, left) >= 0)) {
-            if (getMc().compare(left, iL) == -1) {
+            if (getMc().compare(left, iL) < 0) {
                 if (getMc().isEqual(right, iL) && (!isUpperBoundInclusive() || !iv.isDownerBoundInclusive())) {
 					return null;
 				}
@@ -300,14 +300,16 @@ public final class IntervalI<T> extends Interval<T>{
 	}
 
 
-	@Override
+	@NotNull
+    @Override
 	public String toString() {
 		return toString(NumberFormatter.getToStringFormatter());
 	}
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.Interval#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
-	@Override
+	@NotNull
+    @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
 		StringBuilder sb = new StringBuilder();
 		if(isDownerBoundInclusive()){
@@ -334,7 +336,8 @@ public final class IntervalI<T> extends Interval<T>{
 		return sb.toString();
 	}
 
-	@Override
+	@NotNull
+    @Override
     public <N> Interval<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		return new IntervalI<>(newCalculator, mapper.apply(left), mapper.apply(right), type);
 	}
@@ -371,38 +374,26 @@ public final class IntervalI<T> extends Interval<T>{
 					&& isUpperBoundInclusive() == iv.isUpperBoundInclusive()){
 				N iL = iv.downerBound();
 				N iR = iv.upperBound();
-				if(iL == null){
-					if(left != null){
-						return false;
-					}
-				}else if(left == null){
-					return false;
-				}else{
-					T iLM = mapper.apply(iL);
-                    if (!getMc().isEqual(iLM, left)) {
-						return false;
-					}
-				}
-				if(iR == null){
-					if(right != null){
-						return false;
-					}
-				}else if(right == null){
-					return false;
-				}else{
-					T iRM = mapper.apply(iR);
-                    if (!getMc().isEqual(iRM, right)) {
-						return false;
-					}
-				}
-				return true;
-				
-			}
+                if (mappingSideNotEquals(mapper, iL, left)) return false;
+                return !mappingSideNotEquals(mapper, iR, right);
+
+            }
 		}
 		return false;
 	}
 
-	@Override
+    private <N> boolean mappingSideNotEquals(@NotNull Function<N, T> mapper, N iR, T right) {
+        if(iR == null){
+            return right != null;
+        }else if(right == null){
+            return true;
+        }else{
+            T iRM = mapper.apply(iR);
+            return !getMc().isEqual(iRM, right);
+        }
+    }
+
+    @Override
     public boolean valueEquals(@NotNull MathObject<T> obj) {
 		if(obj instanceof Interval){
 			Interval<T> iv = (Interval<T>) obj;
@@ -410,35 +401,23 @@ public final class IntervalI<T> extends Interval<T>{
 					&& isUpperBoundInclusive() == iv.isUpperBoundInclusive()){
 				T iL = iv.downerBound();
 				T iR = iv.upperBound();
-				if(iL == null){
-					if(left != null){
-						return false;
-					}
-				}else if(left == null){
-					return false;
-				}else{
-                    if (!getMc().isEqual(iL, left)) {
-						return false;
-					}
-				}
-				if(iR == null){
-					if(right != null){
-						return false;
-					}
-				}else if(right == null){
-					return false;
-				}else{
-                    if (!getMc().isEqual(iR, right)) {
-						return false;
-					}
-				}
-				return true;
-				
-			}
+                if (sideNotEquals(iL, left)) return false;
+                return !sideNotEquals(iR, right);
+
+            }
 		}
 		return false;
 	}
 
-	
-	
+    private boolean sideNotEquals(T side1, T side2) {
+        if(side1 == null){
+            return side2 != null;
+        }else if(side2 == null){
+            return true;
+        }else{
+            return !getMc().isEqual(side1, side2);
+        }
+    }
+
+
 }

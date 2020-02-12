@@ -32,6 +32,7 @@ public abstract class AbstractCountableSet<T> extends AbstractMathSet<T> impleme
 		return BigInteger.valueOf(size());
 	}
 	
-	@Override
+	@NotNull
+    @Override
     public abstract <N> AbstractCountableSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 }

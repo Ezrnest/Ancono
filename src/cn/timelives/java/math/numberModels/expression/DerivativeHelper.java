@@ -1,14 +1,11 @@
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.algebra.calculus.Calculus;
+import cn.timelives.java.math.calculus.Calculus;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.expression.anno.DisallowModify;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import static cn.timelives.java.math.numberModels.expression.ExprFunction.FUNCTION_NAME_EXP;
@@ -69,7 +66,7 @@ public class DerivativeHelper {
         if (poly == null || !poly.containsChar(variableName)) {
             //constant
             var result = dMultiply(node.children, variableName);
-            return poly == null ? result : Node.wrapCloneNodeMultiply(result, poly);
+            return poly == null ? result : Node.wrapNodeMultiply(result, poly); // no clone
         }
         var p_ = Calculus.derivation(node.p, variableName);
         if (node.children.isEmpty()) {
@@ -77,8 +74,8 @@ public class DerivativeHelper {
         }
         Node n_ = dMultiply(node.children, variableName);
         Node partA = Node.wrapNodeMultiply(n_, poly);
-        Node partB = Node.wrapNodeMultiply(Node.wrapNodeAM(false, node.children), p_);
-        return Node.wrapNodeAM(true, partA, partB);
+        Node partB = Node.wrapNodeMultiply(Node.wrapCloneNodeAM(false, node.children), p_);
+        return Node.wrapNodeAM(true, partA, partB); // no clone
     }
 
 
@@ -101,7 +98,7 @@ public class DerivativeHelper {
         } else {
             a = nodes.get(0).cloneNode(null);
             List<Node> remains = nodes.subList(1, nodes.size());
-            b = Node.wrapNodeAM(false, remains);
+            b = Node.wrapCloneNodeAM(false, remains);
             a_ = derivativeNode(a, variableName);
             b_ = dMultiply(remains, variableName);
         }
@@ -150,6 +147,15 @@ public class DerivativeHelper {
                 " with " + parameterLength + " parameter(s)");
     }
 
+    private static Node dReciprocal(@DisallowModify Node.SFunction node, String variableName) {
+        // 1/f(x) -> f'(x) / (f(x))^2
+        Node fx = node.child;
+        Node fx_ = derivativeNode(fx, variableName);
+        Node cos = Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, fx, Node.newPolyNode(Multinomial.valueOf(-2L)));
+        return Node.wrapNodeAM(false, fx_, cos);
+    }
+
+
     private static Node dSin(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
@@ -184,8 +190,9 @@ public class DerivativeHelper {
 
     private static Node dExp(@DisallowModify Node.SFunction node, String variableName) {
         Node fx = node.child;
+//        Objects.requireNonNull(fx);
         Node fx_ = derivativeNode(fx, variableName);
-        return Node.wrapNodeAM(false, fx_, node);
+        return Node.wrapNodeAM(false, fx_, node.cloneNode());
     }
 
     private static Node dSquareRoot(@DisallowModify Node.SFunction node, String variableName) {
@@ -206,6 +213,9 @@ public class DerivativeHelper {
     private static Node dExp2(@DisallowModify Node.DFunction node, String variableName) {
         Node base = node.c1;
         Node exponent = node.c2;
+        Objects.requireNonNull(base);
+        Objects.requireNonNull(exponent);
+
         //a^b = e^(b * ln(a))
         Node lna = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_LN, base);
         Node newExponent = Node.wrapCloneNodeAM(false, exponent, lna);
@@ -281,6 +291,7 @@ public class DerivativeHelper {
     }
 
     private static void addSingles() {
+        addSFunctionDerivator(ExprFunction.FUNCTION_NAME_RECIPROCAL,DerivativeHelper::dReciprocal);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_SIN, DerivativeHelper::dSin);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_COS, DerivativeHelper::dCos);
         addSFunctionDerivator(ExprFunction.FUNCTION_NAME_TAN, DerivativeHelper::dTan);
@@ -439,15 +450,17 @@ public class DerivativeHelper {
 
     }
 
-    public static void main(String[] args) {
-        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
-        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
-        SimplificationStrategies.setCalRegularization(ec);
-        expr = ec.simplify(expr);
-        print("Expression is: " + expr);
-        var re = Calculus.derivation(expr, "x");
-//        re.listNode();
-        re = ec.simplify(re);
-        print(re);
-    }
+//    public static void main(String[] args) {
+//        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
+//        var f = ec.parseExpr("exp(sin(x),3)");
+//        print(ec.differential(f));
+//        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
+//        SimplificationStrategies.setCalRegularization(ec);
+//        expr = ec.simplify(expr);
+//        print("Expression is: " + expr);
+//        var re = Calculus.derivation(expr, "x");
+////        re.listNode();
+//        re = ec.simplify(re);
+//        print(re);
+//    }
 }

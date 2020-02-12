@@ -588,7 +588,8 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 	
 	
 	
-	@Override
+	@NotNull
+    @Override
     public <N> Circle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
 		Point<N> op = o.mapTo(mapper, newCalculator);
 		N r2 = mapper.apply(this.r2);

@@ -5,6 +5,7 @@ package test.math.abstractAlgebra;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
 import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.MathCalculator;
@@ -35,39 +36,34 @@ public class TestLimitedGroup {
 	@Test
 	public void test1() {
 		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
-		GroupCalculator<TransMatrix<Integer>> matmc = new GroupCalculator<TransMatrix<Integer>>() {
+		GroupCalculator<TransMatrix<Integer>> matmc = new JGroupCalculator<>() {
             @Override
             public boolean isCommutative() {
                 return false;
             }
 
-            @NotNull
-			@Override
-			@SuppressWarnings("unchecked")
-			public TransMatrix<Integer> gpow(@NotNull TransMatrix<Integer> x, long n) {
-				return (TransMatrix<Integer>) DefaultImpls.gpow(this, x, n);
-			}
 
-			@Override
-			public boolean isEqual(TransMatrix<Integer> x, TransMatrix<Integer> y) {
-				return x.valueEquals(y);
-			}
-			
-			@Override
-			public TransMatrix<Integer> apply(TransMatrix<Integer> x, TransMatrix<Integer> y) {
-				return y.andThen(x);
-			}
-			
-			@Override
-			public TransMatrix<Integer> getIdentity() {
-				return TransMatrix.identityTrans(mc);
-			}
-			
-			@Override
-			public TransMatrix<Integer> inverse(TransMatrix<Integer> x) {
-				return x.inverse();
-			}
-		}; 
+            @Override
+            public boolean isEqual(TransMatrix<Integer> x, @NotNull TransMatrix<Integer> y) {
+                return x.valueEquals(y);
+            }
+
+            @Override
+            public TransMatrix<Integer> apply(@NotNull TransMatrix<Integer> x, TransMatrix<Integer> y) {
+                return y.andThen(x);
+            }
+
+            @Override
+            public TransMatrix<Integer> getIdentity() {
+                return TransMatrix.identityTrans(mc);
+            }
+
+            @NotNull
+            @Override
+            public TransMatrix<Integer> inverse(TransMatrix<Integer> x) {
+                return x.inverse();
+            }
+        };
 		AbstractFiniteGroup<TransMatrix<Integer>> g = FiniteGroups.createGroup(matmc, 
 				TransMatrix.flipX(mc),
 				TransMatrix.flipY(mc),
@@ -76,9 +72,9 @@ public class TestLimitedGroup {
 		TransMatrix<Integer>[][] table = FiniteGroups.generateGroupTable(g);
 		String names = "eabcmpqn";
 		Function<TransMatrix<Integer>,String> namer = x -> {
-			for(int i=1;i<table.length;i++) {
+			for(int i=0;i<table.length;i++) {
 				if(matmc.isEqual(table[0][i],x)) {
-					return names.substring(i-1, i);
+					return names.substring(i, i+1);
 				}
 			}
 			return "-";

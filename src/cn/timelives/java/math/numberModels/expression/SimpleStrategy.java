@@ -34,8 +34,16 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	public SimpleStrategy(Set<String> tags, Set<Type> types, String fname, String description) {
 		super(tags, types, fname, description);
 	}
-	
-	/**
+
+    @Override
+    public String toString() {
+        if(description.isBlank()){
+            return super.toString();
+        }
+        return description;
+    }
+
+    /**
 	 * Directly gets the children of the node, without getting a copy.
 	 * @param n a ListChildNode
 	 * @return the children
@@ -91,7 +99,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
 	 * @param p a polynomial, or null.
 	 * @return a node, either of type Add or Multiply.
 	 */
-	protected final CombinedNode wrapNodeAM(boolean isAdd, List<Node> nodes, Multinomial p) {
+	protected final Node wrapNodeAM(boolean isAdd, List<Node> nodes, Multinomial p) {
 		return Node.wrapNodeAM(isAdd, nodes, p);
 	}
 	/**

@@ -6,8 +6,9 @@ package cn.timelives.java.math.function
 import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.MathCalculatorHolder
 import cn.timelives.java.math.MathObject
-import cn.timelives.java.math.algebra.Polynomial
-import cn.timelives.java.math.algebra.calculus.*
+import cn.timelives.java.math.algebra.IPolynomial
+import cn.timelives.java.math.calculus.*
+import cn.timelives.java.math.calculus.Calculus.derivation
 import cn.timelives.java.math.numberModels.CalculatorUtils
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.utilities.ArraySup
@@ -52,10 +53,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     }
 
     /*
-	 * @see cn.timelives.java.math.algebra.calculus.Integrable#integrate()
+	 * @see cn.timelives.java.math.calculus.Integrable#integrate()
 	 */
     override fun integrate(): AbstractSVPFunction<T> {
-        return integration(this)
+        return Calculus.integrate(this)
     }
 
     /* (non-Javadoc)
@@ -110,14 +111,14 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             return true
         }
         val f = obj as SVPFunction<N>
-        return Polynomial.isEqual(this, f, CalculatorUtils.mappedIsEqual(mc, mapper))
+        return IPolynomial.isEqual(this, f, CalculatorUtils.mappedIsEqual(mc, mapper))
     }
 
     /* (non-Javadoc)
 	 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.number_models.NumberFormatter)
 	 */
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
-        return Polynomial.stringOf(this, mc, nf)
+        return IPolynomial.stringOf(this, mc, nf)
     }
 
 
@@ -423,11 +424,11 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 
         /**
          * Returns a function from a Polynomial.
-         * @param m a [Polynomial]
+         * @param m a [IPolynomial]
          * @param mc a [MathCalculator]
          * @return an [AbstractSVPFunction]
          */
-        fun <T : Any> fromPolynomial(m: Polynomial<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
+        fun <T : Any> fromPolynomial(m: IPolynomial<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
             if (m is AbstractSVPFunction<*>) {
                 return m as AbstractSVPFunction<T>
             }
@@ -441,12 +442,12 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 
         /**
          * Returns a function from a Polynomial which is also a [MathCalculatorHolder].
-         * @param m a [Polynomial]
+         * @param m a [IPolynomial]
          * @param mc a [MathCalculator]
          * @return an [AbstractSVPFunction]
          * @throws ClassCastException if `!(m instanceof MathCalculatorHolder)`;
          */
-        fun <T : Any> fromPolynomial(m: Polynomial<T>): AbstractSVPFunction<T> {
+        fun <T : Any> fromPolynomial(m: IPolynomial<T>): AbstractSVPFunction<T> {
             val holder = m as MathCalculatorHolder<T>
             return fromPolynomial(m, holder.mathCalculator)
         }

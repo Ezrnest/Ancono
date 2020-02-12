@@ -15,7 +15,7 @@ import cn.timelives.java.math.set.MathSet;
  * @author liyicheng 2018-03-01 18:41
  *
  */
-public interface Coset<T,G extends Group<T,G>> extends MathSet<T> {
+public interface Coset<T,G extends Group<T>> extends MathSet<T> {
 	/**
 	 * Gets the group <i>G</i>.
 	 * @return

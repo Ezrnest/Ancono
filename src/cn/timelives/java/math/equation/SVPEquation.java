@@ -1,7 +1,7 @@
 package cn.timelives.java.math.equation;
 
 import cn.timelives.java.math.*;
-import cn.timelives.java.math.algebra.Polynomial;
+import cn.timelives.java.math.algebra.IPolynomial;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
 import cn.timelives.java.math.function.AbstractSVPFunction;
 import cn.timelives.java.math.numberModels.*;
@@ -27,7 +27,7 @@ import java.util.function.Function;
  * @param <T>
  */
 public abstract class SVPEquation<T> extends SVEquation<T> 
-implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
+implements IPolynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	protected final int mp;
 	protected SVPEquation(MathCalculator<T> mc,int mp) {
 		super(mc);
@@ -80,7 +80,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			return true;
 		}
 		SVPEquation<T> sv = (SVPEquation<T>) obj;
-        return Polynomial.isEqual(this, sv, getMc()::isEqual);
+        return IPolynomial.isEqual(this, sv, getMc()::isEqual);
 	}
 	
 	@Override
@@ -92,7 +92,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			return true;
 		}
 		SVPEquation<N> sv = (SVPEquation<N>) obj;
-        return Polynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
+        return IPolynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
 	}
 	
 	/* (non-Javadoc)
@@ -101,7 +101,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
     @NotNull
     @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        return Polynomial.stringOf(this, getMc(), nf) + " = 0";
+        return IPolynomial.stringOf(this, getMc(), nf) + " = 0";
 		
 	}
 	
@@ -117,7 +117,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 			return false;
 		}
 		SVPEquation<?> sv = (SVPEquation<?>)obj;
-		return Polynomial.isEqual(this, sv);
+		return IPolynomial.isEqual(this, sv);
 	}
 	
 	/*
@@ -125,7 +125,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	 */
 	@Override
 	public int hashCode() {
-		return op.hashCode()*31 + Polynomial.hashCodeOf(this);
+		return op.hashCode()*31 + IPolynomial.hashCodeOf(this);
 	}
 	
 	/*
@@ -315,11 +315,11 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	
 	/**
 	 * Returns an equation from a multinomial.
-	 * @param m a {@link Polynomial}
+	 * @param m a {@link IPolynomial}
 	 * @param mc a {@link MathCalculator}
 	 * @return a {@link SVPEquation}
 	 */
-    public static <T> SVPEquation<T> fromPolynomial(Polynomial<T> m, MathCalculator<T> mc) {
+    public static <T> SVPEquation<T> fromPolynomial(IPolynomial<T> m, MathCalculator<T> mc) {
 		if(m instanceof SVPEquation) {
 			return (SVPEquation<T>)m;
 		}
@@ -333,11 +333,11 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 	}
 	/**
 	 * Returns an equation from a multinomial which is also a {@link MathCalculatorHolder}.
-	 * @param m a {@link Polynomial}
+	 * @param m a {@link IPolynomial}
 	 * @return a {@link SVPEquation}
 	 * @throws ClassCastException if {@code !(m instanceof MathCalculatorHolder)};
 	 */
-    public static <T> SVPEquation<T> fromPolynomial(Polynomial<T> m) {
+    public static <T> SVPEquation<T> fromPolynomial(IPolynomial<T> m) {
 		@SuppressWarnings("unchecked")
 		MathCalculatorHolder<T> holder = (MathCalculatorHolder<T>)m;
         return fromPolynomial(m, holder.getMathCalculator());
@@ -748,7 +748,7 @@ implements Polynomial<T>,Simplifiable<T, SVPEquation<T>> {
 		}
 		
 		/*
-		 * @see cn.timelives.java.math.property.Solveable#getSolution()
+		 * @see cn.timelives.java.math.property.Solveable#getBaseSolutions()
 		 */
 		@Override
 		public SingletonSet<T> getSolution() {

@@ -59,6 +59,9 @@ public interface CountableSet<T> extends MathSet<T> ,Iterable<T>{
 	 * @throws UnsupportedOperationException if the size exceeds long.
 	 */
 	long size();
+
+	long INFINITE_SIZE = -1L;
+	BigInteger INFINITE_SIZE_BIG_INTEGER = BigInteger.valueOf(INFINITE_SIZE);
 	
 	/**
 	 * Gets the size of this countable set, returns {@code -1} if 
@@ -69,7 +72,6 @@ public interface CountableSet<T> extends MathSet<T> ,Iterable<T>{
 	
 	/**
 	 * Determines whether this CountableSet contains finite elements.
-	 * @return
 	 */
 	default boolean isFinite(){
 		return size()!=-1;

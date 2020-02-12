@@ -11,7 +11,6 @@ import java.awt.*;
  *
  */
 public interface CurveColorer {
-	
-	
-	public Color getColor(int i,int j,double[][] data);
+
+	Color getColor(int i, int j, double[][] data);
 }

@@ -5,11 +5,14 @@ package cn.timelives.java.math.algebra.linearAlgebra;
 
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.utilities.ArraySup;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.function.Function;
 
 /**
+ * A matrix compoased of vectors.
  * @author lyc
  *
  */
@@ -66,7 +69,8 @@ final class VMatrix<T> extends Matrix<T> {
 		}
 		return obj;
 	}
-	private Matrix<T> mapTo0(@SuppressWarnings("rawtypes") Function<Vector<T>,Vector> f){
+	@NotNull
+    private Matrix<T> mapTo0(@SuppressWarnings("rawtypes") Function<Vector<T>,Vector> f){
 		@SuppressWarnings("unchecked")
 		Vector<T>[] vn = ArraySup.mapTo(vs, f,Vector.class);
         return new VMatrix<>(vn, row, column, getMc(), isRow);
@@ -74,7 +78,8 @@ final class VMatrix<T> extends Matrix<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#negative()
 	 */
-	@Override
+	@NotNull
+    @Override
 	public Matrix<T> negative() {
 		return mapTo0(Vector::negative);
 	}
@@ -82,7 +87,9 @@ final class VMatrix<T> extends Matrix<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#transportMatrix()
 	 */
-	@Override
+	@Contract(" -> new")
+    @NotNull
+    @Override
 	public Matrix<T> transportMatrix() {
         return new VMatrix<>(vs, column, row, getMc(), !isRow);
 	}
@@ -90,7 +97,8 @@ final class VMatrix<T> extends Matrix<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#multiplyNumber(long)
 	 */
-	@Override
+	@NotNull
+    @Override
 	public Matrix<T> multiplyNumber(long n) {
 		return mapTo0(v -> v.multiplyNumber(n));
 	}
@@ -98,7 +106,8 @@ final class VMatrix<T> extends Matrix<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#multiplyNumber(java.lang.Object)
 	 */
-	@Override
+	@NotNull
+    @Override
 	public Matrix<T> multiplyNumber(T n) {
 		return mapTo0(v -> v.multiplyNumber(n));
 	}
@@ -106,7 +115,9 @@ final class VMatrix<T> extends Matrix<T> {
 	/* (non-Javadoc)
 	 * @see cn.timelives.java.math.algebra.abstractAlgebra.linearAlgebra.Matrix#cofactor(int, int)
 	 */
-	@Override
+	@NotNull
+    @Contract("_, _ -> new")
+    @Override
 	public Matrix<T> cofactor(int r, int c) {
 		if(row<=1 || column<=1)
 			throw new ArithmeticException("No cofactor");
@@ -154,4 +165,24 @@ final class VMatrix<T> extends Matrix<T> {
 		vn[row] = v;
         return new VMatrix<>(vn, this.row, this.column, getMc(), isRow);
 	}
+
+    @Override
+    public Vector<T> getRow(int row) {
+        if(!isRow){
+            return super.getRow(row);
+        }
+        rowRangeCheck(row);
+        return vs[row];
+    }
+
+    @Override
+    public Vector<T> getColumn(int column) {
+	    if(isRow){
+	        return super.getColumn(column);
+        }
+	    columnRangeCheck(column);
+	    return vs[column];
+    }
+
+
 }

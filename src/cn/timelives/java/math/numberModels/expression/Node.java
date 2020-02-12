@@ -15,12 +15,12 @@ import cn.timelives.java.math.numberModels.expression.anno.DisallowModify;
 import cn.timelives.java.math.numberModels.expression.simplification.SimplificationStrategy;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
@@ -64,411 +64,6 @@ public abstract class Node implements Computable, Serializable {
      */
     Node(NodeWithChildren parent) {
         this.parent = parent;
-    }
-
-    /**
-     * Determines whether two node are equal using {@link Node#equalNode(Node, MultinomialCalculator)}, or they are both {@code null}.
-     */
-    public static boolean nodeEquals(Node a, Node b, MultinomialCalculator pc) {
-        return (a == b) || (a != null && a.equalNode(b, pc));
-    }
-
-    static boolean polyEquals(Multinomial a, Multinomial b, MultinomialCalculator pc) {
-        return (a == b) || (a != null && pc.isEqual(a, b));
-    }
-
-    public static Poly newPolyNode(Multinomial p, NodeWithChildren parent) {
-        return new Poly(parent, p);
-    }
-
-    public static Poly newPolyNode(Multinomial p) {
-        return newPolyNode(p, null);
-    }
-
-    static boolean replaceChildNode(Node n, Node replacement) {
-        if (n.parent != null) {
-            return n.parent.replace(n, replacement);
-        }
-        return false;
-    }
-
-    /**
-     * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
-     */
-    public static CombinedNode wrapCloneNodeAM(boolean isAdd, Node n1, Node n2) {
-        CombinedNode root;
-        if (isAdd) {
-            Add add = new Add(null, null, new ArrayList<>(2));
-            add.addChild(n1.cloneNode(add));
-            add.addChild(n2.cloneNode(add));
-            root = add;
-        } else {
-            Multiply mul = new Multiply(null, null, new ArrayList<>(2));
-            mul.addChild(n1.cloneNode(mul));
-            mul.addChild(n2.cloneNode(mul));
-            root = mul;
-        }
-        return root;
-    }
-
-    /**
-     * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
-     *
-     * @param isAdd
-     * @param ns
-     * @return
-     */
-    public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns) {
-        NodeWithChildren root;
-        List<Node> list = new ArrayList<>(ns.size());
-        if (isAdd) {
-            root = new Add(null, null, list);
-        } else {
-            root = new Multiply(null, null, list);
-        }
-        for (Node n : ns) {
-            list.add(n.cloneNode(root));
-        }
-        return root;
-    }
-
-    /**
-     * Wraps the nodes with either Add or Multiply. The newly created node has no parent node.
-     */
-    public static Node wrapNodeAM(boolean isAdd, List<Node> ns) {
-        NodeWithChildren root;
-        if (isAdd) {
-            root = new Add(null, null, ns);
-        } else {
-            root = new Multiply(null, null, ns);
-        }
-        for (Node n : ns) {
-            n.parent = root;
-        }
-        return root;
-    }
-
-    /**
-     * Wraps the nodes  with either Add or Multiply. The newly created node has no parent node.
-     * @return
-     */
-    public static CombinedNode wrapNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
-        CombinedNode root;
-        if (isAdd) {
-            root = new Add(null, null, ns);
-        } else {
-            root = new Multiply(null, null, ns);
-        }
-        for (Node n : ns) {
-            n.parent = root;
-        }
-        root.p = p;
-        return root;
-    }
-
-//	public abstract T recurApply(Function<Node,T> f)
-
-    /**
-     * Wraps the nodes with either Add or Multiply. The newly created node has no parent node.
-     * This method will try to clean the nodes original link to their parent node
-     */
-    public static CombinedNode wrapNodeAM(boolean isAdd, Node n1, Node n2) {
-        CombinedNode root;
-        List<Node> list = new ArrayList<>(2);
-        list.add(n1);
-        list.add(n2);
-        if (isAdd) {
-            root = new Add(null, null, list);
-        } else {
-            root = new Multiply(null, null, list);
-        }
-        n1.parent = root;
-        n2.parent = root;
-        return root;
-    }
-
-    /**
-     * Returns {@code n*x} without any simplification.
-     *
-     * @param n
-     * @param x
-     * @return
-     */
-    public static Multiply wrapCloneNodeMultiply(Node n, Multinomial x) {
-        List<Node> list = new ArrayList<>(1);
-        Multiply nroot = new Multiply(null, x, list);
-        Node rt = n.cloneNode(nroot);
-        list.add(rt);
-        return nroot;
-    }
-
-    /**
-     * Returns {@code n*x} without any simplification.
-     * <p>The node has no parent!
-     *
-     * @param n
-     * @param x
-     * @return
-     */
-    public static Multiply wrapNodeMultiply(Node n, Multinomial x) {
-        n.removeFromParent();
-        List<Node> list = new ArrayList<>(1);
-        Multiply nroot = new Multiply(null, x, list);
-        list.add(n);
-        n.parent = nroot;
-        return nroot;
-    }
-
-    /**
-     * Returns {@code n+x} without any simplification.
-     * <p>The node has no parent!
-     *
-     * @param n
-     * @param x
-     * @return
-     */
-    public static Add wrapNodeAdd(Node n, Multinomial x) {
-        n.removeFromParent();
-        List<Node> list = new ArrayList<>(1);
-        Add nroot = new Add(null, x, list);
-        list.add(n);
-        n.parent = nroot;
-        return nroot;
-    }
-
-    /**
-     * Returns {@code n+x} without any simplification.
-     *
-     * @param n
-     * @param x
-     * @return
-     */
-    public static Add wrapCloneNodeAdd(Node n, Multinomial x) {
-        List<Node> list = new ArrayList<>(1);
-        Add nroot = new Add(null, x, list);
-        Node rt = n.cloneNode(nroot);
-        list.add(rt);
-        return nroot;
-    }
-
-    /**
-     * Wraps the node to a single function of the given name, the node will be modified (sets its parent).
-     */
-    public static SFunction wrapNodeSF(String fname,@AllowModify Node n) {
-        n.removeFromParent();
-        SFunction root = new SFunction(null, n, fname);
-        n.parent = root;
-        return root;
-    }
-
-    /**
-     * Wraps the node to a single function of the given name, the node will be cloned.
-     */
-    public static SFunction wrapCloneNodeSF(String fname,@DisallowModify Node n) {
-        SFunction root = new SFunction(null, null, fname);
-        root.child = n.cloneNode(root);
-        return root;
-    }
-
-    public static Fraction wrapCloneNodeFraction(Node nume, Node deno) {
-        Fraction root = new Fraction(null, null, null);
-        root.c1 = nume.cloneNode(root);
-        root.c2 = deno.cloneNode(root);
-        return root;
-    }
-
-    static void linkToBiNode(Node c1, Node c2, BiNode root) {
-        c1.parent = root;
-        c2.parent = root;
-    }
-
-    public static Fraction wrapNodeFraction(Node nume, Node deno) {
-        Fraction root = new Fraction(null, nume, deno);
-        linkToBiNode(nume, deno, root);
-        return root;
-    }
-
-    public static boolean isPolynomial(Node n) {
-        return n.getType() == Type.POLYNOMIAL;
-    }
-
-    public static boolean isPolynomial(Node n, Multinomial p, ExprCalculator ec) {
-        if (n.getType() != Type.POLYNOMIAL) {
-            return false;
-        }
-        Poly poly = (Poly) n;
-        return ec.getMultinomialCalculator().isEqual(poly.p, p);
-    }
-
-    public static Poly toPolynomial(Node n) {
-        return (Poly) n;
-    }
-
-    public static Multinomial getPolynomialOrDefault(CombinedNode node, ExprCalculator ec) {
-        Multinomial p = node.p;
-        if (p == null) {
-            return node.getType() == Type.ADD ? ec.getPZero() : ec.getPOne();
-        }
-        return p;
-    }
-
-    /**
-     * Gets the polynomial part in the node, returns {@code null} if there is
-     *
-     * @param node
-     * @param mc
-     * @return
-     */
-    public static Multinomial getPolynomialPart(Node node, ExprCalculator mc) {
-        if (node instanceof CombinedNode) {
-            CombinedNode cn = (CombinedNode) node;
-            return getPolynomialOrDefault(cn, mc);
-        }
-        if (node.getType() == Type.POLYNOMIAL) {
-            return ((Poly) node).p;
-        }
-        return null;
-    }
-
-    /**
-     * Gets the polynomial part in the node, returns {@code null} if there is
-     *
-     * @param node
-     * @param p
-     * @return
-     */
-    static Node setPolynomialPart(Node node, Multinomial p) {
-        if (node instanceof CombinedNode) {
-            CombinedNode cn = (CombinedNode) node;
-            cn.p = p;
-            return node;
-        }
-        if (node.getType() == Type.POLYNOMIAL) {
-            return newPolyNode(p, node.parent);
-        }
-        return node;
-    }
-
-    /**
-     * Returns the name of the function of the node if the node is a function node, or returns {@code null}.
-     *
-     * @param n
-     * @return
-     */
-    public static String getFunctionName(Node n) {
-        if (n instanceof FunctionNode) {
-            return ((FunctionNode) n).getFunctionName();
-        }
-        return null;
-    }
-
-    public static boolean isFunctionNode(Node n, String fname, int argumentLength) {
-        if (!fname.equals(getFunctionName(n))) {
-            return false;
-        }
-        Type ty = n.getType();
-        if (ty == Type.S_FUNCTION) {
-            return argumentLength == 1;
-        } else if (ty == Type.D_FUNCTION) {
-            return argumentLength == 2;
-        } else {
-            MFunction mf = (MFunction) n;
-            return argumentLength == mf.getNumberOfChildren();
-        }
-    }
-
-    public static DFunction wrapCloneNodeDF(String fname, Node n1, Node n2) {
-        DFunction root = new DFunction(null, null, null, fname, false);
-        root.c1 = n1.cloneNode(root);
-        root.c2 = n2.cloneNode(root);
-        return root;
-    }
-
-    public static MFunction wrapCloneNodeMF(String fname, List<Node> nodes, boolean sortable) {
-        MFunction root = new MFunction(null, CollectionSup.mapList(nodes, Node::cloneNode), fname, sortable);
-        for (Node n : nodes) {
-            n.parent = root;
-        }
-        return root;
-    }
-
-    public static DFunction wrapNodeDF(String fname, Node n1, Node n2) {
-        return wrapNodeDF(fname, n1, n2, false);
-    }
-
-    public static DFunction wrapNodeDF(String fname, Node n1, Node n2, boolean sortable) {
-        DFunction root = new DFunction(null, n1, n2, fname, sortable);
-        linkToBiNode(n1, n2, root);
-        return root;
-    }
-
-    public static MFunction wrapNodeMF(String fname, List<Node> nodes, boolean sortable) {
-        MFunction root = new MFunction(null, nodes, fname, sortable);
-        for (Node n : nodes) {
-            n.parent = root;
-        }
-        return root;
-    }
-
-
-
-    public static Pair<Multinomial, Node> unwrapMultiply(Node node, ExprCalculator ec) {
-        if (node.getType() != Type.MULTIPLY) {
-            return null;
-        }
-        Multiply m = (Multiply) node;
-        if (m.getNumberOfChildren() == 1) {
-            Multinomial p = m.p;
-            if (p == null) {
-                p = ec.getPOne();
-            }
-            return new Pair<>(p, m.getChildren(0));
-        }
-        return null;
-    }
-
-    static Pair<Multinomial, List<Node>> unwrapMultiplyList(Node node, ExprCalculator ec) {
-        if (node.getType() != Type.MULTIPLY) {
-            return null;
-        }
-        Multiply m = (Multiply) node;
-        Multinomial p = m.p;
-        if (p == null) {
-            p = ec.getPOne();
-        }
-        return new Pair<>(p, m.children);
-    }
-
-    public static Pair<Node, BigInteger> peelExpStructure(Node node, ExprCalculator ec) {
-        if (node.getType() != Type.D_FUNCTION) {
-            return null;
-        }
-        DFunction df = (DFunction) node;
-        if (!df.functionName.equals("exp")) {
-            return null;
-        }
-        if (df.c2.getType() != Type.POLYNOMIAL) {
-            return null;
-        }
-        BigInteger pow = Multinomial.asBigInteger(((Poly) df.c2).p);
-        if (pow == null) {
-            return null;
-        }
-        Node sub = df.c1;
-        return new Pair<>(sub, pow);
-    }
-
-    static Node buildExpStructure(Node n, BigInteger pow, ExprCalculator ec) {
-        if (pow.equals(BigInteger.ONE)) {
-            return n;
-        } else if (pow.equals(BigInteger.ZERO)) {
-            return newPolyNode(ec.getPOne(), null);
-        }
-        Poly p = newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null);
-        DFunction sf = new DFunction(null, n, p, "exp", false);
-        p.parent = sf;
-        n.parent = sf;
-        return sf;
     }
 
     /**
@@ -540,6 +135,21 @@ public abstract class Node implements Computable, Serializable {
      */
     public abstract Node recurApply(Function<Node, Node> f, int depth);
 
+    /**
+     * Applies the recursion operation to the node, this method shouldn't modify the node.
+     * <p>
+     * The function will be recursively applied to all the child nodes of the node in
+     * deep-first order, and then be applied to the node itself.
+     * <p></p>
+     * For example, {@code node.recurApply(x -> print(x),Integer.MAX_VALUE)}
+     * lists all the nodes.
+     * <P></P>
+     * <p>
+     * @param f     the function that should be applied to the node
+     * @param depth the depth of the recursion
+     */
+    public abstract void recurApplyConsumer(Consumer<Node> f, int depth);
+
     /*
      * @see java.lang.Object#toString()
      */
@@ -551,7 +161,7 @@ public abstract class Node implements Computable, Serializable {
     }
 
     /**
-     * Returns the clone of the node, all its child nodes will be
+     * Returns the deep clone of the node, all its child nodes will be
      * cloned as well. The parent of the new node will be set as given.
      */
     public abstract Node cloneNode(NodeWithChildren parent);
@@ -820,10 +430,22 @@ public abstract class Node implements Computable, Serializable {
                     Node nt = t.recurApply(f, depth);
                     if (nt != t) {
                         lit.set(nt);
+                        nt.parent = this; // Set the parent
                     }
                 }
             }
             return f.apply(this);
+        }
+
+        @Override
+        public void recurApplyConsumer(Consumer<Node> f, int depth) {
+            if (depth > 0) {
+                depth--;
+                for(Node n : children){
+                    n.recurApplyConsumer(f,depth);
+                }
+            }
+            f.accept(this);
         }
     }
 
@@ -912,7 +534,16 @@ public abstract class Node implements Computable, Serializable {
             if (depth > 0) {
                 child = child.recurApply(f, depth - 1);
             }
+            child.parent = this;
             return f.apply(this);
+        }
+
+        @Override
+        public void recurApplyConsumer(Consumer<Node> f, int depth) {
+            if(depth > 0){
+                child.recurApplyConsumer(f,depth-1);
+            }
+            f.accept(this);
         }
 
         /*
@@ -1044,9 +675,26 @@ public abstract class Node implements Computable, Serializable {
         public Node recurApply(Function<Node, Node> f, int depth) {
             if (depth > 0) {
                 c1 = c1.recurApply(f, depth - 1);
-                c2 = c2.recurApply(f, depth - 1);
+                try {
+                    var t = c2.recurApply(f, depth - 1);
+                    Objects.requireNonNull(t);
+                    c2 = t;
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                }
+                c1.parent = c2.parent = this;
             }
             return f.apply(this);
+        }
+
+        @Override
+        public void recurApplyConsumer(Consumer<Node> f, int depth) {
+            if(depth > 0){
+                c1.recurApplyConsumer(f, depth - 1);
+                c2.recurApplyConsumer(f, depth - 1);
+            }
+            f.accept(this);
         }
 
         void setBoth(Node n1, Node n2) {
@@ -1054,6 +702,16 @@ public abstract class Node implements Computable, Serializable {
             c2 = n2;
             n1.parent = this;
             n2.parent = this;
+        }
+
+        void setFirst(Node n){
+            c1 = n;
+            n.parent = this;
+        }
+
+        void setSecond(Node n){
+            c2 = n;
+            n.parent = this;
         }
 
 
@@ -1214,6 +872,11 @@ public abstract class Node implements Computable, Serializable {
         @Override
         public Node recurApply(Function<Node, Node> f, int depth) {
             return depth >= 0 ? f.apply(this) : this;
+        }
+
+        @Override
+        public void recurApplyConsumer(Consumer<Node> f, int depth) {
+            f.accept(this);
         }
 
         /*
@@ -1624,9 +1287,17 @@ public abstract class Node implements Computable, Serializable {
         @Override
         protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
             sb.append(functionName).append('(');
-            c1.toString(sb, nf, false);
+            if(c1==null){
+                sb.append("null");
+            }else{
+                c1.toString(sb, nf, false);
+            }
             sb.append(',');
-            c2.toString(sb, nf, false);
+            if(c2 == null){
+                sb.append("null");
+            }else{
+                c2.toString(sb, nf, false);
+            }
             sb.append(')');
         }
 
@@ -1817,5 +1488,419 @@ public abstract class Node implements Computable, Serializable {
 
 
     }
+    /**
+     * Determines whether two node are equal using {@link Node#equalNode(Node, MultinomialCalculator)}, or they are both {@code null}.
+     */
+    public static boolean nodeEquals(Node a, Node b, MultinomialCalculator pc) {
+        return (a == b) || (a != null && a.equalNode(b, pc));
+    }
 
+    static boolean polyEquals(Multinomial a, Multinomial b, MultinomialCalculator pc) {
+        return (a == b) || (a != null && pc.isEqual(a, b));
+    }
+
+    public static Poly newPolyNode(Multinomial p, NodeWithChildren parent) {
+        return new Poly(parent, p);
+    }
+
+    public static Poly newPolyNode(Multinomial p) {
+        return newPolyNode(p, null);
+    }
+
+    static boolean replaceChildNode(Node n, Node replacement) {
+        if (n.parent != null) {
+            return n.parent.replace(n, replacement);
+        }
+        return false;
+    }
+
+    /**
+     * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
+     */
+    public static CombinedNode wrapCloneNodeAM(boolean isAdd, Node n1, Node n2) {
+        CombinedNode root;
+        if (isAdd) {
+            Add add = new Add(null, null, new ArrayList<>(2));
+            add.addChild(n1.cloneNode(add));
+            add.addChild(n2.cloneNode(add));
+            root = add;
+        } else {
+            Multiply mul = new Multiply(null, null, new ArrayList<>(2));
+            mul.addChild(n1.cloneNode(mul));
+            mul.addChild(n2.cloneNode(mul));
+            root = mul;
+        }
+        return root;
+    }
+    private static Node amPolyOrDefault(boolean isAdd, Multinomial p){
+        if(p==null){
+            if(isAdd){
+                return newPolyNode(Multinomial.ZERO);
+            }else{
+                return newPolyNode(Multinomial.ONE);
+            }
+        }else{
+            return newPolyNode(p);
+        }
+    }
+    /**
+     * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
+     */
+    public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns) {
+        return wrapCloneNodeAM(isAdd, ns,null);
+    }
+
+    /**
+     * Wraps the nodes  with either Add or Multiply. The newly created node has no parent node.
+     */
+    public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
+        if(ns.isEmpty()){
+            return amPolyOrDefault(isAdd,p);
+        }
+        CombinedNode root;
+        List<Node> list = new ArrayList<>(ns.size());
+        if (isAdd) {
+            root = new Add(null, null, list);
+        } else {
+            root = new Multiply(null, null, list);
+        }
+        for (Node n : ns) {
+            list.add(n.cloneNode(root));
+        }
+        root.p = p;
+        return root;
+    }
+
+    /**
+     * Wraps the nodes with either Add or Multiply. The newly created node has no parent node.
+     */
+    public static Node wrapNodeAM(boolean isAdd, List<Node> ns) {
+        return wrapNodeAM(isAdd,ns,null);
+    }
+
+    /**
+     * Wraps the nodes  with either Add or Multiply. The newly created node has no parent node.
+     * @return
+     */
+    public static Node wrapNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
+        if(ns.isEmpty()){
+            return amPolyOrDefault(isAdd,p);
+        }
+        CombinedNode root;
+        if (isAdd) {
+            root = new Add(null, null, ns);
+        } else {
+            root = new Multiply(null, null, ns);
+        }
+        for (Node n : ns) {
+            n.parent = root;
+        }
+        root.p = p;
+        return root;
+    }
+
+//	public abstract T recurApply(Function<Node,T> f)
+
+    /**
+     * Wraps the nodes with either Add or Multiply. The newly created node has no parent node.
+     * This method will try to clean the nodes original link to their parent node
+     */
+    public static CombinedNode wrapNodeAM(boolean isAdd, Node n1, Node n2) {
+        CombinedNode root;
+        List<Node> list = new ArrayList<>(2);
+        list.add(n1);
+        list.add(n2);
+        if (isAdd) {
+            root = new Add(null, null, list);
+        } else {
+            root = new Multiply(null, null, list);
+        }
+        n1.parent = root;
+        n2.parent = root;
+        return root;
+    }
+
+    /**
+     * Returns {@code n*x} without any simplification.
+     *
+     * @param n
+     * @param x
+     * @return
+     */
+    public static Multiply wrapCloneNodeMultiply(Node n, Multinomial x) {
+        List<Node> list = new ArrayList<>(1);
+        Multiply nroot = new Multiply(null, x, list);
+        Node rt = n.cloneNode(nroot);
+        list.add(rt);
+        return nroot;
+    }
+
+    /**
+     * Returns {@code n*x} without any simplification.
+     * <p>The node has no parent!
+     *
+     * @param n
+     * @param x
+     * @return
+     */
+    public static Multiply wrapNodeMultiply(Node n, Multinomial x) {
+        n.removeFromParent();
+        List<Node> list = new ArrayList<>(1);
+        Multiply nroot = new Multiply(null, x, list);
+        list.add(n);
+        n.parent = nroot;
+        return nroot;
+    }
+
+    /**
+     * Returns {@code n+x} without any simplification.
+     * <p>The node has no parent!
+     *
+     * @param n
+     * @param x
+     * @return
+     */
+    public static Add wrapNodeAdd(Node n, Multinomial x) {
+        n.removeFromParent();
+        List<Node> list = new ArrayList<>(1);
+        Add nroot = new Add(null, x, list);
+        list.add(n);
+        n.parent = nroot;
+        return nroot;
+    }
+
+    /**
+     * Returns {@code n+x} without any simplification.
+     *
+     * @param n
+     * @param x
+     * @return
+     */
+    public static Add wrapCloneNodeAdd(Node n, Multinomial x) {
+        List<Node> list = new ArrayList<>(1);
+        Add nroot = new Add(null, x, list);
+        Node rt = n.cloneNode(nroot);
+        list.add(rt);
+        return nroot;
+    }
+
+    /**
+     * Wraps the node to a single function of the given name, the node will be modified (sets its parent).
+     */
+    public static SFunction wrapNodeSF(String fname,@AllowModify Node n) {
+        n.removeFromParent();
+        SFunction root = new SFunction(null, n, fname);
+        n.parent = root;
+        return root;
+    }
+
+    /**
+     * Wraps the node to a single function of the given name, the node will be cloned.
+     */
+    public static SFunction wrapCloneNodeSF(String fname,@DisallowModify Node n) {
+        SFunction root = new SFunction(null, null, fname);
+        root.child = n.cloneNode(root);
+        return root;
+    }
+
+    public static Fraction wrapCloneNodeFraction(Node nume, Node deno) {
+        Fraction root = new Fraction(null, null, null);
+        root.c1 = nume.cloneNode(root);
+        root.c2 = deno.cloneNode(root);
+        return root;
+    }
+
+    static void linkToBiNode(Node c1, Node c2, BiNode root) {
+        c1.parent = root;
+        c2.parent = root;
+    }
+
+    public static Fraction wrapNodeFraction(Node nume, Node deno) {
+        Fraction root = new Fraction(null, nume, deno);
+        linkToBiNode(nume, deno, root);
+        return root;
+    }
+
+    public static boolean isPolynomial(Node n) {
+        return n.getType() == Type.POLYNOMIAL;
+    }
+
+    public static boolean isPolynomial(Node n, Multinomial p, ExprCalculator ec) {
+        if (n.getType() != Type.POLYNOMIAL) {
+            return false;
+        }
+        Poly poly = (Poly) n;
+        return ec.getMultinomialCalculator().isEqual(poly.p, p);
+    }
+
+    public static Poly toPolynomial(Node n) {
+        return (Poly) n;
+    }
+
+    public static Multinomial getPolynomialOrDefault(CombinedNode node, ExprCalculator ec) {
+        Multinomial p = node.p;
+        if (p == null) {
+            return node.getType() == Type.ADD ? ec.getPZero() : ec.getPOne();
+        }
+        return p;
+    }
+
+    /**
+     * Gets the polynomial part in the node, returns {@code null} if the node doesn't
+     * contain the polynomial part. If this node is Add, returns 0 if the actual part is null, and
+     * if this node is Multiply, returns 1 if null.
+     */
+    public static Multinomial getPolynomialPart(Node node, ExprCalculator mc) {
+        if (node instanceof CombinedNode) {
+            CombinedNode cn = (CombinedNode) node;
+            return getPolynomialOrDefault(cn, mc);
+        }
+        if (node.getType() == Type.POLYNOMIAL) {
+            return ((Poly) node).p;
+        }
+        return null;
+    }
+
+    /**
+     * Sets the polynomial part in the node
+     */
+    static Node setPolynomialPart(Node node, Multinomial p) {
+        if (node instanceof CombinedNode) {
+            CombinedNode cn = (CombinedNode) node;
+            cn.p = p;
+            return node;
+        }
+        if (node.getType() == Type.POLYNOMIAL) {
+            return newPolyNode(p, node.parent);
+        }
+        return node;
+    }
+
+    /**
+     * Returns the name of the function of the node if the node is a function node, or returns {@code null}.
+     *
+     * @param n
+     * @return
+     */
+    public static String getFunctionName(Node n) {
+        if (n instanceof FunctionNode) {
+            return ((FunctionNode) n).getFunctionName();
+        }
+        return null;
+    }
+
+    public static boolean isFunctionNode(Node n, String fname, int argumentLength) {
+        if (!fname.equals(getFunctionName(n))) {
+            return false;
+        }
+        Type ty = n.getType();
+        if (ty == Type.S_FUNCTION) {
+            return argumentLength == 1;
+        } else if (ty == Type.D_FUNCTION) {
+            return argumentLength == 2;
+        } else {
+            MFunction mf = (MFunction) n;
+            return argumentLength == mf.getNumberOfChildren();
+        }
+    }
+
+    public static DFunction wrapCloneNodeDF(String fname, Node n1, Node n2) {
+        DFunction root = new DFunction(null, null, null, fname, false);
+        root.c1 = n1.cloneNode(root);
+        root.c2 = n2.cloneNode(root);
+        if(root.c2 == null){
+            print("?");
+        }
+        return root;
+    }
+
+    public static MFunction wrapCloneNodeMF(String fname, List<Node> nodes, boolean sortable) {
+        MFunction root = new MFunction(null, CollectionSup.mapList(nodes, Node::cloneNode), fname, sortable);
+        for (Node n : nodes) {
+            n.parent = root;
+        }
+        return root;
+    }
+
+    public static DFunction wrapNodeDF(String fname, Node n1, Node n2) {
+        if(n2 == null){
+            print("?");
+        }
+        return wrapNodeDF(fname, n1, n2, false);
+    }
+
+    public static DFunction wrapNodeDF(String fname, Node n1, Node n2, boolean sortable) {
+        DFunction root = new DFunction(null, n1, n2, fname, sortable);
+        linkToBiNode(n1, n2, root);
+        return root;
+    }
+
+    public static MFunction wrapNodeMF(String fname, List<Node> nodes, boolean sortable) {
+        MFunction root = new MFunction(null, nodes, fname, sortable);
+        for (Node n : nodes) {
+            n.parent = root;
+        }
+        return root;
+    }
+
+
+
+    public static Pair<Multinomial, Node> unwrapMultiply(Node node, ExprCalculator ec) {
+        if (node.getType() != Type.MULTIPLY) {
+            return null;
+        }
+        Multiply m = (Multiply) node;
+        if (m.getNumberOfChildren() == 1) {
+            Multinomial p = m.p;
+            if (p == null) {
+                p = ec.getPOne();
+            }
+            return new Pair<>(p, m.getChildren(0));
+        }
+        return null;
+    }
+
+    static Pair<Multinomial, List<Node>> unwrapMultiplyList(Node node, ExprCalculator ec) {
+        if (node.getType() != Type.MULTIPLY) {
+            return null;
+        }
+        Multiply m = (Multiply) node;
+        Multinomial p = m.p;
+        if (p == null) {
+            p = ec.getPOne();
+        }
+        return new Pair<>(p, m.children);
+    }
+
+    public static Pair<Node, BigInteger> peelExpStructure(Node node, ExprCalculator ec) {
+        if (node.getType() != Type.D_FUNCTION) {
+            return null;
+        }
+        DFunction df = (DFunction) node;
+        if (!df.functionName.equals("exp")) {
+            return null;
+        }
+        if (df.c2.getType() != Type.POLYNOMIAL) {
+            return null;
+        }
+        BigInteger pow = Multinomial.asBigInteger(((Poly) df.c2).p);
+        if (pow == null) {
+            return null;
+        }
+        Node sub = df.c1;
+        return new Pair<>(sub, pow);
+    }
+
+    static Node buildExpStructure(Node n, BigInteger pow, ExprCalculator ec) {
+        if (pow.equals(BigInteger.ONE)) {
+            return n;
+        } else if (pow.equals(BigInteger.ZERO)) {
+            return newPolyNode(ec.getPOne(), null);
+        }
+        Poly p = newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null);
+        DFunction sf = new DFunction(null, n, p, "exp", false);
+        p.parent = sf;
+        n.parent = sf;
+        return sf;
+    }
 }

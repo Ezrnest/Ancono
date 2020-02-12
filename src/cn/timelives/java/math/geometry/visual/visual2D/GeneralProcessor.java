@@ -95,6 +95,7 @@ public final class GeneralProcessor implements ImageProcessor {
 	public static GeneralProcessor getInstance() {
 		return new GeneralProcessor();
 	}
+
 	public static GeneralProcessor getInstance(ImageDecorator before) {
 		GeneralProcessor g = new GeneralProcessor();
 		g.addBefore(before);

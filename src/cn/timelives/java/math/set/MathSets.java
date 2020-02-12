@@ -4,15 +4,22 @@
 package cn.timelives.java.math.set;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathCalculatorHolder;
+import cn.timelives.java.math.algebra.abstractAlgebra.EqualRelation;
 import cn.timelives.java.math.algebra.abstractAlgebra.GroupCalculators;
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.EqualPredicate;
+import cn.timelives.java.math.function.Bijection;
 import cn.timelives.java.math.numberModels.Calculators;
+import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
 import cn.timelives.java.utilities.structure.Triple;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.sql.Array;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -28,7 +35,7 @@ public final class MathSets {
 	
 	
 	public static <T> SingletonSet<T> singleton(T t,EqualPredicate<T> mc){
-        return new SingletonSet<>(GroupCalculators.INSTANCE.toMathCalculatorEqual(mc), t);
+        return new SingletonSet<>(GroupCalculators.toMathCalculatorEqual(mc), t);
 	}
 
 	@SafeVarargs
@@ -44,9 +51,13 @@ public final class MathSets {
 			}
 			list.add(t);
 		}
-        return new CollectionSet<>(GroupCalculators.INSTANCE.toMathCalculatorEqual(mc), list);
+        return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(mc), list);
 	}
 
+    @SafeVarargs
+    public static <T> CollectionSet<T> asSet(T...ts){
+	    return asSet(EqualPredicate.Companion.naturalEqual(),ts);
+    }
 
 	/**
 	 * Returns a CollectionSet created from the given Collection.
@@ -64,12 +75,12 @@ public final class MathSets {
 			}
 			list.add(t);
 		}
-        return new CollectionSet<>(GroupCalculators.INSTANCE.toMathCalculatorEqual(mc), coll);
+        return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(mc), coll);
 	}
 	/**
-	 * Returns the symmetricGroups set in math, which contains all the elements. The set will
+	 * Returns the universe set in math, which contains all the elements. The set will
 	 * returns "Ω" when toString() is called, which indicates is an
-	 * symmetricGroups set in math.
+	 * universe set in math.
 	 * @return Ω
 	 */
 	@SuppressWarnings("unchecked")
@@ -106,7 +117,7 @@ public final class MathSets {
 
 		/**
 		 * Returns "Ω", which indicates this is an
-		 * symmetricGroups set in math.
+		 * universe set in math.
 		 */
 		@Override
 		public String toString() {
@@ -143,7 +154,8 @@ public final class MathSets {
 		/**
 		 * @see cn.timelives.java.math.set.CountableSet#iterator()
 		 */
-		@Override
+		@NotNull
+        @Override
 		public Iterator<T> iterator() {
 			return Collections.emptyListIterator();
 		}
@@ -287,6 +299,48 @@ public final class MathSets {
         };
     }
 
+
+    public static <T,S> FiniteSet<Pair<T,S>> descartesProduct(FiniteSet<T> s1, FiniteSet<S> s2){
+        var list = new ArrayList<Pair<T,S>>(Math.toIntExact(s1.size() * s2.size()));
+        for( var t : s1){
+            for( var s : s2){
+                list.add(new Pair<>(t,s));
+            }
+        }
+
+        return new FiniteSet<>() {
+            @Override
+            public Pair<T, S> get(long index) {
+                return list.get(Math.toIntExact(index));
+            }
+
+            @Override
+            public Pair<T, S> get(BigInteger index) {
+                return list.get(index.intValueExact());
+            }
+
+            @Override
+            public ListIterator<Pair<T, S>> listIterator() {
+                return Collections.unmodifiableList(list).listIterator();
+            }
+
+            @Override
+            public long size() {
+                return list.size();
+            }
+
+            @Override
+            public BigInteger sizeAsBigInteger() {
+                return BigInteger.valueOf(size());
+            }
+
+            @Override
+            public boolean contains(Pair<T, S> tsPair) {
+                return s1.contains(tsPair.getFirst()) && s2.contains(tsPair.getSecond());
+            }
+        };
+    }
+
 //    /**
 //     * Returns the descarts product of s1 and s2.
 //     * @param s1 a set
@@ -335,5 +389,39 @@ public final class MathSets {
             throw new AssertionError();
         }
 
+    }
+
+
+
+
+    public static <T> List<FiniteSet<T>> partition(FiniteSet<T> set,EqualRelation<T> er){
+        MathCalculator<T> mc;
+        if(set instanceof MathCalculatorHolder){
+            //noinspection unchecked
+            mc = ((MathCalculatorHolder<T>)set).getMathCalculator();
+        }else{
+            mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.Companion.naturalEqual());
+        }
+        List<List<T>> parted = CollectionSup.partition(set,er);
+        return CollectionSup.mapList(parted, x ->
+                MathSets.fromCollection(x,mc));
+    }
+
+    public static <T> FiniteSet<T> filter(FiniteSet<T> set, EqualPredicate<T> er, Predicate<T> filter){
+        var list = new ArrayList<T>();
+        for(var t : set){
+            if(filter.test(t)){
+                list.add(t);
+            }
+        }
+        return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(er), list);
+    }
+
+    public static <T,R> FiniteSet<R> map(FiniteSet<T> set, EqualPredicate<R> er, Function<T,R> mapper){
+        var list = new ArrayList<R>(Math.toIntExact(set.size()));
+        for(var t : set){
+            list.add(mapper.apply(t));
+        }
+        return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(er), list);
     }
 }

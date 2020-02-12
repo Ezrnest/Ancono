@@ -11,17 +11,18 @@ import java.util.function.Function
  * be used. For example, an interval may extend this abstract class and the type of bound can be switched from
  * Integer to Double , or other kind of math number.
  * @author lyc
- * @param <T> the kind of object used, usually a subclass of number
+ * @param T the kind of object used, usually a subclass of number
  * @see MathCalculator
-</T> */
+ */
 abstract class MathObject<T : Any>
 /**
- * Create a flexible math object with the given MathCalculator,the MathCalculator should not
+ * Create a flexible math object with the given MathCalculator, the MathCalculator should not
  * be null.
  * @param mc
  */
-protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalculator<T>>(mc) {
-
+protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalculator<T>>(mc),MathCalculatorHolder<T> {
+    override val mathCalculator: MathCalculator<T>
+        get() = super.mathCalculator
     /**
      * Map this object using the number type `T` to a new object using the number type `N`. This
      * method is a core method of [MathObject]. The subclasses can always changes the return

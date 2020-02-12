@@ -23,6 +23,7 @@ object GroupCalculators {
      * @param equalPredicate
      * @return
      */
+    @JvmStatic
     fun <T> createComposing(id: T, equalPredicate: EqualPredicate<T>): GroupCalculator<T> where T : Any, T : Composable<T>, T : Invertible<T> {
         return object : GroupCalculator<T> {
             override val identity: T
@@ -47,6 +48,7 @@ object GroupCalculators {
      * @param id
      * @return
      */
+    @JvmStatic
     fun <T> createComposing(id: T): GroupCalculator<T> where T : Any, T : Composable<T>, T : Invertible<T> {
         return object : GroupCalculator<T> {
             override val identity: T
@@ -70,6 +72,7 @@ object GroupCalculators {
      * Returns a semigroup calculator from a composable type. The equal relation in this group is defined by [Object.equals].
      * @return
      */
+    @JvmStatic
     fun <T : Composable<T>> createComposingSemi(): SemigroupCalculator<T> {
         return object : SemigroupCalculator<T> {
 
@@ -87,6 +90,7 @@ object GroupCalculators {
      * Returns a semigroup calculator from a composable type.
      * @return
      */
+    @JvmStatic
     fun <T : Composable<T>> createComposingSemi(equalPredicate: EqualPredicate<T>): SemigroupCalculator<T> {
         return object : SemigroupCalculator<T> {
 
@@ -105,6 +109,7 @@ object GroupCalculators {
      * @param gc
      * @return
      */
+    @JvmStatic
     fun <T : Any> toMathCalculatorAdd(gc: GroupCalculator<T>): MathCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
@@ -138,8 +143,8 @@ object GroupCalculators {
             /*
 			 * @see cn.timelives.java.math.numberModels.MathCalculatorAdapter#multiplyLong(java.lang.Object, long)
 			 */
-            override fun multiplyLong(p: T, l: Long): T {
-                return gc.gpow(p, l)
+            override fun multiplyLong(x: T, n: Long): T {
+                return gc.gpow(x, n)
             }
         }
     }
@@ -149,6 +154,7 @@ object GroupCalculators {
      * @param gc
      * @return
      */
+    @JvmStatic
     fun <T : Any> toMathCalculatorEqual(gc: EqualPredicate<T>): MathCalculator<T> {
         return if (gc is MathCalculator<*>) {
             gc as MathCalculator<T>
@@ -164,10 +170,9 @@ object GroupCalculators {
 
     /**
      * Returns a [MathCalculator] from the RingCalculator, mapping add, subtract, multiply.
-     * @param rc
-     * @param <T>
      * @return
-    </T> */
+     */
+    @JvmStatic
     fun <T : Any> toMathCalculatorRing(rc: RingCalculator<T>): MathCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
@@ -182,8 +187,8 @@ object GroupCalculators {
                 return rc.add(x, y)
             }
 
-            override fun negate(para: T): T {
-                return rc.negate(para)
+            override fun negate(x: T): T {
+                return rc.negate(x)
             }
 
             override fun subtract(x: T, y: T): T {
@@ -194,12 +199,12 @@ object GroupCalculators {
                 return rc.multiply(x, y)
             }
 
-            override fun multiplyLong(p: T, l: Long): T {
-                return rc.multiplyLong(p, l)
+            override fun multiplyLong(x: T, n: Long): T {
+                return rc.multiplyLong(x, n)
             }
 
-            override fun pow(p: T, exp: Long): T {
-                return rc.pow(p, exp)
+            override fun pow(x: T, n: Long): T {
+                return rc.pow(x, n)
             }
         }
     }
@@ -209,7 +214,8 @@ object GroupCalculators {
      * @param fc
      * @param <T>
      * @return
-    </T> */
+     */
+    @JvmStatic
     fun <T : Any> toMathCalculatorDR(fc: DivisionRingCalculator<T>): MathCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
@@ -260,6 +266,52 @@ object GroupCalculators {
             }
         }
     }
+    @JvmStatic
+    fun <T:Any> asSemigroupCalculator(rc : RingCalculator<T>) : SemigroupCalculator<T>{
+        return object : SemigroupCalculator<T>{
+            override fun apply(x: T, y: T): T {
+                return rc.multiply(x,y)
+            }
+
+            override fun isEqual(x: T, y: T): Boolean {
+                return rc.isEqual(x,y)
+            }
+        }
+    }
+
+    fun <T:Any> asMonoidCalculator(uc : UnitRingCalculator<T>) : MonoidCalculator<T>{
+        return object : MonoidCalculator<T>{
+            override val identity: T
+                get() = uc.one
+
+            override fun apply(x: T, y: T): T {
+                return uc.multiply(x,y)
+            }
+
+            override fun isEqual(x: T, y: T): Boolean {
+                return uc.isEqual(x,y)
+            }
+        }
+    }
+
+    fun <T:Any> asGroupCalculator(dc : DivisionRingCalculator<T>) : GroupCalculator<T>{
+        return object : GroupCalculator<T>{
+            override fun inverse(x: T): T {
+                return dc.reciprocal(x)
+            }
+
+            override val identity: T
+                get() = dc.one
+
+            override fun apply(x: T, y: T): T {
+                return dc.multiply(x,y)
+            }
+
+            override fun isEqual(x: T, y: T): Boolean {
+                return dc.isEqual(x,y)
+            }
+        }
+    }
 
     /**
      * Returns a isomorphism calculator of the original calculator through bijection `f`.
@@ -272,11 +324,12 @@ object GroupCalculators {
     }
 
 
-    internal class IsoGC<T : Any, S : Any>
-    /**
-     *
-     */
-    (val origin: GroupCalculator<T>, val f: Bijection<T, S>) : GroupCalculator<S> {
+    internal class IsoGC<T : Any, S : Any>(val origin: GroupCalculator<T>, val f: Bijection<T, S>)
+        : GroupCalculator<S> {
+
+        override val isCommutative: Boolean
+            get() = origin.isCommutative
+
         /*
 		 * @see cn.timelives.java.math.algebra.abstractAlgebra.calculator.MonoidCalculator#getIdentity()
 		 */
@@ -312,6 +365,8 @@ object GroupCalculators {
             return f.apply(re)
         }
     }
+
+
 
 }
 /**

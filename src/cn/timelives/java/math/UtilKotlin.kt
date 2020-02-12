@@ -1,5 +1,6 @@
 package cn.timelives.java.math
 
+import cn.timelives.java.math.algebra.IPolynomial
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix
 import cn.timelives.java.math.algebra.linearAlgebra.Vector
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector
@@ -11,89 +12,94 @@ import cn.timelives.java.math.numberModels.Term
 import cn.timelives.java.math.numberModels.structure.Complex
 import cn.timelives.java.math.set.MathSet
 import cn.timelives.java.math.set.MathSets
-import cn.timelives.java.utilities.CollectionSup
-import java.util.*
-import kotlin.collections.ArrayList
+
+/*
+ * Provides extension methods for convenience.
+ */
 
 operator fun <T> Vector<T>.get(i: Int) = this.getNumber(i)!!
 operator fun <T> Matrix<T>.get(i: Int, j: Int) = this.getNumber(i, j)!!
+operator fun <T> Matrix<T>.get(row: Int) = getRow(row)!!
 
-operator fun <T> Matrix<T>.times(mat : Matrix<T>) = Matrix.multiplyMatrix(this,mat)!!
-operator fun <T> Matrix<T>.minus(mat : Matrix<T>) = Matrix.minusMatrix(this,mat)!!
-operator fun <T> Matrix<T>.plus(mat : Matrix<T>) = Matrix.addMatrix(this,mat)!!
+operator fun <T> Matrix<T>.times(mat: Matrix<T>) = Matrix.multiplyMatrix(this, mat)!!
+operator fun <T> Matrix<T>.minus(mat: Matrix<T>) = Matrix.minusMatrix(this, mat)!!
+operator fun <T> Matrix<T>.plus(mat: Matrix<T>) = Matrix.addMatrix(this, mat)!!
 operator fun <T> Matrix<T>.unaryMinus() = this.negative()!!
-
 operator fun <T : Any> Vector<T>.unaryMinus() = this.negative()!!
+
 operator fun <T : Any> PVector<T>.unaryMinus() = this.negative()!!
 operator fun <T : Any> SVector<T>.unaryMinus() = this.negative()!!
-
 operator fun <T : Any> Vector<T>.plus(v: Vector<T>) = Vector.addVector(this, v)!!
+
 operator fun <T : Any> PVector<T>.plus(v: PVector<T>) = this.add(v)!!
 operator fun <T : Any> SVector<T>.plus(v: SVector<T>) = this.add(v)!!
-
 operator fun <T : Any> Vector<T>.minus(v: Vector<T>) = Vector.subtractVector(this, v)!!
+
 operator fun <T : Any> PVector<T>.minus(v: PVector<T>) = this.add(v)!!
 operator fun <T : Any> SVector<T>.minus(v: SVector<T>) = this.subtract(v)!!
-
 operator fun <T : Any> SVector<T>.times(k: T) = this.multiplyNumber(k)!!
+
 operator fun <T : Any> PVector<T>.times(k: T) = this.multiplyNumber(k)!!
 operator fun <T : Any> Vector<T>.times(k: T) = this.multiplyNumber(k)!!
-
-
 operator fun <T : Any> PVector<T>.component1() = this.x!!
-operator fun <T : Any> PVector<T>.component2() = this.y!!
 
+
+operator fun <T : Any> PVector<T>.component2() = this.y!!
 operator fun <T : Any> SVector<T>.component1() = this.x!!
+
 operator fun <T : Any> SVector<T>.component2() = this.y!!
 operator fun <T : Any> SVector<T>.component3() = this.z!!
-
 operator fun <T : Any> Point<T>.component1() = this.x!!
-operator fun <T : Any> Point<T>.component2() = this.y!!
 
+operator fun <T : Any> Point<T>.component2() = this.y!!
 operator fun <T : Any> SPoint<T>.component1() = this.x!!
+
 operator fun <T : Any> SPoint<T>.component2() = this.y!!
 operator fun <T : Any> SPoint<T>.component3() = this.z!!
-
 operator fun <T : Any> Complex<T>.component1() = this.re()
+
+operator fun <T> Matrix<T>.times(v: Vector<T>) = Vector.multiplyToVector(this, v)!!
+operator fun <T> Vector<T>.times(mat: Matrix<T>) = Vector.multiplyByVector(this, mat)!!
+
 operator fun <T : Any> Complex<T>.component2() = this.im()
 
-
+operator fun <T:Any> IPolynomial<T>.get(n : Int) = this.getCoefficient(n)!!
 operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)!!
 operator fun Multinomial.times(y: Multinomial) = this.multiply(y)!!
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!
 operator fun Multinomial.div(y: Term) = this.divide(y)!!
 
 
-operator fun <T:Any> MathSet<T>.minus(another : MathSet<T>) : MathSet<T> =
+operator fun <T : Any> MathSet<T>.minus(another: MathSet<T>): MathSet<T> =
         MathSet { this.contains(it) && !another.contains(it) }
 
-infix fun <T:Any> MathSet<T>.intersect(another: MathSet<T>) : MathSet<T> = MathSets.intersectOf(this,another)
-infix fun <T:Any> MathSet<T>.and(another: MathSet<T>) : MathSet<T> = this intersect another
-infix fun <T:Any> MathSet<T>.union(another: MathSet<T>) : MathSet<T> = MathSets.unionOf(this,another)
-infix fun <T:Any> MathSet<T>.or(another: MathSet<T>) : MathSet<T> = this union another
+infix fun <T : Any> MathSet<T>.intersect(another: MathSet<T>): MathSet<T> = MathSets.intersectOf(this, another)
+infix fun <T : Any> MathSet<T>.and(another: MathSet<T>): MathSet<T> = this intersect another
+infix fun <T : Any> MathSet<T>.union(another: MathSet<T>): MathSet<T> = MathSets.unionOf(this, another)
+infix fun <T : Any> MathSet<T>.or(another: MathSet<T>): MathSet<T> = this union another
 
-fun <T> List<T>.exclude(idx : Int) : List<T>{
-    val result = ArrayList<T>(this.size-1)
-    for(n in 0 until idx){
+fun <T> List<T>.exclude(idx: Int): List<T> {
+    val result = ArrayList<T>(this.size - 1)
+    for (n in 0 until idx) {
         result += this[n]
     }
-    for(n in (idx+1) until this.size){
+    for (n in (idx + 1) until this.size) {
         result += this[n]
     }
     return result
 }
 
-fun <T : Comparable<T>> List<T>.isSorted(inversedNaturalOrder : Boolean = false) : Boolean{
-    if(this.size < 2){
+fun <T : Comparable<T>> List<T>.isSorted(inversedNaturalOrder: Boolean = false): Boolean {
+    if (this.size < 2) {
         return true
     }
-    for(n in 1 until size){
-        if(inversedNaturalOrder){
-            if(this[n-1] < this[n]){
+    for (n in 1 until size) {
+        if (inversedNaturalOrder) {
+            if (this[n - 1] < this[n]) {
                 return false
             }
-        }else{
-            if(this[n-1] > this[n]){
+        } else {
+            if (this[n - 1] > this[n]) {
                 return false
             }
         }

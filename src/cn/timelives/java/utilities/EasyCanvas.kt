@@ -2,17 +2,19 @@
 
 package cn.timelives.java.utilities
 
+import com.sun.glass.events.WheelEvent
+import javafx.application.Application
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
+import javafx.event.Event
 import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.geometry.Point2D
 import javafx.geometry.VPos
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
+import javafx.scene.input.*
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.ArcType
@@ -43,6 +45,19 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
     private val stage: Stage
     private val canvas: Canvas
     private val graphics: GraphicsContext
+    var transform: Affine
+        set(value) {
+            if (Platform.isFxApplicationThread()) {
+                graphics.transform = value
+            } else {
+                Platform.runLater { graphics.transform = value }
+            }
+        }
+        /**
+         * Gets a clone of the current transform.
+         */
+        get() = graphics.transform.clone()
+
 
     init {
         val pair = EasyDrawingWindow.createCanvas(width, height, title)
@@ -52,11 +67,19 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
     }
 
     fun show() {
-        Platform.runLater { stage.show() }
+        if (Platform.isFxApplicationThread()) {
+            stage.show()
+        } else {
+            Platform.runLater { stage.show() }
+        }
     }
 
     fun close() {
-        Platform.runLater { stage.close() }
+        if (Platform.isFxApplicationThread()) {
+            stage.close()
+        } else {
+            Platform.runLater { stage.close() }
+        }
     }
 
     fun isShowing(): Boolean {
@@ -64,11 +87,19 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
     }
 
     fun draw(f: Consumer<GraphicsContext>) {
-        Platform.runLater { f.accept(graphics) }
+        if (Platform.isFxApplicationThread()) {
+            f.accept(graphics)
+        } else {
+            Platform.runLater { f.accept(graphics) }
+        }
     }
 
     fun draw(f: (GraphicsContext) -> Unit) {
-        Platform.runLater { f(graphics) }
+        if (Platform.isFxApplicationThread()) {
+            f(graphics)
+        } else {
+            Platform.runLater { f(graphics) }
+        }
     }
 
     fun getBackingCanvas(): Canvas {
@@ -83,177 +114,261 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
      * Clears the canvas.
      */
     fun clear() {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.clearRect(0.0, 0.0, canvas.width, canvas.height)
+        } else {
+            Platform.runLater { graphics.clearRect(0.0, 0.0, canvas.width, canvas.height) }
         }
     }
 
     /** @see GraphicsContext.setFill */
     fun setFill(p: Paint) {
-        graphics.fill = p
+        if (Platform.isFxApplicationThread()) {
+            graphics.fill = p
+        } else {
+            Platform.runLater { graphics.fill = p }
+        }
     }
 
     /** @see GraphicsContext.setStroke */
     fun setStroke(p: Paint) {
-        graphics.stroke = p
+        if (Platform.isFxApplicationThread()) {
+            graphics.stroke = p
+        } else {
+            Platform.runLater { graphics.stroke = p }
+        }
     }
 
     /** @see GraphicsContext.setLineWidth */
     fun setLineWidth(lw: Double) {
-        graphics.lineWidth = lw
+        if (Platform.isFxApplicationThread()) {
+            graphics.lineWidth = lw
+        } else {
+            Platform.runLater { graphics.lineWidth = lw }
+        }
     }
 
     /** @see GraphicsContext.setLineCap */
     fun setLineCap(cap: StrokeLineCap) {
-        graphics.lineCap = cap
+        if (Platform.isFxApplicationThread()) {
+            graphics.lineCap = cap
+        } else {
+            Platform.runLater { graphics.lineCap = cap }
+        }
     }
 
     /** @see GraphicsContext.setLineJoin */
     fun setLineJoin(join: StrokeLineJoin) {
-        graphics.lineJoin = join
+        if (Platform.isFxApplicationThread()) {
+            graphics.lineJoin = join
+        } else {
+            Platform.runLater { graphics.lineJoin = join }
+        }
     }
 
     /** @see GraphicsContext.setMiterLimit */
     fun setMiterLimit(ml: Double) {
-        graphics.miterLimit = ml
+        if (Platform.isFxApplicationThread()) {
+            graphics.miterLimit = ml
+        } else {
+            Platform.runLater { graphics.miterLimit = ml }
+        }
     }
 
     /** @see GraphicsContext.setLineDashes */
     fun setLineDashes(vararg dashes: Double) {
-        graphics.setLineDashes(*dashes)
+        if (Platform.isFxApplicationThread()) {
+            graphics.setLineDashes(*dashes)
+        } else {
+            Platform.runLater { graphics.setLineDashes(*dashes) }
+        }
     }
 
     /** @see GraphicsContext.setLineDashOffset */
     fun setLineDashOffset(dashOffset: Double) {
-        graphics.lineDashOffset = dashOffset
+        if (Platform.isFxApplicationThread()) {
+            graphics.lineDashOffset = dashOffset
+        } else {
+            Platform.runLater { graphics.lineDashOffset = dashOffset }
+        }
     }
 
     /** @see GraphicsContext.setFont */
     fun setFont(f: Font) {
-        graphics.font = f
+        if (Platform.isFxApplicationThread()) {
+            graphics.font = f
+        } else {
+            Platform.runLater { graphics.font = f }
+        }
     }
 
     /** @see GraphicsContext.setFontSmoothingType */
     fun setFontSmoothingType(fontsmoothing: FontSmoothingType) {
-        graphics.fontSmoothingType = fontsmoothing
+        if (Platform.isFxApplicationThread()) {
+            graphics.fontSmoothingType = fontsmoothing
+        } else {
+            Platform.runLater { graphics.fontSmoothingType = fontsmoothing }
+        }
     }
 
     /** @see GraphicsContext.setTextAlign */
     fun setTextAlign(align: TextAlignment) {
-        graphics.textAlign = align
+        if (Platform.isFxApplicationThread()) {
+            graphics.textAlign = align
+        } else {
+            Platform.runLater { graphics.textAlign = align }
+        }
     }
 
     /** @see GraphicsContext.setTextBaseline */
     fun setTextBaseline(baseline: VPos) {
-        graphics.textBaseline = baseline
+        if (Platform.isFxApplicationThread()) {
+            graphics.textBaseline = baseline
+        } else {
+            Platform.runLater { graphics.textBaseline = baseline }
+        }
     }
 
     /** @see GraphicsContext.setFillRule */
     fun setFillRule(fillRule: FillRule) {
-        graphics.fillRule = fillRule
+        if (Platform.isFxApplicationThread()) {
+            graphics.fillRule = fillRule
+        } else {
+            Platform.runLater { graphics.fillRule = fillRule }
+        }
     }
 
     /** @see GraphicsContext.fillText */
     fun fillText(text: String, x: Double, y: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.fillText(text, x, y)
+        } else {
+            Platform.runLater { graphics.fillText(text, x, y) }
         }
     }
 
     /** @see GraphicsContext.strokeText */
     fun strokeText(text: String, x: Double, y: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeText(text, x, y)
+        } else {
+            Platform.runLater { graphics.strokeText(text, x, y) }
         }
     }
 
     /** @see GraphicsContext.fillText */
     fun fillText(text: String, x: Double, y: Double, maxWidth: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.fillText(text, x, y, maxWidth)
+        } else {
+            Platform.runLater { graphics.fillText(text, x, y, maxWidth) }
         }
     }
 
     /** @see GraphicsContext.strokeText */
     fun strokeText(text: String, x: Double, y: Double, maxWidth: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeText(text, x, y, maxWidth)
+        } else {
+            Platform.runLater { graphics.strokeText(text, x, y, maxWidth) }
         }
     }
 
     /** @see GraphicsContext.clearRect */
     fun clearRect(x: Double, y: Double, w: Double, h: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.clearRect(x, y, w, h)
+        } else {
+            Platform.runLater { graphics.clearRect(x, y, w, h) }
         }
     }
 
     /** @see GraphicsContext.fillRect */
     fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.fillRect(x, y, w, h)
+        } else {
+            Platform.runLater { graphics.fillRect(x, y, w, h) }
         }
     }
 
     /** @see GraphicsContext.strokeRect */
     fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeRect(x, y, w, h)
+        } else {
+            Platform.runLater { graphics.strokeRect(x, y, w, h) }
         }
     }
 
     /** @see GraphicsContext.fillOval */
     fun fillOval(x: Double, y: Double, w: Double, h: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.fillOval(x, y, w, h)
+        } else {
+            Platform.runLater { graphics.fillOval(x, y, w, h) }
         }
     }
 
     /** @see GraphicsContext.strokeOval */
     fun strokeOval(x: Double, y: Double, w: Double, h: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeOval(x, y, w, h)
+        } else {
+            Platform.runLater { graphics.strokeOval(x, y, w, h) }
         }
     }
 
     /** @see GraphicsContext.fillArc */
     fun fillArc(x: Double, y: Double, w: Double, h: Double, startAngle: Double, arcExtent: Double, closure: ArcType) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.fillArc(x, y, w, h, startAngle, arcExtent, closure)
+        } else {
+            Platform.runLater { graphics.fillArc(x, y, w, h, startAngle, arcExtent, closure) }
         }
     }
 
     /** @see GraphicsContext.strokeArc */
     fun strokeArc(x: Double, y: Double, w: Double, h: Double, startAngle: Double, arcExtent: Double, closure: ArcType) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeArc(x, y, w, h, startAngle, arcExtent, closure)
+        } else {
+            Platform.runLater { graphics.strokeArc(x, y, w, h, startAngle, arcExtent, closure) }
         }
     }
 
     /** @see GraphicsContext.fillRoundRect */
     fun fillRoundRect(x: Double, y: Double, w: Double, h: Double, arcWidth: Double, arcHeight: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.fillRoundRect(x, y, w, h, arcWidth, arcHeight)
+        } else {
+            Platform.runLater { graphics.fillRoundRect(x, y, w, h, arcWidth, arcHeight) }
         }
     }
 
     /** @see GraphicsContext.strokeRoundRect */
     fun strokeRoundRect(x: Double, y: Double, w: Double, h: Double, arcWidth: Double, arcHeight: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeRoundRect(x, y, w, h, arcWidth, arcHeight)
+        } else {
+            Platform.runLater { graphics.strokeRoundRect(x, y, w, h, arcWidth, arcHeight) }
         }
     }
 
     /** @see GraphicsContext.strokeLine */
     fun drawLine(x1: Double, y1: Double, x2: Double, y2: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeLine(x1, y1, x2, y2)
+        } else {
+            Platform.runLater { graphics.strokeLine(x1, y1, x2, y2) }
         }
     }
 
     fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokeLine(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble())
+        } else {
+            Platform.runLater { graphics.strokeLine(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble()) }
         }
     }
 
@@ -282,29 +397,37 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
 
     /** @see GraphicsContext.fillPolygon */
     fun fillPolygon(xPoints: DoubleArray, yPoints: DoubleArray, nPoints: Int) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.fillPolygon(xPoints, yPoints, nPoints)
+        } else {
+            Platform.runLater { graphics.fillPolygon(xPoints, yPoints, nPoints) }
         }
     }
 
     /** @see GraphicsContext.strokePolygon */
     fun strokePolygon(xPoints: DoubleArray, yPoints: DoubleArray, nPoints: Int) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokePolygon(xPoints, yPoints, nPoints)
+        } else {
+            Platform.runLater { graphics.strokePolygon(xPoints, yPoints, nPoints) }
         }
     }
 
     /** @see GraphicsContext.strokePolyline */
     fun strokePolyline(xPoints: DoubleArray, yPoints: DoubleArray, nPoints: Int) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.strokePolyline(xPoints, yPoints, nPoints)
+        } else {
+            Platform.runLater { graphics.strokePolyline(xPoints, yPoints, nPoints) }
         }
     }
 
     /** @see GraphicsContext.drawImage */
     fun drawImage(img: Image, x: Double, y: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.drawImage(img, x, y)
+        } else {
+            Platform.runLater { graphics.drawImage(img, x, y) }
         }
     }
 
@@ -315,15 +438,41 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
 
     /** @see GraphicsContext.drawImage */
     fun drawImage(img: Image, x: Double, y: Double, w: Double, h: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.drawImage(img, x, y, w, h)
+        } else {
+            Platform.runLater { graphics.drawImage(img, x, y, w, h) }
         }
     }
 
     /** @see GraphicsContext.drawImage */
     fun drawImage(img: Image, sx: Double, sy: Double, sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) {
-        Platform.runLater {
+        if (Platform.isFxApplicationThread()) {
             graphics.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh)
+        } else {
+            Platform.runLater { graphics.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh) }
+        }
+    }
+
+    private fun <T : Event> createHandlerWrapper(newHandler: EventHandler<in T>, originHandler: EventHandler<in T>?): EventHandler<in T> {
+        return if (originHandler == null) {
+            newHandler
+        } else {
+            EventHandler { event ->
+                originHandler.handle(event)
+                newHandler.handle(event)
+            }
+        }
+    }
+
+    private fun <T : Event> createHandlerWrapper(newHandler: (T) -> Unit, originHandler: EventHandler<in T>?): EventHandler<in T> {
+        return if (originHandler == null) {
+            EventHandler(newHandler)
+        } else {
+            EventHandler { event ->
+                originHandler.handle(event)
+                newHandler(event)
+            }
         }
     }
 
@@ -332,14 +481,7 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
      */
     fun addKeyPressedHandler(handler: EventHandler<in KeyEvent>) {
         val origin = canvas.onKeyPressed
-        if (origin == null) {
-            canvas.onKeyPressed = handler
-        } else {
-            canvas.onKeyPressed = EventHandler { event ->
-                origin.handle(event)
-                handler.handle(event)
-            }
-        }
+        canvas.onKeyPressed = createHandlerWrapper(handler, origin)
     }
 
     /**
@@ -347,14 +489,7 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
      */
     fun addKeyPressedHandler(handler: (KeyEvent) -> Unit) {
         val origin = canvas.onKeyPressed
-        if (origin == null) {
-            canvas.onKeyPressed = EventHandler(handler)
-        } else {
-            canvas.onKeyPressed = EventHandler { event ->
-                origin.handle(event)
-                handler(event)
-            }
-        }
+        canvas.onKeyPressed = createHandlerWrapper(handler, origin)
     }
 
     /**
@@ -362,14 +497,7 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
      */
     fun addMouseClickedHandler(handler: EventHandler<in MouseEvent>) {
         val origin = canvas.onMouseClicked
-        if (origin == null) {
-            canvas.onMouseClicked = handler
-        } else {
-            canvas.onMouseClicked = EventHandler { event ->
-                origin.handle(event)
-                handler.handle(event)
-            }
-        }
+        canvas.onMouseClicked = createHandlerWrapper(handler, origin)
     }
 
     /**
@@ -377,23 +505,23 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
      */
     fun addMouseClickedHandler(handler: (MouseEvent) -> Unit) {
         val origin = canvas.onMouseClicked
-        if (origin == null) {
-            canvas.onMouseClicked = EventHandler(handler)
-        } else {
-            canvas.onMouseClicked = EventHandler { event ->
-                origin.handle(event)
-                handler(event)
-            }
-        }
+        canvas.onMouseClicked = createHandlerWrapper(handler, origin)
+    }
+
+    fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: EventHandler<in T>) {
+        canvas.addEventHandler(eventType, eventHandler)
+    }
+
+    fun <T : Event> addEventHandler(eventType: EventType<T>, eventHandler: (T) -> Unit) {
+        canvas.addEventHandler(eventType, eventHandler)
     }
 
 }
 
 /**
  * Provides a zooming plugin for the easy canvas, which can provide proper zooming for the drawing and also user-friendly
- * view control.The drawing function must be set through method [setDrawer], which
- * will be called when necessary. An affine transformation, which can be used to locate the position of points in the canvas,
- * is provided for the drawer.
+ * view control. The drawing function must be set through method [setDrawer], which
+ * will be called when necessary.
  *
  * **Coordinate systems**
  *
@@ -412,15 +540,19 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
  * in length.
  *
  * **User interaction**
- * The user can use direction key to move the view and key '+' or '-' to zoom in or out,
- * which will result in changes of the affine transformation and redrawing. The percentage of moving and zooming can
+ * The user can use mouse dragging and mouse wheel to move and zoom, and can also use direction key to move the view and
+ * key '+' or '-' to zoom in or out, which will result in changes of the affine transformation and redrawing.
+ * The percentage of moving and zooming can
  * be set via [zoomingFactor] and [movingFactor].
  *
- *
+ * @param centerX the real x-coordinate of the center point on the screen
+ * @param centerY the real y-coordinate of the center point on the screen
+ * @param scale the scaling factor, small value to zoom out, large value to zoom in. If a negative value is given,
+ * then a default value will be used instead.
  */
 class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Double = 0.0, scale: Double = -1.0) {
     private var aff: Affine
-    private var drawer: (EasyCanvas, Affine) -> Unit = { _, _ -> Unit }
+    private var drawer: (EasyCanvas) -> Unit = { _ -> Unit }
     /**
      * The scale of the zooming, which is equal to the determinant of the affine transformation.
      */
@@ -455,6 +587,9 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
             field = value
         }
 
+
+    private var mousePos: Point2D = Point2D.ZERO
+
     init {
         val width = canvas.width / 2
         val height = canvas.height / 2
@@ -464,7 +599,7 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
             scale
         }
         val tx = -k * centerX + width
-        val ty = -k * centerY + height
+        val ty = k * centerY + height
         aff = Transform.affine(k, 0.0, 0.0, -k, tx, ty)
         registerListener()
     }
@@ -483,7 +618,40 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
                 }
             }
         })
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED) {
+            mousePos = Point2D(it.x, it.y)
+//            println("Pressed")
+        }
 
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED) {
+            //            println("Dragged")
+            translateView(it.x - mousePos.x, it.y - mousePos.y)
+            mousePos = Point2D(it.x, it.y)
+        }
+
+        canvas.addEventHandler(ScrollEvent.SCROLL) {
+            if (it.deltaY > 0) {
+                zoomIn(it.x, it.y)
+            } else {
+                zoomOut(it.x, it.y)
+            }
+        }
+    }
+
+    /**
+     * Zoom in with the zooming factor set.
+     * @param centerX the x-coordinate of the zooming center on the screen
+     * @param centerY the y-coordinate of the zooming center on the screen
+     */
+    fun zoomIn(centerX: Double, centerY: Double) {
+        aff.prependScale(zoomingFactor, zoomingFactor, centerX, centerY)
+        update()
+    }
+
+    fun zoomOut(centerX: Double, centerY: Double) {
+        val factor = 1 / zoomingFactor
+        aff.prependScale(factor, factor, centerX, centerY)
+        update()
     }
 
     /**
@@ -513,10 +681,17 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
 
     fun update() {
         canvas.clear()
-        drawer(canvas, aff)
+        canvas.draw { gc ->
+            gc.save()
+            val tr = gc.transform
+            tr.append(aff)
+            gc.transform = tr
+            drawer(canvas)
+            gc.restore()
+        }
     }
 
-    fun setDrawer(f: (EasyCanvas, Affine) -> Unit) {
+    fun setDrawer(f: (EasyCanvas) -> Unit) {
         drawer = f
         update()
     }
@@ -526,7 +701,7 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
      */
     fun setCenter(centerX: Double, centerY: Double) {
         val re = aff.transform(centerX, centerY)
-        aff.prependTranslation(re.x, re.y)
+        aff.prependTranslation(canvas.width / 2 - re.x, canvas.height / 2 - re.y)
         update()
     }
 
@@ -567,11 +742,10 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
 
 //fun main(args: Array<String>) {
 //    val canvas = EasyCanvas(500, 500)
-//    val zooming = ZoomingPlugin(canvas)
-//    zooming.setDrawer { can, aff ->
-//
-//        can.drawLine(aff.transform(0.0, 0.0), aff.transform(10.0, 10.0))
+//    val zooming = ZoomingPlugin(canvas, 2.0, 2.0)
+//    zooming.setCenter(20.0, 10.0)
+//    zooming.setDrawer { can ->
+//        can.drawLine(10.0, 0.0, 100.0, 100.0)
 //    }
-////    canvas.drawLine(0.0,0.0,10.0,10.0)
 //    canvas.show()
 //}

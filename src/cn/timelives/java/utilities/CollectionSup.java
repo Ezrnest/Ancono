@@ -149,6 +149,10 @@ public final class CollectionSup {
         }
     }
 
+    /**
+     * Compares two collections first by their size and then by the elements in it. The order of the elements
+     * is considered.
+     */
     public static <T> int compareCollection(Collection<? extends T> list1, Collection<? extends T> list2, Comparator<T> comp) {
         int com = list1.size() - list2.size();
         if (com != 0) {
@@ -167,15 +171,51 @@ public final class CollectionSup {
         return 0;
     }
 
+    /**
+     * Compares two collections by their lexicographical order using a comparator.
+     * <p></p>
+     * For example, [-5,1] < [-1,2,3] and [1,2,3] < [1,2,3,4]
+     */
+    public static <T> int compareCollectionLexi(Collection<? extends T> list1, Collection<? extends T> list2, Comparator<T> comp) {
+        Iterator<? extends T> it1 = list1.iterator(),
+                it2 = list2.iterator();
+        while (it1.hasNext() && it2.hasNext()) {
+            T a = it1.next();
+            T b = it2.next();
+            int com = comp.compare(a, b);
+            if (com != 0) {
+                return com;
+            }
+        }
+        if (it1.hasNext()) {
+            return 1;
+        }
+        if (it2.hasNext()) {
+            return -1;
+        }
+        return 0;
+    }
+
+    /**
+     * Compares two collections by their lexicographical order.
+     * <p></p>
+     * For example, [-5,1] < [-1,2,3] and [1,2,3] < [1,2,3,4]
+     */
+    public static <T extends Comparable<T>> int compareCollectionLexi(Collection<? extends T> list1, Collection<? extends T> list2) {
+        return compareCollectionLexi(list1, list2, Comparator.naturalOrder());
+    }
+
+    /**
+     * Compares two collection first by their size and then by the elements in it. The order of the elements
+     * is considered.
+     */
     public static <T extends Comparable<T>> int compareCollection(Collection<? extends T> list1, Collection<? extends T> list2) {
         return compareCollection(list1, list2, Comparator.naturalOrder());
     }
 
+
     /**
      * Creates a hash set from the array.
-     *
-     * @param ts
-     * @return
      */
     @SafeVarargs
     public static <T> Set<T> createHashSet(T... ts) {
@@ -201,10 +241,9 @@ public final class CollectionSup {
     }
 
     /**
-     * Returns a comparator for list.
+     * Returns a comparator for collection.
      *
-     * @param comp
-     * @return
+     * @see CollectionSup#compareCollection(Collection, Collection, Comparator)
      */
     public static <T, U extends Collection<T>> Comparator<U> collectionComparator(Comparator<? super T> comp) {
         return (x, y) -> compareCollection(x, y, comp);
@@ -212,11 +251,6 @@ public final class CollectionSup {
 
     /**
      * Add the key-value to the map
-     *
-     * @param map
-     * @param key
-     * @param value
-     * @param generator
      */
     public static <T, S, C extends Collection<S>> void accumulateMap(Map<T, C> map, T key, S value, Supplier<C> generator) {
         map.compute(key, (k, coll) -> {
@@ -396,6 +430,10 @@ public final class CollectionSup {
         return result;
     }
 
+
+    /**
+     * Compares the lexicographical order of two maps, considering the keys and values.
+     */
     public static <K extends Comparable<K>, V extends Comparable<V>> int compareLexi(NavigableMap<K, V> m1, NavigableMap<K, V> m2) {
         if (m1.isEmpty() && m2.isEmpty()) {
             return 0;
@@ -403,35 +441,27 @@ public final class CollectionSup {
 
         var it1 = m1.entrySet().iterator();
         var it2 = m2.entrySet().iterator();
-        while (true) {
-            boolean hs1 = it1.hasNext(),
-                    hs2 = it2.hasNext();
-            if (hs1) {
-                if (!hs2) {
-                    return -1;
-                }
-            } else {
-                if (hs2) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
+        while (it1.hasNext() && it2.hasNext()) {
             var en1 = it1.next();
             var en2 = it2.next();
             K ch1 = en1.getKey();
             K ch2 = en2.getKey();
             int comp = ch1.compareTo(ch2);
-            if (comp < 0) {
-                return -1;
-            } else if (comp > 0) {
-                return 1;
+            if (comp != 0) {
+                return comp;
             }
-            comp = en2.getValue().compareTo(en1.getValue());
+            comp = en1.getValue().compareTo(en2.getValue());
             if (comp != 0) {
                 return comp;
             }
         }
+        if (it1.hasNext()) {
+            return -1;
+        }
+        if (it2.hasNext()) {
+            return 1;
+        }
+        return 0;
     }
 
     @SuppressWarnings("unchecked")

@@ -217,75 +217,80 @@ public final class Triangle<T> extends MathObject<T> {
 	 * @return the orthocenter of this triangle
 	 */
 	public Point<T> centerH(){
-        T y2_y1 = getMc().subtract(B.y, A.y);
-        T y3_y2 = getMc().subtract(C.y, B.y);
-        T y1_y3 = getMc().subtract(A.y, C.y);
-        T x2_x1 = getMc().subtract(B.x, A.x);
-        T x3_x2 = getMc().subtract(C.x, B.x);
-        T x1_x3 = getMc().subtract(A.x, C.x);
-        T s = getMc().negate(getMc().add(getMc().add(
-                getMc().multiply(A.x, y3_y2),
-                getMc().multiply(B.x, y1_y3)),
-                getMc().multiply(C.x, y2_y1)));
-        T d1 = getMc().add(getMc().multiply(getMc().multiply(A.x, B.x), y2_y1),
-                getMc().multiply(getMc().multiply(B.x, C.x), y3_y2));
-        d1 = getMc().add(d1, getMc().multiply(getMc().multiply(C.x, A.x), y1_y3));
-        d1 = getMc().subtract(d1, getMc().multiply(getMc().multiply(y2_y1, y3_y2), y1_y3));
-        T d2 = getMc().add(getMc().multiply(getMc().multiply(A.y, B.y), x2_x1),
-                getMc().multiply(getMc().multiply(B.y, C.y), x3_x2));
-        d2 = getMc().add(d2, getMc().multiply(getMc().multiply(C.y, A.y), x1_x3));
-        d2 = getMc().subtract(d2, getMc().multiply(getMc().multiply(x2_x1, x3_x2), x1_x3));
-        d2 = getMc().negate(d2);
-        d1 = getMc().divide(d1, s);
-        d2 = getMc().divide(d2, s);
-        return new Point<T>(getMc(), d1, d2);
-	}
-	/**
-	 * Returns the circumcenter of this triangle,which is the the center of the circumcircle,as well 
-	 * as three perpendicular bisectors' intersect point.
-	 * @return the circumcenter of this triangle
-	 */
-	public Point<T> centerO(){
-        T y1_y2 = getMc().subtract(A.y, B.y);
-        T y2_y3 = getMc().subtract(B.y, C.y);
-        T y3_y1 = getMc().subtract(C.y, A.y);
-        T x1_x2 = getMc().subtract(A.x, B.x);
-        T x2_x3 = getMc().subtract(B.x, C.x);
-        T x3_x1 = getMc().subtract(C.x, A.x);
+        var mc = getMc();
+        T y2_y1 = mc.subtract(B.y, A.y);
+        T y3_y2 = mc.subtract(C.y, B.y);
+        T y1_y3 = mc.subtract(A.y, C.y);
+        T x2_x1 = mc.subtract(B.x, A.x);
+        T x3_x2 = mc.subtract(C.x, B.x);
+        T x1_x3 = mc.subtract(A.x, C.x);
+        T s = mc.negate(mc.add(mc.add(
+                mc.multiply(A.x, y3_y2),
+                mc.multiply(B.x, y1_y3)),
+                mc.multiply(C.x, y2_y1)));
+        T d1 = mc.add(mc.multiply(mc.multiply(A.x, B.x), y2_y1),
+                mc.multiply(mc.multiply(B.x, C.x), y3_y2));
+        d1 = mc.add(d1, mc.multiply(mc.multiply(C.x, A.x), y1_y3));
+        d1 = mc.subtract(d1, mc.multiply(mc.multiply(y2_y1, y3_y2), y1_y3));
+        T d2 = mc.add(mc.multiply(mc.multiply(A.y, B.y), x2_x1),
+                mc.multiply(mc.multiply(B.y, C.y), x3_x2));
+        d2 = mc.add(d2, mc.multiply(mc.multiply(C.y, A.y), x1_x3));
+        d2 = mc.subtract(d2, mc.multiply(mc.multiply(x2_x1, x3_x2), x1_x3));
+        d2 = mc.negate(d2);
+        d1 = mc.divide(d1, s);
+        d2 = mc.divide(d2, s);
+        return new Point<T>(mc, d1, d2);
+    }
 
-        T s = getMc().multiplyLong(getMc().add(getMc().add(
-                getMc().multiply(A.x, y2_y3),
-                getMc().multiply(B.x, y3_y1)),
-                getMc().multiply(C.x, y1_y2)), 2);
-        T n1 = getMc().add(getMc().multiply(y2_y3, getMc().multiply(A.x, A.x)),
-                getMc().multiply(y3_y1, getMc().multiply(B.x, B.x)));
-        n1 = getMc().add(n1, getMc().multiply(y1_y2, getMc().multiply(C.x, C.x)));
-        n1 = getMc().subtract(n1, getMc().multiply(getMc().multiply(y1_y2, y2_y3), y3_y1));
-        T n2 = getMc().add(getMc().multiply(x2_x3, getMc().multiply(A.y, A.y)),
-                getMc().multiply(x3_x1, getMc().multiply(B.y, B.y)));
-        n2 = getMc().add(n2, getMc().multiply(x1_x2, getMc().multiply(C.y, C.y)));
-        n2 = getMc().subtract(n2, getMc().multiply(getMc().multiply(x1_x2, x2_x3), x3_x1));
-        n2 = getMc().negate(n2);
-        n1 = getMc().divide(n1, s);
-        n2 = getMc().divide(n2, s);
-        return new Point<>(getMc(), n1, n2);
+    /**
+     * Returns the circumcenter of this triangle,which is the the center of the circumcircle, as well
+     * as three perpendicular bisectors' intersect point.
+     *
+     * @return the circumcenter of this triangle
+     */
+	public Point<T> centerO() {
+        var mc = getMc();
+        T y1_y2 = mc.subtract(A.y, B.y);
+        T y2_y3 = mc.subtract(B.y, C.y);
+        T y3_y1 = mc.subtract(C.y, A.y);
+        T x1_x2 = mc.subtract(A.x, B.x);
+        T x2_x3 = mc.subtract(B.x, C.x);
+        T x3_x1 = mc.subtract(C.x, A.x);
+
+        T s = mc.multiplyLong(mc.add(mc.add(
+                mc.multiply(A.x, y2_y3),
+                mc.multiply(B.x, y3_y1)),
+                mc.multiply(C.x, y1_y2)), 2);
+        T n1 = mc.add(mc.multiply(y2_y3, mc.multiply(A.x, A.x)),
+                mc.multiply(y3_y1, mc.multiply(B.x, B.x)));
+        n1 = mc.add(n1, mc.multiply(y1_y2, mc.multiply(C.x, C.x)));
+        n1 = mc.subtract(n1, mc.multiply(mc.multiply(y1_y2, y2_y3), y3_y1));
+        T n2 = mc.add(mc.multiply(x2_x3, mc.multiply(A.y, A.y)),
+                mc.multiply(x3_x1, mc.multiply(B.y, B.y)));
+        n2 = mc.add(n2, mc.multiply(x1_x2, mc.multiply(C.y, C.y)));
+        n2 = mc.subtract(n2, mc.multiply(mc.multiply(x1_x2, x2_x3), x3_x1));
+        n2 = mc.negate(n2);
+        n1 = mc.divide(n1, s);
+        n2 = mc.divide(n2, s);
+        return new Point<>(mc, n1, n2);
 	}
 	/**
 	 * Returns the incenter of this triangle,which is the the center of the incircle,as well 
 	 * as three angular bisectors' intersect point.
 	 * @return the incenter of this triangle
 	 */
-	public Point<T> centerI(){
-		lengthA();
-		lengthB();
-		lengthC();
-		//calculate the length
-        T nx = getMc().add(getMc().add(getMc().multiply(A.x, lenA), getMc().multiply(B.x, lenB)), getMc().multiply(C.x, lenC));
-        T ny = getMc().add(getMc().add(getMc().multiply(A.y, lenA), getMc().multiply(B.y, lenB)), getMc().multiply(C.y, lenC));
-        T deno = getMc().add(getMc().add(lenA, lenB), lenC);
-        nx = getMc().divide(nx, deno);
-        ny = getMc().divide(ny, deno);
-        return new Point<>(getMc(), nx, ny);
+	public Point<T> centerI() {
+        lengthA();
+        lengthB();
+        lengthC();
+        var mc = getMc();
+        //calculate the length
+        T nx = mc.add(mc.add(mc.multiply(A.x, lenA), mc.multiply(B.x, lenB)), mc.multiply(C.x, lenC));
+        T ny = mc.add(mc.add(mc.multiply(A.y, lenA), mc.multiply(B.y, lenB)), mc.multiply(C.y, lenC));
+        T deno = mc.add(mc.add(lenA, lenB), lenC);
+        nx = mc.divide(nx, deno);
+        ny = mc.divide(ny, deno);
+        return new Point<>(mc, nx, ny);
 		
 	}
 	

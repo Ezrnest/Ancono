@@ -111,8 +111,8 @@ public final class Permutations {
 			}
 			int[] copy = array.clone();
 			for (int i = 0; i < size; i++) {
-				array[i] = copy[parr[i]];
-			}
+                array[parr[i]] = copy[i];
+            }
 			return array;
 		}
 

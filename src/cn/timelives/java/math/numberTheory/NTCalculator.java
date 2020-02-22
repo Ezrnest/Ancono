@@ -159,7 +159,7 @@ public interface NTCalculator<T> extends MathCalculator<T> {
      * is required that {@code b} is positive, otherwise an ArithmeticException
      * will be thrown.
      * <p>
-     * For example, {@code mod(1,2)=0}, {@code mod(7,3)=1} and
+     * For example, {@code mod(2,1)=0}, {@code mod(7,3)=1} and
      * {@code mod(-7,3) = 2}.
      *
      * @param a a number

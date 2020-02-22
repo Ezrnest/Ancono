@@ -27,6 +27,10 @@ interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<
         return a
     }
 
+    /**
+     * Returns a triple containing `gcd(this,y)` and `u,v` that
+     * `u*this + v*y = gcd(this,y)`
+     */
     fun gcdUV(y: T): Triple<T, T, T>
 
     /**

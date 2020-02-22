@@ -4,11 +4,10 @@ import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.MathObject
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.numberModels.ComplexI
-import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
-import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberModels.MathCalculatorAdapter
 import cn.timelives.java.math.geometry.analytic.planeAG.PVector
 import cn.timelives.java.math.geometry.analytic.planeAG.Point
+import cn.timelives.java.math.numberModels.api.*
 
 import java.util.ArrayList
 import java.util.Objects
@@ -38,7 +37,7 @@ import java.util.function.Function
  *
  * @param <T>
 </T> */
-class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : MathObject<T>(mc), DivisionRingNumberModel<Complex<T>> {
+class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : MathObject<T>(mc), FieldNumberModel<Complex<T>> {
 
 
     private val a: T = Objects.requireNonNull(a)
@@ -49,6 +48,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     override fun isZero(): Boolean {
         return mc.isZero(a) && mc.isZero(b)
     }
+
     /**
      * Returns the real part of this,which is
      * equal to `Re(this)`.
@@ -292,8 +292,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
     override fun equals(other: Any?): Boolean {
         if (other is Complex<*>) {
-            val com = other as Complex<*>?
-            return a == com!!.a && b == com.b
+            return a == other.a && b == other.b
         }
         return false
     }
@@ -308,18 +307,34 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
      */
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
         if (mc.isZero(a)) {
-            return if (mc.isZero(b)) {
-                "0"
-            } else "(" + nf.format(b, mc) + ")i"
+            return when {
+                mc.isZero(b) -> {
+                    "0"
+                }
+                mc.isEqual(b, mc.one) -> {
+                    return "i"
+                }
+                else -> {
+                    return "(" + nf.format(b, mc) + ")i"
+                }
+            }
         } else {
             if (mc.isZero(b)) {
-                return "(" + nf.format(a, mc) + ")i"
+                return nf.format(a, mc)
             }
+
             val sb = StringBuilder()
-            sb.append('(').append(nf.format(a, mc))
+            sb.append('(')
+                    .append(nf.format(a, mc))
                     .append(")")
-                    .append(nf.format(b, mc))
-                    .append(")i")
+                    .append('+')
+            if (mc.isEqual(b, mc.one)) {
+                sb.append('i')
+            } else {
+                sb.append('(')
+                        .append(nf.format(b, mc))
+                        .append(")i")
+            }
             return sb.toString()
         }
     }
@@ -355,7 +370,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         }
 
         override fun compare(x: Complex<T>, y: Complex<T>): Int {
-            throw UnsupportedCalculationException("Complex Number")
+            throw UnsupportedCalculationException("Complex is not comparable.")
         }
 
         override fun add(x: Complex<T>, y: Complex<T>): Complex<T> {
@@ -371,7 +386,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * is equal to modulus of the complex.(|z|)
          */
         override fun abs(para: Complex<T>): Complex<T> {
-            return Complex.real(para.modulus(), para.mc)
+            return real(para.modulus())
         }
 
         override fun subtract(x: Complex<T>, y: Complex<T>): Complex<T> {
@@ -429,7 +444,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         override fun nroot(x: Complex<T>, n: Long): Complex<T> {
             var arg = x.arg()
             arg = mc.divideLong(arg, n)
-            return Complex.modArg(mc.nroot(x.modulus(), n), arg, mc)
+            return modArg(mc.nroot(x.modulus(), n), arg, mc)
         }
 
         private fun nonNegative(t: T): Boolean {
@@ -456,7 +471,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * argument is equal to b.
          */
         override fun exp(x: Complex<T>): Complex<T> {
-            return Complex.modArg(mc.exp(x.a), x.b, mc)
+            return modArg(mc.exp(x.a), x.b, mc)
         }
 
         /**
@@ -479,6 +494,28 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
             }
             val arg = x.arg()
             return Complex(mc, mod, arg)
+        }
+
+
+        /**
+         * Returns the real number `a` as a complex number.
+         */
+        fun real(a: T): Complex<T> {
+            return Complex(mc, a, mc.zero)
+        }
+
+        /**
+         * Returns the complex number `a+bi`.
+         */
+        fun valueOf(a: T, b: T): Complex<T> {
+            return Complex(mc, a, b)
+        }
+
+        /**
+         * Returns the imaginary number `bi` as a complex number.
+         */
+        fun imaginary(b: T): Complex<T> {
+            return Complex(mc, mc.zero, b)
         }
 
         companion object {
@@ -512,7 +549,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          */
         @Suppress("UNCHECKED_CAST")
         fun <T : Any> zero(mc: MathCalculator<T>): Complex<T> {
-            var c: Complex<T>? = zeros[mc] as Complex<T>
+            var c: Complex<T>? = zeros[mc] as Complex<T>?
             if (c == null) {
                 val z = mc.zero
                 c = Complex(mc, z, z)
@@ -531,6 +568,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @param mc a [MathCalculator]
          * @return a new complex.
          */
+        @JvmStatic
         fun <T : Any> ins(a: T, b: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, a, b)
         }
@@ -543,6 +581,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @param mc a [MathCalculator]
          * @return a new complex.
          */
+        @JvmStatic
         fun <T : Any> real(a: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, a, mc.zero)
         }
@@ -555,6 +594,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @param mc a [MathCalculator]
          * @return a new complex.
          */
+        @JvmStatic
         fun <T : Any> imaginary(b: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.zero, b)
         }
@@ -566,6 +606,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @param theta
          * @return
          */
+        @JvmStatic
         fun <T : Any> modArg(r: T, theta: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.multiply(r, mc.cos(theta)), mc.multiply(r, mc.sin(theta)))
         }
@@ -575,8 +616,26 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @param mc
          * @return
          */
-        fun <T : Any> getCalculator(mc: MathCalculator<T>): MathCalculator<Complex<T>> {
+        @JvmStatic
+        fun <T : Any> getCalculator(mc: MathCalculator<T>): ComplexCalculator<T> {
             return ComplexCalculator(mc)
+        }
+
+        /**
+         * Returns the cross ratio of the four complex.
+         *
+         *     crossRatio(x1,x2,x3,x4) = (x1-x3)(x2-x4)/(x1-x4)(x2-x3)
+         *
+         * Some properties:
+         *
+         * 1. crossRatio(x1,x2,x3,x4) is real iff x1,x2,x3,x4 is on a circle (including line)
+         * 2.
+         *
+         */
+        @JvmStatic
+        fun <T : Any> crossRatio(x1: Complex<T>, x2: Complex<T>, x3: Complex<T>, x4: Complex<T>): Complex<T> {
+            //  (x1-x3)(x2-x4)/(x1-x4)(x2-x3)
+            return (x1 - x3) * (x2 - x4) / ((x1 - x4) * (x2 - x3))
         }
     }
 

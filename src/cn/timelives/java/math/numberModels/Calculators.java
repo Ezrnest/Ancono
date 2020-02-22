@@ -3,12 +3,16 @@
  */
 package cn.timelives.java.math.numberModels;
 
+import cn.timelives.java.logic.propLogic.FalseMatcher;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.ExceptionUtil;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
+import cn.timelives.java.math.numberModels.structure.Polynomial;
+import cn.timelives.java.math.numberModels.structure.RingFraction;
 import cn.timelives.java.math.numberTheory.NTCalculator;
 import cn.timelives.java.math.numberTheory.Primes;
+import cn.timelives.java.utilities.Printer;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
@@ -508,7 +512,7 @@ public final class Calculators {
 
         @Override
         public Integer lcm(Integer a, Integer b) {
-            return MathUtils.lcm(a,b);
+            return MathUtils.lcm(a, b);
         }
 
         /**
@@ -1014,13 +1018,13 @@ public final class Calculators {
 
         @Override
         public Triple<Long, Long, Long> gcdUV(Long a, Long b) {
-            long[] arr = MathUtils.gcdUV(a,b);
-            return new Triple<>(arr[0],arr[1],arr[2]);
+            long[] arr = MathUtils.gcdUV(a, b);
+            return new Triple<>(arr[0], arr[1], arr[2]);
         }
 
         @Override
         public Long lcm(Long a, Long b) {
-            return MathUtils.lcm(a,b);
+            return MathUtils.lcm(a, b);
         }
 
         /**
@@ -1875,7 +1879,7 @@ public final class Calculators {
     /**
      * Return a calculator for {@linkplain BigDecimal} with the given math context.Notice that the method
      * {@code pow} has a limit that {@code exp <= 999999999}<p>
-     * The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,which have
+     * The calculator has {@code MathCalculator#STR_PI} and {@code MathCalculator#STR_E} as constant values,which have
      * the rounding mode of
      * {@link MathContext#DECIMAL128}.
      *
@@ -1888,7 +1892,7 @@ public final class Calculators {
 
     /**
      * Return a calculator for Double.
-     * <p>The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,
+     * <p>The calculator has {@code MathCalculator#STR_PI} and {@code MathCalculator#STR_E} as constant values,
      * which are the double values in Math.<p>
      * This calculator doesn't consider the deviation of double and it
      * {@link MathCalculator#isEqual(Object, Object)} method is just equal to {@code d1 == d2}.
@@ -1902,7 +1906,7 @@ public final class Calculators {
 
     /**
      * Return a calculator for Double.
-     * <p>The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,
+     * <p>The calculator has {@code MathCalculator#STR_PI} and {@code MathCalculator#STR_E} as constant values,
      * which are the double values in Math.<p>
      * This calculator considers the deviation of double and it
      * allows a deviation of {@code 10E-10}
@@ -1916,7 +1920,7 @@ public final class Calculators {
 
     /**
      * Return a calculator for Double.
-     * <p>The calculator has {@value MathCalculator#STR_PI} and {@value MathCalculator#STR_E} as constant values,
+     * <p>The calculator has {@code MathCalculator#STR_PI} and {@code MathCalculator#STR_E} as constant values,
      * which are the double values in Math.<p>
      * This calculator considers the deviation of double.
      *
@@ -1930,21 +1934,30 @@ public final class Calculators {
         private final int p;
         private int[] inversed;
 
-        IntegerCalModP(int p) {
-            this.p = p;
-            inversed = new int[p];
+        private int[] initInv() {
+            int[] inv = new int[p];
             for (int i = 1; i < p; i++) {
-                if (inversed[i] != 0) {
+                if (inv[i] != 0) {
                     continue;
                 }
                 for (int j = 1; j < p; j++) {
+                    if (inv[j] != 0) {
+                        continue;
+                    }
                     if (multiply(i, j) == 1) {
-                        inversed[i] = j;
-                        inversed[j] = i;
+                        inv[i] = j;
+                        inv[j] = i;
                         break;
                     }
                 }
             }
+            return inv;
+        }
+
+
+        IntegerCalModP(int p) {
+            this.p = p;
+            inversed = initInv();
         }
 
         private int modP(int x) {
@@ -2093,4 +2106,9 @@ public final class Calculators {
         }
         return new IntegerCalModP(p);
     }
+//
+//    public static RingFraction.RFCalculator<Polynomial<Fraction>> getCalPolyFraction(){
+//        return RingFraction.Companion.getCalculator(Polynomial.getCalculator(Fraction.Companion.getCalculator()),Polynomial.)
+//    }
+
 }

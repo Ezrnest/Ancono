@@ -12,6 +12,7 @@ import cn.timelives.java.math.numberModels.expression.spi.SimplificationService;
 import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
@@ -1184,7 +1185,7 @@ public final class SimplificationStrategies {
             }
         });
         list.add(new SimplifyFunction(TAG_PRIMARY_SET, ExprFunction.FUNCTION_NAME_RECIPROCAL, "reciprocal(x) -> exp(x,-1)") {
-            @Nullable
+            @NotNull
             @Override
             protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
                 return Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP, node.child.cloneNode(), Node.newPolyNode(Multinomial.NEGATIVE_ONE));

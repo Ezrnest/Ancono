@@ -420,7 +420,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
             //f should be a constant value = [-1,1]
             if (f.hasNoChar()) {
                 if (f.compareTo(Term.ONE) > 0 || f.compareTo(Term.NEGATIVE_ONE) < 0)
-                    throw ArithmeticException("Arcsin undifined  :  " + f.toString())
+                    throw ArithmeticException("Arcsin undifined  :  $f")
             }
         }
         throw UnsupportedCalculationException()
@@ -467,16 +467,16 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     }
 
     override fun gcd(a: Multinomial, b: Multinomial): Multinomial {
-        val comp = a.compareTo(b)
-        if(comp == 0){
-            return a
-        }
-        var a1 : Multinomial
-        var b1 : Multinomial
-        if(comp > 0){
+        val comp = a.compareCharTo(b)
+//        if(comp == 0){
+//            return a
+//        }
+        var a1: Multinomial
+        var b1: Multinomial
+        if (comp < 0) {
             a1 = a
             b1 = b
-        }else{
+        } else {
             a1 = b
             b1 = a
         }

@@ -537,7 +537,7 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
 
     /**
      * Compares the character according to the dictionary order.
-     * x < y < -1 = 1 < y^-1 < 0
+     * x^2 < y^2 < x < y < -1 = 1 < y^-1 < 0
      * Notice that
      * zero is considered to be the biggest.
      */
@@ -1836,12 +1836,22 @@ public final class Term implements Mergeable<Term>,Comparable<Term>,Computable,S
     }
 
     public static void main(String[] args) {
-       var t1 = Term.valueOf("6a");
-       var t2 = Term.valueOf("-3");
-       var t3 = Term.valueOf("9a");
-       var t4 = Term.valueOf("-6");
-       print(Term.getSimplifier().simplify(Arrays.asList(t1,t2,t3,t4)));
+        var t1 = valueOf("x^2");
+        var t2 = valueOf("y^2");
+        var t3 = valueOf("x");
+        var t4 = valueOf("y");
+        var t5 = valueOf("y^-1");
+        var t6 = valueOf("x^-1");
+        var list = Arrays.asList(t1, t2, t3, t4, t5, t6);
+        Collections.sort(list);
+        print(list);
     }
+
+//       var t1 = Term.valueOf("6a");
+//       var t2 = Term.valueOf("-3");
+//       var t3 = Term.valueOf("9a");
+//       var t4 = Term.valueOf("-6");
+//       print(Term.getSimplifier().simplify(Arrays.asList(t1,t2,t3,t4)));
 
 
 //        print(ONE.equals(ONE.negate()));

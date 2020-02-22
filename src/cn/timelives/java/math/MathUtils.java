@@ -81,16 +81,16 @@ public class MathUtils {
         if (b == 0) {
             return new int[]{a, 1, 0};
         }
-        return gcdUV0(a,b);
+        return gcdUV0(a, b);
     }
 
-    static int[] gcdUV0(int a,int b){
+    static int[] gcdUV0(int a, int b) {
         int[] quotients = new int[4];
         int n = 0;
         while (true) {
             int q = a / b;
             int r = a % b;
-            if(r == 0){
+            if (r == 0) {
                 break;
             }
             quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
@@ -101,7 +101,7 @@ public class MathUtils {
         int u0 = 1, u1 = 0,
                 v0 = 0, v1 = 1;
         // u[s] = u[s-2]-q[s-2]*u[s-1]
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             int nextU = u0 - quotients[i] * u1;
             int nextV = v0 - quotients[i] * v1;
             u0 = u1;
@@ -127,16 +127,16 @@ public class MathUtils {
         if (b == 0) {
             return new long[]{a, 1, 0};
         }
-        return gcdUV0(a,b);
+        return gcdUV0(a, b);
     }
 
-    static long[] gcdUV0(long a,long b){
+    static long[] gcdUV0(long a, long b) {
         long[] quotients = new long[4];
         int n = 0;
         while (true) {
             long q = a / b;
             long r = a % b;
-            if(r == 0){
+            if (r == 0) {
                 break;
             }
             quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
@@ -147,7 +147,7 @@ public class MathUtils {
         long u0 = 1, u1 = 0,
                 v0 = 0, v1 = 1;
         // u[s] = u[s-2]-q[s-2]*u[s-1]
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             long nextU = u0 - quotients[i] * u1;
             long nextV = v0 - quotients[i] * v1;
             u0 = u1;
@@ -1464,9 +1464,13 @@ public class MathUtils {
     public static int powMinusOne(int pow) {
         if (pow % 2 == 0) {
             return 1;
-        }else{
+        } else {
             return -1;
         }
+    }
+
+    public static double interpolate(double x, double y, double k) {
+        return x + (y - x) * k;
     }
 
 }

@@ -2,8 +2,10 @@ package cn.timelives.java.math.numberModels.structure
 
 
 import cn.timelives.java.math.FlexibleMathObject
+import cn.timelives.java.math.MathCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.FieldCalculator
 import cn.timelives.java.math.algebra.abstractAlgebra.calculator.RingCalculator
+import cn.timelives.java.math.algebra.abstractAlgebra.calculator.UnitRingCalculator
 import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberModels.api.Simplifier
@@ -24,6 +26,7 @@ import java.util.function.Function
  * <h3>Notice:</h3>
  * To operate the ring fraction, the corresponding ring fraction calculator must be used, which
  * supports the basic operations defined on a field calculator.
+ *
  * [Field of fractions](https://en.wikipedia.org/wiki/Field_of_fractions)
  */
 class RingFraction<T : Any>
@@ -164,6 +167,10 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>) : FlexibleMathObje
         </T> */
         fun <T : Any> getCalculator(ringCalculator: RingCalculator<T>, simplifier: Simplifier<T>?, noneZero: T): RFCalculator<T> {
             return RFCalculator(ringCalculator, simplifier, noneZero)
+        }
+
+        fun <T : Any> getCalculator(mc: UnitRingCalculator<T>, simplifier: Simplifier<T>?): RFCalculator<T> {
+            return RFCalculator(mc, simplifier, mc.one)
         }
 
         fun <T : Any> valueOf(nume: T, deno: T, mc: RingCalculator<T>): RingFraction<T> {

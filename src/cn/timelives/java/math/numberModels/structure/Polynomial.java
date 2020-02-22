@@ -15,8 +15,8 @@ import cn.timelives.java.math.geometry.analytic.planeAG.Point;
 import cn.timelives.java.math.numberModels.*;
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter;
 import cn.timelives.java.math.numberModels.api.NumberFormatter;
+import cn.timelives.java.math.numberModels.api.Simplifier;
 import cn.timelives.java.math.numberTheory.EuclidRingNumberModel;
-import cn.timelives.java.math.numberTheory.EuclidRingNumberModelKt;
 import cn.timelives.java.math.numberTheory.NTCalculator;
 import cn.timelives.java.math.numberTheory.combination.CombUtils;
 import cn.timelives.java.utilities.CollectionSup;
@@ -1163,11 +1163,21 @@ public final class Polynomial<T> extends MathObject<T> implements IPolynomial<T>
         return new PolynomialCalculator<>(mc);
     }
 
+    /**
+     * Returns a
+     *
+     * @param p an irreducible polynomial.
+     * @return a
+     */
+    public static <T> ModPolyCalculator<T> getModCalculator(Polynomial<T> p) {
+        return new ModPolyCalculator<>(p);
+    }
+
 
     public static class PolynomialCalculator<T> extends MathCalculatorAdapter<Polynomial<T>>
             implements MathCalculatorHolder<T>, NTCalculator<Polynomial<T>> {
-        private final MathCalculator<T> mc;
-        private final Polynomial<T> zero, one;
+        protected final MathCalculator<T> mc;
+        protected final Polynomial<T> zero, one;
 
         /**
          *
@@ -1521,8 +1531,121 @@ public final class Polynomial<T> extends MathObject<T> implements IPolynomial<T>
         }
     }
 
+    public static class ModPolyCalculator<T> extends PolynomialCalculator<T> {
+        private final Polynomial<T> p;
+
+        public ModPolyCalculator(Polynomial<T> p) {
+            super(p.getMathCalculator());
+            this.p = p;
+        }
+
+        @Override
+        public boolean isEqual(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+            return super.isEqual(mod(para1), mod(para2));
+        }
+
+        @Override
+        public @NotNull Polynomial<T> add(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+            return mod(super.add(mod(para1), mod(para2)));
+        }
+
+        @Override
+        public @NotNull Polynomial<T> subtract(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+            return mod(super.subtract(mod(para1), mod(para2)));
+        }
+
+        @Override
+        public boolean isZero(@NotNull Polynomial<T> para) {
+            return super.isZero(mod(para));
+        }
+
+        @Override
+        public @NotNull Polynomial<T> multiply(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+            return mod(super.multiply(mod(para1), mod(para2)));
+        }
+
+        @Override
+        public @NotNull Polynomial<T> divide(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+            return super.divide(para1, para2);
+        }
+
+        @Override
+        public Pair<Polynomial<T>, Polynomial<T>> divideAndReminder(Polynomial<T> p1, Polynomial<T> p2) {
+            return super.divideAndReminder(mod(p1), mod(p2));
+        }
+
+        @Override
+        public Polynomial<T> reminder(Polynomial<T> a, Polynomial<T> b) {
+            return super.reminder(a, b);
+        }
+
+        @Override
+        public @NotNull Polynomial<T> pow(@NotNull Polynomial<T> p, long exp) {
+            if (exp == 1) {
+                return p;
+            }
+            if (p.degree == 0) {
+                //single
+                return constant(mc, mc.pow(p.getCoefficient(0), exp));
+            }
+            long mp = exp * p.degree;
+            if (mp > Integer.MAX_VALUE || mp < 0) {
+                throw new ArithmeticException("Too big for exp=" + exp);
+            }
+            return ModelPatterns.binaryProduce(exp, one, p, this::multiply);
+        }
+
+        public Polynomial<T> mod(Polynomial<T> a) {
+            if (a.degree < p.degree) {
+                return a;
+            }
+            return mod(a, p);
+        }
+
+        @Override
+        public Polynomial<T> mod(Polynomial<T> a, Polynomial<T> b) {
+            return super.mod(a, b);
+        }
+
+        @Override
+        public Polynomial<T> divideToInteger(Polynomial<T> a, Polynomial<T> b) {
+            return super.divideToInteger(a, b);
+        }
+
+        @NotNull
+        @Override
+        public Polynomial<T> reciprocal(@NotNull Polynomial<T> x) {
+            var t = x.gcdUV(p); //ut + vp = 1
+            var gcd = t.getFirst();
+            if (!gcd.isOne()) {
+                throw new UnsupportedCalculationException("Polynomial (" + x + ") is not invertible!");
+            }
+            var u = t.getSecond();
+            return mod(u);
+        }
+    }
+
+
     public static <T> NumberFormatter<Polynomial<T>> composedFormatter(NumberFormatter<T> formatter) {
         return (p, mc) -> p.toString(formatter);
+    }
+
+    private static class PolySimplifier<T> implements Simplifier<Polynomial<T>> {
+        @Override
+        public List<Polynomial<T>> simplify(List<Polynomial<T>> numbers) {
+            //TODO
+            return null;
+        }
+
+        @Override
+        public Polynomial<T> simplify(Polynomial<T> x) {
+            return null;
+        }
+
+        @Override
+        public Pair<Polynomial<T>, Polynomial<T>> simplify(Polynomial<T> a, Polynomial<T> b) {
+            return null;
+        }
     }
 
     public static void main(String[] args) {

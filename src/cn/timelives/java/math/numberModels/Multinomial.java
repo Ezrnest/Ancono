@@ -286,7 +286,14 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         if (this == o) {
             return 0;
         }
-        return CollectionSup.compareCollection(terms, o.terms, Comparator.naturalOrder());
+        return CollectionSup.compareCollectionLexi(terms, o.terms, Comparator.naturalOrder());
+    }
+
+    /**
+     * Compares only the character part to another multinomial.
+     */
+    public int compareCharTo(@NotNull Multinomial m) {
+        return CollectionSup.compareCollectionLexi(terms, m.terms, Term::compareChar);
     }
 
 
@@ -1076,11 +1083,12 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-    public static void main(String[] args) {
-        var m1 = Multinomial.valueOf("6a-3");
-        var m2 = Multinomial.valueOf("9a-6");
-        print(Multinomial.simplifyFraction(m1, m2));
-    }
+//    public static void main(String[] args) {
+//    }
+//        var m1 = Multinomial.valueOf("xy+x");
+//        var m2 = Multinomial.valueOf("y+1");
+//        print(m1.compareTo(m2));
+//        print(Multinomial.simplifyFraction(m2, m1));
 //        print(cal.gcd(valueOf("a-b"), valueOf("a+b")));
 //        var re = simplifyFraction(Multinomial.monomial(
 //                Term.singleChar("x",Fraction.Companion.valueOf("5/2"))),Multinomial.valueOf("-x+1"));

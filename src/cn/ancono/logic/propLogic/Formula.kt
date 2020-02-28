@@ -5,6 +5,7 @@ package cn.ancono.logic.propLogic
 import cn.ancono.math.isSorted
 import cn.ancono.utilities.BinarySup
 import cn.ancono.utilities.CollectionSup
+import java.lang.UnsupportedOperationException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -218,12 +219,15 @@ class TruthAssignmentMap internal constructor(val nameArray: Array<String>, var 
         nameArray.sort()
     }
 
-    override val entries: Set<Map.Entry<String, Boolean>> by lazy {
-        val result = TreeSet<Map.Entry<String, Boolean>>()
+    override val entries: MutableSet<MutableMap.MutableEntry<String, Boolean>> by lazy {
+        val result = TreeSet<MutableMap.MutableEntry<String, Boolean>>()
         for (s in nameArray) {
-            result.add(object : Map.Entry<String, Boolean> {
+            result.add(object : MutableMap.MutableEntry<String, Boolean> {
                 override val value: Boolean = get(s)!!
                 override val key: String = s
+                override fun setValue(newValue: Boolean): Boolean {
+                    throw UnsupportedOperationException()
+                }
             })
         }
         result

@@ -1,7 +1,7 @@
 package test.math.linearAlgebra
 
-import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup
-import cn.timelives.java.math.times
+import cn.ancono.math.algebra.linearAlgebra.MatrixSup
+import cn.ancono.math.times
 import org.junit.Assert.*
 import org.junit.Test
 

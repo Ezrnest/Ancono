@@ -1,12 +1,12 @@
 package test.math.numberModels.structure;
 
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.Fraction;
-import cn.timelives.java.math.numberModels.structure.Polynomial;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.numberModels.Fraction;
+import cn.ancono.math.numberModels.structure.Polynomial;
 import org.junit.Test;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 import static org.junit.Assert.*;
 
 public class PolynomialTest {

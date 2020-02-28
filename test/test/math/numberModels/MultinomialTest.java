@@ -1,11 +1,11 @@
 package test.math.numberModels;
 
-import cn.timelives.java.math.MathUtils;
-import cn.timelives.java.math.numberModels.Multinomial;
+import cn.ancono.math.MathUtils;
+import cn.ancono.math.numberModels.Multinomial;
 import org.junit.Test;
 
-import static cn.timelives.java.math.numberModels.Multinomial.valueOf;
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.math.numberModels.Multinomial.valueOf;
+import static cn.ancono.utilities.Printer.print;
 import static org.junit.Assert.*;
 
 public class MultinomialTest {

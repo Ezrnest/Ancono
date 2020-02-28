@@ -1053,7 +1053,7 @@ internal constructor(
          * Identify the given expression
          */
         @JvmStatic
-        val EXPRESSION_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)(/\\d+)?")
+        val EXPRESSION_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)(/(\\d+))?")
         // *([\\+\\-]?\\d+(\\/\\d+)?) * another replacement which
         val DECIMAL_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)\\.(\\d+)")
 
@@ -1069,7 +1069,7 @@ internal constructor(
             if (m.matches()) {
                 val n = m.group(1).toLong()
                 return try {
-                    val d = m.group(2).toLong()
+                    val d = m.group(3).toLong()
                     valueOf(n, d)
                 } catch (e: Exception) {
                     valueOf(n)

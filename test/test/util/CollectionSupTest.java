@@ -1,6 +1,6 @@
 package test.util;
 
-import cn.timelives.java.utilities.CollectionSup;
+import cn.ancono.utilities.CollectionSup;
 import org.junit.Test;
 
 import java.util.Arrays;

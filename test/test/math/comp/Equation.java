@@ -1,14 +1,14 @@
 package test.math.comp;
 
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.equation.SVPEquation;
-import cn.timelives.java.math.equation.Type;
-import cn.timelives.java.math.equation.inequation.SVPInequation;
-import cn.timelives.java.math.numberModels.Calculators;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.equation.SVPEquation;
+import cn.ancono.math.equation.Type;
+import cn.ancono.math.equation.inequation.SVPInequation;
+import cn.ancono.math.numberModels.Calculators;
 import test.math.comp.studyUtils.Run;
 import test.math.comp.studyUtils.StudyMethodRunner;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 
 public class Equation {
     public static void main(String[] args) {

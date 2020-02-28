@@ -1,10 +1,10 @@
 package test
 
-import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup
-import cn.timelives.java.math.algebra.linearAlgebra.Vector
-import cn.timelives.java.math.numberModels.Calculators
-import cn.timelives.java.math.numberModels.expression.ExprCalculator
-import cn.timelives.java.math.times
+import cn.ancono.math.algebra.linearAlgebra.MatrixSup
+import cn.ancono.math.algebra.linearAlgebra.Vector
+import cn.ancono.math.numberModels.Calculators
+import cn.ancono.math.numberModels.expression.ExprCalculator
+import cn.ancono.math.times
 import java.util.function.Function
 
 

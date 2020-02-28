@@ -3,21 +3,21 @@
  */
 package test.math.abstractAlgebra;
 
-import cn.timelives.java.math.algebra.abstractAlgebra.FiniteGroups;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.GroupCalculator;
-import cn.timelives.java.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
-import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.geometry.analytic.planeAG.TransMatrix;
-import cn.timelives.java.utilities.ArraySup;
+import cn.ancono.math.algebra.abstractAlgebra.FiniteGroups;
+import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator;
+import cn.ancono.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
+import cn.ancono.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.geometry.analytic.planeAG.TransMatrix;
+import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.util.function.Function;
 
-import static cn.timelives.java.utilities.Printer.print;
-import static cn.timelives.java.utilities.Printer.printMatrix;
+import static cn.ancono.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.printMatrix;
 
 /**
  * @author liyicheng

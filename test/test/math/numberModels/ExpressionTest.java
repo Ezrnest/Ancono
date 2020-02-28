@@ -3,23 +3,23 @@
  */
 package test.math.numberModels;
 
-import cn.timelives.java.math.equation.SVPEquation;
-import cn.timelives.java.math.equation.SVPEquation.QEquation;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.Multinomial;
-import cn.timelives.java.math.numberModels.expression.ExprCalculator;
-import cn.timelives.java.math.numberModels.expression.Expression;
-import cn.timelives.java.math.numberModels.expression.SimplificationStrategies;
-import cn.timelives.java.math.geometry.analytic.planeAG.Line;
-import cn.timelives.java.math.geometry.analytic.planeAG.Point;
-import cn.timelives.java.math.geometry.analytic.planeAG.curve.EllipseV;
+import cn.ancono.math.equation.SVPEquation;
+import cn.ancono.math.equation.SVPEquation.QEquation;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.numberModels.Multinomial;
+import cn.ancono.math.numberModels.expression.ExprCalculator;
+import cn.ancono.math.numberModels.expression.Expression;
+import cn.ancono.math.numberModels.expression.SimplificationStrategies;
+import cn.ancono.math.geometry.analytic.planeAG.Line;
+import cn.ancono.math.geometry.analytic.planeAG.Point;
+import cn.ancono.math.geometry.analytic.planeAG.curve.EllipseV;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;

@@ -1,11 +1,11 @@
 package test.math.numberModels;
 
-import cn.timelives.java.math.MathUtils;
-import cn.timelives.java.math.numberModels.Term;
+import cn.ancono.math.MathUtils;
+import cn.ancono.math.numberModels.Term;
 import org.junit.Test;
 
-import static cn.timelives.java.utilities.Printer.print;
-import static cn.timelives.java.utilities.Printer.printnb;
+import static cn.ancono.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.printnb;
 import static org.junit.Assert.*;
 
 public class TermTest {

@@ -3,17 +3,17 @@
  */
 package test.math;
 
-import cn.timelives.java.math.equation.SVPEquation;
-import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
-import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
-import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.algebra.linearAlgebra.Vector;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.geometry.analytic.planeAG.curve.ConicSection;
-import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
-import cn.timelives.java.utilities.ArraySup;
-import cn.timelives.java.utilities.structure.Pair;
+import cn.ancono.math.equation.SVPEquation;
+import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution;
+import cn.ancono.math.algebra.linearAlgebra.Matrix;
+import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
+import cn.ancono.math.algebra.linearAlgebra.Vector;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.geometry.analytic.planeAG.curve.ConicSection;
+import cn.ancono.math.geometry.analytic.planeAG.curve.GeneralConicSection;
+import cn.ancono.utilities.ArraySup;
+import cn.ancono.utilities.structure.Pair;
 import org.junit.Test;
 
 import java.util.Arrays;

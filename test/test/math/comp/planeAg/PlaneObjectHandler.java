@@ -3,10 +3,10 @@
  */
 package test.math.comp.planeAg;
 
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.geometry.analytic.planeAG.Line;
-import cn.timelives.java.math.geometry.analytic.planeAG.PVector;
-import cn.timelives.java.math.geometry.analytic.planeAG.Point;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.geometry.analytic.planeAG.Line;
+import cn.ancono.math.geometry.analytic.planeAG.PVector;
+import cn.ancono.math.geometry.analytic.planeAG.Point;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 
 /**
  * 

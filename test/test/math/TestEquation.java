@@ -3,13 +3,13 @@
  */
 package test.math;
 
-import cn.timelives.java.math.equation.EquationSup;
-import cn.timelives.java.math.equation.Type;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.MathCalculator;
+import cn.ancono.math.equation.EquationSup;
+import cn.ancono.math.equation.Type;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.MathCalculator;
 import org.junit.Test;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 /**
  * @author liyicheng
  * 2017-10-09 19:26

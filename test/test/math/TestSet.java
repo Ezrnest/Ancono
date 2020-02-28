@@ -25,28 +25,30 @@ import static org.junit.Assert.assertTrue;
 public class TestSet {
 
 	/**
-	 * 
-	 */
-	public TestSet() {
-	}
-	private <T> void printContains(MathSet<T> set,T e) {
-		print(set.toString()+" contains "+e+" = "+set.contains(e));
-	}
-	private <S extends IntersectableSet<?, S>> void printIntersect(S set1,S set2) {
-		print(set1.toString()+" ∩ "+set2.toString()+" = "+set1.intersect(set2));
-	}
-	
-	MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
-	
-	
-	public void testInterval() {
-		Interval<Integer> v1,v2,v3;
-		v1 = Interval.closedInterval(0, 2, mc);
-		v2 = Interval.closedInterval(2, 4, mc);
-		v3 = Interval.closedInterval(2, 2, mc);
+	 *
+     */
+    public TestSet() {
+    }
+
+    private <T> void printContains(MathSet<T> set, T e) {
+        print(set.toString() + " contains " + e + " = " + set.contains(e));
+    }
+
+    private <S extends IntersectableSet<?, S>> void printIntersect(S set1, S set2) {
+        print(set1.toString() + " ∩ " + set2.toString() + " = " + set1.intersect(set2));
+    }
+
+    MathCalculator<Integer> mc = Calculators.getCalInteger();
+
+
+    public void testInterval() {
+        Interval<Integer> v1, v2, v3;
+        v1 = Interval.closedInterval(0, 2, mc);
+        v2 = Interval.closedInterval(2, 4, mc);
+        v3 = Interval.closedInterval(2, 2, mc);
 //		v4 = Interval.closedInterval(0, 2, mc);
-		printContains(v3,2);
-		printContains(v3,3);
+        printContains(v3, 2);
+        printContains(v3, 3);
 		printIntersect(v1,v2);
 		v1 = Interval.openInterval(0, 2, mc);
 		v2 = Interval.openInterval(2, 4, mc);

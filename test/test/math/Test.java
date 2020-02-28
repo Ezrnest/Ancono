@@ -13,7 +13,6 @@ import cn.ancono.utilities.Timer;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
-import java.util.function.LongFunction;
 
 import static cn.ancono.utilities.Printer.print;
 import static cn.ancono.utilities.Printer.print_;
@@ -382,28 +381,28 @@ class Test {
 	*/
 	
 	static <T> void progerssionTest(T a){
-		Progression<Long> p2 = ProgressionSup.asFirstElementAndDifferece(1L,1L,Calculators.getCalculatorLong());
-		p2 = Progression.combinedProgression(Calculators.getCalculatorLong(), ls -> ls[0] * ls[0], p2);
-		p2.limit(100).stream().forEachOrdered(l -> print(l));
-		
-	}
+        Progression<Long> p2 = ProgressionSup.asFirstElementAndDifferece(1L, 1L, Calculators.getCalLong());
+        p2 = Progression.combinedProgression(Calculators.getCalLong(), ls -> ls[0] * ls[0], p2);
+        p2.limit(100).stream().forEachOrdered(l -> print(l));
+
+    }
 	
-	static void progerssionTest2(){
-		Progression<Long> p1 = ProgressionSup.asFirstElementAndDifferece(1L,1L,Calculators.getCalculatorLong());
-		Progression<Double> p2 = p1.mapTo(l -> Math.log(Math.abs(l*l-l)+2), Calculators.getCalculatorDouble());
-		p2 = Progression.computeProgression(p2.getMathCalculator(), l -> Math.cos(l*2 - l*l), p2);
-		
-		Progression<BigDecimal> pr = p2.mapTo(d -> new BigDecimal( d*d *d - d*d), Calculators.getCalculatorBigDecimal(MathContext.DECIMAL128));
-		
-		Progression<BigDecimal> prc = Progression.cachedProgression(pr, 0, 100, true);
-		Timer t = new Timer();
-		t.start();
-		for(int i=0;i<100;i++){
-			pr.get(i);
-		}
-		print(t.end());
-		t.start();
-		for(int i=0;i<100;i++){
+	static void progerssionTest2() {
+        Progression<Long> p1 = ProgressionSup.asFirstElementAndDifferece(1L, 1L, Calculators.getCalLong());
+        Progression<Double> p2 = p1.mapTo(l -> Math.log(Math.abs(l * l - l) + 2), Calculators.getCalDouble());
+        p2 = Progression.computeProgression(p2.getMathCalculator(), l -> Math.cos(l * 2 - l * l), p2);
+
+        Progression<BigDecimal> pr = p2.mapTo(d -> new BigDecimal(d * d * d - d * d), Calculators.getCalBigDecimal(MathContext.DECIMAL128));
+
+        Progression<BigDecimal> prc = Progression.cachedProgression(pr, 0, 100, true);
+        Timer t = new Timer();
+        t.start();
+        for (int i = 0; i < 100; i++) {
+            pr.get(i);
+        }
+        print(t.end());
+        t.start();
+        for (int i = 0; i < 100; i++) {
 			prc.get(i);
 		}
 		print(t.end());
@@ -412,28 +411,28 @@ class Test {
 		pr.limit(105).iteratorFrom(95).forEachRemaining(bd -> print(bd.toString()));
 	}
 	
-	static void progerssionTest3(){
-		Progression<Long> p1 = ProgressionSup.
-				asFirstElementAndDifferece(1L, 2L, Calculators.getCalculatorLong());
-		Progression<Long> p2 = ProgressionSup.
-				createGeometricProgression(1L, 2L, Calculators.getCalculatorLong());
-		Progression<Long> pr = Progression.combinedProgression(Calculators.getCalculatorLong(), ls -> ls[0] * ls[1], p1,p2);
-		pr.limit(20).forEach(l -> print(l));
-		print("sum = "+pr.sumOf(0, 20));
-	}
+	static void progerssionTest3() {
+        Progression<Long> p1 = ProgressionSup.
+                asFirstElementAndDifferece(1L, 2L, Calculators.getCalLong());
+        Progression<Long> p2 = ProgressionSup.
+                createGeometricProgression(1L, 2L, Calculators.getCalLong());
+        Progression<Long> pr = Progression.combinedProgression(Calculators.getCalLong(), ls -> ls[0] * ls[1], p1, p2);
+        pr.limit(20).forEach(l -> print(l));
+        print("sum = " + pr.sumOf(0, 20));
+    }
 	
-	static void progressionTest4(){
-		MathCalculator<Long> mc = Calculators.getCalculatorLong();
-		Progression<Long> p0 = Progression.createProgression(l -> l*l - 10*l - 100, -1, mc);
-		Interval<Long> iv = new IntervalI<>(mc,null,10L,false,true);
-		p0.limit(100).stream().filter(l -> iv.contains(l)).forEach(l -> print(l));
-	}
+	static void progressionTest4() {
+        MathCalculator<Long> mc = Calculators.getCalLong();
+        Progression<Long> p0 = Progression.createProgression(l -> l * l - 10 * l - 100, -1, mc);
+        Interval<Long> iv = new IntervalI<>(mc, null, 10L, false, true);
+        p0.limit(100).stream().filter(l -> iv.contains(l)).forEach(l -> print(l));
+    }
 	
-	static void progressionTest5(){
-		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
-		Progression<Double> ps = Progression.createProgressionRecur1(d -> (d * (3.5d - d)),0.7d,-1, mc);
-		ps.stream().limit(30).forEach(Printer::print);
-	}
+	static void progressionTest5() {
+        MathCalculator<Double> mc = Calculators.getCalDouble();
+        Progression<Double> ps = Progression.createProgressionRecur1(d -> (d * (3.5d - d)), 0.7d, -1, mc);
+        ps.stream().limit(30).forEach(Printer::print);
+    }
 	
 	static void progressionSum(){
 		MathCalculator<Fraction> mc = Fraction.getCalculator();
@@ -451,31 +450,32 @@ class Test {
 		b.limit(20).forEach(Printer::print);
 	}
 	
-	static void progressionDemo(){
-		
-		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
-		Progression<Double> ps = Progression.
-				createProgression(Math::sqrt, -1, mc);
+	static void progressionDemo() {
+
+        MathCalculator<Double> mc = Calculators.getCalDouble();
+        Progression<Double> ps = Progression.
+                createProgression(Math::sqrt, -1, mc);
 //		Progression<Long> p2 = ps.mapTo(d -> Math.round(d),
 //				Calculators.getCalculatorLong());
 //		p2.limit(100).forEach(Printer::print);
-		Interval<Double> iv = new IntervalI<Double>(mc,4d,7d,true,true);
-		ps.limit(100).stream()
-						.filter(iv::contains)
-						.forEach(Printer::print);;
+        Interval<Double> iv = new IntervalI<Double>(mc, 4d, 7d, true, true);
+        ps.limit(100).stream()
+                .filter(iv::contains)
+                .forEach(Printer::print);
+        ;
 		
 		
 		
 	}
 	
-	static void progression6(){
-		MathCalculator<Long> mc = Calculators.getCalculatorLong();
-		Progression<Long> p1 = ProgressionSup.createArithmeticProgression(5L, 0L, mc);
-		Progression<Long> p2 = Progression.createPeriodicProgression(
-				Arrays.copyOf(p1.limit(25).toArray(), 25, Long[].class), mc, Progression.UNLIMITED);
-		p2.limit(100).forEach(Printer::print);
-		
-	}
+	static void progression6() {
+        MathCalculator<Long> mc = Calculators.getCalLong();
+        Progression<Long> p1 = ProgressionSup.createArithmeticProgression(5L, 0L, mc);
+        Progression<Long> p2 = Progression.createPeriodicProgression(
+                Arrays.copyOf(p1.limit(25).toArray(), 25, Long[].class), mc, Progression.UNLIMITED);
+        p2.limit(100).forEach(Printer::print);
+
+    }
 	
 	
 	

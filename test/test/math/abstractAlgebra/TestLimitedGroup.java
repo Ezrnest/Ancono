@@ -35,8 +35,8 @@ public class TestLimitedGroup {
 	
 	@Test
 	public void test1() {
-		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
-		GroupCalculator<TransMatrix<Integer>> matmc = new JGroupCalculator<>() {
+        MathCalculator<Integer> mc = Calculators.getCalInteger();
+        GroupCalculator<TransMatrix<Integer>> matmc = new JGroupCalculator<>() {
             @Override
             public boolean isCommutative() {
                 return false;

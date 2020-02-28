@@ -18,7 +18,7 @@ import java.util.Random;
 import static cn.ancono.utilities.Printer.print;
 @Deprecated
 public class SpaceAGTest {
-	private static final MathCalculator<Double> mc = Calculators.getCalculatorDouble();
+    private static final MathCalculator<Double> mc = Calculators.getCalDouble();
 //	private Map<String,Point<Double>> cube = new HashMap<>();
 //	
 //	{
@@ -35,16 +35,16 @@ public class SpaceAGTest {
 	private Cube<Double> cb = Cube.unitCube(mc);
 	
 	
-	public void test(){
-		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
-		SVector<Double> sv1 = SVector.valueOf(1d, 1d, 0d, mc),
-				sv2 = SVector.valueOf(0d, 1d, 1d, mc);
-		print(sv1);
-		print(sv2);
-		print(sv1.add(sv2));
-		print(sv1.innerProduct(sv2));
-		print(sv1.angle(sv2, Math::acos)/ Math.PI);
-	}
+	public void test() {
+        MathCalculator<Double> mc = Calculators.getCalDouble();
+        SVector<Double> sv1 = SVector.valueOf(1d, 1d, 0d, mc),
+                sv2 = SVector.valueOf(0d, 1d, 1d, mc);
+        print(sv1);
+        print(sv2);
+        print(sv1.add(sv2));
+        print(sv1.innerProduct(sv2));
+        print(sv1.angle(sv2, Math::acos) / Math.PI);
+    }
 	
 	
 	public void test2(){
@@ -181,19 +181,19 @@ public class SpaceAGTest {
 //	}
 	
 	
-	public void proveCenterI2(){
-		SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalculatorDouble());
-		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
-		Random rd = new Random();
-		@SuppressWarnings("unchecked")
-		SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
-		for(int i=0;i<ps.length;i++){
-			ps[i] = g.of(rd.nextDouble(), rd.nextDouble(), rd.nextDouble());
-		}
-		Tetrahedron<Double> te = Tetrahedron.fourPoints(ps[0], ps[1],ps[2],ps[3]);
-		print(te);
-		double s = te.surfaceArea();
-		double left = te.radiusI();
+	public void proveCenterI2() {
+        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalDouble());
+        MathCalculator<Double> mc = Calculators.getCalDouble();
+        Random rd = new Random();
+        @SuppressWarnings("unchecked")
+        SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
+        for (int i = 0; i < ps.length; i++) {
+            ps[i] = g.of(rd.nextDouble(), rd.nextDouble(), rd.nextDouble());
+        }
+        Tetrahedron<Double> te = Tetrahedron.fourPoints(ps[0], ps[1], ps[2], ps[3]);
+        print(te);
+        double s = te.surfaceArea();
+        double left = te.radiusI();
 		double x = te.getBottom().area() * ps[0].getX() + te.getSideF2().area() * ps[1].getX()
 				+ te.getSideF3().area() * ps[2].getX() + te.getSideF1().area() * ps[3].getX();
 		double y = te.getBottom().area() * ps[0].getY() + te.getSideF2().area() * ps[1].getY()
@@ -211,19 +211,19 @@ public class SpaceAGTest {
 	}
 	
 	
-	public void studyHCenter(){
-		SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalculatorDouble());
-		MathCalculator<Double> mc = Calculators.getCalculatorDouble();
-		Random rd = new Random();
-		@SuppressWarnings("unchecked")
-		SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
-		for(int i=0;i<ps.length;i++){
-			ps[i] = g.of(rd.nextDouble(), rd.nextDouble(), rd.nextDouble());
-		}
-		Tetrahedron<Double> te = Tetrahedron.fourPoints(ps[0], ps[1],ps[2],ps[3]);
-		Plane<Double> p1,p2,p3;
-		print(te);
-		p1 = te.getBottom().getPlane().perpendicular(te.getSideF1().getEdgeA().getLine());
+	public void studyHCenter() {
+        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalDouble());
+        MathCalculator<Double> mc = Calculators.getCalDouble();
+        Random rd = new Random();
+        @SuppressWarnings("unchecked")
+        SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
+        for (int i = 0; i < ps.length; i++) {
+            ps[i] = g.of(rd.nextDouble(), rd.nextDouble(), rd.nextDouble());
+        }
+        Tetrahedron<Double> te = Tetrahedron.fourPoints(ps[0], ps[1], ps[2], ps[3]);
+        Plane<Double> p1, p2, p3;
+        print(te);
+        p1 = te.getBottom().getPlane().perpendicular(te.getSideF1().getEdgeA().getLine());
 		p2 = te.getBottom().getPlane().perpendicular(te.getSideF2().getEdgeA().getLine());
 		p3 = te.getBottom().getPlane().perpendicular(te.getSideF3().getEdgeA().getLine());
 		print(p1.intersectPoint(p2.intersectLine(p3)));

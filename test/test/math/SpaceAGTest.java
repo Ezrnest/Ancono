@@ -7,19 +7,13 @@ import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
 import cn.timelives.java.math.algebra.linearAlgebra.Vector;
 import cn.timelives.java.math.geometry.analytic.spaceAG.*;
 import cn.timelives.java.math.numberModels.*;
-import cn.timelives.java.math.numberModels.old.Formula;
-import cn.timelives.java.math.numberModels.old.FormulaCalculator;
-import cn.timelives.java.math.numberModels.old.FracPoly;
-import cn.timelives.java.math.numberModels.old.PolynomialOld;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;
 import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Cube;
 import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Tetrahedron;
 import cn.timelives.java.utilities.ArraySup;
 
-import java.util.List;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 import static cn.timelives.java.utilities.Printer.print;
 @Deprecated
@@ -68,123 +62,123 @@ public class SpaceAGTest {
 		print(p.angleSin(B1D));
 		print(p.distanceSq(D));
 	}
-	
-	public void test3(){
-		FormulaCalculator fc = FormulaCalculator.getCalculator();
-		// MathCalculator<PolynomialOld> mcp = PolynomialOld
-		PolynomialOld[] pos = new PolynomialOld[9];
-		pos[0] = new PolynomialOld(fc, Formula.valueOf("d[x1]"));
-		pos[1] = new PolynomialOld(fc, Formula.valueOf("d[x2]"));
-		pos[2] = new PolynomialOld(fc, Formula.valueOf("d[x3]"));
-		pos[3] = new PolynomialOld(fc, Formula.valueOf("d[y1]"));
-		pos[4] = new PolynomialOld(fc, Formula.valueOf("d[y2]"));
-		pos[5] = new PolynomialOld(fc, Formula.valueOf("d[y3]"));
-		pos[6] = new PolynomialOld(fc, Formula.valueOf("d[z1]"));
-		pos[7] = new PolynomialOld(fc, Formula.valueOf("d[z2]"));
-		pos[8] = new PolynomialOld(fc, Formula.valueOf("d[z3]"));
-		FracPoly[] fps = new FracPoly[9];
-		for (int i = 0; i < 9; i++) {
-			fps[i] = FracPoly.valueOf(pos[i]);
-		}
-		MathCalculator<FracPoly> mcfp = FracPoly.getCalculator();
-		SPoint<FracPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
-		SPoint<FracPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
-		SPoint<FracPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
-		SVector<FracPoly> v1 = SVector.vector(pa, pb);
-		SVector<FracPoly> v2 = SVector.vector(pa, pc);
-		FracPoly re1 = v1.outerProduct(v2).calLengthSq();
-		
-		SVector<FracPoly> vat = pa.getVector(),
-				vbt = pb.getVector(),
-				vct = pc.getVector();
-		SVector<FracPoly> va = vat.outerProduct(vbt),
-				vb = vbt.outerProduct(vct),
-				vc = vct.outerProduct(vat);
-		FracPoly f = mcfp.addX(va.calLengthSq(),vb.calLengthSq(),vc.calLengthSq());
-		FracPoly f2 = mcfp.multiplyLong(mcfp.addX(va.innerProduct(vb),vb.innerProduct(vc),vc.innerProduct(va)), 2l);
-		FracPoly re2 = mcfp.add(f, f2);
-		print(mcfp.isEqual(re1, re2));
-		dealWith(re1.toString());
-		dealWith(re2.toString());
-		dealWith(va.innerProduct(vb).toString());
-	}
-	
-	private void dealWith(String str) {
-		print(str.replaceAll("d\\[(\\w+)]", "$1"));
-	}
-	Pattern pattern = Pattern.compile("d\\[(\\w+)]");
-	private void dealWith(FracPoly fp) {
-		print(pattern.matcher(fp.toString()).replaceAll("$1"));
-	}
-	
-	public void test4(){
-		SPoint<Double> A = cb.getVertex("A"),
-				C = cb.getVertex("C"),
-				C1 = cb.getVertex("C1"),
-				B1 = cb.getVertex("B1"),
-				A1 = cb.getVertex("A1");
-		SPoint<Double> M = C1.middle(C);
-		Line<Double> l1 = Line.twoPoints(A, M),
-				l2 = Line.twoPoints(A1, B1);
-		print(l1.angleCos(l2));
-		print(l1.distanceSq(l2));
-	}
-	
-	public void triangleTest(){
-		SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalculatorDouble());
-		SPoint<Double> p = g.of(1d, 1d, 1d);
-		@SuppressWarnings("unchecked")
-		SPoint<Double>[] ps = new SPoint[]{
-			g.of(0d,1d,0d),g.of(1d, 1d, 0d),g.of(0d,0d,0d)
-		};
-		List<STriangle<Double>> list = STriangle.prismSurfaces(p, ps);
-		list.forEach(c -> print(c));
-//		assertEquals(list.get(0).getA(), ps[0]);
-		
-	}
-	
-	public void proveCenterI(){
-		//failed ... 
-		FormulaCalculator fc = FormulaCalculator.getCalculator();
-		// MathCalculator<PolynomialOld> mcp = PolynomialOld
-		PolynomialOld[] pos = new PolynomialOld[12];
-		pos[0] = new PolynomialOld(fc, Formula.valueOf("d[x1]"));
-		pos[1] = new PolynomialOld(fc, Formula.valueOf("d[x2]"));
-		pos[2] = new PolynomialOld(fc, Formula.valueOf("d[x3]"));
-		pos[3] = new PolynomialOld(fc, Formula.valueOf("d[y1]"));
-		pos[4] = new PolynomialOld(fc, Formula.valueOf("d[y2]"));
-		pos[5] = new PolynomialOld(fc, Formula.valueOf("d[y3]"));
-		pos[6] = new PolynomialOld(fc, Formula.valueOf("d[z1]"));
-		pos[7] = new PolynomialOld(fc, Formula.valueOf("d[z2]"));
-		pos[8] = new PolynomialOld(fc, Formula.valueOf("d[z3]"));
-		pos[9] = new PolynomialOld(fc, Formula.valueOf("d[x4]"));
-		pos[10] = new PolynomialOld(fc, Formula.valueOf("d[y4]"));
-		pos[11] = new PolynomialOld(fc, Formula.valueOf("d[z4]"));
-		FracPoly[] fps = new FracPoly[pos.length];
-		for (int i = 0; i < fps.length; i++) {
-			fps[i] = FracPoly.valueOf(pos[i]);
-		}
-		MathCalculator<FracPoly> mcfp = FracPoly.getCalculator();
-		SPoint<FracPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
-		SPoint<FracPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
-		SPoint<FracPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
-		SPoint<FracPoly> pp = SPoint.valueOf(fps[9], fps[10], fps[11], mcfp);
-		Tetrahedron<FracPoly> tetra = Tetrahedron.fourPoints(pp,pa, pb, pc);
-		FracPoly[] ts = new FracPoly[10];
-		@SuppressWarnings("unchecked")
-		SVector<FracPoly>[] vs = (SVector<FracPoly>[]) new SVector<?>[10];
-		ts[0] = tetra.getBottom().areaSq();
-		ts[1] = tetra.getBottom().areaSq();
-		ts[2] = tetra.getBottom().areaSq();
-		ts[3] = tetra.getBottom().areaSq();
-		vs[0] = tetra.getBottom().getEdgeA().getDirectVector();
-		vs[1] = tetra.getBottom().getEdgeB().getDirectVector();
-		print("Area for one triangle");
-		dealWith(ts[0]);
-		print("An outer product");
-		dealWith((vs[3]=vs[0].outerProduct(vs[1])).toString());
-		dealWith(vs[3].calLengthSq());
-	}
+
+//	public void test3(){
+//		FormulaCalculator fc = FormulaCalculator.getCalculator();
+//		// MathCalculator<PolynomialOld> mcp = PolynomialOld
+//		PolynomialOld[] pos = new PolynomialOld[9];
+//		pos[0] = new PolynomialOld(fc, Formula.valueOf("d[x1]"));
+//		pos[1] = new PolynomialOld(fc, Formula.valueOf("d[x2]"));
+//		pos[2] = new PolynomialOld(fc, Formula.valueOf("d[x3]"));
+//		pos[3] = new PolynomialOld(fc, Formula.valueOf("d[y1]"));
+//		pos[4] = new PolynomialOld(fc, Formula.valueOf("d[y2]"));
+//		pos[5] = new PolynomialOld(fc, Formula.valueOf("d[y3]"));
+//		pos[6] = new PolynomialOld(fc, Formula.valueOf("d[z1]"));
+//		pos[7] = new PolynomialOld(fc, Formula.valueOf("d[z2]"));
+//		pos[8] = new PolynomialOld(fc, Formula.valueOf("d[z3]"));
+//		FracPoly[] fps = new FracPoly[9];
+//		for (int i = 0; i < 9; i++) {
+//			fps[i] = FracPoly.valueOf(pos[i]);
+//		}
+//		MathCalculator<FracPoly> mcfp = FracPoly.getCalculator();
+//		SPoint<FracPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
+//		SPoint<FracPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
+//		SPoint<FracPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
+//		SVector<FracPoly> v1 = SVector.vector(pa, pb);
+//		SVector<FracPoly> v2 = SVector.vector(pa, pc);
+//		FracPoly re1 = v1.outerProduct(v2).calLengthSq();
+//
+//		SVector<FracPoly> vat = pa.getVector(),
+//				vbt = pb.getVector(),
+//				vct = pc.getVector();
+//		SVector<FracPoly> va = vat.outerProduct(vbt),
+//				vb = vbt.outerProduct(vct),
+//				vc = vct.outerProduct(vat);
+//		FracPoly f = mcfp.addX(va.calLengthSq(),vb.calLengthSq(),vc.calLengthSq());
+//		FracPoly f2 = mcfp.multiplyLong(mcfp.addX(va.innerProduct(vb),vb.innerProduct(vc),vc.innerProduct(va)), 2l);
+//		FracPoly re2 = mcfp.add(f, f2);
+//		print(mcfp.isEqual(re1, re2));
+//		dealWith(re1.toString());
+//		dealWith(re2.toString());
+//		dealWith(va.innerProduct(vb).toString());
+//	}
+//
+//	private void dealWith(String str) {
+//		print(str.replaceAll("d\\[(\\w+)]", "$1"));
+//	}
+//	Pattern pattern = Pattern.compile("d\\[(\\w+)]");
+//	private void dealWith(FracPoly fp) {
+//		print(pattern.matcher(fp.toString()).replaceAll("$1"));
+//	}
+//
+//	public void test4(){
+//		SPoint<Double> A = cb.getVertex("A"),
+//				C = cb.getVertex("C"),
+//				C1 = cb.getVertex("C1"),
+//				B1 = cb.getVertex("B1"),
+//				A1 = cb.getVertex("A1");
+//		SPoint<Double> M = C1.middle(C);
+//		Line<Double> l1 = Line.twoPoints(A, M),
+//				l2 = Line.twoPoints(A1, B1);
+//		print(l1.angleCos(l2));
+//		print(l1.distanceSq(l2));
+//	}
+//
+//	public void triangleTest(){
+//		SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalculatorDouble());
+//		SPoint<Double> p = g.of(1d, 1d, 1d);
+//		@SuppressWarnings("unchecked")
+//		SPoint<Double>[] ps = new SPoint[]{
+//			g.of(0d,1d,0d),g.of(1d, 1d, 0d),g.of(0d,0d,0d)
+//		};
+//		List<STriangle<Double>> list = STriangle.prismSurfaces(p, ps);
+//		list.forEach(c -> print(c));
+////		assertEquals(list.get(0).getA(), ps[0]);
+//
+//	}
+//
+//	public void proveCenterI(){
+//		//failed ...
+//		FormulaCalculator fc = FormulaCalculator.getCalculator();
+//		// MathCalculator<PolynomialOld> mcp = PolynomialOld
+//		PolynomialOld[] pos = new PolynomialOld[12];
+//		pos[0] = new PolynomialOld(fc, Formula.valueOf("d[x1]"));
+//		pos[1] = new PolynomialOld(fc, Formula.valueOf("d[x2]"));
+//		pos[2] = new PolynomialOld(fc, Formula.valueOf("d[x3]"));
+//		pos[3] = new PolynomialOld(fc, Formula.valueOf("d[y1]"));
+//		pos[4] = new PolynomialOld(fc, Formula.valueOf("d[y2]"));
+//		pos[5] = new PolynomialOld(fc, Formula.valueOf("d[y3]"));
+//		pos[6] = new PolynomialOld(fc, Formula.valueOf("d[z1]"));
+//		pos[7] = new PolynomialOld(fc, Formula.valueOf("d[z2]"));
+//		pos[8] = new PolynomialOld(fc, Formula.valueOf("d[z3]"));
+//		pos[9] = new PolynomialOld(fc, Formula.valueOf("d[x4]"));
+//		pos[10] = new PolynomialOld(fc, Formula.valueOf("d[y4]"));
+//		pos[11] = new PolynomialOld(fc, Formula.valueOf("d[z4]"));
+//		FracPoly[] fps = new FracPoly[pos.length];
+//		for (int i = 0; i < fps.length; i++) {
+//			fps[i] = FracPoly.valueOf(pos[i]);
+//		}
+//		MathCalculator<FracPoly> mcfp = FracPoly.getCalculator();
+//		SPoint<FracPoly> pa = SPoint.valueOf(fps[0], fps[3], fps[6], mcfp);
+//		SPoint<FracPoly> pb = SPoint.valueOf(fps[1], fps[4], fps[7], mcfp);
+//		SPoint<FracPoly> pc = SPoint.valueOf(fps[2], fps[5], fps[8], mcfp);
+//		SPoint<FracPoly> pp = SPoint.valueOf(fps[9], fps[10], fps[11], mcfp);
+//		Tetrahedron<FracPoly> tetra = Tetrahedron.fourPoints(pp,pa, pb, pc);
+//		FracPoly[] ts = new FracPoly[10];
+//		@SuppressWarnings("unchecked")
+//		SVector<FracPoly>[] vs = (SVector<FracPoly>[]) new SVector<?>[10];
+//		ts[0] = tetra.getBottom().areaSq();
+//		ts[1] = tetra.getBottom().areaSq();
+//		ts[2] = tetra.getBottom().areaSq();
+//		ts[3] = tetra.getBottom().areaSq();
+//		vs[0] = tetra.getBottom().getEdgeA().getDirectVector();
+//		vs[1] = tetra.getBottom().getEdgeB().getDirectVector();
+//		print("Area for one triangle");
+//		dealWith(ts[0]);
+//		print("An outer product");
+//		dealWith((vs[3]=vs[0].outerProduct(vs[1])).toString());
+//		dealWith(vs[3].calLengthSq());
+//	}
 	
 	
 	public void proveCenterI2(){
@@ -271,13 +265,13 @@ public class SpaceAGTest {
 			}
 			Matrix<Double> matrix = Matrix.valueOf(mat);
 			LinearEquationSolution<Double> so = MatrixSup.solveLinearEquation(matrix);
-			Vector<Double> x = so.getBase();
+			Vector<Double> x = so.getSpecialSolution();
 			Matrix<Double> cofactor = matrix.subMatrix(0, 0,row-1,row-1);
 			Vector<Double> v = Vector.column(matrix, row);
 			Vector<Double> v1 =  Vector.column(Matrix.multiplyMatrix(cofactor, x),0);
 			v = v.mapTo(d -> d, mc);
 			v1 = v1.mapTo(d -> d, mc);
-			if(v1.valueEquals(v)== false){
+			if (!v1.valueEquals(v)) {
 				print("WRONG?---");
 				matrix.printMatrix();
 				print(v1);

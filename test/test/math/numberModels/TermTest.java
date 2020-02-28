@@ -56,4 +56,10 @@ public class TermTest {
     @Test
     public void compareNumber() {
     }
+
+    @Test
+    public void toLatexString() {
+        var t = Term.valueOf("2a/5*Sqr90*b^0.5");
+        assertEquals("", "+\\frac{6\\sqrt{10}}{5}a{b}^{\\frac{1}{2}}", t.toLatexString());
+    }
 }

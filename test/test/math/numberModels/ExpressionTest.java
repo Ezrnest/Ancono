@@ -3,7 +3,6 @@
  */
 package test.math.numberModels;
 
-import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.equation.SVPEquation;
 import cn.timelives.java.math.equation.SVPEquation.QEquation;
 import cn.timelives.java.math.numberModels.Calculators;
@@ -171,6 +170,22 @@ public class ExpressionTest {
         assertMathEquals(expr.computeDouble(f2),16d/3,Calculators.getCalculatorDoubleDev());
         assertMathEquals(mc.parseExpr("sin(x)").computeDouble(f2),1d,Calculators.getCalculatorDoubleDev());
 	}
+
+	@Test
+	public void testSubstitute2(){
+	    SimplificationStrategies.setCalRegularization(mc);
+	    Expression expr = mc.parseExpr("acos(x)");
+	    expr = mc.substitute(expr,"x",Expression.ZERO);
+	    assertEquals("The result of substituting acos(x)|x=0 should be a",expr.toString(),"a");
+    }
+
+    @Test
+    public void test(){
+        SimplificationStrategies.setCalRegularization(mc);
+        Expression expr = mc.parseExpr("acos(exp(sin(x),2)+exp(cos(x),2)-1)");
+        assertEquals(expr.toString(),"a");
+    }
+
 
 
 }

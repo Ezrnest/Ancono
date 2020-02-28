@@ -197,7 +197,7 @@ public class InputFrame extends JFrame {
 				Printer.print(code);
 				Printer.print_();
 				PrintWriter pw = Printer.getOutput();
-				Printer.reSet(writer);
+                Printer.reset(writer);
 				try{
 					JavaCodeGenerator g2 = generator.clone();
 					CharSequence javaCode = g2.setClassName(g2.getClassName()+Long.toString(Math.abs(rd.nextLong())))
@@ -224,7 +224,7 @@ public class InputFrame extends JFrame {
 					}
 					Printer.print_();
 				}finally{
-					Printer.reSet(pw);
+                    Printer.reset(pw);
 				}
 				running = false;
 			}

@@ -26,9 +26,9 @@ public class TestEquation {
 	
 	@Test
 	public void testSolve() {
-		print(EquationSup.solveQInequation(1d, 2d, 1d, Type.LESS_OR_EQUAL, mc));
-		print(EquationSup.solveQInequation(1d, -2d, -3d, Type.LESS_OR_EQUAL, mc));
-		print(EquationSup.solveQInequation(0d, 2d, -3d, Type.GREATER, mc));
-		print(EquationSup.solveQInequation(1d, -2d, -3d, Type.NOT_EQUAL, mc));
+		print(EquationSup.INSTANCE.solveQInequation(1d, 2d, 1d, Type.LESS_OR_EQUAL, mc));
+		print(EquationSup.INSTANCE.solveQInequation(1d, -2d, -3d, Type.LESS_OR_EQUAL, mc));
+		print(EquationSup.INSTANCE.solveQInequation(0d, 2d, -3d, Type.GREATER, mc));
+		print(EquationSup.INSTANCE.solveQInequation(1d, -2d, -3d, Type.NOT_EQUAL, mc));
 	}
 }

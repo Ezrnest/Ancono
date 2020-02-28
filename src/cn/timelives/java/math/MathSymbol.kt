@@ -182,4 +182,22 @@ object MathSymbol {
 
     const val LOGIC_OR = "∨"
 
+    val toLatexFunctionNameMap: MutableMap<String, String>
+
+    init {
+        toLatexFunctionNameMap = hashMapOf(
+                "sin" to "\\sin ",
+                "cos" to "\\cos ",
+                "tan" to "\\tan ",
+                "exp" to "\\exp ",
+                "ln" to "\\ln ",
+                "log" to "\\log ",
+                "arcsin" to "\\arcsin ",
+                "arccos" to "\\arccos ",
+                "arctan" to "\\sin "
+        )
+    }
+
+    @JvmStatic
+    fun getLatexFunctionName(n: String): String = toLatexFunctionNameMap.getOrDefault(n, n)
 }

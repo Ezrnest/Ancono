@@ -7,10 +7,13 @@ import cn.timelives.java.math.algebra.IMTerm
 import cn.timelives.java.math.algebra.IMultinomial
 import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.numberModels.CalculatorUtils
+import cn.timelives.java.math.numberModels.MathCalculatorAdapter
 import cn.timelives.java.math.numberModels.api.AlgebraModel
 import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
 import cn.timelives.java.math.numberTheory.EuclidRingNumberModel
 import cn.timelives.java.utilities.CollectionSup
+import cn.timelives.java.utilities.ModelPatterns
+import java.lang.UnsupportedOperationException
 import java.util.*
 import java.util.function.Function
 import kotlin.Comparator
@@ -80,6 +83,9 @@ data class TermF<F : Any>
     }
 }
 
+/**
+ * Describes the multinomial ring on field `F`.
+ */
 class MultinomialF<F : Any>
 internal constructor(
         mc: MathCalculator<F>,
@@ -167,7 +173,7 @@ internal constructor(
             return this
         }
         if (tx.isZero()) {
-            ExceptionUtil.divideByZero()
+            ExceptionUtil.dividedByZero()
         }
         return TermF(TermF.divideCharMap(this.characters, tx.characters), coefficient / tx.coefficient)
     }
@@ -342,6 +348,10 @@ internal constructor(
         return fromTerms(mergingMultiply(terms, y.terms))
     }
 
+    fun pow(n: Long): MultinomialF<F> {
+        return ModelPatterns.binaryProduce(n, this, MultinomialF<F>::multiply)
+    }
+
     override fun isZero(): Boolean {
         return terms.size == 1 && terms.first().isZero()
     }
@@ -417,8 +427,9 @@ internal constructor(
         return gcd(y).isOne()
     }
 
+
     override fun <N : Any> mapTo(mapper: Function<F, N>, newCalculator: MathCalculator<N>): MultinomialF<N> {
-        return MultinomialF(newCalculator, terms.mapTo(getsDefaultTermsSet()) { TermF(it.characters, mapper.apply(it.coefficient)) })
+        return MultinomialF(newCalculator, terms.mapTo(getDefaultTermsSet()) { TermF(it.characters, mapper.apply(it.coefficient)) })
     }
 
     override fun valueEquals(obj: MathObject<F>): Boolean {
@@ -463,9 +474,80 @@ internal constructor(
 
 
     companion object {
-        internal fun <T : Any> getsDefaultTermsSet(): NavigableSet<TermF<T>> {
+        internal fun <F : Any> getDefaultTermsSet(): NavigableSet<TermF<F>> {
             return TreeSet(LexicographicalComparator)
         }
 
+        fun <F : Any> monomial(t: TermF<F>, mc: MathCalculator<F>): MultinomialF<F> {
+            val s = getDefaultTermsSet<F>()
+            s.add(t)
+            return MultinomialF(mc, s)
+        }
+
+        fun <F : Any> one(mc: MathCalculator<F>): MultinomialF<F> {
+            return monomial(TermF(mc.one), mc)
+        }
+
+        fun <F : Any> zero(mc: MathCalculator<F>): MultinomialF<F> {
+            return monomial(TermF(mc.zero), mc)
+        }
+    }
+
+}
+
+class MultinomialFCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<MultinomialF<T>>() {
+    override val one: MultinomialF<T> = MultinomialF.one(mc)
+    override val zero: MultinomialF<T> = MultinomialF.zero(mc)
+
+    override fun isZero(para: MultinomialF<T>): Boolean {
+        return para.isZero()
+    }
+
+    override fun isEqual(x: MultinomialF<T>, y: MultinomialF<T>): Boolean {
+        return x.valueEquals(y)
+    }
+
+    override fun compare(x: MultinomialF<T>, y: MultinomialF<T>): Int {
+        return x.compareTo(y)
+    }
+
+    override val isComparable: Boolean
+        get() = true
+
+    override fun add(x: MultinomialF<T>, y: MultinomialF<T>): MultinomialF<T> {
+        return x.add(y)
+    }
+
+    override fun negate(x: MultinomialF<T>): MultinomialF<T> {
+        return x.negate()
+    }
+
+    override fun subtract(x: MultinomialF<T>, y: MultinomialF<T>): MultinomialF<T> {
+        return x.subtract(y)
+    }
+
+    override fun multiply(x: MultinomialF<T>, y: MultinomialF<T>): MultinomialF<T> {
+        return x.multiply(y)
+    }
+
+    override fun divide(x: MultinomialF<T>, y: MultinomialF<T>): MultinomialF<T> {
+        val pair = x.divideAndRemainder(y)
+        if (pair.second.isZero()) {
+            return pair.first
+        }
+        throw UnsupportedOperationException()
+    }
+
+    override fun multiplyLong(x: MultinomialF<T>, n: Long): MultinomialF<T> {
+        return x.multiply(CalculatorUtils.valueOfLong(n, mc))
+    }
+
+    override fun divideLong(x: MultinomialF<T>, n: Long): MultinomialF<T> {
+        return x.multiply(mc.reciprocal(CalculatorUtils.valueOfLong(n, mc)))
+    }
+
+
+    override fun pow(x: MultinomialF<T>, n: Long): MultinomialF<T> {
+        return x.pow(n)
     }
 }

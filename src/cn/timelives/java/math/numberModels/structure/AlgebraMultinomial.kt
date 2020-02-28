@@ -6,6 +6,7 @@ import java.util.*
 import kotlin.Comparator
 
 /**
+ * Describes a multinomial composed with linear independent elements of an algebra `V` on `K`.
  * Created at 2019/9/12 15:51
  * @author  lyc
  */

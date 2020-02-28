@@ -341,8 +341,8 @@ public interface NTCalculator<T> extends MathCalculator<T> {
      * Determines whether the two numbers <code>a</code> and <code>b</code>
      * are co-prime.
      */
-    default boolean isCoprime(T a, T b){
-        return isEqual(gcd(a,b),getOne());
+    default boolean isCoprime(T a, T b) {
+        return isEqual(gcd(a, b), getOne());
     }
 
     @SuppressWarnings("unchecked")
@@ -374,7 +374,7 @@ public interface NTCalculator<T> extends MathCalculator<T> {
             v0 = v1;
             v1 = nextV;
         }
-        return new Triple<>(b,u1,v1);
+        return new Triple<>(b, u1, v1);
     }
 
     /**
@@ -394,7 +394,7 @@ public interface NTCalculator<T> extends MathCalculator<T> {
         a = abs(a);
         b = abs(b);
         T gcd = gcd(a, b);
-        return divide(multiply(a, b), gcd);
+        return multiply(divide(a, gcd), b);
     }
 
     /**

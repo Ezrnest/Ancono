@@ -97,6 +97,8 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
     override fun toString(): String {
         return toString(FlexibleNumberFormatter.getToStringFormatter())
     }
-
-
 }
+
+//object MathObjects{
+//    fun <T1:Any,S1:MathObject<T1>, T2 :Any, S2 : MathObject<T2>> mapTo2(obj : MathObject<S1>, )
+//}

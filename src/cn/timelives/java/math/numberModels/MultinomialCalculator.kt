@@ -467,32 +467,34 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     }
 
     override fun gcd(a: Multinomial, b: Multinomial): Multinomial {
-        val comp = a.compareCharTo(b)
-//        if(comp == 0){
-//            return a
+//        val comp = a.compareCharTo(b)
+////        if(comp == 0){
+////            return a
+////        }
+//        var a1: Multinomial
+//        var b1: Multinomial
+//        if (comp < 0) {
+//            a1 = a
+//            b1 = b
+//        } else {
+//            a1 = b
+//            b1 = a
 //        }
-        var a1: Multinomial
-        var b1: Multinomial
-        if (comp < 0) {
-            a1 = a
-            b1 = b
-        } else {
-            a1 = b
-            b1 = a
-        }
-        if (ZERO == a1) {
-            return b1
-        }
-        while (ZERO != b1) {
-            val t = b1
-            b1 = mod(a1, b1)
-            if (a1 == b1) {
-                return ONE
-            }
-            a1 = t
-        }
-        return a1
+//        if (ZERO == a1) {
+//            return b1
+//        }
+//        while (ZERO != b1) {
+//            val t = b1
+//            b1 = mod(a1, b1)
+//            if (a1 == b1) {
+//                return ONE
+//            }
+//            a1 = t
+//        }
+//        return a1
+        return Multinomial.gcd(a, b)
     }
+
 
     override fun divideAndReminder(a: Multinomial, b: Multinomial): cn.timelives.java.utilities.structure.Pair<Multinomial, Multinomial> {
         val arr = a.divideAndRemainder(b)
@@ -516,8 +518,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         }
 
         override fun simplify(a: Multinomial, b: Multinomial): cn.timelives.java.utilities.structure.Pair<Multinomial, Multinomial> {
-            val arr = Multinomial.simplifyFraction(a, b)
-            return cn.timelives.java.utilities.structure.Pair(arr[0], arr[1])
+            return Multinomial.simplifyFraction(a, b)
         }
     }
 

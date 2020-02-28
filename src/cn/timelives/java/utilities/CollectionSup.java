@@ -5,7 +5,6 @@ package cn.timelives.java.utilities;
 
 import cn.timelives.java.math.algebra.abstractAlgebra.EqualRelation;
 import cn.timelives.java.utilities.structure.Pair;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -337,23 +336,23 @@ public final class CollectionSup {
     }
 
     /**
-     * Returns the descartes product of s1 and s2.
+     * Returns the cartesian product of s1 and s2.
      *
      * @param s1 a set
      * @param s2 another set
      */
-    public static <T, R> Set<Pair<T, R>> descartesProductSet(Set<T> s1, Set<R> s2) {
-        return descartesProduct(s1, s2, new HashSet<>(s1.size() * s2.size()));
+    public static <T, R> Set<Pair<T, R>> cartesianProductSet(Set<T> s1, Set<R> s2) {
+        return cartesianProduct(s1, s2, new HashSet<>(s1.size() * s2.size()));
     }
 
     /**
-     * Returns the descartes product of s1 and s2.
+     * Returns the cartesian product of s1 and s2.
      *
      * @param s1 a set
      * @param s2 another set
      */
-    public static <T, R> List<Pair<T, R>> descartesProductList(Collection<T> s1, Collection<R> s2) {
-        return descartesProduct(s1, s2, new ArrayList<>(s1.size() * s2.size()));
+    public static <T, R> List<Pair<T, R>> cartesianProductList(Collection<T> s1, Collection<R> s2) {
+        return cartesianProduct(s1, s2, new ArrayList<>(s1.size() * s2.size()));
     }
 
 
@@ -364,7 +363,7 @@ public final class CollectionSup {
      * @param c2 another iterable
      * @param re a collection
      */
-    public static <T, R, S extends Collection<Pair<T, R>>> S descartesProduct(Collection<T> c1, Collection<R> c2, S re) {
+    public static <T, R, S extends Collection<Pair<T, R>>> S cartesianProduct(Collection<T> c1, Collection<R> c2, S re) {
         for (T t : c1) {
             for (R r : c2) {
                 re.add(new Pair<>(t, r));
@@ -380,19 +379,44 @@ public final class CollectionSup {
      */
 
     /**
-     * Computes the descartes product of the two given iterable and adds the result elements to <code>re</code>
+     * Computes the cartesian product of the two given iterable and adds the result elements to <code>re</code>
      */
     @SafeVarargs
-    public static <T, S extends Collection<List<T>>> S descartesProductMultiple(S dest, Collection<T>... collections) {
-
-        appendAndAdd(dest, collections, 0, new ArrayList<>(collections.length), collections.length);
+    public static <T, S extends Collection<List<T>>> S cartesianProduct(S dest, Collection<T>... collections) {
+        var d = collections.length;
+        var list = Arrays.asList(collections);
+        appendAndAdd(dest, list, 0, new ArrayList<>(d), d);
         return dest;
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> void appendAndAdd(Collection<List<T>> dest, Collection<T>[] cs, int index, ArrayList<T> current, int size) {
+    /**
+     * Computes the cartesian product of the two given iterable and adds the result elements to <code>re</code>
+     */
+    @SafeVarargs
+    public static <T> List<List<T>> cartesianProductM(Collection<T>... collections) {
+        return cartesianProduct(Arrays.asList(collections));
+    }
 
-        var curColl = cs[index];
+    /**
+     * Computes the cartesian product of the two given iterable.
+     */
+    public static <T> List<List<T>> cartesianProduct(List<? extends Collection<T>> collections) {
+        var size = 1;
+        for (var c : collections) {
+            size *= c.size();
+        }
+        var result = new ArrayList<List<T>>(size);
+        var d = collections.size();
+        appendAndAdd(result, collections, 0, new ArrayList<>(d), d);
+        return result;
+    }
+
+    private static <T> void appendAndAdd(Collection<List<T>> dest, List<? extends Collection<T>> cs, int index, ArrayList<T> current, int size) {
+        if (index >= cs.size()) {
+            dest.add(current);
+            return;
+        }
+        var curColl = cs.get(index);
         for (Iterator<T> it = curColl.iterator(); it.hasNext(); ) {
             T t = it.next();
             ArrayList<T> copy;
@@ -403,11 +427,7 @@ public final class CollectionSup {
                 copy = current;
             }
             copy.add(t);
-            if (index == cs.length - 1) {
-                dest.add(copy);
-            } else {
-                appendAndAdd(dest, cs, index + 1, copy, size);
-            }
+            appendAndAdd(dest, cs, index + 1, copy, size);
         }
     }
 

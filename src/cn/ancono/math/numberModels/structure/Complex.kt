@@ -609,7 +609,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return a new complex.
          */
         @JvmStatic
-        fun <T : Any> ins(a: T, b: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T : Any> of(a: T, b: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, a, b)
         }
 
@@ -801,7 +801,7 @@ class ComplexH<T : Any> {
 
     companion object {
         fun <T : Any> of(mc: MathCalculator<T>, x: T, y: T): ComplexH<T> {
-            return ComplexH(Complex.ins(x, y, mc))
+            return ComplexH(Complex.of(x, y, mc))
         }
 
         fun <T : Any> of(z: Complex<T>): ComplexH<T> {

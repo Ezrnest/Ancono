@@ -1256,7 +1256,7 @@ public final class Polynomial<T> extends MathObject<T> implements
             if (mc.isZero(coe)) {
                 continue;
             }
-            map.put(n, coe);
+            map.put(i, coe);
             //noinspection SuspiciousNameCombination
             x0Power = mc.multiply(x0Power, x0);
         }

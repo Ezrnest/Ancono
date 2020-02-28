@@ -654,7 +654,7 @@ class ExprCalculator
                 node = polySimplifyAdd(node as Add, depth)
             }
             Type.FRACTION -> {
-                node = polySimplifyFraction(node as Fraction, depth)
+                node = polySimplifyFraction(node as NodeFrac, depth)
             }
             Type.MULTIPLY -> {
                 node = polySimplifyMultiply(node as Multiply, depth)
@@ -750,7 +750,7 @@ class ExprCalculator
         return node
     }
 
-    internal fun polySimplifyFraction(@AllowModify node: Fraction, depth: Int): Node {
+    internal fun polySimplifyFraction(@AllowModify node: NodeFrac, depth: Int): Node {
         var nume = if (depth > 0) simplifyPolynomial(node.c1, depth - 1) else node.c1
         var deno = if (depth > 0) simplifyPolynomial(node.c2, depth - 1) else node.c2
         if (nume.type == Type.POLYNOMIAL) {
@@ -1037,6 +1037,7 @@ class ExprCalculator
             SimplificationStrategies.setCalRegularization(instance)
         }
 
+        @JvmStatic
         fun getNewInstance(): ExprCalculator {
             val ec = ExprCalculator()
             SimplificationStrategies.setCalRegularization(ec)

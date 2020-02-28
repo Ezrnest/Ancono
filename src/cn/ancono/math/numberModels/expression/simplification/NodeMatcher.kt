@@ -638,7 +638,7 @@ class FractionMatcher(val numeMatcher: NodeMatcher, val denoMatcher: NodeMatcher
         if (n.type != Node.Type.FRACTION) {
             return null
         }
-        val fraction = n as Node.Fraction
+        val fraction = n as Node.NodeFrac
         val subResult1 = numeMatcher.matches(fraction.c1, refMapping, ec) ?: return null
         val subResult2 = denoMatcher.matches(fraction.c2, subResult1.refMapping, ec) ?: return null
         return NodeMatchResultImpl(subResult2.refMapping, n, this)

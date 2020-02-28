@@ -1766,10 +1766,10 @@ public final class Calculators {
         }
     }
 
-    static class DoubleCalcualtorWithDeviation extends DoubleCalculator {
+    static class DoubleCalculatorWithDeviation extends DoubleCalculator {
         private final double dev;
 
-        public DoubleCalcualtorWithDeviation(double dev) {
+        public DoubleCalculatorWithDeviation(double dev) {
             this.dev = dev;
         }
 
@@ -1806,7 +1806,7 @@ public final class Calculators {
             return super.compare(x, y);
         }
 
-        static final DoubleCalcualtorWithDeviation dc = new DoubleCalcualtorWithDeviation(10E-10);
+        static final DoubleCalculatorWithDeviation dc = new DoubleCalculatorWithDeviation(10E-10);
     }
 
     /**
@@ -1818,7 +1818,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static IntegerCalculator getCalculatorIntegerExact() {
+    public static IntegerCalculator getCalIntegerExact() {
         return IntegerCalculatorExact.cal;
     }
 
@@ -1833,7 +1833,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static IntegerCalculator getCalculatorInteger() {
+    public static IntegerCalculator getCalInteger() {
         return IntegerCalculator.cal;
     }
 
@@ -1845,7 +1845,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static LongCalculator getCalculatorLongExact() {
+    public static LongCalculator getCalLongExact() {
         return LongCalculatorExact.cal;
     }
 
@@ -1856,7 +1856,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static LongCalculator getCalculatorLong() {
+    public static LongCalculator getCalLong() {
         return LongCalculator.cal;
     }
 
@@ -1868,7 +1868,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static BigIntegerCalculator getCalculatorBigInteger() {
+    public static BigIntegerCalculator getCalBigInteger() {
         return BigIntegerCalculator.cal;
     }
 
@@ -1882,7 +1882,7 @@ public final class Calculators {
      * @param mc a math context
      * @return a MathCalculator
      */
-    public static MathCalculator<BigDecimal> getCalculatorBigDecimal(MathContext mc) {
+    public static MathCalculator<BigDecimal> getCalBigDecimal(MathContext mc) {
         return new BigDecimalCalculator(mc);
     }
 
@@ -1896,7 +1896,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> getCalculatorDouble() {
+    public static MathCalculator<Double> getCalDouble() {
         return DoubleCalculator.dc;
     }
 
@@ -1911,7 +1911,7 @@ public final class Calculators {
      */
     @NotNull
     public static MathCalculator<Double> getCalculatorDoubleDev() {
-        return DoubleCalcualtorWithDeviation.dc;
+        return DoubleCalculatorWithDeviation.dc;
     }
 
     /**
@@ -1923,7 +1923,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     public static MathCalculator<Double> getCalculatorDoubleDev(double dev) {
-        return new DoubleCalcualtorWithDeviation(Math.abs(dev));
+        return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
     static class IntegerCalModP extends IntegerCalculatorExact {

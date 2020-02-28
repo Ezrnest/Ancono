@@ -596,7 +596,7 @@ fun main(args: Array<String>) {
 //    val t = Limit.limitOf(m,p2,mc)
 //    println(t)
 
-    val mcl = Calculators.getCalculatorLongExact()
+    val mcl = Calculators.getCalLongExact()
 //    val nume = Polynomial.valueOf(mc,1L,0L,0L,1L)
 //    val deno = Polynomial.valueOf(mc,0L,-1L,3L,-3L,1L)
     val nume = Polynomial.valueOf(mcl, 0L, 1L)

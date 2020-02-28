@@ -187,6 +187,10 @@ public final class Expression implements Computable, Serializable {
     }
 
 
+    public static ExprCalculator getCalculator() {
+        return ExprCalculator.getInstance();
+    }
+
     /**
      * The identifier for a function as a suffix
      */

@@ -103,7 +103,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
             case MULTIPLY:
                 return simplifyMultiply((Multiply) node, mc);
             case FRACTION:
-                return simplifyFraction((Fraction) node, mc);
+                return simplifyFraction((NodeFrac) node, mc);
             case S_FUNCTION:
                 return simplifySFunction((SFunction) node, mc);
             case D_FUNCTION:
@@ -161,7 +161,7 @@ public abstract class SimStraImpl implements SpecificStrategy, TaggedStrategy {
      * @return the node after simplification, or {@code null} to indicate no simplification is done.
      */
     @Nullable
-    protected Node simplifyFraction(@AllowModify Fraction node, ExprCalculator mc) {
+    protected Node simplifyFraction(@AllowModify NodeFrac node, ExprCalculator mc) {
         return node;
     }
 

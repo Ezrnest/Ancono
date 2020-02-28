@@ -162,7 +162,7 @@ public final class SimplificationStrategies {
             TreeMap<Node, List<Node>> map = new TreeMap<>(mc.getNodeComparator());
             for (Node n : children) {
                 if (n.getType() == Type.FRACTION) {
-                    Fraction f = (Fraction) n;
+                    NodeFrac f = (NodeFrac) n;
                     CollectionSup.accumulateMap(map, f.c2, f.c1, ArrayList::new);
                 }
             }
@@ -174,7 +174,7 @@ public final class SimplificationStrategies {
             map.entrySet().removeIf(en -> en.getValue().size() <= 1);
             children.removeIf(x -> {
                 if (x.getType() == Type.FRACTION) {
-                    Fraction f = (Fraction) x;
+                    NodeFrac f = (NodeFrac) x;
                     return map.containsKey(f.c2);
                 } else {
                     return false;
@@ -183,7 +183,7 @@ public final class SimplificationStrategies {
             for (Entry<Node, List<Node>> en : map.entrySet()) {
                 Node deno = en.getKey();
                 List<Node> numes = en.getValue();
-                Fraction f = Node.wrapNodeFraction(Node.wrapNodeAM(true, numes), deno);
+                NodeFrac f = Node.wrapNodeFraction(Node.wrapNodeAM(true, numes), deno);
                 children.add(f);
                 f.parent = node;
             }
@@ -211,7 +211,7 @@ public final class SimplificationStrategies {
                     denos = new ArrayList<>();
             for (Node n : children) {
                 if (n.getType() == Type.FRACTION) {
-                    Fraction f = (Fraction) n;
+                    NodeFrac f = (NodeFrac) n;
                     numes.add(f.c1);
                     f.c1.parent = node;
                     denos.add(f.c2);
@@ -223,7 +223,7 @@ public final class SimplificationStrategies {
             NodeWithChildren parent = node.parent;
             node.children = numes;
             Node deno = Node.wrapNodeAM(false, denos);
-            Fraction frac = Node.wrapNodeFraction(node, deno);
+            NodeFrac frac = Node.wrapNodeFraction(node, deno);
             frac.parent = parent;
 
             node.resetSimIdentifier();
@@ -233,7 +233,7 @@ public final class SimplificationStrategies {
         /*
          */
         @Override
-        protected Node simplifyFraction(Fraction node, ExprCalculator mc) {
+        protected Node simplifyFraction(NodeFrac node, ExprCalculator mc) {
             Node c1 = node.c1,
                     c2 = node.c2;
             Type t1 = c1.getType(),
@@ -447,7 +447,7 @@ public final class SimplificationStrategies {
          * @see cn.ancono.math.numberModels.expression.SimStraImpl#simplifyFraction(cn.ancono.math.numberModels.expression.Node.Fraction, cn.ancono.math.numberModels.expression.ExprCalculator)
          */
         @Override
-        protected Node simplifyFraction(Fraction node, ExprCalculator mc) {
+        protected Node simplifyFraction(NodeFrac node, ExprCalculator mc) {
             Node c1 = node.c1,
                     c2 = node.c2;
             List<Node> nume = new ArrayList<>(1),
@@ -759,11 +759,11 @@ public final class SimplificationStrategies {
              * Flatten fraction: (a/b)/(c/d) -> ad / bc
              */
             @Override
-            protected Node simplifyFraction(Fraction node, ExprCalculator mc) {
+            protected Node simplifyFraction(NodeFrac node, ExprCalculator mc) {
                 if (node.c1.getType() == Type.FRACTION) {
-                    Fraction f1 = (Fraction) node.c1;
+                    NodeFrac f1 = (NodeFrac) node.c1;
                     if (node.c2.getType() == Type.FRACTION) {
-                        Fraction f2 = (Fraction) node.c2;
+                        NodeFrac f2 = (NodeFrac) node.c2;
                         Node nume = Node.wrapNodeAM(false, f1.c1, f2.c2);
                         Node deno = Node.wrapNodeAM(false, f1.c2, f2.c1);
                         node.setBoth(nume, deno);
@@ -775,7 +775,7 @@ public final class SimplificationStrategies {
                     }
                     return mc.simplify(node, 1);
                 } else if (node.c2.getType() == Type.FRACTION) {
-                    Fraction f2 = (Fraction) node.c2;
+                    NodeFrac f2 = (NodeFrac) node.c2;
                     Node nume = Node.wrapNodeAM(false, node.c1, f2.c2);
                     Node deno = f2.c1;
                     node.setBoth(nume, deno);
@@ -984,14 +984,14 @@ public final class SimplificationStrategies {
                     denos = new ArrayList<>(count);
             for (Node n : children) {
                 if (n.getType() == Type.FRACTION) {
-                    Fraction f = (Fraction) n;
+                    NodeFrac f = (NodeFrac) n;
                     denos.add(f.c2);
                 }
             }
             for (Node n : children) {
                 List<Node> mul = new ArrayList<>(count + 1);
                 if (n.getType() == Type.FRACTION) {
-                    Fraction f = (Fraction) n;
+                    NodeFrac f = (NodeFrac) n;
                     for (Node nd : denos) {
                         if (nd != f.c2) {
                             mul.add(nd.cloneNode(null));
@@ -1019,7 +1019,7 @@ public final class SimplificationStrategies {
             }
             Node nume = Node.wrapNodeAM(true, numes);
             Node deno = Node.wrapNodeAM(false, denos);
-            Fraction f = Node.wrapNodeFraction(nume, deno);
+            NodeFrac f = Node.wrapNodeFraction(nume, deno);
             f.parent = node.parent;
             return mc.simplify(f, 2);
         }
@@ -1270,7 +1270,7 @@ public final class SimplificationStrategies {
 
 
         @Override
-        protected @Nullable Node simplifyFraction(Fraction node, ExprCalculator mc) {
+        protected @Nullable Node simplifyFraction(NodeFrac node, ExprCalculator mc) {
             if (!Boolean.parseBoolean(mc.getProperty(SimplificationStrategies.PROP_FRACTION_TO_EXP))) {
                 return null;
             }
@@ -1313,7 +1313,7 @@ public final class SimplificationStrategies {
                 if (mulCal.isEqual(exp, Multinomial.NEGATIVE_ONE)) {
                     if (c1.getType() == Type.FRACTION) {
                         //exp(x/y,-1) -> y/x
-                        var temp = (Fraction) c1;
+                        var temp = (NodeFrac) c1;
                         var nume = temp.c2;
                         var deno = temp.c1;
                         return mc.simplify(Node.wrapNodeFraction(nume, deno), 0);

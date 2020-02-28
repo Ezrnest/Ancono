@@ -205,7 +205,7 @@ public abstract class Node implements Computable, Serializable {
         MULTIPLY,
         /**
          * Fraction, which contains a node as numerator and another node as denominator
-         * <p>{@link Node.Fraction}
+         * <p>{@link NodeFrac}
          */
         FRACTION,
         /**
@@ -1521,14 +1521,14 @@ public abstract class Node implements Computable, Serializable {
 
     }
 
-    public static final class Fraction extends BiNode {
+    public static final class NodeFrac extends BiNode {
 
         /**
          * @param parent
          * @param c1
          * @param c2
          */
-        Fraction(NodeWithChildren parent, Node c1, Node c2) {
+        NodeFrac(NodeWithChildren parent, Node c1, Node c2) {
             super(parent, c1, c2, false);
         }
 
@@ -1545,10 +1545,10 @@ public abstract class Node implements Computable, Serializable {
          */
         @Override
         public boolean equalNode(Node n, MultinomialCalculator pc) {
-            if (!(n instanceof Fraction)) {
+            if (!(n instanceof NodeFrac)) {
                 return false;
             }
-            Fraction node = (Fraction) n;
+            NodeFrac node = (NodeFrac) n;
             return nodeEquals(c1, node.c1, pc) &&
                     nodeEquals(c2, node.c2, pc);
 
@@ -1558,10 +1558,10 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#cloneNode(cn.ancono.math.numberModels.expression.Node)
          */
         @Override
-        public Fraction cloneNode(NodeWithChildren parent) {
+        public NodeFrac cloneNode(NodeWithChildren parent) {
             Node nc1 = c1.cloneNode(null),
                     nc2 = c2.cloneNode(null);
-            Fraction clone = new Fraction(parent, nc1, nc2);
+            NodeFrac clone = new NodeFrac(parent, nc1, nc2);
             nc1.parent = clone;
             nc2.parent = clone;
             clone.simIdentifier = simIdentifier;
@@ -1829,8 +1829,8 @@ public abstract class Node implements Computable, Serializable {
         return root;
     }
 
-    public static Fraction wrapCloneNodeFraction(Node nume, Node deno) {
-        Fraction root = new Fraction(null, null, null);
+    public static NodeFrac wrapCloneNodeFraction(Node nume, Node deno) {
+        NodeFrac root = new NodeFrac(null, null, null);
         root.c1 = nume.cloneNode(root);
         root.c2 = deno.cloneNode(root);
         return root;
@@ -1841,8 +1841,8 @@ public abstract class Node implements Computable, Serializable {
         c2.parent = root;
     }
 
-    public static Fraction wrapNodeFraction(Node nume, Node deno) {
-        Fraction root = new Fraction(null, nume, deno);
+    public static NodeFrac wrapNodeFraction(Node nume, Node deno) {
+        NodeFrac root = new NodeFrac(null, nume, deno);
         linkToBiNode(nume, deno, root);
         return root;
     }

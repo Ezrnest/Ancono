@@ -26,7 +26,7 @@ operator fun Node.minus(n: Node): Node.Add = Node.wrapNodeAM(true, this,
 
 operator fun Node.times(n: Node): Node.Multiply = Node.wrapNodeAM(false, this, n) as Node.Multiply
 
-operator fun Node.div(n: Node): Node.Fraction = Node.wrapNodeFraction(this, n)
+operator fun Node.div(n: Node): Node.NodeFrac = Node.wrapNodeFraction(this, n)
 
 fun addAll(vararg ns: Node): Node = Node.wrapNodeAM(true, ns.toList())
 

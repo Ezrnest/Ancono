@@ -11,7 +11,8 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.coroutines.experimental.buildSequence
 
-/*
+/**
+ * Provides basic tools for proposition logic.
  * Created at 2018/9/18
  * @author liyicheng
  */
@@ -814,6 +815,8 @@ infix fun Formula.valueEquals(another: Formula): Boolean {
 }
 
 //fun main(args: Array<String>) {
+//    val s= (p or q) and (!r)
+//    println(s.toMainDisjunctiveNorm())
 ////    println(p and (q or true.f) equalTo p)
 //    val prop = (((p implies q) and (q implies r)) and p)
 //    println(r.toMainDisjunctiveNorm(prop.propositions))

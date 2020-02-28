@@ -1,8 +1,8 @@
 package test.math.abstractAlgebra
 
-import cn.timelives.java.math.algebra.abstractAlgebra.group.finite.PermutationGroup
-import cn.timelives.java.math.numberTheory.combination.Permutation
-import cn.timelives.java.math.numberTheory.combination.Permutations
+import cn.ancono.math.algebra.abstractAlgebra.group.finite.PermutationGroup
+import cn.ancono.math.numberTheory.combination.Permutation
+import cn.ancono.math.numberTheory.combination.Permutations
 import org.junit.Test
 import kotlin.test.assertSame
 

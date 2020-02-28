@@ -1,28 +1,28 @@
 package test.math.planeAg;
 
 //
-//import cn.timelives.java.math.MathCalculator;
-//import cn.timelives.java.math.MathObject;
-//import cn.timelives.java.math.MathUtils;
-//import cn.timelives.java.math.algebra.Progression;
-//import cn.timelives.java.math.algebra.ProgressionSup;
-//import cn.timelives.java.math.equation.SVPEquation.QEquation;
-//import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
-//import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
-//import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
-//import cn.timelives.java.math.algebra.linearAlgebra.Vector;
-//import cn.timelives.java.math.numberModels.*;
-//import cn.timelives.java.math.numberModels.api.Simplifier;
-//import cn.timelives.java.math.numberModels.expression.ExprCalculator;
-//import cn.timelives.java.math.numberModels.expression.Expression;
-//import cn.timelives.java.math.geometry.analytic.planeAG.*;
-//import cn.timelives.java.math.geometry.analytic.planeAG.curve.EllipseV;
-//import cn.timelives.java.math.geometry.analytic.planeAG.curve.GeneralConicSection;
-//import cn.timelives.java.math.geometry.analytic.planeAG.curve.HyperbolaV;
-//import cn.timelives.java.math.numberModels.old.*;
-//import cn.timelives.java.utilities.EasyConsole;
-//import cn.timelives.java.utilities.ModelPatterns;
-//import cn.timelives.java.utilities.Printer;
+//import cn.ancono.math.MathCalculator;
+//import cn.ancono.math.MathObject;
+//import cn.ancono.math.MathUtils;
+//import cn.ancono.math.algebra.Progression;
+//import cn.ancono.math.algebra.ProgressionSup;
+//import cn.ancono.math.equation.SVPEquation.QEquation;
+//import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution;
+//import cn.ancono.math.algebra.linearAlgebra.Matrix;
+//import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
+//import cn.ancono.math.algebra.linearAlgebra.Vector;
+//import cn.ancono.math.numberModels.*;
+//import cn.ancono.math.numberModels.api.Simplifier;
+//import cn.ancono.math.numberModels.expression.ExprCalculator;
+//import cn.ancono.math.numberModels.expression.Expression;
+//import cn.ancono.math.geometry.analytic.planeAG.*;
+//import cn.ancono.math.geometry.analytic.planeAG.curve.EllipseV;
+//import cn.ancono.math.geometry.analytic.planeAG.curve.GeneralConicSection;
+//import cn.ancono.math.geometry.analytic.planeAG.curve.HyperbolaV;
+//import cn.ancono.math.numberModels.old.*;
+//import cn.ancono.utilities.EasyConsole;
+//import cn.ancono.utilities.ModelPatterns;
+//import cn.ancono.utilities.Printer;
 //
 //import java.io.PrintWriter;
 //import java.util.Arrays;
@@ -31,8 +31,8 @@ package test.math.planeAg;
 //import java.util.Scanner;
 //import java.util.regex.Pattern;
 //
-//import static cn.timelives.java.utilities.Printer.print;
-//import static cn.timelives.java.utilities.Printer.print_;
+//import static cn.ancono.utilities.Printer.print;
+//import static cn.ancono.utilities.Printer.print_;
 //import static org.junit.Assert.*;
 //
 @Deprecated

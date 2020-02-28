@@ -1,6 +1,6 @@
 package test.logic.propLogic
 
-import cn.timelives.java.logic.propLogic.*
+import cn.ancono.logic.propLogic.*
 import org.junit.Assert.*
 import org.junit.Test
 

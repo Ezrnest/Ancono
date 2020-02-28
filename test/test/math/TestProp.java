@@ -3,11 +3,11 @@
  */
 package test.math;
 
-import cn.timelives.java.math.numberTheory.combination.Enumer;
+import cn.ancono.math.numberTheory.combination.Enumer;
 import org.junit.Test;
 
-import static cn.timelives.java.utilities.Printer.print;
-import static cn.timelives.java.utilities.Printer.printnb;
+import static cn.ancono.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.printnb;
 
 /**
  * @author liyicheng

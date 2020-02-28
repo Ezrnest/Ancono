@@ -1,9 +1,9 @@
 package test.math.comp.planeAg;
 
-import cn.timelives.java.utilities.Printer;
-import cn.timelives.java.utilities.dynamic.DynamicCompileEngine;
-import cn.timelives.java.utilities.dynamic.JavaCodeGenerator;
-import cn.timelives.java.utilities.swingTools.TextAreaOutputWriter;
+import cn.ancono.utilities.Printer;
+import cn.ancono.utilities.dynamic.DynamicCompileEngine;
+import cn.ancono.utilities.dynamic.JavaCodeGenerator;
+import cn.ancono.utilities.swingTools.TextAreaOutputWriter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -136,13 +136,13 @@ public class InputFrame extends JFrame {
 	private final Executor exc = Executors.newSingleThreadExecutor();
 	
 	private void initGenerator(){
-		generator.setPublicClass()
-			.setClassName("JavaMethodObject")
-			.addImport("cn.timelives.java.utilities.*")
-			.addImport("cn.timelives.java.utilities.math.*")
-			.addImport("cn.timelives.java.utilities.math.planeAG.*")
-			.addImport("cn.timelives.java.utilities.math.number_types.*")
-			.addImportStatic("cn.timelives.java.utilities.Printer.*")
+        generator.setPublicClass()
+                .setClassName("JavaMethodObject")
+                .addImport("cn.ancono.utilities.*")
+                .addImport("cn.ancono.utilities.math.*")
+                .addImport("cn.ancono.utilities.math.planeAG.*")
+                .addImport("cn.ancono.utilities.math.number_types.*")
+                .addImportStatic("cn.ancono.utilities.Printer.*")
 			.addImplement("Runnable");
 	}
 	

@@ -1,8 +1,8 @@
 package test.math.calculus
 
-import cn.timelives.java.math.calculus.Calculus
-import cn.timelives.java.math.numberModels.expression.ExprCalculator
-import cn.timelives.java.math.numberModels.expression.Expression
+import cn.ancono.math.calculus.Calculus
+import cn.ancono.math.numberModels.expression.ExprCalculator
+import cn.ancono.math.numberModels.expression.Expression
 import org.junit.Test
 
 class CalculusTest {

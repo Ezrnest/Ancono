@@ -1,22 +1,22 @@
 package test.math;
 
-import cn.timelives.java.math.algebra.Progression;
-import cn.timelives.java.math.algebra.ProgressionSup;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.numberModels.Fraction;
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.set.Interval;
-import cn.timelives.java.math.set.IntervalI;
-import cn.timelives.java.utilities.Printer;
-import cn.timelives.java.utilities.Timer;
+import cn.ancono.math.algebra.Progression;
+import cn.ancono.math.algebra.ProgressionSup;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.numberModels.Fraction;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.set.Interval;
+import cn.ancono.math.set.IntervalI;
+import cn.ancono.utilities.Printer;
+import cn.ancono.utilities.Timer;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.function.LongFunction;
 
-import static cn.timelives.java.utilities.Printer.print;
-import static cn.timelives.java.utilities.Printer.print_;
+import static cn.ancono.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print_;
 
 class Test {
 	

@@ -1,21 +1,21 @@
 package test.math;
 
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.algebra.linearAlgebra.LinearEquationSolution;
-import cn.timelives.java.math.algebra.linearAlgebra.Matrix;
-import cn.timelives.java.math.algebra.linearAlgebra.MatrixSup;
-import cn.timelives.java.math.algebra.linearAlgebra.Vector;
-import cn.timelives.java.math.geometry.analytic.spaceAG.*;
-import cn.timelives.java.math.numberModels.*;
-import cn.timelives.java.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
-import cn.timelives.java.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;
-import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Cube;
-import cn.timelives.java.math.geometry.analytic.spaceAG.shape.Tetrahedron;
-import cn.timelives.java.utilities.ArraySup;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution;
+import cn.ancono.math.algebra.linearAlgebra.Matrix;
+import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
+import cn.ancono.math.algebra.linearAlgebra.Vector;
+import cn.ancono.math.geometry.analytic.spaceAG.*;
+import cn.ancono.math.numberModels.*;
+import cn.ancono.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
+import cn.ancono.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;
+import cn.ancono.math.geometry.analytic.spaceAG.shape.Cube;
+import cn.ancono.math.geometry.analytic.spaceAG.shape.Tetrahedron;
+import cn.ancono.utilities.ArraySup;
 
 import java.util.Random;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 @Deprecated
 public class SpaceAGTest {
 	private static final MathCalculator<Double> mc = Calculators.getCalculatorDouble();

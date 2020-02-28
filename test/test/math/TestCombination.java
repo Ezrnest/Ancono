@@ -3,14 +3,14 @@
  */
 package test.math;
 
-import cn.timelives.java.math.numberTheory.combination.Permutation;
-import cn.timelives.java.math.numberTheory.combination.Permutations;
-import cn.timelives.java.utilities.ArraySup;
+import cn.ancono.math.numberTheory.combination.Permutation;
+import cn.ancono.math.numberTheory.combination.Permutations;
+import cn.ancono.utilities.ArraySup;
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

@@ -1,11 +1,11 @@
 package test.math.calculus
 
-import cn.timelives.java.math.calculus.Limit
-import cn.timelives.java.math.calculus.LimitProcess
-import cn.timelives.java.math.calculus.expression.FunctionHelper
-import cn.timelives.java.math.numberModels.expression.ExprCalculator
-import cn.timelives.java.math.numberModels.expression.Expression
-import cn.timelives.java.math.numberModels.expression.simplification.*
+import cn.ancono.math.calculus.Limit
+import cn.ancono.math.calculus.LimitProcess
+import cn.ancono.math.calculus.expression.FunctionHelper
+import cn.ancono.math.numberModels.expression.ExprCalculator
+import cn.ancono.math.numberModels.expression.Expression
+import cn.ancono.math.numberModels.expression.simplification.*
 import org.junit.Assert.*
 import org.junit.Test
 import test.math.TestUtils.assertMathEquals

@@ -3,18 +3,18 @@
  */
 package test.math.comp.planeAg;
 
-import cn.timelives.java.math.equation.SVPEquation.QEquation;
-import cn.timelives.java.math.function.QuadraticFunction;
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.numberModels.Multinomial;
-import cn.timelives.java.math.numberModels.expression.ExprCalculator;
-import cn.timelives.java.math.numberModels.expression.Expression;
-import cn.timelives.java.math.numberModels.expression.SimplificationStrategies;
-import cn.timelives.java.math.geometry.analytic.planeAG.*;
-import cn.timelives.java.math.geometry.analytic.planeAG.Point;
-import cn.timelives.java.math.geometry.analytic.planeAG.curve.EllipseV;
-import cn.timelives.java.math.geometry.visual.visual2D.PlaneDrawer;
+import cn.ancono.math.equation.SVPEquation.QEquation;
+import cn.ancono.math.function.QuadraticFunction;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.Multinomial;
+import cn.ancono.math.numberModels.expression.ExprCalculator;
+import cn.ancono.math.numberModels.expression.Expression;
+import cn.ancono.math.numberModels.expression.SimplificationStrategies;
+import cn.ancono.math.geometry.analytic.planeAG.*;
+import cn.ancono.math.geometry.analytic.planeAG.Point;
+import cn.ancono.math.geometry.analytic.planeAG.curve.EllipseV;
+import cn.ancono.math.geometry.visual.visual2D.PlaneDrawer;
 import test.math.comp.studyUtils.Run;
 import test.math.comp.studyUtils.StudyMethodRunner;
 
@@ -27,7 +27,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 
 /**
  * @author liyicheng

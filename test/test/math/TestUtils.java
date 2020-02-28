@@ -3,7 +3,7 @@
  */
 package test.math;
 
-import cn.timelives.java.math.MathCalculator;
+import cn.ancono.math.MathCalculator;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 

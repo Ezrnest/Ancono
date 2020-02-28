@@ -3,17 +3,17 @@
  */
 package test.math;
 
-import cn.timelives.java.math.numberModels.Calculators;
-import cn.timelives.java.math.MathCalculator;
-import cn.timelives.java.math.set.IntersectableSet;
-import cn.timelives.java.math.set.Interval;
-import cn.timelives.java.math.set.IntervalUnion;
-import cn.timelives.java.math.set.MathSet;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.MathCalculator;
+import cn.ancono.math.set.IntersectableSet;
+import cn.ancono.math.set.Interval;
+import cn.ancono.math.set.IntervalUnion;
+import cn.ancono.math.set.MathSet;
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static cn.timelives.java.utilities.Printer.print;
+import static cn.ancono.utilities.Printer.print;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

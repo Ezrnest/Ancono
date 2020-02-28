@@ -7,7 +7,7 @@ object ExceptionUtil {
      * <pre>x / 0</pre>
      */
     @JvmStatic
-    fun divideByZero(): Nothing {
+    fun dividedByZero(): Nothing {
         throw ArithmeticException("Divide by zero: /0")
     }
 
@@ -39,6 +39,7 @@ object ExceptionUtil {
     fun valueTooBig(): Nothing {
         throw NumberValueException("Too big.")
     }
+
     @JvmStatic
     fun valueTooBig(expr: String): Nothing {
         throw NumberValueException("Too big.", expr)

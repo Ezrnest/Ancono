@@ -10,4 +10,5 @@ interface AlgebraCalculator<K:Any,V:Any> : VectorSpaceCalculator<K,V>, RingCalcu
     @Deprecated("use {@link #add(Object, Object)} instead for more clarity.", ReplaceWith("add(x, y)"))
     override fun apply(x: V, y: V): V = add(x,y)
 
+
 }

@@ -99,7 +99,7 @@ object Limit {
     fun fractionPoly(nume: Multinomial, deno: Multinomial, process: LimitProcessE,
                      mc: ExprCalculator = ExprCalculator.instance): LimitResultE {
         if (deno.isZero) {
-            ExceptionUtil.divideByZero()
+            ExceptionUtil.dividedByZero()
         }
         val reNume = limitOf(nume, process, mc)
         val reDeno = limitOf(deno, process, mc)

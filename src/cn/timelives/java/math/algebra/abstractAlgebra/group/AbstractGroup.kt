@@ -10,7 +10,7 @@ import cn.timelives.java.math.set.MathSet
  * Created at 2018/10/9 12:46
  * @author  liyicheng
  */
-abstract class AbstractGroup<T:Any>(open val gc : GroupCalculator<T>, protected val elements: MathSet<T>) : Group<T>{
+open class AbstractGroup<T : Any>(open val gc: GroupCalculator<T>, protected val elements: MathSet<T>) : Group<T> {
     override fun getCalculator(): GroupCalculator<T> {
         return gc
     }
@@ -87,3 +87,38 @@ abstract class AbstractGroup<T:Any>(open val gc : GroupCalculator<T>, protected 
         throw UnsupportedOperationException()
     }
 }
+
+open class AbstractAbelGroup<T : Any>(gc: GroupCalculator<T>, elements: MathSet<T>) : AbstractGroup<T>(gc, elements) {
+    override fun getNormalSubgroups(): MathSet<out Group<T>> {
+        return subgroups
+    }
+
+    override fun isNormalSubgroup(g: Group<T>): Boolean {
+        return true
+    }
+
+    override fun isConjugate(h1: Group<T>, h2: Group<T>): Boolean {
+        return h1 == h2
+    }
+
+    override fun isConjugate(g1: T, g2: T): Boolean {
+        return calculator.isEqual(g1, g2)
+    }
+
+    override fun normalizer(h: Group<T>): Group<T> {
+        return this
+    }
+
+    override fun centralizer(a: T): Group<T> {
+        return this
+    }
+
+    override fun centralizer(h: Group<T>): Group<T> {
+        return this
+    }
+
+    override fun conjugateSubgroup(h: Group<T>, x: T): Group<T> {
+        return super.conjugateSubgroup(h, x)
+    }
+}
+

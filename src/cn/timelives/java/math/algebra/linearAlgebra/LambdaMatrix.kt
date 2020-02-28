@@ -8,7 +8,6 @@ import cn.timelives.java.math.minus
 import cn.timelives.java.math.numberModels.Fraction
 import cn.timelives.java.math.numberModels.Multinomial
 import cn.timelives.java.math.numberModels.structure.Polynomial
-import cn.timelives.java.math.times
 import java.util.*
 import kotlin.math.min
 
@@ -172,7 +171,7 @@ internal fun <T : Any> toNormalForm(data: PData<T>, mc: PMC<T>, fromIdx: Int) {
     }
     val head = data[fromIdx][fromIdx]
     if (!head.isZero()) {
-        data[fromIdx][fromIdx] = head.unit()
+        data[fromIdx][fromIdx] = head.monic()
     }
     toNormalForm(data, mc, fromIdx + 1)
 }

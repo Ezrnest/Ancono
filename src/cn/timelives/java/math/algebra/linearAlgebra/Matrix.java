@@ -1597,8 +1597,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     /**
      * Returns a string representation of this matrix in detail.
      */
+    @SuppressWarnings("unchecked")
     public String contentToString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        //noinspection unchecked
         return StringSup.formatMatrix(ArraySup.mapTo2(getValues(), (Object n) -> nf.format((T) n, getMc()), String.class));
     }
 

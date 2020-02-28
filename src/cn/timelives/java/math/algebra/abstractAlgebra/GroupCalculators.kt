@@ -278,7 +278,7 @@ object GroupCalculators {
             }
         }
     }
-
+    @JvmStatic
     fun <T:Any> asMonoidCalculator(uc : UnitRingCalculator<T>) : MonoidCalculator<T>{
         return object : MonoidCalculator<T>{
             override val identity: T
@@ -294,6 +294,7 @@ object GroupCalculators {
         }
     }
 
+    @JvmStatic
     fun <T:Any> asGroupCalculator(dc : DivisionRingCalculator<T>) : GroupCalculator<T>{
         return object : GroupCalculator<T>{
             override fun inverse(x: T): T {

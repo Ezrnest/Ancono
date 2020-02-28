@@ -31,9 +31,9 @@ public class NumberValueException extends RuntimeException {
 
 
 	/**
-	 * @param message
-	 * @param cause
-	 */
+     * @param message
+     * @param expr
+     */
 	public NumberValueException(String message,String expr) {
 		super(message);
 		this.expr = expr;

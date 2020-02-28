@@ -38,7 +38,7 @@ interface DivisionRingCalculator<T : Any> : UnitRingCalculator<T> {
      */
     fun divideLong(x: T, n: Long): T {
         if (n == 0L) {
-            ExceptionUtil.divideByZero()
+            ExceptionUtil.dividedByZero()
         }
         return divide(x, multiplyLong(one, n))
     }

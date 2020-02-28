@@ -696,6 +696,11 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
         update()
     }
 
+    fun setDrawer(f: Consumer<EasyCanvas>) {
+        drawer = { can -> f.accept(can) }
+        update()
+    }
+
     /**
      * Translate to make the given point shown at the center.
      */

@@ -1,6 +1,5 @@
 package samples;
 
-import cn.ancono.math.numberModels.expression.ExprCalculator;
 import cn.ancono.math.numberModels.expression.Expression;
 
 public class ExpressionSample {

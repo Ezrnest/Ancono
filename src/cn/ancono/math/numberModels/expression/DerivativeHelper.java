@@ -37,7 +37,7 @@ public class DerivativeHelper {
                 return dNodeMultiply((Node.Multiply) node, variableName);
             }
             case FRACTION: {
-                return dNodeFraction((Node.Fraction) node, variableName);
+                return dNodeFraction((Node.NodeFrac) node, variableName);
             }
             case S_FUNCTION:
             case D_FUNCTION:
@@ -106,7 +106,7 @@ public class DerivativeHelper {
         return Node.wrapNodeAM(true, partA, partB);
     }
 
-    private static Node dNodeFraction(@DisallowModify Node.Fraction node, String variableName) {
+    private static Node dNodeFraction(@DisallowModify Node.NodeFrac node, String variableName) {
         //(f(x)/g(x))' = ( f'(x)g(x) - f(x)g'(x) )/g(x)^2
         Node f = node.c1.cloneNode(null);
         Node g = node.c2.cloneNode(null);

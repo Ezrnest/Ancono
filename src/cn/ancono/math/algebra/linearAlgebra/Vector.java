@@ -362,7 +362,7 @@ public abstract class Vector<T> extends Matrix<T> {
         for (int i = 0; i < vec.length; i++) {
             vec[i] = ns[i];
         }
-        return new DVector<>(vec, isRow, Calculators.getCalculatorLong());
+        return new DVector<>(vec, isRow, Calculators.getCalLong());
     }
 
     /**

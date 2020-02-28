@@ -133,7 +133,7 @@ public abstract class SimpleStrategy extends SimStraImpl {
      * @param deno the node as the denominator
      * @return a new Fraction node
      */
-    protected final Fraction wrapNodeFraction(Node nume, Node deno) {
+    protected final NodeFrac wrapNodeFraction(Node nume, Node deno) {
         return Node.wrapNodeFraction(nume, deno);
     }
 

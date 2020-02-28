@@ -145,7 +145,7 @@ object AlgebraUtil {
             MathUtils.lcm(a, f.denominator)
         }
 
-        return this.mapTo(Function { it.multiply(lcm).toLong() }, Calculators.getCalculatorLong())
+        return this.mapTo(Function { it.multiply(lcm).toLong() }, Calculators.getCalLong())
     }
 
     fun decomposeInt(p: Polynomial<Long>): DecomposedPoly<Fraction> {
@@ -165,7 +165,7 @@ object AlgebraUtil {
             } else {
                 -re
             }
-        }, Calculators.getCalculatorLong()))
+        }, Calculators.getCalLong()))
     }
 
 
@@ -317,7 +317,7 @@ object AlgebraUtil {
 }
 
 fun main(args: Array<String>) {
-    val mc = Calculators.getCalculatorLongExact()
+    val mc = Calculators.getCalLongExact()
 //    val nume = Polynomial.valueOf(mc,1L,0L,0L,1L)
 //    val deno = Polynomial.valueOf(mc,0L,-1L,3L,-3L,1L)
     val nume = Polynomial.valueOf(mc, 6L, 5L)

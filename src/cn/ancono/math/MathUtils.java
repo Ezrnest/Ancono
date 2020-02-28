@@ -1454,12 +1454,15 @@ public class MathUtils {
         return new long[]{result, base};
     }
 
-    public static String simplifyExpression(String expr) {
-        var ex = Expression.valueOf(expr);
-        var mc = ExprCalculator.Companion.getNewInstance();
-        return mc.simplify(ex).toString();
-    }
+//    public static String simplifyExpression(String expr) {
+//        var ex = Expression.valueOf(expr);
+//        var mc = ExprCalculator.Companion.getNewInstance();
+//        return mc.simplify(ex).toString();
+//    }
 
+    /**
+     * Returns the power of <code>-1</code>.
+     */
     public static int powMinusOne(int pow) {
         if (pow % 2 == 0) {
             return 1;
@@ -1470,6 +1473,12 @@ public class MathUtils {
 
     public static double interpolate(double x, double y, double k) {
         return x + (y - x) * k;
+    }
+
+
+    public static long chineseRemainder(long[] mods, long[] remainers) {
+        ExceptionUtil.notImplemented("");
+        return 0;
     }
 
 }

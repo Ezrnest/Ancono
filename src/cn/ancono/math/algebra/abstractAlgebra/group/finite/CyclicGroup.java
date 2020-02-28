@@ -32,9 +32,6 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
     /**
      * size * generator
      *
-     * @param size
-     * @param generator
-     * @param mod
      */
     CyclicGroup(int size, int generator, int mod) {
         super(new CyclicCalInt(mod));
@@ -53,7 +50,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
         for (int n = 0; n < mod; n += generator) {
             list.add(n);
         }
-        return MathSets.fromCollection(list, Calculators.getCalculatorInteger());
+        return MathSets.fromCollection(list, Calculators.getCalInteger());
     }
 
     /**
@@ -70,7 +67,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
             n += generator;
         }
         list.trimToSize();
-        return MathSets.fromCollection(list, Calculators.getCalculatorInteger());
+        return MathSets.fromCollection(list, Calculators.getCalInteger());
     }
 
     @NotNull
@@ -115,7 +112,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
      * @param cg
      * @return
      */
-    public boolean isSupgroupHomo(CyclicGroup cg) {
+    public boolean isSubgroupHomo(CyclicGroup cg) {
         return size % cg.size == 0;
     }
 
@@ -158,7 +155,12 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
         @NotNull
         @Override
         public Integer gpow(@NotNull Integer x, long n) {
-            return (Integer) GroupCalculator.DefaultImpls.gpow(this, x, n);
+            long t = x * n;
+            if (t >= 0) {
+                return (int) (t % mod);
+            } else {
+                return (int) ((-t) % mod);
+            }
         }
 
         @Override

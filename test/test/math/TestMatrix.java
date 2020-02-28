@@ -28,23 +28,23 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestMatrix {
 
-	/**
-	 * 
-	 */
-	public TestMatrix() {
-	}
+    /**
+     *
+     */
+    public TestMatrix() {
+    }
 
-	MathCalculator<Long> mc = Calculators.getCalculatorLong();
-	MathCalculator<Double> mcd = Calculators.getCalculatorDoubleDev();
+    MathCalculator<Long> mc = Calculators.getCalLong();
+    MathCalculator<Double> mcd = Calculators.getCalculatorDoubleDev();
 
-//	@Test
-	public void testEigenEquation() {
-		Matrix<Long> mat = Matrix.valueOf(new long[][] { { 1, 0 }, { 0, 4 } });
-		SVPEquation<Long> equation = mat.eigenvalueEquation(), expected = SVPEquation.quadratic(1L, -5L, 4L, mc);
-		assertTrue("EigenEquation:", expected.valueEquals(equation));
-		mat = Matrix.valueOf(new long[][] { { 1, 2 }, { 3, 4 } });
-		equation = mat.eigenvalueEquation();
-		expected = SVPEquation.quadratic(1L, -5L, -2L, mc);
+    //	@Test
+    public void testEigenEquation() {
+        Matrix<Long> mat = Matrix.valueOf(new long[][]{{1, 0}, {0, 4}});
+        SVPEquation<Long> equation = mat.eigenvalueEquation(), expected = SVPEquation.quadratic(1L, -5L, 4L, mc);
+        assertTrue("EigenEquation:", expected.valueEquals(equation));
+        mat = Matrix.valueOf(new long[][]{{1, 2}, {3, 4}});
+        equation = mat.eigenvalueEquation();
+        expected = SVPEquation.quadratic(1L, -5L, -2L, mc);
 		assertTrue("EigenEquation:", expected.valueEquals(equation));
 		mat = Matrix.valueOf(new long[][] { { 1, 2, 3 }, { 3, 4, 5 }, { 4, 5, 6 } });
 		equation = mat.eigenvalueEquation();

@@ -45,4 +45,9 @@ object ExceptionUtil {
     fun valueTooBig(expr: String): Nothing {
         throw NumberValueException("Too big.", expr)
     }
+
+    @JvmStatic
+    fun notImplemented(reason: String): Nothing {
+        throw NotImplementedError(reason)
+    }
 }

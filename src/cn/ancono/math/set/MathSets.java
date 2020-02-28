@@ -393,10 +393,10 @@ public final class MathSets {
     }
 
 
+    @SuppressWarnings("unchecked")
     public static <T> List<FiniteSet<T>> partition(FiniteSet<T> set, EqualRelation<T> er) {
         MathCalculator<T> mc;
         if (set instanceof MathCalculatorHolder) {
-            //noinspection unchecked
             mc = ((MathCalculatorHolder<T>) set).getMathCalculator();
         } else {
             mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.Companion.naturalEqual());

@@ -166,7 +166,7 @@ internal constructor(val process: LimitProcessE, val mc: ExprCalculator, hopital
                 return limitNodeMultiply(node as Node.Multiply)
             }
             Node.Type.FRACTION -> {
-                return limitNodeFraction(node as Node.Fraction)
+                return limitNodeFraction(node as Node.NodeFrac)
             }
             Node.Type.S_FUNCTION, Node.Type.D_FUNCTION, Node.Type.M_FUNCTION ->
                 return FunctionHelper.DISPATCHER.limit(node, this)
@@ -234,7 +234,7 @@ internal constructor(val process: LimitProcessE, val mc: ExprCalculator, hopital
         return limitNodeMultiplyTwo(f, LimitResult.positiveInf(), g, null)
     }
 
-    private fun limitNodeFraction(@DisallowModify node: Node.Fraction)
+    private fun limitNodeFraction(@DisallowModify node: Node.NodeFrac)
             : LimitResultE? {
         val nume = node.c1
         val deno = node.c2

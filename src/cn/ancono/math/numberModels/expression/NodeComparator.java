@@ -69,7 +69,7 @@ public final class NodeComparator implements Comparator<Node> {
                 return compare(a.c2, b.c2);
             }
             case FRACTION: {
-                Fraction a = (Fraction) n1, b = (Fraction) n2;
+                NodeFrac a = (NodeFrac) n1, b = (NodeFrac) n2;
                 comp = compare(a.c1, b.c1);
                 if (comp != 0) {
                     return comp;

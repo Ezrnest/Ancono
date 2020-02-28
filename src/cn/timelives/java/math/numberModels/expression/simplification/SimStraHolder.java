@@ -147,22 +147,19 @@ public final class SimStraHolder {
 			return false;
 		SimStraHolder other = (SimStraHolder) obj;
 		if (generalTypes == null) {
-			if (other.generalTypes != null)
-				return false;
-		} else if (!generalTypes.equals(other.generalTypes))
-			return false;
-		if (specifices == null) {
-			if (other.specifices != null)
-				return false;
-		} else if (!specifices.equals(other.specifices))
-			return false;
-		if (tagged == null) {
-			if (other.tagged != null)
-				return false;
-		} else if (!tagged.equals(other.tagged))
-			return false;
-		return true;
-	}
+            if (other.generalTypes != null)
+                return false;
+        } else if (!generalTypes.equals(other.generalTypes))
+            return false;
+        if (specifices == null) {
+            if (other.specifices != null)
+                return false;
+        } else if (!specifices.equals(other.specifices))
+            return false;
+        if (tagged == null) {
+            return other.tagged == null;
+        } else return tagged.equals(other.tagged);
+    }
 
 	private Node performAfterCheckTags(Set<String> tags, List<? extends SimplificationStrategy> slist, final Node node, ExprCalculator mc) {
 		if(slist.isEmpty()) {

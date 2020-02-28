@@ -58,6 +58,10 @@ public final class Expression implements Computable,Serializable {
         return expr;
     }
 
+    public String toLatexString() {
+        return root.toLatexString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

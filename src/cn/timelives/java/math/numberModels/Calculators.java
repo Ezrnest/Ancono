@@ -3,16 +3,12 @@
  */
 package cn.timelives.java.math.numberModels;
 
-import cn.timelives.java.logic.propLogic.FalseMatcher;
 import cn.timelives.java.math.MathCalculator;
 import cn.timelives.java.math.MathUtils;
 import cn.timelives.java.math.exceptions.ExceptionUtil;
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException;
-import cn.timelives.java.math.numberModels.structure.Polynomial;
-import cn.timelives.java.math.numberModels.structure.RingFraction;
 import cn.timelives.java.math.numberTheory.NTCalculator;
 import cn.timelives.java.math.numberTheory.Primes;
-import cn.timelives.java.utilities.Printer;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
@@ -2007,7 +2003,7 @@ public final class Calculators {
 
         private int inverseOf(int x) {
             if (x == 0) {
-                ExceptionUtil.divideByZero();
+                ExceptionUtil.dividedByZero();
             }
             return inversed[modP(x)];
         }

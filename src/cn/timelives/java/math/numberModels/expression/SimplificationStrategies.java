@@ -3,13 +3,11 @@
  */
 package cn.timelives.java.math.numberModels.expression;
 
-import cn.timelives.java.math.exceptions.UnsatisfiedCalculationResultException;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
 import cn.timelives.java.math.numberModels.expression.Node.*;
 import cn.timelives.java.math.numberModels.expression.simplification.NodeHelper;
 import cn.timelives.java.math.numberModels.expression.spi.SimplificationService;
-import cn.timelives.java.math.numberModels.structure.Polynomial;
 import cn.timelives.java.utilities.CollectionSup;
 import cn.timelives.java.utilities.structure.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -245,6 +243,9 @@ public final class SimplificationStrategies {
             if (!((t1 == Type.MULTIPLY || t1 == Type.POLYNOMIAL) && (t2 == Type.MULTIPLY || t2 == Type.POLYNOMIAL))) {
                 return null;
             }
+            if (t1 == Type.POLYNOMIAL && t2 == Type.POLYNOMIAL) {
+                return null;
+            }
             Multinomial pnume = Node.getPolynomialPart(c1, mc),
                     pdeno = Node.getPolynomialPart(c2, mc);
             boolean sim = false;
@@ -252,14 +253,15 @@ public final class SimplificationStrategies {
                 sim = simplifyDivideNode((Multiply) c1, (Multiply) c2, mc);
             }
 
-            List<Multinomial> list = Arrays.asList(pnume, pdeno);
-            list = mc.getPolynomialSimplifier().simplify(list);
-            if (!sim && mc.getMultinomialCalculator().isEqual(pnume, list.get(0))) {
+//            List<Multinomial> list = Arrays.asList(pnume, pdeno);
+//            list = mc.getMultinomialSimplifier().simplify(list);
+            var pair = Multinomial.simplifyFraction(pnume, pdeno);
+            if (!sim && mc.getMultinomialCalculator().isEqual(pnume, pair.getSecond())) {
                 //nothing is changed.
                 return null;
             }
-            pnume = list.get(0);
-            pdeno = list.get(1);
+            pnume = pair.getFirst();
+            pdeno = pair.getSecond();
             c1 = Node.setPolynomialPart(c1, pnume);
             c2 = Node.setPolynomialPart(c2, pdeno);
             c1.resetSimIdentifier();
@@ -1043,11 +1045,23 @@ public final class SimplificationStrategies {
     }
 
 
+    /**
+     * <ul>
+     *     <li>exp(ln(x)) -> x</li>
+     *     <li>exp(x,0) -> 1</li>
+     *     <li>exp(x,1) -> x</li>
+     *     <li>exp(exp(x,p1),p2) -> exp(x,p1*p2)</li>
+     *     <li>exp(exp(p1),p2) -> exp(p1*p2)</li>
+     *     <li>x * exp(x,y) * exp(x,z) -> exp(x,1+y+z)</li>
+     * </ul>
+     */
     public static void addExpStrategies(List<SimpleStrategy> list) {
-        list.add(new SimplifyFunction(TAG_PRIMARY_SET, "exp", "exp(ln(x))->x") {
-            /**
-             * exp(ln(x))->x
-             */
+        list.add(new SimplifyFunction(TAG_PRIMARY_SET, "exp",
+                "exp(ln(x)) -> x; " +
+                        "exp(x,0) -> 1; " +
+                        "exp(x,1) -> x; " +
+                        "exp(exp(x,p1),p2) -> exp(x,p1*p2);" +
+                        "exp(exp(p1),p2) -> exp(p1*p2);") {
             @Override
             protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
                 Node child = node.child;
@@ -1062,14 +1076,14 @@ public final class SimplificationStrategies {
                     for (Iterator<Node> iterator = mul.children.iterator(); iterator.hasNext(); ) {
                         Node n = iterator.next();
                         if (Node.isFunctionNode(n, ExprFunction.FUNCTION_NAME_LN, 1)) {
-                            x = ((SFunction)n).child;
+                            x = ((SFunction) n).child;
                             iterator.remove();
                             break;
                         }
                     }
                     if (x != null) {
                         mul.resetSimIdentifier();
-                        return mc.simplify(Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, x, mul));
+                        return mc.simplify(Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP, x, mul));
                     }
                 }
 
@@ -1077,7 +1091,7 @@ public final class SimplificationStrategies {
             }
 
             /*
-             * @see cn.timelives.java.math.numberModels.expression.SimStraImpl#simplifyDFunction(cn.timelives.java.math.numberModels.expression.Node.DFunction, cn.timelives.java.math.numberModels.expression.ExprCalculator)
+             *
              */
             @Override
             protected Node simplifyDFunction(DFunction node, ExprCalculator mc) {
@@ -1090,16 +1104,12 @@ public final class SimplificationStrategies {
                     var exp = ((Poly) c2).p;
                     var mulCal = mc.getMultinomialCalculator();
                     if (mulCal.isEqual(exp, Multinomial.ZERO)) {
+                        //exp(x,0) -> 1
                         return Node.newPolyNode(Multinomial.ONE);
                     } else if (mulCal.isEqual(exp, Multinomial.ONE)) {
-                        return c1.cloneNode();
-                    } else if (mulCal.isEqual(exp, Multinomial.NEGATIVE_ONE)) {
-                        if (c1.getType() == Type.FRACTION) {
-                            var temp = (Fraction) c1;
-                            var nume = temp.c2;
-                            var deno = temp.c1;
-                            return Node.wrapCloneNodeFraction(nume, deno);
-                        }
+                        //exp(x,1) -> x
+//                        return c1.cloneNode();
+                        return c1;
                     }
                 }
                 if (Node.isFunctionNode(c1, "exp", 2)) {
@@ -1124,7 +1134,7 @@ public final class SimplificationStrategies {
                 }
             }
         });
-        list.add(new SimplifyMultiplyStruct(TAG_PRIMARY_SET) {
+        list.add(new SimplifyMultiplyStruct(TAG_PRIMARY_SET, "x * exp(x,y) * exp(x,z) -> exp(x,1+y+z)") {
             //x * exp(x,y) * exp(x,z) = exp(x,1+y+z)
             @Override
             protected List<Pair<Node, BigInteger>> simplify(List<Pair<Node, BigInteger>> nodes, ExprCalculator ec) {
@@ -1188,13 +1198,19 @@ public final class SimplificationStrategies {
             @NotNull
             @Override
             protected Node simplifySFunction(SFunction node, ExprCalculator mc) {
-                return Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP, node.child.cloneNode(), Node.newPolyNode(Multinomial.NEGATIVE_ONE));
+                return mc.simplify(Node.wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP, node.child.cloneNode(), Node.newPolyNode(Multinomial.NEGATIVE_ONE)));
             }
         });
         list.add(new ExpPossibleReduction());
+        list.add(new ExpToFraction());
         list.add(new ExpConvertFraction());
     }
 
+    /**
+     * <ul>
+     *     <li>(p*q) * exp(q,-1) -> p</li>
+     * </ul>
+     */
     static class ExpPossibleReduction extends SimpleStrategy {
 
         public ExpPossibleReduction() {
@@ -1207,7 +1223,7 @@ public final class SimplificationStrategies {
                 return null;
             }
             Multinomial m = node.p;
-            if(m.isOne()){
+            if (m.isOne()) {
                 return null;
             }
             List<Node> children = node.children;
@@ -1224,41 +1240,92 @@ public final class SimplificationStrategies {
                 Poly poly = (Poly) base;
                 Multinomial toDivide = poly.p;
                 var re = Multinomial.simplifyFraction(m, toDivide);
-                if(m.equals(re[0])){
+                if (m.equals(re.getFirst())) {
                     continue;
                 }
-                m = re[0];
-                exp.setFirst(Node.newPolyNode(re[1]));
+                m = re.getFirst();
+                exp.setFirst(Node.newPolyNode(re.getSecond()));
                 exp.resetSimIdentifier();
                 reduced = true;
                 if (m.isOne()) {
                     break;
                 }
             }
-            if(!reduced){
+            if (!reduced) {
                 return null;
             }
             node.p = m;
-            return mc.simplify(node,1);
+            return mc.simplify(node, 1);
         }
     }
 
-    static class ExpConvertFraction extends SimpleStrategy{
+    /**
+     * <ul>
+     *     <li>1/x -> exp(x,-1)</li>
+     * </ul>
+     */
+    static class ExpConvertFraction extends SimpleStrategy {
 
         public ExpConvertFraction() {
-            super(TAG_ALGEBRA_SET, CollectionSup.unmodifiableEnumSet(Type.FRACTION),null, "1/x -> exp(x,-1)");
+            super(TAG_ALGEBRA_SET, CollectionSup.unmodifiableEnumSet(Type.FRACTION), null, "1/x -> exp(x,-1)");
         }
+
 
         @Override
         protected @Nullable Node simplifyFraction(Fraction node, ExprCalculator mc) {
-            if(!Boolean.parseBoolean(mc.getProperty(SimplificationStrategies.PROP_FRACTION_TO_EXP))){
+            if (!Boolean.parseBoolean(mc.getProperty(SimplificationStrategies.PROP_FRACTION_TO_EXP))) {
                 return null;
             }
             Node nume = node.getC1();
-            if(!Node.isPolynomial(nume,Multinomial.ONE,mc)){
+            if (!Node.isPolynomial(nume, Multinomial.ONE, mc)) {
                 return null;
             }
-            return Node.buildExpStructure(node.c2,BigInteger.ONE.negate(),mc);
+            return Node.buildExpStructure(node.c2, BigInteger.ONE.negate(), mc);
+        }
+    }
+
+    /**
+     * <ul>
+     *     <li>exp(x,-1) -> 1/x</li>
+     *     <li>exp(x/y,-1) -> y/x</li>
+     * </ul>
+     */
+    static class ExpToFraction extends SimpleStrategy {
+
+        public ExpToFraction() {
+            super(TAG_ALGEBRA_SET, CollectionSup.unmodifiableEnumSet(Type.D_FUNCTION), "exp",
+                    "exp(x,-1) -> 1/x; " +
+                            "exp(x/y,-1) -> y/x; ");
+        }
+
+        @Override
+        protected @Nullable Node simplifyDFunction(DFunction node, ExprCalculator mc) {
+            if (Boolean.parseBoolean(mc.getProperty(SimplificationStrategies.PROP_FRACTION_TO_EXP))) {
+                return null;
+            }
+
+            Node c1 = node.c1,
+                    c2 = node.c2;
+            if (Node.isPolynomial(c1, Multinomial.E, mc)) {
+                return Node.wrapNodeSF("exp", c2);
+            }
+            if (c2.getType() == Type.POLYNOMIAL) {
+                var exp = ((Poly) c2).p; // the power
+                var mulCal = mc.getMultinomialCalculator();
+                if (mulCal.isEqual(exp, Multinomial.NEGATIVE_ONE)) {
+                    if (c1.getType() == Type.FRACTION) {
+                        //exp(x/y,-1) -> y/x
+                        var temp = (Fraction) c1;
+                        var nume = temp.c2;
+                        var deno = temp.c1;
+                        return mc.simplify(Node.wrapNodeFraction(nume, deno), 0);
+                    } else {
+                        //exp(x,-1) -> 1/x
+                        return mc.simplify(Node.wrapNodeFraction(Node.newPolyNode(Multinomial.ONE), c1), 0);
+                    }
+                }
+            }
+            return null;
         }
     }
 

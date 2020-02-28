@@ -112,7 +112,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
 
     fun divide(k: BigInteger): BigFraction {
         if (k.signum() == 0) {
-            ExceptionUtil.divideByZero()
+            ExceptionUtil.dividedByZero()
         }
         if (isZero()) {
             return ZERO
@@ -131,7 +131,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
 
     override fun divide(y: BigFraction): BigFraction {
         if (y.isZero()) {
-            ExceptionUtil.divideByZero()
+            ExceptionUtil.dividedByZero()
         }
         if (isZero()) {
             return ZERO
@@ -143,7 +143,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
 
     override fun reciprocal(): BigFraction {
         if (isZero()) {
-            ExceptionUtil.divideByZero()
+            ExceptionUtil.dividedByZero()
         }
         return BigFraction(signum, denominator, numerator)
     }

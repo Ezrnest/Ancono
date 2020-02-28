@@ -12,8 +12,13 @@ interface MonoidNumberModel<T : MonoidNumberModel<T>> {
     fun add(y: T): T
 }
 
+interface MulMonoidNumberModel<T : MulMonoidNumberModel<T>> {
+    fun multiply(y: T): T
+}
+
+
 /**
- * Describes a number model which is suitable for a group.
+ * Describes a number model which is suitable for a group. The operations are named as addition group.
  */
 interface GroupNumberModel<T : GroupNumberModel<T>> : MonoidNumberModel<T> {
     /**
@@ -32,32 +37,56 @@ interface GroupNumberModel<T : GroupNumberModel<T>> : MonoidNumberModel<T> {
     fun subtract(y: T): T = add(y.negate())
 }
 
-inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.plus(y: T): T = add(y)
+/**
+ * Describes a number model which is suitable for a group. The operations are named as multiplication group.
+ */
+interface MulGroupNumberModel<T : MulGroupNumberModel<T>> : MulMonoidNumberModel<T> {
+    /**
+     * Returns `this * y` as the operation defined in the group.
+     */
+    override fun multiply(y: T): T
+
+    /**
+     * Returns the reciprocal of `this`, that is, the element `e` such that `e * this = this * e = 1`
+     */
+    fun reciprocal(): T
+
+    /**
+     * Returns `this - y`, which should be equal to `add(negate(y))`.
+     */
+    fun divide(y: T): T = multiply(y.reciprocal())
+}
+
+inline operator fun <T : MonoidNumberModel<T>> MonoidNumberModel<T>.plus(y: T): T = add(y)
 
 inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.unaryMinus(): T = negate()
 inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.minus(y: T): T = subtract(y)
 
+inline operator fun <T : MulMonoidNumberModel<T>> MulMonoidNumberModel<T>.times(y: T): T = multiply(y)
+inline operator fun <T : MulGroupNumberModel<T>> MulGroupNumberModel<T>.div(y: T): T = divide(y)
+
+
 /**
  * Describes a number model which is suitable for a ring.
  */
-interface RingNumberModel<T : RingNumberModel<T>> : GroupNumberModel<T> {
-    fun multiply(y: T): T
+interface RingNumberModel<T : RingNumberModel<T>> : GroupNumberModel<T>, MulMonoidNumberModel<T> {
+    override fun multiply(y: T): T
 
     fun isZero(): Boolean
 }
 
-inline operator fun <T : RingNumberModel<T>> RingNumberModel<T>.times(y: T): T = multiply(y)
+//inline operator fun <T : RingNumberModel<T>> RingNumberModel<T>.times(y: T): T = multiply(y)
 
 /**
  * Describes a number model which is suitable for a division ring.
  * @see cn.timelives.java.math.algebra.abstractAlgebra.structure.DivisionRing
  */
-interface DivisionRingNumberModel<T : DivisionRingNumberModel<T>> : RingNumberModel<T> {
-    fun reciprocal(): T
-    fun divide(y: T): T = multiply(y.reciprocal())
+interface DivisionRingNumberModel<T : DivisionRingNumberModel<T>> : RingNumberModel<T>, MulGroupNumberModel<T> {
+    override fun reciprocal(): T
+    override fun divide(y: T): T = multiply(y.reciprocal())
 }
 
-inline operator fun <T : DivisionRingNumberModel<T>> DivisionRingNumberModel<T>.div(y: T): T = divide(y)
+//inline operator fun <T : DivisionRingNumberModel<T>> DivisionRingNumberModel<T>.div(y: T): T = divide(y)
 /**
  * Describes a number model which is suitable for a field.
  * @see cn.timelives.java.math.algebra.abstractAlgebra.structure.Field

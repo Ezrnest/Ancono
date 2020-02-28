@@ -8,8 +8,6 @@ import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.numberModels.Multinomial
 import cn.timelives.java.math.numberModels.MultinomialCalculator
 import cn.timelives.java.math.numberModels.Term
-import cn.timelives.java.math.numberModels.api.Computable
-import cn.timelives.java.math.numberModels.api.NumberFormatter
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.math.numberModels.expression.Node.*
 import cn.timelives.java.math.numberModels.expression.anno.AllowModify
@@ -18,7 +16,6 @@ import cn.timelives.java.math.numberModels.expression.simplification.p
 
 import java.util.*
 import cn.timelives.java.utilities.Printer.print
-import cn.timelives.java.utilities.Printer.printnb
 import java.lang.UnsupportedOperationException
 import java.util.function.ToDoubleFunction
 
@@ -102,7 +99,7 @@ class ExprCalculator
          *
          * @return the ps
          */
-        val polynomialSimplifier: Simplifier<Multinomial> = Multinomial.getSimplifier(),
+        val multinomialSimplifier: Simplifier<Multinomial> = Multinomial.getSimplifier(),
         /**
          * Gets the fs.
          *
@@ -159,7 +156,7 @@ class ExprCalculator
 
     private fun updateSimplificationIdentifier() {
         var si = multinomialCalculator.hashCode()
-        si = si * 31 + polynomialSimplifier.hashCode()
+        si = si * 31 + multinomialSimplifier.hashCode()
         si = si * 31 + functionHolder.hashCode()
         si = si * 31 + simStraHolder.hashCode()
         si = si * 31 + properties.hashCode()
@@ -279,7 +276,11 @@ class ExprCalculator
 	 * java.lang.Object)
 	 */
     override fun compare(x: Expression, y: Expression): Int {
-        return x.computeDouble(compareCompute).compareTo(y.computeDouble(compareCompute))
+        try {
+            return x.computeDouble(compareCompute).compareTo(y.computeDouble(compareCompute))
+        } catch (e: java.lang.Exception) {
+            throw UnsupportedCalculationException()
+        }
     }
 
     /*
@@ -761,16 +762,19 @@ class ExprCalculator
             }
             if (deno.type == Type.POLYNOMIAL) {
                 val pdeno = deno as Poly
-                try {
-                    val quotient = multinomialCalculator.divide(pnume.p, pdeno.p)
-                    return newPolyNode(quotient, node.parent)
-                } catch (ex: UnsupportedCalculationException) {
-                    // cannot compute
-                }
+//                try {
+//                    val quotient = multinomialCalculator.divide(pnume.p, pdeno.p)
+//                    return newPolyNode(quotient, node.parent)
+//                } catch (ex: UnsupportedCalculationException) {
+//                    // cannot compute
+//                }
 
-                val list = polynomialSimplifier.simplify(Arrays.asList(pnume.p, pdeno.p))
-                nume = newPolyNode(list[0], node)
-                deno = newPolyNode(list[1], node)
+                val pair = Multinomial.simplifyFraction(pnume.p, pdeno.p)
+                if (pair.second.isOne) {
+                    return newPolyNode(pair.first, node.parent)
+                }
+                nume = newPolyNode(pair.first, node)
+                deno = newPolyNode(pair.second, node)
             }
         } else if (deno.type == Type.POLYNOMIAL) {
             val pdeno = deno as Poly
@@ -1035,15 +1039,21 @@ class ExprCalculator
             SimplificationStrategies.setCalRegularization(instance)
         }
 
-        fun getNewInstance() : ExprCalculator{
+        fun getNewInstance(): ExprCalculator {
             val ec = ExprCalculator()
             SimplificationStrategies.setCalRegularization(ec)
             return ec
         }
 
-        internal var debugEnabled = false
+        /**
+         * For debugging, prints simplification per 100 steps.
+         */
+        var debugEnabled = false
 
-        internal var showSimSteps = false
+        /**
+         * Prints the steps of simplification.
+         */
+        var showSimSteps = false
     }
 }
 

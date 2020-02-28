@@ -68,11 +68,11 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         throwFor()
     }
 
-    override fun divideLong(x: T, n: Long): T {
+    override fun multiplyLong(x: T, n: Long): T {
         throwFor()
     }
 
-    override fun multiplyLong(x: T, n: Long): T {
+    override fun divideLong(x: T, n: Long): T {
         throwFor()
     }
 

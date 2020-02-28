@@ -31,7 +31,7 @@ public final class ParserUtils {
         boolean first = true;
         int prev = i;
         int brac = 0;
-        Boolean positive = !Boolean.valueOf(expr.charAt(i)=='-');
+        boolean positive = !(expr.charAt(i) == '-');
         for(;i<=end;i++){
             char c = expr.charAt(i);
             if(brac == 0){
@@ -44,8 +44,8 @@ public final class ParserUtils {
                         Pair<String,Boolean> p = new Pair<String, Boolean>(part, positive);
                         list.add(p);
                     }
-                    prev = i+1;
-                    positive = Boolean.valueOf(c == '+');
+                    prev = i + 1;
+                    positive = c == '+';
 
                     first = false;
                     continue;

@@ -4,6 +4,7 @@
 package cn.timelives.java.math.numberModels.expression;
 
 import cn.timelives.java.math.MathCalculator;
+import cn.timelives.java.math.MathSymbol;
 import cn.timelives.java.math.numberModels.Calculators;
 import cn.timelives.java.math.numberModels.Multinomial;
 import cn.timelives.java.math.numberModels.MultinomialCalculator;
@@ -106,7 +107,7 @@ public abstract class Node implements Computable, Serializable {
     /*
      * @see java.lang.Object#toString()
      */
-    protected abstract void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended);
+    protected abstract void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended);
 
     /**
      * List this node and all it sub-nodes.
@@ -145,6 +146,7 @@ public abstract class Node implements Computable, Serializable {
      * lists all the nodes.
      * <P></P>
      * <p>
+     *
      * @param f     the function that should be applied to the node
      * @param depth the depth of the recursion
      */
@@ -160,13 +162,21 @@ public abstract class Node implements Computable, Serializable {
         return sb.toString();
     }
 
+    public String toLatexString() {
+        StringBuilder sb = new StringBuilder();
+        toLatexString(sb, false);
+        return sb.toString();
+    }
+
+    protected abstract void toLatexString(StringBuilder sb, boolean bracketRecommended);
+
     /**
      * Returns the deep clone of the node, all its child nodes will be
      * cloned as well. The parent of the new node will be set as given.
      */
     public abstract Node cloneNode(NodeWithChildren parent);
 
-    public Node cloneNode(){
+    public Node cloneNode() {
         return cloneNode(null);
     }
 
@@ -226,7 +236,6 @@ public abstract class Node implements Computable, Serializable {
     }
 
 
-
     /**
      * A node with children is a branch node(or root node). The node's children can
      * be accessed via {@link #getChildren(int)} and {@link #getChildrenList()}.
@@ -273,7 +282,7 @@ public abstract class Node implements Computable, Serializable {
          */
         public abstract List<Node> getChildrenList();
 
-        public List<Node> getChildrenListCopy(){
+        public List<Node> getChildrenListCopy() {
             return new ArrayList<>(getChildrenList());
         }
 
@@ -441,8 +450,8 @@ public abstract class Node implements Computable, Serializable {
         public void recurApplyConsumer(Consumer<Node> f, int depth) {
             if (depth > 0) {
                 depth--;
-                for(Node n : children){
-                    n.recurApplyConsumer(f,depth);
+                for (Node n : children) {
+                    n.recurApplyConsumer(f, depth);
                 }
             }
             f.accept(this);
@@ -540,8 +549,8 @@ public abstract class Node implements Computable, Serializable {
 
         @Override
         public void recurApplyConsumer(Consumer<Node> f, int depth) {
-            if(depth > 0){
-                child.recurApplyConsumer(f,depth-1);
+            if (depth > 0) {
+                child.recurApplyConsumer(f, depth - 1);
             }
             f.accept(this);
         }
@@ -690,7 +699,7 @@ public abstract class Node implements Computable, Serializable {
 
         @Override
         public void recurApplyConsumer(Consumer<Node> f, int depth) {
-            if(depth > 0){
+            if (depth > 0) {
                 c1.recurApplyConsumer(f, depth - 1);
                 c2.recurApplyConsumer(f, depth - 1);
             }
@@ -704,12 +713,12 @@ public abstract class Node implements Computable, Serializable {
             n2.parent = this;
         }
 
-        void setFirst(Node n){
+        void setFirst(Node n) {
             c1 = n;
             n.parent = this;
         }
 
-        void setSecond(Node n){
+        void setSecond(Node n) {
             c2 = n;
             n.parent = this;
         }
@@ -912,16 +921,31 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter)
          */
         @Override
-        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
+        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             String str = nf.format(p, POLY_CALCULATOR);
             if (str.length() == 1) {
-                braketRecommended = false;
+                bracketRecommended = false;
             }
-            if (braketRecommended) {
+            if (bracketRecommended) {
                 sb.append('(');
             }
             sb.append(str);
-            if (braketRecommended) {
+            if (bracketRecommended) {
+                sb.append(')');
+            }
+        }
+
+        @Override
+        protected void toLatexString(StringBuilder sb, boolean bracketRecommended) {
+            String str = p.toLatexString();
+            if (p.isMonomial()) {
+                bracketRecommended = false;
+            }
+            if (bracketRecommended) {
+                sb.append('(');
+            }
+            sb.append(str);
+            if (bracketRecommended) {
                 sb.append(')');
             }
         }
@@ -991,8 +1015,8 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter)
          */
         @Override
-        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
-            if (braketRecommended) {
+        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+            if (bracketRecommended) {
                 sb.append('(');
             }
             if (p != null) {
@@ -1006,8 +1030,27 @@ public abstract class Node implements Computable, Serializable {
                 n.toString(sb, nf, false);
                 sb.append('+');
             }
-                sb.deleteCharAt(sb.length() - 1);
-            if (braketRecommended) {
+            sb.deleteCharAt(sb.length() - 1);
+            if (bracketRecommended) {
+                sb.append(')');
+            }
+        }
+
+        @Override
+        protected void toLatexString(StringBuilder sb, boolean bracketRecommended) {
+            if (bracketRecommended) {
+                sb.append('(');
+            }
+            if (p != null) {
+                sb.append(p.toLatexString());
+                sb.append('+');
+            }
+            for (Node n : children) {
+                n.toLatexString(sb, false);
+                sb.append('+');
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            if (bracketRecommended) {
                 sb.append(')');
             }
         }
@@ -1079,16 +1122,19 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
-            if (braketRecommended) {
+        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+            if (bracketRecommended) {
                 sb.append('(');
-            }
+            }//
             if (p != null) {
                 if (!p.equals(Multinomial.ONE)) {
                     //should be simplified by the tree to set the polynomial to null
                 }
                 if (p.equals(Multinomial.NEGATIVE_ONE)) {
                     sb.append('-');
+                } else if (p.isMonomial()) {
+                    sb.append(nf.format(p, POLY_CALCULATOR));
+                    sb.append('*');
                 } else {
                     sb.append('(');
                     sb.append(nf.format(p, POLY_CALCULATOR));
@@ -1102,10 +1148,37 @@ public abstract class Node implements Computable, Serializable {
                 sb.append('*');
             }
             sb.deleteCharAt(sb.length() - 1);
-            if (braketRecommended) {
+            if (bracketRecommended) {
                 sb.append(')');
             }
+        }
 
+        @Override
+        protected void toLatexString(StringBuilder sb, boolean bracketRecommended) {
+            if (bracketRecommended) {
+                sb.append('(');
+            }//
+            if (p != null) {
+                if (!p.equals(Multinomial.ONE)) {
+                    //should be simplified by the tree to set the polynomial to null
+                }
+                if (p.equals(Multinomial.NEGATIVE_ONE)) {
+                    sb.append('-');
+                } else if (p.isMonomial()) {
+                    sb.append(p.toLatexString());
+                } else {
+                    sb.append('(');
+                    sb.append(p.toLatexString());
+                    sb.append(')');
+                }
+
+            }
+            for (Node n : children) {
+                n.toLatexString(sb, true);
+            }
+            if (bracketRecommended) {
+                sb.append(')');
+            }
         }
 
         @Override
@@ -1198,12 +1271,22 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             sb.append(functionName).append('(');
             child.toString(sb, nf, false);
             sb.append(')');
         }
 
+
+        @Override
+        protected void toLatexString(StringBuilder sb, boolean bracketRecommended) {
+            var latexName = MathSymbol.getLatexFunctionName(functionName);
+            sb.append(latexName).append('(');
+            child.toLatexString(sb, false);
+            sb.append(')');
+        }
+
+        @SuppressWarnings("unchecked")
         @Override
         public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
             T x = child.compute(valueMap, mc);
@@ -1285,18 +1368,36 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             sb.append(functionName).append('(');
-            if(c1==null){
+            if (c1 == null) {
                 sb.append("null");
-            }else{
+            } else {
                 c1.toString(sb, nf, false);
             }
             sb.append(',');
-            if(c2 == null){
+            if (c2 == null) {
                 sb.append("null");
-            }else{
+            } else {
                 c2.toString(sb, nf, false);
+            }
+            sb.append(')');
+        }
+
+        @Override
+        protected void toLatexString(StringBuilder sb, boolean bracketRecommended) {
+            var latexName = MathSymbol.getLatexFunctionName(functionName);
+            sb.append(latexName).append('(');
+            if (c1 == null) {
+                sb.append("null");
+            } else {
+                c1.toLatexString(sb, false);
+            }
+            sb.append(',');
+            if (c2 == null) {
+                sb.append("null");
+            } else {
+                c2.toLatexString(sb, false);
             }
             sb.append(')');
         }
@@ -1373,10 +1474,21 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             sb.append(functionName).append('(');
             for (Node n : children) {
                 n.toString(sb, nf, false);
+                sb.append(',');
+            }
+            sb.setCharAt(sb.length() - 1, ')');
+        }
+
+        @Override
+        protected void toLatexString(StringBuilder sb, boolean bracketRecommended) {
+            var latexName = MathSymbol.getLatexFunctionName(functionName);
+            sb.append(latexName).append('(');
+            for (Node n : children) {
+                n.toLatexString(sb, false);
                 sb.append(',');
             }
             sb.setCharAt(sb.length() - 1, ')');
@@ -1460,16 +1572,25 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.timelives.java.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.timelives.java.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean braketRecommended) {
-            if (braketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+            if (bracketRecommended) {
                 sb.append('(');
             }
             c1.toString(sb, nf, true);
             sb.append('/');
             c2.toString(sb, nf, true);
-            if (braketRecommended) {
+            if (bracketRecommended) {
                 sb.append(')');
             }
+        }
+
+        @Override
+        protected void toLatexString(StringBuilder sb, boolean bracketRecommended) {
+            sb.append("\\frac{");
+            c1.toLatexString(sb, false);
+            sb.append("}{");
+            c2.toLatexString(sb, false);
+            sb.append('}');
         }
 
         @Override
@@ -1488,8 +1609,10 @@ public abstract class Node implements Computable, Serializable {
 
 
     }
+
     /**
-     * Determines whether two node are equal using {@link Node#equalNode(Node, MultinomialCalculator)}, or they are both {@code null}.
+     * Determines whether two node are equal using {@link Node#equalNode(Node, MultinomialCalculator)}, or they are both
+     * {@code null}.
      */
     public static boolean nodeEquals(Node a, Node b, MultinomialCalculator pc) {
         return (a == b) || (a != null && a.equalNode(b, pc));
@@ -1532,30 +1655,32 @@ public abstract class Node implements Computable, Serializable {
         }
         return root;
     }
-    private static Node amPolyOrDefault(boolean isAdd, Multinomial p){
-        if(p==null){
-            if(isAdd){
+
+    private static Node amPolyOrDefault(boolean isAdd, Multinomial p) {
+        if (p == null) {
+            if (isAdd) {
                 return newPolyNode(Multinomial.ZERO);
-            }else{
+            } else {
                 return newPolyNode(Multinomial.ONE);
             }
-        }else{
+        } else {
             return newPolyNode(p);
         }
     }
+
     /**
      * Wraps the nodes' clones with either Add or Multiply. The newly created node has no parent node.
      */
     public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns) {
-        return wrapCloneNodeAM(isAdd, ns,null);
+        return wrapCloneNodeAM(isAdd, ns, null);
     }
 
     /**
      * Wraps the nodes  with either Add or Multiply. The newly created node has no parent node.
      */
     public static Node wrapCloneNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
-        if(ns.isEmpty()){
-            return amPolyOrDefault(isAdd,p);
+        if (ns.isEmpty()) {
+            return amPolyOrDefault(isAdd, p);
         }
         CombinedNode root;
         List<Node> list = new ArrayList<>(ns.size());
@@ -1575,16 +1700,17 @@ public abstract class Node implements Computable, Serializable {
      * Wraps the nodes with either Add or Multiply. The newly created node has no parent node.
      */
     public static Node wrapNodeAM(boolean isAdd, List<Node> ns) {
-        return wrapNodeAM(isAdd,ns,null);
+        return wrapNodeAM(isAdd, ns, null);
     }
 
     /**
      * Wraps the nodes  with either Add or Multiply. The newly created node has no parent node.
+     *
      * @return
      */
     public static Node wrapNodeAM(boolean isAdd, List<Node> ns, Multinomial p) {
-        if(ns.isEmpty()){
-            return amPolyOrDefault(isAdd,p);
+        if (ns.isEmpty()) {
+            return amPolyOrDefault(isAdd, p);
         }
         CombinedNode root;
         if (isAdd) {
@@ -1687,7 +1813,7 @@ public abstract class Node implements Computable, Serializable {
     /**
      * Wraps the node to a single function of the given name, the node will be modified (sets its parent).
      */
-    public static SFunction wrapNodeSF(String fname,@AllowModify Node n) {
+    public static SFunction wrapNodeSF(String fname, @AllowModify Node n) {
         n.removeFromParent();
         SFunction root = new SFunction(null, n, fname);
         n.parent = root;
@@ -1697,7 +1823,7 @@ public abstract class Node implements Computable, Serializable {
     /**
      * Wraps the node to a single function of the given name, the node will be cloned.
      */
-    public static SFunction wrapCloneNodeSF(String fname,@DisallowModify Node n) {
+    public static SFunction wrapCloneNodeSF(String fname, @DisallowModify Node n) {
         SFunction root = new SFunction(null, null, fname);
         root.child = n.cloneNode(root);
         return root;
@@ -1808,7 +1934,7 @@ public abstract class Node implements Computable, Serializable {
         DFunction root = new DFunction(null, null, null, fname, false);
         root.c1 = n1.cloneNode(root);
         root.c2 = n2.cloneNode(root);
-        if(root.c2 == null){
+        if (root.c2 == null) {
             print("?");
         }
         return root;
@@ -1823,7 +1949,7 @@ public abstract class Node implements Computable, Serializable {
     }
 
     public static DFunction wrapNodeDF(String fname, Node n1, Node n2) {
-        if(n2 == null){
+        if (n2 == null) {
             print("?");
         }
         return wrapNodeDF(fname, n1, n2, false);
@@ -1842,7 +1968,6 @@ public abstract class Node implements Computable, Serializable {
         }
         return root;
     }
-
 
 
     public static Pair<Multinomial, Node> unwrapMultiply(Node node, ExprCalculator ec) {

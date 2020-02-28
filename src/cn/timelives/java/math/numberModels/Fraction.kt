@@ -4,15 +4,16 @@ import cn.timelives.java.math.MathUtils
 import cn.timelives.java.math.exceptions.ExceptionUtil
 import cn.timelives.java.math.exceptions.UnsupportedCalculationException
 import cn.timelives.java.math.algebra.linearAlgebra.Matrix
-import cn.timelives.java.math.numberModels.api.DivisionRingNumberModel
 import cn.timelives.java.math.numberModels.api.FieldNumberModel
 import cn.timelives.java.math.numberModels.api.Simplifier
 import cn.timelives.java.math.numberTheory.NaiveNumberTheory
 import cn.timelives.java.utilities.ArraySup
 import java.io.Serializable
+import java.lang.Exception
 
 import java.util.ArrayList
 import java.util.regex.Pattern
+import kotlin.math.log10
 import kotlin.math.sign
 
 
@@ -234,7 +235,7 @@ internal constructor(
      */
     override fun divide(y: Fraction): Fraction {
         if (y.signum == 0) {
-            ExceptionUtil.divideByZero()
+            ExceptionUtil.dividedByZero()
         }
         if (this.signum == 0) {
             return ZERO
@@ -552,10 +553,10 @@ internal constructor(
             return "0"
         }
         if (denominator == 1L) {
-            return if (signum < 0)
-                "-" + java.lang.Long.toString(numerator)
-            else
-                java.lang.Long.toString(numerator)
+            return if (signum < 0) {
+                "-$numerator"
+            } else
+                numerator.toString()
         }
         val sb = StringBuilder()
         if (signum < 0)
@@ -576,15 +577,33 @@ internal constructor(
         }
         if (isInteger) {
             return if (signum < 0)
-                "-" + java.lang.Long.toString(numerator)
+                "-$numerator"
             else
-                java.lang.Long.toString(numerator)
+                numerator.toString()
         }
         val sb = StringBuilder("(")
         if (signum < 0)
             sb.append('-')
         sb.append(numerator).append('/').append(denominator)
         sb.append(')')
+        return sb.toString()
+    }
+
+    fun toLatexString(): String {
+        if (signum == 0) {
+            return "0"
+        }
+        if (isInteger) {
+            return if (signum < 0)
+                "-$numerator"
+            else
+                numerator.toString()
+        }
+        val sb = StringBuilder()
+        if (signum < 0) {
+            sb.append('-');
+        }
+        sb.append("\\frac{").append(numerator).append("}{").append(denominator).append('}')
         return sb.toString()
     }
 
@@ -916,7 +935,7 @@ internal constructor(
             return Fraction(nAd[0], nAd[1], signum)
         }
 
-        private val maxPrecision = Math.log10(java.lang.Long.MAX_VALUE.toDouble()).toInt() - 1
+        private val maxPrecision = log10(java.lang.Long.MAX_VALUE.toDouble()).toInt() - 1
 
         /**
          * Return a fraction that is closet to the value of `d` but is small than `d`,
@@ -1034,8 +1053,10 @@ internal constructor(
          * Identify the given expression
          */
         @JvmStatic
-        val EXPRESSION_PATTERN: Pattern = Pattern.compile("[+\\-]?\\d+(/\\d+)?")
+        val EXPRESSION_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)(/\\d+)?")
         // *([\\+\\-]?\\d+(\\/\\d+)?) * another replacement which
+        val DECIMAL_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)\\.(\\d+)")
+
         /**
          * Return a fraction representing the value of the given expression.The text given should be like :
          * `"[\\+\\-]?\\d+(\\/\\d+)?"` as regular expression
@@ -1044,18 +1065,26 @@ internal constructor(
          */
         @JvmStatic
         fun valueOf(expr: String): Fraction {
-            val m = EXPRESSION_PATTERN.matcher(expr)
+            var m = EXPRESSION_PATTERN.matcher(expr)
             if (m.matches()) {
-                val nAd = expr.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val l1 = java.lang.Long.parseLong(nAd[0])
-                return if (nAd.size > 1) {
-
-                    val l2 = java.lang.Long.parseLong(nAd[1])
-                    valueOf(l1, l2)
-                } else {
-                    valueOf(l1)
+                val n = m.group(1).toLong()
+                return try {
+                    val d = m.group(2).toLong()
+                    valueOf(n, d)
+                } catch (e: Exception) {
+                    valueOf(n)
                 }
             }
+            m = DECIMAL_PATTERN.matcher(expr)
+            if (m.matches()) {
+                val n1 = m.group(1).toLong()
+                val n2 = m.group(2)
+                val digits = n2.length
+                val deno = MathUtils.power(10L, digits)
+                val nume = n1 * deno + n2.toLong()
+                return valueOf(nume, deno)
+            }
+
             throw NumberFormatException("Illegal Fraction:$expr")
 
         }

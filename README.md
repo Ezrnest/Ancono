@@ -35,8 +35,8 @@ This library includes the following modules:
     
     Line, triangle, conic sections (including circle, ellipse, hyperbola and parabola) and affine transformations 
     are provided in Ancono. 
-    Useful methods are available, including computing the intersection points, computing the 4 kinds of centers 
-    of a triangle and so much more.  
+    Useful methods are available, including computing the intersection points, computing the four kinds of centers 
+    of a triangle and so much more. Ancono also supports visualization for curves and objects on plane.
      
 6. Number theory and Combinations
     
@@ -52,7 +52,7 @@ This library includes the following modules:
     Utilities for derivatives, Taylor series and so on are provided.
     
 9. And more...
-## Examples
+## Samples
 
 ### <a name="numbers">Using number models</a>: 
 
@@ -112,10 +112,12 @@ System.out.println(f3);
 
 ## Number models
 
+
+
 ## Usage
-Users can utilize this library by simply import the jar file downloaded from /out/artifacts  
+Users can utilize this library by simply import the jar file downloaded from /out/artifacts. If the 
 
-
+## Dependencies
 
 
 ## Development

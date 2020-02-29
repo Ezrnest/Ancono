@@ -1,15 +1,15 @@
 /**
  * 2017-10-06
  */
-package cn.timelives.java.math.function
+package cn.ancono.math.function
 
-import cn.timelives.java.math.MathObject
-import cn.timelives.java.math.algebra.calculus.Derivable
-import cn.timelives.java.math.numberModels.api.FlexibleNumberFormatter
-import cn.timelives.java.math.numberModels.Fraction
-import cn.timelives.java.math.MathCalculator
-import cn.timelives.java.math.set.Interval
-import cn.timelives.java.math.set.IntervalUnion
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.MathObject
+import cn.ancono.math.calculus.Derivable
+import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.set.Interval
+import cn.ancono.math.set.IntervalUnion
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 
@@ -18,7 +18,7 @@ import java.util.function.Function
  * @author liyicheng
  * 2017-10-06 10:02
  */
-abstract class AbstractSVFunction<T>
+abstract class AbstractSVFunction<T : Any>
 /**
  * @param mc
  */
@@ -32,9 +32,9 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
 
 
     /*
-	 * @see cn.timelives.java.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
+	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 	 */
-    abstract override fun <N> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AbstractSVFunction<N>
+    abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AbstractSVFunction<N>
 
     /**
      * Describe the function:
@@ -44,54 +44,52 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
      *
      * @param <T>
     </T> */
-    class Ln<T>
+    class Ln<T : Any>
     /**
      * @param mc
      */
-    internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivable<T, Power<T>> {
+    internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivable<T, T, Power<T>> {
 
         /*
-		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
+		 * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
 		 */
         override fun apply(x: T): T {
             return mc.ln(x)
         }
 
         /*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.ancono.math.algebra.calculus.Derivable#derive()
 		 */
         override fun derive(): Power<T> {
             return Power(mc, mc.one, Fraction.NEGATIVE_ONE)
         }
 
         /*
-		 * @see cn.timelives.java.math.function.MathFunction#domain()
+		 * @see cn.ancono.math.function.MathFunction#domain()
 		 */
         override fun domain(): Interval<T> {
             return Interval.positive(mc)
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
+		 * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Ln<N> {
+        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Ln<N> {
             return Ln(newCalculator)
         }
 
         /*
-		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+		 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
 		 */
         override fun valueEquals(obj: MathObject<T>): Boolean {
             if (obj is Log<*>) {
-                return mc.isEqual((obj as Log<T>).a, mc.constantValue(MathCalculator.STR_E))
+                return mc.isEqual((obj as Log<T>).a, mc.constantValue(MathCalculator.STR_E)!!)
             }
-            return if (obj !is Ln<*>) {
-                false
-            } else true
+            return obj is Ln<*>
         }
 
         /*
-		 * @see cn.timelives.java.math.FlexibleMathObject#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
+		 * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.numberModels.api.NumberFormatter)
 		 */
         override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
             return "ln(x)"
@@ -106,48 +104,48 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
      * 2017-10-10 18:37
      * @param <T>
     </T> */
-    class Log<T>
+    class Log<T : Any>
     /**
      * @param mc
      */
-    (mc: MathCalculator<T>, val a: T) : AbstractSVFunction<T>(mc), Derivable<T, Power<T>> {
+    (mc: MathCalculator<T>, val a: T) : AbstractSVFunction<T>(mc), Derivable<T, T, Power<T>> {
         /*
-		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
+		 * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
 		 */
         override fun apply(x: T): T {
             return mc.log(a, x)
         }
 
         /*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.ancono.math.algebra.calculus.Derivable#derive()
 		 */
         override fun derive(): Power<T> {
             return Power(mc, mc.reciprocal(mc.ln(a)), Fraction.NEGATIVE_ONE)
         }
 
         /*
-		 * @see cn.timelives.java.math.function.MathFunction#domain()
+		 * @see cn.ancono.math.function.MathFunction#domain()
 		 */
         override fun domain(): Interval<T> {
             return Interval.positive(mc)
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
+		 * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
 		 */
         override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
             return "log(" + nf.format(a, mc) + ",x)"
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
+		 * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Log<N> {
+        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Log<N> {
             return Log(newCalculator, mapper.apply(a))
         }
 
         /*
-		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+		 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
 		 */
         override fun valueEquals(obj: MathObject<T>): Boolean {
             if (obj is Ln<*>) {
@@ -172,7 +170,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
      *
      * @param <T>
     </T> */
-    class Power<T>
+    class Power<T : Any>
     /**
      * @param mc
      */
@@ -186,7 +184,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
                                         * Gets the n:<pre>a*x^n</pre>
                                         * @return the n as a fraction
                                         */
-                                       val n: Fraction = Fraction.ONE) : AbstractSVFunction<T>(mc), Derivable<T, Power<T>> {
+                                       val n: Fraction = Fraction.ONE) : AbstractSVFunction<T>(mc), Derivable<T, T, Power<T>> {
 
         private var domain: IntervalUnion<T>? = null
 
@@ -196,7 +194,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
         internal constructor(mc: MathCalculator<T>, n: Fraction) : this(mc, mc.one, n) {}
 
         /*
-		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
+		 * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
 		 */
         override fun apply(x: T): T {
             if (n.signum == 0) {
@@ -220,7 +218,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
         }
 
         /*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.ancono.math.algebra.calculus.Derivable#derive()
 		 */
         override fun derive(): Power<T> {
             if (mc.isZero(a)) {
@@ -235,32 +233,30 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
         }
 
         /*
-		 * @see cn.timelives.java.math.function.MathFunction#domain()
+		 * @see cn.ancono.math.function.MathFunction#domain()
 		 */
-        override fun domain(): IntervalUnion<T>? {
+        override fun domain(): IntervalUnion<T> {
             if (domain == null) {
-                val dom: IntervalUnion<T>
-                if (n.signum >= 0) {
+                domain = if (n.signum >= 0) {
                     if (n.denominator % 2 == 1L) {
-                        dom = IntervalUnion.universe(mc)
+                        IntervalUnion.universe(mc)
                     } else {
-                        dom = IntervalUnion.valueOf(Interval.toPositiveInf(mc.zero, true, mc))
+                        IntervalUnion.valueOf(Interval.toPositiveInf(mc.zero, true, mc))
                     }
                 } else {
                     if (n.denominator % 2 == 1L) {
-                        dom = IntervalUnion.except(mc.zero, mc)
+                        IntervalUnion.except(mc.zero, mc)
                     } else {
-                        dom = IntervalUnion.valueOf(Interval.positive(mc))
+                        IntervalUnion.valueOf(Interval.positive(mc))
                     }
                 }
-                domain = dom
             }
-            return domain
+            return domain!!
 
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
+		 * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
 		 */
         override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
             if (mc.isZero(a)) {
@@ -284,14 +280,14 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
+		 * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Power<N> {
+        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Power<N> {
             return Power(newCalculator, mapper.apply(a), n)
         }
 
         /*
-		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+		 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
 		 */
         override fun valueEquals(obj: MathObject<T>): Boolean {
             if (obj !is Power<*>) {
@@ -316,7 +312,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
      *
      * @param <T>
     </T> */
-    class Exp<T>
+    class Exp<T : Any>
     /**
      * @param mc
      */
@@ -330,23 +326,23 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
                           * Gets the a:<pre>c*a^x</pre>
                           * @return the a
                           */
-                         val a: T) : AbstractSVFunction<T>(mc), Derivable<T, Exp<T>> {
+                         val a: T) : AbstractSVFunction<T>(mc), Derivable<T, T, Exp<T>> {
         /*
-		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
+		 * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
 		 */
         override fun apply(x: T): T {
             return mc.multiply(c, mc.exp(a, x))
         }
 
         /*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.ancono.math.algebra.calculus.Derivable#derive()
 		 */
         override fun derive(): Exp<T> {
             return Exp(mc, mc.multiply(c, mc.ln(a)), a)
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
+		 * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
 		 */
         override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
             val sb = StringBuilder()
@@ -365,14 +361,14 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
+		 * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Exp<N> {
+        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Exp<N> {
             return Exp(newCalculator, mapper.apply(c), mapper.apply(a))
         }
 
         /*
-		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+		 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
 		 */
         override fun valueEquals(obj: MathObject<T>): Boolean {
             if (obj is Ex<*>) {
@@ -395,46 +391,46 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
      *
      * @param <T>
     </T> */
-    class Ex<T>
+    class Ex<T : Any>
     /**
      * @param mc
      */
-    internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivable<T, Ex<T>> {
+    internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivable<T, T, Ex<T>> {
         /*
-		 * @see cn.timelives.java.math.function.SVFunction#apply(java.lang.Object)
+		 * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
 		 */
         override fun apply(x: T): T {
             return mc.exp(x)
         }
 
         /*
-		 * @see cn.timelives.java.math.algebra.calculus.Derivable#derive()
+		 * @see cn.ancono.math.algebra.calculus.Derivable#derive()
 		 */
         override fun derive(): Ex<T> {
             return this
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#toString(cn.timelives.java.math.numberModels.api.NumberFormatter)
+		 * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
 		 */
         override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
             return "e^x"
         }
 
         /*
-		 * @see cn.timelives.java.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.timelives.java.math.MathCalculator)
+		 * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Ex<N> {
+        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Ex<N> {
             return Ex(newCalculator)
         }
 
         /*
-		 * @see cn.timelives.java.math.FlexibleMathObject#valueEquals(cn.timelives.java.math.FlexibleMathObject)
+		 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
 		 */
         override fun valueEquals(obj: MathObject<T>): Boolean {
             if (obj is Exp<*>) {
                 val exp = obj as Exp<T>
-                return mc.isEqual(mc.one, exp.c) && mc.isEqual(mc.constantValue(MathCalculator.STR_E), exp.a)
+                return mc.isEqual(mc.one, exp.c) && mc.isEqual(mc.constantValue(MathCalculator.STR_E)!!, exp.a)
             }
             return obj is Ex<*>
         }
@@ -449,7 +445,8 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          * @param mc a [MathCalculator]
          * @return e^x
          */
-        fun <T> naturalExp(mc: MathCalculator<T>): Ex<T> {
+        @Suppress("UNCHECKED_CAST")
+        fun <T : Any> naturalExp(mc: MathCalculator<T>): Ex<T> {
             var ex: Ex<T>? = expmap[mc] as Ex<T>
             if (ex == null) {
                 ex = Ex(mc)
@@ -463,7 +460,8 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          * @param mc a [MathCalculator]
          * @return ln(x)
          */
-        fun <T> naturalLog(mc: MathCalculator<T>): Ln<T> {
+        @Suppress("UNCHECKED_CAST")
+        fun <T : Any> naturalLog(mc: MathCalculator<T>): Ln<T> {
             var ex: Ln<T>? = lnmap[mc] as Ln<T>
             if (ex == null) {
                 ex = Ln(mc)
@@ -479,7 +477,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          * @param mc a [MathCalculator]
          * @return <pre>c*a^x</pre>
          */
-        fun <T> exp(a: T, c: T, mc: MathCalculator<T>): Exp<T> {
+        fun <T : Any> exp(a: T, c: T, mc: MathCalculator<T>): Exp<T> {
             if (mc.isZero(c)) {
                 throw IllegalArgumentException("c == 0")
             }
@@ -496,7 +494,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          * @param mc a [MathCalculator]
          * @return <pre>a^x</pre>
          */
-        fun <T> exp(a: T, mc: MathCalculator<T>): Exp<T> {
+        fun <T : Any> exp(a: T, mc: MathCalculator<T>): Exp<T> {
             if (mc.compare(a, mc.zero) <= 0 || mc.isEqual(mc.one, a)) {
                 throw IllegalArgumentException("a <= 0 || a==1")
             }
@@ -511,7 +509,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          * @param mc a [MathCalculator]
          * @return <pre>log<sup>a</sup>x</pre>
          */
-        fun <T> log(a: T, mc: MathCalculator<T>): Log<T> {
+        fun <T : Any> log(a: T, mc: MathCalculator<T>): Log<T> {
             if (mc.compare(a, mc.zero) <= 0 || mc.isEqual(mc.one, a)) {
                 throw IllegalArgumentException("a <= 0 || a==1")
             }
@@ -527,7 +525,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          * @param mc a [MathCalculator]
          * @return <pre>a*x^n</pre>
          */
-        fun <T> pow(a: T, n: Fraction, mc: MathCalculator<T>): Power<T> {
+        fun <T : Any> pow(a: T, n: Fraction, mc: MathCalculator<T>): Power<T> {
             return if (mc.isZero(a)) {
                 Power(mc)
             } else Power(mc, a, n)
@@ -541,7 +539,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          * @param mc a [MathCalculator]
          * @return <pre>x^n</pre>
          */
-        fun <T> pow(n: Fraction, mc: MathCalculator<T>): Power<T> {
+        fun <T : Any> pow(n: Fraction, mc: MathCalculator<T>): Power<T> {
             return Power(mc, n)
         }
     }

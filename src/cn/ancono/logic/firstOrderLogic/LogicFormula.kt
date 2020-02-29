@@ -57,7 +57,7 @@ sealed class LogicFormula : Comparable<LogicFormula> {
     /**
      * Replaces a single individual term.
      */
-    fun replaceTerm(term: IndividualTerm, replacement: IndividualTerm, checkValid: Boolean = false): LogicFormula {
+    fun replaceTerm(term: IndividualTerm, replacement: IndividualTerm): LogicFormula {
         return replaceTerms(mapOf(term to replacement))
     }
 

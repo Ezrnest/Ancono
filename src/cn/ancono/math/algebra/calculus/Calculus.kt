@@ -3,16 +3,16 @@
  */
 @file:JvmName("Calculus")
 
-package cn.timelives.java.math.algebra.calculus
+package cn.ancono.math.algebra.calculus
 
-import cn.timelives.java.math.function.AbstractSVPFunction
-import cn.timelives.java.math.function.SVFunction
-import cn.timelives.java.math.function.SVPFunction
-import cn.timelives.java.math.function.invoke
-import cn.timelives.java.math.numberModels.Multinomial
-import cn.timelives.java.math.numberModels.Term
-import cn.timelives.java.math.numberModels.expression.DerivativeHelper
-import cn.timelives.java.math.numberModels.expression.Expression
+import cn.ancono.math.function.AbstractSVPFunction
+import cn.ancono.math.function.SVFunction
+import cn.ancono.math.function.SVPFunction
+import cn.ancono.math.function.invoke
+import cn.ancono.math.numberModels.Multinomial
+import cn.ancono.math.numberModels.Term
+import cn.ancono.math.numberModels.expression.DerivativeHelper
+import cn.ancono.math.numberModels.expression.Expression
 import java.util.function.DoubleUnaryOperator
 
 /**
@@ -119,8 +119,8 @@ fun integralApproximationSimpson(fx: DoubleUnaryOperator, a: Double, b: Double, 
  * @param f
  * @return
  */
-fun <T> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
-    val cns = arrayOfNulls<Any>(f.degree) as Array<T>
+fun <T : Any> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
+    @Suppress("UNCHECKED_CAST") val cns = arrayOfNulls<Any>(f.degree) as Array<T>
     val mc = f.mathCalculator
     for (i in 1..f.degree) {
         //(Ax^i)' = iA*x^(i-1)
@@ -134,8 +134,8 @@ fun <T> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
  * @param f
  * @return
  */
-fun <T> integration(f: SVPFunction<T>): AbstractSVPFunction<T> {
-    val cns = arrayOfNulls<Any>(f.degree + 2) as Array<T>
+fun <T : Any> integration(f: SVPFunction<T>): AbstractSVPFunction<T> {
+    @Suppress("UNCHECKED_CAST") val cns = arrayOfNulls<Any>(f.degree + 2) as Array<T>
     val mc = f.mathCalculator
     for (i in 0..f.degree) {
         //(Ax^(i+1))' = (i+1)*Ax^i

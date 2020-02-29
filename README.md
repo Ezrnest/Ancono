@@ -1,7 +1,6 @@
+# Ancono
 
-#Ancono
-
-A Java-based Math library.
+An object-oriented Math library.
 
 ---
 

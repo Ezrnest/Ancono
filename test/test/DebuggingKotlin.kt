@@ -35,7 +35,7 @@ fun p3(){
         5 b 3
         1-c 0 -a
     """.trimIndent()
-    val mat = MatrixSup.parseMatrixD(str,mc,mc::parseExpr)
+    val mat = MatrixSup.parseMatrixD(str, mc, mc::parse)
     mat.printMatrix()
     println(mat.calDetDefault())
     mat.adjugateMatrix().printMatrix()

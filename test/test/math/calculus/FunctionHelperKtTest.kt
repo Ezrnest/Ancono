@@ -15,20 +15,20 @@ class FunctionHelperTestA{
 
     @Test
     fun testLimit0(){
-        val expr = mc.parseExpr("exp(1+1/x,x)")
+        val expr = mc.parse("exp(1+1/x,x)")
         val process = LimitProcess.toPositiveInf<Expression>()
         val limit = FunctionHelper.limitNode(expr.root,process, mc)
         assertNotNull(limit)
-        assertMathEquals(mc.parseExpr("e"),limit!!.value.value,mc)
+        assertMathEquals(mc.parse("e"), limit!!.value.value, mc)
     }
 
     @Test
     fun testLimit1(){
-        val expr = mc.parseExpr("(sin(x)-x)/(x*(cos(x)-1))")
+        val expr = mc.parse("(sin(x)-x)/(x*(cos(x)-1))")
         val process = LimitProcess.toPositiveZero(mc)
         val limit = FunctionHelper.limitNode(expr.root,process, mc)
         assertNotNull(limit)
-        assertMathEquals(mc.parseExpr("1/3"),limit!!.value.value,mc)
+        assertMathEquals(mc.parse("1/3"), limit!!.value.value, mc)
     }
 
     @Test

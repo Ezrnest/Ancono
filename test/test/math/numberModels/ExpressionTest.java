@@ -51,7 +51,7 @@ public class ExpressionTest {
 		print(x);
 	}
 	Expression valueOf(String expr){
-	    return mc.parseExpr(expr);
+        return mc.parse(expr);
     }
 
 	@Test
@@ -113,26 +113,26 @@ public class ExpressionTest {
     }
 
     @Test
-    public void test2(){
-		SimplificationStrategies.setCalRegularization(mc);
-		var ell = EllipseV.standardEquation(a,b,true,mc);
-		var k = mc.parseExpr("k");
-		var d = mc.parseExpr("d");
-		var l1 = Line.slopeIntercept(k,d,mc);
-		var list = ell.intersectPoints(l1);
-		var A = list.get(0);
-		var B = list.get(1);
-		var M = A.middle(B);
-		var l2 = Line.parallelY(M.x,mc);
-		var P1 = Point.valueOf(x,ell.computeY(x),mc);
-		var P2 = Point.valueOf(P1.x,mc.negate(P1.y),mc);
-		var AP1 = Line.twoPoint(A,P1);
-		var BP2 = Line.twoPoint(B,P2);
-		var E = AP1.intersectPoint(l2);
-		var F = BP2.intersectPoint(l2);
-		var result = mc.multiply(mc.subtract(E.y,M.y),mc.subtract(F.y,M.y));
-		var resultShouldBe = mc.parseExpr("(-a^2*b^2*k^2-b^4+b^2*d^2)/(a^2*k^2+b^2)");
-		assertTrue("",mc.isEqual(result,resultShouldBe));
+    public void test2() {
+        SimplificationStrategies.setCalRegularization(mc);
+        var ell = EllipseV.standardEquation(a, b, true, mc);
+        var k = mc.parse("k");
+        var d = mc.parse("d");
+        var l1 = Line.slopeIntercept(k, d, mc);
+        var list = ell.intersectPoints(l1);
+        var A = list.get(0);
+        var B = list.get(1);
+        var M = A.middle(B);
+        var l2 = Line.parallelY(M.x, mc);
+        var P1 = Point.valueOf(x, ell.computeY(x), mc);
+        var P2 = Point.valueOf(P1.x, mc.negate(P1.y), mc);
+        var AP1 = Line.twoPoint(A, P1);
+        var BP2 = Line.twoPoint(B, P2);
+        var E = AP1.intersectPoint(l2);
+        var F = BP2.intersectPoint(l2);
+        var result = mc.multiply(mc.subtract(E.y, M.y), mc.subtract(F.y, M.y));
+        var resultShouldBe = mc.parse("(-a^2*b^2*k^2-b^4+b^2*d^2)/(a^2*k^2+b^2)");
+        assertTrue("", mc.isEqual(result, resultShouldBe));
     }
 
     @Test
@@ -144,19 +144,21 @@ public class ExpressionTest {
 	}
 
 	@Test
-	public void testSubstitute(){
-		SimplificationStrategies.setCalRegularization(mc);
-		Expression expr = mc.parseExpr("(a+b)/(a-b)+(a+2b)/(a-b)");
-		assertMathEquals(expr,valueOf("(2a+3b)/(a-b)"),mc);
-		assertMathEquals(
-				mc.substitute(expr,"a",valueOf("exp(a,2)")),
-				valueOf("(2a^2+3b)/(a^2-b)"),mc);
-		Function<String,Expression> f = x ->{
-			switch(x){
-				case "a" : return valueOf("x");
-				case "b" : return valueOf("y");
-			}
-			return valueOf("1");
+	public void testSubstitute() {
+        SimplificationStrategies.setCalRegularization(mc);
+        Expression expr = mc.parse("(a+b)/(a-b)+(a+2b)/(a-b)");
+        assertMathEquals(expr, valueOf("(2a+3b)/(a-b)"), mc);
+        assertMathEquals(
+                mc.substitute(expr, "a", valueOf("exp(a,2)")),
+                valueOf("(2a^2+3b)/(a^2-b)"), mc);
+        Function<String, Expression> f = x -> {
+            switch (x) {
+                case "a":
+                    return valueOf("x");
+                case "b":
+                    return valueOf("y");
+            }
+            return valueOf("1");
         };
         ToDoubleFunction<String> f2 = x -> {
             switch (x) {
@@ -171,21 +173,21 @@ public class ExpressionTest {
         };
         assertMathEquals(expr.compute(f, mc), valueOf("(2x+3y)/(x-y)"), mc);
         assertMathEquals(expr.computeDouble(f2), 16d / 3, Calculators.getCalDoubleDev());
-        assertMathEquals(mc.parseExpr("sin(x)").computeDouble(f2), 1d, Calculators.getCalDoubleDev());
+        assertMathEquals(mc.parse("sin(x)").computeDouble(f2), 1d, Calculators.getCalDoubleDev());
     }
 
 	@Test
-	public void testSubstitute2(){
-	    SimplificationStrategies.setCalRegularization(mc);
-	    Expression expr = mc.parseExpr("acos(x)");
-	    expr = mc.substitute(expr,"x",Expression.ZERO);
-	    assertEquals("The result of substituting acos(x)|x=0 should be a",expr.toString(),"a");
+	public void testSubstitute2() {
+        SimplificationStrategies.setCalRegularization(mc);
+        Expression expr = mc.parse("acos(x)");
+        expr = mc.substitute(expr, "x", Expression.ZERO);
+        assertEquals("The result of substituting acos(x)|x=0 should be a", expr.toString(), "a");
     }
 
     @Test
     public void test(){
         SimplificationStrategies.setCalRegularization(mc);
-        Expression expr = mc.parseExpr("acos(exp(sin(x),2)+exp(cos(x),2)-1)");
+        Expression expr = mc.parse("acos(exp(sin(x),2)+exp(cos(x),2)-1)");
         assertEquals(expr.toString(),"a");
     }
 

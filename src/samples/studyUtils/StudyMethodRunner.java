@@ -1,7 +1,7 @@
 /**
  * 2017-06-13
  */
-package test.math.comp.studyUtils;
+package samples.studyUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

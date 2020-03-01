@@ -1,22 +1,21 @@
 /**
  * 2017-10-29
  */
-package test.math.comp.planeAg;
+package samples.planeAG;
 
+import cn.ancono.math.MathCalculator;
 import cn.ancono.math.equation.SVPEquation.QEquation;
 import cn.ancono.math.function.QuadraticFunction;
+import cn.ancono.math.geometry.analytic.planeAG.Point;
+import cn.ancono.math.geometry.analytic.planeAG.*;
+import cn.ancono.math.geometry.analytic.planeAG.curve.EllipseV;
+import cn.ancono.math.geometry.visual.visual2D.PlaneDrawer;
 import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.expression.ExprCalculator;
 import cn.ancono.math.numberModels.expression.Expression;
 import cn.ancono.math.numberModels.expression.SimplificationStrategies;
-import cn.ancono.math.geometry.analytic.planeAG.*;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
-import cn.ancono.math.geometry.analytic.planeAG.curve.EllipseV;
-import cn.ancono.math.geometry.visual.visual2D.PlaneDrawer;
-import test.math.comp.studyUtils.Run;
-import test.math.comp.studyUtils.StudyMethodRunner;
+import samples.studyUtils.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -26,27 +25,26 @@ import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-
 import static cn.ancono.utilities.Printer.print;
 
 /**
  * @author liyicheng
  * 2017-10-29 10:52
- *
  */
 public final class CodePlace {
     static final ExprCalculator mc = ExprCalculator.Companion.getNewInstance();
-	static final MathCalculator<Double> mcd = Calculators.getCalculatorDoubleDev();
-	Point<Expression> A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T;
-	PVector<Expression> v1,v2,v3,v4,v5,v6;
-	Line<Expression> l1,l2,l3,l4,l5,l6;
-	Expression x,y,z,a,b,c,d,e,f,t,θ,α,β,k;
-	/**
-	 * 
-	 */
-	public CodePlace() {
-		sp.setShowInput(true);
-		sp.giveCodePlane(this);
+    static final MathCalculator<Double> mcd = Calculators.getCalDoubleDev();
+    Point<Expression> A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T;
+    PVector<Expression> v1, v2, v3, v4, v5, v6;
+    Line<Expression> l1, l2, l3, l4, l5, l6;
+    Expression x, y, z, a, b, c, d, e, f, t, θ, α, β, k;
+
+    /**
+     *
+     */
+    public CodePlace() {
+        sp.setShowInput(true);
+        sp.giveCodePlane(this);
 		
 	}
 	PlaneObjectHandler<Expression> sp = new PlaneObjectHandler<>(CodePlace::of,
@@ -211,8 +209,8 @@ public final class CodePlace {
 		print(l1.intersectPoint(l2));
 	}
 
-	@Run
-	public void m8(){
+//	@Run
+public void m8(){
 		/*
 		high school entrance exam real exercise:
 		2011.23
@@ -256,27 +254,30 @@ public final class CodePlace {
 			var p = Point.valueOf(x,y,mcd);
 			return AB3.distanceSq(p)-CD3.distanceSq(p);
 		});
-		saveImage(drawer.draw(rect, 500,500),"3");
-	}
-	/**题目：
-	 * 抛物线，直线l，交于AB，AB中点为M，
-	 * 过M垂直于x轴作l2交抛物线于G，
-	 * 抛物线上任取点P，AP,BP分交l2于E,F,
-	 * 证明G为EF中点
-	 * y = ax^2 + bx + c
-	 * y = kx + d	                      */
-//	@Run
-	public void m9(){
-		input("a=a|b=b|c=c|k=k|d=d|x=x");
-		//将题目所用变量输入到程序里
-		enableSimplify();
-		//启用化简
-		var parabola = QuadraticFunction.generalFormula(a,b,c,mc);//QuadraticFunction:二次函数
-		//创建抛物线：y = ax^2 + bx + c
-		print(parabola.toConicSection());//.toConicSection():将二次函数表示成圆锥曲线(ConicSection)
-		//输出抛物线解析式，
-		var line = Line.slopeIntercept(k,d,mc);
-		//创建直线：y = kx + d
+    saveImage(drawer.draw(rect, 500, 500), "3");
+}
+
+    /**
+     * 题目：
+     * 抛物线，直线l，交于AB，AB中点为M，
+     * 过M垂直于x轴作l2交抛物线于G，
+     * 抛物线上任取点P，AP,BP分交l2于E,F,
+     * 证明G为EF中点
+     * y = ax^2 + bx + c
+     * y = kx + d
+     */
+    @Run
+    public void m9() {
+        input("a=a|b=b|c=c|k=k|d=d|x=x");
+        //将题目所用变量输入到程序里
+        enableSimplify();
+        //启用化简
+        var parabola = QuadraticFunction.generalFormula(a, b, c, mc);//QuadraticFunction:二次函数
+        //创建抛物线：y = ax^2 + bx + c
+        print(parabola.toConicSection());//.toConicSection():将二次函数表示成圆锥曲线(ConicSection)
+        //输出抛物线解析式，
+        var line = Line.slopeIntercept(k, d, mc);
+        //创建直线：y = kx + d
 		var list = parabola.toConicSection().intersectPoints(line);
 		//获得抛物线与直线的交点，intersect points:交点
 		A = list.get(0);
@@ -323,30 +324,67 @@ public final class CodePlace {
 		var M = A.middle(B);
 		var l2 = Line.parallelY(M.x,mcd);
 		double[] vals = {1.5,1.3,1,0.5,0.3,-0.3,-0.5,-1};
-		for(double x : vals){
-			var P1 = Point.valueOf(x,ell.computeY(x),mcd);
-			var P2 = Point.valueOf(x,-ell.computeY(x),mcd);
-			var AP = Line.twoPoint(A,P1);
-			var BP = Line.twoPoint(B,P2);
-			var E = AP.intersectPoint(l2);
-			var F = BP.intersectPoint(l2);
-			print(E.distance(M)*F.distance(M));
-		}
+		for(double x : vals) {
+            var P1 = Point.valueOf(x, ell.computeY(x), mcd);
+            var P2 = Point.valueOf(x, -ell.computeY(x), mcd);
+            var AP = Line.twoPoint(A, P1);
+            var BP = Line.twoPoint(B, P2);
+            var E = AP.intersectPoint(l2);
+            var F = BP.intersectPoint(l2);
+            print(E.distance(M) * F.distance(M));
+        }
+    }
 
-	}
 
-//	@Run
-	public void m11(){
-		input("k=k|d=d|x=x");
-		enableSimplify();
-		var ell = standardEllipse();
-		print(ell);
-		l1 = Line.slopeIntercept(k,d,mc);
-		print(l1);
-		var list = ell.intersectPoints(l1);
-		var A = list.get(0);
-		var B = list.get(1);
-		print(A);
+    @Run
+    public void m11() {
+        input("k=k|d=d|x=x");
+        enableSimplify();
+        var ell = standardEllipse();
+        print(ell);
+        l1 = Line.slopeIntercept(k, d, mc);
+        print(l1);
+        var list = ell.intersectPoints(l1);
+        var A = list.get(0);
+        var B = list.get(1);
+        var M = A.middle(B);
+        var l2 = Line.parallelY(M.x, mc);
+        var P1 = Point.valueOf(x, ell.computeY(x), mc);
+        var P2 = Point.valueOf(P1.x, mc.negate(P1.y), mc);
+        var AP1 = Line.twoPoint(A, P1);
+        var BP2 = Line.twoPoint(B, P2);
+        var E = AP1.intersectPoint(l2);
+        var F = BP2.intersectPoint(l2);
+        var result = mc.multiply(mc.subtract(E.y, M.y), mc.subtract(F.y, M.y));
+        print(result.toString());
+        print(result.toLatexString());
+
+//		Node.Fraction f = (Node.Fraction)result.getRoot();
+//		PolynomialOld nume = Node.getPolynomialPart(f.getC1(),mc);
+//		PolynomialOld deno = Node.getPolynomialPart(f.getC2(),mc);
+//		var nx = PolynomialX.fromPolynomial(nume,"x").coefficientVector();
+//		var dx = PolynomialX.fromPolynomial(deno,"x").coefficientVector();
+//
+//		print(nx.isParallel(dx));
+//		PolynomialOld p1 = nx.getNumber(0);
+//		PolynomialOld p2 = dx.getNumber(0);
+//		var list2 = PolyCalculator.getSimplifier().simplify(Arrays.asList(p1,p2));
+//		print(list2);
+    }
+
+
+    //	@Run
+    public void m12() {
+        input("k=k|d=d|x=x");
+        enableSimplify();
+        var ell = standardEllipse();
+        print(ell);
+        l1 = Line.slopeIntercept(k, d, mc);
+        print(l1);
+        var list = ell.intersectPoints(l1);
+        var A = list.get(0);
+        var B = list.get(1);
+        print(A);
 		var M = A.middle(B);
 		var l2 = Line.parallelY(M.x,mc);
 		var P1 = Point.valueOf(x,ell.computeY(x),mc);
@@ -369,7 +407,6 @@ public final class CodePlace {
             }
             return 1d;
         }));
-
 	}
 
 }

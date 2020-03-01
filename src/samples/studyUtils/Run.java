@@ -1,4 +1,4 @@
-package test.math.comp.studyUtils;
+package samples.studyUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

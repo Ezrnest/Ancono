@@ -1,4 +1,4 @@
-package test.math.comp.planeAg;
+package samples.planeAG;
 
 import cn.ancono.utilities.Printer;
 import cn.ancono.utilities.dynamic.DynamicCompileEngine;
@@ -135,7 +135,7 @@ public class InputFrame extends JFrame {
 	private JTextArea textArea;
 	private final Executor exc = Executors.newSingleThreadExecutor();
 	
-	private void initGenerator(){
+	private void initGenerator() {
         generator.setPublicClass()
                 .setClassName("JavaMethodObject")
                 .addImport("cn.ancono.utilities.*")
@@ -143,8 +143,8 @@ public class InputFrame extends JFrame {
                 .addImport("cn.ancono.utilities.math.planeAG.*")
                 .addImport("cn.ancono.utilities.math.number_types.*")
                 .addImportStatic("cn.ancono.utilities.Printer.*")
-			.addImplement("Runnable");
-	}
+                .addImplement("Runnable");
+    }
 	
 	private void launchCode(){
 		launchCode(textArea.getText());
@@ -193,21 +193,21 @@ public class InputFrame extends JFrame {
 		exc.execute(new Runnable(){
 			@Override
 			public void run() {
-				String code = defineAndReplace(code0);
-				Printer.print(code);
-				Printer.print_();
-				PrintWriter pw = Printer.getOutput();
+                String code = defineAndReplace(code0);
+                Printer.print(code);
+                Printer.print_();
+                PrintWriter pw = Printer.getOutput();
                 Printer.reset(writer);
-				try{
-					JavaCodeGenerator g2 = generator.clone();
-					CharSequence javaCode = g2.setClassName(g2.getClassName()+Long.toString(Math.abs(rd.nextLong())))
-						.getMethodBuilder("run")
-						.publicMod()
-						.returnVoid()
-						.setBody(code)
-						.build()
-					.buildCode();
-					Class<?> runnable = engine.compileAndLoadClass(g2.getClassName(), javaCode);
+                try {
+                    JavaCodeGenerator g2 = generator.clone();
+                    CharSequence javaCode = g2.setClassName(g2.getClassName() + Long.toString(Math.abs(rd.nextLong())))
+                            .getMethodBuilder("run")
+                            .publicMod()
+                            .returnVoid()
+                            .setBody(code)
+                            .build()
+                            .buildCode();
+                    Class<?> runnable = engine.compileAndLoadClass(g2.getClassName(), javaCode);
 					if(runnable==null){
 						output.append("Init failed:");
 						output.append(engine.getFailureMessage());
@@ -215,17 +215,17 @@ public class InputFrame extends JFrame {
 						System.err.println(javaCode);
 					}else{
 						try {
-							Runnable task = (Runnable) runnable.getConstructor().newInstance();
-							task.run();
-						} catch (Exception e) {
+                            Runnable task = (Runnable) runnable.newInstance();
+                            task.run();
+                        } catch (Exception e) {
 							output.append("Init failed:");
 							output.append(e.toString());
 						}
 					}
 					Printer.print_();
-				}finally{
+				}finally {
                     Printer.reset(pw);
-				}
+                }
 				running = false;
 			}
 		});

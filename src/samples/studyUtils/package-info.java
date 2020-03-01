@@ -6,4 +6,4 @@
  * 2017-06-13 17:44
  *
  */
-package test.math.comp.studyUtils;
+package samples.studyUtils;

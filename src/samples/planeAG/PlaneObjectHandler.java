@@ -1,7 +1,7 @@
 /**
  * 2017-04-14
  */
-package test.math.comp.planeAg;
+package samples.planeAG;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.geometry.analytic.planeAG.Line;
@@ -20,33 +20,34 @@ import java.util.regex.Pattern;
 import static cn.ancono.utilities.Printer.print;
 
 /**
- * 
  * @author liyicheng
  * 2017-04-14 20:18
- *
  */
 public class PlaneObjectHandler<T> {
-	private Map<String,Point<T>> pmap;
-	private Map<String,Line<T>> lmap;
-	private Map<String,PVector<T>> vmap;
-	private Map<String,T> nmap;
-	private Function<String,T> parser;
-	private MathCalculator<T> mc;
-	private List<Map<?,?>> maps;
-	/**
-	 * 
-	 */
-	public PlaneObjectHandler(Function<String,T> parser,MathCalculator<T> mc) {
-		pmap = new HashMap<>();
-		lmap = new HashMap<>();
-		vmap = new HashMap<>();
-		nmap = new HashMap<>();
-		maps = new ArrayList<>();
-		maps.add(pmap);
-		maps.add(lmap);
-		maps.add(vmap);
-		maps.add(nmap);
-		this.parser = parser;
+    private Map<String, Point<T>> pmap;
+    private Map<String, Line<T>> lmap;
+    private Map<String, PVector<T>> vmap;
+    private Map<String, T> nmap;
+    private Function<String, T> parser;
+    private MathCalculator<T> mc;
+    private List<Map<?, ?>> maps;
+
+    /**
+     *
+     * @param parser
+     * @param mc
+     */
+    public PlaneObjectHandler(Function<String, T> parser, MathCalculator<T> mc) {
+        pmap = new HashMap<>();
+        lmap = new HashMap<>();
+        vmap = new HashMap<>();
+        nmap = new HashMap<>();
+        maps = new ArrayList<>();
+        maps.add(pmap);
+        maps.add(lmap);
+        maps.add(vmap);
+        maps.add(nmap);
+        this.parser = parser;
 		this.mc = mc;
 	}
 	

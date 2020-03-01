@@ -12,7 +12,7 @@ import org.junit.Test
 
 class LinearTransTest{
     val mc = Fraction.calculator
-    val par : (String) -> Fraction = Fraction.Companion::valueOf
+    val par: (String) -> Fraction = Fraction.Companion::of
 
     @Test
     fun testTransMatrix(){

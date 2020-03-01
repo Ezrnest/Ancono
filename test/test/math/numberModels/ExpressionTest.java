@@ -157,19 +157,22 @@ public class ExpressionTest {
 				case "b" : return valueOf("y");
 			}
 			return valueOf("1");
-		};
-		ToDoubleFunction<String> f2 = x->{
-			switch(x){
-				case "a" : return 5d;
-				case "b" : return 2d;
-				case "x" : return Math.PI/2;
-			}
-			return 1d;
-		};
-        assertMathEquals(expr.compute(f,mc),valueOf("(2x+3y)/(x-y)"),mc);
-        assertMathEquals(expr.computeDouble(f2),16d/3,Calculators.getCalculatorDoubleDev());
-        assertMathEquals(mc.parseExpr("sin(x)").computeDouble(f2),1d,Calculators.getCalculatorDoubleDev());
-	}
+        };
+        ToDoubleFunction<String> f2 = x -> {
+            switch (x) {
+                case "a":
+                    return 5d;
+                case "b":
+                    return 2d;
+                case "x":
+                    return Math.PI / 2;
+            }
+            return 1d;
+        };
+        assertMathEquals(expr.compute(f, mc), valueOf("(2x+3y)/(x-y)"), mc);
+        assertMathEquals(expr.computeDouble(f2), 16d / 3, Calculators.getCalDoubleDev());
+        assertMathEquals(mc.parseExpr("sin(x)").computeDouble(f2), 1d, Calculators.getCalDoubleDev());
+    }
 
 	@Test
 	public void testSubstitute2(){

@@ -5,4 +5,4 @@
  * @author lyc
  *
  */
-package test.math.comp.planeAg;
+package samples.planeAG;

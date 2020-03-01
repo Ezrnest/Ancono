@@ -1,7 +1,6 @@
 package test
 
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup
-import cn.ancono.math.algebra.linearAlgebra.Vector
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.times
@@ -16,7 +15,7 @@ fun main(args: Array<String>) {
     p2()
 }
 fun p2(){
-    val mcd = Calculators.getCalculatorDoubleDev()
+    val mcd = Calculators.getCalDoubleDev()
     val str = """
             1 2 5
             1 0 1

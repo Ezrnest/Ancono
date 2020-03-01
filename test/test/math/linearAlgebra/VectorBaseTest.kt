@@ -1,23 +1,19 @@
 package test.math.linearAlgebra
 
-import cn.ancono.math.algebra.linearAlgebra.Matrix
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup
 import cn.ancono.math.algebra.linearAlgebra.Vector
 import cn.ancono.math.algebra.linearAlgebra.VectorBase
 import cn.ancono.math.algebra.linearAlgebra.space.LinearSpace
-import cn.ancono.math.algebra.linearAlgebra.space.VectorSpace
 import cn.ancono.math.get
 import cn.ancono.math.numberModels.Fraction
-import org.junit.Assert.*
 import org.junit.Test
-import kotlin.test.assert
 
 /**
  * Contains tests for vector base and linear space.
  */
 class VectorBaseTest{
     val mc = Fraction.calculator
-    val par : (String) -> Fraction = Fraction.Companion::valueOf
+    val par: (String) -> Fraction = Fraction.Companion::of
 
     @Test
     fun testIntersect(){

@@ -103,4 +103,11 @@ public class MultinomialTest {
         var m1 = m.reciprocal();
         assertEquals("m*(1/m) = 1", m.multiply(m1), Multinomial.ONE);
     }
+
+    @Test
+    public void gcd1() {
+        var m1 = Multinomial.valueOf("xy+x");
+        var m2 = Multinomial.valueOf("y^2+2y+1");
+        print(Multinomial.gcd(m1, m2));
+    }
 }

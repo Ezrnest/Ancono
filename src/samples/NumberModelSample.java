@@ -6,7 +6,7 @@ import cn.ancono.math.numberModels.structure.Complex;
 
 public class NumberModelSample {
     public static void useFraction1() {
-        Fraction a = Fraction.valueOf("1/2");
+        Fraction a = Fraction.of("1/2");
         System.out.println(a);
         Fraction b = Fraction.ONE;
         var c = a.add(b);

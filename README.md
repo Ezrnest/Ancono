@@ -62,9 +62,7 @@ System.out.println(a);
 Fraction b = Fraction.ONE;
 var c = a.add(b);
 c = c.subtract(Fraction.ZERO);
-System.out.println(c);
 c = c.multiply(a);
-System.out.println(c);
 c = c.add(1);
 System.out.println(c); 
 //Result: 7/4
@@ -107,17 +105,61 @@ var f3 = cal.divide(f1, f2);
 System.out.println(f3);
 ```
 
+### <a name="expressions">Matrix</a>
+```java
+var cal = Calculators.getCalInteger();
+var calFrac = Fraction.getCalculator();
+var m1 = Matrix.of(cal, 2, 2,
+        1, 2,
+        4, 5).mapTo(Fraction::of, calFrac);
+var m2 = Matrix.of(cal, 2, 2,
+        3, -6,
+        -4, 8).mapTo(Fraction::of, calFrac);
+var m3 = Matrix.multiply(m1, m2);
+m3.printMatrix();
+var det = m3.calDet();
+var rank = m3.calRank();
+System.out.println("Det of the matrix: " + det);
+System.out.println("Rank of the matrix: " + rank);
+```
+
+### <a name="expressions">Finite groups</a>
+```java
+var G = PermutationGroup.symmetricGroup(4);
+var H = PermutationGroup.generateFrom(
+        Permutations.swap(4, 0, 1),
+        Permutations.swap(4, 2, 3)
+);
+var H1 = G.normalizer(H);
+System.out.println(H1.getSet());
+System.out.println(G.indexOf(H1));
+```
 
 
 ## Number models
 
+To be capable of dealing with different representations of numbers and expressions, Ancono defines the interface of 
+`MathCalculator`, which contains a basic set of operations. Math objects in Ancono usually requires an instance of
+`MathCalculator` when construction. Implementations of `MathCalculator` of build-in number types(int, long, double) are 
+provided in `Calculators`.
 
 
 ## Usage
-Users can utilize this library by simply import the jar file downloaded from /out/artifacts. If the 
+Users can utilize this library by simply import the jar file downloaded from /out/artifacts. If the visualization module 
+will be used, please make sure [JavaFx](https://www.javafxdeveloper.com) is installed.
+
+## Language
+Ancono is written by both Java and [Kotlin](https://kotlinlang.org) and you can use it with Java only. However, some 
+extra features (such as operator override) are only possible if you use Kotlin. 
 
 ## Dependencies
+Core:
+* Java: JDK 11
+* JavaFx: 11
+* Kotlin: 1.3
 
+Test:
+* JUnit 4
 
 ## Development
 Project Ancono welcomes anyone to join in the development. 

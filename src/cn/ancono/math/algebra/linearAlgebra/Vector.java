@@ -320,7 +320,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * Create a new Matrix with the given fraction array.A boolean representing whether the
      * vector should be a row-vector or column-vector is necessary.The {@link Matrix} returned by
      * this method generally has a better performance in contrast to the matrix return by simply call
-     * {@link Matrix#valueOf(Object[][], MathCalculator)} using a two-dimension array as parameter.
+     * {@link Matrix#of(Object[][], MathCalculator)} using a two-dimension array as parameter.
      * <p>For example , assume {@code fs} is
      * an array contains following values:[1,3,4,5],then {@code createVector(true,fs} will return a
      * matrix whose row count is one and column count is 4, while {@code createVector(false,fs} will
@@ -346,7 +346,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * Create a new Matrix with the given fraction array.A boolean representing whether the
      * vector should be a row-vector or column-vector is necessary.The {@link Matrix} returned by
      * this method generally has a better performance in contrast to the matrix return by simply call
-     * {@link Matrix#valueOf(Object[][], MathCalculator)} using a two-dimension array as parameter.
+     * {@link Matrix#of(Object[][], MathCalculator)} using a two-dimension array as parameter.
      * <p>For example , assume {@code ns} is
      * an array contains following values:[1,3,4,5],then {@code createVector(true,ns} will return a
      * matrix whose row count is one and column count is 4, while {@code createVector(false,ns} will
@@ -355,7 +355,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @param isRow decides whether the vector return is a row-vector
      * @param ns    the numbers
      * @return a newly created vector
-     * @see DVector#valueOf(Object[][], MathCalculator)
+     * @see DVector#of(Object[][], MathCalculator)
      */
     public static Vector<Long> createVector(boolean isRow, long[] ns) {
         Long[] vec = new Long[ns.length];
@@ -391,7 +391,7 @@ public abstract class Vector<T> extends Matrix<T> {
 
 
     /**
-     * This method provides a more suitable implement for vector adding than {@link Matrix#addMatrix(Matrix, Matrix)},
+     * This method provides a more suitable implement for vector adding than {@link Matrix#add(Matrix, Matrix)},
      * this method will add the two vector and return a column vector as the result.
      *
      * @return a column vector as result

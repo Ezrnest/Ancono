@@ -114,10 +114,10 @@ object AlgebraUtil {
         //solution = const.factor / first.factor
         val ff = MathUtils.factors(first.absoluteValue)
         val cf = MathUtils.factors(const.absoluteValue)
-        val pf = p.mapTo(Function { it -> Fraction.valueOf(it) }, Fraction.calculator)
+        val pf = p.mapTo(Function { it -> Fraction.of(it) }, Fraction.calculator)
         for (nume in cf) {
             for (deno in ff) {
-                var root = Fraction.valueOf(nume, deno)
+                var root = Fraction.of(nume, deno)
 
                 if (pf.compute(root).isZero()) {
                     return root
@@ -133,7 +133,7 @@ object AlgebraUtil {
     }
 
     fun Polynomial<Long>.toFractionPoly(): Polynomial<Fraction> {
-        return this.mapTo(Function { Fraction.valueOf(it) }, Fraction.calculator)
+        return this.mapTo(Function { Fraction.of(it) }, Fraction.calculator)
     }
 
     /**

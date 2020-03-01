@@ -110,7 +110,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
         mat[2][0] = vec.z;
         mat[2][1] = l.vec.z;
         mat[2][2] = getMc().subtract(l.p0.z, p0.z);
-        return Matrix.valueOf(mat, getMc());
+        return Matrix.of(mat, getMc());
     }
 
     /**

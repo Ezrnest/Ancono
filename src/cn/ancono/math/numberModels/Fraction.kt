@@ -413,7 +413,7 @@ internal constructor(
                 return Fraction.ONE
             } else {
                 if (exp.denominator % 2 == 0L) {
-                    ExceptionUtil.negativeSquare()
+                    ExceptionUtil.sqrtForNegative()
                 }
                 return Fraction.NEGATIVE_ONE
             }
@@ -421,7 +421,7 @@ internal constructor(
         var signum = 1
         if (this.signum < 0) {
             if (exp.denominator % 2 == 0L)
-                ExceptionUtil.negativeSquare()
+                ExceptionUtil.sqrtForNegative()
             signum = -1
         }
 
@@ -476,7 +476,7 @@ internal constructor(
             return ZERO
         }
         val re = this.divide(divisor)
-        return Fraction.valueOf(re.toLong())
+        return Fraction.of(re.toLong())
     }
 
     /**
@@ -896,7 +896,7 @@ internal constructor(
         }
 
         @JvmStatic
-        fun valueOf(number: Long): Fraction {
+        fun of(number: Long): Fraction {
             return when {
                 number == 0L -> ZERO
                 number == 1L -> ONE
@@ -914,7 +914,7 @@ internal constructor(
          * @return a new fraction
          */
         @JvmStatic
-        fun valueOf(numerator: Long, denominator: Long): Fraction {
+        fun of(numerator: Long, denominator: Long): Fraction {
             var numerator1 = numerator
             var denominator1 = denominator
             if (numerator1 == 0L) {
@@ -944,7 +944,7 @@ internal constructor(
          * @return a fraction
          */
         @JvmStatic
-        fun valueOfDouble(d: Double, precision: Int): Fraction {
+        fun ofDouble(d: Double, precision: Int): Fraction {
             var d1 = d
             if (precision <= 0 || precision > maxPrecision) {
                 throw IllegalArgumentException("Bad precision:$precision")
@@ -1064,15 +1064,15 @@ internal constructor(
          * @return
          */
         @JvmStatic
-        fun valueOf(expr: String): Fraction {
+        fun of(expr: String): Fraction {
             var m = EXPRESSION_PATTERN.matcher(expr)
             if (m.matches()) {
                 val n = m.group(1).toLong()
                 return try {
                     val d = m.group(3).toLong()
-                    valueOf(n, d)
+                    of(n, d)
                 } catch (e: Exception) {
-                    valueOf(n)
+                    of(n)
                 }
             }
             m = DECIMAL_PATTERN.matcher(expr)
@@ -1082,7 +1082,7 @@ internal constructor(
                 val digits = n2.length
                 val deno = MathUtils.power(10L, digits)
                 val nume = n1 * deno + n2.toLong()
-                return valueOf(nume, deno)
+                return of(nume, deno)
             }
 
             throw NumberFormatException("Illegal Fraction:$expr")
@@ -1114,11 +1114,11 @@ internal constructor(
         }
 
         @JvmStatic
-        fun valueOf(signum: Int, numerator: Long, denominator: Long): Fraction {
+        fun of(signum: Int, numerator: Long, denominator: Long): Fraction {
             if (signum == 0) {
                 return ZERO
             }
-            return valueOf(if (signum > 0) {
+            return of(if (signum > 0) {
                 numerator
             } else {
                 -numerator
@@ -1161,9 +1161,9 @@ internal constructor(
 
 }
 
-fun Long.toFrac(): Fraction = Fraction.valueOf(this)
+fun Long.toFrac(): Fraction = Fraction.of(this)
 
-fun Int.toFrac(): Fraction = Fraction.valueOf(this.toLong())
+fun Int.toFrac(): Fraction = Fraction.of(this.toLong())
 
 
 //fun main(args: Array<String>) {

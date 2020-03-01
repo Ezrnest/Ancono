@@ -5,8 +5,6 @@ import cn.ancono.math.equation.inequation.SVPInequation;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.Fraction;
-import cn.ancono.math.numberModels.expression.ExprCalculator;
-import cn.ancono.math.numberModels.expression.Expression;
 import cn.ancono.math.numberTheory.Primes;
 import cn.ancono.math.set.IntervalUnion;
 import cn.ancono.utilities.ArraySup;
@@ -317,6 +315,26 @@ public class MathUtils {
     }
 
     /**
+     * Returns the quotient of <code>a/b</code> if it is divisible, throws an Exception otherwise.
+     */
+    public static long divideExact(long a, long b) {
+        if (a % b != 0) {
+            ExceptionUtil.notExactDivision(a, b);
+        }
+        return a / b;
+    }
+
+    /**
+     * Returns the quotient of <code>a/b</code> if it is divisible, throws an Exception otherwise.
+     */
+    public static int divideExact(int a, int b) {
+        if (a % b != 0) {
+            ExceptionUtil.notExactDivision(a, b);
+        }
+        return a / b;
+    }
+
+    /**
      * Calculate the square root of {@code n}.If n cannot be expressed as
      * a square of an integer,then {@code -1} will be returned. Throws an
      * exception if {@code n<0}
@@ -326,7 +344,7 @@ public class MathUtils {
      */
     public static long squareRootExact(long n) {
         if (n < 0) {
-            throw new ArithmeticException();
+            ExceptionUtil.sqrtForNegative();
         }
         if (n == 0) {
             return 0;
@@ -1400,7 +1418,7 @@ public class MathUtils {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).floor());
             base *= power(factor[0], basePow);
-            int rePow = Fraction.valueOf(basePow).divide(exp).toInt();
+            int rePow = Fraction.of(basePow).divide(exp).toInt();
             result *= power(factor[0], rePow);
         }
         return new long[]{result, base};
@@ -1448,7 +1466,7 @@ public class MathUtils {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).ceil());
             base *= power(factor[0], basePow);
-            int rePow = Fraction.valueOf(basePow).divide(exp).toInt();
+            int rePow = Fraction.of(basePow).divide(exp).toInt();
             result *= power(factor[0], rePow);
         }
         return new long[]{result, base};

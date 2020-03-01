@@ -1296,7 +1296,7 @@ public abstract class Node implements Computable, Serializable {
         @Override
         public double computeDouble(ToDoubleFunction<String> valueMap) {
             double x = child.computeDouble(valueMap);
-            return ExprFunction.findFunctionAndApply(Calculators.getCalculatorDoubleDev(), functionName, x);
+            return ExprFunction.findFunctionAndApply(Calculators.getCalDoubleDev(), functionName, x);
         }
     }
 
@@ -1414,7 +1414,7 @@ public abstract class Node implements Computable, Serializable {
         public double computeDouble(ToDoubleFunction<String> valueMap) {
             double p1 = c1.computeDouble(valueMap);
             double p2 = c2.computeDouble(valueMap);
-            return ExprFunction.findFunctionAndApply(Calculators.getCalculatorDoubleDev(), functionName, p1, p2);
+            return ExprFunction.findFunctionAndApply(Calculators.getCalDoubleDev(), functionName, p1, p2);
         }
 
     }

@@ -197,7 +197,7 @@ object EquationSup {
         val cf = MathUtils.factors(const)
         for (nume in cf) {
             for (deno in ff) {
-                var root = Fraction.valueOf(nume, deno)
+                var root = Fraction.of(nume, deno)
                 if (equa.isSolution(root)) {
                     result.add(root)
                 }

@@ -24,7 +24,7 @@ object ExceptionUtil {
      * root of a negative number.
      */
     @JvmStatic
-    fun negativeSquare(): Nothing {
+    fun sqrtForNegative(): Nothing {
         throw ArithmeticException("Negative square: Sqr(-x)")
     }
 
@@ -49,5 +49,15 @@ object ExceptionUtil {
     @JvmStatic
     fun notImplemented(reason: String): Nothing {
         throw NotImplementedError(reason)
+    }
+
+    /**
+     * Throws an exception indicating the division can not be done because [x] is not exact divisible by [y].
+     *
+     * For example, `2` is exact not divisible by `3`.
+     */
+    @JvmStatic
+    fun notExactDivision(x: Any, y: Any): Nothing {
+        throw UnsupportedCalculationException("Not exact division: $x / $y")
     }
 }

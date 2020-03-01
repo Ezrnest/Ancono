@@ -316,7 +316,11 @@ abstract class AbstractFiniteGroup<T : Any>
     override fun centralizer(h: Group<T>): FiniteGroup<T> {
         val sub = asSubgroup(h)
         val list = set.filter { x ->
-            sub.set.all { h -> gc.eval { gc.isEqual(x + h, h + x) } }
+            sub.set.all { h ->
+                gc.eval {
+                    gc.isEqual(x + h, h + x)
+                }
+            }
         }
         return FiniteGroups.createGroupWithoutCheck(gc, list)
     }

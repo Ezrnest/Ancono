@@ -12,6 +12,7 @@ import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.structure.Complex
 import cn.ancono.math.set.MathSet
 import cn.ancono.math.set.MathSets
+import cn.ancono.utilities.structure.Pair
 
 /*
  * Provides extension methods for convenience.
@@ -21,9 +22,9 @@ operator fun <T> Vector<T>.get(i: Int) = this.getNumber(i)!!
 operator fun <T> Matrix<T>.get(i: Int, j: Int) = this.getNumber(i, j)!!
 operator fun <T> Matrix<T>.get(row: Int) = getRow(row)!!
 
-operator fun <T> Matrix<T>.times(mat: Matrix<T>) = Matrix.multiplyMatrix(this, mat)!!
-operator fun <T> Matrix<T>.minus(mat: Matrix<T>) = Matrix.minusMatrix(this, mat)!!
-operator fun <T> Matrix<T>.plus(mat: Matrix<T>) = Matrix.addMatrix(this, mat)!!
+operator fun <T> Matrix<T>.times(mat: Matrix<T>) = Matrix.multiply(this, mat)!!
+operator fun <T> Matrix<T>.minus(mat: Matrix<T>) = Matrix.subtract(this, mat)!!
+operator fun <T> Matrix<T>.plus(mat: Matrix<T>) = Matrix.add(this, mat)!!
 operator fun <T> Matrix<T>.unaryMinus() = this.negative()!!
 operator fun <T : Any> Vector<T>.unaryMinus() = this.negative()!!
 
@@ -56,11 +57,12 @@ operator fun <T : Any> SPoint<T>.component1() = this.x!!
 
 operator fun <T : Any> SPoint<T>.component2() = this.y!!
 operator fun <T : Any> SPoint<T>.component3() = this.z!!
-operator fun <T : Any> Complex<T>.component1() = this.re()
+
 
 operator fun <T> Matrix<T>.times(v: Vector<T>) = Vector.multiplyToVector(this, v)!!
 operator fun <T> Vector<T>.times(mat: Matrix<T>) = Vector.multiplyByVector(this, mat)!!
 
+operator fun <T : Any> Complex<T>.component1() = this.re()
 operator fun <T : Any> Complex<T>.component2() = this.im()
 
 operator fun <T : Any> IPolynomial<T>.get(n: Int) = this.getCoefficient(n)!!
@@ -69,6 +71,8 @@ operator fun Multinomial.times(y: Multinomial) = this.multiply(y)!!
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!
 operator fun Multinomial.div(y: Term) = this.divide(y)!!
 
+operator fun <T, S> Pair<T, S>.component1(): T = this.first
+operator fun <T, S> Pair<T, S>.component2(): S = this.second
 
 operator fun <T : Any> MathSet<T>.minus(another: MathSet<T>): MathSet<T> =
         MathSet { this.contains(it) && !another.contains(it) }

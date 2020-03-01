@@ -7,6 +7,7 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.IPolynomial;
+import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator;
 import cn.ancono.math.algebra.linearAlgebra.Matrix;
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
 import cn.ancono.math.algebra.linearAlgebra.Vector;
@@ -633,6 +634,34 @@ public final class Polynomial<T> extends MathObject<T> implements
 
 
     /**
+     * Returns the gcd of all coefficients.
+     * <br>
+     * It is required that the MathCalculator is an instance of UFDCalculator.
+     */
+    public T cont() {
+        var mc = getMc();
+        @SuppressWarnings("unchecked")
+        var gc = (UFDCalculator<T>) mc;
+        T re = gc.getZero();
+        for (var coe : this.map.values()) {
+            if (mc.isZero(coe)) {
+                continue;
+            }
+            re = gc.gcd(re, coe);
+        }
+        return re;
+    }
+
+    /**
+     * Returns the primitive polynomial corresponding to this polynomial.
+     * <br>
+     * It is required that the <code>MathCalculator</code> is an instance of <code>UFDCalculator</code>.
+     */
+    public Polynomial<T> toPrimitive() {
+        return divide(cont());
+    }
+
+    /**
      * Returns the greatest common divisor of this and <code>g</code>. The coefficient of the top term in the
      * returned polynomial is one.
      */
@@ -759,16 +788,16 @@ public final class Polynomial<T> extends MathObject<T> implements
 
     private static <T> Polynomial<T> sumOfX2(MathCalculator<T> mc) {
         //1^2+2^2+...n^2 = n(n+1)(2n+1)/6 = 1/3*n^3+1/2*n^2+1/6*n
-        var c1 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 3), mc);
-        var c2 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 2), mc);
-        var c3 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 6), mc);
+        var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 3), mc);
+        var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
+        var c3 = CalculatorUtils.valueOfFraction(Fraction.of(1, 6), mc);
         return Polynomial.valueOf(mc, mc.getZero(), c3, c2, c1);
     }
 
     private static <T> Polynomial<T> sumOfX3(MathCalculator<T> mc) {
         //1^2+2^2+...n^2 = (n(n+1)/2)^2 = 1/4*n^4+1/2*n^3+1/4*n^2
-        var c1 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 4), mc);
-        var c2 = CalculatorUtils.valueOfFraction(Fraction.valueOf(1, 2), mc);
+        var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 4), mc);
+        var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
         var o = mc.getZero();
         return Polynomial.valueOf(mc, o, o, c1, c2, c1);
     }
@@ -1100,6 +1129,21 @@ public final class Polynomial<T> extends MathObject<T> implements
         }
         var map = new TreeMap<Integer, T>();
         map.put(p, mc.getOne());
+        return new Polynomial<>(mc, map, p);
+    }
+
+    /**
+     * Returns <code>k*x^p</code>, where p is a non-negative integer.
+     */
+    public static <T> Polynomial<T> powerX(int p, T k, MathCalculator<T> mc) {
+        if (p < 0) {
+            throw new IllegalArgumentException("p<0");
+        }
+        if (mc.isZero(k)) {
+            return zero(mc);
+        }
+        var map = new TreeMap<Integer, T>();
+        map.put(p, k);
         return new Polynomial<>(mc, map, p);
     }
 

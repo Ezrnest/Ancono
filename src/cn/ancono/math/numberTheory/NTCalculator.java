@@ -5,6 +5,8 @@ package cn.ancono.math.numberTheory;
 
 
 import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator;
+import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.structure.Pair;
 import kotlin.Triple;
@@ -23,7 +25,7 @@ import java.math.BigInteger;
  *
  * @author liyicheng 2017-09-09 20:33
  */
-public interface NTCalculator<T> extends MathCalculator<T> {
+public interface NTCalculator<T> extends MathCalculator<T>, UFDCalculator<T> {
 
     /**
      * Returns the "minimal" element in the type T.
@@ -244,6 +246,15 @@ public interface NTCalculator<T> extends MathCalculator<T> {
         return isEqual(mod(a, b), getZero());
     }
 
+    @NotNull
+    @Override
+    default T exactDivide(@NotNull T x, @NotNull T y) {
+        if (!isExactDivide(x, y)) {
+            ExceptionUtil.notExactDivision(x, y);
+        }
+        return divide(x, y);
+    }
+
     /**
      * Determines whether the number is an odd number. A number is an odd number
      * if it is an integer and {@code mod(x,2)==1}.
@@ -305,6 +316,8 @@ public interface NTCalculator<T> extends MathCalculator<T> {
      * @param b another number
      * @return {@code gcd(|a|,|b|)}
      */
+    @NotNull
+    @Override
     default T gcd(T a, T b) {
         a = abs(a);
         b = abs(b);

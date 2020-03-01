@@ -134,11 +134,11 @@ public interface Group<T> extends Monoid<T> {
     }
 
     /**
-     * Returns the normalizer of a subgroup <code>g</code>, that is,
+     * Returns the normalizer of a subgroup <code>h</code>, that is,
      * <text>{x | x<sup>-1</sup>Hx = H}</text>
      *
      * @param h a subgroup.
-     * @return the normalizer of <code>g</code>
+     * @return the normalizer of <code>h</code>
      */
     Group<T> normalizer(Group<T> h);
 

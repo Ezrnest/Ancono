@@ -200,10 +200,10 @@ public class MatrixSup {
             Matcher mach = P_FOR_FRACTION.matcher(str);
             for (int j = 0; j < column; j++) {
                 mach.find();
-                ma[i][j] = Fraction.valueOf(mach.group(1));
+                ma[i][j] = Fraction.of(mach.group(1));
             }
         }
-        return Matrix.valueOf(ma, Fraction.getCalculator());
+        return Matrix.of(ma, Fraction.getCalculator());
     }
 
     /**
@@ -286,7 +286,7 @@ public class MatrixSup {
     }
 
     public static Matrix<Fraction> parseFMatrix(String str) {
-        return parseMatrixD(str, Fraction.getCalculator(), Fraction::valueOf);
+        return parseMatrixD(str, Fraction.getCalculator(), Fraction::of);
     }
 
     /**
@@ -695,7 +695,7 @@ public class MatrixSup {
 
     public static <T> Polynomial<Matrix<T>> matrixPolynomial(int n, Polynomial<T> p) {
         var cal = p.getMathCalculator();
-        var cm = Matrix.matrixCalculator(n, cal);
+        var cm = Matrix.getCalculator(n, cal);
         return p.mapTo(e -> Matrix.diag(e, n, cal), cm);
     }
 

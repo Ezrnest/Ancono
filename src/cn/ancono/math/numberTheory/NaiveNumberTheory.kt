@@ -58,7 +58,7 @@ object NaiveNumberTheory {
             b = d
             c = p
             d = q
-            list.add(Fraction.valueOf(a, b))
+            list.add(Fraction.of(a, b))
         }
         return list
 
@@ -94,7 +94,7 @@ object NaiveNumberTheory {
             b = d
             c = p
             d = q
-            yield(Fraction.valueOf(a, b))
+            yield(Fraction.of(a, b))
         }
 
     }

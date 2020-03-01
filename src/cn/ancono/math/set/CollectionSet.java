@@ -5,6 +5,7 @@ package cn.ancono.math.set;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathSymbol;
 import cn.ancono.math.function.Bijection;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.utilities.ArraySup;
@@ -141,8 +142,12 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
         return super.valueEquals(obj, mapper);
     }
 
+    @NotNull
     @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        if (size() == 0) {
+            return MathSymbol.EMPTY_SET;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         for (T t : list) {

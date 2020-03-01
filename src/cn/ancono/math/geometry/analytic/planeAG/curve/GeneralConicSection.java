@@ -171,7 +171,7 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
     @SuppressWarnings("unchecked")
     protected Matrix<T> createQuadraticFormMatrix() {
         T B_2 = getMc().divideLong(B, 2L);
-        return Matrix.valueOf((T[][]) new Object[][]{
+        return Matrix.of((T[][]) new Object[][]{
                 {A, B_2},
                 {B_2, C},
         }, getMc());

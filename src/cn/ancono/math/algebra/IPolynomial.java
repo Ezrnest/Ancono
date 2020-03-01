@@ -61,7 +61,7 @@ public interface IPolynomial<T> extends Iterable<T> {
 
 
     /**
-     * Returns the first term of this polynomial.
+     * Returns the leading term of this polynomial.
      */
     default T first() {
         return getCoefficient(getDegree());

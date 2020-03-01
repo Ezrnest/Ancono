@@ -158,7 +158,7 @@ public final class Expression implements Computable, Serializable {
                     continue;
                 }
             }
-            var variable = Term.characterPower(variableName, Fraction.valueOf(i));
+            var variable = Term.characterPower(variableName, Fraction.of(i));
             Node pow = Node.newPolyNode(Multinomial.monomial(variable));
             Node coe = root.cloneNode();
             Node term = Node.wrapNodeAM(false, coe, pow);

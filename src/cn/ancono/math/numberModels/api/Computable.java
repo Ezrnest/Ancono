@@ -37,7 +37,7 @@ public interface Computable {
      * @throws ArithmeticException if the result exceeds double
      */
     default double computeDouble(ToDoubleFunction<String> valueMap) {
-        return compute(valueMap::applyAsDouble, Calculators.getCalculatorDoubleDev());
+        return compute(valueMap::applyAsDouble, Calculators.getCalDoubleDev());
     }
 
 

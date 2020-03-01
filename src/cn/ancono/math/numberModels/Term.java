@@ -241,7 +241,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         if (signum == 0) {
             return Fraction.ZERO;
         }
-        return Fraction.valueOf(signum, numerator.longValueExact(), denominator.longValueExact());
+        return Fraction.of(signum, numerator.longValueExact(), denominator.longValueExact());
     }
 
     /**
@@ -773,7 +773,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
             // -i^(2-a)
             signum = -signum;
             Fraction times = this.character.get(I_STR);
-            character.put(I_STR, Fraction.valueOf(2).minus(times));
+            character.put(I_STR, Fraction.of(2).minus(times));
         }
 
         return new Term(signum, ndr, character);
@@ -1323,7 +1323,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
                 if (tpos < str.length() && str.charAt(tpos) == '^') {
                     nm.region(tpos + 1, end);
                     if (nm.lookingAt()) {
-                        time = Fraction.valueOf(nm.group());
+                        time = Fraction.of(nm.group());
                         tpos = nm.end();
                     } else {
                         throw new NumberFormatException("Illegal Expression using ^");
@@ -1496,14 +1496,14 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
 
     static int simplifyCharacter(int signum, NavigableMap<String, Fraction> character) {
         if (character.containsKey(I_STR)) {
-            Fraction[] rd = character.get(I_STR).divideAndRemainder(Fraction.valueOf(2));
+            Fraction[] rd = character.get(I_STR).divideAndRemainder(Fraction.of(2));
             if (Fraction.ZERO.equals(rd[1])) {
                 character.remove(I_STR);
             } else {
 
                 character.put(I_STR, rd[1]);
             }
-            return (Fraction.ZERO.equals(rd[0].remainder(Fraction.valueOf(2)))) ? (signum) : (-signum);
+            return (Fraction.ZERO.equals(rd[0].remainder(Fraction.of(2)))) ? (signum) : (-signum);
         } else {
             return signum;
         }

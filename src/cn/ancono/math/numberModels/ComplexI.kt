@@ -1,9 +1,9 @@
-package cn.timelives.java.math.numberModels
+package cn.ancono.math.numberModels
 
-import cn.timelives.java.math.MathCalculator
-import cn.timelives.java.math.geometry.analytic.planeAG.PVector
-import cn.timelives.java.math.geometry.analytic.planeAG.Point
-import cn.timelives.java.utilities.SNFSupport
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.geometry.analytic.planeAG.PVector
+import cn.ancono.math.geometry.analytic.planeAG.Point
+import cn.ancono.utilities.SNFSupport
 
 import java.text.DecimalFormat
 

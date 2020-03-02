@@ -35,12 +35,11 @@ import java.util.function.IntFunction;
 
 
 /**
- * An implement for interface IPolynomial.
+ * Represents the
  *
  * @author liyicheng
  * @see IPolynomial
- * 2017-11-21 17:10
- */
+ *///created by liyicheng at 2017-11-21 17:10
 public final class Polynomial<T> extends MathObject<T> implements
         IPolynomial<T>,
         Comparable<Polynomial<T>>,

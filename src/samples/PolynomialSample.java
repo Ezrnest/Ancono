@@ -3,7 +3,9 @@ package samples;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.structure.Polynomial;
-
+/*
+ * Created by lyc at 2020/3/1
+ */
 public class PolynomialSample {
     public static void computeProduct() {
         var cal = Calculators.getCalDouble();

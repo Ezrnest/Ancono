@@ -39,7 +39,7 @@ import java.util.*
  *
  * @param <T> the type of number to deal with
  * @author lyc
-</T> */
+ */
 interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
     /**

@@ -1214,6 +1214,9 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     private static Multinomial gcd0(Multinomial m1, Multinomial m2) {
+        /*
+        Created by liyicheng at 2020/2/27
+        */
         // consider m1 and m2 as polynomial on fraction ring of multinomial
         var ch = m1.getCharacters().first();
         var p1 = Polynomial.fromMultinomial(m1, ch); // Polynomial<Multinomial>

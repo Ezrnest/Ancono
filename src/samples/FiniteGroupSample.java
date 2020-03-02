@@ -5,7 +5,9 @@ import cn.ancono.math.numberTheory.combination.Permutation;
 import cn.ancono.math.numberTheory.combination.Permutations;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.Printer;
-
+/*
+ * Created by lyc at 2020/3/1
+ */
 public class FiniteGroupSample {
     public static void permutationGroup1() {
         var G = PermutationGroup.symmetricGroup(4);

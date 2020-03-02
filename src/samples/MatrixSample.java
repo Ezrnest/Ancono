@@ -1,11 +1,16 @@
 package samples;
 
 import cn.ancono.math.algebra.linearAlgebra.Matrix;
+import cn.ancono.math.algebra.linearAlgebra.QuadraticForm;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
+import cn.ancono.math.numberModels.Multinomial;
 
 import static cn.ancono.math.numberModels.Fraction.of;
 
+/*
+ * Created by lyc at 2020/2/29
+ */
 public class MatrixSample {
     public static void sample1() {
         var cal = Calculators.getCalInteger();
@@ -26,8 +31,27 @@ public class MatrixSample {
         System.out.println("Rank of the matrix: " + rank);
     }
 
+    public static void quadraticForm() {
+        var expr = "10x^2+8xy+24xz+2y^2-28yz+z^2";
+        var A = QuadraticForm.representationMatrix(Multinomial.valueOf(expr));
+        System.out.println("A = ");
+        A.printMatrix();
+        var pair = A.congruenceDiagForm();
+        var J = pair.getFirst();
+        var P = pair.getSecond();
+        System.out.println("P = ");
+        P.printMatrix();
+        System.out.println("J = ");
+        J.printMatrix();
+        System.out.println("P^T * A * P = ");
+        // P^T*A*P = J
+        Matrix.multiply(P.transportMatrix(), A, P).printMatrix();
+    }
+
 
     public static void main(String[] args) {
         sample1();
+        System.out.println();
+        quadraticForm();
     }
 }

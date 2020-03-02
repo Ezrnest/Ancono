@@ -9,7 +9,7 @@ import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.utilities.structure.Pair
-
+//Created by lyc at 2020-03-01 13:59
 /**
  * Provides utility algorithms for polynomials on a ring and an UFD.
  */
@@ -26,6 +26,7 @@ object PolynomialOnRing {
         /*
         See Algorithm 3.1.2, page 112 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
+        Created by lyc at 2020-03-01 14:25
          */
         val m = A.degree
         val n = B.degree
@@ -62,6 +63,7 @@ object PolynomialOnRing {
         /*
         See Algorithm 3.1.2, page 112 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
+        Created by lyc at 2020-03-01 14:25
          */
         require(!B.isZero())
         val m = A.degree
@@ -99,6 +101,7 @@ object PolynomialOnRing {
         /*
         See Algorithm 3.2.10, page 117 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
+        Created by lyc at 2020-03-01 16:02
          */
         val mc = f.mathCalculator
         @Suppress("UNCHECKED_CAST")
@@ -133,6 +136,7 @@ object PolynomialOnRing {
         /*
         See Algorithm 3.3.1, page 118 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
+        Created by lyc at 2020-03-01 16:02
          */
         var A: Polynomial<T>
         var B: Polynomial<T>

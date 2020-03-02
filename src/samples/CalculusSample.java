@@ -4,6 +4,9 @@ import cn.ancono.math.calculus.Limit;
 import cn.ancono.math.calculus.LimitProcess;
 import cn.ancono.math.numberModels.expression.Expression;
 
+/*
+ * Created by lyc at 2020/3/1
+ */
 public class CalculusSample {
     public static void limitSample() {
         var mc = Expression.getCalculator();

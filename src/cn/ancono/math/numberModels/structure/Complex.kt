@@ -37,7 +37,7 @@ import kotlin.math.atan2
  * @author lyc
  *
  * @param <T>
-</T> */
+ */
 class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : MathObject<T>(mc), FieldNumberModel<Complex<T>> {
 
 
@@ -751,6 +751,10 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
  * Describes the expanded complex including the infinity point.
  */
 class ComplexH<T : Any> {
+    /*
+    Created by liyicheng 2020/2/24
+     */
+
     private val v: Complex<T>?
 
     val isInf: Boolean

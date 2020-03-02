@@ -11,6 +11,9 @@ import cn.ancono.utilities.ZoomingPlugin;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
+/*
+ * Created by lyc at 2020/3/1
+ */
 public class DrawPlaneCurveSample {
     public static void sample1() {
         var mcd = Calculators.getCalDouble();

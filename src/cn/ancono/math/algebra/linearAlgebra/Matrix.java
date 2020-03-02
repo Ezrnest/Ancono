@@ -239,8 +239,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     public abstract Matrix<T> negative();
 
     /**
-     * Return a MatrixN = this<sup>T</sup>.The new Matrix's row count = this.column
-     * , new Matrix's column count = this.row.
+     * Return a MatrixN = this<sup>T</sup>. The new Matrix's row count = <code>this.column</code>
+     * , new Matrix's column count = <code>this.row</code>.
      *
      * @return <tt>this<sup>T</sup></tt>
      */
@@ -1407,7 +1407,11 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return MatrixSup.frobeniusForm(this);
     }
 
-    public kotlin.Pair<Matrix<T>, Matrix<T>> congruenceDiagForm() {
+    /**
+     * Transform this matrix to diagonal with congruence transformation. Returns a pair of matrix <code>(J,P)</code>
+     * such that <code>P^T*this*P = J</code> and <code>J</code> is a diagonal matrix.
+     */
+    public Pair<Matrix<T>, Matrix<T>> congruenceDiagForm() {
         if (!isSquare()) {
             throw new IllegalArgumentException("The matrix must be a square matrix!");
         }
@@ -1443,7 +1447,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         System.arraycopy(arr, row, m2, 0, row);
         var mat1 = new DMatrix<>(m1, row, column, mc);
         var mat2 = new DMatrix<>(m2, row, column, mc);
-        return new kotlin.Pair<>(mat1, mat2);
+        return new Pair<>(mat1, mat2);
     }
 
     private void doCongruenceOperations(T[][] mat) {

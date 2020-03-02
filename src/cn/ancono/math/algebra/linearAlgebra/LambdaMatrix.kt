@@ -1,10 +1,8 @@
 package cn.ancono.math.algebra.linearAlgebra
 
-import cn.ancono.math.MathCalculator
+import cn.ancono.math.*
 import cn.ancono.math.algebra.AlgebraUtil
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
-import cn.ancono.math.get
-import cn.ancono.math.minus
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.structure.Polynomial

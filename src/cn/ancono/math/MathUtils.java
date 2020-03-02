@@ -506,7 +506,7 @@ public class MathUtils {
 
     /**
      * find the number n :
-     * {@code n=2^k, 2^(k-1)<num<n}
+     * {@code n=2^k, 2^(k-1) < num < n}
      *
      * @param num num>0
      * @return

@@ -170,8 +170,8 @@ object AlgebraUtil {
 
 
     private fun decomposion0(p: Polynomial<Long>, list: MutableMap<Polynomial<Fraction>, Int>) {
-        when (p.degree) {
-            0 -> return
+        when (p.leadingPower) {
+            -1, 0 -> return
             1 -> {
                 list.merge(p.toFractionPoly(), 1) { t, u ->
                     t + u

@@ -153,7 +153,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          */
         @Override
         public <N> SVPInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new FromFunction<>(newCalculator, op, f.mapTo(mapper, newCalculator));
+            AbstractSVPFunction<N> t = (AbstractSVPFunction<N>) f.mapTo(mapper, newCalculator);
+            return new FromFunction<>(newCalculator, op, t);
         }
 
         /*

@@ -50,7 +50,8 @@ object PolynomialOnRing {
     }
 
     /**
-     * Performs the pseudo division of two polynomials on a ring. This algorithm finds `Q` and `R` such that
+     * Performs the pseudo division of two polynomials on a ring and returns only the remainder.
+     * This algorithm finds `Q` and `R` such that
      * `d^(A.degree - B.degree + 1) A = BQ + R` and `R.degree < B.degree`. It is required that `B` is not zero and
      * `A.degree >= B.degree`.
      *

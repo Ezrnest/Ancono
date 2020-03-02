@@ -30,6 +30,12 @@ abstract class AbstractSVPFunction<T : Any>
 protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVFunction<T>(mc), SVPFunction<T>, SDerivable<T, AbstractSVPFunction<T>>, Integrable<T> {
 
     override fun getDegree(): Int {
+        if (mp > 0) {
+            return mp
+        }
+        if (mc.isZero(constant())) {
+            return -1
+        }
         return mp
     }
 
@@ -66,26 +72,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 	 */
     abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AbstractSVPFunction<N>
 
-    /* (non-Javadoc)
-	 * @see cn.ancono.math.FlexibleMathObject#equals(java.lang.Object)
-	 */
 
-    override fun equals(other: Any?): Boolean {
-        if (other is AbstractSVPFunction<*>) {
-            val `as` = other as AbstractSVPFunction<T>?
-            if (degree != `as`!!.degree) {
-                return false
-            }
-            for (i in 0 until mp) {
-                if (getCoefficient(i) != `as`.getCoefficient(i)) {
-                    return false
-                }
-            }
-            return true
-
-        }
-        return false
-    }
 
     /**
      * Compares whether the another one is also a SVPFunction and determines whether
@@ -169,7 +156,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 
         override fun hashCode(): Int {
             var result = super.hashCode()
-            result = 31 * result + Arrays.hashCode(coes)
+            result = 31 * result + coes.contentHashCode()
             return result
         }
 

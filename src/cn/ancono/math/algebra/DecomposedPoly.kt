@@ -27,7 +27,7 @@ open class DecomposedPoly<T : Any>(val decomposed: List<Pair<Polynomial<T>, Int>
         get() {
             if (expandedBackingField == null) {
                 expandedBackingField = decomposed.fold(Polynomial.one(decomposed[0].first.mathCalculator))
-                { acc: Polynomial<T>, (p, n) -> acc * p.pow(n) }
+                { acc: Polynomial<T>, (p, n) -> acc * p.pow(n.toLong()) }
             }
             return expandedBackingField!!
         }

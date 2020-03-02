@@ -120,8 +120,13 @@ fun integralApproximationSimpson(fx: DoubleUnaryOperator, a: Double, b: Double, 
  * @return
  */
 fun <T : Any> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
-    @Suppress("UNCHECKED_CAST") val cns = arrayOfNulls<Any>(f.degree) as Array<T>
     val mc = f.mathCalculator
+    if (f.degree < 0) {
+        // zero
+        return AbstractSVPFunction.constant(mc.zero, mc)
+    }
+    @Suppress("UNCHECKED_CAST") val cns = arrayOfNulls<Any>(f.degree) as Array<T>
+
     for (i in 1..f.degree) {
         //(Ax^i)' = iA*x^(i-1)
         cns[i - 1] = mc.multiplyLong(f.getCoefficient(i), i.toLong())

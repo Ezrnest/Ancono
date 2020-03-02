@@ -1064,7 +1064,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     public static Multinomial fromPolynomialT(IPolynomial<Term> p, String variableName) {
         NavigableSet<Term> set = getSet();
-        for (int i = 0; i <= p.getDegree(); i++) {
+        for (int i = 0; i <= p.getLeadingPower(); i++) {
             Term t = p.getCoefficient(i);
             if (t.isZero()) {
                 continue;
@@ -1080,7 +1080,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     public static Multinomial fromPolynomialM(IPolynomial<Multinomial> p, String variableName) {
         NavigableSet<Term> set = getSet();
-        for (int i = 0; i <= p.getDegree(); i++) {
+        for (int i = 0; i <= p.getLeadingPower(); i++) {
             Multinomial t = p.getCoefficient(i);
             if (t.isZero()) {
                 continue;
@@ -1219,7 +1219,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         var p1 = Polynomial.fromMultinomial(m1, ch); // Polynomial<Multinomial>
         var p2 = Polynomial.fromMultinomial(m2, ch);
 
-        var gcd = PolynomialOnRing.primitivePolynomialGCD(p1, p2);
+        var gcd = PolynomialOnRing.subResultantGCD(p1, p2);
         return fromPolynomialM(gcd, ch);
 //        //extract the gcd of coefficient first
 //        var c1 = p1.getNonZeroCoefficients();

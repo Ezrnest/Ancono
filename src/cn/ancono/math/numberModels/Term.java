@@ -1190,7 +1190,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
 
 
     private static Pattern numberPattern = Pattern.compile("[+-]?[\\d.]+");
-    private static Pattern charPattern = Pattern.compile("(" + PI_STR + ")|([a-zA-Z](\\[\\w+\\])?)");
+    private static Pattern charPattern = Pattern.compile("(" + PI_STR + ")|([a-zA-Z]([\\[\\]{}_0-9])*)");
 
 
     /**

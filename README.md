@@ -55,6 +55,8 @@ This library includes the following modules:
     
     With Ancono, user can construct and operate formulas of proposition logic and first order logic. 
     
+    See samples <a href="#logic">here</a>.
+    
 8. Calculus
 
     Utilities for derivatives, Taylor series, limits, differential forms and so on are provided.
@@ -180,6 +182,18 @@ var expr = mc.parse("sin(x)/x");
 var result = Limit.limitOf(expr, LimitProcess.Companion.toZero(mc),mc);
 System.out.println("as x -> 0, lim sin(x)/x = "+result);
 //result = 1
+```
+
+
+#### <a name="logic">Logic</a>
+Predicate logic (written in Kotlin):
+```kotlin
+val formula = (p implies q) and (q implies r) implies (q implies r)
+println(formula)
+println("Is tautology: ${formula.isTautology}")
+println("Main disjunctive norm: ${formula.toMainDisjunctiveNorm()}")
+println("Conjunctive norm: ${formula.toConjunctiveNorm()}")
+println("Is equivalent to T: ${formula valueEquals T}")
 ```
 
 More samples are available in src/samples.

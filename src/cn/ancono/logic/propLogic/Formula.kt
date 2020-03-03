@@ -90,8 +90,16 @@ sealed class Formula : Comparable<Formula> {
         }
     }
 
+    /**
+     * Determines whether this logic formula is tautology, that is, for all truth assignment for variables in this
+     * formula, the result is all true.
+     */
     val isTautology: Boolean by lazy { iterateTruthTable().all { it.second } }
 
+    /**
+     * Determines whether this logic formula is contradictory, that is, there exists no truth assignment that
+     * satisfies this formula.
+     */
     val isContradictory: Boolean by lazy { iterateTruthTable().none { it.second } }
 
     val isSatisfiable: Boolean by lazy { iterateTruthTable().any { it.second } }
@@ -652,8 +660,12 @@ fun Formula.simplify(steps: MutableList<SimplificationStep>? = null): Formula = 
 fun Formula.simplifyWithSteps(): Pair<Formula, List<SimplificationStep>> = simplifyByRulesWithSteps(this, Rule.basicRules)
 
 fun Formula.toDisjunctiveNorm(steps: MutableList<SimplificationStep>? = null): Formula = simplifyByRules(this, Rule.toDisjunctiveNormalFormRules, steps)
+
 fun Formula.toConjunctiveNorm(steps: MutableList<SimplificationStep>? = null): Formula = simplifyByRules(this, Rule.toConjunctiveNormalFormRules, steps)
 
+/**
+ * Transforms this formula to main disjunctive norm.
+ */
 fun Formula.toMainDisjunctiveNorm(props: Set<Proposition> = this.propositions, steps: MutableList<SimplificationStep>? = null): Formula {
     val f = this.toDisjunctiveNorm(steps)
     if (f is PropFormula) {

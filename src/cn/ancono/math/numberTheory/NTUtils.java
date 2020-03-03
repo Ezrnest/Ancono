@@ -9,5 +9,5 @@ package cn.ancono.math.numberTheory;
  * @author liyicheng
  */
 public class NTUtils {
-    
+
 }

@@ -35,7 +35,7 @@ import java.util.function.IntFunction;
 
 
 /**
- * Represents the
+ * Represents polynomials of one variable on a field <code>T</code>.
  *
  * @author liyicheng
  * @see IPolynomial
@@ -647,8 +647,11 @@ public final class Polynomial<T> extends MathObject<T> implements
     }
 
     /**
-     * Returns the greatest common divisor of this and <code>g</code>. The coefficient of the top term in the
+     * Returns the greatest common divisor of this and <code>g</code>. The coefficient of the leading term in the
      * returned polynomial is one.
+     * <br>
+     * This method assumes division can be done on <code>T</code>. If <code>T</code> is actually a ring, please use
+     * {@linkplain PolynomialOnRing#primitiveGCD(Polynomial, Polynomial)} instead.
      */
     @NotNull
     @Override
@@ -692,6 +695,9 @@ public final class Polynomial<T> extends MathObject<T> implements
 //        return (Polynomial<T>) EuclidRingNumberModel.DefaultImpls.lcm(this,y);
     }
 
+    /**
+     * Determines whether this polynomial is coprime to another polynomial.
+     */
     @Override
     public boolean isCoprime(@NotNull Polynomial<T> y) {
         return this.gcd(y).isOne();

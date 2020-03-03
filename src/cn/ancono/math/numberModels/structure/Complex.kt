@@ -7,7 +7,6 @@ import cn.ancono.math.function.Bijection
 import cn.ancono.math.geometry.analytic.planeAG.PVector
 import cn.ancono.math.geometry.analytic.planeAG.Point
 import cn.ancono.math.geometry.analytic.spaceAG.SPoint
-import cn.ancono.math.numberModels.ComplexI
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.*

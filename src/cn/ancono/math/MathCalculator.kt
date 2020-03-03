@@ -117,13 +117,12 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     /**
      * Add the parameters,this method is equal to:
      *
-     * <pre>
-     * T sum = getZero();
-     * for (Object t : ps) {
-     * sum = add(sum, (T) t);
-     * }
-     * return sum;
-    </pre> *
+     *
+     *    T sum = getZero();
+     *    for (Object t : ps) {
+     *    sum = add(sum, (T) t);
+     *    }
+     *    return sum;
      *
      *
      * The Object-type input array is to fit genetic types.
@@ -187,11 +186,11 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     }
 
     /**
-     * Returns the result of `para1 * para2`.
+     * Returns the result of `x * y`.
      *
      * @param x a number
      * @param y another number
-     * @return `para1 * para2`
+     * @return `x * y`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
@@ -200,13 +199,11 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     /**
      * Multiply the parameters,this method is equal to:
      *
-     * <pre>
-     * T re = getOne();
-     * for (T t : ps) {
-     * re = multiply(re, t);
-     * }
-     * return re;
-    </pre> *
+     *    T re = getOne();
+     *    for (T t : ps) {
+     *    re = multiply(re, t);
+     *    }
+     *    return re;
      *
      * @param ps an array of numbers to multiply
      * @return the result
@@ -223,11 +220,11 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     }
 
     /**
-     * Returns the result of `para1 / para2`.
+     * Returns the result of `x / y`.
      *
      * @param x a number as dividend
      * @param y another number as divisor
-     * @return `para1 / para2`
+     * @return `x / y`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
@@ -245,13 +242,13 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     override fun reciprocal(x: T): T
 
     /**
-     * Return the result of `l*p`, this method is provided because this is
-     * equals to `add(p,p)` for `l` times. This method expects a better
+     * Return the result of `x*n`, this method is provided because this is
+     * equals to add for `n` times. This method expects a better
      * performance.
      *
      * @param x a number
      * @param n another number of long
-     * @return `p*l`
+     * @return `x*n`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
@@ -261,11 +258,11 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     }
 
     /**
-     * Return the result of `p / n` , throws exception if necessary.
+     * Return the result of `x / n` , throws exception if necessary.
      *
      * @param x a number as dividend
      * @param n another number of long as divisor
-     * @return `p / n`
+     * @return `x / n`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
@@ -294,11 +291,11 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     fun nroot(x: T, n: Long): T
 
     /**
-     * Return `p ^ exp`.This method should be equal to calling
-     * `this.multiply(p,p)` for many times if `exp > 0` , or
-     * `this.divide(p,p)` if `exp < 0 `, or return `getOne()` if
-     * `exp == 0`.Notice that this calculator may not throw an
-     * ArithmeticException if `p == 0 && exp <= 0`,whether to throw exception
+     * Return `x ^ n`.This method should be equal to calling
+     * multiply for many times if `n > 0` , or
+     * divide if `n < 0 `, or return `getOne()` if
+     * `n == 0`.Notice that this calculator may not throw an
+     * ArithmeticException if `n == 0 && n <= 0`, whether to throw exception
      * is determined by the implementation.
      *
      * @param x   a number
@@ -317,8 +314,8 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * Some common constants are list below:
      *
      *  * <tt>Pi</tt> :the ratio of the circumference of a circle to its
-     * diameter.See:[Math.PI]
-     *  * <tt>e</tt> :the base of the natural logarithms.See:[Math.E]
+     * diameter. See: [Math.PI]
+     *  * <tt>e</tt> :the base of the natural logarithms. See: [Math.E]
      *  * <tt>i</tt> :the square root of `-1`.
      *
      *
@@ -357,19 +354,15 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     /**
      * Returns result of
      *
-     * <pre>
-     * log<sub>a</sub>b
-    </pre> *
      *
-     * <br></br>
+     * `log(a,b) = ln(b) / ln(a)`
+     *
      * This method provides a default implement by computing:
      * `divide(ln(b),ln(a))`.
      *
      * @param a a number
      * @param b another number
-     * @return <pre>
-     * log<sub>a</sub>b
-    </pre> *
+     * @return `log(a,b) = ln(b) / ln(a)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
@@ -380,17 +373,12 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     /**
      * Returns result of
      *
-     * <pre>
-     * ln(x)
-    </pre> *
+     * `ln(x)`
      *
-     *
-     * or the natural logarithm (base e).
+     * namely the natural logarithm (base e).
      *
      * @param x a number
-     * @return <pre>
-     * ln(x)
-    </pre> *
+     * @return `ln(x)`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */

@@ -19,16 +19,12 @@ import java.util.Objects;
 public interface NumberFormatter<T> extends FlexibleNumberFormatter<T, MathCalculator<T>> {
     /**
      * Formats the given number, using a {@link MathCalculator}.
-     * @param number
-     * @param mc
-     * @return
      */
     String format(T number, MathCalculator<T> mc);
 
     /**
      * Returns a decimal formatter for number.
      * @param digit the digit to show.
-     * @return
      */
     static <T extends Number> NumberFormatter<T> decimalFormatter(int digit) {
         NumberFormat nf = SNFSupport.dfByDigit(digit);
@@ -44,6 +40,9 @@ public interface NumberFormatter<T> extends FlexibleNumberFormatter<T, MathCalcu
 
     static final NumberFormatter<?> toString = (x, mc) -> Objects.toString(x);
 
+    /**
+     * Returns a number formatter that simply calls <code>toString()</code>.
+     */
     @SuppressWarnings("unchecked")
     public static <T> NumberFormatter<T> getToStringFormatter() {
         return (NumberFormatter<T>) toString;

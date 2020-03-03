@@ -89,9 +89,11 @@ object PolynomialOnRing {
      * Computes the GCD of two polynomials on an UFD.
      *
      * It is required that the calculator of [f] is an instance of [UFDCalculator].
+     *
+     * @see [subResultantGCD]
      */
     @JvmStatic
-    fun <T : Any> primitivePolynomialGCD(f: Polynomial<T>, g: Polynomial<T>): Polynomial<T> {
+    fun <T : Any> primitiveGCD(f: Polynomial<T>, g: Polynomial<T>): Polynomial<T> {
         if (f.isZero()) {
             return g
         }
@@ -130,6 +132,8 @@ object PolynomialOnRing {
      * Computes the GCD of two polynomials on an UFD using sub-resultant method.
      *
      * It is required that the calculator of [f] is an instance of [UFDCalculator].
+     *
+     * @see [primitiveGCD]
      */
     @JvmStatic
     fun <T : Any> subResultantGCD(f: Polynomial<T>, g: Polynomial<T>): Polynomial<T> {

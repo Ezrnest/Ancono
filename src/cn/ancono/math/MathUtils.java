@@ -72,41 +72,88 @@ public class MathUtils {
      * @return an int array of <code>{gcd(a,b), u, v}</code>.
      */
     public static int[] gcdUV(int a, int b) {
-        if (a == 0) {
-            return new int[]{b, 0, 1};
+        int[] result = gcdUV0(Math.abs(a), Math.abs(b));
+        //deal with negative values
+        if (a < 0) {
+            result[1] = -result[1];
         }
-        if (b == 0) {
-            return new int[]{a, 1, 0};
+        if (b < 0) {
+            result[2] = -result[2];
         }
-        return gcdUV0(a, b);
+        return result;
     }
 
     static int[] gcdUV0(int a, int b) {
-        int[] quotients = new int[4];
-        int n = 0;
-        while (true) {
-            int q = a / b;
-            int r = a % b;
-            if (r == 0) {
-                break;
-            }
-            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
-            a = b;
-            b = r;
+//        int[] quotients = new int[4];
+//        int n = 0;
+//        while (true) {
+//            int q = a / b;
+//            int r = a % b;
+//            if (r == 0) {
+//                break;
+//            }
+//            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+//            a = b;
+//            b = r;
+//        }
+//        // computes u and v
+//        int u0 = 1, u1 = 0,
+//                v0 = 0, v1 = 1;
+//        // u[s] = u[s-2]-q[s-2]*u[s-1]
+//        for (int i = 0; i < n; i++) {
+//            int nextU = u0 - quotients[i] * u1;
+//            int nextV = v0 - quotients[i] * v1;
+//            u0 = u1;
+//            u1 = nextU;
+//            v0 = v1;
+//            v1 = nextV;
+//        }
+//        return new int[]{b, u1, v1};
+        //Re-implemented by lyc at 2020-03-03 15:57
+        /*
+        Euclid's Extended Algorithms:
+        Refer to Henri Cohen 'A course in computational algebraic number theory' Algorithm 1.3.6
+         */
+        if (b == 0) {
+            return new int[]{a, 1, 0};
         }
-        // computes u and v
-        int u0 = 1, u1 = 0,
-                v0 = 0, v1 = 1;
-        // u[s] = u[s-2]-q[s-2]*u[s-1]
-        for (int i = 0; i < n; i++) {
-            int nextU = u0 - quotients[i] * u1;
-            int nextV = v0 - quotients[i] * v1;
+        /*
+        Explanation of the algorithm: 
+        we want to maintain the following equation while computing the gcd using the Euclid's algorithm
+        let d0=a, d1=b, d2, d3 ... be the sequence of remainders in Euclid's algorithm,
+        then we have 
+            a*1 + b*0 = d0
+            a*0 + b*1 = d1
+        let 
+            u0 = 1, v0 = 0
+            u1 = 0, v1 = 1
+        then we want to build a sequence of u_i, v_i such that 
+            a*u_i + b*v_i = d_i,
+        when we find the d_n = gcd(a,b), the corresponding u_n and v_n is what we want.
+        We have: 
+            d_i = q_i * d_{i+1} + d_{i+2}        (by Euclid's algorithm
+        so 
+            a*u_i + b*v_i = q_i * (a*u_{i+1} + b*v_{i+1}) + (a*u_{i+2} + b*v_{i+2})
+            u_i - q_i * u_{i+1} = u_{i+2}
+            v_i - q_i * v_{i+1} = v_{i+2}
+        but it is only necessary for us to record u_i, since v_i can be calculated from the equation 
+            a*u_i + b*v_i = d_i 
+         */
+        int d0 = a;
+        int d1 = b;
+        int u0 = 1;
+        int u1 = 0;
+        while (d1 > 0) {
+            int q = d0 / d1;
+            int d2 = d0 % d1;
+            d0 = d1;
+            d1 = d2;
+            int u2 = u0 - q * u1;
             u0 = u1;
-            u1 = nextU;
-            v0 = v1;
-            v1 = nextV;
+            u1 = u2;
         }
-        return new int[]{b, u1, v1};
+        int v = (d0 - a * u0) / b;
+        return new int[]{d0, u0, v};
     }
 
 
@@ -118,41 +165,69 @@ public class MathUtils {
      * @return an long array of <code>{gcd(a,b), u, v}</code>.
      */
     public static long[] gcdUV(long a, long b) {
-        if (a == 0) {
-            return new long[]{b, 0, 1};
+        long[] result = gcdUV0(Math.abs(a), Math.abs(b));
+        //deal with negative values
+        if (a < 0) {
+            result[1] = -result[1];
         }
-        if (b == 0) {
-            return new long[]{a, 1, 0};
+        if (b < 0) {
+            result[2] = -result[2];
         }
-        return gcdUV0(a, b);
+        return result;
     }
 
     static long[] gcdUV0(long a, long b) {
-        long[] quotients = new long[4];
-        int n = 0;
-        while (true) {
-            long q = a / b;
-            long r = a % b;
-            if (r == 0) {
-                break;
-            }
-            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
-            a = b;
-            b = r;
+//        long[] quotients = new long[4];
+//        int n = 0;
+//        while (true) {
+//            long q = a / b;
+//            long r = a % b;
+//            if (r == 0) {
+//                break;
+//            }
+//            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+//            a = b;
+//            b = r;
+//        }
+//        // computes u and v
+//        long u0 = 1, u1 = 0,
+//                v0 = 0, v1 = 1;
+//        // u[s] = u[s-2]-q[s-2]*u[s-1]
+//        for (int i = 0; i < n; i++) {
+//            long nextU = u0 - quotients[i] * u1;
+//            long nextV = v0 - quotients[i] * v1;
+//            u0 = u1;
+//            u1 = nextU;
+//            v0 = v1;
+//            v1 = nextV;
+//        }
+//        return new long[]{b, u1, v1};
+        //Re-implemented by lyc at 2020-03-03 16:42
+        /*
+        Euclid's Extended Algorithms:
+        Refer to Henri Cohen 'A course in computational algebraic number theory' Algorithm 1.3.6
+         */
+        if (b == 0) {
+            return new long[]{a, 1, 0};
         }
-        // computes u and v
-        long u0 = 1, u1 = 0,
-                v0 = 0, v1 = 1;
-        // u[s] = u[s-2]-q[s-2]*u[s-1]
-        for (int i = 0; i < n; i++) {
-            long nextU = u0 - quotients[i] * u1;
-            long nextV = v0 - quotients[i] * v1;
+        /*
+        See the explanation above in the int version of the same algorithm
+         */
+        long d0 = a;
+        long d1 = b;
+        long u0 = 1;
+        long u1 = 0;
+        while (d1 > 0) {
+            long q = d0 / d1;
+            long d2 = d0 % d1;
+            d0 = d1;
+            d1 = d2;
+            long u2 = u0 - q * u1;
             u0 = u1;
-            u1 = nextU;
-            v0 = v1;
-            v1 = nextV;
+            u1 = u2;
         }
-        return new long[]{b, u1, v1};
+        long v = (d0 - a * u0) / b;
+        return new long[]{d0, u0, v};
     }
 
     /**
@@ -649,6 +724,35 @@ public class MathUtils {
             n >>= 1;
         }
         return ans;
+    }
+
+
+    /**
+     * Returns the mod inverse of <code>a</code> mod <code>p</code>. That is, a number <code>u</code> such that
+     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are coprime.
+     */
+    public static int modInverse(int a, int p) {
+        //Created by lyc at 2020-03-03 16:50
+        var arr = gcdUV(a, p);
+        // au + pv = 1
+        if (arr[0] != 1) {
+            throw new ArithmeticException("a and p is not coprime: a=" + a + ", p=" + p);
+        }
+        return arr[1];
+    }
+
+    /**
+     * Returns the mod inverse of <code>a</code> mod <code>p</code>. That is, a number <code>u</code> such that
+     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are coprime.
+     */
+    public static long modInverse(long a, long p) {
+        //Created by lyc at 2020-03-03 16:50
+        var arr = gcdUV(a, p);
+        // au + pv = 1
+        if (arr[0] != 1) {
+            throw new ArithmeticException("a and p is not coprime: a=" + a + ", p=" + p);
+        }
+        return arr[1];
     }
 
     /**

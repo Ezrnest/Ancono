@@ -594,7 +594,7 @@ public class MatrixSup {
      */
     @SuppressWarnings("unchecked")
     public static <T> Matrix<T> similarDiag(Matrix<T> mat, EquationSolver<T, SVPEquation<T>> equationSolver) {
-        SVPEquation<T> equation = mat.eigenvalueEquation();
+        SVPEquation<T> equation = mat.charEquation();
         List<T> eigenvalues = equationSolver.solve(equation);
         return Matrix.diag((T[]) eigenvalues.toArray(), mat.getMathCalculator());
     }
@@ -608,7 +608,7 @@ public class MatrixSup {
      */
     @SuppressWarnings("unchecked")
     public static <T> Matrix<T> similarDiag(Matrix<T> mat, MathFunction<SVPEquation<T>, List<T>> equationSolver) {
-        SVPEquation<T> equation = mat.eigenvalueEquation();
+        SVPEquation<T> equation = mat.charEquation();
         List<T> eigenvalues = equationSolver.apply(equation);
         return Matrix.diag((T[]) eigenvalues.toArray(), mat.getMathCalculator());
     }
@@ -634,7 +634,7 @@ public class MatrixSup {
     /**
      * Returns the eigenmatrix of `M`, which is equal to `λI-M`
      */
-    public static <T> Matrix<Polynomial<T>> eigenmatrix(Matrix<T> m, MathCalculator<Polynomial<T>> mcp) {
+    public static <T> Matrix<Polynomial<T>> charMatrix(Matrix<T> m, MathCalculator<Polynomial<T>> mcp) {
         if (m.row != m.column) {
             throw new IllegalArgumentException("M must be square!");
         }
@@ -657,8 +657,8 @@ public class MatrixSup {
     /**
      * Returns the eigenmatrix of `M`, which is equal to `λI-M`
      */
-    public static <T> Matrix<Polynomial<T>> eigenmatrix(Matrix<T> m) {
-        return eigenmatrix(m, Polynomial.getCalculator(m.getMathCalculator()));
+    public static <T> Matrix<Polynomial<T>> charMatrix(Matrix<T> m) {
+        return charMatrix(m, Polynomial.getCalculator(m.getMathCalculator()));
     }
 
     /**
@@ -666,8 +666,8 @@ public class MatrixSup {
      */
     public static <T> boolean isSimilar(Matrix<T> a, Matrix<T> b) {
         var pc = Polynomial.getCalculator(a.getMathCalculator());
-        var x = eigenmatrix(a, pc);
-        var y = eigenmatrix(b, pc);
+        var x = charMatrix(a, pc);
+        var y = charMatrix(b, pc);
         x = LambdaMatrixKt.toNormalForm(x);
         y = LambdaMatrixKt.toNormalForm(y);
         return x.valueEquals(y);
@@ -679,7 +679,7 @@ public class MatrixSup {
      */
     public static <T> Matrix<T> frobeniusForm(Matrix<T> mat) {
         var pc = Polynomial.getCalculator(mat.getMathCalculator());
-        var x = eigenmatrix(mat, pc);
+        var x = charMatrix(mat, pc);
         return LambdaMatrixKt.toFrobeniusForm(x, mat.getMathCalculator());
     }
 

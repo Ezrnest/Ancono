@@ -13,7 +13,6 @@ import cn.ancono.math.numberModels.MathCalculatorAdapter;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.structure.Polynomial;
-import cn.ancono.math.numberTheory.combination.CombUtils;
 import cn.ancono.math.property.Invertible;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.ModelPatterns;
@@ -542,14 +541,14 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     public T calDet() {
         requireSquare();
-        if (row <= 3) {
-            return calDetDefault();
-        }
-        try {
-            return MatrixSup.fastDet(this);
-        } catch (UnsupportedOperationException ignore) {
-        }
-        return calDetDefault();
+//        if (row <= 3) {
+//            return calDetDefault();
+//        }
+//        try {
+//            return MatrixSup.fastDet(this);
+//        } catch (UnsupportedOperationException ignore) {
+//        }
+//        return calDetDefault();
         //calculate by separating first row
 //		boolean turn = false;
 //		for(int i=0;i<column;i++){
@@ -562,19 +561,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 //			turn = !turn;
 //		}
 //		return sum;
-    }
-
-    /**
-     * Return det(this), this method computes the determinant of this
-     * matrix by the definition. It can only provide a correct result  but  its time performance may
-     * not be the best and can vary a lot.
-     *
-     * @return det(this)
-     * @throws ArithmeticException if this Matrix is not a square matrix.
-     */
-    public T calDetDefault() {
-        //just calculate the value by recursion definition.
-
         var mc = getMc();
         //some fast implement when the order is below 4
         if (row == 3) {
@@ -590,28 +576,106 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         } else if (row == 2) {
             return mc.subtract(mc.multiply(getNumber(0, 0), getNumber(1, 1)), mc.multiply(getNumber(0, 1), getNumber(1, 0)));
         }
-        return det0(new int[row], 0, mc.getOne());
+        return detGaussBareiss();
     }
 
-    private T det0(int[] selected, int index, T mulTemp) {
+//    /**
+//     * Return det(this), this method computes the determinant of this
+//     * matrix by the definition.
+//     *
+//     * @return det(this)
+//     * @throws ArithmeticException if this Matrix is not a square matrix.
+//     */
+//    public T calDetDefault() {
+//        //just calculate the value by recursion definition.
+//
+//    }
+
+    private T detGaussBareiss() {
+        //Created by lyc at 2020-03-05 19:18
+        /*
+        Refer to 'A Course in Computational Algebraic Number Theory' Algorithm 2.2.6
+
+        Explanation of the algorithm:
+        We still use the primary transformation to eliminate elements in the matrix, but here we store the potential
+        denominator and divide them only when necessary.
+        For each loop, we eliminate the size of the matrix by one, but we still use the same array and the top-left
+        element of remaining matrix is at the position (k,k).
+
+        Recall the vanilla elimination process, assuming the element at (k,k) is non-zero, we multiply a factor to
+        the first row and subtract it from i-th row. The factor is equal to m[i,k] / m[k,k]. This row transformation
+        will affect the i-th row, changing it element m[i,j] to m[i,j] - m[k,j] * m[i,k] / m[k,k]. However, since
+        we don't want to do division, we extract the denominator m[k,k] and so the resulting element is
+            m[i,j] * m[k,k] - m[k,j] * m[i,k]
+        After a loop, all element below m[k,k] are effectively zero, and the determinant of the original matrix is
+        equal to the determinant of the remaining matrix.
+
+         */
+
         var mc = getMc();
-        if (index == row) {
-            if (CombUtils.inverseCount(selected) % 2 == 0) {
-                return mulTemp;
-            } else {
-                return mc.negate(mulTemp);
+        @SuppressWarnings("unchecked")
+        T[][] mat = (T[][]) getValues();
+        int n = getRowCount();
+        T d = mc.getOne(); // the denominator that we store
+        boolean positive = true;
+        for (int k = 0; k < n; k++) {
+            //locate the top-left element used for elimination first, it must be non-zero
+            if (mc.isZero(mat[k][k])) {
+                boolean allZero = true;
+                int i = 0;
+                for (; i < n; i++) {
+                    if (mc.isZero(mat[i][k])) {
+                        continue;
+                    }
+                    allZero = false;
+                    break;
+                }
+                if (allZero) {
+                    return mc.getZero();
+                }
+                // row swap
+                for (int j = k; j < n; j++) {
+                    T t = mat[i][j];
+                    mat[i][j] = mat[k][j];
+                    mat[k][j] = t;
+                }
+                positive = !positive;
             }
-        }
-        T sum = mc.getZero();
-        for (int i = 0; i < column; i++) {
-            if (ArraySup.arrayContains(i, selected, 0, index)) {
-                continue;
+            T p = mat[k][k];
+            for (int i = k + 1; i < n; i++) {
+                for (int j = k + 1; j < n; j++) {
+                    T t = mc.subtract(mc.multiply(p, mat[i][j]), mc.multiply(mat[i][k], mat[k][j]));
+                    mat[i][j] = mc.divide(t, d);
+                }
             }
-            selected[index] = i;
-            sum = mc.add(sum, det0(selected, index + 1, mc.multiply(mulTemp, getNumber(index, i))));
+            d = p;
         }
-        return sum;
+        if (positive) {
+            return mat[n - 1][n - 1];
+        } else {
+            return mc.negate(mat[n - 1][n - 1]);
+        }
     }
+
+//    private T det0(int[] selected, int index, T mulTemp) {
+//        var mc = getMc();
+//        if (index == row) {
+//            if (CombUtils.inverseCount(selected) % 2 == 0) {
+//                return mulTemp;
+//            } else {
+//                return mc.negate(mulTemp);
+//            }
+//        }
+//        T sum = mc.getZero();
+//        for (int i = 0; i < column; i++) {
+//            if (ArraySup.arrayContains(i, selected, 0, index)) {
+//                continue;
+//            }
+//            selected[index] = i;
+//            sum = mc.add(sum, det0(selected, index + 1, mc.multiply(mulTemp, getNumber(index, i))));
+//        }
+//        return sum;
+//    }
 
 
     /**
@@ -952,22 +1016,22 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
     /**
-     * Creates the eigenvalue equation of this matrix. It is required that
+     * Creates the characteristic equation of this matrix. It is required that
      * this matrix is a square matrix.
      *
      * @return an equation
      */
-    public SVPEquation<T> eigenvalueEquation() {
-        return SVPEquation.fromPolynomial(eigenPolynomial());
+    public SVPEquation<T> charEquation() {
+        return SVPEquation.fromPolynomial(charPoly());
     }
 
     /**
-     * Creates the eigenvalue equation of this matrix. It is required that
+     * Creates the characteristic polynomial of this matrix. It is required that
      * this matrix is a square matrix.
      *
      * @return an equation
      */
-    public Polynomial<T> eigenPolynomial() {
+    public Polynomial<T> charPoly() {
         if (column != row) {
             throw new ArithmeticException("Not square");
         }
@@ -985,14 +1049,14 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * Returns the eigen-matrix:
      * <pre>λI-this</pre>which is a matrix of polynomial.
      */
-    public Matrix<Polynomial<T>> eigenmatrix() {
-        return MatrixSup.eigenmatrix(this);
+    public Matrix<Polynomial<T>> charMatrix() {
+        return MatrixSup.charMatrix(this);
     }
 
     /**
      * Returns the matrix of subtracting this matrix by <code>tI</code>, a diagonal matrix.
      */
-    public Matrix<T> eigenmatrix(T t) {
+    public Matrix<T> charMatrix(T t) {
         @SuppressWarnings("unchecked")
         T[][] mat = (T[][]) new Object[row][column];
         var mc = getMc();
@@ -1034,7 +1098,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * @return a list of eigenvalues
      */
     public List<T> eigenvalues(EquationSolver<T, SVPEquation<T>> equationSolver) {
-        SVPEquation<T> equation = eigenvalueEquation();
+        SVPEquation<T> equation = charEquation();
         return equationSolver.solve(equation);
     }
 

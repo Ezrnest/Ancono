@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
 object LogicSample {
 
     fun predicateLogic() {
-        val formula = (p implies q) and (q implies r) implies (q implies r)
+        val formula = (p implies q) and (q implies r) implies (p implies r)
         println(formula)
         println("Is tautology: ${formula.isTautology}")
         println("Main disjunctive norm: ${formula.toMainDisjunctiveNorm()}")

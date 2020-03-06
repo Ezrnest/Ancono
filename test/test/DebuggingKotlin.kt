@@ -37,7 +37,7 @@ fun p3(){
     """.trimIndent()
     val mat = MatrixSup.parseMatrixD(str, mc, mc::parse)
     mat.printMatrix()
-    println(mat.calDetDefault())
+    println(mat.calDet())
     mat.adjugateMatrix().printMatrix()
 
 //    mat.inverse().printMatrix()

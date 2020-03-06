@@ -17,6 +17,10 @@ public class FiniteGroupSample {
         );
         var H1 = G.normalizer(H);
         System.out.println(H1.getSet());
+        System.out.println(G.isNormalSubgroup(H1));
+//        G.getCosets(H1,false).stream().forEach( c ->
+//                System.out.println(c.getRepresentatives())
+//        );
         System.out.println(G.indexOf(H1));
     }
 

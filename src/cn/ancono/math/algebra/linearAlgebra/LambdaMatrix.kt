@@ -60,7 +60,7 @@ fun <T : Any> LambdaMatrix<T>.invariantFactor(): List<Polynomial<T>> {
 
 object LambdaMatrixSup {
     fun jordanFormAndTrans(matrix: Matrix<Fraction>): Pair<Matrix<Fraction>, Matrix<Fraction>>? {
-        val lamM = matrix.eigenmatrix()
+        val lamM = matrix.charMatrix()
         val nForm = lamM.toNormalForm()
         val invFac = normalFormInvFac(nForm)
         val primaryFactor = TreeMap<Fraction, ArrayList<Int>>()

@@ -40,14 +40,14 @@ public class TestMatrix {
     //	@Test
     public void testEigenEquation() {
         Matrix<Long> mat = Matrix.of(new long[][]{{1, 0}, {0, 4}});
-        SVPEquation<Long> equation = mat.eigenvalueEquation(), expected = SVPEquation.quadratic(1L, -5L, 4L, mc);
+        SVPEquation<Long> equation = mat.charEquation(), expected = SVPEquation.quadratic(1L, -5L, 4L, mc);
         assertTrue("EigenEquation:", expected.valueEquals(equation));
         mat = Matrix.of(new long[][]{{1, 2}, {3, 4}});
-        equation = mat.eigenvalueEquation();
+        equation = mat.charEquation();
         expected = SVPEquation.quadratic(1L, -5L, -2L, mc);
         assertTrue("EigenEquation:", expected.valueEquals(equation));
         mat = Matrix.of(new long[][]{{1, 2, 3}, {3, 4, 5}, {4, 5, 6}});
-        equation = mat.eigenvalueEquation();
+        equation = mat.charEquation();
         expected = SVPEquation.valueOf(mc, 0L, -9L, -11L, 1L);
         assertTrue("EigenEquation:", expected.valueEquals(equation));
     }

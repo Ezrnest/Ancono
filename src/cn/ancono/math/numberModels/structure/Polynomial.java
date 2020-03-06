@@ -651,7 +651,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * returned polynomial is one.
      * <br>
      * This method assumes division can be done on <code>T</code>. If <code>T</code> is actually a ring, please use
-     * {@linkplain PolynomialOnRing#primitiveGCD(Polynomial, Polynomial)} instead.
+     * {@linkplain PolynomialSup#primitiveGCD(Polynomial, Polynomial)} instead.
      */
     @NotNull
     @Override

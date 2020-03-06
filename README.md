@@ -186,7 +186,7 @@ System.out.println("as x -> 0, lim sin(x)/x = "+result);
 
 
 #### <a name="logic">Logic</a>
-Predicate logic (written in Kotlin):
+Proposition logic (written in Kotlin):
 ```kotlin
 val formula = (p implies q) and (q implies r) implies (q implies r)
 println(formula)

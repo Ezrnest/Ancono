@@ -3,7 +3,7 @@ package cn.ancono.math.algebra.linearAlgebra.mapping
 import cn.ancono.math.*
 import cn.ancono.math.algebra.abstractAlgebra.calculator.AlgebraCalculator
 import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator
+import cn.ancono.math.algebra.abstractAlgebra.calculator.LinearSpaceCalculator
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
 import cn.ancono.math.algebra.linearAlgebra.*
 import cn.ancono.math.function.Bijection
@@ -403,7 +403,7 @@ DLinearTrans<T : Any> internal constructor(
     }
 }
 
-class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: Int) : VectorSpaceCalculator<T, LinearMapping<T>> {
+class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: Int) : LinearSpaceCalculator<T, LinearMapping<T>> {
 
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
@@ -433,6 +433,7 @@ class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimD
 }
 
 class LinearTransCal<T : Any>(val mc: MathCalculator<T>, val dim: Int) : AlgebraCalculator<T, LinearTrans<T>> {
+
 
     override val scalarCalculator: FieldCalculator<T>
         get() = mc

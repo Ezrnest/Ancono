@@ -20,6 +20,7 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
     /**
      * Returns a closed interval that indicates the domain of this parametric curve
      */
+    @JvmDefault
     override fun domain(): Interval<T>
 
     /**

@@ -4,7 +4,6 @@ import cn.ancono.math.MathUtils
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.math.numberTheory.combination.CombUtils
-import kotlin.coroutines.experimental.buildSequence
 
 
 /**
@@ -50,7 +49,7 @@ object DefinedPolynomials {
         return legendrePolySeq().elementAt(n)
     }
 
-    fun legendrePolySeq(): Sequence<Polynomial<Fraction>> = buildSequence {
+    fun legendrePolySeq(): Sequence<Polynomial<Fraction>> = sequence {
         var l0 = Polynomial.constant(Fraction.calculator, Fraction.ONE)
         var l1 = Polynomial.oneX(Fraction.calculator)
         yield(l0)
@@ -86,7 +85,7 @@ object DefinedPolynomials {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
 //    DefinedPolynomials.legendrePolySeq().take(15).forEach { println(it) }
 //    val re = DefinedPolynomials.bernsteinPolyList(5).reduce { a, b -> a.add(b) }
 //    println(re)

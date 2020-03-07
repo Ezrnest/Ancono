@@ -3,7 +3,7 @@ package test.math.linearAlgebra
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup
 import cn.ancono.math.algebra.linearAlgebra.Vector
 import cn.ancono.math.algebra.linearAlgebra.VectorBase
-import cn.ancono.math.algebra.linearAlgebra.space.LinearSpace
+import cn.ancono.math.algebra.linearAlgebra.space.AffineSpace
 import cn.ancono.math.get
 import cn.ancono.math.numberModels.Fraction
 import org.junit.Test
@@ -45,13 +45,13 @@ class VectorBaseTest{
     }
 
     @Test
-    fun testIntersect2(){
-        val p1 = MatrixSup.parseVector("1 2",mc,par)
-        val v1 = MatrixSup.parseVector("1 1",mc,par)
-        val p2 = MatrixSup.parseVector("3 4",mc,par)
-        val v2 = MatrixSup.parseVector("-1 1",mc,par)
-        val sp1 = LinearSpace.valueOf(p1,v1)
-        val sp2 = LinearSpace.valueOf(p2,v2)
+    fun testIntersect2() {
+        val p1 = MatrixSup.parseVector("1 2", mc, par)
+        val v1 = MatrixSup.parseVector("1 1", mc, par)
+        val p2 = MatrixSup.parseVector("3 4", mc, par)
+        val v2 = MatrixSup.parseVector("-1 1", mc, par)
+        val sp1 = AffineSpace.valueOf(p1, v1)
+        val sp2 = AffineSpace.valueOf(p2, v2)
         val re = sp1.intersect(sp2)!!
         assert(re.originVector.valueEquals(p2))
     }
@@ -68,12 +68,12 @@ class VectorBaseTest{
             1 0 -1 2
         """.trimIndent()
         val mat = MatrixSup.parseFMatrix(str)
-        val (s1,a1,a2,s2,b1) = mat.rowVectors()
+        val (s1, a1, a2, s2, b1) = mat.rowVectors()
         val b2 = mat[5] // no component6()
-        val sp1 = LinearSpace.valueOf(s1,a1,a2)
-        val sp2 = LinearSpace.valueOf(s2,b1,b2)
+        val sp1 = AffineSpace.valueOf(s1, a1, a2)
+        val sp2 = AffineSpace.valueOf(s2, b1, b2)
         val re = sp1.intersect(sp2)!!
-        val desired = LinearSpace.valueOf(mat[6])
+        val desired = AffineSpace.valueOf(mat[6])
 //        val s1 = MatrixSup.parseFMatrix()
 //        println(re)
 //        println(desired)

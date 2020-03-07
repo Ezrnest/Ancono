@@ -17,7 +17,9 @@ public interface Monoid<T> extends Semigroup<T> {
      *
      * @return the identity element of this monoid.
      */
-    public T identity();
+    default T identity() {
+        return getCalculator().getIdentity();
+    }
 
     /**
      * Gets the calculator of this Monoid.

@@ -3,7 +3,6 @@ package cn.ancono.math.algebra.abstractAlgebra.group.finite;
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.structure.AbelianGroup;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.set.FiniteSet;
@@ -29,12 +28,13 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
      */
     final int mod;
 
+    final CyclicCalInt mc;
+
     /**
-     * size * generator
      *
      */
     CyclicGroup(int size, int generator, int mod) {
-        super(new CyclicCalInt(mod));
+        mc = new CyclicCalInt(mod);
         this.size = size;
         this.generator = generator;
         this.mod = mod;
@@ -42,6 +42,11 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
 
     CyclicGroup(int size) {
         this(size, 1, size);
+    }
+
+    @Override
+    public GroupCalculator<Integer> getCalculator() {
+        return mc;
     }
 
     @Override
@@ -83,7 +88,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
             }
             n += generator;
         }
-        return MathSets.fromCollection(list, EqualPredicate.Companion.naturalEqual());
+        return MathSets.fromCollection(list, EqualPredicate.naturalEqual());
     }
 
     @NotNull
@@ -102,7 +107,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
             }
         }
         list.add(this);
-        return MathSets.fromCollection(list, EqualPredicate.Companion.naturalEqual());
+        return MathSets.fromCollection(list, EqualPredicate.naturalEqual());
     }
 
     /**
@@ -116,7 +121,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
         return size % cg.size == 0;
     }
 
-    static class CyclicCalInt implements JGroupCalculator<Integer> {
+    static class CyclicCalInt implements GroupCalculator<Integer> {
         final int mod;
 
         //int range: 0<=x < mod

@@ -6,7 +6,6 @@ package cn.ancono.math.algebra.abstractAlgebra;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculatorKt;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup;
 import cn.ancono.math.algebra.abstractAlgebra.group.finite.CyclicGroup;
 import cn.ancono.math.algebra.abstractAlgebra.structure.finite.FiniteGroup;
@@ -42,15 +41,20 @@ public final class FiniteGroups {
     static class FiniteGroupImpl<T> extends AbstractFiniteGroup<T> {
 
         private final FiniteSet<T> set;
+        private final GroupCalculator<T> gc;
 
         /**
          *
          */
         public FiniteGroupImpl(GroupCalculator<T> gc, FiniteSet<T> set) {
-            super(gc);
+            this.gc = gc;
             this.set = set;
         }
 
+        @Override
+        public GroupCalculator<T> getCalculator() {
+            return gc;
+        }
 
         /*
          * @see cn.ancono.math.algebra.abstractAlgebra.structure.LimitedGroup#getSet()
@@ -294,7 +298,7 @@ public final class FiniteGroups {
 
     public static AbstractFiniteGroup<Integer> createFromGroupTableWithoutCheck(int[][] table, boolean isCommutative) {
         int size = table.length;
-        var gc = new JGroupCalculator<Integer>() {
+        var gc = new GroupCalculator<Integer>() {
             @Override
             public boolean isCommutative() {
                 return isCommutative;
@@ -405,7 +409,7 @@ public final class FiniteGroups {
      * @return a group
      */
     public static <T> AbstractFiniteGroup<T> identityGroup(T e) {
-        return identityGroup(new JGroupCalculator<>() {
+        return identityGroup(new GroupCalculator<>() {
             @Override
             public boolean isCommutative() {
                 return true;
@@ -456,8 +460,8 @@ public final class FiniteGroups {
         if (e == a) {
             throw new IllegalArgumentException("e == a");
         }
-        var set = MathSets.asSet(EqualPredicate.Companion.referenceEqual(), e, a);
-        JGroupCalculator<T> cal = new JGroupCalculator<>() {
+        var set = MathSets.asSet(EqualPredicate.refEqual(), e, a);
+        GroupCalculator<T> cal = new GroupCalculator<>() {
             @Override
             public boolean isCommutative() {
                 return true;
@@ -504,6 +508,9 @@ public final class FiniteGroups {
             }, true
     );
 
+    /**
+     * Returns a finite group containing the given three elements.
+     */
     public static <T> AbstractFiniteGroup<T> tripleGroup(T e, T a, T b) {
         Objects.requireNonNull(e);
         Objects.requireNonNull(a);
@@ -514,8 +521,8 @@ public final class FiniteGroups {
         // 0 1 2
         // 1 2 0
         // 2 0 1
-        var set = MathSets.asSet(EqualPredicate.Companion.referenceEqual(), e, a, b);
-        var cal = new JGroupCalculator<T>() {
+        var set = MathSets.asSet(EqualPredicate.refEqual(), e, a, b);
+        var cal = new GroupCalculator<T>() {
 
             @Override
             public boolean isEqual(@NotNull T x, @NotNull T y) {
@@ -579,7 +586,7 @@ public final class FiniteGroups {
     }
 
 
-    public static AbstractFiniteGroup<Integer> KLIEN_FOUR_GROUP_INT = createFromGroupTableWithoutCheck(
+    public static AbstractFiniteGroup<Integer> KLEIN_FOUR_GROUP_INT = createFromGroupTableWithoutCheck(
             new int[][]{
                     {0, 1, 2, 3},
                     {1, 0, 3, 2},
@@ -589,6 +596,9 @@ public final class FiniteGroups {
     );
 
 
+    /**
+     * Returns the Klein four-element group.
+     */
     public static <T> AbstractFiniteGroup<T> klienFourGroup(T e, T a, T b, T c) {
         /*
         * 	e 	a 	b 	c
@@ -597,11 +607,13 @@ public final class FiniteGroups {
         b 	b 	c 	e 	a
         c 	c 	b 	a 	e
          */
-        return isomorphism(KLIEN_FOUR_GROUP_INT, Bijection.indexMapping(e, a, b, c));
+        return isomorphism(KLEIN_FOUR_GROUP_INT, Bijection.indexMapping(e, a, b, c));
     }
 
-
-    public static boolean homoEquals(FiniteGroup<?> g1, FiniteGroup<?> g2) {
+    /**
+     * Determines whether the two finite groups are isomorphic.
+     */
+    public static boolean isIsomorphic(FiniteGroup<?> g1, FiniteGroup<?> g2) {
         if (g1.index() != g2.index()) {
             return false;
         }
@@ -615,7 +627,12 @@ public final class FiniteGroups {
         return map != null;
     }
 
-    public static Optional<Permutation> homoEqualsAndPermutation(FiniteGroup<?> g1, FiniteGroup<?> g2) {
+    /**
+     * Determines whether the two finite groups are isomorphic and returns the isomorphism as a permutation
+     * <code>p</code>, which maps the i-th element in <code>g1</code> to the element of index <code>p.apply(i)</code>
+     * in the group <code>g2</code>.
+     */
+    public static Optional<Permutation> computeIsomorphismP(FiniteGroup<?> g1, FiniteGroup<?> g2) {
         if (g1.index() != g2.index()) {
             return Optional.empty();
         }
@@ -632,7 +649,10 @@ public final class FiniteGroups {
         return Optional.of(Permutations.valueOf(map));
     }
 
-    public static <T, R> Optional<IsomorphismMapping<T, R>> homoEqualsAndMap(FiniteGroup<T> g1, FiniteGroup<R> g2) {
+    /**
+     * Determines whether the two finite groups are isomorphic and returns the isomorphism as a mapping.
+     */
+    public static <T, R> Optional<IsomorphismMapping<T, R>> computeIsomorphism(FiniteGroup<T> g1, FiniteGroup<R> g2) {
         if (g1.index() != g2.index()) {
             return Optional.empty();
         }
@@ -672,7 +692,8 @@ public final class FiniteGroups {
     }
 
     /**
-     *
+     * A recursive method to determine whether two group tables are isomorphic and returns the mapping.
+     * @param cur the newest that is assigned
      */
     static int[] recurEqual(int size, int[][] t1, int[][] t2, int[] map, int cur) {
         for (int i = 0; i < size; i++) {
@@ -680,6 +701,7 @@ public final class FiniteGroups {
                 //assign the value
                 for (int val = 0; val < size; val++) {
                     if (ArraySup.firstIndexOf(val, map) > -1) {
+                        //already assigned
                         continue;
                     }
                     map[i] = val;
@@ -692,7 +714,7 @@ public final class FiniteGroups {
                     }
                 }
                 if (map[i] == -1) {
-                    //failed
+                    //all failed
                     return null;
                 }
             } else {
@@ -729,12 +751,16 @@ public final class FiniteGroups {
 //    }
 
     /**
-     * Returns the outer product of the two groups.
+     * Returns the outer product of the two groups. The set of the corresponding group is
+     * the cartesian product of the sets of the two groups, the operation is define as:
+     * <pre>
+     *     (g1,h1) * (g2,h2) = (g1g2, h1h2)
+     * </pre>
      */
     public static <T, N> AbstractFiniteGroup<Pair<T, N>> outerProduct(FiniteGroup<T> g, FiniteGroup<N> h) {
         var gc = g.getCalculator();
         var hc = h.getCalculator();
-        var ngc = new JGroupCalculator<Pair<T, N>>() {
+        var ngc = new GroupCalculator<Pair<T, N>>() {
 
             @Override
             public boolean isEqual(@NotNull Pair<T, N> x, @NotNull Pair<T, N> y) {
@@ -765,13 +791,16 @@ public final class FiniteGroups {
                 return new Pair<>(a, b);
             }
         };
-        var nset = MathSets.descartesProduct(g.getSet(), h.getSet());
+        var nset = MathSets.cartesianProduct(g.getSet(), h.getSet());
         return new FiniteGroupImpl<>(ngc, nset);
     }
 
 
     /**
-     * Returns the commutator group of g.
+     * Returns the commutator group of g. That is, the subgroup of <code>g</code> containing all the elements like
+     * <pre>a<sup>-1</sup>b<sup>-1</sup>ab</pre>
+     *
+     * @see GroupCalculatorKt#commutator(GroupCalculator, Object, Object)
      */
     public static <T> AbstractFiniteGroup<T> commutatorGroup(FiniteGroup<T> g) {
 //        GroupCalculatorKt.commutator()

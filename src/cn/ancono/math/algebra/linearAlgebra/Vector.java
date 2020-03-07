@@ -2,8 +2,7 @@ package cn.ancono.math.algebra.linearAlgebra;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.javaImpl.JVectorSpaceCalculator;
+import cn.ancono.math.algebra.abstractAlgebra.calculator.LinearSpaceCalculator;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
@@ -930,8 +929,8 @@ public abstract class Vector<T> extends Matrix<T> {
         return Matrix.fromVectors(true, vectors).calRank();
     }
 
-    public static <T> VectorSpaceCalculator<T, Vector<T>> getCalculator(MathCalculator<T> mc, int dimension) {
-        return new VectorCalculator<>(mc, dimension);
+    public static <T> LinearSpaceCalculator<T, Vector<T>> getCalculator(MathCalculator<T> mc, int dimension) {
+        return new LinearCalculator<>(mc, dimension);
     }
 //	public static void main(String[] args) {
 //	    var v1 = Vector.createVector(new long[]{1,3,14});
@@ -955,11 +954,11 @@ public abstract class Vector<T> extends Matrix<T> {
 //	}
 }
 
-class VectorCalculator<T> implements JVectorSpaceCalculator<T, Vector<T>> {
+class LinearCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
     private final MathCalculator<T> mc;
     private final int dimension;
 
-    public VectorCalculator(MathCalculator<T> mc, int dimension) {
+    public LinearCalculator(MathCalculator<T> mc, int dimension) {
         this.mc = mc;
         this.dimension = dimension;
     }

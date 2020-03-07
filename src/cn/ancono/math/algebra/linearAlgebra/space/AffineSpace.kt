@@ -66,8 +66,11 @@ interface ILinearSpace<T : Any> : CoordinateSystem<T> {
 
 }
 
+/**
+ * Describes an affine space
+ */
 @Suppress("CanBePrimaryConstructorProperty")
-abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
+abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
                                     originVector: Vector<T>,
                                     vectorBase: VectorBase<T>) : AbstractCoordinateSystem<T>(mc), ILinearSpace<T> {
     override val vectorBase: VectorBase<T> = vectorBase
@@ -97,7 +100,7 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
         return super.innerProduce(v1, v2)
     }
 
-    override fun intersect(s: ILinearSpace<T>): LinearSpace<T>? {
+    override fun intersect(s: ILinearSpace<T>): AffineSpace<T>? {
         require(this.standardDimension == s.standardDimension) { "The standard dimension must be the same!" }
 
         val list = ArrayList<Vector<T>>(this.dimension + s.dimension + 1)
@@ -136,7 +139,7 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
     }
 
     override fun valueEquals(obj: MathObject<T>): Boolean {
-        if (obj !is LinearSpace) {
+        if (obj !is AffineSpace) {
             return false
         }
         return dimension == obj.dimension && standardDimension == obj.standardDimension &&
@@ -144,14 +147,14 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
     }
 
     override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        if (obj !is LinearSpace) {
+        if (obj !is AffineSpace) {
             return false
         }
         return dimension == obj.dimension && standardDimension == obj.standardDimension
                 && originVector.valueEquals(obj.originVector, mapper) && vectorBase.valueEquals(obj.vectorBase, mapper)
     }
 
-    abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): LinearSpace<N>
+    abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AffineSpace<N>
 
 
     companion object {
@@ -159,23 +162,23 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
          * Creates a new linear space from the given origin vector and vector base.
          */
         @JvmStatic
-        fun <T : Any> valueOf(originVector: Vector<T>, vectorBase: VectorBase<T>): LinearSpace<T> {
+        fun <T : Any> valueOf(originVector: Vector<T>, vectorBase: VectorBase<T>): AffineSpace<T> {
             require(originVector.size == vectorBase.vectorDimension)
             val mc = originVector.mathCalculator
-            return DLinearSpace(mc, originVector.toColumnVector(), vectorBase)
+            return DAffineSpace(mc, originVector.toColumnVector(), vectorBase)
         }
 
         /**
          * Creates a new linear space from the given origin vector and base vectors.
          */
         @JvmStatic
-        fun <T : Any> valueOf(originVector: Vector<T>, vararg baseVectors: Vector<T>): LinearSpace<T> = valueOf(originVector, baseVectors.asList())
+        fun <T : Any> valueOf(originVector: Vector<T>, vararg baseVectors: Vector<T>): AffineSpace<T> = valueOf(originVector, baseVectors.asList())
 
         /**
          * Creates a new linear space from the given origin vector and base vectors.
          */
         @JvmStatic
-        fun <T : Any> valueOf(originVector: Vector<T>, baseVectors: List<Vector<T>>): LinearSpace<T> {
+        fun <T : Any> valueOf(originVector: Vector<T>, baseVectors: List<Vector<T>>): AffineSpace<T> {
             if (baseVectors.isEmpty()) {
                 return singlePoint(originVector)
             }
@@ -187,7 +190,7 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
          * may not support some operations.
          */
         @JvmStatic
-        fun <T : Any> singlePoint(originVector: Vector<T>): LinearSpace<T> {
+        fun <T : Any> singlePoint(originVector: Vector<T>): AffineSpace<T> {
             return valueOf(originVector.toColumnVector(), VectorBase.zeroBase(originVector.size, originVector.mathCalculator))
         }
 
@@ -197,15 +200,15 @@ abstract class LinearSpace<T : Any>(mc: MathCalculator<T>,
 /**
  * Returns a linear space whose origin vector is a zero vector and the vector base this `this`.
  */
-fun <T : Any> VectorBase<T>.toLinearSapce(): LinearSpace<T> {
-    return LinearSpace.valueOf(Vector.zeroVector(vectorDimension, mathCalculator), this)
+fun <T : Any> VectorBase<T>.toLinearSapce(): AffineSpace<T> {
+    return AffineSpace.valueOf(Vector.zeroVector(vectorDimension, mathCalculator), this)
 }
 
-internal class DLinearSpace<T : Any>(mc: MathCalculator<T>, originVector: Vector<T>,
-                                     vectorBase: VectorBase<T>) : LinearSpace<T>(mc, originVector, vectorBase) {
+internal class DAffineSpace<T : Any>(mc: MathCalculator<T>, originVector: Vector<T>,
+                                     vectorBase: VectorBase<T>) : AffineSpace<T>(mc, originVector, vectorBase) {
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): DLinearSpace<N> {
-        return DLinearSpace(newCalculator, originVector.mapTo(mapper, newCalculator), vectorBase.mapTo(mapper, newCalculator))
+    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): DAffineSpace<N> {
+        return DAffineSpace(newCalculator, originVector.mapTo(mapper, newCalculator), vectorBase.mapTo(mapper, newCalculator))
     }
 
 }

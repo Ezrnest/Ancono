@@ -307,7 +307,7 @@ object Calculus {
 
     fun taylorSeriesSeq(expr: Expression, variableName: String = "x", point: Expression = Expression.ZERO,
                         mc: ExprCalculator = ExprCalculator.instance)
-            : Sequence<Expression> = buildSequence {
+            : Sequence<Expression> = sequence {
         var n = 0
         var deno = 1L
         var f = expr

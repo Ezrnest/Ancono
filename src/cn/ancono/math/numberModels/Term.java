@@ -2,7 +2,6 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.addableSet.MathAdder;
 import cn.ancono.math.numberModels.api.Computable;
@@ -1825,7 +1824,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     }
 
 
-    static class TermCalculator implements JGroupCalculator<Term>, MathAdder<Term> {
+    static class TermCalculator implements GroupCalculator<Term>, MathAdder<Term> {
         @NotNull
         @Override
         public Term inverse(@NotNull Term x) {

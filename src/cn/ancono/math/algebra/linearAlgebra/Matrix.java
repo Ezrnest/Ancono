@@ -1046,7 +1046,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
     /**
-     * Returns the eigen-matrix:
+     * Returns the characteristic matrix:
      * <pre>λI-this</pre>which is a matrix of polynomial.
      */
     public Matrix<Polynomial<T>> charMatrix() {

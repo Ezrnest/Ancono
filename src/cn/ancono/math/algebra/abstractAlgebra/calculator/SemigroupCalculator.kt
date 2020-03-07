@@ -1,6 +1,3 @@
-/**
- * 2018-02-27
- */
 package cn.ancono.math.algebra.abstractAlgebra.calculator
 
 import cn.ancono.math.function.MathBinaryOperator
@@ -12,59 +9,44 @@ import cn.ancono.utilities.ModelPatterns
  * 2018-02-27 17:31
  */
 interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T> {
-
-
     /**
      * Applies the operation defined in the semigroup.
-     * @param x
-     * @param y
-     * @return
      */
     override fun apply(x: T, y: T): T
-
 
     /**
      * Determines whether the operation is commutative. It is false by default.
      */
+    @JvmDefault
     val isCommutative: Boolean
         get() = false
 
-    /**
-     * Determines whether the two elements are equal.
-     * @param x
-     * @param y
-     * @return
-     */
-    override fun isEqual(x: T, y: T): Boolean
-
-    /**
-     * Returns `x^n=x*x*x....*x` defined in the semigroup.
-     * @param x
-     * @param n a positive number
-     * @return
-     */
+    @JvmDefault
     fun gpow(x: T, n: Long): T {
-        return ModelPatterns.binaryProduce(n, x) { a, b -> this.apply(a, b) }
+        return ModelPatterns.binaryProduce(n, x, { a: T, b: T -> this.apply(a, b) })
     }
+
 
     /**
      * Operator function of add for [T].
      * @see apply
      */
-    operator fun T.plus(y: T) = apply(this, y)
+    @JvmDefault
+    operator fun T.plus(y: T): T = apply(this, y)
 
     /**
      * Operator function for [T].
      * @see gpow
      */
-    operator fun Long.times(x: T) = gpow(x, this)
+    @JvmDefault
+    operator fun Long.times(x: T): T = gpow(x, this)
 
     /**
      * Operator function for [T].
      * @see gpow
      */
+    @JvmDefault
     operator fun T.times(n: Long) = n * this
 }
-
 
 inline fun <T : Any, C : SemigroupCalculator<T>, R> C.eval(block: C.() -> R): R = this.run(block)

@@ -54,7 +54,7 @@ public final class MathSets {
 
     @SafeVarargs
     public static <T> CollectionSet<T> asSet(T... ts) {
-        return asSet(EqualPredicate.Companion.naturalEqual(), ts);
+        return asSet(EqualPredicate.naturalEqual(), ts);
     }
 
     /**
@@ -406,7 +406,7 @@ public final class MathSets {
         if (set instanceof MathCalculatorHolder) {
             mc = ((MathCalculatorHolder<T>) set).getMathCalculator();
         } else {
-            mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.Companion.naturalEqual());
+            mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.naturalEqual());
         }
         List<List<T>> parted = CollectionSup.partition(set, er);
         return CollectionSup.mapList(parted, x ->

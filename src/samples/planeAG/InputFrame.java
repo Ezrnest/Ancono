@@ -215,7 +215,7 @@ public class InputFrame extends JFrame {
 						System.err.println(javaCode);
 					}else{
 						try {
-                            Runnable task = (Runnable) runnable.newInstance();
+                            Runnable task = (Runnable) runnable.getDeclaredConstructor().newInstance();
                             task.run();
                         } catch (Exception e) {
 							output.append("Init failed:");

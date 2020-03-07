@@ -29,7 +29,7 @@ object Groups {
      */
     @JvmStatic
     fun <T : Any> createGroupWithoutCheck(gc: GroupCalculator<T>, set: MathSet<T>): Group<T> {
-        return GroupImpl(gc, set)
+        return GroupFromCal(gc, set)
     }
 
 }
@@ -183,12 +183,12 @@ class IsomorphismedGroup<T : Any, S : Any>(val group: Group<T>, val f: Bijection
     }
 }
 
-internal class GroupImpl<T : Any>(gc: GroupCalculator<T>, set: MathSet<T>) : AbstractGroup<T>(gc, set) {
-    override fun getCalculator(): GroupCalculator<T> {
-        return gc
-    }
-
-    override fun index(): Long {
-        return -1
-    }
-}
+//internal class GroupImpl<T : Any>(gc: GroupCalculator<T>, set: MathSet<T>) : AbstractGroup<T>(gc, set) {
+//    override fun getCalculator(): GroupCalculator<T> {
+//        return cal
+//    }
+//
+//    override fun index(): Long {
+//        return -1
+//    }
+//}

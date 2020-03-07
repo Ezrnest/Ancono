@@ -1,6 +1,8 @@
 package cn.ancono.math.algebra.abstractAlgebra.structure
 
 import cn.ancono.math.algebra.abstractAlgebra.calculator.ModuleCalculator
+import cn.ancono.math.algebra.abstractAlgebra.ring.RingFromCal
+import cn.ancono.math.set.MathSets
 
 /**
  * A module over a ring is a generalization of the notion of vector space over a field,
@@ -18,7 +20,8 @@ import cn.ancono.math.algebra.abstractAlgebra.calculator.ModuleCalculator
  */
 interface Module<T : Any, V : Any> : AbelianGroup<V> {
 
-    val basis: Ring<T>
+    val scalars: Ring<T>
+        get() = RingFromCal(calculator.scalarCalculator, MathSets.universe())
 
     override fun getCalculator(): ModuleCalculator<T, V>
 

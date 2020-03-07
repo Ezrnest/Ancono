@@ -2,9 +2,9 @@ package cn.ancono.math.algebra.linearAlgebra
 
 import cn.ancono.math.CalculatorHolder
 import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator
+import cn.ancono.math.algebra.abstractAlgebra.calculator.LinearSpaceCalculator
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
-import cn.ancono.math.algebra.linearAlgebra.space.VectorSpace
+import cn.ancono.math.algebra.abstractAlgebra.structure.LinearSpace
 import cn.ancono.math.function.MathFunction
 import cn.ancono.math.function.SVFunction
 import cn.ancono.math.function.invoke
@@ -64,15 +64,15 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
      * Returns the math calculator for field `K`
      */
     override val mathCalculator: FieldCalculator<K>
-        get() = vectorSpace.basis.calculator
+        get() = vectorSpace.scalars.calculator
 
-    val vectorCalculator: VectorSpaceCalculator<K, U>
+    val linearCalculator: LinearSpaceCalculator<K, U>
         get() = vectorSpace.calculator
 
     /**
      * The vector space of [U].
      */
-    abstract val vectorSpace: VectorSpace<K, U>
+    abstract val vectorSpace: LinearSpace<K, U>
 
 
     /**
@@ -87,7 +87,7 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
         @Suppress("UnnecessaryVariable")//To make the following code more clear
         val g = y
         return mappingOf { x ->
-            vectorCalculator.eval {
+            linearCalculator.eval {
                 f(x) + g(x)
             }
 
@@ -97,7 +97,7 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
     override fun negate(): ALinearMapping<K, V, U> {
         val f = this
         return mappingOf { x ->
-            vectorCalculator.eval {
+            linearCalculator.eval {
                 -f(x)
             }
         }
@@ -106,7 +106,7 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
     override fun multiply(k: K): ALinearMapping<K, V, U> {
         val f = this
         return mappingOf { x ->
-            vectorCalculator.scalarMultiply(k, f(x))
+            linearCalculator.scalarMultiply(k, f(x))
         }
     }
 
@@ -121,7 +121,7 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
 
 }
 
-abstract class KALinearTrans<K : Any, V : Any>(override val vectorSpace: VectorSpace<K, V>) : ALinearMapping<K, V, V>(), SVFunction<V> {
+abstract class KALinearTrans<K : Any, V : Any>(override val vectorSpace: LinearSpace<K, V>) : ALinearMapping<K, V, V>(), SVFunction<V> {
 
 }
 
@@ -134,11 +134,11 @@ abstract class KALinearTrans<K : Any, V : Any>(override val vectorSpace: VectorS
 //    }
 //}
 
-class ZeroALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: VectorSpace<K, U>) : ALinearMapping<K, V, U>() {
+class ZeroALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: LinearSpace<K, U>) : ALinearMapping<K, V, U>() {
     override fun apply(x: V): U = vectorSpace.identity()
 }
 
-class DALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: VectorSpace<K, U>, private val f: (V) -> U)
+class DALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: LinearSpace<K, U>, private val f: (V) -> U)
     : ALinearMapping<K, V, U>() {
     override fun apply(x: V): U {
         return f(x)

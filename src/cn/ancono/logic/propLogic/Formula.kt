@@ -80,7 +80,7 @@ sealed class Formula : Comparable<Formula> {
     }
 
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    fun iterateTruthTable(): Sequence<Pair<TruthAssignment, Boolean>> = buildSequence {
+    fun iterateTruthTable(): Sequence<Pair<TruthAssignment, Boolean>> = sequence {
         val names = variableNames
         var taMap = TruthAssignmentMap(names)
         val total = 1 shl names.size

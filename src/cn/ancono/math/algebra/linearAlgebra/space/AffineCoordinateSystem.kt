@@ -29,7 +29,7 @@ interface IAffineCoordinateSystem<T : Any> : ILinearSpace<T> {
 abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final override val dimension: Int,
                                                originVector: Vector<T>,
                                                vectorBase: FullVectorBase<T>)
-    : LinearSpace<T>(mc, originVector, vectorBase), IAffineCoordinateSystem<T>, Composable<AffineCoordinateSystem<T>> {
+    : AffineSpace<T>(mc, originVector, vectorBase), IAffineCoordinateSystem<T>, Composable<AffineCoordinateSystem<T>> {
 
     init {
         require(dimension == originVector.size)
@@ -114,7 +114,7 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
 
 internal class DAffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension: Int, originVector: Vector<T>, vectorBase: FullVectorBase<T>) :
         AffineCoordinateSystem<T>(mc, dimension, originVector, vectorBase) {
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): LinearSpace<N> {
+    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AffineSpace<N> {
         return DAffineCoordinateSystem(newCalculator, dimension, originVector.mapTo(mapper, newCalculator), vectorBase.mapTo(mapper, newCalculator))
     }
 

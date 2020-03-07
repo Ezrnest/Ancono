@@ -72,6 +72,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      *
      * @return the class
      */
+    @JvmDefault
     override val numberClass: Class<*>
         get() = zero.javaClass
 
@@ -171,6 +172,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
+    @JvmDefault
     override fun subtract(x: T, y: T): T
 
     /**
@@ -181,6 +183,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @return `true` if `para==zero`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
+    @JvmDefault
     fun isZero(para: T): Boolean {
         return isEqual(zero, para)
     }
@@ -228,6 +231,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
+    @JvmDefault
     override fun divide(x: T, y: T): T
 
     /**
@@ -252,7 +256,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @Suppress("RedundantOverride")//override to reduce unnecessary override of subclasses written in java.
+    @JvmDefault
     override fun multiplyLong(x: T, n: Long): T {
         return super.multiplyLong(x, n)
     }
@@ -266,6 +270,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
+    @JvmDefault
     override fun divideLong(x: T, n: Long): T
 
     /**
@@ -304,6 +309,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
+    @JvmDefault
     override fun pow(x: T, n: Long): T
 
     /**

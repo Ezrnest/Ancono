@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linearAlgebra;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.linearAlgebra.space.LinearSpace;
+import cn.ancono.math.algebra.linearAlgebra.space.AffineSpace;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -40,11 +40,11 @@ public class LinearEquationSolution<T> {
 
 
     @Nullable
-    public LinearSpace<T> asLinearSpace() {
+    public AffineSpace<T> asLinearSpace() {
         if (sit == Situation.NO_SOLUTION) {
             return null;
         }
-        return LinearSpace.Companion.valueOf(specialSolution, Objects.requireNonNull(solutionSpace()));
+        return AffineSpace.Companion.valueOf(specialSolution, Objects.requireNonNull(solutionSpace()));
     }
 
     @Nullable

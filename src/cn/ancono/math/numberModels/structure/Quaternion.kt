@@ -201,7 +201,7 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
 }
 
 class QuaternionCalculator<T : Any>(val mc: MathCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
-    override val multiplyIsCommutative: Boolean
+    override val isMultiplyCommutative: Boolean
         get() = false
 
     override fun reciprocal(x: Quaternion<T>): Quaternion<T> {

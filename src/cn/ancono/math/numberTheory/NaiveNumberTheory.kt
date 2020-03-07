@@ -67,7 +67,7 @@ object NaiveNumberTheory {
     /**
      * Returns a list containing [n]-th farey sequence.
      */
-    fun fareySequence(n: Long): Sequence<Fraction> = buildSequence {
+    fun fareySequence(n: Long): Sequence<Fraction> = sequence {
         /*
         A property of farey sequence:
         1. Neighbouring terms a/b and c/d in a Farey sequence, with a/b < c/d,

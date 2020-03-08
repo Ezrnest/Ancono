@@ -67,7 +67,7 @@ public class TestMatrix {
                 Vector<Double> base = solution.getSpecialSolution();
                 Vector<Double>[] ks = solution.getBaseSolutions();
                 if (ks != null) {
-                    base = Vector.addVectors(base, ks);
+                    base = Vector.addAll(base, ks);
                 }
                 Matrix<Double> re1 = Matrix.multiply(matrix.subMatrix(0, 0, row - 1, column - 2), base),
                         re2 = matrix.subMatrix(0, column - 1, row - 1, column - 1);
@@ -92,7 +92,7 @@ public class TestMatrix {
                 Vector<Double> base = solution.getSpecialSolution();
                 Vector<Double>[] ks = solution.getBaseSolutions();
                 if (ks != null) {
-                    base = Vector.addVectors(base, ks);
+                    base = Vector.addAll(base, ks);
                 }
                 Matrix<Double> re = Matrix.multiply(matrix, base);
                 assertTrue(re.valueEquals(zero));

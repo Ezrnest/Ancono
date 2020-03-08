@@ -150,7 +150,7 @@ object DFBaseCalculator : AlgebraCalculator<Expression, DFBase> {
         }
     }
 
-    override fun isLinearRelevant(u: DFBase, v: DFBase): Boolean {
+    override fun isLinearDependent(u: DFBase, v: DFBase): Boolean {
         return ec.isZero(u.coefficient) || ec.isZero(v.coefficient) || u.bases.contentEquals(v.bases)
     }
 }

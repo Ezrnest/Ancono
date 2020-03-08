@@ -2,7 +2,7 @@ package test.math.linearAlgebra
 
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup
 import cn.ancono.math.algebra.linearAlgebra.Vector
-import cn.ancono.math.algebra.linearAlgebra.VectorBase
+import cn.ancono.math.algebra.linearAlgebra.VectorBasis
 import cn.ancono.math.algebra.linearAlgebra.space.AffineSpace
 import cn.ancono.math.get
 import cn.ancono.math.numberModels.Fraction
@@ -87,21 +87,21 @@ class VectorBaseTest{
             2 1 1
             1 1 1
         """.trimIndent()
-        val mat1 = MatrixSup.parseMatrixD(str,mc,par)
+        val mat1 = MatrixSup.parseMatrixD(str, mc, par)
         str = """
             0 1 1
             -1 1 0
             1 2 1
         """.trimIndent()
-        val mat2 = MatrixSup.parseMatrixD(str,mc,par)
-        val vb1 = VectorBase.createBase(mat1.rowVectors())
-        val vb2 = VectorBase.createBase(mat2.rowVectors())
+        val mat2 = MatrixSup.parseMatrixD(str, mc, par)
+        val vb1 = VectorBasis.createBase(mat1.rowVectors())
+        val vb2 = VectorBasis.createBase(mat2.rowVectors())
         str = """
             |0 1 1
             |-1 -3 -2
             |2 4 4
         """.trimMargin()
-        val desired = MatrixSup.parseMatrixD(str,mc,par)
+        val desired = MatrixSup.parseMatrixD(str, mc, par)
         assert(vb1.transMatrix(vb2).valueEquals(desired))
 
     }
@@ -115,14 +115,14 @@ class VectorBaseTest{
             0 1 -1 -1
         """.trimIndent()
 
-        val base1 = VectorBase.createBase(MatrixSup.parseFMatrix(str).rowVectors())
+        val base1 = VectorBasis.createBase(MatrixSup.parseFMatrix(str).rowVectors())
         str = """
             1 0 0 1
             0 0 1 -1
             2 1 0 3
             -1 0 1 2
         """.trimIndent()
-        val base2 = VectorBase.createBase(MatrixSup.parseFMatrix(str).rowVectors())
+        val base2 = VectorBasis.createBase(MatrixSup.parseFMatrix(str).rowVectors())
         str = """
             -1/2 -1/2 3/2 4
             -1/2 1/2 -1/2 1

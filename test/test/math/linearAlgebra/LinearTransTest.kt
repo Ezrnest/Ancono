@@ -2,7 +2,7 @@ package test.math.linearAlgebra
 
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup
 import cn.ancono.math.algebra.linearAlgebra.Vector
-import cn.ancono.math.algebra.linearAlgebra.VectorBase
+import cn.ancono.math.algebra.linearAlgebra.VectorBasis
 import cn.ancono.math.algebra.linearAlgebra.mapping.LinearMapping
 import cn.ancono.math.algebra.linearAlgebra.mapping.LinearTrans
 import cn.ancono.math.numberModels.Fraction
@@ -15,19 +15,19 @@ class LinearTransTest{
     val par: (String) -> Fraction = Fraction.Companion::of
 
     @Test
-    fun testTransMatrix(){
+    fun testTransMatrix() {
         val str = """
             1 2 3 2
             -1 0 3 1
             2 1 5 -1
             1 1 2 2
         """.trimIndent()
-        val mat = MatrixSup.parseMatrixD(str,mc,par)
-        val (e1,e2,e3,e4) = Vector.unitVectors(4,mc)
-        val base1 = VectorBase.createFullBase(e1,e2,e3,e4)
-        val base2 = VectorBase.createFullBase(e4,e3,e2,e1)
-        val base3 = VectorBase.createFullBase(e1, e1 + e2, e1 + e2 + e3, e1 + e2 + e3 + e4)
-        val trans = LinearTrans.underBase(mat,base1)
+        val mat = MatrixSup.parseMatrixD(str, mc, par)
+        val (e1, e2, e3, e4) = Vector.unitVectors(4, mc)
+        val base1 = VectorBasis.createFullBase(e1, e2, e3, e4)
+        val base2 = VectorBasis.createFullBase(e4, e3, e2, e1)
+        val base3 = VectorBasis.createFullBase(e1, e1 + e2, e1 + e2 + e3, e1 + e2 + e3 + e4)
+        val trans = LinearTrans.underBase(mat, base1)
         println(trans.transMatrixUnder(base2).contentToString(NumberFormatter.getToStringFormatter()))
         println(trans.transMatrixUnder(base3).contentToString(NumberFormatter.getToStringFormatter()))
     }
@@ -47,13 +47,13 @@ class LinearTransTest{
             2 1 1 3
             1 1 2 -5
         """.trimIndent()
-        val imageDesired = VectorBase.createBase(MatrixSup.parseFMatrix(str).rowVectors())
+        val imageDesired = VectorBasis.createBase(MatrixSup.parseFMatrix(str).rowVectors())
         assert(imageDesired.equivalentTo(tran.image))
         str = """
             -1 3 -2 1 0
             9 -11 5 0 4
         """.trimIndent()
-        val kernelDesired = VectorBase.createBase(MatrixSup.parseFMatrix(str).rowVectors())
+        val kernelDesired = VectorBasis.createBase(MatrixSup.parseFMatrix(str).rowVectors())
         assert(kernelDesired.equivalentTo(tran.kernel))
     }
 }

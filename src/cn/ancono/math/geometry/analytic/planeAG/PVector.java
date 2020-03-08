@@ -162,7 +162,7 @@ public final class PVector<T> extends Vector<T> {
         T[] arr = (T[]) Array.newInstance(x.getClass(), 2);
         arr[0] = x;
         arr[1] = y;
-        return Vector.createVector(getMc(), true, arr);
+        return Vector.of(getMc(), true, arr);
     }
 
     @Override

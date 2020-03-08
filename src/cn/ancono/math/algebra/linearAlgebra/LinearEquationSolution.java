@@ -48,15 +48,15 @@ public class LinearEquationSolution<T> {
     }
 
     @Nullable
-    public VectorBase<T> solutionSpace() {
+    public VectorBasis<T> solutionSpace() {
         if (sit == Situation.NO_SOLUTION) {
             return null;
         }
         if (baseSolutions == null) {
             //only one solution
-            return VectorBase.zeroBase(specialSolution.getSize(), specialSolution.getMathCalculator());
+            return VectorBasis.zeroBase(specialSolution.getSize(), specialSolution.getMathCalculator());
         }
-        return VectorBase.createBaseWithoutCheck(baseSolutions);
+        return VectorBasis.createBaseWithoutCheck(baseSolutions);
     }
 
 
@@ -126,7 +126,7 @@ public class LinearEquationSolution<T> {
         if (sit == Situation.SINGLE_SOLUTION) {
             return specialSolution;
         }
-        return specialSolution.isZeroVector() ? Vector.addVector(specialSolution, baseSolutions[0]) : specialSolution;
+        return specialSolution.isZeroVector() ? Vector.addAll(specialSolution, baseSolutions[0]) : specialSolution;
     }
 
 

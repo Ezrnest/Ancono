@@ -184,7 +184,7 @@ public interface IPolynomial<T> extends Iterable<T> {
         for (int i = 0; i < length; i++) {
             arr[i] = fx.getCoefficient(i);
         }
-        return Vector.createVector(mc, arr);
+        return Vector.of(mc, arr);
     }
 
     /**

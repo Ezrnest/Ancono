@@ -1449,19 +1449,19 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     /**
      * Returns the solution space of this matrix.
      */
-    public VectorBase<T> solutionSpace() {
+    public VectorBasis<T> solutionSpace() {
         return MatrixSup.solveHomogeneousLinearEquation(this).solutionSpace();
     }
 
     /**
      * Returns the column space of this matrix.
      */
-    public VectorBase<T> columnSpace() {
-        return VectorBase.generate(columnVectors());
+    public VectorBasis<T> columnSpace() {
+        return VectorBasis.generate(columnVectors());
     }
 
-    public VectorBase<T> rowSpace() {
-        return VectorBase.generate(rowVectors());
+    public VectorBasis<T> rowSpace() {
+        return VectorBasis.generate(rowVectors());
     }
 
     /**
@@ -1586,8 +1586,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 temp[j] = ws[j].multiplyNumber(k);
                 RB.set(k, j, i);
             }
-            var t = Vector.addVectors(i, temp);
-            var v = Vector.subtractVector(u, t);
+            var t = Vector.addAll(i, temp);
+            var v = Vector.subtract(u, t);
             if (v.isZeroVector()) {
                 ws[i] = v;
             } else {
@@ -2446,13 +2446,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         }
     }
 
-    public static <T> Matrix<T> fromVectors(boolean asRowVector, List<Vector<T>> vectors) {
+    public static <T> Matrix<T> fromVectors(boolean asRowVector, List<? extends Vector<T>> vectors) {
         int size = vectors.get(0).getSize();
         var mc = vectors.get(0).getMc();
         @SuppressWarnings("unchecked")
         Vector<T>[] arr = (Vector<T>[]) new Vector[vectors.size()];
         int index = 0;
-        for (var v : vectors) {
+        for (Vector<T> v : vectors) {
             if (v.getSize() != size) {
                 throw new IllegalArgumentException("Different size!");
             }

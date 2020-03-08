@@ -294,6 +294,30 @@ public abstract class Vector<T> extends Matrix<T> {
         }
     }
 
+    /**
+     * Returns a vector of the given size. The elements in the corresponding positions are equal to the elements
+     * in this and remaining elements are set to zero.
+     */
+    public Vector<T> resize(int size) {
+        if (size < 1) {
+            throw new IllegalArgumentException("size < 1");
+        }
+        if (size == this.getSize()) {
+            return this;
+        }
+        @SuppressWarnings("unchecked")
+        T[] vec = (T[]) new Object[size];
+        int pos = Math.min(size, this.getSize());
+        for (int i = 0; i < pos; i++) {
+            vec[i] = getNumber(i);
+        }
+        var mc = getMc();
+        for (int i = pos; i < size; i++) {
+            vec[i] = mc.getZero();
+        }
+        return new DVector<>(vec, isRow, mc);
+    }
+
     @NotNull
     @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
@@ -316,23 +340,23 @@ public abstract class Vector<T> extends Matrix<T> {
     public abstract <N> Vector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
 
     /**
-     * Create a new Matrix with the given fraction array.A boolean representing whether the
-     * vector should be a row-vector or column-vector is necessary.The {@link Matrix} returned by
+     * Create a new vector with the given elements. A boolean representing whether the
+     * vector should be a row-vector or column-vector is necessary. The vector returned by
      * this method generally has a better performance in contrast to the matrix return by simply call
      * {@link Matrix#of(Object[][], MathCalculator)} using a two-dimension array as parameter.
      * <p>For example , assume {@code fs} is
-     * an array contains following values:[1,3,4,5],then {@code createVector(true,fs} will return a
+     * an array contains following values:[1,3,4,5],then {@code of(true,fs} will return a
      * matrix whose row count is one and column count is 4, while {@code createVector(false,fs} will
      * return a matrix with 4 rows and 1 column.
      *
      * @param isRow decides whether the vector return is a row-vector
      * @param fs    the numbers,null values will be considered as ZERO
      * @return a newly created vector
-     * @see DVector#createVector(boolean, long[])
+     * @see DVector#of(boolean, long[])
      */
     @SafeVarargs
-    public static <T> Vector<T> createVector(MathCalculator<T> mc, boolean isRow,
-                                             T... fs) {
+    public static <T> Vector<T> of(MathCalculator<T> mc, boolean isRow,
+                                   T... fs) {
         @SuppressWarnings("unchecked")
         T[] vec = (T[]) new Object[fs.length];
         for (int i = 0; i < vec.length; i++) {
@@ -341,14 +365,27 @@ public abstract class Vector<T> extends Matrix<T> {
         return new DVector<>(vec, isRow, mc);
     }
 
+
     /**
-     * Create a new Matrix with the given fraction array.A boolean representing whether the
-     * vector should be a row-vector or column-vector is necessary.The {@link Matrix} returned by
+     * Returns a column vector from the given elements.
+     */
+    public static <T> Vector<T> of(MathCalculator<T> mc, List<T> elements) {
+        @SuppressWarnings("unchecked")
+        T[] vec = (T[]) elements.toArray();
+        for (int i = 0; i < vec.length; i++) {
+            vec[i] = vec[i] == null ? mc.getZero() : vec[i];
+        }
+        return new DVector<>(vec, false, mc);
+    }
+
+    /**
+     * Create a new vector with the given long array. A boolean representing whether the
+     * vector should be a row-vector or column-vector is necessary. The vector returned by
      * this method generally has a better performance in contrast to the matrix return by simply call
      * {@link Matrix#of(Object[][], MathCalculator)} using a two-dimension array as parameter.
      * <p>For example , assume {@code ns} is
-     * an array contains following values:[1,3,4,5],then {@code createVector(true,ns} will return a
-     * matrix whose row count is one and column count is 4, while {@code createVector(false,ns} will
+     * an array contains following values:[1,3,4,5],then {@code of(true,ns} will return a
+     * matrix whose row count is one and column count is 4, while {@code of(false,ns} will
      * return a matrix with 4 rows and 1 column.
      *
      * @param isRow decides whether the vector return is a row-vector
@@ -356,7 +393,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return a newly created vector
      * @see DVector#of(Object[][], MathCalculator)
      */
-    public static Vector<Long> createVector(boolean isRow, long[] ns) {
+    public static Vector<Long> of(boolean isRow, long[] ns) {
         Long[] vec = new Long[ns.length];
         for (int i = 0; i < vec.length; i++) {
             vec[i] = ns[i];
@@ -370,11 +407,11 @@ public abstract class Vector<T> extends Matrix<T> {
      *
      * @param fs the numbers
      * @return a newly created column vector
-     * @see #createVector(MathCalculator, boolean, Object[])
+     * @see #of(MathCalculator, boolean, Object[])
      */
     @SafeVarargs
-    public static <T> Vector<T> createVector(MathCalculator<T> mc, T... fs) {
-        return createVector(mc, false, fs);
+    public static <T> Vector<T> of(MathCalculator<T> mc, T... fs) {
+        return of(mc, false, fs);
     }
 
     /**
@@ -382,10 +419,10 @@ public abstract class Vector<T> extends Matrix<T> {
      *
      * @param arr the numbers
      * @return a newly created vector
-     * @see #createVector(boolean, long[])
+     * @see #of(boolean, long[])
      */
-    public static Vector<Long> createVector(long[] arr) {
-        return createVector(false, arr);
+    public static Vector<Long> of(long[] arr) {
+        return of(false, arr);
     }
 
 
@@ -396,7 +433,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return a column vector as result
      * @throws ArithmeticException if dimension doesn't match
      */
-    public static <T> Vector<T> addVector(Vector<T> v1, Vector<T> v2) {
+    public static <T> Vector<T> addAll(Vector<T> v1, Vector<T> v2) {
         v1.checkSameSize(v2);
         final int size = v1.getSize();
         @SuppressWarnings("unchecked")
@@ -409,12 +446,12 @@ public abstract class Vector<T> extends Matrix<T> {
     }
 
     /**
-     * A method similar to {@link #addVector(Vector, Vector)}, but subtract.
+     * A method similar to {@link #addAll(Vector, Vector)}, but subtract.
      *
      * @return a column vector as result
      * @throws ArithmeticException if dimension doesn't match
      */
-    public static <T> Vector<T> subtractVector(Vector<T> v1, Vector<T> v2) {
+    public static <T> Vector<T> subtract(Vector<T> v1, Vector<T> v2) {
         v1.checkSameSize(v2);
         final int size = v1.getSize();
         @SuppressWarnings("unchecked")
@@ -434,8 +471,8 @@ public abstract class Vector<T> extends Matrix<T> {
      * @throws ArithmeticException if dimension doesn't match
      */
     @SafeVarargs
-    public static <T> Vector<T> addVectors(Vector<T>... vecs) {
-        return addVectors(vecs.length, vecs);
+    public static <T> Vector<T> addAll(Vector<T>... vecs) {
+        return addAll(vecs.length, vecs);
     }
 
     /**
@@ -447,7 +484,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @throws ArithmeticException if dimension doesn't match
      */
     @SafeVarargs
-    public static <T> Vector<T> addVectors(int n, Vector<T>... vecs) {
+    public static <T> Vector<T> addAll(int n, Vector<T>... vecs) {
         if (n < 1 || n > vecs.length) {
             throw new IllegalArgumentException();
         }
@@ -475,7 +512,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @throws ArithmeticException if dimension doesn't match
      */
     @SafeVarargs
-    public static <T> Vector<T> addVectors(Vector<T> v, Vector<T>... vecs) {
+    public static <T> Vector<T> addAll(Vector<T> v, Vector<T>... vecs) {
         final int size = v.getSize();
         @SuppressWarnings("unchecked")
         T[] re = (T[]) v.toArray();
@@ -548,7 +585,7 @@ public abstract class Vector<T> extends Matrix<T> {
     }
 
     /**
-     * Return a zero vector of the given length.
+     * Return a zero column vector of the given length.
      */
     public static <T> Vector<T> zeroVector(int length, MathCalculator<T> mc) {
         return zeroVector(length, false, mc);
@@ -602,7 +639,9 @@ public abstract class Vector<T> extends Matrix<T> {
         return new DVector<>(arr, isRow, mc);
     }
 
-
+    /**
+     * Resize the given vector, expanding the vector on the left side and the right side.
+     */
     public static <T> Vector<T> resizeOf(Vector<T> v, int leftExpansion, int rightExpansion) {
         if (leftExpansion + v.getSize() <= 0 || rightExpansion + v.getSize() <= 0) {
             throw new IllegalArgumentException();
@@ -695,7 +734,7 @@ public abstract class Vector<T> extends Matrix<T> {
                 temp2[j] = list.get(j).multiplyNumber(temp1[j].innerProduct(vec));
             }
             temp2[i] = vec;
-            Vector<T> result = addVectors(i + 1, temp2);
+            Vector<T> result = addAll(i + 1, temp2);
             list.add(result);
             prev = result;
         }
@@ -832,7 +871,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @param vectors a series of vectors of the same size
      * @return <code>true</code> if they are linear relevant
      */
-    public static <T> boolean isLinearRelevant(List<Vector<T>> vectors) {
+    public static <T> boolean isLinearRelevant(List<? extends Vector<T>> vectors) {
         checkNonEmptyAndSameSize(vectors);
         int size = vectors.get(0).getSize();
         if (vectors.size() > size) {
@@ -843,7 +882,7 @@ public abstract class Vector<T> extends Matrix<T> {
         return rank < vectors.size();
     }
 
-    private static <T> void checkNonEmptyAndSameSize(List<Vector<T>> vectors) {
+    private static <T> void checkNonEmptyAndSameSize(List<? extends Vector<T>> vectors) {
         if (vectors.isEmpty()) {
             throw new IllegalArgumentException("Empty Vector!");
         }
@@ -861,7 +900,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @param vectors a list of vectors
      */
     @SuppressWarnings("Duplicates")
-    public static <T> VectorBase<T> maximumLinearIrrelevant(List<Vector<T>> vectors) {
+    public static <T> VectorBasis<T> maximumLinearIrrelevant(List<Vector<T>> vectors) {
         checkNonEmptyAndSameSize(vectors);
         int size = vectors.size();
         Matrix<T> mat = Matrix.fromVectors(true, vectors);
@@ -886,7 +925,7 @@ public abstract class Vector<T> extends Matrix<T> {
             row++;
         }
         bases.trimToSize();
-        return new DVectorBase<>(mc, vectors.get(0).getSize(), bases);
+        return new DVectorBasis<>(mc, vectors.get(0).getSize(), bases);
     }
 
     /**
@@ -896,7 +935,7 @@ public abstract class Vector<T> extends Matrix<T> {
      */
     @SuppressWarnings("Duplicates")
     @SafeVarargs
-    public static <T> VectorBase<T> maximumLinearIrrelevant(Vector<T>... vectors) {
+    public static <T> VectorBasis<T> maximumLinearIrrelevant(Vector<T>... vectors) {
         return maximumLinearIrrelevant(Arrays.asList(vectors));
     }
 
@@ -978,7 +1017,7 @@ class LinearCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
     @NotNull
     @Override
     public Vector<T> apply(@NotNull Vector<T> x, @NotNull Vector<T> y) {
-        return Vector.addVector(x, y);
+        return Vector.addAll(x, y);
     }
 
     @NotNull
@@ -999,11 +1038,16 @@ class LinearCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
     }
 
     @Override
-    public boolean isLinearRelevant(@NotNull Vector<T> u, @NotNull Vector<T> v) {
+    public boolean isLinearDependent(@NotNull Vector<T> u, @NotNull Vector<T> v) {
         return u.isParallel(v);
     }
 
-//    public static void main(String[] args) {
+    @Override
+    public boolean isLinearDependent(@NotNull List<? extends Vector<T>> vectors) {
+        return Vector.isLinearRelevant(vectors);
+    }
+
+    //    public static void main(String[] args) {
 //        var mc = Calculators.getCalculatorDouble();
 //        var vc = new VectorCalculator<Double>(mc, 2);
 //        Printer.print(vc);

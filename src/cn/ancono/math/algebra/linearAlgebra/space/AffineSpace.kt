@@ -10,12 +10,12 @@ import java.util.function.Function
 
 /**
  * Describes n-dimension linear space. The system is composed
- * of an origin vector([originVector]) and a vector base([vectorBase]), whose dimension(size) is equal to
+ * of an origin vector([originVector]) and a vector base([vectorBasis]), whose dimension(size) is equal to
  * [standardDimension]. The [dimension] of this coordinate system is equal to
- * the number of base vectors in the [vectorBase].
+ * the number of base vectors in the [vectorBasis].
  */
 interface ILinearSpace<T : Any> : CoordinateSystem<T> {
-    val vectorBase: IVectorBase<T>
+    val vectorBasis: IVectorBasis<T>
 
     val originVector: Vector<T>
 
@@ -23,13 +23,13 @@ interface ILinearSpace<T : Any> : CoordinateSystem<T> {
      * The dimension of the linear space, which is equal to the number of base vectors
      */
     override val dimension: Int
-        get() = vectorBase.rank
+        get() = vectorBasis.rank
 
     /**
      * The length of the vectors in this space.
      */
     override val standardDimension: Int
-        get() = vectorBase.vectorDimension
+        get() = vectorBasis.vectorLength
 
     /**
      * Any vector whose size is equal to [dimension] is valid.
@@ -40,16 +40,16 @@ interface ILinearSpace<T : Any> : CoordinateSystem<T> {
 
     override fun contains(v: Vector<T>): Boolean {
         val local = v - originVector
-        return vectorBase.canReduce(local)
+        return vectorBasis.canReduce(local)
     }
 
     override fun fromStandardCord(v: Vector<T>): Vector<T> {
         val local = v - originVector
-        return vectorBase.reduce(local)
+        return vectorBasis.reduce(local)
     }
 
     override fun toStandardCord(v: Vector<T>): Vector<T> {
-        return vectorBase.produce(v) + originVector
+        return vectorBasis.produce(v) + originVector
     }
 
     /**
@@ -72,12 +72,12 @@ interface ILinearSpace<T : Any> : CoordinateSystem<T> {
 @Suppress("CanBePrimaryConstructorProperty")
 abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
                                     originVector: Vector<T>,
-                                    vectorBase: VectorBase<T>) : AbstractCoordinateSystem<T>(mc), ILinearSpace<T> {
-    override val vectorBase: VectorBase<T> = vectorBase
+                                    vectorBase: VectorBasis<T>) : AbstractCoordinateSystem<T>(mc), ILinearSpace<T> {
+    override val vectorBasis: VectorBasis<T> = vectorBase
     override val originVector: Vector<T> = originVector
 
     init {
-        require(originVector.size == vectorBase.vectorDimension)
+        require(originVector.size == vectorBase.vectorLength)
     }
 
     override fun isValidCord(v: Vector<T>): Boolean {
@@ -104,8 +104,8 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
         require(this.standardDimension == s.standardDimension) { "The standard dimension must be the same!" }
 
         val list = ArrayList<Vector<T>>(this.dimension + s.dimension + 1)
-        list.addAll(this.vectorBase.vectors)
-        list.addAll(s.vectorBase.vectors)
+        list.addAll(this.vectorBasis.vectors)
+        list.addAll(s.vectorBasis.vectors)
         list.add(s.originVector - this.originVector)
         val mat = Matrix.fromVectors(false, list)
         val solution = MatrixSup.solveLinearEquation(mat)
@@ -114,7 +114,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
             return null
         }
         val v = solution.specialSolution
-        val vs = vectorBase.vectors
+        val vs = vectorBasis.vectors
         var ori = this.originVector
         for (i in vs.indices) {
             ori += vs[i] * v[i]
@@ -134,7 +134,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
 
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
         append("{$originVector;")
-        vectorBase.vectors.joinTo(this)
+        vectorBasis.vectors.joinTo(this)
         append("}")
     }
 
@@ -143,7 +143,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
             return false
         }
         return dimension == obj.dimension && standardDimension == obj.standardDimension &&
-                originVector.valueEquals(obj.originVector) && vectorBase.valueEquals(obj.vectorBase)
+                originVector.valueEquals(obj.originVector) && vectorBasis.valueEquals(obj.vectorBasis)
     }
 
     override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
@@ -151,7 +151,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
             return false
         }
         return dimension == obj.dimension && standardDimension == obj.standardDimension
-                && originVector.valueEquals(obj.originVector, mapper) && vectorBase.valueEquals(obj.vectorBase, mapper)
+                && originVector.valueEquals(obj.originVector, mapper) && vectorBasis.valueEquals(obj.vectorBasis, mapper)
     }
 
     abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AffineSpace<N>
@@ -162,8 +162,8 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
          * Creates a new linear space from the given origin vector and vector base.
          */
         @JvmStatic
-        fun <T : Any> valueOf(originVector: Vector<T>, vectorBase: VectorBase<T>): AffineSpace<T> {
-            require(originVector.size == vectorBase.vectorDimension)
+        fun <T : Any> valueOf(originVector: Vector<T>, vectorBase: VectorBasis<T>): AffineSpace<T> {
+            require(originVector.size == vectorBase.vectorLength)
             val mc = originVector.mathCalculator
             return DAffineSpace(mc, originVector.toColumnVector(), vectorBase)
         }
@@ -182,7 +182,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
             if (baseVectors.isEmpty()) {
                 return singlePoint(originVector)
             }
-            return valueOf(originVector, VectorBase.createBase(baseVectors))
+            return valueOf(originVector, VectorBasis.createBase(baseVectors))
         }
 
         /**
@@ -191,7 +191,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
          */
         @JvmStatic
         fun <T : Any> singlePoint(originVector: Vector<T>): AffineSpace<T> {
-            return valueOf(originVector.toColumnVector(), VectorBase.zeroBase(originVector.size, originVector.mathCalculator))
+            return valueOf(originVector.toColumnVector(), VectorBasis.zeroBase(originVector.size, originVector.mathCalculator))
         }
 
     }
@@ -200,15 +200,15 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
 /**
  * Returns a linear space whose origin vector is a zero vector and the vector base this `this`.
  */
-fun <T : Any> VectorBase<T>.toLinearSapce(): AffineSpace<T> {
-    return AffineSpace.valueOf(Vector.zeroVector(vectorDimension, mathCalculator), this)
+fun <T : Any> VectorBasis<T>.toAffineSpace(): AffineSpace<T> {
+    return AffineSpace.valueOf(Vector.zeroVector(vectorLength, mathCalculator), this)
 }
 
 internal class DAffineSpace<T : Any>(mc: MathCalculator<T>, originVector: Vector<T>,
-                                     vectorBase: VectorBase<T>) : AffineSpace<T>(mc, originVector, vectorBase) {
+                                     vectorBase: VectorBasis<T>) : AffineSpace<T>(mc, originVector, vectorBase) {
 
     override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): DAffineSpace<N> {
-        return DAffineSpace(newCalculator, originVector.mapTo(mapper, newCalculator), vectorBase.mapTo(mapper, newCalculator))
+        return DAffineSpace(newCalculator, originVector.mapTo(mapper, newCalculator), vectorBasis.mapTo(mapper, newCalculator))
     }
 
 }

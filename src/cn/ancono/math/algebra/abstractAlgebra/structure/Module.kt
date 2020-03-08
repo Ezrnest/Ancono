@@ -18,11 +18,11 @@ import cn.ancono.math.set.MathSets
  * @author  liyicheng
  *
  */
-interface Module<T : Any, V : Any> : AbelianGroup<V> {
+interface Module<R : Any, V : Any> : AbelianGroup<V> {
 
-    val scalars: Ring<T>
+    val scalars: Ring<R>
         get() = RingFromCal(calculator.scalarCalculator, MathSets.universe())
 
-    override fun getCalculator(): ModuleCalculator<T, V>
+    override fun getCalculator(): ModuleCalculator<R, V>
 
 }

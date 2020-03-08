@@ -30,11 +30,11 @@ operator fun <T : Any> Vector<T>.unaryMinus() = this.negative()!!
 
 operator fun <T : Any> PVector<T>.unaryMinus() = this.negative()!!
 operator fun <T : Any> SVector<T>.unaryMinus() = this.negative()!!
-operator fun <T : Any> Vector<T>.plus(v: Vector<T>) = Vector.addVector(this, v)!!
+operator fun <T : Any> Vector<T>.plus(v: Vector<T>) = Vector.addAll(this, v)!!
 
 operator fun <T : Any> PVector<T>.plus(v: PVector<T>) = this.add(v)!!
 operator fun <T : Any> SVector<T>.plus(v: SVector<T>) = this.add(v)!!
-operator fun <T : Any> Vector<T>.minus(v: Vector<T>) = Vector.subtractVector(this, v)!!
+operator fun <T : Any> Vector<T>.minus(v: Vector<T>) = Vector.subtract(this, v)!!
 
 operator fun <T : Any> PVector<T>.minus(v: PVector<T>) = this.add(v)!!
 operator fun <T : Any> SVector<T>.minus(v: SVector<T>) = this.subtract(v)!!

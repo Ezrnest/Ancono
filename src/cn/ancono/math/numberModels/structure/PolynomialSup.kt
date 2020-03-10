@@ -5,6 +5,7 @@ import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.utilities.structure.Pair
+
 //Created by lyc at 2020-03-01 13:59
 /**
  * Provides utility algorithms for polynomials on a ring and an UFD.
@@ -81,6 +82,7 @@ object PolynomialSup {
         return R
     }
 
+
     /**
      * Computes the GCD of two polynomials on an UFD.
      *
@@ -127,7 +129,7 @@ object PolynomialSup {
     /**
      * Computes the GCD of two polynomials on an UFD using sub-resultant method.
      *
-     * It is required that the calculator of [f] is an instance of [UFDCalculator].
+     *
      *
      * @see [primitiveGCD]
      */
@@ -151,13 +153,14 @@ object PolynomialSup {
             return A
         }
         val mc = f.mathCalculator
+
         @Suppress("UNCHECKED_CAST")
         val rc = mc as UFDCalculator<T>
         val a = A.cont()
         val b = B.cont()
         val d = rc.gcd(a, b)
-        var g = mc.one
-        var h = mc.one
+        var g1 = mc.one
+        var h1 = mc.one
         while (true) {
             val t = (A.degree - B.degree).toLong()
             val R = pseudoDivisionR(A, B)
@@ -169,9 +172,9 @@ object PolynomialSup {
                 break
             }
             A = B
-            B = R.divide(mc.multiply(g, mc.pow(h, t)))
-            g = A.first()
-            h = mc.multiply(h, mc.pow(mc.divide(g, h), t))
+            B = R.divide(mc.multiply(g1, mc.pow(h1, t)))
+            g1 = A.first()
+            h1 = mc.multiply(h1, mc.pow(mc.divide(g1, h1), t))
         }
         return d * B.toPrimitive()
     }

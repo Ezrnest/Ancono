@@ -12,7 +12,7 @@ import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.SimplificationStrategies
 import cn.ancono.math.numberModels.structure.Polynomial
-import cn.ancono.math.numberTheory.NTCalculator
+import cn.ancono.math.numberTheory.IntCalculator
 import cn.ancono.math.numberTheory.combination.CombUtils
 import java.util.*
 import java.util.function.Function
@@ -100,8 +100,9 @@ object AlgebraUtil {
      * Tries the find solution of a polynomial of integer coefficient.
      */
     @JvmStatic
-    fun <T : Any> tryFindSolutions(p: Polynomial<T>, mc: NTCalculator<T>) {
+    fun <T : Any> tryFindSolutions(p: Polynomial<T>, mc: IntCalculator<T>) {
         TODO()
+
     }
 
     @JvmStatic

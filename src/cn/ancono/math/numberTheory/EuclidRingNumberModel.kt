@@ -34,6 +34,7 @@ interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<
      * `u*this + v*y = gcd(this,y)`
      */
     fun gcdUV(y: T): Triple<T, T, T>
+    //default implementation requires zero and one, which are not available.
 
     /**
      * Returns the least common multiplier of `this` and `y`.

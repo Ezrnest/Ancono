@@ -15,4 +15,9 @@ interface UFDCalculator<T : Any> : UnitRingCalculator<T> {
      */
     fun exactDivide(x: T, y: T): T
 
+    /**
+     * Determines whether `x` exactly divides `y`.
+     */
+    fun isExactDivide(a: T, b: T): Boolean
 }
+

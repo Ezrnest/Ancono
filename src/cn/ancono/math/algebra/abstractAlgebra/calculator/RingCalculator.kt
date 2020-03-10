@@ -37,6 +37,14 @@ interface RingCalculator<T : Any> : GroupCalculator<T> {
     val zero: T
 
     /**
+     * Determines whether `x` is equal to [zero]. This method is added for convenience.
+     */
+    @JvmDefault
+    fun isZero(x: T): Boolean {
+        return isEqual(x, zero)
+    }
+
+    /**
      * Returns the result of `x+y`.
      * @return `x+y`
      */

@@ -175,18 +175,6 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     @JvmDefault
     override fun subtract(x: T, y: T): T
 
-    /**
-     * Determines whether the given parameter is zero.This method is set because the
-     * high frequency of testing whether the number is zero in most math
-     * calculations.
-     *
-     * @return `true` if `para==zero`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
-     */
-    @JvmDefault
-    fun isZero(para: T): Boolean {
-        return isEqual(zero, para)
-    }
 
     /**
      * Returns the result of `x * y`.
@@ -578,8 +566,8 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
                     return f(mc.arcsin(f.deply(x)))
                 }
 
-                override fun isZero(para: S): Boolean {
-                    return mc.isZero(f.deply(para))
+                override fun isZero(x: S): Boolean {
+                    return mc.isZero(f.deply(x))
                 }
 
                 override fun exp(a: S, b: S): S {

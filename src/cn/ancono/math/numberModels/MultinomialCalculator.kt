@@ -1,15 +1,16 @@
 package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator
+import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Multinomial.*
 import cn.ancono.math.numberModels.api.Simplifier
-import cn.ancono.math.numberTheory.NTCalculator
 import java.math.BigInteger
 import java.util.*
 
 @Suppress("NAME_SHADOWING")
-class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinomial> {
+class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multinomial> {
 
     override val isComparable: Boolean
         get() = true
@@ -23,18 +24,18 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
     override val numberClass: Class<Multinomial>
         get() = Multinomial::class.java
 
-    override fun asBigInteger(x: Multinomial): BigInteger {
-        if (x.isMonomial && x.first.isInteger) {
-            return x.first.let { t ->
-                val n = x.first.numerator
-                when {
-                    t.signum >= 0 -> n
-                    else -> -n
-                }
-            }
-        }
-        throw UnsupportedOperationException()
-    }
+//    override fun asBigInteger(x: Multinomial): BigInteger {
+//        if (x.isMonomial && x.first.isInteger) {
+//            return x.first.let { t ->
+//                val n = x.first.numerator
+//                when {
+//                    t.signum >= 0 -> n
+//                    else -> -n
+//                }
+//            }
+//        }
+//        throw UnsupportedOperationException()
+//    }
 
 
     private class Pair internal constructor(internal val n: BigInteger, internal val d: BigInteger) {
@@ -51,7 +52,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         }
 
         override fun toString(): String {
-            return "[" + n.toString() + "," + d.toString() + "]"
+            return "[$n,$d]"
         }
 
         companion object {
@@ -98,8 +99,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return x.subtract(y)
     }
 
-    override fun isZero(para: Multinomial): Boolean {
-        return para == ZERO
+    override fun isZero(x: Multinomial): Boolean {
+        return x == ZERO
     }
 
     override fun multiply(x: Multinomial, y: Multinomial): Multinomial {
@@ -443,29 +444,29 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         throw UnsupportedCalculationException()
     }
 
-    override fun isInteger(x: Multinomial): Boolean {
-        return true
-    }
+//    override fun isInteger(x: Multinomial): Boolean {
+//        return true
+//    }
+//
+//    override fun isQuotient(x: Multinomial): Boolean {
+//        return true
+//    }
+//
+//    override fun mod(a: Multinomial, b: Multinomial): Multinomial {
+//        return a.divideAndRemainder(b)[1]
+//    }
+//
+//    override fun divideToInteger(a: Multinomial, b: Multinomial): Multinomial {
+//        return a.divideAndRemainder(b)[0]
+//    }
 
-    override fun isQuotient(x: Multinomial): Boolean {
-        return true
-    }
-
-    override fun mod(a: Multinomial, b: Multinomial): Multinomial {
-        return a.divideAndRemainder(b)[1]
-    }
-
-    override fun divideToInteger(a: Multinomial, b: Multinomial): Multinomial {
-        return a.divideAndRemainder(b)[0]
-    }
-
-    override fun isPositive(x: Multinomial): Boolean {
-        return x != ZERO
-    }
-
-    override fun isNegative(x: Multinomial): Boolean {
-        return false
-    }
+//    override fun isPositive(x: Multinomial): Boolean {
+//        return x != ZERO
+//    }
+//
+//    override fun isNegative(x: Multinomial): Boolean {
+//        return false
+//    }
 
     override fun gcd(a: Multinomial, b: Multinomial): Multinomial {
 //        val comp = a.compareCharTo(b)
@@ -496,11 +497,22 @@ class MultinomialCalculator : MathCalculator<Multinomial>, NTCalculator<Multinom
         return Multinomial.gcd(a, b)
     }
 
-
-    override fun divideAndReminder(a: Multinomial, b: Multinomial): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
-        val arr = a.divideAndRemainder(b)
-        return cn.ancono.utilities.structure.Pair(arr[0], arr[1])
+    override fun exactDivide(x: Multinomial, y: Multinomial): Multinomial {
+        return x.divide(y)
     }
+
+    override fun isExactDivide(a: Multinomial, b: Multinomial): Boolean {
+        val (_, r) = a.divideAndRemainder(b)
+        return r.isZero
+    }
+    //    override fun divideAndRemainder(a: Multinomial, b: Multinomial): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
+//        val arr = a.divideAndRemainder(b)
+//        return cn.ancono.utilities.structure.Pair(arr[0], arr[1])
+//    }
+//
+//    override fun remainder(a: Multinomial, b: Multinomial): Multinomial {
+//        return
+//    }
 
     internal class MSimplifier : Simplifier<Multinomial> {
 

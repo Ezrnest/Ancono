@@ -63,14 +63,12 @@ public interface EqualRelation<T> extends Relation<T> {
         return p::isEqual;
     }
 
-    EqualRelation<?> BY_EQUAL = Object::equals;
 
     /**
      * Returns an equivalence relation that represents {@link Object#equals(Object)}.
      */
-    @SuppressWarnings("unchecked")
     static <T> EqualRelation<T> objectEquals() {
-        return (EqualRelation<T>) BY_EQUAL;
+        return Object::equals;
     }
 
     /**

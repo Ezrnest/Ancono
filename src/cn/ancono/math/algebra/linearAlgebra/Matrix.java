@@ -1000,11 +1000,11 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
     /**
-     * Returns the trail if this matrix.
+     * Returns the trace if this matrix.
      *
      * @return {@code tr(this)}
      */
-    public T trail() {
+    public T trace() {
         if (column != row) {
             throw new ArithmeticException("Not square");
         }
@@ -1601,6 +1601,19 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new kotlin.Pair<>(Q, R);
     }
 
+    /**
+     * Transforms this matrix to Hermite normal form. It is required that the math calculator is UFDCalculator.
+     *
+     * @return
+     */
+    public Matrix<T> toHermiteForm() {
+
+        return null;
+    }
+
+    public Matrix<T> toSmithForm() {
+        return null;
+    }
 
     @NotNull
     @Override

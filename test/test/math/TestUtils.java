@@ -4,6 +4,7 @@
 package test.math;
 
 import cn.ancono.math.MathCalculator;
+import cn.ancono.math.MathObject;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
@@ -64,15 +65,21 @@ public final class TestUtils {
 
 			@Override
 			public void describeTo(Description description) {
-				description.appendText("zero");
-			}
-		};
-	}
+                description.appendText("zero");
+            }
+        };
+    }
 
-	public static <T> void assertMathEquals(T expected,T actual, MathCalculator<T> mc){
-	    if(!mc.isEqual(expected,actual)){
-	        throw new AssertionError("Expected <"+expected+">, actual <"+actual+">");
+    public static <T> void assertMathEquals(T expected, T actual, MathCalculator<T> mc) {
+        if (!mc.isEqual(expected, actual)) {
+            throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
         }
-	}
+    }
+
+    public static <T> void assertValueEquals(MathObject<T> expected, MathObject<T> actual) {
+        if (!expected.valueEquals(actual)) {
+            throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
+        }
+    }
 
 }

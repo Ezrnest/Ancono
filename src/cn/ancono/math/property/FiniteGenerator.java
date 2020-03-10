@@ -9,7 +9,7 @@ import cn.ancono.math.set.MathSet;
 import java.util.List;
 
 /**
- * Describe a set, module or something that is finitely generated.
+ * Describe a family of generators set for a set, module or something that is finitely generated.
  *
  * @author liyicheng
  */

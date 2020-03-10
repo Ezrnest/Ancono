@@ -667,7 +667,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
 
     /**
-     * Returns the quotient and the remainder of the multinomial division.
+     * Returns the quotient and the remainder of the multinomial division.<br>
      * <b>Note: This method is only designed for test divisibility and should not be used for GCD!</b>
      */
     public Multinomial[] divideAndRemainder(Multinomial divisor) {

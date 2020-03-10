@@ -96,14 +96,14 @@ object AlgebraUtil {
         return Polynomial.valueOf(BigFraction.calculator, *list)
     }
 
-    /**
-     * Tries the find solution of a polynomial of integer coefficient.
-     */
-    @JvmStatic
-    fun <T : Any> tryFindSolutions(p: Polynomial<T>, mc: IntCalculator<T>) {
-        TODO()
-
-    }
+//    /**
+//     * Tries the find solution of a polynomial of integer coefficient.
+//     */
+//    @JvmStatic
+//    fun <T : Any> tryFindSolutions(p: Polynomial<T>, mc: IntCalculator<T>) {
+//        TODO()
+//
+//    }
 
     @JvmStatic
     fun findOneRationalRoot(p: Polynomial<Long>): Fraction? {
@@ -115,7 +115,7 @@ object AlgebraUtil {
         //solution = const.factor / first.factor
         val ff = MathUtils.factors(first.absoluteValue)
         val cf = MathUtils.factors(const.absoluteValue)
-        val pf = p.mapTo(Function { it -> Fraction.of(it) }, Fraction.calculator)
+        val pf = p.mapTo(Function { Fraction.of(it) }, Fraction.calculator)
         for (nume in cf) {
             for (deno in ff) {
                 var root = Fraction.of(nume, deno)
@@ -129,7 +129,6 @@ object AlgebraUtil {
                 }
             }
         }
-
         return null
     }
 

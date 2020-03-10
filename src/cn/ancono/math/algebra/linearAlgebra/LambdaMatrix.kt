@@ -2,6 +2,8 @@ package cn.ancono.math.algebra.linearAlgebra
 
 import cn.ancono.math.*
 import cn.ancono.math.algebra.AlgebraUtil
+import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator
+import cn.ancono.math.algebra.abstractAlgebra.calculator.RingCalculator
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
@@ -38,7 +40,7 @@ fun <T : Any> LambdaMatrix<T>.toNormalForm(): LambdaMatrix<T> {
             getNumber(i, j)
         }
     }
-    toNormalForm(data, mathCalculator, 0)
+    toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
     return DMatrix(data, row, column, mathCalculator)
 }
 
@@ -58,7 +60,9 @@ fun <T : Any> LambdaMatrix<T>.invariantFactor(): List<Polynomial<T>> {
     return normalFormInvFac(toNormalForm())
 }
 
+@Suppress("UNCHECKED_CAST")
 object LambdaMatrixSup {
+    @JvmStatic
     fun jordanFormAndTrans(matrix: Matrix<Fraction>): Pair<Matrix<Fraction>, Matrix<Fraction>>? {
         val lamM = matrix.charMatrix()
         val nForm = lamM.toNormalForm()
@@ -101,6 +105,20 @@ object LambdaMatrixSup {
         val transMat = Matrix.fromVectors(false, trans)
         return jordan to transMat
     }
+
+    @JvmStatic
+    fun <T : Any> toSmithForm(matrix: Matrix<T>): Matrix<T> {
+        require(matrix.isSquare)
+        @Suppress("UNCHECKED_CAST")
+        val data = Array(matrix.row) { i ->
+            Array<Any>(matrix.column) { j ->
+                matrix.getNumber(i, j)
+            }
+        } as Array<Array<T>>
+
+        toNormalForm(data, matrix.mathCalculator as EUDCalculator<T>, 0)
+        return DMatrix(data, matrix.row, matrix.column, matrix.mathCalculator)
+    }
 }
 
 
@@ -132,7 +150,7 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
             getNumber(i, j)
         }
     }
-    toNormalForm(data, mathCalculator, 0)
+    toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
     val builder = Matrix.getBuilder(row, column, mc)
     var pos = 0
     val one = mc.one
@@ -154,7 +172,28 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
 }
 
 
-internal fun <T : Any> toNormalForm(data: PData<T>, mc: PMC<T>, fromIdx: Int) {
+internal fun <T : Any> toNormalForm(data: PData<T>, mc: Polynomial.PolynomialCalculator<T>, fromIdx: Int) {
+//    if (fromIdx >= data.size) {
+//        return
+//    }
+//    processFirst(data, fromIdx, mc)
+//
+//    for (i in (fromIdx + 1) until data.size) {
+//        for (j in (fromIdx + 1) until data.size) {
+//            while (!doDivide(data, fromIdx, i, j, mc)) {
+//                processFirst(data, fromIdx, mc)
+//            }
+//        }
+//    }
+//    val head = data[fromIdx][fromIdx]
+//    if (!head.isZero()) {
+//        data[fromIdx][fromIdx] = head.monic()
+//    }
+//    toNormalForm(data, mc, fromIdx + 1)
+
+}
+
+internal fun <T : Any> toNormalForm(data: Array<Array<T>>, mc: EUDCalculator<T>, fromIdx: Int) {
     if (fromIdx >= data.size) {
         return
     }
@@ -167,14 +206,11 @@ internal fun <T : Any> toNormalForm(data: PData<T>, mc: PMC<T>, fromIdx: Int) {
             }
         }
     }
-    val head = data[fromIdx][fromIdx]
-    if (!head.isZero()) {
-        data[fromIdx][fromIdx] = head.monic()
-    }
     toNormalForm(data, mc, fromIdx + 1)
 }
 
-private fun <T : Any> processFirst(data: PData<T>, fromIdx: Int, mc: PMC<T>) {
+
+private fun <T : Any> processFirst(data: Array<Array<T>>, fromIdx: Int, mc: EUDCalculator<T>) {
     var i = fromIdx + 1
     while (i < data.size) {
         if (!doDivideCol(data, fromIdx, i, mc)) {
@@ -189,18 +225,18 @@ private fun <T : Any> processFirst(data: PData<T>, fromIdx: Int, mc: PMC<T>) {
     }
 }
 
-private fun <T : Any> doDivideCol(data: PData<T>, rs: Int, col: Int, mc: PMC<T>): Boolean {
+private fun <T : Any> doDivideCol(data: Array<Array<T>>, rs: Int, col: Int, mc: EUDCalculator<T>): Boolean {
     val p = data[rs][rs]
-    if (data[rs][col].isZero()) {
+    if (mc.isZero(data[rs][col])) {
         return true
     }
-    if (p.isZero()) {
+    if (mc.isZero(p)) {
         swapCol(data, rs, col, rs)
         return true
     }
-    val (q, r) = data[rs][col].divideAndRemainder(p)
-    multiplyAndAddCol(data, mc, rs, col, q.negate(), rs)
-    return if (r.isZero()) {
+    val (q, r) = mc.divideAndRemainder(data[rs][col], p)
+    multiplyAndAddCol(data, mc, rs, col, mc.negate(q), rs)
+    return if (mc.isZero(r)) {
         true
     } else {
         swapCol(data, rs, col, rs)
@@ -208,18 +244,18 @@ private fun <T : Any> doDivideCol(data: PData<T>, rs: Int, col: Int, mc: PMC<T>)
     }
 }
 
-private fun <T : Any> doDivideRow(data: PData<T>, rs: Int, row: Int, mc: PMC<T>): Boolean {
+private fun <T : Any> doDivideRow(data: Array<Array<T>>, rs: Int, row: Int, mc: EUDCalculator<T>): Boolean {
     val p = data[rs][rs]
-    if (data[row][rs].isZero()) {
+    if (mc.isZero(data[row][rs])) {
         return true
     }
-    if (p.isZero()) {
+    if (mc.isZero(p)) {
         swapCol(data, rs, row, rs)
         return true
     }
-    val (q, r) = data[row][rs].divideAndRemainder(p)
-    multiplyAndAddRow(data, mc, rs, row, q.negate(), rs)
-    return if (r.isZero()) {
+    val (q, r) = mc.divideAndRemainder(data[row][rs], p)
+    multiplyAndAddRow(data, mc, rs, row, mc.negate(q), rs)
+    return if (mc.isZero(r)) {
         true
     } else {
         swapRow(data, rs, row)
@@ -227,16 +263,15 @@ private fun <T : Any> doDivideRow(data: PData<T>, rs: Int, row: Int, mc: PMC<T>)
     }
 }
 
-private fun <T : Any> doDivide(data: PData<T>, rs: Int, row: Int, col: Int, mc: PMC<T>): Boolean {
+private fun <T : Any> doDivide(data: Array<Array<T>>, rs: Int, row: Int, col: Int, mc: EUDCalculator<T>): Boolean {
     val p = data[rs][rs]
-    val (q, r) = data[row][col].divideAndRemainder(p)
-    return if (r.isZero()) {
+    val (q, r) = mc.divideAndRemainder(data[row][col], p)
+    return if (mc.isZero(r)) {
         true
     } else {
         multiplyAndAddRow(data, mc, row, rs, mc.one, rs + 1)
-        multiplyAndAddCol(data, mc, rs, col, q.negate(), rs)
+        multiplyAndAddCol(data, mc, rs, col, mc.negate(q), rs)
         swapCol(data, rs, col, rs)
-
         false
     }
 
@@ -270,13 +305,13 @@ internal fun <T : Any> multiplyCol(data: PData<T>, col: Int, k: T, rowStart: Int
 }
 
 
-internal fun <T : Any> multiplyAndAddRow(data: PData<T>, mc: PMC<T>, row1: Int, row2: Int, k: Polynomial<T>, colStart: Int = 0) {
+internal fun <T : Any> multiplyAndAddRow(data: Array<Array<T>>, mc: RingCalculator<T>, row1: Int, row2: Int, k: T, colStart: Int = 0) {
     for (i in colStart until data[row1].size) {
         data[row2][i] = mc.eval { data[row2][i] + k * data[row1][i] }
     }
 }
 
-internal fun <T : Any> multiplyAndAddCol(data: PData<T>, mc: PMC<T>, col1: Int, col2: Int, k: Polynomial<T>, rowStart: Int = 0) {
+internal fun <T : Any> multiplyAndAddCol(data: Array<Array<T>>, mc: RingCalculator<T>, col1: Int, col2: Int, k: T, rowStart: Int = 0) {
     for (i in rowStart until data.size) {
         data[i][col2] = mc.eval { data[i][col2] + k * data[i][col1] }
     }

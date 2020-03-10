@@ -3,6 +3,7 @@ package cn.ancono.math.algebra.linearAlgebra;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.MathObjectExtend;
+import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.ModuleCalculator;
 import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
@@ -1553,7 +1554,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             }
             pos++;
         }
-        return;
     }
 
     /**
@@ -1601,18 +1601,34 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new kotlin.Pair<>(Q, R);
     }
 
+//    /**
+//     * Transforms this matrix to Hermite normal form. It is required that the math calculator is UFDCalculator.
+//     *
+//     * @return
+//     */
+//    public Matrix<T> toHermiteForm() {
+//
+//
+//
+//        return null;
+//    }
+
     /**
-     * Transforms this matrix to Hermite normal form. It is required that the math calculator is UFDCalculator.
+     * Transforms this matrix to Smith normal form, a diagonal matrix with the following property:
+     * <pre>
+     * m[i,i] | m[i+1,i+1]  for i <= r,
+     * m[i,i] = 0, for i > r
+     * </pre>
      *
-     * @return
+     * <b>It is required that the MathCalculator of this matrix is an {@link EUDCalculator}. </b>
+     *
+     * <p></p>
+     * For example, the Smith normal form of matrix <code>[[1 2 3][4 5 6][7 8 9]]</code> can be
+     * <code>diag(1,3,0)</code>
      */
-    public Matrix<T> toHermiteForm() {
-
-        return null;
-    }
-
     public Matrix<T> toSmithForm() {
-        return null;
+        //Created by lyc at 2020-03-10 14:54
+        return LambdaMatrixSup.toSmithForm(this);
     }
 
     @NotNull
@@ -2136,6 +2152,26 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         fillData(mat, mc.getZero());
         for (int i = 0; i < n; i++) {
             mat[i][i] = arr[i];
+        }
+        return new DMatrix<>(mat, n, n, mc);
+    }
+
+    /**
+     * Return a diagonal matrix containing the given numbers. M[i][i] = arr[i]
+     */
+    public static <T> Matrix<T> diag(List<T> arr, MathCalculator<T> mc) {
+        Objects.requireNonNull(arr);
+
+        int n = arr.size();
+        if (n < 1) {
+            throw new IllegalArgumentException("Illegal size:" + n);
+        }
+        @SuppressWarnings("unchecked")
+        T[][] mat = (T[][]) new Object[n][n];
+        fillData(mat, mc.getZero());
+        var it = arr.iterator();
+        for (int i = 0; i < n; i++) {
+            mat[i][i] = it.next();
         }
         return new DMatrix<>(mat, n, n, mc);
     }

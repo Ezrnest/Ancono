@@ -623,7 +623,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             //locate the top-left element used for elimination first, it must be non-zero
             if (mc.isZero(mat[k][k])) {
                 boolean allZero = true;
-                int i = 0;
+                int i = k;
                 for (; i < n; i++) {
                     if (mc.isZero(mat[i][k])) {
                         continue;
@@ -1225,7 +1225,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * Determines whether this matrix is invertible.
      */
     public boolean isInvertible() {
-        return !getMc().isZero(MatrixSup.fastDet(this));
+        return !getMc().isZero(calDet());
     }
 
     /**

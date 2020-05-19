@@ -4,6 +4,7 @@ import cn.ancono.math.geometry.analytic.planeAG.curve.PlaneParametricCurve;
 
 import java.awt.geom.Point2D;
 import java.util.function.DoubleFunction;
+import java.util.function.DoubleUnaryOperator;
 
 /*
  * Created at 2018/11/13 11:22
@@ -41,6 +42,25 @@ public interface ParametricCurve {
             @Override
             public Point2D.Double substitute(double t) {
                 return f.apply(t);
+            }
+
+            @Override
+            public double downerBound() {
+                return downer;
+            }
+
+            @Override
+            public double upperBound() {
+                return upper;
+            }
+        };
+    }
+
+    static ParametricCurve fromFunction(DoubleUnaryOperator f, double downer, double upper) {
+        return new ParametricCurve() {
+            @Override
+            public Point2D.Double substitute(double t) {
+                return new Point2D.Double(t, f.applyAsDouble(t));
             }
 
             @Override

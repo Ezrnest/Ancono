@@ -51,7 +51,8 @@ public final class Distributions {
      * where (n,k) means the binomial coefficient.<p>
      * Using default precision  of
      * {@link MathContext#DECIMAL128}, this method supports larger input and has more accuracy than
-     *  {@link #dstBinomial(int, int, double)}.
+     * {@link #binomial(int, int, double)}.
+     *
      * @param k the number of event excepted to happen
      * @param n the total number of trails
      * @param p the probability
@@ -167,7 +168,6 @@ public final class Distributions {
     /**
      * Computes the density function of standard distribution.
      * 1/√(2π) * e<sup>-x<sup>2</sup>/2</sup>
-     * @param x
      * @return {@code φ(x)}
      */
     public static double normalDensityStandard(double x) {
@@ -179,7 +179,6 @@ public final class Distributions {
      * <p>
      * λe<sup>-λx</sup>
      * @param λ an constant {@code λ>0}
-     * @param x
      * @return {@code p(x)}
      */
     public static double exponentDensity(double λ, double x) {
@@ -195,7 +194,6 @@ public final class Distributions {
      * λe<sup>-λx</sup>
      * or 0 if {@code x<0}.
      * @param λ an constant {@code λ>0} (no checking in the method)
-     * @param x
      * @return function: {@code p(x)}
      */
     public static DensityFunction exponentDensityFunction(double λ) {
@@ -224,7 +222,6 @@ public final class Distributions {
      * 1-e<sup>-λx</sup>
      * or 0 if {@code x<0}.
      * @param λ an constant {@code λ>0} (no checking in the method)
-     * @param x
      * @return {@code p(x)}
      */
     public static DistributionFunction exponentDistributionFunction(double λ) {
@@ -313,8 +310,6 @@ public final class Distributions {
      * @param σ1
      * @param σ2
      * @param ρ
-     * @param x
-     * @param y
      * @return
      */
     public static BiDensityFunction binormalDensityFunction(double μ1, double μ2, double σ1, double σ2, double ρ) {

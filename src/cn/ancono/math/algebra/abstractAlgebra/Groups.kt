@@ -120,11 +120,11 @@ class IsomorphismedGroup<T : Any, S : Any>(val group: Group<T>, val f: Bijection
     }
 
     override fun indexOf(sub: Group<S>): Long {
-        return group.indexOf(originOf(sub))
+        return group.indexOf(originOf(sub)!!)
     }
 
     override fun isConjugate(h1: Group<S>, h2: Group<S>): Boolean {
-        return group.isConjugate(originOf(h1), originOf(h2))
+        return group.isConjugate(originOf(h1)!!, originOf(h2)!!)
     }
 
     override fun normalizer(h: Group<S>): Group<S> {
@@ -134,12 +134,12 @@ class IsomorphismedGroup<T : Any, S : Any>(val group: Group<T>, val f: Bijection
 
     override fun getCosets(h: Group<S>, isLeft: Boolean): MathSet<out Coset<S, out Group<S>>> {
         @Suppress("UNCHECKED_CAST")
-        val t = group.getCosets(originOf(h), isLeft) as MathSet<Coset<T, Group<T>>>
+        val t = group.getCosets(originOf(h)!!, isLeft) as MathSet<Coset<T, Group<T>>>
         return t.mapTo(cosetMapper)
     }
 
     override fun conjugateSubgroup(h: Group<S>, x: S): Group<S> {
-        return IsomorphismedGroup(group.conjugateSubgroup(originOf(h), f.deply(x)), f)
+        return IsomorphismedGroup(group.conjugateSubgroup(originOf(h)!!, f.deply(x)), f)
     }
 
     override fun isConjugate(g1: S, g2: S): Boolean {

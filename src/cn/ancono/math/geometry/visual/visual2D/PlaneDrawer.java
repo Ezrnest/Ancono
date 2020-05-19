@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.DoubleUnaryOperator;
 
 import static cn.ancono.utilities.Printer.print;
 
@@ -38,6 +39,10 @@ public class PlaneDrawer {
      */
     public PlaneDrawer() {
 
+    }
+
+    public boolean addFunction(DoubleUnaryOperator f, Color c) {
+        return addCurve(c, (x, y) -> y - f.applyAsDouble(x));
     }
 
     public boolean addCurve(Color c, SubstitutableCurve f) {
@@ -78,6 +83,7 @@ public class PlaneDrawer {
     public void addPCurve(ParametricCurve pc) {
         ps.add(new ParaCurveDrawer(pc));
     }
+
 
     /**
      * @param rect

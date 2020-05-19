@@ -61,6 +61,7 @@ public class MatrixSup {
      * @return det(mat)
      * @deprecated use {@link Matrix#calDet()} instead.
      */
+    @Deprecated
     public static <T> T fastDet(Matrix<T> mat) {
         if (mat.row != mat.column) {
             throw new ArithmeticException("Cannot calculate det for: " + mat.row + "*" + mat.column);

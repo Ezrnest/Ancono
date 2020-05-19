@@ -254,7 +254,7 @@ public final class SimplificationStrategies {
 //            List<Multinomial> list = Arrays.asList(pnume, pdeno);
 //            list = mc.getMultinomialSimplifier().simplify(list);
             var pair = Multinomial.simplifyFraction(pnume, pdeno);
-            if (!sim && mc.getMultinomialCalculator().isEqual(pnume, pair.getSecond())) {
+            if (!sim && mc.getMultinomialCalculator().isEqual(pnume, pair.getFirst())) {
                 //nothing is changed.
                 return null;
             }

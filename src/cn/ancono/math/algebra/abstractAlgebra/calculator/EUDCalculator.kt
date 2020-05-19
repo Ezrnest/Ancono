@@ -12,6 +12,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
  * Describes a calculator for an Euclidean domain. The fundamental operation of this type of calculator is
  * [divideAndRemainder].
  *
+ * All calculators for integers are `EUDCalculator`.
  *
  * See [EuclideanDomain](https://mathworld.wolfram.com/EuclideanDomain.html) for more information.
  */

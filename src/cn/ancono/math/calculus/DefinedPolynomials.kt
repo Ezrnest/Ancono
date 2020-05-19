@@ -89,5 +89,5 @@ fun main() {
 //    DefinedPolynomials.legendrePolySeq().take(15).forEach { println(it) }
 //    val re = DefinedPolynomials.bernsteinPolyList(5).reduce { a, b -> a.add(b) }
 //    println(re)
-
+    DefinedPolynomials.legendrePolySeq().take(5).forEach { println(it) }
 }

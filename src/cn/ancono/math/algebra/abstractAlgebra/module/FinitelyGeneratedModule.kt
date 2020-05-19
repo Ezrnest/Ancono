@@ -1,5 +1,6 @@
-package cn.ancono.math.algebra.abstractAlgebra.structure
+package cn.ancono.math.algebra.abstractAlgebra.module
 
+import cn.ancono.math.algebra.abstractAlgebra.structure.Module
 import cn.ancono.math.property.FiniteGenerator
 
 

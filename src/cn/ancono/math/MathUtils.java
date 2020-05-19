@@ -1103,30 +1103,32 @@ public class MathUtils {
             //to prevent the overflow
             return 3037000499L;
         }
-        int p = 4;
-        //find the lower bound and the upper bound.
-        long high = 64L;
-        while (high < n) {
-            p += 2;
-            high *= 4;
-        }
-        p >>>= 1;
-        long low = 1L << p;
-        high = low << 1;
-        return ModelPatterns.binarySearchL(low, high, (long x) -> {
-            long sqr = x * x;
-//			print(x);
-            if (sqr == n) {
-                return 0;
-            }
-            if (sqr > n) {
-                return 1;
-            }
-            if (sqr + 2 * x + 1 > n) {
-                return 0;
-            }
-            return -1;
-        });
+        return (long) Math.sqrt(n);
+
+//        int p = 4;
+//        //find the lower bound and the upper bound.
+//        long high = 64L;
+//        while (high < n) {
+//            p += 2;
+//            high *= 4;
+//        }
+//        p >>>= 1;
+//        long low = 1L << p;
+//        high = low << 1;
+//        return ModelPatterns.binarySearchL(low, high, (long x) -> {
+//            long sqr = x * x;
+////			print(x);
+//            if (sqr == n) {
+//                return 0;
+//            }
+//            if (sqr > n) {
+//                return 1;
+//            }
+//            if (sqr + 2 * x + 1 > n) {
+//                return 0;
+//            }
+//            return -1;
+//        });
     }
 
 

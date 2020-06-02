@@ -109,7 +109,7 @@ public final class Distributions {
      * @param p the probability
      * @return {@code f(k;r,p)}
      */
-    public static double pasca(int k, int r, double p) {
+    public static double pascal(int k, int r, double p) {
         long l = combination(k - 1, r - 1);
         double d = Math.pow(p, r);
         d *= l;

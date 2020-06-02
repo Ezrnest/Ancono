@@ -4,6 +4,7 @@ import cn.ancono.math.equation.Type;
 import cn.ancono.math.equation.inequation.SVPInequation;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
+import cn.ancono.math.numberModels.ComplexI;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberTheory.Primes;
 import cn.ancono.math.set.IntervalUnion;
@@ -876,106 +877,6 @@ public class MathUtils {
     }
 
     /**
-     * Solve an equation that
-     * <pre>ax^2 + bx + c = 0</pre>
-     * This method will ignore imaginary solutions.
-     * <p>This method will return a list of solutions,which will contain
-     * no element if there is no real solution({@code delta<0}),
-     * one if there is only one solution(or two solutions of the identity value)({@code delta==0})
-     * or two elements if there are two solutions(({@code delta>0}).
-     * <p>This method normally requires {@code squareRoot()} method of the {@link MathCalculator}.
-     *
-     * @param a  the coefficient of x^2.
-     * @param b  the coefficient of x.
-     * @param c  the constant coefficient
-     * @param mc a MathCalculator
-     * @return the list of solution,regardless of order.
-     */
-    public static <T> List<T> solveEquation(T a, T b, T c, MathCalculator<T> mc) {
-        //Calculate the delta
-        T delta;
-        {//=mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));;
-            T t1 = mc.multiply(b, b);
-            T t2 = mc.multiply(a, c);
-            T t3 = mc.multiplyLong(t2, 4L);
-            delta = mc.subtract(t1, t3);
-        }
-        int compare = 1;
-        try {
-            compare = mc.compare(delta, mc.getZero());
-        } catch (UnsupportedCalculationException ex) {
-            try {
-                if (mc.isZero(delta))
-                    compare = 0;
-            } catch (UnsupportedCalculationException ex2) {
-            }
-        }
-//		Printer.print(delta);
-        if (compare < 0) {
-            //no solution
-            return Collections.emptyList();
-        } else if (compare == 0) {
-            List<T> so = new ArrayList<>(1);
-            // -b/2a
-            T re = mc.divide(mc.divideLong(b, -2L), a);
-            so.add(re);
-            return so;
-        } else {
-            // x1 = (-b + sqr(delta)) / 2a
-            // x2 = (-b - sqr(delta)) / 2a
-            List<T> so = new ArrayList<>(2);
-            delta = mc.squareRoot(delta);
-            T a2 = mc.multiplyLong(a, 2);
-            T re = mc.divide(mc.subtract(delta, b), a2);
-            so.add(re);
-            re = mc.negate(mc.divide(mc.add(b, delta), a2));
-            so.add(re);
-            return so;
-        }
-    }
-
-    /**
-     * Solve an equation of
-     * <pre>ax^2 + bx + c = 0</pre>
-     * This method will use the root-formula and will compute all of the solutions(include imaginary
-     * solutions),and always returns two solutions even if the two solutions are the identity.
-     *
-     * @param a  the coefficient of x^2.
-     * @param b  the coefficient of x.
-     * @param c  the constant coefficient
-     * @param mc a MathCalculator
-     * @return a list of the solutions
-     */
-    public static <T> List<T> solveEquationIma(T a, T b, T c, MathCalculator<T> mc) {
-        T delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L));
-        // x1 = (-b + sqr(delta)) / 2a
-        // x2 = (-b - sqr(delta)) / 2a
-        List<T> so = new ArrayList<>(2);
-        delta = mc.squareRoot(delta);
-        T a2 = mc.multiplyLong(a, 2);
-        T re = mc.divide(mc.subtract(delta, b), a2);
-        so.add(re);
-        re = mc.negate(mc.divide(mc.add(b, delta), a2));
-        so.add(re);
-        return so;
-    }
-
-    /**
-     * Solves an inequation of
-     * <pre>ax^2 + bx + c = 0</pre>
-     *
-     * @param a   the coefficient of x^2.
-     * @param b   the coefficient of x.
-     * @param c   the constant coefficient
-     * @param mc  a MathCalculator
-     * @param <T>
-     * @return
-     */
-    public static <T> IntervalUnion<T> solveInequation(T a, T b, T c, Type op, MathCalculator<T> mc) {
-        return SVPInequation.quadratic(a, b, c, op, mc).getSolution();
-    }
-
-    /**
      * Reduce the number to an array representing each digit of the radix. The
      * {@code number} should be the sum of
      * <pre>result[i] * radix^i</pre>
@@ -1602,7 +1503,9 @@ public class MathUtils {
 
     public static long chineseRemainder(long[] mods, long[] remainers) {
         ExceptionUtil.notImplemented("");
+        //TODO
         return 0;
     }
+
 
 }

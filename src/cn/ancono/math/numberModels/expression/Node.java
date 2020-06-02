@@ -1057,7 +1057,12 @@ public abstract class Node implements Computable, Serializable {
 
         @Override
         public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
-            T re = p.compute(valueMap, mc);
+            T re;
+            if (p != null) {
+                re = p.compute(valueMap, mc);
+            } else {
+                re = mc.getZero();
+            }
             for (Node n : children) {
                 re = mc.add(re, n.compute(valueMap, mc));
             }
@@ -1066,7 +1071,10 @@ public abstract class Node implements Computable, Serializable {
 
         @Override
         public double computeDouble(ToDoubleFunction<String> valueMap) {
-            double re = p.computeDouble(valueMap);
+            double re = 0;
+            if (p != null) {
+                re = p.computeDouble(valueMap);
+            }
             for (Node n : children) {
                 re += n.computeDouble(valueMap);
             }
@@ -1181,20 +1189,29 @@ public abstract class Node implements Computable, Serializable {
             }
         }
 
+
         @Override
         public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
-            T re = p.compute(valueMap, mc);
+            T re;
+            if (p != null) {
+                re = p.compute(valueMap, mc);
+            } else {
+                re = mc.getOne();
+            }
             for (Node n : children) {
-                re = mc.multiply(re, n.compute(valueMap, mc));
+                re = mc.add(re, n.compute(valueMap, mc));
             }
             return re;
         }
 
         @Override
         public double computeDouble(ToDoubleFunction<String> valueMap) {
-            double re = p.computeDouble(valueMap);
+            double re = 1;
+            if (p != null) {
+                re = p.computeDouble(valueMap);
+            }
             for (Node n : children) {
-                re *= n.computeDouble(valueMap);
+                re += n.computeDouble(valueMap);
             }
             return re;
         }

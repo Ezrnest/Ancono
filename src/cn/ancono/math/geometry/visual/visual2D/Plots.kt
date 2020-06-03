@@ -52,13 +52,13 @@ class Plotting(width: Int = 500, height: Int = 500) {
         rect = Rectangle2D.Double(x1, y1, width, height)
     }
 
-    fun plotCurve(curve: SubstitutableCurve) {
-        planeDrawer.addCurve(defaultColor, curve)
+    fun plotCurve(curve: SubstitutableCurve, c: Color = this.defaultColor) {
+        planeDrawer.addCurve(c, curve)
         updateDrawing()
     }
 
-    fun plotFunction(f: DoubleUnaryOperator) {
-        planeDrawer.addCurve(defaultColor) { x, y -> y - f.applyAsDouble(x) }
+    fun plotFunction(f: DoubleUnaryOperator, c: Color = this.defaultColor) {
+        planeDrawer.addCurve(c) { x, y -> y - f.applyAsDouble(x) }
         updateDrawing()
     }
 

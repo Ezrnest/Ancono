@@ -49,55 +49,6 @@ abstract class ComposedRV<out T>() : RandomVariable<T>() {
 }
 
 
-class ContanceDist<out T>(val c: T) : SimpleRV<Unit, T>() {
-    override fun fromPoint(e: Unit): T {
-        return c
-    }
-
-    override val space: ProbSpace<Unit>
-        get() = TrivialSpace
-}
-
-
-class UniformDist(override val space: IntervalSpace) : SimpleRV<Double, Double>() {
-    val lower: Double
-        get() = space.lower
-
-    val upper: Double
-        get() = space.upper
-
-    override fun fromPoint(e: Double): Double {
-        return e
-    }
-}
-
-class NormalDist(val a: Double, val sigma: Double, override val space: StandardNormalDistSpace) : SimpleRV<Double, Double>() {
-    init {
-        require(sigma > 0)
-    }
-
-    override fun fromPoint(e: Double): Double {
-        return sigma * e + a
-    }
-}
-
-class BernoulliDist(override val space: BernoulliSpace) : SimpleRV<Boolean, Int>() {
-    override fun fromPoint(e: Boolean): Int {
-        return if (e) {
-            1
-        } else {
-            0
-        }
-    }
-}
-
-class GeometryDist(override val space: PascalSpace) : SimpleRV<Int, Int>() {
-    override fun fromPoint(e: Int): Int {
-        return e
-    }
-}
-
-
 class UnaryMappedRV<T, out R>(val rv: RandomVariable<T>, val f: (T) -> R) : ComposedRV<R>() {
     override val spaces: Set<ProbSpace<*>>
         get() = rv.spaces
@@ -135,3 +86,86 @@ class MappedRV<out T, S>(override val rvs: List<RandomVariable<S>>, val mapping:
 
     }
 }
+
+
+class ContanceDist<out T>(val c: T) : SimpleRV<Unit, T>() {
+    override fun fromPoint(e: Unit): T {
+        return c
+    }
+
+    override val space: ProbSpace<Unit>
+        get() = TrivialSpace
+}
+
+/**
+ * A random variable that simply returns the event.
+ */
+class IdentityVariable<E : Any, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E>() {
+    override fun fromPoint(e: E): E {
+        return e
+    }
+}
+//
+//class UniformDist(override val space: IntervalSpace) : SimpleRV<Double, Double>() {
+//    val lower: Double
+//        get() = space.lower
+//
+//    val upper: Double
+//        get() = space.upper
+//
+//    override fun fromPoint(e: Double): Double {
+//        return e
+//    }
+//}
+
+class NormalDist(val a: Double, val sigma: Double, override val space: StandardNormalDistSpace) : SimpleRV<Double, Double>() {
+    init {
+        require(sigma > 0)
+    }
+
+    override fun fromPoint(e: Double): Double {
+        return sigma * e + a
+    }
+}
+
+//class BernoulliDist(override val space: BernoulliSpace) : SimpleRV<Boolean, Int>() {
+//    override fun fromPoint(e: Boolean): Int {
+//        return if (e) {
+//            1
+//        } else {
+//            0
+//        }
+//    }
+//}
+//
+//class GeometryDist(override val space: GeomSpace) : SimpleRV<Int, Int>() {
+//    override fun fromPoint(e: Int): Int {
+//        return e
+//    }
+//}
+//
+//class BinomialDist(override val space: BinomialSpace) : SimpleRV<Int, Int>() {
+//    override fun fromPoint(e: Int): Int {
+//        return e
+//    }
+//}
+//
+//class PascalDist(override val space: PascalSpace) : SimpleRV<Int, Int>() {
+//    override fun fromPoint(e: Int): Int {
+//        return e
+//    }
+//}
+//
+//class PoissonDist(override val space: PoissonSpace) : SimpleRV<Int,Int>(){
+//    override fun fromPoint(e: Int): Int {
+//        return e
+//    }
+//}
+
+
+class ExpDist(val k: Double, override val space: StandardExpSpace) : SimpleRV<Double, Double>() {
+    override fun fromPoint(e: Double): Double {
+        return e / k
+    }
+}
+

@@ -3,10 +3,12 @@ package cn.ancono.math.prob
 import cn.ancono.math.numeric.NumericSup
 import java.util.*
 import java.util.function.DoubleUnaryOperator
+import kotlin.math.sqrt
 
 
 typealias DoubleRV = RandomVariable<Double>
 typealias IntRV = RandomVariable<Int>
+
 
 /*
  * Created by liyicheng at 2020-06-02 17:14
@@ -40,8 +42,8 @@ object RandomVariables {
     /**
      * Returns a random variable of uniform distribution.
      */
-    fun uniform(lower: Double = 0.0, upper: Double = 1.0): DoubleRV {
-        return UniformDist(IntervalSpace(lower, upper))
+    fun uniform(lower: Double = 0.0, upper: Double = 1.0): SimpleRV<Double, Double> {
+        return IdentityVariable(IntervalSpace(lower, upper))
     }
 
     /**
@@ -50,8 +52,8 @@ object RandomVariables {
      *     P{ X = 0 } = p
      *     P{ X = 1 } = 1-p
      */
-    fun bernoulli(p: Double = 0.5): RandomVariable<Int> {
-        return BernoulliDist(BernoulliSpace(p))
+    fun bernoulli(p: Double = 0.5): SimpleRV<Int, Int> {
+        return IdentityVariable(BernoulliSpace(p))
     }
 
     /**
@@ -59,16 +61,125 @@ object RandomVariables {
      *
      *     P{ X = n } = q^(n-1) * p    ( n > 0 )
      */
-    fun geometry(p: Double = 0.5): RandomVariable<Int> {
-        return GeometryDist(PascalSpace(p))
+    fun geometry(p: Double = 0.5): SimpleRV<Int, Int> {
+        return IdentityVariable(GeomSpace(p))
+    }
+
+
+    /**
+     * Returns a random variable of binomial distribution:
+     *
+     *     P{ X = k } = C(n,k) * p^k * q^(n-k)    ( 0<= k <= n )
+     */
+    fun binomial(n: Int, p: Double = 0.5): SimpleRV<Int, Int> {
+        if (n == 1) {
+            return bernoulli(p)
+        }
+        return IdentityVariable(BinomialSpace(p, n))
+    }
+
+    /**
+     * Returns a random variable of pascal distribution:
+     *
+     *     P{ X = k } = C(k-1,n-1) * p^n * q^(k-n)    ( k >= n )
+     */
+    fun pascal(n: Int, p: Double = 0.5): SimpleRV<Int, Int> {
+        if (n == 1) {
+            return geometry(p)
+        }
+        return IdentityVariable(PascalSpace(p, n))
     }
 
     /**
      * Returns a random variable of normal distribution.
      */
-    fun normal(a: Double = 0.0, sigma: Double = 1.0): DoubleRV {
+    fun normal(a: Double = 0.0, sigma: Double = 1.0): SimpleRV<Double, Double> {
         return NormalDist(a, sigma, StandardNormalDistSpace())
     }
+
+    /**
+     * Returns a random variable of poisson distribution.
+     *
+     *     P{ X = n } = k^n / n! * e^(-k)     (n>=0)
+     */
+    fun poisson(k: Double = 1.0): SimpleRV<Int, Int> {
+        return IdentityVariable(PoissonSpace(k))
+    }
+
+    /**
+     * Returns a random variable of exponent distribution.
+     *
+     *     p(x) = ke^(-kx)    ( x > 0 )
+     */
+    fun exponent(k: Double = 1.0): SimpleRV<Double, Double> {
+        return ExpDist(k, StandardExpSpace())
+    }
+
+    /**
+     * Returns a random variable of logarithmic normal distribution.
+     *
+     * If `X ~ N(a,sigma)`, then `e^X ~ logNormal(a,sigma)`
+     */
+    fun logNormal(a: Double = 0.0, sigma: Double = 1.0): DoubleRV {
+        return normal(a, sigma).map(Math::exp)
+    }
+
+    /**
+     * Returns a random variable of chi-square distribution.
+     *
+     * If `X_i ~ N(0,1)` iid, and
+     *
+     *     X = (X_1)^2 + ... + (X_n)^2
+     *
+     * then `X ~ Χ^2(n)`
+     */
+    fun chiSquare(n: Int): DoubleRV {
+        require(n > 0)
+        val ns = (0 until n).map { normal() }
+        return map(ns) { list ->
+            list.sumByDouble { it * it }
+        }
+    }
+
+    /**
+     * Returns a random variable of t-distribution.
+     *
+     * If `X ~ N(0,1), Y ~ Χ^2(n)`, and
+     *
+     *     Z = X / sqrt(Y/n)
+     *
+     * then `Z ~ t(n)`
+     */
+    fun tDist(n: Int): DoubleRV {
+        require(n > 0)
+        val X = normal()
+        val Y = chiSquare(n)
+        val sqrtN = sqrt(n.toDouble())
+        return map2(X, Y) { x, y ->
+            sqrtN * x / sqrt(y)
+        }
+    }
+
+    /**
+     * Returns a random variable of F-distribution.
+     *
+     * If `X ~ Χ^2(m), Y ~ Χ^2(n)`, and
+     *
+     *     Z = (X / m) / (Y / n)
+     *
+     * then `Z ~ F(m,n)`
+     */
+    fun fDist(m: Int, n: Int): DoubleRV {
+        require(m > 0 && n > 0)
+        val X = chiSquare(m)
+        val Y = chiSquare(n)
+        val k = n.toDouble() / m
+        return map2(X, Y) { x, y ->
+            k * x / y
+        }
+    }
+//
+//    fun beta()
 
 
     /**
@@ -124,16 +235,26 @@ object RandomVariables {
         return MappedRV(rvs, f)
     }
 
+    /**
+     * Maps the given random variables to a new random variable.
+     */
+    fun <T, S, R> map2(x: RandomVariable<T>, y: RandomVariable<S>, f: (T, S) -> R): RandomVariable<R> {
+        return MappedRV.binary(x, y, f)
+    }
+
     fun sum(rvs: List<DoubleRV>): DoubleRV {
         return map(rvs) { it.sum() }
     }
 
+    fun sumInt(rvs: List<IntRV>): IntRV {
+        return map(rvs) { it.sum() }
+    }
 
     fun average(rvs: List<DoubleRV>): DoubleRV {
         return map(rvs) { it.average() }
     }
 
-    fun estimateExpectation(x: DoubleRV, times: Int = 10000): Double {
+    fun estimateExpectation(x: DoubleRV, times: Int = 1000000): Double {
         return x.getAsSequence().take(times).average()
     }
 
@@ -157,4 +278,19 @@ object RandomVariables {
         return NumericSup.linearInterpolate(from, to, data, d)
     }
 
+
+    fun estimateDist(x: IntRV, from: Int, to: Int, times: Int = 1000000): DoubleArray {
+        require(to >= from)
+        val length = to - from + 1
+        val counting = IntArray(length)
+        repeat(times) {
+            val a = x.get()
+            val i = a - from
+            if (i < length) {
+                counting[i]++
+            }
+        }
+        val data = DoubleArray(counting.size) { i -> counting[i].toDouble() / times }
+        return data
+    }
 }

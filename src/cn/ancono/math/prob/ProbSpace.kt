@@ -8,12 +8,38 @@ import kotlin.math.ln
 
 typealias Event = Map<ProbSpace<*>, Any>
 
-/*
+/**
+ * Describes the probability space in math, but it only provides method of generating
+ * random points in the space according to the probability of the space.
+ *
+ * Probability space is the base of random variables. Generally, probability space can
+ * be seen as a 'random source' for random variables. Random variables depend
+ * on probability space to provide random values, and a single random variable
+ * may depend on multiple spaces. Additionally, several random variables can depend
+ * on the same probability space. In this case, these random variables may not be
+ * independent.
+ *
+ * Probability spaces are always distinct. Different instances of probability space
+ * should be considered to be different. [Object.equals] and [Object.hashCode] should not
+ * be overridden.
+ *
+ *
+ *
  * Created by liyicheng at 2020-06-02 15:07
+ *
+ * @see RandomVariable
+ * @param E the type of point in this space.
  */
 interface ProbSpace<out E : Any> {
+
+    /**
+     * Randomly returns a point in this probability space.
+     */
     fun randomPoint(): E
 
+    /**
+     * Returns a sequence of random points in this probability space.
+     */
     fun randomPoints(): Sequence<E> {
         return generateSequence { this.randomPoint() }
     }

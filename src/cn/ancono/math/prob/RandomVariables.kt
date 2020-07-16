@@ -13,6 +13,7 @@ typealias IntRV = RandomVariable<Int>
 /*
  * Created by liyicheng at 2020-06-02 17:14
  */
+
 operator fun DoubleRV.plus(y: DoubleRV): DoubleRV {
     return MappedRV.binary(this, y, Double::plus)
 }
@@ -37,6 +38,9 @@ operator fun DoubleRV.unaryMinus(): DoubleRV {
     return this.map(Double::unaryMinus)
 }
 
+/**
+ * Provides methods of constructing random variables.
+ */
 object RandomVariables {
 
     /**
@@ -92,6 +96,9 @@ object RandomVariables {
 
     /**
      * Returns a random variable of normal distribution.
+     *
+     * @param a the expectation
+     * @param sigma the square root of the variance
      */
     fun normal(a: Double = 0.0, sigma: Double = 1.0): SimpleRV<Double, Double> {
         return NormalDist(a, sigma, StandardNormalDistSpace())

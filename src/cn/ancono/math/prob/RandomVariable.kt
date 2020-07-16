@@ -1,14 +1,35 @@
 package cn.ancono.math.prob
 
 
-/*
+/**
+ * Describes a random variable that is based on a probability space.
+ *
+ *
+ *
  * Created by liyicheng at 2020-06-01 10:54
+ *
+ * @see ProbSpace
+ * @see RandomVariables
  */
 sealed class RandomVariable<out T> {
+
+    /**
+     * A set of all the probability spaces that this random variable depends on.
+     */
     abstract val spaces: Set<ProbSpace<*>>
 
+    /**
+     * Returns the value that corresponds to the random event, that is, a
+     * map containing required probability spaces and random points.
+     *
+     * This method should return the same for the same input.
+     */
     abstract fun fromEvent(event: Event): T
 
+    /**
+     * Randomly gets a value of this random variable according to the
+     * probability.
+     */
     abstract fun get(): T
 }
 

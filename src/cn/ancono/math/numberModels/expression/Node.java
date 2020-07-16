@@ -233,6 +233,8 @@ public abstract class Node implements Computable, Serializable {
         String getFunctionName();
 
         int getParameterLength();
+
+        Node cloneNodeRenameFunction(String newFunctionName);
     }
 
 
@@ -1284,6 +1286,15 @@ public abstract class Node implements Computable, Serializable {
             return clone;
         }
 
+        @Override
+        public Node cloneNodeRenameFunction(String newFunctionName) {
+            Node nchild = child.cloneNode(null);
+            SFunction clone = new SFunction(null, nchild, newFunctionName);
+            nchild.parent = clone;
+//            clone.simIdentifier = simIdentifier;
+            return clone;
+        }
+
         /*
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
@@ -1378,6 +1389,17 @@ public abstract class Node implements Computable, Serializable {
             nc1.parent = clone;
             nc2.parent = clone;
             clone.simIdentifier = simIdentifier;
+            return clone;
+        }
+
+        @Override
+        public Node cloneNodeRenameFunction(String newFunctionName) {
+            Node nc1 = c1.cloneNode(null),
+                    nc2 = c2.cloneNode(null);
+            DFunction clone = new DFunction(null, nc1, nc2, newFunctionName, sortable);
+            nc1.parent = clone;
+            nc2.parent = clone;
+//            clone.simIdentifier = simIdentifier;
             return clone;
         }
 
@@ -1484,6 +1506,17 @@ public abstract class Node implements Computable, Serializable {
                 nchildren.add(n.cloneNode(clone));
             }
             clone.simIdentifier = simIdentifier;
+            return clone;
+        }
+
+        @Override
+        public Node cloneNodeRenameFunction(String newFunctionName) {
+            List<Node> nchildren = new ArrayList<>(getNumberOfChildren());
+            MFunction clone = new MFunction(null, nchildren, newFunctionName, sortable);
+            for (Node n : children) {
+                nchildren.add(n.cloneNode(clone));
+            }
+//            clone.simIdentifier = simIdentifier;
             return clone;
         }
 

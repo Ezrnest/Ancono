@@ -8,7 +8,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.Simplifier
-import cn.ancono.math.numberTheory.NTCalculator
+import cn.ancono.math.numberTheory.IntCalculator
 import cn.ancono.utilities.structure.Pair
 import java.util.*
 import java.util.function.Function
@@ -82,11 +82,25 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>)
 
     class RFCalculator<T : Any> internal constructor(mc: RingCalculator<T>,
                                                      internal val sim: Simplifier<T>?,
-                                                     nonZero: T)
+                                                     private val nonZero: T)
         : MathCalculatorAdapter<RingFraction<T>>() {
         internal val mc: RingCalculator<T> = Objects.requireNonNull(mc)
         override val zero: RingFraction<T> = RingFraction(mc.zero, nonZero, mc)
         override val one: RingFraction<T> = RingFraction(nonZero, nonZero, mc)
+
+        /**
+         * Returns a fraction that is equal to `x/1`. Note that if there is no multiplication unit in the ring,
+         * the numerator and the denominator are not `x` and `1`.
+         *
+         * **Note**: This function is essentially the injection from the ring to the fraction field.
+         */
+        fun of(x: T): RingFraction<T> {
+            if (mc.isEqual(x, mc.zero)) {
+                return zero
+            }
+            return valueOf(mc.multiply(nonZero, x), nonZero)
+//            return RingFraction(x)
+        }
 
         fun simplify(n: T, d: T): RingFraction<T> {
             if (sim == null) {
@@ -187,7 +201,7 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>)
          * Returns a composed of the
          */
         @JvmStatic
-        fun <T : Any> extractGcd(fractions: List<RingFraction<T>>, mc: NTCalculator<T>): Pair<T, T> {
+        fun <T : Any> extractGcd(fractions: List<RingFraction<T>>, mc: IntCalculator<T>): Pair<T, T> {
             val initial = Pair(mc.zero, mc.one)
             return fractions.fold(initial) { p, frac ->
                 val n = mc.gcd(p.first, frac.nume)

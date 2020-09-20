@@ -132,7 +132,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
     public Matrix<T> cofactor(int r, int c) {
         rowRangeCheck(r);
         columnRangeCheck(c);
-        return Matrix.valueOf((T[][]) new Object[][]{{data[1 - r][1 - c]}}, getMc());
+        return Matrix.of((T[][]) new Object[][]{{data[1 - r][1 - c]}}, getMc());
     }
 
     /* (non-Javadoc)
@@ -165,7 +165,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
     @Override
     public int calRank() {
         if (rank == -1)
-            rank = Matrix.valueOf(data, getMc()).calRank();
+            rank = Matrix.of(data, getMc()).calRank();
         return rank;
     }
 

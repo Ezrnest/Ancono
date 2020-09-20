@@ -233,6 +233,8 @@ public abstract class Node implements Computable, Serializable {
         String getFunctionName();
 
         int getParameterLength();
+
+        Node cloneNodeRenameFunction(String newFunctionName);
     }
 
 
@@ -1057,7 +1059,12 @@ public abstract class Node implements Computable, Serializable {
 
         @Override
         public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
-            T re = p.compute(valueMap, mc);
+            T re;
+            if (p != null) {
+                re = p.compute(valueMap, mc);
+            } else {
+                re = mc.getZero();
+            }
             for (Node n : children) {
                 re = mc.add(re, n.compute(valueMap, mc));
             }
@@ -1066,7 +1073,10 @@ public abstract class Node implements Computable, Serializable {
 
         @Override
         public double computeDouble(ToDoubleFunction<String> valueMap) {
-            double re = p.computeDouble(valueMap);
+            double re = 0;
+            if (p != null) {
+                re = p.computeDouble(valueMap);
+            }
             for (Node n : children) {
                 re += n.computeDouble(valueMap);
             }
@@ -1181,20 +1191,29 @@ public abstract class Node implements Computable, Serializable {
             }
         }
 
+
         @Override
         public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
-            T re = p.compute(valueMap, mc);
+            T re;
+            if (p != null) {
+                re = p.compute(valueMap, mc);
+            } else {
+                re = mc.getOne();
+            }
             for (Node n : children) {
-                re = mc.multiply(re, n.compute(valueMap, mc));
+                re = mc.add(re, n.compute(valueMap, mc));
             }
             return re;
         }
 
         @Override
         public double computeDouble(ToDoubleFunction<String> valueMap) {
-            double re = p.computeDouble(valueMap);
+            double re = 1;
+            if (p != null) {
+                re = p.computeDouble(valueMap);
+            }
             for (Node n : children) {
-                re *= n.computeDouble(valueMap);
+                re += n.computeDouble(valueMap);
             }
             return re;
         }
@@ -1267,6 +1286,15 @@ public abstract class Node implements Computable, Serializable {
             return clone;
         }
 
+        @Override
+        public Node cloneNodeRenameFunction(String newFunctionName) {
+            Node nchild = child.cloneNode(null);
+            SFunction clone = new SFunction(null, nchild, newFunctionName);
+            nchild.parent = clone;
+//            clone.simIdentifier = simIdentifier;
+            return clone;
+        }
+
         /*
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
@@ -1296,7 +1324,7 @@ public abstract class Node implements Computable, Serializable {
         @Override
         public double computeDouble(ToDoubleFunction<String> valueMap) {
             double x = child.computeDouble(valueMap);
-            return ExprFunction.findFunctionAndApply(Calculators.getCalculatorDoubleDev(), functionName, x);
+            return ExprFunction.findFunctionAndApply(Calculators.getCalDoubleDev(), functionName, x);
         }
     }
 
@@ -1364,6 +1392,17 @@ public abstract class Node implements Computable, Serializable {
             return clone;
         }
 
+        @Override
+        public Node cloneNodeRenameFunction(String newFunctionName) {
+            Node nc1 = c1.cloneNode(null),
+                    nc2 = c2.cloneNode(null);
+            DFunction clone = new DFunction(null, nc1, nc2, newFunctionName, sortable);
+            nc1.parent = clone;
+            nc2.parent = clone;
+//            clone.simIdentifier = simIdentifier;
+            return clone;
+        }
+
         /*
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
@@ -1414,7 +1453,7 @@ public abstract class Node implements Computable, Serializable {
         public double computeDouble(ToDoubleFunction<String> valueMap) {
             double p1 = c1.computeDouble(valueMap);
             double p2 = c2.computeDouble(valueMap);
-            return ExprFunction.findFunctionAndApply(Calculators.getCalculatorDoubleDev(), functionName, p1, p2);
+            return ExprFunction.findFunctionAndApply(Calculators.getCalDoubleDev(), functionName, p1, p2);
         }
 
     }
@@ -1467,6 +1506,17 @@ public abstract class Node implements Computable, Serializable {
                 nchildren.add(n.cloneNode(clone));
             }
             clone.simIdentifier = simIdentifier;
+            return clone;
+        }
+
+        @Override
+        public Node cloneNodeRenameFunction(String newFunctionName) {
+            List<Node> nchildren = new ArrayList<>(getNumberOfChildren());
+            MFunction clone = new MFunction(null, nchildren, newFunctionName, sortable);
+            for (Node n : children) {
+                nchildren.add(n.cloneNode(clone));
+            }
+//            clone.simIdentifier = simIdentifier;
             return clone;
         }
 

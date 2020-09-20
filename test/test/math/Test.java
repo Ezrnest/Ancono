@@ -436,16 +436,16 @@ class Test {
 	
 	static void progressionSum(){
 		MathCalculator<Fraction> mc = Fraction.getCalculator();
-		Progression<Fraction> a = Progression.createProgression(
-				l -> Fraction.valueOf(l).add(Fraction.ONE).squareOf().reciprocal(),-1,mc);
-		Progression<Fraction> b = Progression.createProgression(
+        Progression<Fraction> a = Progression.createProgression(
+                l -> Fraction.of(l).add(Fraction.ONE).squareOf().reciprocal(), -1, mc);
+        Progression<Fraction> b = Progression.createProgression(
                 value -> {
                     Fraction sum = Fraction.ONE;
-                    for(long l = 1; l < value;l++){
+                    for (long l = 1; l < value; l++) {
                         sum = sum.multiply(Fraction.ONE.minus(a.get(l)));
                     }
                     return sum;
-                },-1 , mc);
+                }, -1, mc);
 		a.limit(20).forEach(Printer::print);
 		b.limit(20).forEach(Printer::print);
 	}

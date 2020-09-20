@@ -29,14 +29,25 @@ import java.util.function.BiPredicate;
 public interface IPolynomial<T> extends Iterable<T> {
     /**
      * Gets the degree of this polynomial, which is the max power of x.
+     * The degree of zero polynomial is <code>-1</code>.
      *
      * @return the degree of polynomial.
      */
     int getDegree();
 
     /**
+     * Returns the power of the leading term. This method is equivalent to
+     * <code>max(getDegree(),0)</code>
+     *
+     * @return
+     */
+    default int getLeadingPower() {
+        return Math.max(getDegree(), 0);
+    }
+
+    /**
      * Gets the number of the corresponding index, throws {@link IndexOutOfBoundsException}
-     * if {@code n<0 || n>getDegree()}.
+     * if {@code n<0}.
      *
      * @param n the power of the variable.
      * @return
@@ -44,10 +55,10 @@ public interface IPolynomial<T> extends Iterable<T> {
     T getCoefficient(int n);
 
     /**
-     * Determines whether this polynomial is a constant.
+     * Determines whether this polynomial is a constant (including zero).
      */
     default boolean isConstant() {
-        return getDegree() == 0;
+        return getDegree() <= 0;
     }
 
     /**
@@ -61,10 +72,10 @@ public interface IPolynomial<T> extends Iterable<T> {
 
 
     /**
-     * Returns the first term of this polynomial.
+     * Returns the leading term of this polynomial.
      */
     default T first() {
-        return getCoefficient(getDegree());
+        return getCoefficient(getLeadingPower());
     }
 
     /**
@@ -129,7 +140,7 @@ public interface IPolynomial<T> extends Iterable<T> {
 
     public static <T> String stringOf(IPolynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         int maxPower = m.getDegree();
-        if (maxPower == 0) {
+        if (maxPower <= 0) {
             return nf.format(m.getCoefficient(0), mc);
         }
         StringBuilder sb = new StringBuilder();
@@ -173,7 +184,7 @@ public interface IPolynomial<T> extends Iterable<T> {
         for (int i = 0; i < length; i++) {
             arr[i] = fx.getCoefficient(i);
         }
-        return Vector.createVector(mc, arr);
+        return Vector.of(mc, arr);
     }
 
     /**

@@ -164,7 +164,6 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
      * Gets a copy of array representing this permutation. For each index n in the range,
      * {@code arr[n]==apply(n)}
      *
-     * @return
      */
     default int[] getArray() {
         int length = size();

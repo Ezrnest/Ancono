@@ -14,6 +14,7 @@ class QuadraticForm {
         /**
          * Returns the representation matrix of the given multinomial. The characters are in lexicographical order.
          */
+        @JvmStatic
         fun representationMatrix(q: Multinomial): Matrix<Fraction> {
             val chars = q.characters
             val chMap = hashMapOf<String, Int>()

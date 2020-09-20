@@ -3,7 +3,7 @@ package cn.ancono.math.algebra.linearAlgebra.mapping
 import cn.ancono.math.*
 import cn.ancono.math.algebra.abstractAlgebra.calculator.AlgebraCalculator
 import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.VectorSpaceCalculator
+import cn.ancono.math.algebra.abstractAlgebra.calculator.LinearSpaceCalculator
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
 import cn.ancono.math.algebra.linearAlgebra.*
 import cn.ancono.math.function.Bijection
@@ -46,12 +46,13 @@ interface VLinearMapping<K : Any> : ILinearMapping<K, Vector<K>, Vector<K>> {
     /**
      * The kernel of this linear mapping, which is equal to the solution space of the transformation matrix.
      */
-    val kernel: VectorBase<K>
+    val kernel: VectorBasis<K>
         get() = transMatrix.solutionSpace()
+
     /**
      * The image of this linear mapping, which is equal to the column space of the transformation matrix.
      */
-    val image: VectorBase<K>
+    val image: VectorBasis<K>
         get() = transMatrix.columnSpace()
 
 
@@ -73,8 +74,8 @@ interface VLinearMapping<K : Any> : ILinearMapping<K, Vector<K>, Vector<K>> {
     /**
      * Transform the given vector base.
      */
-    fun transformBase(vectorBase: VectorBase<K>): VectorBase<K> =
-            VectorBase.generate(transformAll(vectorBase.vectors))
+    fun transformBase(vectorBase: VectorBasis<K>): VectorBasis<K> =
+            VectorBasis.generate(transformAll(vectorBase.vectors))
 
     /**
      * Performs this linear transformation to the column vectors in the matrix.
@@ -138,17 +139,17 @@ abstract class LinearMapping<T : Any> internal constructor(
         mc: MathCalculator<T>
 ) : MathObjectExtend<T>(mc), VLinearMapping<T> {
 
-    override val kernel: VectorBase<T> by lazy { super.kernel }
+    override val kernel: VectorBasis<T> by lazy { super.kernel }
 
-    override val image: VectorBase<T> by lazy { super.image }
+    override val image: VectorBasis<T> by lazy { super.image }
 
 
     /**
      * Returns the transformation under the given base.
      */
-    open fun transMatrixUnder(srcBase: FullVectorBase<T>, destBase: FullVectorBase<T>): Matrix<T> {
-        require(srcBase.vectorDimension == dimSrc)
-        require(destBase.vectorDimension == dimDest)
+    open fun transMatrixUnder(srcBase: FullVectorBasis<T>, destBase: FullVectorBasis<T>): Matrix<T> {
+        require(srcBase.vectorLength == dimSrc)
+        require(destBase.vectorLength == dimDest)
         val p = srcBase.transMatrixToStandard()
         val q = destBase.transMatrixFromStandard()
         return p * transMatrix * q
@@ -325,7 +326,7 @@ internal constructor(
      * Returns the transformation under a new vector base of the space. The
      * returned matrix is similar to the original transformation matrix.
      */
-    fun transMatrixUnder(base: FullVectorBase<T>): Matrix<T> {
+    fun transMatrixUnder(base: FullVectorBasis<T>): Matrix<T> {
         val p = base.getVectorsAsMatrix()
         val pInv = p.inverse()
         return pInv * transMatrix * p
@@ -357,7 +358,7 @@ internal constructor(
          * > P^-1 * A * P
          */
         @JvmStatic
-        fun <T : Any> underBase(transMatrix: Matrix<T>, base: FullVectorBase<T>): LinearTrans<T> {
+        fun <T : Any> underBase(transMatrix: Matrix<T>, base: FullVectorBasis<T>): LinearTrans<T> {
             val pInv = base.getVectorsAsMatrix()
             val p = pInv.inverse()
             val transMatUnderStandard = pInv * transMatrix * p
@@ -403,7 +404,7 @@ DLinearTrans<T : Any> internal constructor(
     }
 }
 
-class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: Int) : VectorSpaceCalculator<T, LinearMapping<T>> {
+class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: Int) : LinearSpaceCalculator<T, LinearMapping<T>> {
 
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
@@ -420,7 +421,7 @@ class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimD
         return x.negate()
     }
 
-    override fun isLinearRelevant(u: LinearMapping<T>, v: LinearMapping<T>): Boolean {
+    override fun isLinearDependent(u: LinearMapping<T>, v: LinearMapping<T>): Boolean {
         return LinearMapping.isLinearRelevant(u, v)
     }
 
@@ -433,6 +434,7 @@ class LinearMapCal<T : Any>(val mc: MathCalculator<T>, val dimSrc: Int, val dimD
 }
 
 class LinearTransCal<T : Any>(val mc: MathCalculator<T>, val dim: Int) : AlgebraCalculator<T, LinearTrans<T>> {
+
 
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
@@ -460,7 +462,7 @@ class LinearTransCal<T : Any>(val mc: MathCalculator<T>, val dim: Int) : Algebra
         return x.compose(y)
     }
 
-    override fun isLinearRelevant(u: LinearTrans<T>, v: LinearTrans<T>): Boolean {
+    override fun isLinearDependent(u: LinearTrans<T>, v: LinearTrans<T>): Boolean {
         return u.isLinearRelevant(v)
     }
 }

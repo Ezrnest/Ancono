@@ -4,9 +4,8 @@ import cn.ancono.math.equation.Type;
 import cn.ancono.math.equation.inequation.SVPInequation;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
+import cn.ancono.math.numberModels.ComplexI;
 import cn.ancono.math.numberModels.Fraction;
-import cn.ancono.math.numberModels.expression.ExprCalculator;
-import cn.ancono.math.numberModels.expression.Expression;
 import cn.ancono.math.numberTheory.Primes;
 import cn.ancono.math.set.IntervalUnion;
 import cn.ancono.utilities.ArraySup;
@@ -74,41 +73,88 @@ public class MathUtils {
      * @return an int array of <code>{gcd(a,b), u, v}</code>.
      */
     public static int[] gcdUV(int a, int b) {
-        if (a == 0) {
-            return new int[]{b, 0, 1};
+        int[] result = gcdUV0(Math.abs(a), Math.abs(b));
+        //deal with negative values
+        if (a < 0) {
+            result[1] = -result[1];
         }
-        if (b == 0) {
-            return new int[]{a, 1, 0};
+        if (b < 0) {
+            result[2] = -result[2];
         }
-        return gcdUV0(a, b);
+        return result;
     }
 
     static int[] gcdUV0(int a, int b) {
-        int[] quotients = new int[4];
-        int n = 0;
-        while (true) {
-            int q = a / b;
-            int r = a % b;
-            if (r == 0) {
-                break;
-            }
-            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
-            a = b;
-            b = r;
+//        int[] quotients = new int[4];
+//        int n = 0;
+//        while (true) {
+//            int q = a / b;
+//            int r = a % b;
+//            if (r == 0) {
+//                break;
+//            }
+//            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+//            a = b;
+//            b = r;
+//        }
+//        // computes u and v
+//        int u0 = 1, u1 = 0,
+//                v0 = 0, v1 = 1;
+//        // u[s] = u[s-2]-q[s-2]*u[s-1]
+//        for (int i = 0; i < n; i++) {
+//            int nextU = u0 - quotients[i] * u1;
+//            int nextV = v0 - quotients[i] * v1;
+//            u0 = u1;
+//            u1 = nextU;
+//            v0 = v1;
+//            v1 = nextV;
+//        }
+//        return new int[]{b, u1, v1};
+        //Re-implemented by lyc at 2020-03-03 15:57
+        /*
+        Euclid's Extended Algorithms:
+        Refer to Henri Cohen 'A course in computational algebraic number theory' Algorithm 1.3.6
+         */
+        if (b == 0) {
+            return new int[]{a, 1, 0};
         }
-        // computes u and v
-        int u0 = 1, u1 = 0,
-                v0 = 0, v1 = 1;
-        // u[s] = u[s-2]-q[s-2]*u[s-1]
-        for (int i = 0; i < n; i++) {
-            int nextU = u0 - quotients[i] * u1;
-            int nextV = v0 - quotients[i] * v1;
+        /*
+        Explanation of the algorithm: 
+        we want to maintain the following equation while computing the gcd using the Euclid's algorithm
+        let d0=a, d1=b, d2, d3 ... be the sequence of remainders in Euclid's algorithm,
+        then we have 
+            a*1 + b*0 = d0
+            a*0 + b*1 = d1
+        let 
+            u0 = 1, v0 = 0
+            u1 = 0, v1 = 1
+        then we want to build a sequence of u_i, v_i such that 
+            a*u_i + b*v_i = d_i,
+        when we find the d_n = gcd(a,b), the corresponding u_n and v_n is what we want.
+        We have: 
+            d_i = q_i * d_{i+1} + d_{i+2}        (by Euclid's algorithm
+        so 
+            a*u_i + b*v_i = q_i * (a*u_{i+1} + b*v_{i+1}) + (a*u_{i+2} + b*v_{i+2})
+            u_i - q_i * u_{i+1} = u_{i+2}
+            v_i - q_i * v_{i+1} = v_{i+2}
+        but it is only necessary for us to record u_i, since v_i can be calculated from the equation 
+            a*u_i + b*v_i = d_i 
+         */
+        int d0 = a;
+        int d1 = b;
+        int u0 = 1;
+        int u1 = 0;
+        while (d1 > 0) {
+            int q = d0 / d1;
+            int d2 = d0 % d1;
+            d0 = d1;
+            d1 = d2;
+            int u2 = u0 - q * u1;
             u0 = u1;
-            u1 = nextU;
-            v0 = v1;
-            v1 = nextV;
+            u1 = u2;
         }
-        return new int[]{b, u1, v1};
+        int v = (d0 - a * u0) / b;
+        return new int[]{d0, u0, v};
     }
 
 
@@ -120,41 +166,69 @@ public class MathUtils {
      * @return an long array of <code>{gcd(a,b), u, v}</code>.
      */
     public static long[] gcdUV(long a, long b) {
-        if (a == 0) {
-            return new long[]{b, 0, 1};
+        long[] result = gcdUV0(Math.abs(a), Math.abs(b));
+        //deal with negative values
+        if (a < 0) {
+            result[1] = -result[1];
         }
-        if (b == 0) {
-            return new long[]{a, 1, 0};
+        if (b < 0) {
+            result[2] = -result[2];
         }
-        return gcdUV0(a, b);
+        return result;
     }
 
     static long[] gcdUV0(long a, long b) {
-        long[] quotients = new long[4];
-        int n = 0;
-        while (true) {
-            long q = a / b;
-            long r = a % b;
-            if (r == 0) {
-                break;
-            }
-            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
-            a = b;
-            b = r;
+//        long[] quotients = new long[4];
+//        int n = 0;
+//        while (true) {
+//            long q = a / b;
+//            long r = a % b;
+//            if (r == 0) {
+//                break;
+//            }
+//            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
+//            a = b;
+//            b = r;
+//        }
+//        // computes u and v
+//        long u0 = 1, u1 = 0,
+//                v0 = 0, v1 = 1;
+//        // u[s] = u[s-2]-q[s-2]*u[s-1]
+//        for (int i = 0; i < n; i++) {
+//            long nextU = u0 - quotients[i] * u1;
+//            long nextV = v0 - quotients[i] * v1;
+//            u0 = u1;
+//            u1 = nextU;
+//            v0 = v1;
+//            v1 = nextV;
+//        }
+//        return new long[]{b, u1, v1};
+        //Re-implemented by lyc at 2020-03-03 16:42
+        /*
+        Euclid's Extended Algorithms:
+        Refer to Henri Cohen 'A course in computational algebraic number theory' Algorithm 1.3.6
+         */
+        if (b == 0) {
+            return new long[]{a, 1, 0};
         }
-        // computes u and v
-        long u0 = 1, u1 = 0,
-                v0 = 0, v1 = 1;
-        // u[s] = u[s-2]-q[s-2]*u[s-1]
-        for (int i = 0; i < n; i++) {
-            long nextU = u0 - quotients[i] * u1;
-            long nextV = v0 - quotients[i] * v1;
+        /*
+        See the explanation above in the int version of the same algorithm
+         */
+        long d0 = a;
+        long d1 = b;
+        long u0 = 1;
+        long u1 = 0;
+        while (d1 > 0) {
+            long q = d0 / d1;
+            long d2 = d0 % d1;
+            d0 = d1;
+            d1 = d2;
+            long u2 = u0 - q * u1;
             u0 = u1;
-            u1 = nextU;
-            v0 = v1;
-            v1 = nextV;
+            u1 = u2;
         }
-        return new long[]{b, u1, v1};
+        long v = (d0 - a * u0) / b;
+        return new long[]{d0, u0, v};
     }
 
     /**
@@ -317,6 +391,26 @@ public class MathUtils {
     }
 
     /**
+     * Returns the quotient of <code>a/b</code> if it is divisible, throws an Exception otherwise.
+     */
+    public static long divideExact(long a, long b) {
+        if (a % b != 0) {
+            ExceptionUtil.notExactDivision(a, b);
+        }
+        return a / b;
+    }
+
+    /**
+     * Returns the quotient of <code>a/b</code> if it is divisible, throws an Exception otherwise.
+     */
+    public static int divideExact(int a, int b) {
+        if (a % b != 0) {
+            ExceptionUtil.notExactDivision(a, b);
+        }
+        return a / b;
+    }
+
+    /**
      * Calculate the square root of {@code n}.If n cannot be expressed as
      * a square of an integer,then {@code -1} will be returned. Throws an
      * exception if {@code n<0}
@@ -326,7 +420,7 @@ public class MathUtils {
      */
     public static long squareRootExact(long n) {
         if (n < 0) {
-            throw new ArithmeticException();
+            ExceptionUtil.sqrtForNegative();
         }
         if (n == 0) {
             return 0;
@@ -488,7 +582,7 @@ public class MathUtils {
 
     /**
      * find the number n :
-     * {@code n=2^k, 2^(k-1)<num<n}
+     * {@code n=2^k, 2^(k-1) < num < n}
      *
      * @param num num>0
      * @return
@@ -633,6 +727,35 @@ public class MathUtils {
         return ans;
     }
 
+
+    /**
+     * Returns the mod inverse of <code>a</code> mod <code>p</code>. That is, a number <code>u</code> such that
+     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are coprime.
+     */
+    public static int modInverse(int a, int p) {
+        //Created by lyc at 2020-03-03 16:50
+        var arr = gcdUV(a, p);
+        // au + pv = 1
+        if (arr[0] != 1) {
+            throw new ArithmeticException("a and p is not coprime: a=" + a + ", p=" + p);
+        }
+        return arr[1];
+    }
+
+    /**
+     * Returns the mod inverse of <code>a</code> mod <code>p</code>. That is, a number <code>u</code> such that
+     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are coprime.
+     */
+    public static long modInverse(long a, long p) {
+        //Created by lyc at 2020-03-03 16:50
+        var arr = gcdUV(a, p);
+        // au + pv = 1
+        if (arr[0] != 1) {
+            throw new ArithmeticException("a and p is not coprime: a=" + a + ", p=" + p);
+        }
+        return arr[1];
+    }
+
     /**
      * {@code (a^n) % mod}, with number as int. For example, {@code powerAndMod(2,2,3) = 1}.
      * This method will not check overflow.
@@ -751,106 +874,6 @@ public class MathUtils {
         }
         katList[n] = sum;
         return sum;
-    }
-
-    /**
-     * Solve an equation that
-     * <pre>ax^2 + bx + c = 0</pre>
-     * This method will ignore imaginary solutions.
-     * <p>This method will return a list of solutions,which will contain
-     * no element if there is no real solution({@code delta<0}),
-     * one if there is only one solution(or two solutions of the identity value)({@code delta==0})
-     * or two elements if there are two solutions(({@code delta>0}).
-     * <p>This method normally requires {@code squareRoot()} method of the {@link MathCalculator}.
-     *
-     * @param a  the coefficient of x^2.
-     * @param b  the coefficient of x.
-     * @param c  the constant coefficient
-     * @param mc a MathCalculator
-     * @return the list of solution,regardless of order.
-     */
-    public static <T> List<T> solveEquation(T a, T b, T c, MathCalculator<T> mc) {
-        //Calculate the delta
-        T delta;
-        {//=mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));;
-            T t1 = mc.multiply(b, b);
-            T t2 = mc.multiply(a, c);
-            T t3 = mc.multiplyLong(t2, 4L);
-            delta = mc.subtract(t1, t3);
-        }
-        int compare = 1;
-        try {
-            compare = mc.compare(delta, mc.getZero());
-        } catch (UnsupportedCalculationException ex) {
-            try {
-                if (mc.isZero(delta))
-                    compare = 0;
-            } catch (UnsupportedCalculationException ex2) {
-            }
-        }
-//		Printer.print(delta);
-        if (compare < 0) {
-            //no solution
-            return Collections.emptyList();
-        } else if (compare == 0) {
-            List<T> so = new ArrayList<>(1);
-            // -b/2a
-            T re = mc.divide(mc.divideLong(b, -2L), a);
-            so.add(re);
-            return so;
-        } else {
-            // x1 = (-b + sqr(delta)) / 2a
-            // x2 = (-b - sqr(delta)) / 2a
-            List<T> so = new ArrayList<>(2);
-            delta = mc.squareRoot(delta);
-            T a2 = mc.multiplyLong(a, 2);
-            T re = mc.divide(mc.subtract(delta, b), a2);
-            so.add(re);
-            re = mc.negate(mc.divide(mc.add(b, delta), a2));
-            so.add(re);
-            return so;
-        }
-    }
-
-    /**
-     * Solve an equation of
-     * <pre>ax^2 + bx + c = 0</pre>
-     * This method will use the root-formula and will compute all of the solutions(include imaginary
-     * solutions),and always returns two solutions even if the two solutions are the identity.
-     *
-     * @param a  the coefficient of x^2.
-     * @param b  the coefficient of x.
-     * @param c  the constant coefficient
-     * @param mc a MathCalculator
-     * @return a list of the solutions
-     */
-    public static <T> List<T> solveEquationIma(T a, T b, T c, MathCalculator<T> mc) {
-        T delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L));
-        // x1 = (-b + sqr(delta)) / 2a
-        // x2 = (-b - sqr(delta)) / 2a
-        List<T> so = new ArrayList<>(2);
-        delta = mc.squareRoot(delta);
-        T a2 = mc.multiplyLong(a, 2);
-        T re = mc.divide(mc.subtract(delta, b), a2);
-        so.add(re);
-        re = mc.negate(mc.divide(mc.add(b, delta), a2));
-        so.add(re);
-        return so;
-    }
-
-    /**
-     * Solves an inequation of
-     * <pre>ax^2 + bx + c = 0</pre>
-     *
-     * @param a   the coefficient of x^2.
-     * @param b   the coefficient of x.
-     * @param c   the constant coefficient
-     * @param mc  a MathCalculator
-     * @param <T>
-     * @return
-     */
-    public static <T> IntervalUnion<T> solveInequation(T a, T b, T c, Type op, MathCalculator<T> mc) {
-        return SVPInequation.quadratic(a, b, c, op, mc).getSolution();
     }
 
     /**
@@ -981,30 +1004,32 @@ public class MathUtils {
             //to prevent the overflow
             return 3037000499L;
         }
-        int p = 4;
-        //find the lower bound and the upper bound.
-        long high = 64L;
-        while (high < n) {
-            p += 2;
-            high *= 4;
-        }
-        p >>>= 1;
-        long low = 1L << p;
-        high = low << 1;
-        return ModelPatterns.binarySearchL(low, high, (long x) -> {
-            long sqr = x * x;
-//			print(x);
-            if (sqr == n) {
-                return 0;
-            }
-            if (sqr > n) {
-                return 1;
-            }
-            if (sqr + 2 * x + 1 > n) {
-                return 0;
-            }
-            return -1;
-        });
+        return (long) Math.sqrt(n);
+
+//        int p = 4;
+//        //find the lower bound and the upper bound.
+//        long high = 64L;
+//        while (high < n) {
+//            p += 2;
+//            high *= 4;
+//        }
+//        p >>>= 1;
+//        long low = 1L << p;
+//        high = low << 1;
+//        return ModelPatterns.binarySearchL(low, high, (long x) -> {
+//            long sqr = x * x;
+////			print(x);
+//            if (sqr == n) {
+//                return 0;
+//            }
+//            if (sqr > n) {
+//                return 1;
+//            }
+//            if (sqr + 2 * x + 1 > n) {
+//                return 0;
+//            }
+//            return -1;
+//        });
     }
 
 
@@ -1400,7 +1425,7 @@ public class MathUtils {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).floor());
             base *= power(factor[0], basePow);
-            int rePow = Fraction.valueOf(basePow).divide(exp).toInt();
+            int rePow = Fraction.of(basePow).divide(exp).toInt();
             result *= power(factor[0], rePow);
         }
         return new long[]{result, base};
@@ -1448,7 +1473,7 @@ public class MathUtils {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).ceil());
             base *= power(factor[0], basePow);
-            int rePow = Fraction.valueOf(basePow).divide(exp).toInt();
+            int rePow = Fraction.of(basePow).divide(exp).toInt();
             result *= power(factor[0], rePow);
         }
         return new long[]{result, base};
@@ -1478,7 +1503,9 @@ public class MathUtils {
 
     public static long chineseRemainder(long[] mods, long[] remainers) {
         ExceptionUtil.notImplemented("");
+        //TODO
         return 0;
     }
+
 
 }

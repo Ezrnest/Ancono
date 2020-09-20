@@ -6,7 +6,10 @@ package cn.ancono.math.algebra.abstractAlgebra.structure;
 import cn.ancono.math.algebra.abstractAlgebra.EqualRelation;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.group.Homomorphism;
+import cn.ancono.math.set.FiniteSet;
+import cn.ancono.math.set.InfiniteSet;
 import cn.ancono.math.set.MathSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A group is a algebraic structure consisting of a set of elements and an operation.<p>
@@ -38,29 +41,46 @@ public interface Group<T> extends Monoid<T> {
      * number of elements in this group. If this group contains infinite
      * elements, returns {@code -cardinality-1}.
      */
-    long index();
+    default long index() {
+        var s = getSet();
+        if (s instanceof FiniteSet) {
+            return ((FiniteSet<T>) s).size();
+        } else if (s instanceof InfiniteSet) {
+            return -((InfiniteSet<T>) s).cardinalNumber() - 1;
+        }
+        throw new UnsupportedOperationException();
+    }
+
 
     /**
      * Returns a set of subgroups.
      */
-    MathSet<? extends Group<T>> getSubgroups();
+    default MathSet<? extends Group<T>> getSubgroups() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Determines whether the given group is a subgroup of this group.
      *
      * @param g a group
      */
-    boolean isSubgroup(Group<T> g);
+    default boolean isSubgroup(@NotNull Group<T> g) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Gets a set of normal subgroups.
      */
-    MathSet<? extends Group<T>> getNormalSubgroups();
+    default MathSet<? extends Group<T>> getNormalSubgroups() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Determines whether the group is a normal subgroup of this group.
      */
-    boolean isNormalSubgroup(Group<T> g);
+    default boolean isNormalSubgroup(@NotNull Group<T> g) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Gets the coset of the element x of the whole group.
@@ -68,7 +88,7 @@ public interface Group<T> extends Monoid<T> {
      * @param x      an element in this group
      * @param isLeft determines whether it is a left coset.
      */
-    default Coset<T, ? extends Group<T>> getCoset(T x, boolean isLeft) {
+    default Coset<T, ? extends Group<T>> getCoset(@NotNull T x, boolean isLeft) {
         return getCoset(x, this, isLeft);
     }
 
@@ -78,7 +98,9 @@ public interface Group<T> extends Monoid<T> {
      * @param x      an element in this group
      * @param isLeft determines whether it is a left coset.
      */
-    Coset<T, ? extends Group<T>> getCoset(T x, Group<T> subGroup, boolean isLeft);
+    default Coset<T, ? extends Group<T>> getCoset(@NotNull T x, @NotNull Group<T> subGroup, boolean isLeft) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Gets a set of all cosets of the group <code>h</code> in this group.
@@ -86,7 +108,9 @@ public interface Group<T> extends Monoid<T> {
      * @param h      a subgroup
      * @param isLeft whether to return left coset
      */
-    MathSet<? extends Coset<T, ? extends Group<T>>> getCosets(Group<T> h, boolean isLeft);
+    default MathSet<? extends Coset<T, ? extends Group<T>>> getCosets(@NotNull Group<T> h, boolean isLeft) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the index of a subgroup in this group, returns
@@ -94,7 +118,9 @@ public interface Group<T> extends Monoid<T> {
      *
      * @param sub a subgroup
      */
-    long indexOf(Group<T> sub);
+    default long indexOf(@NotNull Group<T> sub) {
+        throw new UnsupportedOperationException();
+    }
 
 
     /**
@@ -104,18 +130,24 @@ public interface Group<T> extends Monoid<T> {
      * @param h1 a subgroup
      * @param h2 another subgroup
      */
-    boolean isConjugate(Group<T> h1, Group<T> h2);
+    default boolean isConjugate(@NotNull Group<T> h1, @NotNull Group<T> h2) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the conjugate subgroup of a subgroup of this:
      * <text>x<sup>-1</sup>Hx</text>.
      */
-    Group<T> conjugateSubgroup(Group<T> h, T x);
+    default Group<T> conjugateSubgroup(@NotNull Group<T> h, T x) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Determines whether the given two elements are conjugate.
      */
-    boolean isConjugate(T g1, T g2);
+    default boolean isConjugate(T g1, T g2) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns a equal relation which considers conjugate subgroups
@@ -134,25 +166,31 @@ public interface Group<T> extends Monoid<T> {
     }
 
     /**
-     * Returns the normalizer of a subgroup <code>g</code>, that is,
+     * Returns the normalizer of a subgroup <code>h</code>, that is,
      * <text>{x | x<sup>-1</sup>Hx = H}</text>
      *
      * @param h a subgroup.
-     * @return the normalizer of <code>g</code>
+     * @return the normalizer of <code>h</code>
      */
-    Group<T> normalizer(Group<T> h);
+    default Group<T> normalizer(Group<T> h) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the centralizer of an element <code>a</code>, that is,
      * <text>{x | x<sup>-1</sup>ax = a}</text>
      */
-    Group<T> centralizer(T a);
+    default Group<T> centralizer(T a) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the centralizer of a subgroup <code>h</code>, which is
      * the intersect of the centralizer of all the elements in the subgroup.
      */
-    Group<T> centralizer(Group<T> h);
+    default Group<T> centralizer(Group<T> h) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the quotient group of a normal subgroup <code>H</code>, namely
@@ -160,7 +198,9 @@ public interface Group<T> extends Monoid<T> {
      *
      * @param h a normal subgroup
      */
-    Group<? extends Coset<T, ? extends Group<T>>> quotientGroup(Group<T> h);
+    default Group<? extends Coset<T, ? extends Group<T>>> quotientGroup(Group<T> h) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the homomorphism between this group and
@@ -169,10 +209,12 @@ public interface Group<T> extends Monoid<T> {
      *
      * @param h a normal subgroup
      */
-    Homomorphism<T,
+    default Homomorphism<T,
             ? extends Coset<T, ? extends Group<T>>,//coset
             ? extends Group<T>,//G
             ? extends Group<? extends Coset<T, ? extends Group<T>>>,//H
             ? extends Group<T>>//K
-    quotientGroupAndHomo(Group<T> h);
+    quotientGroupAndHomo(Group<T> h) {
+        throw new UnsupportedOperationException();
+    }
 }

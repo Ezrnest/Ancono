@@ -123,6 +123,7 @@ interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T,
 interface DerivableSVFunction<T : Any> : DerivableFunction<T, T>, SVFunction<T> {
     override fun derive(): DerivableSVFunction<T>
 
+    @JvmDefault
     override fun <S : Any> mapTo(mapper: Bijection<T, S>): DerivableSVFunction<S> {
         return MappedSVDerivableFunction(this, mapper)
     }

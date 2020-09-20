@@ -91,7 +91,7 @@ public final class Permutations {
             }
             T[] copy = array.clone();
             for (int i = 0; i < size; i++) {
-                array[parr[i]] = copy[i];
+                array[i] = copy[parr[i]];
             }
             return array;
         }
@@ -107,7 +107,7 @@ public final class Permutations {
             }
             int[] copy = array.clone();
             for (int i = 0; i < size; i++) {
-                array[parr[i]] = copy[i];
+                array[i] = copy[parr[i]];
             }
             return array;
         }

@@ -275,7 +275,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         @NotNull
         @Override
         public <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new SVPFEquation<>(newCalculator, f.mapTo(mapper, newCalculator));
+            return new SVPFEquation<>(newCalculator, (AbstractSVPFunction<N>) f.mapTo(mapper, newCalculator));
         }
 
 

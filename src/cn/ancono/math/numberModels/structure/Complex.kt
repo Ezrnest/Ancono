@@ -7,7 +7,6 @@ import cn.ancono.math.function.Bijection
 import cn.ancono.math.geometry.analytic.planeAG.PVector
 import cn.ancono.math.geometry.analytic.planeAG.Point
 import cn.ancono.math.geometry.analytic.spaceAG.SPoint
-import cn.ancono.math.numberModels.ComplexI
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.*
@@ -37,7 +36,7 @@ import kotlin.math.atan2
  * @author lyc
  *
  * @param <T>
-</T> */
+ */
 class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : MathObject<T>(mc), FieldNumberModel<Complex<T>> {
 
 
@@ -751,6 +750,10 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
  * Describes the expanded complex including the infinity point.
  */
 class ComplexH<T : Any> {
+    /*
+    Created by liyicheng 2020/2/24
+     */
+
     private val v: Complex<T>?
 
     val isInf: Boolean

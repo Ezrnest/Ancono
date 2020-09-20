@@ -7,6 +7,7 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.IPolynomial;
+import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.equation.Type;
 import cn.ancono.math.function.AbstractSVPFunction;
 import cn.ancono.math.function.AbstractSVPFunction.LinearFunction;
@@ -153,7 +154,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          */
         @Override
         public <N> SVPInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new FromFunction<>(newCalculator, op, f.mapTo(mapper, newCalculator));
+            AbstractSVPFunction<N> t = (AbstractSVPFunction<N>) f.mapTo(mapper, newCalculator);
+            return new FromFunction<>(newCalculator, op, t);
         }
 
         /*
@@ -312,7 +314,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
             if (solution == null) {
                 IntervalUnion<T> solu;
                 T a = f.getA();
-                List<T> x1x2 = MathUtils.solveEquation(a, f.getB(), f.getC(), getMc());
+                List<T> x1x2 = EquationSup.INSTANCE.solveEquation(a, f.getB(), f.getC(), getMc());
                 Type op = this.op;
                 if (compareZero(a) < 0) {
                     op = op.negative();

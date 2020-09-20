@@ -1,14 +1,15 @@
 package cn.ancono.math.algebra.abstractAlgebra.calculator
 
-
+/*
+ * Created by liyicheng at 2020-03-07 10:35
+ */
 /**
  * Describes the calculator for a module.
  * Created at 2018/9/20 19:31
  * @author  liyicheng
- * @see Module(cn.ancono.math.algebra.abstractAlgebra.structure.Module)
+ * @see cn.ancono.math.algebra.abstractAlgebra.structure.Module
  */
 interface ModuleCalculator<R : Any, V : Any> : GroupCalculator<V> {
-
     /**
      * Performs the multiplication operation( [R]*[V] -> [V])
      */
@@ -22,17 +23,30 @@ interface ModuleCalculator<R : Any, V : Any> : GroupCalculator<V> {
     /**
      * Performs the addiction operation on [V]
      */
+    @JvmDefault
     override fun apply(x: V, y: V): V
 
-    fun rAdd(r1: R, r2: R): R = scalarCalculator.add(r1, r2)
+    @JvmDefault
+    fun rAdd(r1: R, r2: R): R {
+        return scalarCalculator.add(r1, r2)
+    }
 
-    fun rSubtract(r1: R, r2: R): R = scalarCalculator.subtract(r1, r2)
+    @JvmDefault
+    fun rSubtract(r1: R, r2: R): R {
+        return scalarCalculator.subtract(r1, r2)
+    }
 
-    fun rNegate(r: R): R = scalarCalculator.negate(r)
+    @JvmDefault
+    fun rNegate(r: R): R {
+        return scalarCalculator.negate(r)
+    }
 
-    fun rMultiply(r1: R, r2: R): R = scalarCalculator.multiply(r1, r2)
+    @JvmDefault
+    fun rMultiply(r1: R, r2: R): R {
+        return scalarCalculator.multiply(r1, r2)
+    }
 
+    @JvmDefault
     val rZero: R
         get() = scalarCalculator.zero
-
 }

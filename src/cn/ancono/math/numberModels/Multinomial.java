@@ -8,6 +8,7 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberModels.structure.Polynomial;
+import cn.ancono.math.numberModels.structure.PolynomialSup;
 import cn.ancono.math.numberModels.structure.RingFraction;
 import cn.ancono.math.numberTheory.combination.Permutation;
 import cn.ancono.math.numberTheory.combination.Permutations;
@@ -666,7 +667,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
 
     /**
-     * Returns the quotient and the remainder of the multinomial division.
+     * Returns the quotient and the remainder of the multinomial division.<br>
      * <b>Note: This method is only designed for test divisibility and should not be used for GCD!</b>
      */
     public Multinomial[] divideAndRemainder(Multinomial divisor) {
@@ -1063,12 +1064,12 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     public static Multinomial fromPolynomialT(IPolynomial<Term> p, String variableName) {
         NavigableSet<Term> set = getSet();
-        for (int i = 0; i <= p.getDegree(); i++) {
+        for (int i = 0; i <= p.getLeadingPower(); i++) {
             Term t = p.getCoefficient(i);
             if (t.isZero()) {
                 continue;
             }
-            t = t.multiply(Term.characterPower(variableName, Fraction.valueOf(i)));
+            t = t.multiply(Term.characterPower(variableName, Fraction.of(i)));
             mergingAdd(set, t);
         }
         if (set.isEmpty()) {
@@ -1079,12 +1080,12 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 
     public static Multinomial fromPolynomialM(IPolynomial<Multinomial> p, String variableName) {
         NavigableSet<Term> set = getSet();
-        for (int i = 0; i <= p.getDegree(); i++) {
+        for (int i = 0; i <= p.getLeadingPower(); i++) {
             Multinomial t = p.getCoefficient(i);
             if (t.isZero()) {
                 continue;
             }
-            var x = Term.characterPower(variableName, Fraction.valueOf(i));
+            var x = Term.characterPower(variableName, Fraction.of(i));
             var re = multiplyToSet(t.terms, x);
             mergingAddAll(set, re);
         }
@@ -1213,31 +1214,36 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     private static Multinomial gcd0(Multinomial m1, Multinomial m2) {
+        /*
+        Created by liyicheng at 2020/2/27
+        */
         // consider m1 and m2 as polynomial on fraction ring of multinomial
         var ch = m1.getCharacters().first();
         var p1 = Polynomial.fromMultinomial(m1, ch); // Polynomial<Multinomial>
         var p2 = Polynomial.fromMultinomial(m2, ch);
 
-        //extract the gcd of coefficient first
-        var c1 = p1.getNonZeroCoefficients();
-        var c2 = p2.getNonZeroCoefficients();
-        c1.addAll(c2);
-        var gcdCoe = Multinomial.gcd(c1);
-        p1 = p1.divide(gcdCoe);
-        p2 = p2.divide(gcdCoe);
-
-        //computes the gcd in fraction ring
-        var f1 = injectiveMap(p1);
-        var f2 = injectiveMap(p2);
-        var gcd = f1.gcd(f2); //Polynomial<RingFraction<Multinomial>>
-
-        var coes = gcd.getNonZeroCoefficients();
-        var pair = RingFraction.extractGcd(coes, cal);
-        var result = gcd.mapTo(rf ->
-                        rf.getNume().divide(pair.getFirst()).multiply(pair.getSecond().divide(rf.getDeno())),
-                cal);
-        var m = fromPolynomialM(result, ch);
-        return gcdCoe.multiply(m);
+        var gcd = PolynomialSup.subResultantGCD(p1, p2);
+        return fromPolynomialM(gcd, ch);
+//        //extract the gcd of coefficient first
+//        var c1 = p1.getNonZeroCoefficients();
+//        var c2 = p2.getNonZeroCoefficients();
+//        c1.addAll(c2);
+//        var gcdCoe = Multinomial.gcd(c1);
+//        p1 = p1.divide(gcdCoe);
+//        p2 = p2.divide(gcdCoe);
+//
+//        //computes the gcd in fraction ring
+//        var f1 = injectiveMap(p1);
+//        var f2 = injectiveMap(p2);
+//        var gcd = f1.gcd(f2); //Polynomial<RingFraction<Multinomial>>
+//
+//        var coes = gcd.getNonZeroCoefficients();
+//        var pair = RingFraction.extractGcd(coes, cal);
+//        var result = gcd.mapTo(rf ->
+//                        rf.getNume().divide(pair.getFirst()).multiply(pair.getSecond().divide(rf.getDeno())),
+//                cal);
+//        var m = fromPolynomialM(result, ch);
+//        return gcdCoe.multiply(m);
     }
 
 
@@ -1479,7 +1485,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      */
     public static Multinomial newtonMultinomial(int p, String... characters) {
         var terms = getSet();
-        Fraction power = Fraction.valueOf(p);
+        Fraction power = Fraction.of(p);
         for (String c : characters) {
             terms.add(Term.characterPower(c, power));
         }

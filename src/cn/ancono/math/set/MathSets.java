@@ -20,6 +20,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
+ * Provides several utility methods for sets.
+ *
  * @author liyicheng
  * 2017-09-08 16:31
  */
@@ -52,7 +54,7 @@ public final class MathSets {
 
     @SafeVarargs
     public static <T> CollectionSet<T> asSet(T... ts) {
-        return asSet(EqualPredicate.Companion.naturalEqual(), ts);
+        return asSet(EqualPredicate.naturalEqual(), ts);
     }
 
     /**
@@ -262,25 +264,27 @@ public final class MathSets {
     }
 
     /**
-     * Returns the descarts product of s1 and s2.
+     * Returns the cartesian product of s1 and s2.
      *
      * @param s1 a set
      * @param s2 another set
      */
-    public static <T, S> MathSet<Pair<T, S>> descartesProduct(MathSet<T> s1, MathSet<S> s2) {
+    public static <T, S> MathSet<Pair<T, S>> cartesianProduct(MathSet<T> s1, MathSet<S> s2) {
         return p -> s1.contains(p.getFirst()) && s2.contains(p.getSecond());
     }
 
     /**
-     * Returns the descarts product of s1, s2 and s3.
+     * Returns the cartesian product of s1, s2 and s3.
      */
-    public static <T, S, R> MathSet<Triple<T, S, R>> descartesProduct(MathSet<T> s1, MathSet<S> s2, MathSet<R> s3) {
+    public static <T, S, R> MathSet<Triple<T, S, R>> cartesianProduct(MathSet<T> s1, MathSet<S> s2, MathSet<R> s3) {
         return p -> s1.contains(p.getFirst()) && s2.contains(p.getSecond()) && s3.contains(p.getThird());
     }
 
-
+    /**
+     * Returns the cartesian product of several MathSets.
+     */
     @SafeVarargs
-    public static <T> MathSet<List<T>> descartesProduct(MathSet<T>... sets) {
+    public static <T> MathSet<List<T>> cartesianProduct(MathSet<T>... sets) {
         if (sets.length == 0) {
             throw new IllegalArgumentException("sets.length == 0");
         }
@@ -300,8 +304,10 @@ public final class MathSets {
         };
     }
 
-
-    public static <T, S> FiniteSet<Pair<T, S>> descartesProduct(FiniteSet<T> s1, FiniteSet<S> s2) {
+    /**
+     * Returns the cartesian product of two FiniteSets.
+     */
+    public static <T, S> FiniteSet<Pair<T, S>> cartesianProduct(FiniteSet<T> s1, FiniteSet<S> s2) {
         var list = new ArrayList<Pair<T, S>>(Math.toIntExact(s1.size() * s2.size()));
         for (var t : s1) {
             for (var s : s2) {
@@ -393,13 +399,14 @@ public final class MathSets {
     }
 
 
+
     @SuppressWarnings("unchecked")
     public static <T> List<FiniteSet<T>> partition(FiniteSet<T> set, EqualRelation<T> er) {
         MathCalculator<T> mc;
         if (set instanceof MathCalculatorHolder) {
             mc = ((MathCalculatorHolder<T>) set).getMathCalculator();
         } else {
-            mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.Companion.naturalEqual());
+            mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.naturalEqual());
         }
         List<List<T>> parted = CollectionSup.partition(set, er);
         return CollectionSup.mapList(parted, x ->

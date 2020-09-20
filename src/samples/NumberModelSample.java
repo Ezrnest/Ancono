@@ -3,10 +3,12 @@ package samples;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.structure.Complex;
-
+/*
+ * Created by lyc at 2020/2/29
+ */
 public class NumberModelSample {
     public static void useFraction1() {
-        Fraction a = Fraction.valueOf("1/2");
+        Fraction a = Fraction.of("1/2");
         System.out.println(a);
         Fraction b = Fraction.ONE;
         var c = a.add(b);

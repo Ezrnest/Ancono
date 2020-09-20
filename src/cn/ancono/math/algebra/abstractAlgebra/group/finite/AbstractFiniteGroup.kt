@@ -5,7 +5,6 @@ package cn.ancono.math.algebra.abstractAlgebra.group.finite
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abstractAlgebra.FiniteGroups
-import cn.ancono.math.algebra.abstractAlgebra.GroupCalculators
 import cn.ancono.math.algebra.abstractAlgebra.HomomorphismMapping
 import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate
 import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator
@@ -22,42 +21,40 @@ import cn.ancono.math.set.MathSets
 import cn.ancono.utilities.ArraySup
 import cn.ancono.utilities.CollectionSup
 import java.util.*
+import java.util.function.Function
+import java.util.function.Predicate
 import java.util.function.ToIntFunction
 
 /**
+ * The abstract superclass for all finite groups. Basic methods are implemented.
  * @author liyicheng
  * 2018-03-01 19:13
  */
 abstract class AbstractFiniteGroup<T : Any>
-/**
- *
- */
-(protected val gc: GroupCalculator<T>) : FiniteGroup<T> {
+    : FiniteGroup<T> {
     private var mc: MathCalculator<T>? = null
 
-    protected val wrappedCalculator: MathCalculator<T>
-        get() {
-            if (mc == null) {
-                mc = GroupCalculators.toMathCalculatorAdd(gc)
-            }
-            return mc!!
-        }
+//    protected val wrappedCalculator: MathCalculator<T>
+//        get() {
+//            if (mc == null) {
+//                mc = GroupCalculators.toMathCalculatorAdd(calculator)
+//            }
+//            return mc!!
+//        }
 
     @Transient
     private var groupTable: Array<IntArray>? = null
 
-    /*
-	 * @see cn.ancono.math.algebra.abstractAlgebra.structure.Group#getCalculator()
-	 */
-    override fun getCalculator(): GroupCalculator<T> {
-        return gc
-    }
 
     /*
 	 * @see cn.ancono.math.algebra.abstractAlgebra.structure.Monoid#identity()
 	 */
     override fun identity(): T {
-        return gc.identity
+        return calculator.identity
+    }
+
+    override fun indexOf(sub: Group<T>): Long {
+        return super<FiniteGroup>.indexOf(sub)
     }
 
     override fun groupTable(): Array<IntArray> {
@@ -67,16 +64,17 @@ abstract class AbstractFiniteGroup<T : Any>
         //mapping first
         val set = set
         val size = Math.toIntExact(set.size())
+
         @Suppress("UNCHECKED_CAST")
         val arr = CollectionSup.iteratorToArray(set.iterator(), size) as Array<T>
         //		IntFunction<T> to = x -> arr[x];
-        val from = ToIntFunction<T> { x: T -> ArraySup.firstIndexOf(arr) { y -> gc.isEqual(x, y) } }
+        val from = ToIntFunction<T> { x: T -> ArraySup.firstIndexOf(arr) { y -> calculator.isEqual(x, y) } }
         val result = Array(size) { IntArray(size) }
         for (i in 0 until size) {
             for (j in 0 until size) {
                 val a = arr[i]
                 val b = arr[j]
-                val c = gc.apply(a, b)
+                val c = calculator.apply(a, b)
                 result[i][j] = from.applyAsInt(c)
                 val t = result[i][j]
                 if (t == -1) {
@@ -100,7 +98,7 @@ abstract class AbstractFiniteGroup<T : Any>
             return false
         }
         val group = g as FiniteGroup<T>
-        return if (group.calculator != gc) {
+        return if (group.calculator != calculator) {
             false
         } else MathSets.containsAll(set, group.set)
     }
@@ -134,7 +132,7 @@ abstract class AbstractFiniteGroup<T : Any>
         val subSet = sub.set
         for (x in set) {
             for (h in subSet) {
-                val t = gc.conjugateBy(h, x)
+                val t = calculator.conjugateBy(h, x)
                 if (!subSet.contains(t)) {
                     return false
                 }
@@ -160,12 +158,12 @@ abstract class AbstractFiniteGroup<T : Any>
         val set = set
         val list = ArrayList<T>()
         for (t in set) {
-            val y = if (isLeft) gc.apply(x, t) else gc.apply(t, x)
-            if (!CollectionSup.contains(list) { z -> gc.isEqual(z, y) }) {
+            val y = if (isLeft) calculator.apply(x, t) else calculator.apply(t, x)
+            if (!CollectionSup.contains(list) { z -> calculator.isEqual(z, y) }) {
                 list.add(y)
             }
         }
-        val coset = MathSets.fromCollection(list, wrappedCalculator)
+        val coset = MathSets.fromCollection(list, calculator)
         return FiniteCoset(coset, this, subGroup as AbstractFiniteGroup<T>)
     }
 
@@ -195,6 +193,7 @@ abstract class AbstractFiniteGroup<T : Any>
     override fun regularRepresent(isRight: Boolean): PermutationGroup {
         val size = Math.toIntExact(index())
         val ps = ArrayList<Permutation>(size)
+
         @Suppress("UNCHECKED_CAST")
         val eleArr = arrayOfNulls<Any>(size) as Array<T>
         val eleSet = set
@@ -212,12 +211,12 @@ abstract class AbstractFiniteGroup<T : Any>
                 val re: T
                 re = if (isRight) {
                     //a * a_i
-                    gc.apply(b, a)
+                    calculator.apply(b, a)
                 } else {
                     //a_i^-1 * a
-                    gc.apply(gc.inverse(a), b)
+                    calculator.apply(calculator.inverse(a), b)
                 }
-                val index = ArraySup.firstIndexOf(eleArr) { x -> gc.isEqual(x, re) }
+                val index = ArraySup.firstIndexOf(eleArr) { x -> calculator.isEqual(x, re) }
                 permutation[j] = index
             }
             ps.add(Permutations.valueOf(permutation))
@@ -233,7 +232,7 @@ abstract class AbstractFiniteGroup<T : Any>
 	 */
     override fun getSubgroups(): FiniteSet<out AbstractFiniteGroup<T>> {
         //TODO
-        return MathSets.asSet(EqualPredicate.naturalEqual(), this, FiniteGroups.identityGroup(gc))
+        return MathSets.asSet(EqualPredicate.naturalEqual(), this, FiniteGroups.identityGroup(calculator))
     }
 
     /*
@@ -256,8 +255,8 @@ abstract class AbstractFiniteGroup<T : Any>
         for (g in set) {
             var equals = true
             for (h in sub1.set) {
-                val t = gc.eval { (-g) + h + g }
-                if (!gc.isEqual(t, h)) {
+                val t = calculator.eval { (-g) + h + g }
+                if (!calculator.isEqual(t, h)) {
                     equals = false
                     break
                 }
@@ -271,8 +270,8 @@ abstract class AbstractFiniteGroup<T : Any>
 
     override fun isConjugate(g1: T, g2: T): Boolean {
         for (x in set) {
-            val t = gc.conjugateBy(g1, x)
-            if (gc.isEqual(t, g2)) {
+            val t = calculator.conjugateBy(g1, x)
+            if (calculator.isEqual(t, g2)) {
                 return true
             }
         }
@@ -282,43 +281,47 @@ abstract class AbstractFiniteGroup<T : Any>
 
     override fun conjugateSubgroup(h: Group<T>, x: T): FiniteGroup<T> {
         val sub = asSubgroup(h)
-        val eles = MathSets.map(sub.set, gc) { it -> gc.conjugateBy(it, x) }
-        return FiniteGroups.createGroupWithoutCheck(gc, eles)
+        val eles = MathSets.map(sub.set, calculator, Function { calculator.conjugateBy(it, x) })
+        return FiniteGroups.createGroupWithoutCheck(calculator, eles)
     }
 
 
     override fun normalizer(h: Group<T>): FiniteGroup<T> {
         val sub = asSubgroup(h)
         val elements = sub.set
-        val re = MathSets.filter(set, gc) { x ->
+        val re = MathSets.filter(set, calculator, Predicate { x ->
             var isNormalizer = true
             for (t in elements) {
-                val re = gc.conjugateBy(t, x)
+                val re = calculator.conjugateBy(t, x)
                 if (!elements.contains(re)) {
                     isNormalizer = false
                     break
                 }
             }
             isNormalizer
-        }
-        return FiniteGroups.createGroupWithoutCheck(gc, re)
+        })
+        return FiniteGroups.createGroupWithoutCheck(calculator, re)
     }
 
 
     override fun centralizer(a: T): FiniteGroup<T> {
-        val re = MathSets.filter(set, gc) { x ->
-            gc.isEqual(a, gc.conjugateBy(a, x))
-        }
-        return FiniteGroups.createGroupWithoutCheck(gc, re)
+        val re = MathSets.filter(set, calculator, Predicate { x ->
+            calculator.isEqual(a, calculator.conjugateBy(a, x))
+        })
+        return FiniteGroups.createGroupWithoutCheck(calculator, re)
     }
 
 
     override fun centralizer(h: Group<T>): FiniteGroup<T> {
         val sub = asSubgroup(h)
         val list = set.filter { x ->
-            sub.set.all { h -> gc.eval { gc.isEqual(x + h, h + x) } }
+            sub.set.all { h ->
+                calculator.eval {
+                    calculator.isEqual(x + h, h + x)
+                }
+            }
         }
-        return FiniteGroups.createGroupWithoutCheck(gc, list)
+        return FiniteGroups.createGroupWithoutCheck(calculator, list)
     }
 
     override fun quotientGroup(h: Group<T>): FiniteGroup<FiniteCoset<T>> {
@@ -333,13 +336,13 @@ abstract class AbstractFiniteGroup<T : Any>
 
         val cosetGC = object : GroupCalculator<FiniteCoset<T>> {
             override fun inverse(x: FiniteCoset<T>): FiniteCoset<T> {
-                return cosetOf(gc.inverse(x.representative))
+                return cosetOf(calculator.inverse(x.representative))
             }
 
-            override val identity: FiniteCoset<T> = cosetOf(gc.identity)
+            override val identity: FiniteCoset<T> = cosetOf(calculator.identity)
 
             override fun apply(x: FiniteCoset<T>, y: FiniteCoset<T>): FiniteCoset<T> {
-                return cosetOf(gc.apply(x.representative, y.representative))
+                return cosetOf(calculator.apply(x.representative, y.representative))
             }
 
             override fun isEqual(x: FiniteCoset<T>, y: FiniteCoset<T>): Boolean {

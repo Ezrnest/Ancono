@@ -970,9 +970,9 @@ class ExprCalculator
 
 
     /**
-     * Parses an expression from String and simplifies it.
+     * Parses an expression from a String and simplifies it.
      */
-    fun parseExpr(expr: String): Expression {
+    fun parse(expr: String): Expression {
         val expression = Expression.valueOf(expr)
         return simplify(expression)
     }

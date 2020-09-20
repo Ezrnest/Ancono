@@ -3,13 +3,11 @@ package test.math.calculus
 import cn.ancono.math.calculus.Limit
 import cn.ancono.math.calculus.LimitDirection
 import cn.ancono.math.calculus.LimitProcess
-import cn.ancono.math.calculus.LimitValue
 import cn.ancono.math.calculus.expression.LimitProcessE
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.expression.ExprCalculator
-import cn.ancono.math.numberModels.expression.Expression
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -19,7 +17,7 @@ class LimitKtTest{
     @Test
     fun testPowLimit(){
         val m1 = Multinomial.valueOf("x^2 + 2x")
-        val m2 = Multinomial.monomial(Term.characterPower("x", Fraction.Companion.valueOf("-3/5")))
+        val m2 = Multinomial.monomial(Term.characterPower("x", Fraction.Companion.of("-3/5")))
         val p1: LimitProcessE = LimitProcess.toPositiveInf()
         val p2 = LimitProcess.toPositiveZero(mc)
         val p3 = LimitProcess.toNegativeZero(mc)

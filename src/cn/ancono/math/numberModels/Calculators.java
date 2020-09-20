@@ -7,7 +7,7 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
-import cn.ancono.math.numberTheory.NTCalculator;
+import cn.ancono.math.numberTheory.IntCalculator;
 import cn.ancono.math.numberTheory.Primes;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
@@ -145,11 +145,6 @@ public final class Calculators {
             return Math.multiplyExact(x, y);
         }
 
-        @NotNull
-        @Override
-        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
-            return x / y;
-        }
 
         @NotNull
         @Override
@@ -157,24 +152,15 @@ public final class Calculators {
             return Math.toIntExact(p * l);
         }
 
-        @NotNull
-        @Override
-        public Integer divideLong(@NotNull Integer p, long n) {
-            return (int) (p / n);
-        }
-
-
-        @NotNull
-        @Override
-        public Integer reciprocal(@NotNull Integer p) {
-            throwFor("Integer value");
-            return null;
-        }
 
         @NotNull
         @Override
         public Integer squareRoot(@NotNull Integer x) {
-            return (int) Math.sqrt(x);
+            int s = (int) MathUtils.squareRootExact(x);
+            if (s < 0) {
+                throw new UnsupportedCalculationException("No square root for " + x);
+            }
+            return s;
         }
 
         @NotNull
@@ -189,7 +175,7 @@ public final class Calculators {
                 return exp % 2 == 0 ? Integer.valueOf(1) : Integer.valueOf(-1);
             }
             if (exp == 0) {
-                return Integer.valueOf(1);
+                return 1;
             }
             if (exp >= Integer.SIZE || exp < 0) {
                 //impossible exponent
@@ -237,44 +223,25 @@ public final class Calculators {
                 d = Math.multiplyExact(d, d);
                 z >>= 1;
             }
-            return Integer.valueOf(re);
+            return re;
         }
 
-        /**
-         *
-         */
         @Override
         public Integer decrease(Integer x) {
             return Math.decrementExact(x);
         }
 
-        /**
-         *
-         */
         @Override
         public Integer increase(Integer x) {
             return Math.incrementExact(x);
         }
 
         /**
-         * @see NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
         public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
-            int a = at, n = nt, mod = mt;
-            if (a < 0) {
-                throw new IllegalArgumentException("a<0");
-            }
-            if (mod == 1) {
-                return 0;
-            }
-            if (a == 0 || a == 1) {
-                return a;
-            }
-            int ans = 1;
-            a = a % mod;
-            ans = Math.toIntExact(LongCalculatorExact.getAns(n, mod, ans, Math.multiplyExact(a, ans), Math.multiplyExact(a, a), a));
-            return ans;
+            return MathUtils.powerAndMod(at, nt, mt);
         }
 
 
@@ -289,18 +256,16 @@ public final class Calculators {
     }
 
     /**
-     * An implements for integer, which also implements {@link NTCalculator}.
+     * An implements for integer, which also implements {@link IntCalculator}.
      *
      * @author liyicheng
      * 2017-09-10 12:10
      */
-    public static class IntegerCalculator extends MathCalculatorAdapter<Integer> implements NTCalculator<Integer> {
+    public static class IntegerCalculator extends MathCalculatorAdapter<Integer> implements IntCalculator<Integer> {
         private static final IntegerCalculator cal = new IntegerCalculator();
 
         IntegerCalculator() {
         }
-
-        ;
 
         @Override
         public boolean isEqual(@NotNull Integer x, @NotNull Integer y) {
@@ -350,7 +315,7 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer divide(@NotNull Integer x, @NotNull Integer y) {
-            return x / y;
+            return MathUtils.divideExact(x, y);
         }
 
         @NotNull
@@ -362,6 +327,9 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer divideLong(@NotNull Integer p, long n) {
+            if (p % n != 0) {
+                ExceptionUtil.notExactDivision(p, n);
+            }
             return (int) (p / n);
         }
 
@@ -373,7 +341,7 @@ public final class Calculators {
 
         @Override
         public boolean isZero(@NotNull Integer para) {
-            return para.intValue() == 0;
+            return para == 0;
         }
 
         @NotNull
@@ -385,8 +353,13 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer reciprocal(@NotNull Integer p) {
-            throwFor("Integer value");
-            return null;
+            if (p == 1) {
+                return 1;
+            } else if (p == -1) {
+                return -1;
+            }
+//            ExceptionUtil.not
+            throw new UnsupportedCalculationException("No inverse for " + p);
         }
 
         @NotNull
@@ -423,7 +396,7 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer constantValue(@NotNull String name) {
-            throwFor("No constant value avaliable");
+            throwFor("No constant value available");
             return null;
         }
 
@@ -458,16 +431,16 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#divideToInteger(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#divideToInteger(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
-        public Integer divideToInteger(Integer a, Integer b) {
+        public Integer divideToInteger(@NotNull Integer a, @NotNull Integer b) {
             return a / b;
         }
 
         /**
-         * @see NTCalculator#mod(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#mod(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
@@ -476,27 +449,28 @@ public final class Calculators {
             return Math.abs(x) % Math.abs(y);
         }
 
-        /**
-         * @see NTCalculator#isInteger(java.lang.Object)
-         */
-        @Override
-        public boolean isInteger(Integer x) {
-            return true;
-        }
+//        /**
+//         * @see IntCalculator#isInteger(java.lang.Object)
+//         */
+//        @Override
+//        public boolean isInteger(Integer x) {
+//            return true;
+//        }
+
+//        /**
+//         * @see IntCalculator#isQuotient(java.lang.Object)
+//         */
+//        @Override
+//        public boolean isQuotient(Integer x) {
+//            return true;
+//        }
 
         /**
-         * @see NTCalculator#isQuotient(java.lang.Object)
+         * @see IntCalculator#gcd(java.lang.Object, java.lang.Object)
          */
+        @NotNull
         @Override
-        public boolean isQuotient(Integer x) {
-            return true;
-        }
-
-        /**
-         * @see NTCalculator#gcd(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public Integer gcd(Integer a, Integer b) {
+        public Integer gcd(@NotNull Integer a, @NotNull Integer b) {
             return MathUtils.gcd(a, b);
         }
 
@@ -512,7 +486,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#decrease(java.lang.Object)
+         * @see IntCalculator#decrease(java.lang.Object)
          */
         @Override
         public Integer decrease(Integer x) {
@@ -520,7 +494,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#increase(java.lang.Object)
+         * @see IntCalculator#increase(java.lang.Object)
          */
         @Override
         public Integer increase(Integer x) {
@@ -528,7 +502,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isEven(java.lang.Object)
+         * @see IntCalculator#isEven(java.lang.Object)
          */
         @Override
         public boolean isEven(Integer x) {
@@ -536,7 +510,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isOdd(java.lang.Object)
+         * @see IntCalculator#isOdd(java.lang.Object)
          */
         @Override
         public boolean isOdd(Integer x) {
@@ -544,7 +518,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isPositive(java.lang.Object)
+         * @see IntCalculator#isPositive(java.lang.Object)
          */
         @Override
         public boolean isPositive(Integer x) {
@@ -552,16 +526,16 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#reminder(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#remainder(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
-        public Integer reminder(Integer a, Integer b) {
+        public Integer remainder(@NotNull Integer a, @NotNull Integer b) {
             return a % b;
         }
 
         /**
-         * @see NTCalculator#deg(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#deg(java.lang.Object, java.lang.Object)
          */
         @Override
         public Integer deg(Integer a, Integer b) {
@@ -569,15 +543,15 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#isExactDivide(java.lang.Object, java.lang.Object)
          */
         @Override
-        public boolean isExactDivide(Integer a, Integer b) {
+        public boolean isExactDivide(@NotNull Integer a, @NotNull Integer b) {
             return a % b == 0;
         }
 
         /**
-         * @see NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
         public Integer powerAndMod(Integer a, Integer n, Integer m) {
@@ -614,7 +588,6 @@ public final class Calculators {
         LongCalculatorExact() {
         }
 
-        ;
 
         @Override
         public boolean isEqual(@NotNull Long x, @NotNull Long y) {
@@ -659,10 +632,7 @@ public final class Calculators {
         @NotNull
         @Override
         public Long divide(@NotNull Long x, @NotNull Long y) {
-            if (x % y != 0) {
-                throw new ArithmeticException("Cannot divide exactly: " + x + "/" + y);
-            }
-            return x / y;
+            return MathUtils.divideExact(x, y);
         }
 
         @NotNull
@@ -674,7 +644,7 @@ public final class Calculators {
         @NotNull
         @Override
         public Long divideLong(@NotNull Long p, long n) {
-            return p / n;
+            return MathUtils.divideExact(p, n);
         }
 
         private static final Long ZERO = 0L,
@@ -749,7 +719,7 @@ public final class Calculators {
                 d = Math.multiplyExact(d, d);
                 z >>= 1L;
             }
-            return Long.valueOf(re);
+            return re;
         }
 
         @NotNull
@@ -779,32 +749,7 @@ public final class Calculators {
          */
         @Override
         public Long powerAndMod(Long at, Long nt, Long mt) {
-            long a = at, n = nt, mod = mt;
-            if (a < 0) {
-                throw new IllegalArgumentException("a<0");
-            }
-            if (mod == 1) {
-                return 0L;
-            }
-            if (a == 0 || a == 1) {
-                return a;
-            }
-            long ans = 1;
-            a = a % mod;
-            ans = getAns(n, mod, ans, Math.multiplyExact(a, ans), Math.multiplyExact(a, a), a);
-            return ans;
-        }
-
-        private static long getAns(long n, long mod, long ans, long l, long l2, long a) {
-            while (n > 0) {
-                if ((n & 1) == 1) {
-                    ans = l % mod;
-
-                }
-                a = l2 % mod;
-                n >>= 1;
-            }
-            return ans;
+            return MathUtils.powerAndMod(at, nt, mt);
         }
 
         @NotNull
@@ -815,12 +760,12 @@ public final class Calculators {
     }
 
     /**
-     * An implements for long, which also implements {@link NTCalculator}.
+     * An implements for long, which also implements {@link IntCalculator}.
      *
      * @author liyicheng
      * 2017-09-10 12:10
      */
-    public static class LongCalculator extends MathCalculatorAdapter<Long> implements NTCalculator<Long> {
+    public static class LongCalculator extends MathCalculatorAdapter<Long> implements IntCalculator<Long> {
         private static final LongCalculator cal = new LongCalculator();
 
         LongCalculator() {
@@ -889,8 +834,8 @@ public final class Calculators {
             return p / n;
         }
 
-        private static final Long ZERO = Long.valueOf(0),
-                ONE = Long.valueOf(1);
+        private static final Long ZERO = 0L,
+                ONE = 1L;
 
         @NotNull
         @Override
@@ -974,7 +919,7 @@ public final class Calculators {
          */
         @NotNull
         @Override
-        public Long divideToInteger(Long a, Long b) {
+        public Long divideToInteger(@NotNull Long a, @NotNull Long b) {
             return a / b;
         }
 
@@ -988,27 +933,28 @@ public final class Calculators {
             return Math.abs(x) % Math.abs(y);
         }
 
-        /**
-         *
-         */
-        @Override
-        public boolean isInteger(Long x) {
-            return true;
-        }
+//        /**
+//         *
+//         */
+//        @Override
+//        public boolean isInteger(Long x) {
+//            return true;
+//        }
+
+//        /**
+//         * @see IntCalculator#isQuotient(java.lang.Object)
+//         */
+//        @Override
+//        public boolean isQuotient(Long x) {
+//            return true;
+//        }
 
         /**
-         * @see NTCalculator#isQuotient(java.lang.Object)
+         * @see IntCalculator#gcd(java.lang.Object, java.lang.Object)
          */
+        @NotNull
         @Override
-        public boolean isQuotient(Long x) {
-            return true;
-        }
-
-        /**
-         * @see NTCalculator#gcd(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public Long gcd(Long a, Long b) {
+        public Long gcd(@NotNull Long a, @NotNull Long b) {
             return MathUtils.gcd(a, b);
         }
 
@@ -1024,7 +970,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#decrease(java.lang.Object)
+         * @see IntCalculator#decrease(java.lang.Object)
          */
         @Override
         public Long decrease(Long x) {
@@ -1032,7 +978,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#increase(java.lang.Object)
+         * @see IntCalculator#increase(java.lang.Object)
          */
         @Override
         public Long increase(Long x) {
@@ -1040,7 +986,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isEven(java.lang.Object)
+         * @see IntCalculator#isEven(java.lang.Object)
          */
         @Override
         public boolean isEven(Long x) {
@@ -1048,7 +994,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isOdd(java.lang.Object)
+         * @see IntCalculator#isOdd(java.lang.Object)
          */
         @Override
         public boolean isOdd(Long x) {
@@ -1056,7 +1002,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isPositive(java.lang.Object)
+         * @see IntCalculator#isPositive(java.lang.Object)
          */
         @Override
         public boolean isPositive(Long x) {
@@ -1064,16 +1010,16 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#reminder(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#remainder(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
-        public Long reminder(Long a, Long b) {
+        public Long remainder(@NotNull Long a, @NotNull Long b) {
             return a % b;
         }
 
         /**
-         * @see NTCalculator#deg(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#deg(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
@@ -1082,10 +1028,10 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#isExactDivide(java.lang.Object, java.lang.Object)
          */
         @Override
-        public boolean isExactDivide(Long a, Long b) {
+        public boolean isExactDivide(@NotNull Long a, @NotNull Long b) {
             return a % b == 0;
         }
 
@@ -1108,12 +1054,12 @@ public final class Calculators {
     }
 
     /**
-     * An implements for BigInteger, which also implements {@link NTCalculator}.
+     * An implements for BigInteger, which also implements {@link IntCalculator}.
      *
      * @author liyicheng
      * 2017-09-10 12:10
      */
-    public static class BigIntegerCalculator extends MathCalculatorAdapter<BigInteger> implements NTCalculator<BigInteger> {
+    public static class BigIntegerCalculator extends MathCalculatorAdapter<BigInteger> implements IntCalculator<BigInteger> {
 
         static final BigIntegerCalculator cal = new BigIntegerCalculator();
 
@@ -1246,45 +1192,47 @@ public final class Calculators {
         /**
          *
          */
+        @NotNull
         @Override
         public BigInteger divideToInteger(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.divide(b);
         }
 
         /**
-         * @see NTCalculator#mod(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#mod(java.lang.Object, java.lang.Object)
          */
         @Override
         public BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.mod(b.abs());
         }
 
-        /**
-         *
-         */
-        @Override
-        public boolean isInteger(BigInteger x) {
-            return true;
-        }
+//        /**
+//         *
+//         */
+//        @Override
+//        public boolean isInteger(BigInteger x) {
+//            return true;
+//        }
+
+//        /**
+//         * @see IntCalculator#isQuotient(java.lang.Object)
+//         */
+//        @Override
+//        public boolean isQuotient(BigInteger x) {
+//            return true;
+//        }
 
         /**
-         * @see NTCalculator#isQuotient(java.lang.Object)
+         * @see IntCalculator#gcd(java.lang.Object, java.lang.Object)
          */
-        @Override
-        public boolean isQuotient(BigInteger x) {
-            return true;
-        }
-
-        /**
-         * @see NTCalculator#gcd(java.lang.Object, java.lang.Object)
-         */
+        @NotNull
         @Override
         public BigInteger gcd(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.gcd(b);
         }
 
         /**
-         * @see NTCalculator#decrease(java.lang.Object)
+         * @see IntCalculator#decrease(java.lang.Object)
          */
         @Override
         public BigInteger decrease(@NotNull BigInteger x) {
@@ -1292,7 +1240,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#increase(java.lang.Object)
+         * @see IntCalculator#increase(java.lang.Object)
          */
         @Override
         public BigInteger increase(@NotNull BigInteger x) {
@@ -1300,7 +1248,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isEven(java.lang.Object)
+         * @see IntCalculator#isEven(java.lang.Object)
          */
         @Override
         public boolean isEven(@NotNull BigInteger x) {
@@ -1308,7 +1256,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isOdd(java.lang.Object)
+         * @see IntCalculator#isOdd(java.lang.Object)
          */
         @Override
         public boolean isOdd(@NotNull BigInteger x) {
@@ -1316,7 +1264,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#isPositive(java.lang.Object)
+         * @see IntCalculator#isPositive(java.lang.Object)
          */
         @Override
         public boolean isPositive(@NotNull BigInteger x) {
@@ -1324,15 +1272,16 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#reminder(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#remainder(java.lang.Object, java.lang.Object)
          */
+        @NotNull
         @Override
-        public BigInteger reminder(@NotNull BigInteger a, @NotNull BigInteger b) {
+        public BigInteger remainder(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.remainder(b);
         }
 
         /**
-         * @see NTCalculator#isExactDivide(java.lang.Object, java.lang.Object)
+         * @see IntCalculator#isExactDivide(java.lang.Object, java.lang.Object)
          */
         @Override
         public boolean isExactDivide(@NotNull BigInteger a, @NotNull BigInteger b) {
@@ -1340,7 +1289,7 @@ public final class Calculators {
         }
 
         /**
-         * @see NTCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
         public BigInteger powerAndMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
@@ -1456,7 +1405,7 @@ public final class Calculators {
         @NotNull
         @Override
         public BigDecimal divideLong(@NotNull BigDecimal p, long n) {
-            return p.divide(BigDecimal.valueOf(n));
+            return p.divide(BigDecimal.valueOf(n), mc);
         }
 
         @NotNull
@@ -1910,7 +1859,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> getCalculatorDoubleDev() {
+    public static MathCalculator<Double> getCalDoubleDev() {
         return DoubleCalculatorWithDeviation.dc;
     }
 
@@ -1922,7 +1871,7 @@ public final class Calculators {
      *
      * @return a MathCalculator
      */
-    public static MathCalculator<Double> getCalculatorDoubleDev(double dev) {
+    public static MathCalculator<Double> getCalDoubleDev(double dev) {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
@@ -2091,12 +2040,12 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Integer divideToInteger(Integer a, Integer b) {
+        public Integer divideToInteger(@NotNull Integer a, @NotNull Integer b) {
             return divide(a, b);
         }
     }
 
-    public static MathCalculator<Integer> getCalculatorIntModP(int p) {
+    public static MathCalculator<Integer> getCalIntModP(int p) {
         if (!Primes.getInstance().isPrime(p)) {
             throw new IllegalArgumentException("p must be a prime number!");
         }

@@ -125,6 +125,7 @@ object Limit {
     /**
      * Returns the limit of an expression.
      */
+    @JvmStatic
     fun limitOf(expr: Expression, process: LimitProcessE, mc: ExprCalculator = ExprCalculator.instance): LimitResultE? {
         return FunctionHelper.limitNode(expr.root, process, mc)
     }
@@ -641,6 +642,9 @@ class LimitProcess<T>(val variableName: String, value: LimitValue<T>, direction:
         fun <T : Any> toPositiveZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.RIGHT)
 
         fun <T : Any> toNegativeZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.LEFT)
+
+        fun <T : Any> toZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.BOTH)
+
     }
 }
 

@@ -137,7 +137,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         mat[1][1] = p.b;
         mat[1][2] = p.c;
         mat[1][3] = p.d;
-        return Matrix.valueOf(mat, getMc());
+        return Matrix.of(mat, getMc());
     }
 
     /**

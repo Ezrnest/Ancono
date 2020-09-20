@@ -3,6 +3,7 @@ package cn.ancono.math.geometry.analytic.planeAG;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.MathUtils;
+import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.planeAG.curve.ClosedCurve;
@@ -366,7 +367,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
         T ca = getMc().getOne();
         T cb = getMc().multiplyLong(t1, 2l);
         T cc = getMc().subtract(t2, getMc().multiply(r2, getMc().add(getMc().multiply(x, x), getMc().multiply(y, y))));
-        List<T> c = MathUtils.solveEquation(ca, cb, cc, getMc());
+        List<T> c = EquationSup.INSTANCE.solveEquation(ca, cb, cc, getMc());
         List<Line<T>> re = new ArrayList<>(2);
         re.add(Line.generalFormula(x, y, c.get(0), getMc()));
         re.add(Line.generalFormula(x, y, c.get(1), getMc()));

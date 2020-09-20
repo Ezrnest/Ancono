@@ -49,7 +49,7 @@ public class CoordinateDrawer implements ImageDecorator {
     private void drawX(BufferedImage image, Graphics2D g, Double rect) {
         final int height = image.getHeight(),
                 width = image.getWidth();
-        final int y0 = height - toPixelCoorY(0, rect, height);
+        final int y0 = toPixelCoorY(0, rect, height);
         if (y0 < 0 || y0 >= height) {
             return;
         }
@@ -100,7 +100,7 @@ public class CoordinateDrawer implements ImageDecorator {
         g.setFont(font);
         g.setColor(textColor);
         while (yt < max) {
-            int y = height - toPixelCoorY(yt, rect, height);
+            int y = toPixelCoorY(yt, rect, height);
             if (y > -1 && y < height) {
                 g.drawLine(x0, y, x0 + markLength, y);
 //				g.setFont(null);
@@ -133,7 +133,7 @@ public class CoordinateDrawer implements ImageDecorator {
     }
 
     private int toPixelCoorY(double y, Double rect, int height) {
-        return (int) ((y - rect.y) * height / rect.height);
+        return height - (int) ((y - rect.y) * height / rect.height);
     }
 
     private static DecimalFormat decideFormat(double x1, double x2) {

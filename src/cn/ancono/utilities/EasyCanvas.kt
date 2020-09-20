@@ -38,9 +38,23 @@ import kotlin.math.abs
  * Created at 2018/12/3 21:46
  * @author  liyicheng
  */
-class EasyCanvas(val width: Double, val height: Double, title: String) {
+class EasyCanvas(width: Double, height: Double, title: String) {
     constructor(width: Double, height: Double) : this(width, height, "Canvas")
     constructor(width: Int, height: Int, title: String = "Canvas") : this(width.toDouble(), height.toDouble(), title)
+
+    var width: Double = width
+        set(value) {
+            stage.width = value
+            canvas.width = value
+            field = value
+        }
+
+    var height: Double = height
+        set(value) {
+            stage.height = value
+            canvas.height = value
+            field = value
+        }
 
     private val stage: Stage
     private val canvas: Canvas
@@ -550,9 +564,10 @@ class EasyCanvas(val width: Double, val height: Double, title: String) {
  * @param scale the scaling factor, small value to zoom out, large value to zoom in. If a negative value is given,
  * then a default value will be used instead.
  */
-class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Double = 0.0, scale: Double = -1.0) {
+class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Double = 0.0, scale: Double = 1.0, filpY: Boolean = true) {
     private var aff: Affine
     private var drawer: (EasyCanvas) -> Unit = { _ -> Unit }
+
     /**
      * The scale of the zooming, which is equal to the determinant of the affine transformation.
      */
@@ -566,6 +581,7 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
             val centerY = canvas.height / 2
             aff.prependScale(s, s, centerX, centerY)
         }
+
     /**
      * Describes how much the scale should be multiplied(divided) when user wants to zoom in(out).
      */
@@ -576,6 +592,7 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
             }
             field = value
         }
+
     /**
      * Describes the percentage of translation to be add when zooming in.
      */
@@ -598,9 +615,15 @@ class ZoomingPlugin(val canvas: EasyCanvas, centerX: Double = 0.0, centerY: Doub
         } else {
             scale
         }
+        val ky = if (filpY) {
+            -k
+        } else {
+            k
+        }
         val tx = -k * centerX + width
-        val ty = k * centerY + height
-        aff = Transform.affine(k, 0.0, 0.0, -k, tx, ty)
+        val ty = -ky * centerY + height
+        aff = Transform.affine(k, 0.0, 0.0, ky, tx, ty)
+
         registerListener()
     }
 

@@ -76,7 +76,7 @@ public final class SVector<T> extends Vector<T> {
         arr[0] = x;
         arr[1] = y;
         arr[2] = z;
-        return Vector.createVector(getMc(), true, arr);
+        return Vector.of(getMc(), true, arr);
     }
 
 
@@ -760,14 +760,14 @@ public final class SVector<T> extends Vector<T> {
      * @param z
      * @return a new vector base
      */
-    public static <T> SVectorBase<T> createBase(SVector<T> x, SVector<T> y, SVector<T> z) {
+    public static <T> SVectorBasis<T> createBase(SVector<T> x, SVector<T> y, SVector<T> z) {
         MathCalculator<T> mc = x.getMc();
         T[][] mat = toMatrix(x, y, z);
         T d = MatrixSup.det3(mat, mc);
         if (mc.isZero(d)) {
             throw new IllegalArgumentException("They are on the identity plane");
         }
-        return new SVectorBase<>(x, y, z, mat, d, mc);
+        return new SVectorBasis<>(x, y, z, mat, d, mc);
     }
 
     /**
@@ -776,11 +776,11 @@ public final class SVector<T> extends Vector<T> {
      * @param <T>
      * @author liyicheng
      */
-    public static final class SVectorBase<T> extends VectorBase<T> {
+    public static final class SVectorBasis<T> extends VectorBasis<T> {
         private final SVector<T> x, y, z;
 
-        public SVectorBase(SVector<T> x, SVector<T> y, SVector<T> z, T[][] mat, T D,
-                           MathCalculator<T> mc) {
+        public SVectorBasis(SVector<T> x, SVector<T> y, SVector<T> z, T[][] mat, T D,
+                            MathCalculator<T> mc) {
             super(mc);
             this.x = x;
             this.y = y;
@@ -793,7 +793,7 @@ public final class SVector<T> extends Vector<T> {
         private T[][] mat;
 
         @Override
-        public int getVectorDimension() {
+        public int getVectorLength() {
             return 3;
         }
 
@@ -832,12 +832,12 @@ public final class SVector<T> extends Vector<T> {
 
 
         @Override
-        public <N> SVectorBase<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> SVectorBasis<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
             N[][] ret = ArraySup.mapTo(mat, (T[] arr) ->
                     ArraySup.mapTo(arr, mapper)
             );
             N d = MatrixSup.det3(ret, newCalculator);
-            return new SVectorBase<>(x.mapTo(mapper, newCalculator),
+            return new SVectorBasis<>(x.mapTo(mapper, newCalculator),
                     y.mapTo(mapper, newCalculator),
                     z.mapTo(mapper, newCalculator), ret, d,
                     newCalculator);
@@ -845,8 +845,8 @@ public final class SVector<T> extends Vector<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof SVectorBase) {
-                SVectorBase<?> svb = (SVectorBase<?>) obj;
+            if (obj instanceof SVector.SVectorBasis) {
+                SVectorBasis<?> svb = (SVectorBasis<?>) obj;
                 return x.equals(svb.x) && y.equals(svb.y) && z.equals(svb.z);
             }
             return false;
@@ -861,8 +861,8 @@ public final class SVector<T> extends Vector<T> {
 
         @Override
         public boolean valueEquals(@NotNull MathObject<T> obj) {
-            if (obj instanceof SVectorBase) {
-                SVectorBase<T> svb = (SVectorBase<T>) obj;
+            if (obj instanceof SVector.SVectorBasis) {
+                SVectorBasis<T> svb = (SVectorBasis<T>) obj;
                 return x.valueEquals(svb.x) && y.valueEquals(svb.y) && z.valueEquals(svb.z);
             }
             return super.valueEquals(obj);
@@ -870,8 +870,8 @@ public final class SVector<T> extends Vector<T> {
 
         @Override
         public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof SVectorBase) {
-                SVectorBase<N> svb = (SVectorBase<N>) obj;
+            if (obj instanceof SVector.SVectorBasis) {
+                SVectorBasis<N> svb = (SVectorBasis<N>) obj;
                 return x.valueEquals(svb.x, mapper) && y.valueEquals(svb.y, mapper) && z.valueEquals(svb.z, mapper);
             }
             return super.valueEquals(obj, mapper);

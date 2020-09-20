@@ -9,7 +9,6 @@ import java.lang.UnsupportedOperationException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Provides basic tools for proposition logic.
@@ -80,7 +79,7 @@ sealed class Formula : Comparable<Formula> {
     }
 
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-    fun iterateTruthTable(): Sequence<Pair<TruthAssignment, Boolean>> = buildSequence {
+    fun iterateTruthTable(): Sequence<Pair<TruthAssignment, Boolean>> = sequence {
         val names = variableNames
         var taMap = TruthAssignmentMap(names)
         val total = 1 shl names.size
@@ -90,8 +89,16 @@ sealed class Formula : Comparable<Formula> {
         }
     }
 
+    /**
+     * Determines whether this logic formula is tautology, that is, for all truth assignment for variables in this
+     * formula, the result is all true.
+     */
     val isTautology: Boolean by lazy { iterateTruthTable().all { it.second } }
 
+    /**
+     * Determines whether this logic formula is contradictory, that is, there exists no truth assignment that
+     * satisfies this formula.
+     */
     val isContradictory: Boolean by lazy { iterateTruthTable().none { it.second } }
 
     val isSatisfiable: Boolean by lazy { iterateTruthTable().any { it.second } }
@@ -652,8 +659,12 @@ fun Formula.simplify(steps: MutableList<SimplificationStep>? = null): Formula = 
 fun Formula.simplifyWithSteps(): Pair<Formula, List<SimplificationStep>> = simplifyByRulesWithSteps(this, Rule.basicRules)
 
 fun Formula.toDisjunctiveNorm(steps: MutableList<SimplificationStep>? = null): Formula = simplifyByRules(this, Rule.toDisjunctiveNormalFormRules, steps)
+
 fun Formula.toConjunctiveNorm(steps: MutableList<SimplificationStep>? = null): Formula = simplifyByRules(this, Rule.toConjunctiveNormalFormRules, steps)
 
+/**
+ * Transforms this formula to main disjunctive norm.
+ */
 fun Formula.toMainDisjunctiveNorm(props: Set<Proposition> = this.propositions, steps: MutableList<SimplificationStep>? = null): Formula {
     val f = this.toDisjunctiveNorm(steps)
     if (f is PropFormula) {

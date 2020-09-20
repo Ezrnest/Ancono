@@ -231,17 +231,17 @@ public class SpaceAGTest {
 	
 	
 	public void studyVertexAngle(){
-		MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
-		SVectorGenerator<Double> g = new SVectorGenerator<>(mc);
-		Random rd = new Random();
-		@SuppressWarnings("unchecked")
-		SVector<Double>[] ps = (SVector<Double>[]) new SVector<?>[4];
-		for(int i=0;i<ps.length;i++){
-			ps[i] = g.of(rd.nextDouble(), rd.nextDouble(), rd.nextDouble());
-		}
-		double theta = rd.nextDouble() * Math.PI;
-		print(theta,14);
-		print(SVector.angledVector(ps[0], ps[1], Math.tan(theta)).angle(ps[0], Math::acos));
+        MathCalculator<Double> mc = Calculators.getCalDoubleDev();
+        SVectorGenerator<Double> g = new SVectorGenerator<>(mc);
+        Random rd = new Random();
+        @SuppressWarnings("unchecked")
+        SVector<Double>[] ps = (SVector<Double>[]) new SVector<?>[4];
+        for (int i = 0; i < ps.length; i++) {
+            ps[i] = g.of(rd.nextDouble(), rd.nextDouble(), rd.nextDouble());
+        }
+        double theta = rd.nextDouble() * Math.PI;
+        print(theta, 14);
+        print(SVector.angledVector(ps[0], ps[1], Math.tan(theta)).angle(ps[0], Math::acos));
 		Plane<Double> p1 = Plane.vectorPoint(ps[0], ps[1], SPoint.pointO(mc));
 		Line<Double> l = Line.pointDirect(SPoint.pointO(mc),ps[0]);
 		Plane<Double> p2 = Plane.anglePlane(p1, l, Math.tan(theta));
@@ -255,29 +255,29 @@ public class SpaceAGTest {
 	}
 	
 //	@Test
-	public void testMatrix(){
-		MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
-		final int row = 10;
-		for(int n=0;n<1000;n++){
-			double[][] mat = new double[row][];
-			for(int i=0;i<mat.length;i++){
-				mat[i]=ArraySup.ranDoubleArrNe(row+1, 100);
-			}
-			Matrix<Double> matrix = Matrix.valueOf(mat);
-			LinearEquationSolution<Double> so = MatrixSup.solveLinearEquation(matrix);
-			Vector<Double> x = so.getSpecialSolution();
-			Matrix<Double> cofactor = matrix.subMatrix(0, 0,row-1,row-1);
-			Vector<Double> v = Vector.column(matrix, row);
-			Vector<Double> v1 =  Vector.column(Matrix.multiplyMatrix(cofactor, x),0);
-			v = v.mapTo(d -> d, mc);
-			v1 = v1.mapTo(d -> d, mc);
-			if (!v1.valueEquals(v)) {
-				print("WRONG?---");
-				matrix.printMatrix();
-				print(v1);
-				print(v);
-				print("======");
-			}
-		}
+	public void testMatrix() {
+        MathCalculator<Double> mc = Calculators.getCalDoubleDev();
+        final int row = 10;
+        for (int n = 0; n < 1000; n++) {
+            double[][] mat = new double[row][];
+            for (int i = 0; i < mat.length; i++) {
+                mat[i] = ArraySup.ranDoubleArrNe(row + 1, 100);
+            }
+            Matrix<Double> matrix = Matrix.of(mat);
+            LinearEquationSolution<Double> so = MatrixSup.solveLinearEquation(matrix);
+            Vector<Double> x = so.getSpecialSolution();
+            Matrix<Double> cofactor = matrix.subMatrix(0, 0, row - 1, row - 1);
+            Vector<Double> v = Vector.column(matrix, row);
+            Vector<Double> v1 = Vector.column(Matrix.multiply(cofactor, x), 0);
+            v = v.mapTo(d -> d, mc);
+            v1 = v1.mapTo(d -> d, mc);
+            if (!v1.valueEquals(v)) {
+                print("WRONG?---");
+                matrix.printMatrix();
+                print(v1);
+                print(v);
+                print("======");
+            }
+        }
 	}
 }

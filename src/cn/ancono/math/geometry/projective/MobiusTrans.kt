@@ -13,6 +13,12 @@ import cn.ancono.math.numberModels.structure.ComplexH
 import cn.ancono.math.property.Composable
 import java.util.function.Function
 
+/*
+ * Created by liyicheng at 2020-2-24 14:00
+ */
+/**
+ * Describes a mobius transformation on complex field: `T(z) = (az+b)/(cz+d)`
+ */
 class MobiusTrans<T : Any>(mc: MathCalculator<T>,
                            val cc: MathCalculator<Complex<T>>,
                            val m: TransMatrix<Complex<T>>)
@@ -69,7 +75,7 @@ class MobiusTrans<T : Any>(mc: MathCalculator<T>,
     }
 
     /**
-     * Multiply
+     * Multiply [k]
      */
     fun idMultiply(k: T): MobiusTrans<T> {
         return idMultiply(Complex.real(k, mc))

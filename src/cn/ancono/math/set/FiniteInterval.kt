@@ -4,7 +4,7 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberTheory.NTCalculator
+import cn.ancono.math.numberTheory.IntCalculator
 import java.math.BigInteger
 import java.util.function.Function
 
@@ -13,7 +13,7 @@ import java.util.function.Function
  * Created at 2018/10/10 10:10
  * @author  liyicheng
  */
-class FiniteInterval<T : Any>(override val mathCalculator: NTCalculator<T>, val downer: T, val upper: T)
+class FiniteInterval<T : Any>(override val mathCalculator: IntCalculator<T>, val downer: T, val upper: T)
     : Interval<T>(mathCalculator), FiniteSet<T> {
     override fun contains(n: T): Boolean {
         return mathCalculator.compare(downer, n) <= 0 && mathCalculator.compare(n, upper) <= 0

@@ -15,7 +15,7 @@ open class AlgebraMultinomial<K : Any, V : Any> internal constructor(
 ) : AlgebraModel<K, AlgebraMultinomial<K, V>> {
 
 
-    protected fun canMerge(u: V, v: V): Boolean = ac.isLinearRelevant(u, v)
+    protected fun canMerge(u: V, v: V): Boolean = ac.isLinearDependent(u, v)
 
     protected fun getTS(): NavigableSet<V> = TreeSet(terms.comparator())
 

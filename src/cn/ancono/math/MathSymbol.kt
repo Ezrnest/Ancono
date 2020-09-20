@@ -182,6 +182,8 @@ object MathSymbol {
 
     const val LOGIC_OR = "∨"
 
+    const val LOGIC_NOT = "¬"
+
     val toLatexFunctionNameMap: MutableMap<String, String>
 
     init {

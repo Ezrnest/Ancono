@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.DoubleUnaryOperator;
 
 import static cn.ancono.utilities.Printer.print;
 
@@ -38,6 +39,10 @@ public class PlaneDrawer {
      */
     public PlaneDrawer() {
 
+    }
+
+    public boolean addFunction(DoubleUnaryOperator f, Color c) {
+        return addCurve(c, (x, y) -> y - f.applyAsDouble(x));
     }
 
     public boolean addCurve(Color c, SubstitutableCurve f) {
@@ -78,6 +83,7 @@ public class PlaneDrawer {
     public void addPCurve(ParametricCurve pc) {
         ps.add(new ParaCurveDrawer(pc));
     }
+
 
     /**
      * @param rect
@@ -146,59 +152,57 @@ public class PlaneDrawer {
     }
 
     public boolean drawToFile(Rectangle2D.Double rect, int width, int height, String path) {
-
         return drawToFile(rect, width, height, new File(path));
     }
 
-    public static void main(String[] args) throws IOException {
-//		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
-//		ConicSection<Double> ell = EllipseV.createEllipse(55d, 45d, mc).transform(PAffineTrans.ofTranslation(
-//				PVector.valueOf(0d, 5d, mc)));
-//		//
-////		print(ell);
-//		PlaneDrawer pd = new PlaneDrawer();
-//		DrawableCurve curve = SimpleCurve.of(Utilities.mapToDouble(x -> x, x -> x, ell),
-//				SimpleDrawPointPredicate.getDefault(), SimpleCurveColorer.ofColor(Color.ORANGE),1);
-//		pd.addCurve(curve);
-//		curve = SimpleCurve.of((x,y)-> x*x + y*y - 5,
-//				SimpleDrawPointPredicate.getDefault(), SimpleCurveColorer.ofColor(Color.BLUE),2);
-//		pd.addCurve(curve);
-////		pd.addCurve(Color.RED,  (x,y)->{
-////			return Math.abs(MathUtils.tschebyscheffDistance(x,y,-2,0) - MathUtils.tschebyscheffDistance(x,y,2,0)) - 3;
-////		});
+//    public static void main(String[] args) throws IOException {
+////		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();
+////		ConicSection<Double> ell = EllipseV.createEllipse(55d, 45d, mc).transform(PAffineTrans.ofTranslation(
+////				PVector.valueOf(0d, 5d, mc)));
+////		//
+//////		print(ell);
+////		PlaneDrawer pd = new PlaneDrawer();
+////		DrawableCurve curve = SimpleCurve.of(Utilities.mapToDouble(x -> x, x -> x, ell),
+////				SimpleDrawPointPredicate.getDefault(), SimpleCurveColorer.ofColor(Color.ORANGE),1);
+////		pd.addCurve(curve);
+////		curve = SimpleCurve.of((x,y)-> x*x + y*y - 5,
+////				SimpleDrawPointPredicate.getDefault(), SimpleCurveColorer.ofColor(Color.BLUE),2);
+////		pd.addCurve(curve);
+//////		pd.addCurve(Color.RED,  (x,y)->{
+//////			return Math.abs(MathUtils.tschebyscheffDistance(x,y,-2,0) - MathUtils.tschebyscheffDistance(x,y,2,0)) - 3;
+//////		});
+////
+////		Timer t = new Timer();
+////		t.start();
+////		BufferedImage image = pd.draw(new Rectangle2D.Double(-100,-100,200,200), 1000, 1000);
+////		ImageIO.write(image, "png", new File("C:\\Users\\liyicheng\\Desktop\\新建文件夹\\test.png"));
+////		print(t.end());
+////		print("Finished !");
 //
-//		Timer t = new Timer();
-//		t.start();
-//		BufferedImage image = pd.draw(new Rectangle2D.Double(-100,-100,200,200), 1000, 1000);
-//		ImageIO.write(image, "png", new File("C:\\Users\\liyicheng\\Desktop\\新建文件夹\\test.png"));
-//		print(t.end());
-//		print("Finished !");
-
-//        MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
-        Random rd = new Random();
-        for (int i = 0; i < 100; i++) {
-            PlaneDrawer pd = new PlaneDrawer();
-            double A1 = rd.nextDouble() + 1;
-            double A2 = 2 * rd.nextDouble() + 1;
-            double w1 = rd.nextDouble() * 4;
-            double w2 = w1 * (rd.nextInt());
-            //double basis = (1 + rd.nextDouble()) / 50;
-            //            double w1 = basis * (1 + rd.nextInt(100));
-            //            double w2 = basis * (1 + rd.nextInt(100));
-            double p1 = rd.nextDouble() * 4;
-            double p2 = rd.nextDouble();
-            pd.addPCurve(ParametricCurve.from(t -> new Point2D.Double(A1 * Math.sin(w1 * t + p1), A2 * Math.cos(w2 * t + p2)), 0, 300));
-            String name = String.format("C:\\Users\\14037\\Desktop\\temp\\curve%d.jpg", i);
-            BufferedImage buf = pd.draw(new Rectangle2D.Double(-3, -3, 6, 6), 1000, 1000);
-            var g = buf.getGraphics();
-            g.setColor(Color.BLACK);
-            g.setFont(Font.decode("consolas-18"));
-            g.drawString(String.format("x=%3fsin(%3f*t+%3f)", A1, w1, p1), 20, 20);
-            g.drawString(String.format("y=%3fcos(%3f*t+%3f)", A2, w2, p2), 20, 40);
-            g.drawString("t from 0 to 300", 20, 60);
-            ImageIO.write(buf, "jpg", new File(name));
-            print("Success! " + i);
-        }
-
-    }
+////        MathCalculator<Double> mc = Calculators.getCalculatorDoubleDev();
+//        Random rd = new Random();
+//        for (int i = 0; i < 100; i++) {
+//            PlaneDrawer pd = new PlaneDrawer();
+//            double A1 = rd.nextDouble() + 1;
+//            double A2 = 2 * rd.nextDouble() + 1;
+//            double w1 = rd.nextDouble() * 4;
+//            double w2 = w1 * (rd.nextInt());
+//            //double basis = (1 + rd.nextDouble()) / 50;
+//            //            double w1 = basis * (1 + rd.nextInt(100));
+//            //            double w2 = basis * (1 + rd.nextInt(100));
+//            double p1 = rd.nextDouble() * 4;
+//            double p2 = rd.nextDouble();
+//            pd.addPCurve(ParametricCurve.from(t -> new Point2D.Double(A1 * Math.sin(w1 * t + p1), A2 * Math.cos(w2 * t + p2)), 0, 300));
+//            String name = String.format("C:\\Users\\14037\\Desktop\\temp\\curve%d.jpg", i);
+//            BufferedImage buf = pd.draw(new Rectangle2D.Double(-3, -3, 6, 6), 1000, 1000);
+//            var g = buf.getGraphics();
+//            g.setColor(Color.BLACK);
+//            g.setFont(Font.decode("consolas-18"));
+//            g.drawString(String.format("x=%3fsin(%3f*t+%3f)", A1, w1, p1), 20, 20);
+//            g.drawString(String.format("y=%3fcos(%3f*t+%3f)", A2, w2, p2), 20, 40);
+//            g.drawString("t from 0 to 300", 20, 60);
+//            ImageIO.write(buf, "jpg", new File(name));
+//            print("Success! " + i);
+//        }
+//    }
 }

@@ -4,7 +4,6 @@ import cn.ancono.math.MathUtils
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.math.numberTheory.combination.CombUtils
-import kotlin.coroutines.experimental.buildSequence
 
 
 /**
@@ -22,7 +21,7 @@ object DefinedPolynomials {
     fun bernsteinPoly(n: Int, i: Int): Polynomial<Fraction> {
         // B_{n,i} = C_n^i * t^i * (1-t)^{n-i}
         val a = Polynomial.binomialPower(Fraction.NEGATIVE_ONE, n - i, Fraction.calculator)
-        val coe = Fraction.valueOf(MathUtils.powMinusOne(n - i), CombUtils.combination(n, i), 1L)
+        val coe = Fraction.of(MathUtils.powMinusOne(n - i), CombUtils.combination(n, i), 1L)
         return a.multiply(coe).shift(i)
     }
 
@@ -33,7 +32,7 @@ object DefinedPolynomials {
         val re = ArrayList<Polynomial<Fraction>>(n + 1)
         for (i in (0..n)) {
             val coe = coes[(n - i).toLong()]
-            re.add(base.multiply(Fraction.valueOf(coe)))
+            re.add(base.multiply(Fraction.of(coe)))
             base = base.shift(-1).multiply(t_1)
         }
         re.reverse()
@@ -50,7 +49,7 @@ object DefinedPolynomials {
         return legendrePolySeq().elementAt(n)
     }
 
-    fun legendrePolySeq(): Sequence<Polynomial<Fraction>> = buildSequence {
+    fun legendrePolySeq(): Sequence<Polynomial<Fraction>> = sequence {
         var l0 = Polynomial.constant(Fraction.calculator, Fraction.ONE)
         var l1 = Polynomial.oneX(Fraction.calculator)
         yield(l0)
@@ -59,8 +58,8 @@ object DefinedPolynomials {
         while (true) {
             // nP_n (x) - (2n - 1)xP_{n-1} (x) + (n - 1)P_{n-2} (x)= 0
             // P_n (x) = ((2n - 1)xP_{n-1} (x) - (n - 1)P_{n-2} (x) ) / n
-            val a = Fraction.valueOf(2 * n - 1, n)
-            val b = Fraction.valueOf(-1, n - 1, n)
+            val a = Fraction.of(2 * n - 1, n)
+            val b = Fraction.of(-1, n - 1, n)
             val next = l1.shift(1).multiply(a).add(l0.multiply(b))
             yield(next)
             l0 = l1
@@ -86,9 +85,9 @@ object DefinedPolynomials {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
 //    DefinedPolynomials.legendrePolySeq().take(15).forEach { println(it) }
 //    val re = DefinedPolynomials.bernsteinPolyList(5).reduce { a, b -> a.add(b) }
 //    println(re)
-
+    DefinedPolynomials.legendrePolySeq().take(5).forEach { println(it) }
 }

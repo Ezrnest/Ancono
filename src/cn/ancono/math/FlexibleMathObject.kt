@@ -42,8 +42,9 @@ abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>
     /**
      * Returns a String representing this object, the [NumberFormatter] should
      * be used whenever a number is presented.
-     * @param nf
+     * @param nf a number formatter
      * @return
+     * @see FlexibleNumberFormatter
      */
     abstract fun toString(nf: FlexibleNumberFormatter<T, S>): String
 

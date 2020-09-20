@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linearAlgebra;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.linearAlgebra.space.LinearSpace;
+import cn.ancono.math.algebra.linearAlgebra.space.AffineSpace;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -40,23 +40,23 @@ public class LinearEquationSolution<T> {
 
 
     @Nullable
-    public LinearSpace<T> asLinearSpace() {
+    public AffineSpace<T> asLinearSpace() {
         if (sit == Situation.NO_SOLUTION) {
             return null;
         }
-        return LinearSpace.Companion.valueOf(specialSolution, Objects.requireNonNull(solutionSpace()));
+        return AffineSpace.Companion.valueOf(specialSolution, Objects.requireNonNull(solutionSpace()));
     }
 
     @Nullable
-    public VectorBase<T> solutionSpace() {
+    public VectorBasis<T> solutionSpace() {
         if (sit == Situation.NO_SOLUTION) {
             return null;
         }
         if (baseSolutions == null) {
             //only one solution
-            return VectorBase.zeroBase(specialSolution.getSize(), specialSolution.getMathCalculator());
+            return VectorBasis.zeroBase(specialSolution.getSize(), specialSolution.getMathCalculator());
         }
-        return VectorBase.createBaseWithoutCheck(baseSolutions);
+        return VectorBasis.createBaseWithoutCheck(baseSolutions);
     }
 
 
@@ -126,7 +126,7 @@ public class LinearEquationSolution<T> {
         if (sit == Situation.SINGLE_SOLUTION) {
             return specialSolution;
         }
-        return specialSolution.isZeroVector() ? Vector.addVector(specialSolution, baseSolutions[0]) : specialSolution;
+        return specialSolution.isZeroVector() ? Vector.addAll(specialSolution, baseSolutions[0]) : specialSolution;
     }
 
 

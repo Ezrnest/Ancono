@@ -10,6 +10,7 @@ import cn.ancono.math.numberModels.structure.AlgebraMultinomial
 import java.util.*
 
 /**
+ *
  * Created at 2019/9/14 14:59
  * @author  lyc
  */
@@ -149,11 +150,14 @@ object DFBaseCalculator : AlgebraCalculator<Expression, DFBase> {
         }
     }
 
-    override fun isLinearRelevant(u: DFBase, v: DFBase): Boolean {
+    override fun isLinearDependent(u: DFBase, v: DFBase): Boolean {
         return ec.isZero(u.coefficient) || ec.isZero(v.coefficient) || u.bases.contentEquals(v.bases)
     }
 }
 
+/**
+ * Defines a differential form based on Expression.
+ */
 class DifferentialForm internal constructor(terms: NavigableSet<DFBase>)
     : AlgebraMultinomial<Expression, DFBase>(DFBaseCalculator, terms) {
 
@@ -184,6 +188,9 @@ class DifferentialForm internal constructor(terms: NavigableSet<DFBase>)
         }
     }
 
+    /**
+     * Computes the outer differential of this differential form. A list of variable names is required.
+     */
     fun differential(variables: List<String> = DefaultVariables): DifferentialForm {
         val re = getTS()
         for (t in terms) {
@@ -198,6 +205,9 @@ class DifferentialForm internal constructor(terms: NavigableSet<DFBase>)
             return TreeSet(DFBaseComparator)
         }
 
+        /**
+         * Returns a differential form according to the given coefficient and bases.
+         */
         fun valueOf(coe: Expression, vararg bases: String): DifferentialForm {
             val t = DFBase.valueOf(coe, *bases)
             val terms = getSet()
@@ -208,21 +218,4 @@ class DifferentialForm internal constructor(terms: NavigableSet<DFBase>)
     }
 
 
-}
-
-fun main(args: Array<String>) {
-    val ec = ExprCalculator.instance
-    val vars = listOf("x", "y", "z", "w")
-    val w = DifferentialForm.valueOf(ec.parseExpr("xyzw"))
-    val v = DifferentialForm.valueOf(ec.parseExpr("x+y+z+w"))
-    println(w)
-    println(v)
-    val w2 = w.differential(vars)
-    println(w2)
-    val v2 = v.differential(vars)
-    println(v2)
-    println(v2 * w2)
-    println(w2 * v2)
-    println(w2.differential(vars))
-    println(v2.differential(vars))
 }

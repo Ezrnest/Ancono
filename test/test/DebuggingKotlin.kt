@@ -1,7 +1,6 @@
 package test
 
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup
-import cn.ancono.math.algebra.linearAlgebra.Vector
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.times
@@ -16,7 +15,7 @@ fun main(args: Array<String>) {
     p2()
 }
 fun p2(){
-    val mcd = Calculators.getCalculatorDoubleDev()
+    val mcd = Calculators.getCalDoubleDev()
     val str = """
             1 2 5
             1 0 1
@@ -36,9 +35,9 @@ fun p3(){
         5 b 3
         1-c 0 -a
     """.trimIndent()
-    val mat = MatrixSup.parseMatrixD(str,mc,mc::parseExpr)
+    val mat = MatrixSup.parseMatrixD(str, mc, mc::parse)
     mat.printMatrix()
-    println(mat.calDetDefault())
+    println(mat.calDet())
     mat.adjugateMatrix().printMatrix()
 
 //    mat.inverse().printMatrix()

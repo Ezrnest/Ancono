@@ -7,8 +7,10 @@ import cn.ancono.math.numberModels.expression.anno.DisallowModify;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.regex.Pattern;
 
 import static cn.ancono.math.numberModels.expression.ExprFunction.FUNCTION_NAME_EXP;
+import static cn.ancono.utilities.Printer.print;
 
 /**
  * Helps compute derivative of expression.
@@ -267,11 +269,14 @@ public class DerivativeHelper {
         addExtensions();
     }
 
+    private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d+");
+
+
     private static void addExtensions() {
         addDerivator(new FunctionDerivator() {
             @Override
             public boolean accept(String functionName, int parameterLength) {
-                return parameterLength == 1;
+                return parameterLength < 10;
             }
 
             @Override
@@ -279,8 +284,42 @@ public class DerivativeHelper {
                 if (node instanceof Node.SFunction) {
                     return dFunction((Node.SFunction) node, variableName);
                 }
-                return null;
+                if (!(node instanceof Node.FunctionNode)) {
+                    return null;
+                }
+                var fNode = (Node.FunctionNode) node;
+                var cNode = (Node.NodeWithChildren) node;
+                if (fNode.getParameterLength() >= 10) {
+                    return null;
+                }
+                var name = fNode.getFunctionName();
+                // single digit
+                int idx = name.lastIndexOf('_');
+                String realName;
+                char[] partials;
+                if (idx < 0 || !DIGIT_PATTERN.matcher(name.substring(idx + 1)).matches()) {
+                    realName = name;
+                    partials = new char[0];
+                } else {
+                    realName = name.substring(0, idx);
+                    partials = name.substring(idx + 1).toCharArray();
+                }
+                var allPartials = new ArrayList<Node>(fNode.getParameterLength());
+                for (int i = 0; i < fNode.getParameterLength(); i++) {
+                    var nPartials = Arrays.copyOf(partials, partials.length + 1);
+                    nPartials[partials.length] = (char) (i + 1 + '0');
+                    Arrays.sort(nPartials);
+                    var partialName = realName + "_" + String.valueOf(nPartials);
+                    var child = cNode.getChildren(i);
+                    var n1 = fNode.cloneNodeRenameFunction(partialName);
+                    var n2 = DerivativeHelper.derivativeNode(child, variableName);
+                    var n = Node.wrapNodeAM(false, n1, n2);
+                    allPartials.add(n);
+                }
+                return Node.wrapNodeAM(true, allPartials);
             }
+
+
         });
     }
 
@@ -449,9 +488,10 @@ public class DerivativeHelper {
 
     }
 
-//    public static void main(String[] args) {
-//        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
-//        var f = ec.parseExpr("exp(sin(x),3)");
+    public static void main(String[] args) {
+        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
+        var f = ec.parse("f(g(x)- y, xh(y))");
+        print(ec.differential(ec.differential(f, "y"), "y").toLatexString());
 //        print(ec.differential(f));
 //        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
 //        SimplificationStrategies.setCalRegularization(ec);
@@ -461,5 +501,5 @@ public class DerivativeHelper {
 ////        re.listNode();
 //        re = ec.simplify(re);
 //        print(re);
-//    }
+    }
 }

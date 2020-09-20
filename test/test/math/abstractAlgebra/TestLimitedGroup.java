@@ -5,7 +5,6 @@ package test.math.abstractAlgebra;
 
 import cn.ancono.math.algebra.abstractAlgebra.FiniteGroups;
 import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.javaImpl.JGroupCalculator;
 import cn.ancono.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.MathCalculator;
@@ -36,7 +35,7 @@ public class TestLimitedGroup {
 	@Test
 	public void test1() {
         MathCalculator<Integer> mc = Calculators.getCalInteger();
-        GroupCalculator<TransMatrix<Integer>> matmc = new JGroupCalculator<>() {
+        GroupCalculator<TransMatrix<Integer>> matmc = new GroupCalculator<>() {
             @Override
             public boolean isCommutative() {
                 return false;

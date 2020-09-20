@@ -10,6 +10,7 @@ import cn.ancono.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
 import cn.ancono.math.algebra.abstractAlgebra.structure.Coset;
 import cn.ancono.math.algebra.abstractAlgebra.structure.Group;
 import cn.ancono.math.set.FiniteSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A limited group is a group with limited elements.
@@ -39,19 +40,19 @@ public interface FiniteGroup<T> extends Group<T> {
 
 
     @Override
-    Coset<T, ? extends FiniteGroup<T>> getCoset(T x, Group<T> subGroup, boolean isLeft);
+    Coset<T, ? extends FiniteGroup<T>> getCoset(@NotNull T x, @NotNull Group<T> subGroup, boolean isLeft);
 
     @Override
-    default Coset<T, ? extends FiniteGroup<T>> getCoset(T x, boolean isLeft) {
+    default Coset<T, ? extends FiniteGroup<T>> getCoset(@NotNull T x, boolean isLeft) {
         return getCoset(x, this, isLeft);
     }
 
 
     @Override
-    FiniteSet<? extends Coset<T, ? extends FiniteGroup<T>>> getCosets(Group<T> h, boolean isLeft);
+    FiniteSet<? extends Coset<T, ? extends FiniteGroup<T>>> getCosets(@NotNull Group<T> h, boolean isLeft);
 
     @Override
-    default long indexOf(Group<T> sub) {
+    default long indexOf(@NotNull Group<T> sub) {
         if (!isSubgroup(sub)) {
             throw new NotASubgroupException();
         }
@@ -91,7 +92,7 @@ public interface FiniteGroup<T> extends Group<T> {
 
 
     @Override
-    FiniteGroup<T> conjugateSubgroup(Group<T> h, T x);
+    FiniteGroup<T> conjugateSubgroup(@NotNull Group<T> h, T x);
 
     @Override
     FiniteGroup<T> normalizer(Group<T> h);

@@ -5,6 +5,8 @@ import cn.ancono.math.numberModels.api.times
 
 /**
  * Describes the number model that can be elements of a Euclid ring.
+ *
+ *
  * Created at 2018/12/8 17:15
  * @author  liyicheng
  */
@@ -32,6 +34,7 @@ interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<
      * `u*this + v*y = gcd(this,y)`
      */
     fun gcdUV(y: T): Triple<T, T, T>
+    //default implementation requires zero and one, which are not available.
 
     /**
      * Returns the least common multiplier of `this` and `y`.
@@ -60,6 +63,12 @@ interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<
 
     fun isCoprime(y: T): Boolean
 
+    /**
+     * Returns the maximal degree of [y] in this, that it, the maximum integer `n`
+     * such that `y^n` is a divisor of `this`.
+     *
+     * For example, `12.deg(2) = 2`
+     */
     fun deg(y: T): Int {
         @Suppress("UNCHECKED_CAST") var b = this as T
         if (y.isZero()) {

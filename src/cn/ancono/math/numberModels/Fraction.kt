@@ -1,7 +1,6 @@
 package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathUtils
-import cn.ancono.math.algebra.linearAlgebra.Matrix
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.api.FieldNumberModel
@@ -16,9 +15,14 @@ import kotlin.math.sign
 
 
 /**
- * A simple class that provides fractional calculation which means unless either numerator or denominator
- * is out of range of long, no precision will be lost.This class provides some math calculation with satisfying
- * results,as well normal time-performance.This class is used by [Matrix] as number's format.
+ * A simple class that provides fractional calculation, which means unless either numerator or denominator
+ * is out of range of long, no precision will be lost. This class provides some math calculation with satisfying
+ * results,as well normal time-performance.
+ *
+ * A fraction is composed of three parts: the sign number, the numerator and the denominator. The sign number is an
+ * integer indicating the sign of the fraction. The sign number is zero if and only if this fraction is zero. The
+ * numerator amd the denominator of a fraction are always positive integers that are co-prime to each other.
+ * The denominator must not be zero.
  * @author lyc
  */
 class Fraction
@@ -32,7 +36,7 @@ class Fraction
 internal constructor(
         /**
          * The numerator and denominator of this fraction,
-         * which must be each-prime.
+         * which must be co-prime.
          * Also make sure that denominator != 0
          */
         /**
@@ -49,10 +53,10 @@ internal constructor(
          * The sign number of this fraction,1 for positive,
          * 0 for and only for zero,and -1 for negative.
          */
-        /**
-         * Gets the sign number of this Fraction.
-         * @return sign number
-         */
+//        /**
+//         * Gets the sign number of this Fraction.
+//         * @return sign number
+//         */
         val signum: Int) : Number(), FieldNumberModel<Fraction>, Comparable<Fraction>, Serializable {
 
     /**
@@ -166,7 +170,7 @@ internal constructor(
      * Return the value of `this / num`
      * @param num divider,zero is not allowed.
      * @return `this / num`
-     * @throws IllegalArgumentException if fra == 0.
+     * @throws IllegalArgumentException if num == 0.
      */
     fun divide(num: Long): Fraction {
         var num1 = num
@@ -208,9 +212,9 @@ internal constructor(
     }
 
     /**
-     * Return the value of `this * fra`
+     * Return the value of `this * y`
      * @param y another fraction
-     * @return `this * fra`
+     * @return `this * y`
      */
     override fun multiply(y: Fraction): Fraction {
         if (this.signum == 0 || y.signum == 0) {
@@ -226,10 +230,10 @@ internal constructor(
     }
 
     /**
-     * Return the value of `this / fra`
+     * Return the value of `this / y`
      * @param y divider
-     * @return `this / fra`
-     * @throws IllegalArgumentException if fra == 0.
+     * @return `this / y`
+     * @throws IllegalArgumentException if y == 0.
      */
     override fun divide(y: Fraction): Fraction {
         if (y.signum == 0) {
@@ -238,7 +242,7 @@ internal constructor(
         if (this.signum == 0) {
             return ZERO
         }
-        //exchange fra's numerator and denominator .
+        //exchange y's numerator and denominator .
         val n1D2 = gcdNumAndDen(this.numerator, y.numerator)
         val n2D1 = gcdNumAndDen(y.denominator, this.denominator)
         return Fraction(
@@ -286,9 +290,9 @@ internal constructor(
     }
 
     /**
-     * Return the value of `this + frac`
+     * Return the value of `this + y`
      * @param y a fraction
-     * @return `this + frac`
+     * @return `this + y`
      */
     override fun add(y: Fraction): Fraction {
         val den = MathUtils.lcm(denominator, y.denominator)
@@ -310,16 +314,16 @@ internal constructor(
 
 
     /**
-     * Return the value of `this - frac`
-     * @param frac a fraction
-     * @return `this - frac`
+     * Return the value of `this - y`
+     * @param y a fraction
+     * @return `this - y`
      */
-    operator fun minus(frac: Fraction): Fraction {
-        var num = this.signum.toLong() * this.numerator * frac.denominator - frac.signum.toLong() * frac.numerator * this.denominator
+    operator fun minus(y: Fraction): Fraction {
+        var num = this.signum.toLong() * this.numerator * y.denominator - y.signum.toLong() * y.numerator * this.denominator
         if (num == 0L) {
             return ZERO
         }
-        val den = this.denominator * frac.denominator
+        val den = this.denominator * y.denominator
         val signum: Int
         if (num < 0) {
             num = -num
@@ -360,11 +364,11 @@ internal constructor(
             return if (n == 0) {
                 ExceptionUtil.zeroExponent()
             } else {
-                Fraction.ZERO
+                ZERO
             }
         } else {
             if (n == 0) {
-                return Fraction.ONE
+                return ONE
             }
             val sign: Int
             val deno: Long
@@ -402,26 +406,26 @@ internal constructor(
             if (this.signum == 0) {
                 ExceptionUtil.zeroExponent()
             }
-            return Fraction.ONE
+            return ONE
 
         }
         if (this.signum == 0) {
-            return Fraction.ZERO
+            return ZERO
         } else if (this.numerator == 1L && this.denominator == 1L) {
             // +- 1
-            if (this.signum == 1) {
-                return Fraction.ONE
+            return if (this.signum == 1) {
+                ONE
             } else {
                 if (exp.denominator % 2 == 0L) {
-                    ExceptionUtil.negativeSquare()
+                    ExceptionUtil.sqrtForNegative()
                 }
-                return Fraction.NEGATIVE_ONE
+                NEGATIVE_ONE
             }
         }
         var signum = 1
         if (this.signum < 0) {
             if (exp.denominator % 2 == 0L)
-                ExceptionUtil.negativeSquare()
+                ExceptionUtil.sqrtForNegative()
             signum = -1
         }
 
@@ -452,13 +456,13 @@ internal constructor(
     }
 
     /**
-     * Return `this^2`.The fastest and most convenient way to do this
+     * Return `this^2`. The fastest and most convenient way to do this
      * calculation.
      * @return this^2
      */
     fun squareOf(): Fraction {
         return if (signum == 0) {
-            Fraction.ZERO
+            ZERO
         } else Fraction(numerator * numerator,
                 denominator * denominator, 1)
     }
@@ -476,7 +480,7 @@ internal constructor(
             return ZERO
         }
         val re = this.divide(divisor)
-        return Fraction.valueOf(re.toLong())
+        return of(re.toLong())
     }
 
     /**
@@ -700,7 +704,7 @@ internal constructor(
 
         override fun squareRoot(x: Fraction): Fraction {
             if (x.signum == 0) {
-                return Fraction.ZERO
+                return ZERO
             } else if (x.signum > 0) {
                 val noe = MathUtils.squareRootExact(x.numerator)
                 val deo = MathUtils.squareRootExact(x.denominator)
@@ -715,14 +719,14 @@ internal constructor(
         override fun pow(x: Fraction, n: Long): Fraction {
             var exp1 = n
             if (x.signum == 0) {
-                return if (exp1 == 0L) Fraction.ONE else Fraction.ZERO
+                return if (exp1 == 0L) ONE else ZERO
             }
             val signum = if (exp1 % 2 == 0L) 1 else x.signum
             if (x.denominator == 1L && x.numerator == 1L) {
                 return if (signum == x.signum) x else x.negate()
             }
             if (exp1 == 0L) {
-                return Fraction.ONE
+                return ONE
             }
             var no: Long
             var de: Long
@@ -760,20 +764,20 @@ internal constructor(
                 if (a.signum == 0) {
                     throw ArithmeticException("0^0")
                 }
-                return Fraction.ONE
+                return ONE
 
             }
             if (a.signum == 0) {
-                return Fraction.ZERO
+                return ZERO
             } else if (a.numerator == 1L && a.denominator == 1L) {
                 // +- 1
                 return if (a.signum == 1) {
-                    Fraction.ONE
+                    ONE
                 } else {
                     if (b.denominator % 2 == 0L) {
                         throw ArithmeticException("Negative in Square")
                     }
-                    Fraction.NEGATIVE_ONE
+                    NEGATIVE_ONE
                 }
             }
             var signum = 1
@@ -895,8 +899,11 @@ internal constructor(
             return re
         }
 
+        /**
+         * Returns a fraction from a long.
+         */
         @JvmStatic
-        fun valueOf(number: Long): Fraction {
+        fun of(number: Long): Fraction {
             return when {
                 number == 0L -> ZERO
                 number == 1L -> ONE
@@ -914,7 +921,7 @@ internal constructor(
          * @return a new fraction
          */
         @JvmStatic
-        fun valueOf(numerator: Long, denominator: Long): Fraction {
+        fun of(numerator: Long, denominator: Long): Fraction {
             var numerator1 = numerator
             var denominator1 = denominator
             if (numerator1 == 0L) {
@@ -944,7 +951,7 @@ internal constructor(
          * @return a fraction
          */
         @JvmStatic
-        fun valueOfDouble(d: Double, precision: Int): Fraction {
+        fun ofDouble(d: Double, precision: Int): Fraction {
             var d1 = d
             if (precision <= 0 || precision > maxPrecision) {
                 throw IllegalArgumentException("Bad precision:$precision")
@@ -1018,7 +1025,7 @@ internal constructor(
                 }
             }
             return if (f == null) {
-                Fraction.ZERO
+                ZERO
             } else Fraction(f[0], f[1], signum)
         }
 
@@ -1058,21 +1065,20 @@ internal constructor(
         val DECIMAL_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)\\.(\\d+)")
 
         /**
-         * Return a fraction representing the value of the given expression.The text given should be like :
-         * `"[\\+\\-]?\\d+(\\/\\d+)?"` as regular expression
+         * Return a fraction representing the value of the given expression. The input can be either in fraction way
+         * like `3/5` or in decimal way like `3.14`.
          * @param expr the expression
-         * @return
          */
         @JvmStatic
-        fun valueOf(expr: String): Fraction {
+        fun of(expr: String): Fraction {
             var m = EXPRESSION_PATTERN.matcher(expr)
             if (m.matches()) {
                 val n = m.group(1).toLong()
                 return try {
                     val d = m.group(3).toLong()
-                    valueOf(n, d)
+                    of(n, d)
                 } catch (e: Exception) {
-                    valueOf(n)
+                    of(n)
                 }
             }
             m = DECIMAL_PATTERN.matcher(expr)
@@ -1082,7 +1088,7 @@ internal constructor(
                 val digits = n2.length
                 val deno = MathUtils.power(10L, digits)
                 val nume = n1 * deno + n2.toLong()
-                return valueOf(nume, deno)
+                return of(nume, deno)
             }
 
             throw NumberFormatException("Illegal Fraction:$expr")
@@ -1113,12 +1119,15 @@ internal constructor(
             return if (d < 0) -1 else if (d == 0.0) 0 else 1
         }
 
+        /**
+         * Returns a fraction according to the given [signum], [numerator] and [denominator].
+         */
         @JvmStatic
-        fun valueOf(signum: Int, numerator: Long, denominator: Long): Fraction {
+        fun of(signum: Int, numerator: Long, denominator: Long): Fraction {
             if (signum == 0) {
                 return ZERO
             }
-            return valueOf(if (signum > 0) {
+            return of(if (signum > 0) {
                 numerator
             } else {
                 -numerator
@@ -1134,7 +1143,7 @@ internal constructor(
         //	}
 
         /**
-         * Get the calculator of the class Fraction,the calculator ignores overflow.
+         * Get the calculator of the class Fraction, the calculator ignores overflow.
          *
          * The calculator does not have any constant values.
          * @return a fraction calculator
@@ -1161,9 +1170,9 @@ internal constructor(
 
 }
 
-fun Long.toFrac(): Fraction = Fraction.valueOf(this)
+fun Long.toFrac(): Fraction = Fraction.of(this)
 
-fun Int.toFrac(): Fraction = Fraction.valueOf(this.toLong())
+fun Int.toFrac(): Fraction = Fraction.of(this.toLong())
 
 
 //fun main(args: Array<String>) {

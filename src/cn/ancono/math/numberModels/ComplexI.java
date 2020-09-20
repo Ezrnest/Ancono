@@ -25,8 +25,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
     private static final double TWO_PI = 2 * Math.PI;
 
     private final double a, b;
-    private static final double UNCALCULATED = Double.NaN;
-    private double m = UNCALCULATED, arg = UNCALCULATED;
+    //    private static final double UNCALCULATED = Double.NaN;
+    private double m = Double.NaN, arg = Double.NaN;
     public static final double ANGLE_UPPER_BOUND = Math.PI;
     public static final double ANGLE_DOWNER_BOUND = -Math.PI;
     public static final ComplexI ZERO = new ComplexI(0d, 0d),
@@ -63,7 +63,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * Returns arg(this),the angle must be in [-pi,pi]
      */
     public double arg() {
-        return arg == UNCALCULATED ? (arg = Math.atan2(b, a)) : arg;
+        return Double.isNaN(arg) ? (arg = Math.atan2(b, a)) : arg;
     }
 
     /**
@@ -72,7 +72,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return |this|
      */
     public double mod() {
-        return m == UNCALCULATED ? (m = Math.hypot(a, b)) : m;
+        return Double.isNaN(m) ? (m = Math.hypot(a, b)) : m;
     }
 
     /**

@@ -91,7 +91,7 @@ public abstract class AbstractPermutation implements Permutation {
             int t = i;
             boolean[] temp = new boolean[length];
             int n = 0;
-            while (temp[t] != true) {
+            while (!temp[t]) {
                 temp[t] = true;
                 t = arr[t];
                 n++;
@@ -129,8 +129,8 @@ public abstract class AbstractPermutation implements Permutation {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append('(');
-        for (int i : getArray()) {
-            sb.append(i).append(',');
+        for (int i = 0; i < size; i++) {
+            sb.append(apply(i)).append(',');
         }
         sb.deleteCharAt(sb.length() - 1);
         sb.append(')');

@@ -10,6 +10,7 @@ import cn.ancono.math.calculus.Calculus.DEFAULT_DELTA
 import cn.ancono.math.calculus.Calculus.DEFAULT_RANGE
 import cn.ancono.math.equation.inequation.Inequation
 import cn.ancono.math.equation.inequation.SVPInequation
+import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.SVFunction
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.set.Interval
@@ -25,8 +26,113 @@ import java.util.function.Function
  * 2017-10-06 15:52
  */
 object EquationSup {
+
+
     /**
-     * This method will try to solve the equation using the solution-formulas.Because
+     * Solve an equation that
+     * <pre>ax^2 + bx + c = 0</pre>
+     * This method will ignore imaginary solutions.
+     *
+     * This method will return a list of solutions,which will contain
+     * no element if there is no real solution(`delta<0`),
+     * one if there is only one solution(or two solutions of the identity value)(`delta==0`)
+     * or two elements if there are two solutions((`delta>0`).
+     *
+     * This method normally requires `squareRoot()` method of the [MathCalculator].
+     *
+     * @param a  the coefficient of x^2.
+     * @param b  the coefficient of x.
+     * @param c  the constant coefficient
+     * @param mc a MathCalculator
+     * @return the list of solution,regardless of order.
+     */
+    fun <T : Any> solveEquation(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+        //Calculate the delta
+        var delta: T
+        run {
+            //=mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));;
+            val t1 = mc.multiply(b, b)
+            val t2 = mc.multiply(a, c)
+            val t3 = mc.multiplyLong(t2, 4L)
+            delta = mc.subtract(t1, t3)
+        }
+        var compare = 1
+        try {
+            compare = mc.compare(delta, mc.zero)
+        } catch (ex: UnsupportedCalculationException) {
+            try {
+                if (mc.isZero(delta)) compare = 0
+            } catch (ex2: UnsupportedCalculationException) {
+            }
+        }
+        //		Printer.print(delta);
+        return if (compare < 0) {
+            //no solution
+            emptyList()
+        } else if (compare == 0) {
+            val so: MutableList<T> = ArrayList(1)
+            // -b/2a
+            val re = mc.divide(mc.divideLong(b, -2L), a)
+            so.add(re)
+            so
+        } else {
+            // x1 = (-b + sqr(delta)) / 2a
+            // x2 = (-b - sqr(delta)) / 2a
+            val so: MutableList<T> = ArrayList(2)
+            delta = mc.squareRoot(delta)
+            val a2 = mc.multiplyLong(a, 2)
+            var re = mc.divide(mc.subtract(delta, b), a2)
+            so.add(re)
+            re = mc.negate(mc.divide(mc.add(b, delta), a2))
+            so.add(re)
+            so
+        }
+    }
+
+    /**
+     * Solve an equation of
+     * <pre>ax^2 + bx + c = 0</pre>
+     * This method will use the root-formula and will compute all of the solutions(include imaginary
+     * solutions),and always returns two solutions even if the two solutions are the identity.
+     *
+     * @param a  the coefficient of x^2.
+     * @param b  the coefficient of x.
+     * @param c  the constant coefficient
+     * @param mc a MathCalculator
+     * @return a list of the solutions
+     */
+    fun <T : Any> solveEquationIma(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+        var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
+        // x1 = (-b + sqr(delta)) / 2a
+        // x2 = (-b - sqr(delta)) / 2a
+        val so: MutableList<T> = ArrayList(2)
+        delta = mc.squareRoot(delta)
+        val a2 = mc.multiplyLong(a, 2)
+        var re = mc.divide(mc.subtract(delta, b), a2)
+        so.add(re)
+        re = mc.negate(mc.divide(mc.add(b, delta), a2))
+        so.add(re)
+        return so
+    }
+
+    /**
+     * Solves an inequation of
+     * <pre>ax^2 + bx + c = 0</pre>
+     *
+     * @param a   the coefficient of x^2.
+     * @param b   the coefficient of x.
+     * @param c   the constant coefficient
+     * @param mc  a MathCalculator
+     * @param <T>
+     * @return
+    </T> */
+    fun <T : Any> solveInequation(a: T, b: T, c: T, op: Type?, mc: MathCalculator<T>?): IntervalUnion<T> {
+        return SVPInequation.quadratic(a, b, c, op, mc).solution
+    }
+
+
+    /**
+     * This method will try to solve the equation using the solution-formulas. Because
      * formulas are only available when `n<5`, if `n>=5`,an exception will
      * be thrown.
      *
@@ -86,7 +192,7 @@ object EquationSup {
             if (Inequation.isOperation(op)) {
                 return SVPInequation.quadratic(a, b, c, op, mc).solution
             } else {
-                val solution = MathUtils.solveEquation(a, b, c, mc)
+                val solution = solveEquation(a, b, c, mc)
                 if (op === Type.EQUAL) {
                     return if (solution.isEmpty()) {
                         IntervalUnion.empty(mc)
@@ -197,7 +303,7 @@ object EquationSup {
         val cf = MathUtils.factors(const)
         for (nume in cf) {
             for (deno in ff) {
-                var root = Fraction.valueOf(nume, deno)
+                var root = Fraction.of(nume, deno)
                 if (equa.isSolution(root)) {
                     result.add(root)
                 }

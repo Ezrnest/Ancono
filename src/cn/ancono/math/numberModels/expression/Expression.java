@@ -149,7 +149,7 @@ public final class Expression implements Computable, Serializable {
 
     public static Expression fromPolynomialE(IPolynomial<Expression> p, String variableName) {
         List<Node> terms = new ArrayList<>();
-        for (int i = 0; i <= p.getDegree(); i++) {
+        for (int i = 0; i <= p.getLeadingPower(); i++) {
             Expression coeExpr = p.getCoefficient(i);
             Node root = coeExpr.root;
             if (root.getType() == Node.Type.POLYNOMIAL) {
@@ -158,7 +158,7 @@ public final class Expression implements Computable, Serializable {
                     continue;
                 }
             }
-            var variable = Term.characterPower(variableName, Fraction.valueOf(i));
+            var variable = Term.characterPower(variableName, Fraction.of(i));
             Node pow = Node.newPolyNode(Multinomial.monomial(variable));
             Node coe = root.cloneNode();
             Node term = Node.wrapNodeAM(false, coe, pow);
@@ -187,6 +187,9 @@ public final class Expression implements Computable, Serializable {
     }
 
 
+    /**
+     * Gets the default calculator of <code>Expression</code>.
+     */
     public static ExprCalculator getCalculator() {
         return ExprCalculator.getInstance();
     }
@@ -457,7 +460,7 @@ public final class Expression implements Computable, Serializable {
             try {
                 return Multinomial.valueOf(expr);
             } catch (NumberFormatException ex) {
-                throwFor(ex.getMessage(), offset);
+                throwFor(ex.getMessage() + ": ", offset);
                 //exception here
                 return null;
             }

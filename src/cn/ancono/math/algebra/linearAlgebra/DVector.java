@@ -115,7 +115,7 @@ public final class DVector<T> extends Vector<T> {
     }
 
     @Override
-    public DVector<T> transportMatrix() {
+    public DVector<T> transpose() {
         return new DVector<>(vec, !isRow, getMc());
     }
 

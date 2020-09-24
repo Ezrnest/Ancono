@@ -93,7 +93,7 @@ final class VMatrix<T> extends Matrix<T> {
     @Contract(" -> new")
     @NotNull
     @Override
-    public Matrix<T> transportMatrix() {
+    public Matrix<T> transpose() {
         return new VMatrix<>(vs, column, row, getMc(), !isRow);
     }
 

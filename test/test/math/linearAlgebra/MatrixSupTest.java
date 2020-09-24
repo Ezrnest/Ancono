@@ -6,8 +6,6 @@ import cn.ancono.math.numberModels.Calculators;
 import org.junit.Test;
 import test.math.TestUtils;
 
-import static org.junit.Assert.*;
-
 /*
  * Created by liyicheng at 2020-03-10 13:36
  */
@@ -21,4 +19,5 @@ public class MatrixSupTest {
         w = w.applyFunction(cal::abs);
         TestUtils.assertValueEquals(Matrix.diag(new Integer[]{1, 3, 0}, cal), w);
     }
+
 }

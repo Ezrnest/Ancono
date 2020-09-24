@@ -3,15 +3,16 @@
  */
 package test.math;
 
-import cn.ancono.math.equation.SVPEquation;
+import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution;
 import cn.ancono.math.algebra.linearAlgebra.Matrix;
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
 import cn.ancono.math.algebra.linearAlgebra.Vector;
-import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.geometry.analytic.planeAG.curve.ConicSection;
 import cn.ancono.math.geometry.analytic.planeAG.curve.GeneralConicSection;
+import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.structure.Pair;
 import org.junit.Test;
@@ -36,6 +37,19 @@ public class TestMatrix {
 
     MathCalculator<Long> mc = Calculators.getCalLong();
     MathCalculator<Double> mcd = Calculators.getCalDoubleDev();
+
+    private <T> boolean isUpperTriangular(Matrix<T> m) {
+        var mc = m.getMathCalculator();
+        var n = Math.min(m.getRowCount(), m.getColumnCount());
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (!mc.isZero(m.getNumber(i, j))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     //	@Test
     public void testEigenEquation() {
@@ -139,5 +153,27 @@ public class TestMatrix {
                 {1, 11, 3, -4, 3}
         });
         assertTrue(Math.abs(mat2.calDet() - MatrixSup.fastDet(mat2)) < 0.00001);
+    }
+
+    @Test
+    public void testDecompositionQR() {
+        Matrix<Fraction> A = Matrix.of(new int[][]{
+                {1, 2, 3, 4},
+                {2, 3, 4, 5},
+                {3, 2, 5, 6},
+                {6, -2, -8, 4}
+        }).mapTo(Fraction::of, Fraction.getCalculator());
+        var t = A.decompLU();
+        var P = t.getFirst();
+        var L = t.getSecond();
+        var U = t.getThird();
+//        P.printMatrix();
+//        L.printMatrix();
+        assertTrue("L should be lower triangular.", isUpperTriangular(L.transpose()));
+        assertTrue("U should be upper triangular.", isUpperTriangular(U));
+//        U.printMatrix();
+        var m1 = Matrix.multiply(P, A);
+        var m2 = Matrix.multiply(L, U);
+        assertTrue("PA = LU", m1.valueEquals(m2));
     }
 }

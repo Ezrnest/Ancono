@@ -157,7 +157,7 @@ public final class PVector<T> extends Vector<T> {
      * @see cn.ancono.math.Matrix#transportMatrix()
      */
     @Override
-    public Vector<T> transportMatrix() {
+    public Vector<T> transpose() {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) Array.newInstance(x.getClass(), 2);
         arr[0] = x;

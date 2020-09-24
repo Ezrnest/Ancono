@@ -86,7 +86,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
      * @see cn.ancono.math.Matrix#transportMatrix()
      */
     @Override
-    public TransMatrix<T> transportMatrix() {
+    public TransMatrix<T> transpose() {
         T[][] d2 = gd();
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {

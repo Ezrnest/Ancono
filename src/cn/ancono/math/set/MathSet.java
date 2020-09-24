@@ -1,6 +1,3 @@
-/**
- *
- */
 package cn.ancono.math.set;
 
 

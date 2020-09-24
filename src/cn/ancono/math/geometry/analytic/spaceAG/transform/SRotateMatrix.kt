@@ -92,7 +92,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         return SRotateMatrix(mc, nmat)
     }
 
-    override fun transportMatrix(): SRotateMatrix<T> {
+    override fun transpose(): SRotateMatrix<T> {
         val nmat = Array(3) { i ->
             Array<Any>(3) { j ->
                 mat[j][i]

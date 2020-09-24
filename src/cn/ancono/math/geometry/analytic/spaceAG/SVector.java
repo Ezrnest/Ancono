@@ -70,7 +70,7 @@ public final class SVector<T> extends Vector<T> {
 
 
     @Override
-    public Vector<T> transportMatrix() {
+    public Vector<T> transpose() {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) Array.newInstance(x.getClass(), 3);
         arr[0] = x;

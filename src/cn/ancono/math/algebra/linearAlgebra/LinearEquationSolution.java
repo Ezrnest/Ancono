@@ -152,10 +152,10 @@ public class LinearEquationSolution<T> {
     }
 
     private void printSolu0() {
-        specialSolution.transportMatrix().printMatrix();
+        specialSolution.transpose().printMatrix();
         for (int k = 0; k < baseSolutions.length; k++) {
             printnb("+k" + k);
-            baseSolutions[k].transportMatrix().printMatrix();
+            baseSolutions[k].transpose().printMatrix();
         }
     }
 
@@ -197,7 +197,7 @@ public class LinearEquationSolution<T> {
          */
         public void setBase(Vector<T> base) {
             if (base.isRow()) {
-                this.base = base.transportMatrix();
+                this.base = base.transpose();
             } else {
                 this.base = base;
             }
@@ -206,7 +206,7 @@ public class LinearEquationSolution<T> {
         public void setVariableSolution(Vector<T>[] ss) {
             for (int i = 0; i < ss.length; i++) {
                 if (ss[i].isRow()) {
-                    ss[i] = ss[i].transportMatrix();
+                    ss[i] = ss[i].transpose();
                 }
             }
             this.ss = ss;

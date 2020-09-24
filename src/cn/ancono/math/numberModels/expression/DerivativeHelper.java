@@ -10,7 +10,6 @@ import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 import static cn.ancono.math.numberModels.expression.ExprFunction.FUNCTION_NAME_EXP;
-import static cn.ancono.utilities.Printer.print;
 
 /**
  * Helps compute derivative of expression.
@@ -488,18 +487,18 @@ public class DerivativeHelper {
 
     }
 
-    public static void main(String[] args) {
-        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
-        var f = ec.parse("f(g(x)- y, xh(y))");
-        print(ec.differential(ec.differential(f, "y"), "y").toLatexString());
-//        print(ec.differential(f));
-//        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
-//        SimplificationStrategies.setCalRegularization(ec);
-//        expr = ec.simplify(expr);
-//        print("Expression is: " + expr);
-//        var re = Calculus.derivation(expr, "x");
-////        re.listNode();
-//        re = ec.simplify(re);
-//        print(re);
-    }
+//    public static void main(String[] args) {
+//        ExprCalculator ec = ExprCalculator.Companion.getNewInstance();
+//        var f = ec.parse("f(g(x)- y, xh(y))");
+//        print(ec.differential(ec.differential(f, "y"), "y").toLatexString());
+////        print(ec.differential(f));
+////        Expression expr = Expression.valueOf("f(x)g(x)h(x)F_(x)");
+////        SimplificationStrategies.setCalRegularization(ec);
+////        expr = ec.simplify(expr);
+////        print("Expression is: " + expr);
+////        var re = Calculus.derivation(expr, "x");
+//////        re.listNode();
+////        re = ec.simplify(re);
+////        print(re);
+//    }
 }

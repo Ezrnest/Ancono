@@ -1,6 +1,6 @@
 package cn.ancono.math.prob
 
-import cn.ancono.math.numeric.NumericSup
+import cn.ancono.numeric.NumericSup
 import java.util.*
 import java.util.function.DoubleUnaryOperator
 import kotlin.math.sqrt

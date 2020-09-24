@@ -276,19 +276,19 @@ public abstract class Vector<T> extends Matrix<T> {
      * @see cn.ancono.math.algebra.abstractAlgebra.linearAlgebra.Matrix#transportMatrix()
      */
     @Override
-    public abstract Vector<T> transportMatrix();
+    public abstract Vector<T> transpose();
 
     public Vector<T> toRowVector() {
         if (isRow) {
             return this;
         } else {
-            return transportMatrix();
+            return transpose();
         }
     }
 
     public Vector<T> toColumnVector() {
         if (isRow) {
-            return transportMatrix();
+            return transpose();
         } else {
             return this;
         }

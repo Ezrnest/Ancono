@@ -1,4 +1,4 @@
-package cn.ancono.math.numeric
+package cn.ancono.numeric
 
 import cn.ancono.math.MathUtils
 import java.util.function.DoubleUnaryOperator

@@ -101,7 +101,7 @@ class DMatrix<T> extends Matrix<T> implements Serializable {
     }
 
     @Override
-    public Matrix<T> transportMatrix() {
+    public Matrix<T> transpose() {
         if (row != column) {
             throw new ArithmeticException("Row != Column");
         }

@@ -173,6 +173,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new DVector<>(arr, true, getMathCalculator());
     }
 
+    /**
+     * Returns a new mutable list of row vectors in this matrix.
+     */
     public List<Vector<T>> rowVectors() {
         List<Vector<T>> list = new ArrayList<>(row);
         for (int i = 0; i < row; i++) {
@@ -181,6 +184,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return list;
     }
 
+    /**
+     * Returns a new mutable list of column vectors in this matrix.
+     */
     public List<Vector<T>> columnVectors() {
         List<Vector<T>> list = new ArrayList<>(column);
         for (int i = 0; i < column; i++) {
@@ -239,12 +245,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     public abstract Matrix<T> negative();
 
     /**
-     * Return a MatrixN = this<sup>T</sup>. The new Matrix's row count = <code>this.column</code>
+     * Return the transpose of this matrix: <code>N = this<sup>T</sup></code>.
+     * The new Matrix's row count = <code>this.column</code>
      * , new Matrix's column count = <code>this.row</code>.
      *
      * @return <tt>this<sup>T</sup></tt>
      */
-    public Matrix<T> transportMatrix() {
+    public Matrix<T> transpose() {
         Object[][] re = new Object[column][row];
         for (int l = 0; l < row; ++l) {
             for (int c = 0; c < column; ++c) {
@@ -1465,6 +1472,25 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return VectorBasis.generate(rowVectors());
     }
 
+
+    /**
+     * Computes the (general) LU decomposition of the given matrix <code>A</code> , returns a tuple of matrices
+     * <code>(P,L,U)</code> such that
+     * <code>PA = LU</code>, <code>P</code> is a permutation matrix, <code>L</code> is a lower triangular matrix with 1
+     * as diagonal elements, and
+     * <code>U</code> is a upper triangular matrix.
+     * <br>
+     * It is required that the matrix is invertible.
+     * <br>
+     * <b>Note</b>: This method is not designed for numerical computation but for demonstration.
+     *
+     * @return a tuple a matrices <code>(P,L,U)</code>
+     */
+    public kotlin.Triple<Matrix<T>, Matrix<T>, Matrix<T>> decompLU() {
+        return MatrixSupKt.INSTANCE.decompositionLU(this);
+    }
+
+
     /**
      * Returns the frobenius form of this matrix.
      */
@@ -1562,7 +1588,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      *
      * @return (Q, R) as a pair
      */
-    public kotlin.Pair<Matrix<T>, Matrix<T>> qrDecomposition() {
+    public kotlin.Pair<Matrix<T>, Matrix<T>> decompQR() {
         if (!isSquare()) {
             throw new IllegalArgumentException();
         }
@@ -1599,6 +1625,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         var Q = Matrix.fromVectors(false, ws);
         var R = RB.build();
         return new kotlin.Pair<>(Q, R);
+    }
+
+    public Matrix<T> decompCholesky() {
+        //TODO
     }
 
 //    /**
@@ -1795,7 +1825,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         }
 
         @Override
-        public Matrix<T> transportMatrix() {
+        public Matrix<T> transpose() {
             Object[][] re = new Object[column][row];
             for (int l = 0; l < row; ++l) {
                 for (int c = 0; c < column; ++c) {
@@ -2484,7 +2514,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 throw new IllegalArgumentException("Different size!");
             }
             if (asRowVector ^ v.isRow) {
-                v = v.transportMatrix();
+                v = v.transpose();
             }
             arr[i] = v;
         }
@@ -2506,7 +2536,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 throw new IllegalArgumentException("Different size!");
             }
             if (asRowVector ^ v.isRow) {
-                v = v.transportMatrix();
+                v = v.transpose();
             }
             arr[index++] = v;
         }

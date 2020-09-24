@@ -6,8 +6,6 @@ import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.Multinomial;
 
-import static cn.ancono.math.numberModels.Fraction.of;
-
 /*
  * Created by lyc at 2020/2/29
  */
@@ -45,7 +43,7 @@ public class MatrixSample {
         J.printMatrix();
         System.out.println("P^T * A * P = ");
         // P^T*A*P = J
-        Matrix.multiply(P.transportMatrix(), A, P).printMatrix();
+        Matrix.multiply(P.transpose(), A, P).printMatrix();
     }
 
 

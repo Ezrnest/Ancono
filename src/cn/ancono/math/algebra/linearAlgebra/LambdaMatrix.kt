@@ -37,7 +37,7 @@ fun <T : Any> LambdaMatrix<T>.toNormalForm(): LambdaMatrix<T> {
     @Suppress("UNCHECKED_CAST")
     val data = Array<Array<Polynomial<T>>>(row) { i ->
         Array(column) { j ->
-            getNumber(i, j)
+            get(i, j)
         }
     }
     toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
@@ -112,7 +112,7 @@ object LambdaMatrixSup {
         @Suppress("UNCHECKED_CAST")
         val data = Array(matrix.row) { i ->
             Array<Any>(matrix.column) { j ->
-                matrix.getNumber(i, j)
+                matrix.get(i, j)
             }
         } as Array<Array<T>>
 
@@ -147,7 +147,7 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
     @Suppress("UNCHECKED_CAST")
     val data = Array<Array<Polynomial<T>>>(row) { i ->
         Array(column) { j ->
-            getNumber(i, j)
+            get(i, j)
         }
     }
     toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
@@ -379,7 +379,7 @@ fun <T : Any> LambdaMatrix<T>.doLambdaOperations(ops: List<LambdaPrimaryOperatio
     @Suppress("UNCHECKED_CAST")
     val data = Array<Array<Polynomial<T>>>(row) { i ->
         Array(column) { j ->
-            getNumber(i, j)
+            get(i, j)
         }
     }
     val mc = mathCalculator

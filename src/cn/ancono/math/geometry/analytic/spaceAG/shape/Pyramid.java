@@ -22,7 +22,7 @@ public abstract class Pyramid<T> extends Polyhedron<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#numEdge()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#numEdge()
      */
     @Override
     public long numEdge() {
@@ -30,7 +30,7 @@ public abstract class Pyramid<T> extends Polyhedron<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#numSurface()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#numSurface()
      */
     @Override
     public long numSurface() {
@@ -38,7 +38,7 @@ public abstract class Pyramid<T> extends Polyhedron<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#numVertex()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#numVertex()
      */
     @Override
     public long numVertex() {
@@ -46,7 +46,7 @@ public abstract class Pyramid<T> extends Polyhedron<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#isConvex()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#isConvex()
      */
     @Override
     public boolean isConvex() {

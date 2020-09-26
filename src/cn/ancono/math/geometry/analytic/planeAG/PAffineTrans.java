@@ -148,10 +148,10 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
             } catch (ArithmeticException ae) {
                 throw new ArithmeticException("Cannot inverse transformation.");
             }
-            T nc1 = getMc().negate(getMc().add(getMc().multiply(matInversed.getNumber(0, 0), v.x),
-                    getMc().multiply(matInversed.getNumber(0, 1), v.y)));
-            T nc2 = getMc().negate(getMc().add(getMc().multiply(matInversed.getNumber(1, 0), v.x),
-                    getMc().multiply(matInversed.getNumber(1, 1), v.y)));
+            T nc1 = getMc().negate(getMc().add(getMc().multiply(matInversed.get(0, 0), v.x),
+                    getMc().multiply(matInversed.get(0, 1), v.y)));
+            T nc2 = getMc().negate(getMc().add(getMc().multiply(matInversed.get(1, 0), v.x),
+                    getMc().multiply(matInversed.get(1, 1), v.y)));
             PVector<T> nv = PVector.valueOf(nc1, nc2, getMc());
             inversed = new PAffineTrans<>(getMc(), matInversed, nv);
             inversed.inversed = this;
@@ -251,16 +251,16 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 
     private void append(StringBuilder sb, FlexibleNumberFormatter<T, MathCalculator<T>> nf, int n) {
         boolean appended = false;
-        if (!getMc().isZero(mat.getNumber(n, 0))) {
+        if (!getMc().isZero(mat.get(n, 0))) {
             appended = true;
-            sb.append("(").append(nf.format(mat.getNumber(n, 0), getMc())).append(")x+");
+            sb.append("(").append(nf.format(mat.get(n, 0), getMc())).append(")x+");
         }
-        if (!getMc().isZero(mat.getNumber(n, 1))) {
+        if (!getMc().isZero(mat.get(n, 1))) {
             appended = true;
-            sb.append("(").append(nf.format(mat.getNumber(n, 1), getMc())).append(")y+");
+            sb.append("(").append(nf.format(mat.get(n, 1), getMc())).append(")y+");
         }
-        if (!appended || !getMc().isZero(v.getNumber(n))) {
-            sb.append(nf.format(v.getNumber(n), getMc()));
+        if (!appended || !getMc().isZero(v.get(n))) {
+            sb.append(nf.format(v.get(n), getMc()));
         } else {
             sb.deleteCharAt(sb.length() - 1);
         }

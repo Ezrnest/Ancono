@@ -49,7 +49,7 @@ public abstract class Vector<T> extends Matrix<T> {
         return getSize() == v.getSize();
     }
 
-    public abstract T getNumber(int index);
+    public abstract T get(int index);
 
     /**
      * Returns an array containing all of the elements in this vector in
@@ -80,7 +80,7 @@ public abstract class Vector<T> extends Matrix<T> {
             int size = getSize();
             Object[][] mat = new Object[size][1];
             for (int i = 0; i < size; i++) {
-                mat[i][0] = getNumber(i);
+                mat[i][0] = get(i);
             }
             return mat;
         }
@@ -119,7 +119,7 @@ public abstract class Vector<T> extends Matrix<T> {
         T re = mc.getZero();
         int size = getSize();
         for (int i = 0; i < size; i++) {
-            T t = getNumber(i);
+            T t = get(i);
             re = mc.add(mc.multiply(t, t), re);
         }
         return re;
@@ -146,7 +146,7 @@ public abstract class Vector<T> extends Matrix<T> {
         final int size = getSize();
         T re = mc.getZero();
         for (int i = 0; i < size; i++) {
-            re = mc.add(mc.multiply(getNumber(i), v.getNumber(i)), re);
+            re = mc.add(mc.multiply(get(i), v.get(i)), re);
         }
         return re;
     }
@@ -190,7 +190,7 @@ public abstract class Vector<T> extends Matrix<T> {
     public boolean isZeroVector() {
         var mc = getMc();
         for (int i = 0, size = getSize(); i < size; i++) {
-            if (!mc.isZero(getNumber(i))) {
+            if (!mc.isZero(get(i))) {
                 return false;
             }
         }
@@ -222,8 +222,8 @@ public abstract class Vector<T> extends Matrix<T> {
         }
         final int size = getSize();
         int not0 = 0;
-        while (getMc().isZero(getNumber(not0))) {
-            if (!getMc().isZero(v.getNumber(not0))) {
+        while (getMc().isZero(get(not0))) {
+            if (!getMc().isZero(v.get(not0))) {
                 return false;
             }
             not0++;
@@ -231,10 +231,10 @@ public abstract class Vector<T> extends Matrix<T> {
                 return true;
             }
         }
-        T t1 = getNumber(not0);
-        T t2 = v.getNumber(not0);
+        T t1 = get(not0);
+        T t2 = v.get(not0);
         for (int i = not0 + 1; i < size; i++) {
-            if (!getMc().isEqual(getMc().multiply(t1, v.getNumber(i)), getMc().multiply(t2, getNumber(i)))) {
+            if (!getMc().isEqual(getMc().multiply(t1, v.get(i)), getMc().multiply(t2, get(i)))) {
                 return false;
             }
         }
@@ -242,7 +242,7 @@ public abstract class Vector<T> extends Matrix<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.Matrix#applyFunction(cn.ancono.utilities.math.MathFunction)
+     * @see cn.ancono.cn.ancono.utilities.math.Matrix#applyFunction(cn.ancono.cn.ancono.utilities.math.MathFunction)
      */
     @Override
     public abstract Vector<T> applyFunction(MathFunction<T, T> f);
@@ -309,7 +309,7 @@ public abstract class Vector<T> extends Matrix<T> {
         T[] vec = (T[]) new Object[size];
         int pos = Math.min(size, this.getSize());
         for (int i = 0; i < pos; i++) {
-            vec[i] = getNumber(i);
+            vec[i] = get(i);
         }
         var mc = getMc();
         for (int i = pos; i < size; i++) {
@@ -325,7 +325,7 @@ public abstract class Vector<T> extends Matrix<T> {
         sb.append("(");
         int size = getSize();
         for (int i = 0; i < size; i++) {
-            sb.append(nf.format(getNumber(i), getMc())).append(",");
+            sb.append(nf.format(get(i), getMc())).append(",");
         }
         sb.deleteCharAt(sb.length() - 1);
         sb.append(")");
@@ -440,7 +440,7 @@ public abstract class Vector<T> extends Matrix<T> {
         T[] re = (T[]) new Object[size];
         MathCalculator<T> mc = v1.getMc();
         for (int i = 0; i < re.length; i++) {
-            re[i] = mc.add(v1.getNumber(i), v2.getNumber(i));
+            re[i] = mc.add(v1.get(i), v2.get(i));
         }
         return new DVector<>(re, false, mc);
     }
@@ -458,7 +458,7 @@ public abstract class Vector<T> extends Matrix<T> {
         T[] re = (T[]) new Object[size];
         MathCalculator<T> mc = v1.getMc();
         for (int i = 0; i < re.length; i++) {
-            re[i] = mc.subtract(v1.getNumber(i), v2.getNumber(i));
+            re[i] = mc.subtract(v1.get(i), v2.get(i));
         }
         return new DVector<>(re, false, mc);
     }
@@ -498,7 +498,7 @@ public abstract class Vector<T> extends Matrix<T> {
                 throw new IllegalArgumentException();
             }
             for (int i = 0; i < size; i++) {
-                re[i] = mc.add(re[i], v.getNumber(i));
+                re[i] = mc.add(re[i], v.get(i));
             }
         }
         return new DVector<>(re, false, mc);
@@ -522,7 +522,7 @@ public abstract class Vector<T> extends Matrix<T> {
                 throw new IllegalArgumentException();
             }
             for (int i = 0; i < size; i++) {
-                re[i] = mc.add(re[i], vt.getNumber(i));
+                re[i] = mc.add(re[i], vt.get(i));
             }
         }
         return new DVector<>(re, false, mc);
@@ -661,7 +661,7 @@ public abstract class Vector<T> extends Matrix<T> {
             if (i >= nSize) {
                 break;
             }
-            arr[i] = v.getNumber(i - leftExpansion);
+            arr[i] = v.get(i - leftExpansion);
         }
         for (int i = leftExpansion + size; i < nSize; i++) {
             arr[i] = z;
@@ -775,11 +775,7 @@ public abstract class Vector<T> extends Matrix<T> {
         T z = mc.getZero();
         for (int i = 0; i < length; i++) {
             T t = map.get(i);
-            if (t == null) {
-                arr[i] = z;
-            } else {
-                arr[i] = t;
-            }
+            arr[i] = Objects.requireNonNullElse(t, z);
         }
         return new DVector<>(arr, false, mc);
     }
@@ -816,7 +812,7 @@ public abstract class Vector<T> extends Matrix<T> {
         for (int i = 0; i < mat.row; i++) {
             T t = mc.getZero();
             for (int j = 0; j < mat.column; j++) {
-                t = mc.add(t, mc.multiply(mat.getNumber(i, j), v.getNumber(j)));
+                t = mc.add(t, mc.multiply(mat.get(i, j), v.get(j)));
             }
             result[i] = t;
         }
@@ -842,7 +838,7 @@ public abstract class Vector<T> extends Matrix<T> {
         for (int i = 0; i < mat.column; i++) {
             T t = mc.getZero();
             for (int j = 0; j < mat.row; j++) {
-                t = mc.add(t, mc.multiply(v.getNumber(j), mat.getNumber(j, i)));
+                t = mc.add(t, mc.multiply(v.get(j), mat.get(j, i)));
             }
             result[i] = t;
         }
@@ -941,7 +937,7 @@ public abstract class Vector<T> extends Matrix<T> {
 
     private static <T> boolean isEmptyRow(Matrix<T> mat, int row, MathCalculator<T> mc) {
         for (int i = 0; i < mat.column; i++) {
-            if (!mc.isZero(mat.getNumber(row, i))) {
+            if (!mc.isZero(mat.get(row, i))) {
                 return false;
             }
         }
@@ -971,6 +967,8 @@ public abstract class Vector<T> extends Matrix<T> {
     public static <T> LinearSpaceCalculator<T, Vector<T>> getCalculator(MathCalculator<T> mc, int dimension) {
         return new LinearCalculator<>(mc, dimension);
     }
+
+
 //	public static void main(String[] args) {
 //	    var v1 = Vector.createVector(new long[]{1,3,14});
 //	    v1 = Vector.resizeOf(v1,-1,1);

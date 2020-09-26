@@ -23,7 +23,6 @@ import cn.ancono.math.numberModels.expression.*
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.math.numberTheory.combination.CombUtils
 import java.util.function.DoubleUnaryOperator
-import kotlin.coroutines.experimental.buildSequence
 
 object Calculus {
     /**

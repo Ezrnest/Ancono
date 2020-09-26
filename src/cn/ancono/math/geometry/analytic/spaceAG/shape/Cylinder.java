@@ -71,7 +71,7 @@ public final class Cylinder<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.SpaceObject#volume()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.SpaceObject#volume()
      */
     @Override
     public T volume() {
@@ -80,7 +80,7 @@ public final class Cylinder<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.SpaceObject#surfaceArea()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.SpaceObject#surfaceArea()
      */
     @Override
     public T surfaceArea() {

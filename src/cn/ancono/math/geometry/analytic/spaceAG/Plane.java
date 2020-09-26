@@ -214,7 +214,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
         Vector<T> base = so.getSpecialSolution();
         return new Line<>(getMc(),
-                new SPoint<>(getMc(), base.getNumber(0), base.getNumber(1), base.getNumber(2)),
+                new SPoint<>(getMc(), base.get(0), base.get(1), base.get(2)),
                 SVector.fromVector(ks[0]));
     }
 

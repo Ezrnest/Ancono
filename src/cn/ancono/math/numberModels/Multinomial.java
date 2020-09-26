@@ -1596,7 +1596,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 //        print(m2);
 //        print(m1.divideAndRemainder(m2));
 //        Multinomial m = valueOf("x+y+z");
-//        cn.ancono.utilities.Timer t = new cn.ancono.utilities.Timer(TimeUnit.MILLISECONDS);
+//        cn.ancono.cn.ancono.utilities.Timer t = new cn.ancono.cn.ancono.utilities.Timer(TimeUnit.MILLISECONDS);
 //        t.start();
 //        m.pow(100);
 //        print(t.end());

@@ -1,8 +1,6 @@
 package cn.ancono.math.algebra.linearAlgebra;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator;
 import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution.Situation;
 import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution.SolutionBuilder;
 import cn.ancono.math.equation.EquationSolver;
@@ -12,7 +10,6 @@ import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.math.numberTheory.IntCalculator;
 import cn.ancono.utilities.ArraySup;
-import cn.ancono.utilities.RegexSup;
 import kotlin.Pair;
 import org.jetbrains.annotations.Nullable;
 
@@ -226,6 +223,12 @@ public class MatrixSup {
 
     private static final Pattern ROW_PATTERN = Pattern.compile("\\[(.+?)]");
 
+    private static final Pattern SPACE = Pattern.compile(" +");
+
+    private static final Pattern LINE = Pattern.compile("^.*?$");
+
+    private static final Pattern LINE_SEPARATOR = Pattern.compile("(\r\n)|(\r)|(\n)");
+
     /**
      * Parse a string to matrix, each row should be wrapped with a pair of '[]' and the matrix can be optionally
      * wrapped. The deliminator of elements in a row is one or more spaces.
@@ -241,7 +244,7 @@ public class MatrixSup {
         var matcher = ROW_PATTERN.matcher(str);
         while (matcher.find()) {
             String row = matcher.group(1);
-            String[] rowElements = RegexSup.SPACE.split(row);
+            String[] rowElements = SPACE.split(row);
             if (column == -1) {
                 column = rowElements.length;
             } else {
@@ -275,10 +278,10 @@ public class MatrixSup {
      */
     public static <T> Matrix<T> parseMatrixD(String str,
                                              MathCalculator<T> mc, Function<String, ? extends T> parser) {
-        String[] rows = RegexSup.LINE_SEPARATOR.split(str);
+        String[] rows = LINE_SEPARATOR.split(str);
         String[][] data = new String[rows.length][];
         for (int i = 0; i < rows.length; i++) {
-            data[i] = RegexSup.SPACE.split(rows[i]);
+            data[i] = SPACE.split(rows[i]);
         }
         return parseMatrix(data, mc, parser);
     }
@@ -293,7 +296,7 @@ public class MatrixSup {
      * For example, <pre>1 2 3</pre> is a valid vector.
      */
     public static <T> Vector<T> parseVector(String str, MathCalculator<T> mc, Function<String, ? extends T> parser) {
-        return parseVector0(str, RegexSup.SPACE, mc, parser);
+        return parseVector0(str, SPACE, mc, parser);
     }
 
     private static <T> Vector<T> parseVector0(String str, Pattern deliminator, MathCalculator<T> mc, Function<String, ? extends T> parser) {
@@ -639,9 +642,9 @@ public class MatrixSup {
         for (int i = 0; i < m.row; i++) {
             for (int j = 0; j < m.column; j++) {
                 if (i == j) {
-                    data[i][j] = Polynomial.ofRoot(mc, m.getNumber(i, j));
+                    data[i][j] = Polynomial.ofRoot(mc, m.get(i, j));
                 } else {
-                    data[i][j] = Polynomial.constant(mc, mc.negate(m.getNumber(i, j)));
+                    data[i][j] = Polynomial.constant(mc, mc.negate(m.get(i, j)));
                 }
             }
         }

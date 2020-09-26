@@ -162,7 +162,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isInside(cn.ancono.utilities.math.spaceAG.SPoint)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isInside(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
      */
     @Override
     public boolean isInside(SPoint<T> p) {
@@ -170,7 +170,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isOnSurface(cn.ancono.utilities.math.spaceAG.SPoint)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isOnSurface(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
      */
     @Override
     public boolean isOnSurface(SPoint<T> p) {
@@ -178,7 +178,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.utilities.math.spaceAG.SPoint)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
      */
     @Override
     public boolean contains(SPoint<T> p) {
@@ -300,7 +300,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.utilities.math.MathCalculator)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
      */
     @NotNull
     @Override
@@ -318,7 +318,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
@@ -330,7 +330,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#hashCode()
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#hashCode()
      */
     @Override
     public int hashCode() {
@@ -338,7 +338,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
     public boolean valueEquals(@NotNull MathObject<T> obj) {
@@ -350,7 +350,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
      */
     @Override
     public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
@@ -448,7 +448,7 @@ public final class Sphere<T> extends SpaceObject<T> {
             throw new IllegalArgumentException("Four points identity plane");
         }
         Vector<T> vec = sov.getSpecialSolution();
-        SPoint<T> o = SPoint.valueOf(vec.getNumber(0), vec.getNumber(1), vec.getNumber(2), mc);
+        SPoint<T> o = SPoint.valueOf(vec.get(0), vec.get(1), vec.get(2), mc);
         T r2 = a.distanceSq(o);
         return new Sphere<T>(mc, null, r2, o);
     }

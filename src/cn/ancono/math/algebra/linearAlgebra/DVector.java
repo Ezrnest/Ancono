@@ -34,7 +34,7 @@ public final class DVector<T> extends Vector<T> {
     }
 
     @Override
-    public T getNumber(int i, int j) {
+    public T get(int i, int j) {
         super.rowRangeCheck(i);
         super.columnRangeCheck(j);
         if (isRow) {
@@ -51,7 +51,7 @@ public final class DVector<T> extends Vector<T> {
      * @return the number in {@code i} dimension of this vector
      */
     @Override
-    public T getNumber(int i) {
+    public T get(int i) {
         if (isRow) {
             super.columnRangeCheck(i);
             return vec[i];
@@ -359,7 +359,7 @@ public final class DVector<T> extends Vector<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.AbstractVector#applyFunction(cn.ancono.utilities.math.MathFunction)
+     * @see cn.ancono.cn.ancono.utilities.math.AbstractVector#applyFunction(cn.ancono.cn.ancono.utilities.math.MathFunction)
      */
     @Override
     public DVector<T> applyFunction(MathFunction<T, T> f) {
@@ -375,7 +375,7 @@ public final class DVector<T> extends Vector<T> {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
         for (int i = 0, size = getSize(); i < size; i++) {
-            sb.append(nf.format(getNumber(i), getMc())).append(',');
+            sb.append(nf.format(get(i), getMc())).append(',');
         }
         sb.setCharAt(sb.length() - 1, ']');
         return sb.toString();

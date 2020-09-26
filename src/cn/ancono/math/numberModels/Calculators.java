@@ -246,7 +246,7 @@ public final class Calculators {
 
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.MathCalculator#getNumberClass()
+         * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
          */
         @NotNull
         @Override
@@ -1723,7 +1723,7 @@ public final class Calculators {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.MathCalculatorAdapter.DoubleCalculator#isEqual(java.lang.Double, java.lang.Double)
+         * @see cn.ancono.cn.ancono.utilities.math.MathCalculatorAdapter.DoubleCalculator#isEqual(java.lang.Double, java.lang.Double)
          */
         @Override
         public boolean isEqual(@NotNull Double x, @NotNull Double y) {
@@ -1737,7 +1737,7 @@ public final class Calculators {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.MathCalculator#isZero(java.lang.Object)
+         * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#isZero(java.lang.Object)
          */
         @Override
         public boolean isZero(@NotNull Double para) {

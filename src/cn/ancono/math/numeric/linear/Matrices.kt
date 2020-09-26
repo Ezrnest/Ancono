@@ -1,11 +1,11 @@
-package cn.ancono.numeric.linear
+package cn.ancono.math.numeric.linear
 
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
 import cn.ancono.math.algebra.linearAlgebra.Matrix
 import cn.ancono.math.algebra.linearAlgebra.MatrixOperation
 import cn.ancono.math.algebra.linearAlgebra.MatrixSup
 
-object LinearEquations {
+object Matrices {
 
     /**
      * Computes the sequence of elementary operations transforming the given matrix to identity matrix with
@@ -123,6 +123,28 @@ object LinearEquations {
         return operations
     }
 
+
+    /**
+     * Returns the condition number of the matrix defined by p-norm, which is defined by:
+     *
+     *     |A|_p |A^(-1)|_p
+     *
+     * If the given [p] is `null`, then infinity norm will
+     * be used.
+     *
+     * It is required that the given matrix is invertible.
+     *
+     * @param m an invertible matrix
+     * @param p a number `>=1`, or `null`.
+     */
+    fun <T : Any> cond(m : Matrix<T>, p : T?) : T{
+        val mc = m.mathCalculator
+        val n = m.inverse()
+
+        return mc.eval{
+            m.normP(p) * n.normP(p)
+        }
+    }
 
 }
 

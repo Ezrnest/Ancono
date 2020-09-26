@@ -51,7 +51,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
      * @see cn.ancono.math.Matrix#getNumber(int, int)
      */
     @Override
-    public T getNumber(int i, int j) {
+    public T get(int i, int j) {
         return data[i][j];
     }
 

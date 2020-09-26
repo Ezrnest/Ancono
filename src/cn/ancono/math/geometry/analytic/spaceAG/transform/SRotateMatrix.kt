@@ -51,7 +51,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         return SRotateMatrix(mc, nmat)
     }
 
-    override fun getNumber(i: Int, j: Int): T {
+    override fun get(i: Int, j: Int): T {
         return mat[i][j] as T
     }
 

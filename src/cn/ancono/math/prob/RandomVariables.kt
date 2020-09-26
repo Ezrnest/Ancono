@@ -1,6 +1,6 @@
 package cn.ancono.math.prob
 
-import cn.ancono.numeric.NumericSup
+import cn.ancono.math.numeric.NumericSup
 import java.util.*
 import java.util.function.DoubleUnaryOperator
 import kotlin.math.sqrt
@@ -35,7 +35,8 @@ fun <T, R> RandomVariable<T>.map(f: (T) -> R): RandomVariable<R> {
 }
 
 operator fun DoubleRV.unaryMinus(): DoubleRV {
-    return this.map(Double::unaryMinus)
+    return this.map<Double,Double>(Double::unaryMinus as (Double)->Double)
+//    return this.map
 }
 
 /**

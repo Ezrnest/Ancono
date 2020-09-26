@@ -199,7 +199,7 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
         v1 = list.get(0);
         v2 = list.get(1);
         TransMatrix<T> matrix =
-                TransMatrix.valueOf(v1.getNumber(0), v2.getNumber(0), v1.getNumber(1), v2.getNumber(1), getMc());
+                TransMatrix.valueOf(v1.get(0), v2.get(0), v1.get(1), v2.get(1), getMc());
         ConicSection<T> cs = this.transform(matrix.inverse());
         return new Pair<>(matrix, cs);
     }

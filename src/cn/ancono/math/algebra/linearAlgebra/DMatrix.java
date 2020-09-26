@@ -78,7 +78,7 @@ class DMatrix<T> extends Matrix<T> implements Serializable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public T getNumber(int i, int j) {
+    public T get(int i, int j) {
         return (T) data[i][j];
     }
 

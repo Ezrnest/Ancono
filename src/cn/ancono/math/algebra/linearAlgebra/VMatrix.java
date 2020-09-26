@@ -39,13 +39,13 @@ final class VMatrix<T> extends Matrix<T> {
      * @see cn.ancono.math.algebra.abstractAlgebra.linearAlgebra.Matrix#getNumber(int, int)
      */
     @Override
-    public T getNumber(int i, int j) {
+    public T get(int i, int j) {
         rowRangeCheck(i);
         columnRangeCheck(j);
         if (isRow) {
-            return vs[i].getNumber(j);
+            return vs[i].get(j);
         } else {
-            return vs[j].getNumber(i);
+            return vs[j].get(i);
         }
     }
 
@@ -64,7 +64,7 @@ final class VMatrix<T> extends Matrix<T> {
             obj = new Object[row][column];
             for (int j = 0; j < column; j++) {
                 for (int i = 0; i < row; i++) {
-                    obj[i][j] = vs[j].getNumber(i);
+                    obj[i][j] = vs[j].get(i);
                 }
             }
         }
@@ -133,7 +133,7 @@ final class VMatrix<T> extends Matrix<T> {
             for (int j = 0; j < column; j++) {
                 if (j == c)
                     continue;
-                mat[x][y] = getNumber(i, j);
+                mat[x][y] = get(i, j);
                 y++;
             }
             x++;

@@ -158,7 +158,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
 
         //here shows the advantage of naming the vector in space as SVector
         Vector<T> base = sov.getSpecialSolution();
-        T k = base.getNumber(0);
+        T k = base.get(0);
 
         return new SPoint<T>(getMc(), getMc().add(p0.x, getMc().multiply(k, vec.x)),
                 getMc().add(p0.y, getMc().multiply(k, vec.y)),
@@ -412,7 +412,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#intersect(cn.ancono.utilities.math.spaceAG.SpacePointSet)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#intersect(cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet)
      */
     @Override
     @SuppressWarnings("unchecked")

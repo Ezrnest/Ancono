@@ -238,8 +238,8 @@ public final class SVector<T> extends Vector<T> {
      * This method will ignore j.
      */
     @Override
-    public T getNumber(int i, int j) {
-        return getNumber(i);
+    public T get(int i, int j) {
+        return get(i);
     }
 
     @Override
@@ -248,7 +248,7 @@ public final class SVector<T> extends Vector<T> {
     }
 
     @Override
-    public T getNumber(int i) {
+    public T get(int i) {
         switch (i) {
             case 0:
                 return x;
@@ -648,7 +648,7 @@ public final class SVector<T> extends Vector<T> {
         if (v.getSize() < 3) {
             throw new IllegalArgumentException("Too small");
         }
-        return new SVector<T>(v.getNumber(0), v.getNumber(1), v.getNumber(2), v.getMathCalculator());
+        return new SVector<T>(v.get(0), v.get(1), v.get(2), v.getMathCalculator());
     }
 
     /**
@@ -909,7 +909,7 @@ public final class SVector<T> extends Vector<T> {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.utilities.math.MathCalculator)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
          */
         @Override
         public <N> SVectorGenerator<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
@@ -917,7 +917,7 @@ public final class SVector<T> extends Vector<T> {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
          */
         @Override
         public boolean equals(Object obj) {
@@ -928,7 +928,7 @@ public final class SVector<T> extends Vector<T> {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#hashCode()
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#hashCode()
          */
         @Override
         public int hashCode() {
@@ -936,7 +936,7 @@ public final class SVector<T> extends Vector<T> {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
          */
         @Override
         public boolean valueEquals(@NotNull MathObject<T> obj) {
@@ -944,7 +944,7 @@ public final class SVector<T> extends Vector<T> {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
          */
         @Override
         public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {

@@ -417,7 +417,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          */
         val i: Complex<T> = Complex.imaginary(mc.one, mc)
         /* (non-Javadoc)
-		 * @see cn.ancono.utilities.math.MathCalculator#getNumberClass()
+		 * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
 		 */
         override val numberClass: Class<Complex<*>>
             get() = Complex::class.java

@@ -232,7 +232,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.utilities.math.spaceAG.SPoint)
+         * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
          */
         @Override
         public boolean contains(SPoint<T> p) {
@@ -248,7 +248,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.utilities.math.MathCalculator)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
          */
         @NotNull
         @Override
@@ -257,7 +257,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
          */
         @Override
         public boolean equals(Object obj) {
@@ -269,7 +269,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#hashCode()
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#hashCode()
          */
         @Override
         public int hashCode() {
@@ -277,7 +277,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
          */
         @Override
         public boolean valueEquals(@NotNull MathObject<T> obj) {
@@ -288,7 +288,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
          */
         @Override
         public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
@@ -308,7 +308,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#union(cn.ancono.utilities.math.spaceAG.SpacePointSet)
+         * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#union(cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet)
          */
         @Override
         public UniversePointSet<T> union(SpacePointSet<T> set) {
@@ -316,7 +316,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#intersect(cn.ancono.utilities.math.spaceAG.SpacePointSet)
+         * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#intersect(cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet)
          */
         @Override
         public SpacePointSet<T> intersect(SpacePointSet<T> set) {
@@ -333,7 +333,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.utilities.math.spaceAG.SPoint)
+         * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
          */
         @Override
         public boolean contains(SPoint<T> p) {
@@ -341,7 +341,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.utilities.math.MathCalculator)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
          */
         @NotNull
         @Override
@@ -350,7 +350,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
          */
         @Override
         public boolean equals(Object obj) {
@@ -362,7 +362,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#hashCode()
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#hashCode()
          */
         @Override
         public int hashCode() {
@@ -370,7 +370,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
          */
         @Override
         public boolean valueEquals(@NotNull MathObject<T> obj) {
@@ -381,7 +381,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
          */
         @Override
         public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
@@ -401,7 +401,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#intersect(cn.ancono.utilities.math.spaceAG.SpacePointSet)
+         * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#intersect(cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet)
          */
         @Override
         public EmptyPointSet<T> intersect(SpacePointSet<T> set) {
@@ -409,7 +409,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#union(cn.ancono.utilities.math.spaceAG.SpacePointSet)
+         * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#union(cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet)
          */
         @Override
         public SpacePointSet<T> union(SpacePointSet<T> set) {
@@ -432,7 +432,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.utilities.math.spaceAG.SPoint)
+         * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
          */
         @Override
         public boolean contains(SPoint<T> p) {
@@ -460,7 +460,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.utilities.math.MathCalculator)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
          */
         @NotNull
         @Override
@@ -473,7 +473,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
          */
         @Override
         public boolean equals(Object obj) {
@@ -487,7 +487,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#hashCode()
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#hashCode()
          */
         @Override
         public int hashCode() {
@@ -495,7 +495,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
          */
         @SuppressWarnings("unchecked")
         @Override
@@ -511,7 +511,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
 
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
+         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
          */
         @SuppressWarnings("unchecked")
         @Override

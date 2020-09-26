@@ -5,6 +5,7 @@ package cn.ancono.math.function;
 
 import cn.ancono.math.property.Invertible;
 import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Objects;

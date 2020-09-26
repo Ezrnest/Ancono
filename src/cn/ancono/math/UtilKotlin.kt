@@ -18,8 +18,6 @@ import cn.ancono.utilities.structure.Pair
  * Provides extension methods for convenience.
  */
 
-operator fun <T> Vector<T>.get(i: Int) = this.getNumber(i)!!
-operator fun <T> Matrix<T>.get(i: Int, j: Int) = this.getNumber(i, j)!!
 operator fun <T> Matrix<T>.get(row: Int) = getRow(row)!!
 
 operator fun <T> Matrix<T>.times(mat: Matrix<T>) = Matrix.multiply(this, mat)!!
@@ -93,12 +91,12 @@ fun <T> List<T>.exclude(idx: Int): List<T> {
     return result
 }
 
-fun <T : Comparable<T>> List<T>.isSorted(inversedNaturalOrder: Boolean = false): Boolean {
+fun <T : Comparable<T>> List<T>.isSorted(invertedNaturalOrder: Boolean = false): Boolean {
     if (this.size < 2) {
         return true
     }
     for (n in 1 until size) {
-        if (inversedNaturalOrder) {
+        if (invertedNaturalOrder) {
             if (this[n - 1] < this[n]) {
                 return false
             }

@@ -2,7 +2,6 @@ package cn.ancono.math.numberTheory
 
 import cn.ancono.math.MathUtils
 import cn.ancono.math.numberModels.Fraction
-import kotlin.coroutines.experimental.buildSequence
 
 object NaiveNumberTheory {
 

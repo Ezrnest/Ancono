@@ -64,7 +64,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
 
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#isVertex(cn.ancono.utilities.math.spaceAG.SPoint)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#isVertex(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
      */
     @Override
     public boolean isVertex(SPoint<T> p) {
@@ -80,7 +80,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#isSurface(cn.ancono.utilities.math.spaceAG.Plane)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#isSurface(cn.ancono.cn.ancono.utilities.math.spaceAG.Plane)
      */
     @Override
     public boolean isSurface(Plane<T> p) {
@@ -96,7 +96,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#getEdges()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#getEdges()
      */
     @Override
     public Set<Segment<T>> getEdges() {
@@ -108,7 +108,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#getSurfaces()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#getSurfaces()
      */
     @Override
     public Set<Plane<T>> getSurfaces() {
@@ -194,7 +194,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     private T surfaceArea = null;
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#surfaceArea()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#surfaceArea()
      */
     @Override
     public T surfaceArea() {
@@ -208,7 +208,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     private T volume = null;
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.Polyhedron#volume()
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.Polyhedron#volume()
      */
     @Override
     public T volume() {
@@ -309,7 +309,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     private int planeDirect = 0;
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isInside(cn.ancono.utilities.math.spaceAG.SPoint)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isInside(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
      */
     @Override
     public boolean isInside(SPoint<T> p) {
@@ -328,7 +328,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isOnSurface(cn.ancono.utilities.math.spaceAG.SPoint)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.SpaceObject#isOnSurface(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
      */
     @Override
     public boolean isOnSurface(SPoint<T> p) {
@@ -343,7 +343,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.utilities.math.spaceAG.SPoint)
+     * @see cn.ancono.cn.ancono.utilities.math.spaceAG.SpacePointSet#contains(cn.ancono.cn.ancono.utilities.math.spaceAG.SPoint)
      */
     @Override
     public boolean contains(SPoint<T> p) {
@@ -374,7 +374,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.utilities.math.MathCalculator)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
      */
     @NotNull
     @Override
@@ -389,7 +389,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
@@ -400,7 +400,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#hashCode()
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#hashCode()
      */
     @Override
     public int hashCode() {
@@ -408,7 +408,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
     public boolean valueEquals(@NotNull MathObject<T> obj) {
@@ -420,7 +420,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
+     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
      */
     @Override
     public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {

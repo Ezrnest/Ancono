@@ -61,7 +61,7 @@ public final class PVector<T> extends Vector<T> {
      * @see cn.ancono.math.AbstractVector#getNumber(int)
      */
     @Override
-    public T getNumber(int index) {
+    public T get(int index) {
         switch (index) {
             case 0:
                 return x;
@@ -126,11 +126,11 @@ public final class PVector<T> extends Vector<T> {
     }
 
     /** Ignores the parameter {@code i}.
-     * @see Matrix#getNumber(int, int)
+     * @see Matrix#get(int, int)
      */
     @Override
-    public T getNumber(int i, int j) {
-        return getNumber(j);
+    public T get(int i, int j) {
+        return get(j);
     }
 
     /* (non-Javadoc)
@@ -532,7 +532,7 @@ public final class PVector<T> extends Vector<T> {
         if (v.getSize() < 2) {
             throw new IllegalArgumentException("Too small");
         }
-        return new PVector<T>(v.getNumber(0), v.getNumber(1), v.getMathCalculator());
+        return new PVector<T>(v.get(0), v.get(1), v.getMathCalculator());
     }
 
     /**

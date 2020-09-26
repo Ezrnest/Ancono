@@ -509,7 +509,7 @@ ConicSection<T>
         }
         //compute inverse
         tmat = tmat.inverse();
-        return transform0(tmat.getNumber(0, 0), tmat.getNumber(0, 1), tmat.getNumber(1, 0), tmat.getNumber(1, 1));
+        return transform0(tmat.get(0, 0), tmat.get(0, 1), tmat.get(1, 0), tmat.get(1, 1));
     }
 
     /**

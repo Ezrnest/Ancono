@@ -505,9 +505,9 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         val (_, r) = a.divideAndRemainder(b)
         return r.isZero
     }
-    //    override fun divideAndRemainder(a: Multinomial, b: Multinomial): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
+    //    override fun divideAndRemainder(a: Multinomial, b: Multinomial): cn.ancono.cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
 //        val arr = a.divideAndRemainder(b)
-//        return cn.ancono.utilities.structure.Pair(arr[0], arr[1])
+//        return cn.ancono.cn.ancono.utilities.structure.Pair(arr[0], arr[1])
 //    }
 //
 //    override fun remainder(a: Multinomial, b: Multinomial): Multinomial {

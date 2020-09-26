@@ -608,8 +608,7 @@ public final class Permutations {
 
     static void rangeAndDuplicateCheck(int[] array, int ubound) {
         boolean[] marks = new boolean[ubound];
-        for (int i = 0; i < array.length; i++) {
-            int j = array[i];
+        for (int j : array) {
             if (j < 0 || j >= ubound) {
                 throw new IllegalArgumentException("Invalid index=" + j);
             }
@@ -623,9 +622,6 @@ public final class Permutations {
     /**
      * Gets a permutation of the specific array as the method getArray() in
      * Permutation.
-     *
-     * @param array
-     * @return
      */
     public static Permutation valueOf(int[] array) {
         sizeCheck(array.length);
@@ -634,12 +630,9 @@ public final class Permutations {
     }
 
     /**
-     * Returns the
+     * Returns the permutation of swapping the i-th element and the j-th element.
      *
-     * @param size
-     * @param i
-     * @param j
-     * @return
+     * @param size the size(length) of the permutation
      */
     public static Transposition swap(int size, int i, int j) {
         sizeCheck(size);

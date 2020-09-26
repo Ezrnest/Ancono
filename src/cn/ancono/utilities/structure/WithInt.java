@@ -17,9 +17,9 @@ public final class WithInt<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WithInt)) return false;
+        if (!(o instanceof cn.ancono.utilities.structure.WithInt)) return false;
 
-        WithInt<?> withInt = (WithInt<?>) o;
+        cn.ancono.utilities.structure.WithInt<?> withInt = (cn.ancono.utilities.structure.WithInt<?>) o;
 
         if (x != withInt.x) return false;
         return obj != null ? obj.equals(withInt.obj) : withInt.obj == null;

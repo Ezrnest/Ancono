@@ -1,5 +1,5 @@
 /**
- * Contains all the data structure utilities.
+ * Contains all the data structure cn.ancono.utilities.
  *
  * @author lyc
  */

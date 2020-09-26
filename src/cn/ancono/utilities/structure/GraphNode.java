@@ -5,7 +5,7 @@ package cn.ancono.utilities.structure;
  * @param <N> the subclass of GraphNode that methods will return.
  * @author lyc
  */
-public abstract class GraphNode<E, N extends GraphNode<E, N>> extends Node<E> {
+public abstract class GraphNode<E, N extends cn.ancono.utilities.structure.GraphNode<E, N>> extends Node<E> {
 
 
     protected GraphNode(E ele) {

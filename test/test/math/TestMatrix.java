@@ -14,7 +14,6 @@ import cn.ancono.math.geometry.analytic.planeAG.curve.GeneralConicSection;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.ArraySup;
-import cn.ancono.utilities.Printer;
 import cn.ancono.utilities.structure.Pair;
 import org.junit.Test;
 
@@ -44,7 +43,7 @@ public class TestMatrix {
         var n = Math.min(m.getRowCount(), m.getColumnCount());
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < i; j++) {
-                if (!mc.isZero(m.getNumber(i, j))) {
+                if (!mc.isZero(m.get(i, j))) {
                     return false;
                 }
             }

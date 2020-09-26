@@ -235,9 +235,9 @@ extra features (such as operator override) are only possible if you use Kotlin.
 
 ## Dependencies
 Core:
-* Java: JDK 11
+* Java: JDK 14
 * JavaFx: 11
-* Kotlin: 1.3
+* Kotlin: 1.4
 
 Test:
 * JUnit 4

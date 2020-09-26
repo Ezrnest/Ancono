@@ -1,7 +1,7 @@
 package cn.ancono.utilities.structure;
 
 
-public abstract class DirectedGraphNode<E> extends GraphNode<E, DirectedGraphNode<E>> {
+public abstract class DirectedGraphNode<E> extends GraphNode<E, cn.ancono.utilities.structure.DirectedGraphNode<E>> {
 
     private DirectedGraph<E> graph;
 
@@ -10,7 +10,7 @@ public abstract class DirectedGraphNode<E> extends GraphNode<E, DirectedGraphNod
     }
 
     @Override
-    public Graph<E, DirectedGraphNode<E>> getGraph() {
+    public Graph<E, cn.ancono.utilities.structure.DirectedGraphNode<E>> getGraph() {
         return graph;
     }
 

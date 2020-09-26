@@ -89,7 +89,7 @@ public final class CicularArrayListBuffer<E> extends AbstractList<E> {
     }
 
     public static void main(String[] args) {
-        CicularArrayListBuffer<Integer> b = new CicularArrayListBuffer<>(16);
+        cn.ancono.utilities.structure.CicularArrayListBuffer<Integer> b = new cn.ancono.utilities.structure.CicularArrayListBuffer<>(16);
         b.add(123);
         print(b.getPrevious(0));
     }

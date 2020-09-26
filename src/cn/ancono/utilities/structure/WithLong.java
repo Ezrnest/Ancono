@@ -17,9 +17,9 @@ public final class WithLong<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WithLong)) return false;
+        if (!(o instanceof cn.ancono.utilities.structure.WithLong)) return false;
 
-        WithLong<?> WithLong = (WithLong<?>) o;
+        cn.ancono.utilities.structure.WithLong<?> WithLong = (cn.ancono.utilities.structure.WithLong<?>) o;
 
         if (x != WithLong.x) return false;
         return obj != null ? obj.equals(WithLong.obj) : WithLong.obj == null;

@@ -42,8 +42,8 @@ public final class Pair<T, S> {
         this.second = second;
     }
 
-    public Pair<S, T> swapped() {
-        return new Pair<>(second, first);
+    public cn.ancono.utilities.structure.Pair<S, T> swapped() {
+        return new cn.ancono.utilities.structure.Pair<>(second, first);
     }
 
     /* (non-Javadoc)
@@ -59,8 +59,8 @@ public final class Pair<T, S> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Pair) {
-            Pair<?, ?> p = (Pair<?, ?>) obj;
+        if (obj instanceof cn.ancono.utilities.structure.Pair) {
+            cn.ancono.utilities.structure.Pair<?, ?> p = (cn.ancono.utilities.structure.Pair<?, ?>) obj;
             return Objects.equals(first, p.first) && Objects.equals(second, p.second);
         }
         return false;

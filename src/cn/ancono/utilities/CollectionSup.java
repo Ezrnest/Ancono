@@ -242,7 +242,7 @@ public final class CollectionSup {
     /**
      * Returns a comparator for collection.
      *
-     * @see CollectionSup#compareCollection(Collection, Collection, Comparator)
+     * @see cn.ancono.utilities.CollectionSup#compareCollection(Collection, Collection, Comparator)
      */
     public static <T, U extends Collection<T>> Comparator<U> collectionComparator(Comparator<? super T> comp) {
         return (x, y) -> compareCollection(x, y, comp);

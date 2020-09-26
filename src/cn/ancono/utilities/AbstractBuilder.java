@@ -25,7 +25,7 @@ import java.util.stream.Stream;
  * @param <R> the generated object type
  * @param <I> the thing to add to build.
  */
-public abstract class AbstractBuilder<T, S extends AbstractBuilder<T, S, R, I>, R, I> implements Builder<T, S, I> {
+public abstract class AbstractBuilder<T, S extends cn.ancono.utilities.AbstractBuilder<T, S, R, I>, R, I> implements Builder<T, S, I> {
     private boolean built = false;
 
     /**
@@ -97,7 +97,7 @@ public abstract class AbstractBuilder<T, S extends AbstractBuilder<T, S, R, I>, 
      *
      * @return
      */
-    public AbstractBuilder<S, ?, R, I> nextLevel() {
+    public cn.ancono.utilities.AbstractBuilder<S, ?, R, I> nextLevel() {
         throw new UnsupportedOperationException();
     }
 

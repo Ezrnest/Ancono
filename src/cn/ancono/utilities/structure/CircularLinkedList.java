@@ -273,7 +273,7 @@ public class CircularLinkedList<E> implements Iterable<E> {
     }
 
     public static void main(String[] args) {
-        CircularLinkedList<Integer> list = new CircularLinkedList<Integer>();
+        cn.ancono.utilities.structure.CircularLinkedList<Integer> list = new cn.ancono.utilities.structure.CircularLinkedList<Integer>();
         for (int i = 0; i < 100; i++) {
             list.add(i);
         }

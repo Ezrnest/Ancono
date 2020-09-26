@@ -269,7 +269,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 
         List<LinkedNode<E>> newList = new ArrayList<>(nodes.size());
         HashMap<LinkedNode<E>, LinkedNode<E>> map = new HashMap<>(nodes.size());
-        LinkedDirectedGraph<E> newGraph = new LinkedDirectedGraph<>(newList);
+        cn.ancono.utilities.structure.LinkedDirectedGraph<E> newGraph = new cn.ancono.utilities.structure.LinkedDirectedGraph<>(newList);
         for (LinkedNode<E> n : nodes) {
             LinkedNode<E> nn = new LinkedNode<>(newGraph, n.ele,
                     n.getConnectTo().size(),
@@ -294,7 +294,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
     public <T> DirectedGraph<T> mapToGraph(Function<E, T> mapper) {
         List<LinkedNode<T>> newList = new ArrayList<>(nodes.size());
         HashMap<LinkedNode<E>, LinkedNode<T>> map = new HashMap<>(nodes.size());
-        LinkedDirectedGraph<T> newGraph = new LinkedDirectedGraph<>(newList);
+        cn.ancono.utilities.structure.LinkedDirectedGraph<T> newGraph = new cn.ancono.utilities.structure.LinkedDirectedGraph<>(newList);
         for (LinkedNode<E> n : nodes) {
             LinkedNode<T> nn = new LinkedNode<>(newGraph, mapper.apply(n.ele),
                     n.getConnectTo().size(),
@@ -319,7 +319,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
     public DirectedGraph<E> transpositionOf() {
         List<LinkedNode<E>> newList = new ArrayList<>(nodes.size());
         HashMap<LinkedNode<E>, LinkedNode<E>> map = new HashMap<>(nodes.size());
-        LinkedDirectedGraph<E> newGraph = new LinkedDirectedGraph<>(newList);
+        cn.ancono.utilities.structure.LinkedDirectedGraph<E> newGraph = new cn.ancono.utilities.structure.LinkedDirectedGraph<>(newList);
         for (LinkedNode<E> n : nodes) {
             LinkedNode<E> nn = new LinkedNode<>(newGraph, n.ele,
                     n.getConnectTo().size(),
@@ -533,7 +533,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
         //mapping
         int size = nodes.size();
         ArrayList<LinkedNode<E>> list = new ArrayList<>(size);
-        LinkedDirectedGraph<E> re = new LinkedDirectedGraph<>(list);
+        cn.ancono.utilities.structure.LinkedDirectedGraph<E> re = new cn.ancono.utilities.structure.LinkedDirectedGraph<>(list);
         HashMap<LinkedNode<E>, LinkedNode<E>> mapper = new HashMap<>();
         for (LinkedNode<E> n : nodes) {
             LinkedNode<E> nn = new LinkedNode<>(re, n.ele,
@@ -568,7 +568,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
         LinkedNode<E> node = checkNode(nodeD);
         Set<LinkedNode<E>> cTo = node.getConnectTo();
         ArrayList<LinkedNode<E>> list = new ArrayList<>(cTo.size() + 1);
-        LinkedDirectedGraph<E> gra = new LinkedDirectedGraph<>(list);
+        cn.ancono.utilities.structure.LinkedDirectedGraph<E> gra = new cn.ancono.utilities.structure.LinkedDirectedGraph<>(list);
         LinkedNode<E> connect = new LinkedNode<>(gra, node.ele, cTo.size(), 0);
         for (LinkedNode<E> n : cTo) {
             LinkedNode<E> nn = new LinkedNode<>(gra, n.ele, 0, 1);
@@ -584,7 +584,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
         LinkedNode<E> node = checkNode(nodeD);
         Set<LinkedNode<E>> cBy = node.getConnectBy();
         ArrayList<LinkedNode<E>> list = new ArrayList<>(cBy.size() + 1);
-        LinkedDirectedGraph<E> gra = new LinkedDirectedGraph<>(list);
+        cn.ancono.utilities.structure.LinkedDirectedGraph<E> gra = new cn.ancono.utilities.structure.LinkedDirectedGraph<>(list);
         LinkedNode<E> connect = new LinkedNode<>(gra, node.ele, 0, cBy.size());
         for (LinkedNode<E> n : cBy) {
             LinkedNode<E> nn = new LinkedNode<>(gra, n.ele, 1, 0);
@@ -655,7 +655,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 
         private int time = 1;
 
-        private LinkedDirectedGraph<Set<DirectedGraphNode<E>>> graph;
+        private cn.ancono.utilities.structure.LinkedDirectedGraph<Set<DirectedGraphNode<E>>> graph;
         private final boolean graphed;
 
         public DeepFirstSearcher(boolean graphed) {
@@ -666,7 +666,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
             map = new HashMap<>();
             comps = new ArrayList<>();
             if (graphed) {
-                graph = new LinkedDirectedGraph<>();
+                graph = new cn.ancono.utilities.structure.LinkedDirectedGraph<>();
             }
         }
 
@@ -852,7 +852,7 @@ public class LinkedDirectedGraph<E> extends DirectedGraph<E> {
 
 
     public static void main(String[] args) {
-        LinkedDirectedGraph<String> gra = new LinkedDirectedGraph<>();
+        cn.ancono.utilities.structure.LinkedDirectedGraph<String> gra = new cn.ancono.utilities.structure.LinkedDirectedGraph<>();
         @SuppressWarnings("unchecked")
         DirectedGraphNode<String>[] ns = new DirectedGraphNode[8];
         for (int i = 0; i < 8; i++) {

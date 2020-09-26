@@ -87,7 +87,7 @@ public final class Triple<T1, T2, T3> {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * @see Object#hashCode()
      */
     @Override
     public int hashCode() {
@@ -100,7 +100,7 @@ public final class Triple<T1, T2, T3> {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @see Object#equals(Object)
      */
     @Override
     public boolean equals(Object obj) {
@@ -108,10 +108,10 @@ public final class Triple<T1, T2, T3> {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof Triple))
+        if (!(obj instanceof cn.ancono.utilities.structure.Triple))
             return false;
         @SuppressWarnings("rawtypes")
-        Triple other = (Triple) obj;
+        cn.ancono.utilities.structure.Triple other = (cn.ancono.utilities.structure.Triple) obj;
         if (first == null) {
             if (other.first != null)
                 return false;

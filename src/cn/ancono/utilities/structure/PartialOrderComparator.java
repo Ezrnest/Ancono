@@ -1,7 +1,7 @@
 package cn.ancono.utilities.structure;
 
 /**
- * Partial order is a relation between two object.The {@linkplain PartialOrderComparator} implements
+ * Partial order is a relation between two object.The {@linkplain cn.ancono.utilities.structure.PartialOrderComparator} implements
  * this kind of relationship and following requirements must be fitted.
  * <ul>
  * 	<li>It is <i>reflexive</i>:For any comparator and any partial order, {@code compareWith(A,A)} must return {@code true}.

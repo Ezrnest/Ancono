@@ -74,39 +74,39 @@ public abstract class PartialOrderCollection<E> extends AbstractCollection<E> {
 
     /**
      * Returns the upper elements of {@code e}.The definition of upper elements is in the introduction of {@linkplain
-     * PartialOrderCollection}.
+     * cn.ancono.utilities.structure.PartialOrderCollection}.
      *
      * @param e an element in the collection
      * @return a collection of the upper elements of {@code e}
      */
-    public abstract PartialOrderCollection<E> getUpperElements(E e);
+    public abstract cn.ancono.utilities.structure.PartialOrderCollection<E> getUpperElements(E e);
 
     /**
      * Returns the downer elements of {@code e}.The definition of downer elements is in the introduction of {@linkplain
-     * PartialOrderCollection}.
+     * cn.ancono.utilities.structure.PartialOrderCollection}.
      *
      * @param e an element in the collection
      * @return a collection of the downer elements of {@code e}
      */
-    public abstract PartialOrderCollection<E> getDownerElements(E e);
+    public abstract cn.ancono.utilities.structure.PartialOrderCollection<E> getDownerElements(E e);
 
     /**
      * Returns the direct upper elements of {@code e}.The definition of direct upper elements is in the introduction of
-     * {@linkplain PartialOrderCollection}.
+     * {@linkplain cn.ancono.utilities.structure.PartialOrderCollection}.
      *
      * @param e an element in the collection
      * @return a collection of the direct upper elements of {@code e}
      */
-    public abstract PartialOrderCollection<E> getDirectUpperElements(E e);
+    public abstract cn.ancono.utilities.structure.PartialOrderCollection<E> getDirectUpperElements(E e);
 
     /**
      * Returns the direct downer elements of {@code e}.The definition of direct downer elements is in the introduction
-     * of {@linkplain PartialOrderCollection}.
+     * of {@linkplain cn.ancono.utilities.structure.PartialOrderCollection}.
      *
      * @param e an element in the collection
      * @return a collection of the direct downer elements of {@code e}
      */
-    public abstract PartialOrderCollection<E> getDirectDownerElements(E e);
+    public abstract cn.ancono.utilities.structure.PartialOrderCollection<E> getDirectDownerElements(E e);
 
     /**
      * Return the elements in this collection that {e| (! e ≧ A) && (! A ≧ e)}, the union of {@code
@@ -116,7 +116,7 @@ public abstract class PartialOrderCollection<E> extends AbstractCollection<E> {
      * @param e an element in the collection
      * @return a collection of the untouched elements.
      */
-    public abstract PartialOrderCollection<E> getUntouchedElements(E e);
+    public abstract cn.ancono.utilities.structure.PartialOrderCollection<E> getUntouchedElements(E e);
 
     /**
      * Return the top elements in this collection that <pre>{e |[not exist](e' ∈ collection)(e'≧ e)}</pre>
@@ -124,7 +124,7 @@ public abstract class PartialOrderCollection<E> extends AbstractCollection<E> {
      *
      * @return a collection of top elements
      */
-    public abstract PartialOrderCollection<E> getTopElements();
+    public abstract cn.ancono.utilities.structure.PartialOrderCollection<E> getTopElements();
 
     /**
      * Return the bottom elements in this collection that <pre>{e |[not exist](e' ∈ collection)(e≧ e')}</pre>
@@ -132,7 +132,7 @@ public abstract class PartialOrderCollection<E> extends AbstractCollection<E> {
      *
      * @return a collection of bottom elements
      */
-    public abstract PartialOrderCollection<E> getBottomElements();
+    public abstract cn.ancono.utilities.structure.PartialOrderCollection<E> getBottomElements();
 
 
 }

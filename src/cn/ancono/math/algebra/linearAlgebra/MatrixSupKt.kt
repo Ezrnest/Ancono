@@ -1,6 +1,7 @@
 package cn.ancono.math.algebra.linearAlgebra
 
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
+import cn.ancono.math.get
 import java.util.*
 
 /**
@@ -19,7 +20,9 @@ internal object MatrixSupKt {
      * @return
      */
     fun <T : Any> decompositionLU(m: Matrix<T>): Triple<Matrix<T>, Matrix<T>, Matrix<T>> {
-        require(m.isSquare)
+        require(m.isSquare){
+            "The matrix must be square!"
+        }
         val mc = m.mathCalculator
         val n = m.rowCount
 
@@ -60,6 +63,45 @@ internal object MatrixSupKt {
         return Triple(Matrix.fromVectors(true, p),
                 l.build(),
                 Matrix.valueOfNoCopy(matrix, mc))
+    }
+
+    /**
+     * @see Matrix.decompCholesky
+     */
+    fun <T : Any> decompositionCholesky(A: Matrix<T>): Matrix<T> {
+        require(A.isSquare){
+            "The matrix must be square!"
+        }
+        val mc = A.mathCalculator
+        val n = A.rowCount
+
+        @Suppress("UNCHECKED_CAST")
+        val l = Array(n) {
+            Array<Any>(n) {
+                mc.zero
+            }
+        } as Array<Array<T>>
+        for (j in 0 until n) {
+            var t = A[j, j]
+            for (k in 0 until j) {
+                t = mc.eval { t - l[j][k] * l[j][k] }
+            }
+            t = mc.eval { squareRoot(t) }
+            l[j][j] = t
+            // l_{jj} = sqrt(a_{jj} - sum(0,j-1, l_{jk}^2))
+
+
+            for (i in (j + 1) until n) {
+                var a = A[i][j]
+                for (k in 0 until j) {
+                    a = mc.eval { a - l[i][k] * l[j][k] }
+                }
+                a = mc.eval { a / t }
+                l[i][j] = a
+                // l_{ij} = (a_{ij} - sum(0,j-1,l_{il}l_{jl}))/l_{jj}
+            }
+        }
+        return Matrix.valueOfNoCopy(l,mc)
     }
 }
 

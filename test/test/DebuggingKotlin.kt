@@ -6,7 +6,6 @@ import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.times
 import java.util.function.Function
 
-
 /*
  * Created at 2018/12/28 16:38
  * @author  liyicheng
@@ -38,7 +37,7 @@ fun p3(){
     val mat = MatrixSup.parseMatrixD(str, mc, mc::parse)
     mat.printMatrix()
     println(mat.calDet())
-    mat.adjugateMatrix().printMatrix()
+    mat.adjugate().printMatrix()
 
 //    mat.inverse().printMatrix()
 }

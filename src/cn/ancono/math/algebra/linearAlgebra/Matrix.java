@@ -261,7 +261,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new DMatrix<>(re, column, row, getMc());
     }
 
-    public Matrix<T> adjugateMatrix() {
+    public Matrix<T> adjugate() {
         Object[][] re = new Object[column][row];
         var mc = getMc();
         for (int l = 0; l < row; ++l) {
@@ -1627,8 +1627,17 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new kotlin.Pair<>(Q, R);
     }
 
+    /**
+     * Computes the Cholesky decomposition of this matrix, finding lower triangular matrix <code>L</code> such
+     * that <code>LL^T = A</code>.
+     * <p></p>
+     * It is required that this matrix is a symmetry matrix, and the math calculator supports computing square root.
+     *
+     * @return the lower triangular matrix <code>L</code>.
+     */
     public Matrix<T> decompCholesky() {
-        //TODO
+        //Created by lyc at 2020-09-26 10:47
+        return MatrixSupKt.INSTANCE.decompositionCholesky(this);
     }
 
 //    /**
@@ -2025,7 +2034,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         @SuppressWarnings("unchecked")
         T[][] mat2 = (T[][]) new Object[row][column];
         for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
+            var c = Math.min(column, mat[i].length);
+            for (int j = 0; j < c; j++) {
                 mat2[i][j] = mat[i][j] == null ? mc.getZero() : mat[i][j];
             }
         }
@@ -2103,7 +2113,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
         Long[][] mat2 = new Long[row][column];
         for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
+            var c = Math.min(column, mat[i].length);
+            for (int j = 0; j < c; j++) {
                 mat2[i][j] = mat[i][j];
             }
         }
@@ -2131,7 +2142,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
         Double[][] mat2 = new Double[row][column];
         for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
+            var c = Math.min(column, mat[i].length);
+            for (int j = 0; j < c; j++) {
                 mat2[i][j] = mat[i][j];
             }
         }
@@ -2159,7 +2171,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
         Integer[][] mat2 = new Integer[row][column];
         for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
+            var c = Math.min(column, mat[i].length);
+            for (int j = 0; j < c; j++) {
                 mat2[i][j] = mat[i][j];
             }
         }

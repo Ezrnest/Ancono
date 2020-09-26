@@ -14,18 +14,19 @@ import cn.ancono.math.geometry.analytic.planeAG.curve.GeneralConicSection;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.ArraySup;
+import cn.ancono.utilities.Printer;
 import cn.ancono.utilities.structure.Pair;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author liyicheng 2018-01-25 17:38
- *
  */
 public class TestMatrix {
 
@@ -66,11 +67,11 @@ public class TestMatrix {
         assertTrue("EigenEquation:", expected.valueEquals(equation));
     }
 
-//	@Test
-	public void testSolveEquation() {
-		int row = 8;
-		int column = 10;
-		for (int i = 0; i < 100; i++) {
+    //	@Test
+    public void testSolveEquation() {
+        int row = 8;
+        int column = 10;
+        for (int i = 0; i < 100; i++) {
             double[][] mat = new double[row][];
             for (int j = 0; j < row; j++) {
                 mat[j] = ArraySup.ranDoubleArr(column);
@@ -87,15 +88,15 @@ public class TestMatrix {
                         re2 = matrix.subMatrix(0, column - 1, row - 1, column - 1);
                 assertTrue(re1.valueEquals(re2));
             }
-		}
-	}
+        }
+    }
 
-//	@Test
-	public void testSolveHomoEquation() {
-		int row = 8;
-		int column = 11;
-		Vector<Double> zero = Vector.zeroVector(row, mcd);
-		for (int i = 0; i < 100; i++) {
+    //	@Test
+    public void testSolveHomoEquation() {
+        int row = 8;
+        int column = 11;
+        Vector<Double> zero = Vector.zeroVector(row, mcd);
+        for (int i = 0; i < 100; i++) {
             double[][] mat = new double[row][];
             for (int j = 0; j < row; j++) {
                 mat[j] = ArraySup.ranDoubleArr(column);
@@ -111,11 +112,11 @@ public class TestMatrix {
                 Matrix<Double> re = Matrix.multiply(matrix, base);
                 assertTrue(re.valueEquals(zero));
             }
-		}
-	}
-	
-	@Test
-	public void testEigenVector() {
+        }
+    }
+
+    @Test
+    public void testEigenVector() {
         Matrix<Double> mat = Matrix.of(new double[][]{
                 {0, 1, 1},
                 {1, 0, 1},
@@ -126,17 +127,18 @@ public class TestMatrix {
         });
         assertEquals("", list.toString(), "[[-1.0,[1.0,-1.0,0.0]], [-1.0,[1.0,0.0,-1.0]], [2.0,[-1.0,-1.0,-1.0]]]");
     }
-	@Test
-	public void testNormalizeUsingMatrix() {
-		ConicSection<Double> cs = GeneralConicSection.generalFormula(
-				2d, -Math.sqrt(3),1d,
-				0d,0d,-10d, mcd);
-		ConicSection<Double> afterTrans = cs.toStandardForm();
-		assertTrue("",mcd.isEqual(afterTrans.getA(),2.5)&&mcd.isEqual(afterTrans.getC(),0.5));
-		assertEquals("",cs.determineType(),ConicSection.Type.ELLIPSE);
-	}
 
-	@Test
+    @Test
+    public void testNormalizeUsingMatrix() {
+        ConicSection<Double> cs = GeneralConicSection.generalFormula(
+                2d, -Math.sqrt(3), 1d,
+                0d, 0d, -10d, mcd);
+        ConicSection<Double> afterTrans = cs.toStandardForm();
+        assertTrue("", mcd.isEqual(afterTrans.getA(), 2.5) && mcd.isEqual(afterTrans.getC(), 0.5));
+        assertEquals("", cs.determineType(), ConicSection.Type.ELLIPSE);
+    }
+
+    @Test
     public void testDeterminant() {
         Matrix<Integer> mat = Matrix.of(new int[][]{
                 {1, 2, 3, 4},
@@ -156,7 +158,7 @@ public class TestMatrix {
     }
 
     @Test
-    public void testDecompositionQR() {
+    public void testDecompositionLU() {
         Matrix<Fraction> A = Matrix.of(new int[][]{
                 {1, 2, 3, 4},
                 {2, 3, 4, 5},
@@ -175,5 +177,27 @@ public class TestMatrix {
         var m1 = Matrix.multiply(P, A);
         var m2 = Matrix.multiply(L, U);
         assertTrue("PA = LU", m1.valueEquals(m2));
+    }
+
+    @Test
+    public void testDecompCholesky() {
+        var rd = new Random();
+        Matrix<Double> B = Matrix.of(5,5,Calculators.getCalDoubleDev(),(i,j)->rd.nextDouble());
+        var A = Matrix.multiply(B,B.transpose());
+        var L = A.decompCholesky();
+//        A.congruenceDiagForm().getFirst().printMatrix();
+//        L.printMatrix();
+//        A.printMatrix();
+        var R = Matrix.multiply(L,L.transpose());
+//        R.printMatrix();
+//        var A = Matrix.of(new double[][]{
+//                {4, -1, 1},
+//                {-1, 4.25, 2.75},
+//                {1, 2.75, 3.5}
+//        });
+//        var L = A.decompCholesky();
+//        L.printMatrix();
+//        var R = Matrix.multiply(L,L.transpose());
+        assertTrue("A = LL^T",A.valueEquals(R));
     }
 }

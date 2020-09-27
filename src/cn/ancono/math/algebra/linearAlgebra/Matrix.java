@@ -2581,6 +2581,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return new DMatrix<>(data, reRow, reCol, mc);
     }
 
+    /**
+     * Concatenate the two matrices' rows, resulting in a matrix of shape
+     * <pre>(m1.row + m2.row, max(m1.column, m2.column))</pre>
+     */
     public static <T> Matrix<T> concatRow(Matrix<T> m1, Matrix<T> m2) {
         int row = m1.row + m2.row;
         int column = Math.max(m1.column, m2.column);
@@ -2590,6 +2594,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return bd.build();
     }
 
+    /**
+     * Concatenate the two matrices' columns, resulting in a matrix of shape
+     * <pre>(max(m1.row, m2.row), m1.column + m2.column))</pre>
+     */
     public static <T> Matrix<T> concatColumn(Matrix<T> m1, Matrix<T> m2) {
         int row = Math.max(m1.row, m2.row);
         int column = m1.column + m2.column;
@@ -2683,6 +2691,18 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             }
         }
 
+        protected void rowRangeCheck(int... rs) {
+            for (var r : rs) {
+                rowRangeCheck(r);
+            }
+        }
+
+        protected void columnRangeCheck(int... cs) {
+            for (var c : cs) {
+                columnRangeCheck(c);
+            }
+        }
+
         protected void checkDisposed() {
             if (disposed) {
                 throw new IllegalStateException("The builder has already built!");
@@ -2706,16 +2726,58 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             return this;
         }
 
-        public MatrixBuilder<T> fillArea(int i, int j, Matrix<T> mat) {
+        /**
+         * Fills the area with a matrix such that
+         * <pre>data[i0+i, j0+j] = mat[i,j]</pre>
+         */
+        public MatrixBuilder<T> fillArea(int i0, int j0, Matrix<T> mat) {
+//            checkDisposed();
+//            rowRangeCheck(i0, i0 + mat.row - 1);
+//            columnRangeCheck(j0, j0 + mat.column - 1);
+//            for (int i = 0; i < mat.row; i++) {
+//                for (int j = 0; j < mat.column; j++) {
+//                    data[i + i0][j + j0] = mat.get(i, j);
+//                }
+//            }
+//            return this;
+            return fillArea(i0, j0, mat, 0, 0, mat.row, mat.column);
+        }
+
+        /**
+         * Fills the area with a matrix such that
+         * <pre>data[i0+i, j0+j] = mat[i1 + i,j1 + j]</pre>
+         */
+        public MatrixBuilder<T> fillArea(int i0, int j0, Matrix<T> mat, int i1, int j1, int rows, int columns) {
             checkDisposed();
-            rowRangeCheck(i);
-            rowRangeCheck(i + mat.row - 1);
-            columnRangeCheck(j);
-            columnRangeCheck(j + mat.column - 1);
-            for (int i0 = 0; i0 < mat.row; i0++) {
-                for (int j0 = 0; j0 < mat.column; j0++) {
-                    data[i0 + i][j0 + j] = mat.get(i0, j0);
+            rowRangeCheck(i0, i0 + rows - 1);
+            mat.rowRangeCheck(i1, i1 + rows - 1);
+            columnRangeCheck(j0, j0 + columns - 1);
+            mat.columnRangeCheck(j1, j1 + columns - 1);
+            if (mat instanceof DMatrix) {
+                var m = ((DMatrix<T>) mat).data;
+                for (int i = 0; i < rows; i++) {
+                    System.arraycopy(m[i1 + i], j1, data[i0 + i], j0, columns);
                 }
+            } else {
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < columns; j++) {
+                        data[i + i0][j + j0] = mat.get(i + i1, j + j1);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Fills the area with a matrix such that
+         * <pre>data[i0+i, j0+j] = mat[i1 + i,j1 + j]</pre>
+         */
+        public MatrixBuilder<T> fillArea(int i0, int j0, Object[][] m, int i1, int j1, int rows, int columns) {
+            checkDisposed();
+            rowRangeCheck(i0, i0 + rows - 1);
+            columnRangeCheck(j0, j0 + columns - 1);
+            for (int i = 0; i < rows; i++) {
+                System.arraycopy(m[i1 + i], j1, data[i0 + i], j0, columns);
             }
             return this;
         }

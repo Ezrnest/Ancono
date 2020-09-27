@@ -792,6 +792,24 @@ public abstract class Vector<T> extends Matrix<T> {
         return new DVector<>(arr, false, mc);
     }
 
+    /**
+     * Returns a column vector filled with the given number of the given size.
+     *
+     * @return a column vector `(c,...,c)^T`
+     */
+    public static <T> Vector<T> constant(T c, int size, MathCalculator<T> mc) {
+        @SuppressWarnings("unchecked") T[] arr = (T[]) new Object[size];
+        Arrays.fill(arr,c);
+        return new DVector<>(arr, false, mc);
+    }
+
+    /**
+     * Returns a column vector of ones.
+     */
+    public static <T> Vector<T> ones(int size, MathCalculator<T> mc) {
+        return constant(mc.getOne(), size, mc);
+    }
+
 
     /**
      * Returns the result of {@literal mat * v}, it is required the vector's size is

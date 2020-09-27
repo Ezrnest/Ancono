@@ -25,10 +25,8 @@ public final class DVector<T> extends Vector<T> {
     /**
      * Create a new vector with the given array and
      *
-     * @param vec
-     * @param isRow
      */
-    protected DVector(T[] vec, boolean isRow, MathCalculator<T> mc) {
+    DVector(T[] vec, boolean isRow, MathCalculator<T> mc) {
         super(vec.length, isRow, mc);
         this.vec = vec;
     }

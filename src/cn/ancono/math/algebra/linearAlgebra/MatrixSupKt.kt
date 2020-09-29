@@ -2,6 +2,7 @@ package cn.ancono.math.algebra.linearAlgebra
 
 import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
 import cn.ancono.math.get
+import cn.ancono.utilities.structure.Pair
 import java.util.*
 
 /**
@@ -102,6 +103,49 @@ internal object MatrixSupKt {
             }
         }
         return Matrix.valueOfNoCopy(l,mc)
+    }
+
+    /**
+     * @see Matrix.decompCholesky
+     */
+    fun <T : Any> decompositionCholeskyD(A: Matrix<T>): Pair<Matrix<T>, Vector<T>> {
+        require(A.isSquare){
+            "The matrix must be square!"
+        }
+        val mc = A.mathCalculator
+        val n = A.rowCount
+
+        @Suppress("UNCHECKED_CAST")
+        val l = Array(n) {
+            Array<Any>(n) {
+                mc.zero
+            }
+        } as Array<Array<T>>
+        val d = ArrayList<T>(n)
+
+        for (j in 0 until n) {
+            var t = A[j, j]
+            for (k in 0 until j) {
+                t = mc.eval { t - l[j][k] * l[j][k] * d[k] }
+            }
+            d += t
+            // d_j = a_{jj} - sum(0,j-1, l_{jk}^2)
+            l[j][j] = mc.one
+            // l_{jj} = a_{jj} - sum(0,j-1, l_{jk}^2)
+
+
+            for (i in (j + 1) until n) {
+                var a = A[i][j]
+                for (k in 0 until j) {
+                    a = mc.eval { a - l[i][k] * l[j][k] * d[k] }
+                }
+                l[i][j] = mc.eval { a / t }
+                // l_{ij} = (a_{ij} - sum(0,j-1,d_k * l_{ik}l_{jk}))
+            }
+        }
+        val L = Matrix.valueOfNoCopy(l,mc)
+        val D = Vector.of(mc,d)
+        return Pair(L,D)
     }
 }
 

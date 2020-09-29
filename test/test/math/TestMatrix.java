@@ -199,4 +199,30 @@ public class TestMatrix {
 //        var R = Matrix.multiply(L,L.transpose());
         assertTrue("A = LL^T",A.valueEquals(R));
     }
+
+    @Test
+    public void testDecompCholeskyD() {
+        var rd = new Random();
+        Matrix<Double> B = Matrix.of(5,5,Calculators.getCalDoubleDev(),(i,j)->rd.nextDouble());
+        var A = Matrix.multiply(B,B.transpose());
+        var p = A.decompCholeskyD();
+        var L = p.getFirst();
+        var D = Matrix.diag(p.getSecond());
+
+//        A.congruenceDiagForm().getFirst().printMatrix();
+//        L.printMatrix();
+//        A.printMatrix();
+        var R = Matrix.multiply(Matrix.multiply(L,D),L.transpose());
+
+//        R.printMatrix();
+//        var A = Matrix.of(new double[][]{
+//                {4, -1, 1},
+//                {-1, 4.25, 2.75},
+//                {1, 2.75, 3.5}
+//        });
+//        var L = A.decompCholesky();
+//        L.printMatrix();
+//        var R = Matrix.multiply(L,L.transpose());
+        assertTrue("A = LDL^T",A.valueEquals(R));
+    }
 }

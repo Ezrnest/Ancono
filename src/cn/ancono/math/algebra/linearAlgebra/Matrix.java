@@ -1616,6 +1616,19 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return MatrixSupKt.INSTANCE.decompositionCholesky(this);
     }
 
+    /**
+     * Computes the generalized Cholesky decomposition of this matrix, finding matrix <code>L,D</code>  such
+     * that <code>LDL^T = A</code>, where <code>L</code> is a lower triangular matrix with ones at its diagonal,
+     * and <code>D</code> is diagonal.
+     * <p></p>
+     * It is required that this matrix is a symmetry matrix.
+     *
+     * @return a pair of <code>(L,D)</code>.
+     */
+    public Pair<Matrix<T>,Vector<T>> decompCholeskyD(){
+        return  MatrixSupKt.INSTANCE.decompositionCholeskyD(this);
+    }
+
 //    /**
 //     * Transforms this matrix to Hermite normal form. It is required that the math calculator is UFDCalculator.
 //     *
@@ -2174,6 +2187,25 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
     /**
+     * Return a diagonal matrix containing the given numbers.
+     * <pre> M[i][i] = v[i] </pre>
+     */
+    public static <T> Matrix<T> diag(Vector<T> v) {
+        int n = v.getSize();
+        var mc = v.getMathCalculator();
+        if (n < 1) {
+            throw new IllegalArgumentException("Illegal size:" + n);
+        }
+        @SuppressWarnings("unchecked")
+        T[][] mat = (T[][]) new Object[n][n];
+        fillData(mat, mc.getZero());
+        for (int i = 0; i < n; i++) {
+            mat[i][i] = v.get(i);
+        }
+        return new DMatrix<>(mat, n, n, mc);
+    }
+
+    /**
      * Return a diagonal matrix containing the given numbers. M[i][i] = arr[i]
      */
     public static <T> Matrix<T> diag(List<T> arr, MathCalculator<T> mc) {
@@ -2332,7 +2364,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      *
      * @param m1 a matrix
      * @param m2 another matrix
-     * @return m1��m2
+     * @return m1 * m2
      * @throws IllegalArgumentException if size doesn't match
      * @throws NullPointerException     if m1==null || m2==null
      */

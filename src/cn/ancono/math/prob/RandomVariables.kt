@@ -262,6 +262,9 @@ object RandomVariables {
         return map(rvs) { it.average() }
     }
 
+    /**
+     * Estimates the expectation of the random variable `x` basing on the law of large number.
+     */
     fun estimateExpectation(x: DoubleRV, times: Int = 1000000): Double {
         return x.getAsSequence().take(times).average()
     }

@@ -16,8 +16,8 @@ import java.util.function.UnaryOperator
 typealias VectorFunction<T> = MathFunction<T, SVector<T>>
 
 /**
- * Describes a parametric curve in three-dimension Euclid space. The curve is represented by a function: R->E3 in math
- * and by [MathFunction<T,SPoint<T>>] here. The curve can be notated as r(t), which is a vector function.
+ * Describes a parametric curve in three-dimensional Euclidean space.
+ * Mathematically, a parametric curve is represented by a vector function: `r(t) : (a,b) -> E^3`.
  */
 interface SpaceParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolder<T> {
 

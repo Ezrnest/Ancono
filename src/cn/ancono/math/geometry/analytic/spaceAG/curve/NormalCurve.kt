@@ -6,7 +6,8 @@ import cn.ancono.math.geometry.analytic.spaceAG.*
 import cn.ancono.math.set.Interval
 
 /**
- *
+ *  Describe a normal parametric curve. It is required that the vector function `r(t)` is differentiable of sufficient
+ *  order and the derivative `r'(t) != 0`.
  */
 interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
 
@@ -24,12 +25,15 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
     override fun domain(): Interval<T>
 
     /**
-     * Returns `ds` of this parametric curve. `ds = |r'(t)|dt`
+     * Returns `ds/dt` of this parametric curve. `ds/dt = |r'(t)|`
      */
     val ds: SVFunction<T>
-        get() = MathFunction.composeSV(this.derive(), MathFunction<SVector<T>, T> { x -> x.calLength() })
+        get() = MathFunction.composeSV(this.derive(), { x -> x.calLength() })
 
 
+    /**
+     *  Returns the curvature(as a function) of this curve.
+     */
     val curvature: SVFunction<T>
         get() {
             val d = this.derive()
@@ -83,7 +87,7 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
         get() = MathFunctionSup.mergeOf(alpha, gamma) { a, b -> a.outerProduct(b) }
 
     /**
-     * `gamma(t)`,which is a unit vector parallel to minor normal vector.
+     * `gamma(t)`, which is a unit vector parallel to minor normal vector.
      */
     val gamma: VectorFunction<T>
         get() {

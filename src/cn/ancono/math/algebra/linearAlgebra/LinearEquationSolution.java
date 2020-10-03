@@ -126,7 +126,7 @@ public class LinearEquationSolution<T> {
         if (sit == Situation.SINGLE_SOLUTION) {
             return specialSolution;
         }
-        return specialSolution.isZeroVector() ? Vector.addAll(specialSolution, baseSolutions[0]) : specialSolution;
+        return specialSolution.isZeroVector() ? Vector.addV(specialSolution, baseSolutions[0]) : specialSolution;
     }
 
 

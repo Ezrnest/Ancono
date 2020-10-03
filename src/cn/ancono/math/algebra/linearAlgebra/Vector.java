@@ -433,7 +433,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return a column vector as result
      * @throws ArithmeticException if dimension doesn't match
      */
-    public static <T> Vector<T> addAll(Vector<T> v1, Vector<T> v2) {
+    public static <T> Vector<T> addV(Vector<T> v1, Vector<T> v2) {
         v1.checkSameSize(v2);
         final int size = v1.getSize();
         @SuppressWarnings("unchecked")
@@ -446,7 +446,7 @@ public abstract class Vector<T> extends Matrix<T> {
     }
 
     /**
-     * A method similar to {@link #addAll(Vector, Vector)}, but subtract.
+     * A method similar to {@link #addV(Vector, Vector)}, but subtract.
      *
      * @return a column vector as result
      * @throws ArithmeticException if dimension doesn't match
@@ -1033,7 +1033,7 @@ class LinearCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
     @NotNull
     @Override
     public Vector<T> apply(@NotNull Vector<T> x, @NotNull Vector<T> y) {
-        return Vector.addAll(x, y);
+        return Vector.addV(x, y);
     }
 
     @NotNull

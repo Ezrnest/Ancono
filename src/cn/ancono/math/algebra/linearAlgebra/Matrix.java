@@ -1626,6 +1626,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * @return a pair of <code>(L,D)</code>.
      */
     public Pair<Matrix<T>,Vector<T>> decompCholeskyD(){
+        //Created by lyc at 2020-09-29 21:47
         return  MatrixSupKt.INSTANCE.decompositionCholeskyD(this);
     }
 

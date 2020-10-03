@@ -78,7 +78,7 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
      * `alpha(t)`,which is a unit vector parallel to tangent vector.
      */
     val alpha: VectorFunction<T>
-        get() = MathFunction.andThen(tangentVector, MathFunction<SVector<T>, SVector<T>> { x -> x.unitVector() })
+        get() = MathFunction.andThen(tangentVector, MathFunction { x -> x.unitVector() })
 
     /**
      * `beta(t)`,which is a unit vector parallel to main normal vector.
@@ -193,9 +193,10 @@ fun <T : Any> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDoma
 
         override val mathCalculator: MathCalculator<T> = mc
 
-        override fun derive(): DerivableFunction<T, SVector<T>> {
-            return DerivableFunction.compose(tu, origin, { a, b -> a.add(b) }, { k, v -> v.multiplyNumber(k) })
+        override val derivative: DerivableFunction<T, SVector<T>> by lazy {
+            DerivableFunction.compose(tu, origin, { a, b -> a.add(b) }, { k, v -> v.multiplyNumber(k) })
         }
+
     }
 }
 

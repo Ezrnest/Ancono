@@ -46,7 +46,8 @@ object MathFunctionSup {
     }
 }
 
-internal open class MergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(fx: MathFunction<T, R1>, gx: MathFunction<T, R2>, val merger: (R1, R2) -> R)
+internal open class MergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(fx: MathFunction<T, out R1>, gx: MathFunction<T, out R2>,
+                                                                   val merger: (R1, R2) -> R)
     : MathFunction<T, R> {
 
     open val f = fx

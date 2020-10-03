@@ -61,16 +61,16 @@ class ExprFunction(val expr: Expression,
         return mathCalculator.substitute(expr, variableName, x)
     }
 
-    override fun derive(): DerivableSVFunction<Expression> {
-        return ExprFunction(expr.derivation(variableName), mathCalculator, variableName)
-    }
-
     override fun compose(before: ExprFunction): ExprFunction {
         return ExprFunction(mathCalculator.substitute(expr, variableName, before.expr), mathCalculator, before.variableName)
     }
 
     override fun andThen(after: ExprFunction): ExprFunction {
         return after.compose(this)
+    }
+
+    override val derivative: DerivableSVFunction<Expression> by lazy {
+        ExprFunction(mathCalculator.differential(expr, (variableName)), mathCalculator, variableName)
     }
 }
 

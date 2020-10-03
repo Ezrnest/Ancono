@@ -10,12 +10,16 @@ import cn.ancono.math.set.MathSets
  * guaranteed that the returned function is also derivable in math.
  */
 interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T, R, DerivableFunction<T, R>> {
-
     /**
      * Returns the derivative of this function. Throws an [ArithmeticException] if
-     * this function is not derivable.
+     * this function is not actually derivable.
      */
-    override fun derive(): DerivableFunction<T, R>
+    val derivative: DerivableFunction<T, R>
+
+
+    override fun derive(): DerivableFunction<T, R> {
+        return derivative
+    }
 
     companion object {
         /**
@@ -88,10 +92,10 @@ interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T,
          * @param formalAdd performs add operation to type [T]
          * @param formalMultiply performs multiplication operation
          */
-        fun <T : Any> multiplySV(f: DerivableSVFunction<T>,
-                                 g: DerivableSVFunction<T>,
-                                 formalAdd: (T, T) -> T,
-                                 formalMultiply: (T, T) -> T)
+        fun <T : Any, S : Any> multiplySV(f: DerivableFunction<T, out S>,
+                                          g: DerivableFunction<T, out S>,
+                                          formalAdd: (T, T) -> T,
+                                          formalMultiply: (S, S) -> T)
                 : DerivableSVFunction<T> = DerivableMultiplySV(f, g, formalMultiply = formalMultiply, formalAdd = formalAdd)
 
 
@@ -118,10 +122,14 @@ interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T,
 }
 
 /**
- * Represents a derivable function which is also a [SVFunction].
+ * Represents a derivable single variable function.
  */
 interface DerivableSVFunction<T : Any> : DerivableFunction<T, T>, SVFunction<T> {
-    override fun derive(): DerivableSVFunction<T>
+    override val derivative: DerivableSVFunction<T>
+
+    override fun derive(): DerivableSVFunction<T> {
+        return derivative
+    }
 
     @JvmDefault
     override fun <S : Any> mapTo(mapper: Bijection<T, S>): DerivableSVFunction<S> {
@@ -155,10 +163,12 @@ fun <T : Any, R : Any, S : Any> DerivableFunction<T, R>.composeDerivable(g: Deri
                                                                          formalMultiply: (R, S) -> S)
         : DerivableFunction<T, S> = DerivableFunction.compose(this, g, formalAdd, formalMultiply)
 
+
 internal class DerivableSVFunctionWrapper<T : Any>(private val ori: DerivableFunction<T, T>) : DerivableSVFunction<T> {
-    override fun derive(): DerivableSVFunction<T> {
-        return DerivableSVFunctionWrapper(ori.derive())
+    override val derivative: DerivableSVFunction<T> by lazy {
+        DerivableSVFunctionWrapper(ori.derive())
     }
+
 
     override fun apply(x: T): T {
         return ori.apply(x)
@@ -179,8 +189,8 @@ internal class AndThenHomoDerivableFunction<T : Any, R : Any, S : Any>(val f: De
         return f.domain()
     }
 
-    override fun derive(): DerivableFunction<T, S> {
-        return AndThenHomoDerivableFunction(f.derive(), homo)
+    override val derivative: DerivableFunction<T, S> by lazy {
+        AndThenHomoDerivableFunction(f.derive(), homo)
     }
 }
 
@@ -190,9 +200,6 @@ internal class AndThenHomoDerivableFunction<T : Any, R : Any, S : Any>(val f: De
 internal class MappedSVDerivableFunction<T : Any, S : Any>(val f: DerivableSVFunction<T>, private val homo: Bijection<T, S>) : DerivableSVFunction<S> {
     private val newDomain = f.domain().mapTo(homo)
 
-    override fun derive(): DerivableSVFunction<S> {
-        return MappedSVDerivableFunction(f.derive(), homo)
-    }
 
     override fun apply(x: S): S {
         return homo(f(homo.deply(x)))
@@ -202,25 +209,28 @@ internal class MappedSVDerivableFunction<T : Any, S : Any>(val f: DerivableSVFun
         return newDomain
     }
 
+    override val derivative: DerivableSVFunction<S> by lazy {
+        MappedSVDerivableFunction(f.derive(), homo)
+    }
 }
 
 /**
  * The mapper should not be derived.
  */
-internal open class DerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(fx: DerivableFunction<T, R1>,
-                                                                            gx: DerivableFunction<T, R2>,
+internal open class DerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(fx: DerivableFunction<T, out R1>,
+                                                                            gx: DerivableFunction<T, out R2>,
                                                                             merger: (R1, R2) -> R) : MergeOf2<T, R1, R2, R>(fx, gx, merger), DerivableFunction<T, R> {
 
-    override val f: DerivableFunction<T, R1> = fx
+    override val f: DerivableFunction<T, out R1> = fx
 
-    override val g: DerivableFunction<T, R2> = gx
-
-    override fun derive(): DerivableFunction<T, R> {
-        return DerivableMergeOf2(f.derive(), g.derive(), merger)
-    }
+    override val g: DerivableFunction<T, out R2> = gx
 
     override fun apply(x: T): R {
         return merger(f(x), g(x))
+    }
+
+    override val derivative: DerivableFunction<T, R> by lazy {
+        DerivableMergeOf2(f.derive(), g.derive(), merger)
     }
 }
 
@@ -234,9 +244,10 @@ internal class DerivableMergeOf3<T : Any, R1 : Any, R2 : Any, R3 : Any, S : Any>
     : DerivableFunction<T, S> {
     private val intersectDomain = MathSets.unionOf(f1.domain(), f2.domain(), f3.domain())!!
 
-    override fun derive(): DerivableFunction<T, S> {
-        return DerivableMergeOf3(f1.derive(), f2.derive(), f3.derive(), merger)
+    override val derivative: DerivableFunction<T, S> by lazy {
+        DerivableMergeOf3(f1.derive(), f2.derive(), f3.derive(), merger)
     }
+
 
     override fun apply(x: T): S {
         return merger(f1(x), f2(x), f3(x))
@@ -251,59 +262,65 @@ internal open class DerivableAdd<T : Any, R1 : Any, R2 : Any, R : Any>(f: Deriva
                                                                        formalAdd: (R1, R2) -> R)
     : DerivableMergeOf2<T, R1, R2, R>(f, g, formalAdd) {
 
-    override fun derive(): DerivableFunction<T, R> {
-        return DerivableAdd(f.derive(), g.derive(), merger)
+    override val derivative: DerivableFunction<T, R> by lazy {
+        DerivableAdd(f.derive(), g.derive(), merger)
     }
+
 }
 
 internal class DerivableAddSV<T : Any>(override val f: DerivableSVFunction<T>,
                                        override val g: DerivableSVFunction<T>,
                                        formalAdd: (T, T) -> T) : DerivableAdd<T, T, T, T>(f, g, formalAdd), DerivableSVFunction<T> {
-    override fun derive(): DerivableSVFunction<T> {
-        return DerivableAddSV(f.derive(), g.derive(), merger)
+    override val derivative: DerivableSVFunction<T> by lazy {
+        DerivableAddSV(f.derive(), g.derive(), merger)
     }
 }
 
-internal open class DerivableMultiply<T : Any, R1 : Any, R2 : Any, R : Any>(f: DerivableFunction<T, R1>,
-                                                                            g: DerivableFunction<T, R2>,
+internal open class DerivableMultiply<T : Any, R1 : Any, R2 : Any, R : Any>(f: DerivableFunction<T, out R1>,
+                                                                            g: DerivableFunction<T, out R2>,
                                                                             formalMultiply: (R1, R2) -> R,
                                                                             open val formalAdd: (R, R) -> R)
     : DerivableMergeOf2<T, R1, R2, R>(f, g, formalMultiply) {
 
-    override fun derive(): DerivableFunction<T, R> {
+    override val derivative: DerivableFunction<T, R> by lazy {
         //f(x) * g(x)
         //f'(x) * g(x) + f(x) * g'(x)
         val partA = DerivableMultiply(f.derive(), g, merger, formalAdd)
         val partB = DerivableMultiply(f, g.derive(), merger, formalAdd)
-        return DerivableAdd(partA, partB, formalAdd)
+        DerivableAdd(partA, partB, formalAdd)
     }
 }
 
-internal class DerivableMultiplySV<T : Any>(override val f: DerivableSVFunction<T>,
-                                            override val g: DerivableSVFunction<T>,
-                                            formalMultiply: (T, T) -> T,
-                                            override val formalAdd: (T, T) -> T)
-    : DerivableMultiply<T, T, T, T>(f, g, formalMultiply, formalAdd), DerivableSVFunction<T> {
-    override fun derive(): DerivableSVFunction<T> {
+internal class DerivableMultiplySV<T : Any, S : Any>(override val f: DerivableFunction<T, out S>,
+                                                     override val g: DerivableFunction<T, out S>,
+                                                     formalMultiply: (S, S) -> T,
+                                                     override val formalAdd: (T, T) -> T)
+    : DerivableMultiply<T, S, S, T>(f, g, formalMultiply, formalAdd), DerivableSVFunction<T> {
+
+    override val derivative: DerivableSVFunction<T> by lazy {
         //f(x) * g(x)
         //f'(x) * g(x) + f(x) * g'(x)
         val partA = DerivableMultiplySV(f.derive(), g, merger, formalAdd)
         val partB = DerivableMultiplySV(f, g.derive(), merger, formalAdd)
-        return DerivableAddSV(partA, partB, formalAdd)
+        DerivableAddSV(partA, partB, formalAdd)
     }
+
+
 }
 
 internal open class DerivableCompose<T : Any, R : Any, S : Any>(private val f: DerivableFunction<T, R>,
                                                                 private val g: DerivableFunction<R, S>,
                                                                 private val formalMultiply: (R, S) -> S,
                                                                 private val formalAdd: (S, S) -> S) : DerivableFunction<T, S> {
-    override fun derive(): DerivableFunction<T, S> {
+
+    override val derivative: DerivableFunction<T, S> by lazy {
         //g(f(x))
         //f'(x) * g'(f(x))
         val left = f.derive()
         val right = DerivableCompose(f, g.derive(), formalMultiply, formalAdd)
-        return DerivableMultiply(left, right, formalMultiply, formalAdd)
+        DerivableMultiply(left, right, formalMultiply, formalAdd)
     }
+
 
     override fun apply(x: T): S {
         return g(f(x))
@@ -315,15 +332,16 @@ internal open class DerivableComposeSV<T : Any>(private val f: DerivableSVFuncti
                                                 private val g: DerivableSVFunction<T>,
                                                 private val formalMultiply: (T, T) -> T,
                                                 private val formalAdd: (T, T) -> T) : DerivableSVFunction<T> {
-    override fun derive(): DerivableSVFunction<T> {
+    override val derivative: DerivableSVFunction<T> by lazy {
         //g(f(x))
         //f'(x) * g'(f(x))
         val left = f.derive()
         val right = DerivableComposeSV(f, g.derive(), formalMultiply, formalAdd)
-        return DerivableMultiplySV(left, right, formalMultiply, formalAdd)
+        DerivableMultiplySV(left, right, formalMultiply, formalAdd)
     }
 
     override fun apply(x: T): T {
         return g(f(x))
     }
 }
+

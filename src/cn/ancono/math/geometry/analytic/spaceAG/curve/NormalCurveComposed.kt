@@ -13,36 +13,17 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
                                    val b: DerivableSVFunction<T>,
                                    val c: DerivableSVFunction<T>,
                                    private val domain: Interval<T>,
-                                   mc: MathCalculator<T>) : NormalCurve<T> {
-    override val mathCalculator: MathCalculator<T> = mc
+                                   mc: MathCalculator<T>) : NormalCurve<T>(mc) {
 
-    private val derived by lazy {
+
+    override val derivative: DerivableFunction<T, SVector<T>> by lazy {
         DerivableFunction.mergeOf3(a.derive(), b.derive(), c.derive()) { x, y, z ->
             SVector.valueOf(x, y, z, mc)
         }
     }
 
-    //lazy initialization
-    override val tangentVector: VectorFunction<T> by lazy { super.tangentVector }
-
-    override val mainNormalVector: VectorFunction<T> by lazy { super.mainNormalVector }
-
-    override val minorNormalVector: VectorFunction<T> by lazy { super.minorNormalVector }
-
-    override val alpha: VectorFunction<T> by lazy { super.alpha }
-
-    override val beta: VectorFunction<T> by lazy { super.beta }
-
-    override val gamma: VectorFunction<T> by lazy { super.gamma }
-
-    override val curvature: SVFunction<T> by lazy { super.curvature }
-
-    override val ds: SVFunction<T> by lazy { super.ds }
-
 
     override fun domain(): Interval<T> = domain
-
-    override fun derive(): DerivableFunction<T, SVector<T>> = derived
 
     override fun substitute(t: T): SVector<T> {
         return SVector.valueOf(a(t), b(t), c(t), mathCalculator)
@@ -64,17 +45,22 @@ class NormalCurveComposed<T : Any>(val a: DerivableSVFunction<T>,
 
 }
 
-fun main(args: Array<String>) {
+fun main() {
     SimplificationStrategies.setEnableSpi(true)
     val mc = ExprCalculator.instance
-    SimplificationStrategies.setCalRegularization(mc)
     val xt = Expression.valueOf("-a*cos(t)").asFunction(mc, "t")
     val yt = Expression.valueOf("a*sin(t)").asFunction(mc, "t")
     val zt = Expression.valueOf("bt").asFunction(mc, "t")
     val t = Expression.valueOf("t")
-    val curve = NormalCurveComposed(xt, yt, zt, Interval.universe(mc), mc)
+    val r = NormalCurveComposed(xt, yt, zt, Interval.universe(mc), mc)
 //    println(curve.tangentVector(t))
 //    println(curve.curvature(t))
 //    println(curve.tangentVector(t))
-    println(mc.simplify(curve.curvature(t)))
+    val r1 = r.derivative
+    val r2 = r1.derivative
+    println(r1(t))
+    println(r2(t))
+    println()
+
+    println(mc.simplify(r.curvature(t)))
 }

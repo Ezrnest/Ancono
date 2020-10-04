@@ -312,8 +312,6 @@ public final class SVector<T> extends Vector<T> {
      * the vector the result of {@code this.angleCos(s)} will be 1. If {@code s} is a zero vector,
      * an exception will be thrown.
      *
-     * @param s
-     * @return
      */
     public boolean isOfSameDirection(SVector<T> s) {
         if (s.isZeroVector()) {

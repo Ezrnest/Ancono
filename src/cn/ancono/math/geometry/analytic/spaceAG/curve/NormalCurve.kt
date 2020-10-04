@@ -2,14 +2,18 @@ package cn.ancono.math.geometry.analytic.spaceAG.curve
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.function.*
+import cn.ancono.math.geometry.analytic.AnalyticUtil
 import cn.ancono.math.geometry.analytic.spaceAG.*
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.set.Interval
+
+typealias DVFunction<T> = DerivableFunction<T, SVector<T>>
 
 /**
  *  Describe a normal parametric curve. It is required that the vector function `r(t)` is differentiable of sufficient
  *  order and the derivative `r'(t) != 0`.
  */
-interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
+abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<T>) : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
 
 
     override fun asPointFunction() = this.andThenMap { SPoint.valueOf(it) }
@@ -21,82 +25,95 @@ interface NormalCurve<T : Any> : SpaceParametricCurve<T>, DerivableFunction<T, S
     /**
      * Returns a closed interval that indicates the domain of this parametric curve
      */
-    @JvmDefault
-    override fun domain(): Interval<T>
+//    @JvmDefault
+    abstract override fun domain(): Interval<T>
 
     /**
      * Returns `ds/dt` of this parametric curve. `ds/dt = |r'(t)|`
      */
-    val ds: SVFunction<T>
-        get() = MathFunction.composeSV(this.derive(), { x -> x.calLength() })
+    open val ds: DerivableSVFunction<T> by lazy {
+        AnalyticUtil.length(mathCalculator, derivative)
+    }
+//        get() = MathFunction.composeSV(this.derive(), { x -> x.calLength() })
 
 
     /**
      *  Returns the curvature(as a function) of this curve.
      */
-    val curvature: SVFunction<T>
-        get() {
-            val d = this.derive()
-            val dd = d.derive()
-            return SVFunction { t ->
-                val nume = d(t).outerProduct(dd(t)).calLength()
-                val deno = mathCalculator.pow(d(t).calLength(), 3L)
-                mathCalculator.divide(nume, deno)
-            }
-        }
+    open val curvature: DerivableSVFunction<T> by lazy {
+        // k(t) = |r' × r''| / |r'|^3
+        val r1 = derivative
+        val r2 = derivative.derivative
+        val nume = AnalyticUtil.length(mathCalculator, AnalyticUtil.outerProduct(r1, r2))
+        val deno = DerivableFunction.composeSV(ds, AbstractSVFunction.pow(Fraction.of(3L), mathCalculator), mathCalculator)
+        DerivableFunction.divideSV(nume, deno, mathCalculator)
+    }
 
-//    val torsion : VectorFunction<T>
-//        get(){
-//
-//        }
+    val torsion: DerivableSVFunction<T> by lazy {
+        val r1 = derivative
+        val r2 = r1.derivative
+        val r3 = r2.derivative
+        val nume = AnalyticUtil.mixedProduct(r1, r2, r3, mathCalculator)
+        val w = AnalyticUtil.outerProduct(r1, r2)
+        val deno = AnalyticUtil.innerProduct(mathCalculator, w, w)
+        DerivableFunction.divideSV(nume, deno, mathCalculator)
+    }
 
     /**
      * The tangent vector of this normal curve as a vector function.
      * The vector returned this not a unit vector.
      * @see alpha
      */
-    val tangentVector: VectorFunction<T>
-        get() = this.derive()
+    open val tangentVector: DVFunction<T>
+        get() = derivative
 
     /**
      * The main normal vector of this normal curve as a vector function.
      * The vector returned this not a unit vector.
      * @see beta
      */
-    val mainNormalVector: VectorFunction<T>
-        get() = this.derive().derive()
+    open val mainNormalVector: DVFunction<T>
+        get() = alpha.derivative
+//        get() = this.derive().derive()
 
     /**
      * The minor normal vector of this normal curve as a vector function.
      * The vector returned this not a unit vector.
      * @see gamma
      */
-    val minorNormalVector: VectorFunction<T>
-        get() = MathFunctionSup.mergeOf(tangentVector, mainNormalVector) { a, b -> a.outerProduct(b) }
+    open val minorNormalVector: DVFunction<T> by lazy {
+        AnalyticUtil.outerProduct(tangentVector, mainNormalVector)
+    }
+
 
     /**
      * `alpha(t)`,which is a unit vector parallel to tangent vector.
      */
-    val alpha: VectorFunction<T>
-        get() = MathFunction.andThen(tangentVector, MathFunction { x -> x.unitVector() })
+    open val alpha: DVFunction<T> by lazy {
+        AnalyticUtil.unitVectorSpace(mathCalculator, tangentVector)
+    }
 
     /**
      * `beta(t)`,which is a unit vector parallel to main normal vector.
      */
-    val beta: VectorFunction<T>
-        get() = MathFunctionSup.mergeOf(alpha, gamma) { a, b -> a.outerProduct(b) }
+    open val beta: DVFunction<T> by lazy {
+        AnalyticUtil.unitVectorSpace(mathCalculator, mainNormalVector)
+    }
+//        get() = MathFunctionSup.mergeOf(alpha, gamma) { a, b -> a.outerProduct(b) }
 
     /**
      * `gamma(t)`, which is a unit vector parallel to minor normal vector.
      */
-    val gamma: VectorFunction<T>
-        get() {
-            val d = this.derive()
-            val dd = d.derive()
-            return MathFunction { t ->
-                d(t).outerProduct(dd(t)).unitVector()
-            }
-        }
+    open val gamma: DVFunction<T> by lazy {
+        AnalyticUtil.outerProduct(alpha, beta)
+    }
+//        get() {
+//            val d = this.derive()
+//            val dd = d.derive()
+//            return MathFunction { t ->
+//                d(t).outerProduct(dd(t)).unitVector()
+//            }
+//        }
 
     companion object {
         fun <T : Any> fromFunctionXYZ(a: DerivableSVFunction<T>,
@@ -182,7 +199,7 @@ fun <T : Any> NormalCurve<T>.arcLength(integralHelper: (SVFunction<T>, T, T) -> 
 fun <T : Any> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDomain: Interval<T>): NormalCurve<T> {
     val mc = mathCalculator
     val origin = this
-    return object : NormalCurve<T> {
+    return object : NormalCurve<T>(mc) {
         override fun domain(): Interval<T> {
             return newDomain
         }
@@ -190,8 +207,6 @@ fun <T : Any> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDoma
         override fun substitute(t: T): SVector<T> {
             return origin.substitute(tu.apply(t))
         }
-
-        override val mathCalculator: MathCalculator<T> = mc
 
         override val derivative: DerivableFunction<T, SVector<T>> by lazy {
             DerivableFunction.compose(tu, origin, { a, b -> a.add(b) }, { k, v -> v.multiplyNumber(k) })

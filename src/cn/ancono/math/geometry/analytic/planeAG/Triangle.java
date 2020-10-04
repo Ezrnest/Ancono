@@ -30,8 +30,8 @@ import java.util.function.Function;
  *       <b>a</b>
  * </pre>
  * <h2>Angle</h2>
- * In a triangle,we usually use the vertex to indicate a inner angle.For example, angle {@literal ��}<i>ABC</i> is
- * called by {@literal ��}<i>B</i>. In this class, as a result of the lack of trigonometric functions in {@linkplain MathCalculator},
+ * In a triangle,we usually use the vertex to indicate a inner angle.For example, angle {@literal ∠}<i>ABC</i> is
+ * called by {@literal ∠}<i>B</i>. In this class, as a result of the lack of trigonometric functions in {@linkplain MathCalculator},
  * the related methods usually require a supplementary trigonometric function.If the
  *
  * @param <T>

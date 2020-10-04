@@ -1,6 +1,3 @@
-/**
- *
- */
 package cn.ancono.math.geometry.analytic.planeAG;
 
 import cn.ancono.math.MathCalculator;
@@ -16,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 /**
- * The utility class for transform matrices.
+ * The utility class for transformation matrices.
  *
  * @author liyicheng
  */

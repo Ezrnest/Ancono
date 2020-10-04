@@ -16,6 +16,7 @@ import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.utilities.ArraySup
 import java.util.*
 import java.util.function.Function
+import kotlin.math.max
 
 /**
  * A class providing single variable polynomial functions.
@@ -27,7 +28,7 @@ abstract class AbstractSVPFunction<T : Any>
 /**
  * @param mc
  */
-protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVFunction<T>(mc), SVPFunction<T>, SDerivable<T, AbstractSVPFunction<T>>, Integrable<T> {
+protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVFunction<T>(mc), SVPFunction<T>, DerivableSVFunction<T>, Integrable<T> {
 
     override fun getDegree(): Int {
         if (mp > 0) {
@@ -52,12 +53,16 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         return re
     }
 
+    override val derivative: AbstractSVPFunction<T> by lazy {
+        derivation(this)
+    }
+
     /**
      * Returns the derivation of this function.
      * @return
      */
     override fun derive(): AbstractSVPFunction<T> {
-        return derivation(this)
+        return derivative
     }
 
     /*
@@ -71,7 +76,6 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 	 */
     abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AbstractSVPFunction<N>
-
 
 
     /**
@@ -149,7 +153,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             if (other !is SVPFunctionImpl1<*>) return false
             if (!super.equals(other)) return false
 
-            if (!Arrays.equals(coes, other.coes)) return false
+            if (!coes.contentEquals(other.coes)) return false
 
             return true
         }
@@ -288,10 +292,13 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             return ConstantFunction(newCalculator, mapper.apply(result))
         }
 
+        override fun <S : Any> mapTo(mapper: Bijection<T, S>): DerivableSVFunction<S> {
+            return super<AbstractSVPFunction>.mapTo(mapper)
+        }
 
         /*
-		 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
-		 */
+                 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
+                 */
         override fun valueEquals(obj: MathObject<T>): Boolean {
             return if (obj !is ConstantFunction<*>) {
                 false
@@ -341,7 +348,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             while (mc.isZero(ncoes[max])) {
                 max--
             }
-            ncoes = Arrays.copyOf(ncoes, max + 1)
+            ncoes = ncoes.copyOf(max + 1) as Array<T>
             return SVPFunctionImpl1(mc, max, ncoes)
         }
 
@@ -367,7 +374,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             var mp = 0
             for ((key, value) in coes) {
 
-                mp = Math.max(mp, key)
+                mp = max(mp, key)
                 map[key] = value
             }
             return SVPFunctionImpl2(mc, mp, map)
@@ -448,7 +455,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @return
          */
         fun <T : Any> add(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
-            val max = Math.max(p1.degree, p2.degree)
+            val max = max(p1.degree, p2.degree)
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
             val mc = p1.mathCalculator
             for (i in 0..max) {
@@ -464,7 +471,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @return
          */
         fun <T : Any> subtract(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
-            val max = Math.max(p1.degree, p2.degree)
+            val max = max(p1.degree, p2.degree)
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
             val mc = p1.mathCalculator
             for (i in 0..max) {
@@ -474,6 +481,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         }
 
         private val MAX_ARRAY_THREHOLD = 128
+
         /**
          * Multiplies the two SVPFunction, returns a new function as the result.
          * @param p1

@@ -1,6 +1,9 @@
 package cn.ancono.math.function
 
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
 import cn.ancono.math.calculus.Derivable
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.set.MathSet
 import cn.ancono.math.set.MathSets
 
@@ -57,6 +60,7 @@ interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T,
                                                             formalSubtract: (R1, R2) -> S)
                 : DerivableFunction<T, S> = DerivableAdd(f, g, formalSubtract)
 
+
         /**
          * Returns a derivable function that is equal to the sum of the two functions. This function returns
          * a [SVFunction<T>].
@@ -98,6 +102,14 @@ interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T,
                                           formalMultiply: (S, S) -> T)
                 : DerivableSVFunction<T> = DerivableMultiplySV(f, g, formalMultiply = formalMultiply, formalAdd = formalAdd)
 
+        /**
+         * Returns a derivable function that is equal to the product of the two functions. This function returns
+         * a [SVFunction<T>].
+         */
+        fun <T : Any> multiplySV(f: DerivableFunction<T, T>,
+                                 g: DerivableFunction<T, T>,
+                                 mc: MathCalculator<T>)
+                : DerivableSVFunction<T> = multiplySV(f, g, mc::add, mc::multiply)
 
         /**
          * Returns a derivable function that applies [f] first and then applies [g].
@@ -114,10 +126,37 @@ interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T,
          */
         fun <T : Any> composeSV(f: DerivableSVFunction<T>,
                                 g: DerivableSVFunction<T>,
-                                formalAdd: (T, T) -> T,
-                                formalMultiply: (T, T) -> T)
-                : DerivableSVFunction<T> = DerivableComposeSV(f, g, formalMultiply, formalAdd)
+                                mc: MathCalculator<T>)
+                : DerivableSVFunction<T> = DerivableComposeSV(f, g, mc::multiply, mc::add)
 
+
+        /**
+         * Returns a derivable function of `f/g`.
+         */
+        fun <T : Any> divideSV(f: DerivableSVFunction<T>, g: DerivableSVFunction<T>, mc: MathCalculator<T>)
+                : DerivableSVFunction<T> {
+            return DerivableDivideSV(f, g, mc)
+        }
+
+
+        /**
+         * Returns a derivable function of `f/g`.
+         */
+        fun <T : Any, S : Any> divide(f: DerivableFunction<T, S>, g: DerivableFunction<T, T>,
+                                      mc: MathCalculator<T>,
+                                      formalSubtract: (S, S) -> S,
+                                      formalMultiply: (T, S) -> S)
+                : DerivableFunction<T, S> {
+            return DerivableDivide(f, g, mc, formalMultiply, formalSubtract)
+        }
+
+        /**
+         * Returns a derivable function that is equal to the product of all functions in `fs`.
+         */
+        fun <T : Any, S : Any> multiplyAllSV(fs: List<DerivableFunction<T, S>>,
+                                             formalMultiplyAll: (List<S>) -> T,
+                                             formalAddAll: (List<T>) -> T)
+                : DerivableSVFunction<T> = DerivableMultiplyNSV(fs, formalMultiplyAll, formalAddAll)
     }
 }
 
@@ -304,9 +343,37 @@ internal class DerivableMultiplySV<T : Any, S : Any>(override val f: DerivableFu
         val partB = DerivableMultiplySV(f, g.derive(), merger, formalAdd)
         DerivableAddSV(partA, partB, formalAdd)
     }
-
-
 }
+
+internal class DerivableAddNSV<T : Any>(val fs: List<DerivableSVFunction<T>>,
+                                        val formalAddAll: (List<T>) -> T) : DerivableSVFunction<T> {
+    override val derivative: DerivableSVFunction<T> by lazy {
+        DerivableAddNSV(fs.map { it.derivative }, formalAddAll)
+    }
+
+    override fun apply(x: T): T {
+        return formalAddAll(fs.map { it(x) })
+    }
+}
+
+internal class DerivableMultiplyNSV<T : Any, S : Any>(val fs: List<DerivableFunction<T, S>>,
+                                                      private val formalMultiplyAll: (List<S>) -> T,
+                                                      private val formalAddAll: (List<T>) -> T) : DerivableSVFunction<T> {
+    override val derivative: DerivableSVFunction<T> by lazy {
+        val parts = ArrayList<DerivableSVFunction<T>>(fs.size)
+        for (i in fs.indices) {
+            val t = ArrayList(fs)
+            t[i] = fs[i].derivative
+            parts += DerivableMultiplyNSV(t, formalMultiplyAll, formalAddAll)
+        }
+        DerivableAddNSV(parts, formalAddAll)
+    }
+
+    override fun apply(x: T): T {
+        return formalMultiplyAll(fs.map { it(x) })
+    }
+}
+
 
 internal open class DerivableCompose<T : Any, R : Any, S : Any>(private val f: DerivableFunction<T, R>,
                                                                 private val g: DerivableFunction<R, S>,
@@ -344,4 +411,92 @@ internal open class DerivableComposeSV<T : Any>(private val f: DerivableSVFuncti
         return g(f(x))
     }
 }
+
+
+internal class DerivableDivide<T : Any, S : Any>(private val f: DerivableFunction<T, S>,
+                                                 private val g: DerivableFunction<T, T>,
+                                                 private val mc: MathCalculator<T>,
+                                                 private val formalMultiply: (T, S) -> S,
+                                                 private val formalSubtract: (S, S) -> S
+) : DerivableFunction<T, S> {
+    override val derivative: DerivableFunction<T, S> by lazy {
+        val f_ = f.derivative
+        val g_ = g.derivative
+        val f_g = DerivableFunction.multiply(g, f_, formalSubtract, formalMultiply)
+        val fg_ = DerivableFunction.multiply(g_, f, formalSubtract, formalMultiply)
+        val nume = DerivableFunction.subtract(f_g, fg_, formalSubtract)
+        val deno = DerivableFunction.compose(g, AbstractSVFunction.pow(Fraction.TWO, mc), mc::add, mc::multiply)
+
+        DerivableDivide(nume, deno, mc, formalMultiply, formalSubtract)
+    }
+
+    override fun apply(x: T): S {
+        return formalMultiply(mc.reciprocal(g(x)), f(x))
+    }
+}
+
+
+internal class DerivableDivideSV<T : Any>(private val f: DerivableSVFunction<T>,
+                                          private val g: DerivableSVFunction<T>,
+                                          private val mc: MathCalculator<T>) : DerivableSVFunction<T> {
+    override val derivative: DerivableSVFunction<T> by lazy {
+        val f_ = f.derivative
+        val g_ = g.derivative
+        val f_g = DerivableFunction.multiplySV(f_, g, mc)
+        val fg_ = DerivableFunction.multiplySV(f, g_, mc)
+        val nume = DerivableFunction.subtractSV(f_g, fg_, mc::subtract)
+        val deno = DerivableFunction.composeSV(g, AbstractSVFunction.pow(Fraction.TWO, mc), mc)
+
+        DerivableDivideSV(nume, deno, mc)
+    }
+
+    override fun apply(x: T): T {
+        return mc.eval { f(x) / g(x) }
+    }
+}
+
+//class DerivableSVFunctionCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<DerivableSVFunction<T>>() {
+//    override val one: DerivableSVFunction<T> = AbstractSVFunction.constant(mc.one,mc)
+//    override val zero: DerivableSVFunction<T> = AbstractSVFunction.constant(mc.zero,mc)
+//
+//    override fun add(x: DerivableSVFunction<T>, y: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return DerivableFunction.addSV(x,y,mc::add)
+//    }
+//
+//    override fun negate(x: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return x.andThenMap(mc::negate)
+//    }
+//
+//    override fun subtract(x: DerivableSVFunction<T>, y: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return super.subtract(x, y)
+//    }
+//
+//    override fun multiply(x: DerivableSVFunction<T>, y: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return super.multiply(x, y)
+//    }
+//
+//    override fun divide(x: DerivableSVFunction<T>, y: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return super.divide(x, y)
+//    }
+//
+//    override fun reciprocal(x: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return super.reciprocal(x)
+//    }
+//
+//    override fun squareRoot(x: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return super.squareRoot(x)
+//    }
+//
+//    override fun pow(x: DerivableSVFunction<T>, n: Long): DerivableSVFunction<T> {
+//        return super.pow(x, n)
+//    }
+//
+//    override fun exp(a: DerivableSVFunction<T>, b: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return super.exp(a, b)
+//    }
+//
+//    override fun ln(x: DerivableSVFunction<T>): DerivableSVFunction<T> {
+//        return super.ln(x)
+//    }
+//}
 

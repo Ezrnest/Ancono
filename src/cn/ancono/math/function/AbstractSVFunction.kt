@@ -14,14 +14,13 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 
 /**
- * This class provides some basic useful functions such as
+ * This class provides some basic functions such as `pow`, `exp`, `log`.
+ *
+ *
  * @author liyicheng
  * 2017-10-06 10:02
  */
 abstract class AbstractSVFunction<T : Any>
-/**
- * @param mc
- */
 protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> {
 
     /**
@@ -38,8 +37,11 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
 
 
     companion object {
-        private val expmap = ConcurrentHashMap<MathCalculator<*>, Ex<*>>()
-        private val lnmap = ConcurrentHashMap<MathCalculator<*>, Ln<*>>()
+
+
+        fun <T : Any> constant(c: T, mc: MathCalculator<T>): AbstractSVPFunction.ConstantFunction<T> {
+            return AbstractSVPFunction.ConstantFunction(mc, c)
+        }
 
         /**
          * Returns the function : e^x
@@ -48,12 +50,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          */
         @Suppress("UNCHECKED_CAST")
         fun <T : Any> naturalExp(mc: MathCalculator<T>): Ex<T> {
-            var ex: Ex<T>? = expmap[mc] as Ex<T>
-            if (ex == null) {
-                ex = Ex(mc)
-                expmap[mc] = ex
-            }
-            return ex
+            return Ex(mc)
         }
 
         /**
@@ -63,12 +60,7 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
          */
         @Suppress("UNCHECKED_CAST")
         fun <T : Any> naturalLog(mc: MathCalculator<T>): Ln<T> {
-            var ex: Ln<T>? = lnmap[mc] as Ln<T>
-            if (ex == null) {
-                ex = Ln(mc)
-                lnmap[mc] = ex
-            }
-            return ex
+            return Ln(mc)
         }
 
         /**
@@ -130,6 +122,13 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
             return if (mc.isZero(a)) {
                 Power(mc)
             } else Power(mc, a, n)
+        }
+
+        /**
+         * Returns the function `x^(1/2)`.
+         */
+        fun <T : Any> sqrt(mc: MathCalculator<T>): Power<T> {
+            return pow(Fraction.HALF, mc)
         }
 
         /**

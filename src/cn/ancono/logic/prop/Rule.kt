@@ -1,9 +1,9 @@
-package cn.ancono.logic.propLogic
+package cn.ancono.logic.prop
 
-import cn.ancono.logic.propLogic.FormulaMatcher.Companion.A
-import cn.ancono.logic.propLogic.FormulaMatcher.Companion.B
-import cn.ancono.logic.propLogic.FormulaMatcher.Companion.F
-import cn.ancono.logic.propLogic.FormulaMatcher.Companion.T
+import cn.ancono.logic.prop.FormulaMatcher.Companion.A
+import cn.ancono.logic.prop.FormulaMatcher.Companion.B
+import cn.ancono.logic.prop.FormulaMatcher.Companion.F
+import cn.ancono.logic.prop.FormulaMatcher.Companion.T
 import java.util.*
 
 /*

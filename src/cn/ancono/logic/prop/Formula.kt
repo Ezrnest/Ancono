@@ -1,6 +1,6 @@
 @file:Suppress("CanBeParameter", "MemberVisibilityCanBePrivate")
 
-package cn.ancono.logic.propLogic
+package cn.ancono.logic.prop
 
 import cn.ancono.math.isSorted
 import cn.ancono.utilities.BinarySup

@@ -1,4 +1,4 @@
-package cn.ancono.logic.firstOrderLogic
+package cn.ancono.logic.firstOrder
 
 
 /*

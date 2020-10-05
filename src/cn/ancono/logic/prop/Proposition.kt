@@ -1,4 +1,4 @@
-package cn.ancono.logic.propLogic
+package cn.ancono.logic.prop
 
 import java.util.*
 

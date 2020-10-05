@@ -1,6 +1,6 @@
 package samples
 
-import cn.ancono.logic.propLogic.*
+import cn.ancono.logic.prop.*
 
 fun main(args: Array<String>) {
     LogicSample.predicateLogic()

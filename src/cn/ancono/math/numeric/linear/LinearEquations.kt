@@ -1,10 +1,9 @@
 package cn.ancono.math.numeric.linear
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
-import cn.ancono.math.algebra.linearAlgebra.Matrix
-import cn.ancono.math.algebra.linearAlgebra.MatrixOperation
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup
-import cn.ancono.math.algebra.linearAlgebra.Vector
+import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.algebra.linear.MatrixSup
+import cn.ancono.math.algebra.linear.Vector
 
 object LinearEquations {
 

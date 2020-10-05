@@ -1,6 +1,6 @@
 package samples;
 
-import cn.ancono.math.algebra.abstractAlgebra.group.finite.PermutationGroup;
+import cn.ancono.math.algebra.abs.group.finite.PermutationGroup;
 import cn.ancono.math.numberTheory.combination.Permutations;
 
 /*

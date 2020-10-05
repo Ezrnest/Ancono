@@ -3,11 +3,11 @@ package cn.ancono.math.numberModels.structure
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.abstractAlgebra.FiniteGroups
-import cn.ancono.math.algebra.abstractAlgebra.calculator.DivisionRingCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.asGroupCalculator
-import cn.ancono.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup
-import cn.ancono.math.geometry.analytic.spaceAG.SVector
+import cn.ancono.math.algebra.abs.FiniteGroups
+import cn.ancono.math.algebra.abs.calculator.DivisionRingCalculator
+import cn.ancono.math.algebra.abs.calculator.asGroupCalculator
+import cn.ancono.math.algebra.abs.group.finite.AbstractFiniteGroup
+import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import java.util.function.Function
 

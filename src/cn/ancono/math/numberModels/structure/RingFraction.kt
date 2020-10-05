@@ -2,8 +2,8 @@ package cn.ancono.math.numberModels.structure
 
 
 import cn.ancono.math.FlexibleMathObject
-import cn.ancono.math.algebra.abstractAlgebra.calculator.RingCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.UnitRingCalculator
+import cn.ancono.math.algebra.abs.calculator.RingCalculator
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter

@@ -1,7 +1,6 @@
 package cn.ancono.math.geometry.spaces
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.linearAlgebra.Vector
+import cn.ancono.math.algebra.linear.Vector
 
 
 /*

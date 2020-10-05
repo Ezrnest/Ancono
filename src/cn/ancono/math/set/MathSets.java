@@ -5,9 +5,9 @@ package cn.ancono.math.set;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
-import cn.ancono.math.algebra.abstractAlgebra.EqualRelation;
-import cn.ancono.math.algebra.abstractAlgebra.GroupCalculators;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.EqualRelation;
+import cn.ancono.math.algebra.abs.GroupCalculators;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.utilities.CollectionSup;
 import cn.ancono.utilities.structure.Pair;
 import cn.ancono.utilities.structure.Triple;

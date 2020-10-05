@@ -1,11 +1,15 @@
 package samples
 
+import cn.ancono.math.calculus.Calculus.derivation
 import cn.ancono.math.function.asFunction
 import cn.ancono.math.function.invoke
-import cn.ancono.math.geometry.analytic.spaceAG.curve.NormalCurve
-import cn.ancono.math.geometry.analytic.spaceAG.curve.NormalCurveComposed
+import cn.ancono.math.geometry.analytic.space.SVector
+import cn.ancono.math.geometry.differential.NormalCurve
+import cn.ancono.math.geometry.differential.NormalCurveComposed
+import cn.ancono.math.minus
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
+import cn.ancono.math.plus
 import cn.ancono.math.set.Interval
 
 object DifferentialGeometrySample {
@@ -22,12 +26,47 @@ object DifferentialGeometrySample {
         val t = mc.parse("t")
         val r1 = makeCurve("t+Sqr3*sin(t), 2cos(t),Sqr3*t-sin(t)")
         val r2 = makeCurve("2cos(t/2),2sin(t/2),-t")
+        println("r1:")
         println(r1.curvature(t))
         println(r1.torsion(t))
+        println("r2:")
         println(r2.curvature(t))
         println(r2.torsion(t))
-
     }
+
+    fun proof1() {
+        val at = getVector(mc, 0)
+        val bt = getVector(mc, 1)
+        val innerProduct = at.innerProduct(bt)
+        val left = innerProduct.derivation()
+        val right = mc.add(at.derivation().innerProduct(bt), at.innerProduct(bt.derivation()))
+        println("left - right is ${mc.subtract(left, right)}")
+    }
+
+    fun proof2() {
+        val at = getVector(mc, 0)
+        val bt = getVector(mc, 1)
+        val left = at.outerProduct(bt).derivation()
+        val right = at.derivation().outerProduct(bt) + at.outerProduct(bt.derivation())
+        println("left - right is ${(left - right)}")
+    }
+
+    fun proof3() {
+        val at = getVector(mc, 0)
+        val bt = getVector(mc, 1)
+        val ct = getVector(mc, 2)
+
+        val left = SVector.mixedProduct(at, bt, ct).derivation()
+        val right = mc.addX(SVector.mixedProduct(at.derivation(), bt, ct),
+                SVector.mixedProduct(at, bt.derivation(), ct),
+                SVector.mixedProduct(at, bt, ct.derivation()))
+        println("left - right is ${mc.subtract(left, right)}")
+    }
+
+    fun getVector(mc: ExprCalculator, num: Int = 0): SVector<Expression> = SVector.valueOf(Expression.valueOf("f${num}_(x)"),
+            Expression.valueOf("g${num}_(x)"), Expression.valueOf("h${num}_(x)"), mc)
+
+    fun SVector<Expression>.derivation(): SVector<Expression> = this.applyFunction { it.derivation() }
 }
 
 fun main() {

@@ -1,7 +1,6 @@
-bin
 .settings
 .idea
 *.ipr
 *.iml
 *.iws
-out 
+out

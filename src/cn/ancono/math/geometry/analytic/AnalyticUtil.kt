@@ -1,13 +1,13 @@
 package cn.ancono.math.geometry.analytic
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.linearAlgebra.Matrix
-import cn.ancono.math.algebra.linearAlgebra.Vector
+import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.function.AbstractSVFunction
 import cn.ancono.math.function.DerivableFunction
 import cn.ancono.math.function.DerivableSVFunction
-import cn.ancono.math.geometry.analytic.spaceAG.SVector
-import cn.ancono.math.geometry.analytic.spaceAG.curve.DVFunction
+import cn.ancono.math.geometry.analytic.space.SVector
+import cn.ancono.math.geometry.differential.DVFunction
 
 
 /**

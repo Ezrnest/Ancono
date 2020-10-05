@@ -1,12 +1,12 @@
 package cn.ancono.math
 
 import cn.ancono.math.algebra.IPolynomial
-import cn.ancono.math.algebra.linearAlgebra.Matrix
-import cn.ancono.math.algebra.linearAlgebra.Vector
-import cn.ancono.math.geometry.analytic.planeAG.PVector
-import cn.ancono.math.geometry.analytic.planeAG.Point
-import cn.ancono.math.geometry.analytic.spaceAG.SPoint
-import cn.ancono.math.geometry.analytic.spaceAG.SVector
+import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.algebra.linear.Vector
+import cn.ancono.math.geometry.analytic.plane.PVector
+import cn.ancono.math.geometry.analytic.plane.Point
+import cn.ancono.math.geometry.analytic.space.SPoint
+import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.structure.Complex

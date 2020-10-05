@@ -4,9 +4,9 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
-import cn.ancono.math.geometry.analytic.planeAG.PVector
-import cn.ancono.math.geometry.analytic.planeAG.Point
-import cn.ancono.math.geometry.analytic.spaceAG.SPoint
+import cn.ancono.math.geometry.analytic.plane.PVector
+import cn.ancono.math.geometry.analytic.plane.Point
+import cn.ancono.math.geometry.analytic.space.SPoint
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.*

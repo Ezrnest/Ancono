@@ -3,7 +3,7 @@
  */
 package cn.ancono.utilities;
 
-import cn.ancono.math.algebra.abstractAlgebra.EqualRelation;
+import cn.ancono.math.algebra.abs.EqualRelation;
 import cn.ancono.utilities.structure.Pair;
 
 import java.util.*;

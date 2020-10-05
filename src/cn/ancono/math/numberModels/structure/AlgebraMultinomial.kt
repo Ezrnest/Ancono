@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels.structure
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.AlgebraCalculator
+import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
 import cn.ancono.math.numberModels.api.AlgebraModel
 import java.util.*
 

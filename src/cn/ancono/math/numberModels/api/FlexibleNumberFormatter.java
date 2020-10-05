@@ -1,7 +1,6 @@
 package cn.ancono.math.numberModels.api;
 
-import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.utilities.SNFSupport;
 
 /**

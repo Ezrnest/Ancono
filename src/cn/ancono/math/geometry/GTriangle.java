@@ -2,7 +2,7 @@ package cn.ancono.math.geometry;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.geometry.analytic.planeAG.*;
+import cn.ancono.math.geometry.analytic.plane.*;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;

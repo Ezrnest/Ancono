@@ -1,6 +1,6 @@
 package test
 
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup
+import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.times

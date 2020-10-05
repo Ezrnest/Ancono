@@ -2,7 +2,7 @@ package cn.ancono.math.set
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
-import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberTheory.IntCalculator
 import java.math.BigInteger

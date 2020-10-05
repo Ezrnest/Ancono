@@ -2,8 +2,8 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
-import cn.ancono.math.geometry.analytic.planeAG.PVector;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
+import cn.ancono.math.geometry.analytic.plane.PVector;
+import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.api.FieldNumberModel;
 import cn.ancono.utilities.SNFSupport;
 import org.jetbrains.annotations.NotNull;

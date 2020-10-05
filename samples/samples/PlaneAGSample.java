@@ -1,8 +1,7 @@
 package samples;
 
-import cn.ancono.math.geometry.analytic.planeAG.PlaneAgUtils;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
-import cn.ancono.math.geometry.analytic.planeAG.Triangle;
+import cn.ancono.math.geometry.analytic.plane.Point;
+import cn.ancono.math.geometry.analytic.plane.Triangle;
 import cn.ancono.math.numberModels.expression.Expression;
 /*
  * Created by lyc at 2020/3/1

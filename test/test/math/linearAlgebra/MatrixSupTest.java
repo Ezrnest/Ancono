@@ -1,7 +1,7 @@
 package test.math.linearAlgebra;
 
-import cn.ancono.math.algebra.linearAlgebra.Matrix;
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
+import cn.ancono.math.algebra.linear.Matrix;
+import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.numberModels.Calculators;
 import org.junit.Test;
 import test.math.TestUtils;

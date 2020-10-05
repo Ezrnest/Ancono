@@ -3,7 +3,7 @@
  */
 package cn.ancono.math
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 
 /**
  * @author liyicheng

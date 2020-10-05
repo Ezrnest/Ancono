@@ -1,10 +1,8 @@
 package samples
 
-import cn.ancono.math.algebra.linearAlgebra.Matrix
-import cn.ancono.math.algebra.linearAlgebra.Vector
-import cn.ancono.math.calculus.Calculus
+import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.BigFraction
-import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.times
 import java.math.BigInteger
 

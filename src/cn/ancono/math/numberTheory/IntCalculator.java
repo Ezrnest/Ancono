@@ -5,7 +5,7 @@ package cn.ancono.math.numberTheory;
 
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator;
+import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.utilities.structure.Pair;
 import org.jetbrains.annotations.NotNull;

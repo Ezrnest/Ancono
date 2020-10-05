@@ -10,9 +10,9 @@ import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.expression.ExprCalculator;
 import cn.ancono.math.numberModels.expression.Expression;
 import cn.ancono.math.numberModels.expression.SimplificationStrategies;
-import cn.ancono.math.geometry.analytic.planeAG.Line;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
-import cn.ancono.math.geometry.analytic.planeAG.curve.EllipseV;
+import cn.ancono.math.geometry.analytic.plane.Line;
+import cn.ancono.math.geometry.analytic.plane.Point;
+import cn.ancono.math.geometry.analytic.plane.curve.EllipseV;
 import org.junit.Test;
 
 import java.util.List;

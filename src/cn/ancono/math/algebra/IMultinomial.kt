@@ -1,6 +1,6 @@
 package cn.ancono.math.algebra
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 
 

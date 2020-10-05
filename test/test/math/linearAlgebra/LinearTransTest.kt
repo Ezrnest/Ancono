@@ -1,10 +1,10 @@
 package test.math.linearAlgebra
 
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup
-import cn.ancono.math.algebra.linearAlgebra.Vector
-import cn.ancono.math.algebra.linearAlgebra.VectorBasis
-import cn.ancono.math.algebra.linearAlgebra.mapping.LinearMapping
-import cn.ancono.math.algebra.linearAlgebra.mapping.LinearTrans
+import cn.ancono.math.algebra.linear.MatrixSup
+import cn.ancono.math.algebra.linear.Vector
+import cn.ancono.math.algebra.linear.VectorBasis
+import cn.ancono.math.algebra.linear.mapping.LinearMapping
+import cn.ancono.math.algebra.linear.mapping.LinearTrans
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.plus

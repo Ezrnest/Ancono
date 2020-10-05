@@ -2,9 +2,9 @@
 
 package cn.ancono.math.numberModels.api
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.RingCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
+import cn.ancono.math.algebra.abs.calculator.GroupCalculator
+import cn.ancono.math.algebra.abs.calculator.RingCalculator
 
 
 interface MonoidNumberModel<T : MonoidNumberModel<T>> {
@@ -78,7 +78,7 @@ interface RingNumberModel<T : RingNumberModel<T>> : GroupNumberModel<T>, MulMono
 
 /**
  * Describes a number model which is suitable for a division ring.
- * @see cn.ancono.math.algebra.abstractAlgebra.structure.DivisionRing
+ * @see cn.ancono.math.algebra.abs.structure.DivisionRing
  */
 interface DivisionRingNumberModel<T : DivisionRingNumberModel<T>> : RingNumberModel<T>, MulGroupNumberModel<T> {
     override fun reciprocal(): T
@@ -88,7 +88,7 @@ interface DivisionRingNumberModel<T : DivisionRingNumberModel<T>> : RingNumberMo
 //inline operator fun <T : DivisionRingNumberModel<T>> DivisionRingNumberModel<T>.div(y: T): T = divide(y)
 /**
  * Describes a number model which is suitable for a field.
- * @see cn.ancono.math.algebra.abstractAlgebra.structure.Field
+ * @see cn.ancono.math.algebra.abs.structure.Field
  */
 interface FieldNumberModel<T : FieldNumberModel<T>> : DivisionRingNumberModel<T>
 

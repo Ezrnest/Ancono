@@ -2,7 +2,7 @@ package cn.ancono.math.geometry.analytic
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.linearAlgebra.Vector
+import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.set.MathSet
 
 /**

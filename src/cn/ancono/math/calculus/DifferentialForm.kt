@@ -1,9 +1,8 @@
 package cn.ancono.math.calculus
 
 import cn.ancono.math.MathSymbol
-import cn.ancono.math.algebra.abstractAlgebra.calculator.AlgebraCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator
-import cn.ancono.math.numberModels.api.times
+import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
 import cn.ancono.math.numberModels.structure.AlgebraMultinomial

@@ -5,7 +5,7 @@ package cn.ancono.math.algebra;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
-import cn.ancono.math.algebra.linearAlgebra.Vector;
+import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
 

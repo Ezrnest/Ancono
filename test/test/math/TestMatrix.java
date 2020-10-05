@@ -4,13 +4,13 @@
 package test.math;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution;
-import cn.ancono.math.algebra.linearAlgebra.Matrix;
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
-import cn.ancono.math.algebra.linearAlgebra.Vector;
+import cn.ancono.math.algebra.linear.LinearEquationSolution;
+import cn.ancono.math.algebra.linear.Matrix;
+import cn.ancono.math.algebra.linear.MatrixSup;
+import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.equation.SVPEquation;
-import cn.ancono.math.geometry.analytic.planeAG.curve.ConicSection;
-import cn.ancono.math.geometry.analytic.planeAG.curve.GeneralConicSection;
+import cn.ancono.math.geometry.analytic.plane.curve.ConicSection;
+import cn.ancono.math.geometry.analytic.plane.curve.GeneralConicSection;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.ArraySup;

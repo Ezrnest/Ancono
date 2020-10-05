@@ -1,8 +1,7 @@
 package cn.ancono.math.geometry.spaces
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.linearAlgebra.Matrix
-import java.util.function.Function
+import cn.ancono.math.algebra.linear.Matrix
 
 
 /*

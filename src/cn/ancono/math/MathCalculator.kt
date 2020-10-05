@@ -1,6 +1,6 @@
 package cn.ancono.math
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke

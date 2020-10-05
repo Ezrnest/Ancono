@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels.structure
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator
+import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.api.times

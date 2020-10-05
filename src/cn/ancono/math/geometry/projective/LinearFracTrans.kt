@@ -3,10 +3,9 @@ package cn.ancono.math.geometry.projective
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.function.Bijection
-import cn.ancono.math.geometry.analytic.planeAG.TransMatrix
-import cn.ancono.math.get
+import cn.ancono.math.geometry.analytic.plane.TransMatrix
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.MulGroupNumberModel
 import cn.ancono.math.numberModels.api.times

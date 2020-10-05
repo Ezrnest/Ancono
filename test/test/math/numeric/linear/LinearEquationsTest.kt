@@ -1,7 +1,7 @@
 package test.math.numeric.linear
 
-import cn.ancono.math.algebra.linearAlgebra.Matrix
-import cn.ancono.math.algebra.linearAlgebra.Vector
+import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numeric.linear.LinearEquations

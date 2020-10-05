@@ -1,9 +1,9 @@
 package test.math.linearAlgebra
 
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup
-import cn.ancono.math.algebra.linearAlgebra.Vector
-import cn.ancono.math.algebra.linearAlgebra.VectorBasis
-import cn.ancono.math.algebra.linearAlgebra.space.AffineSpace
+import cn.ancono.math.algebra.linear.MatrixSup
+import cn.ancono.math.algebra.linear.Vector
+import cn.ancono.math.algebra.linear.VectorBasis
+import cn.ancono.math.algebra.linear.space.AffineSpace
 import cn.ancono.math.get
 import cn.ancono.math.numberModels.Fraction
 import org.junit.Test

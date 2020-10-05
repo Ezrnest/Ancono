@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator
+import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Multinomial.*
 import cn.ancono.math.numberModels.api.Simplifier

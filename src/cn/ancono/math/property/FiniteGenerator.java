@@ -3,8 +3,7 @@ package cn.ancono.math.property;
  * Created by liyicheng at 2020-03-07 13:00
  */
 
-import cn.ancono.math.algebra.linearAlgebra.Vector;
-import cn.ancono.math.set.MathSet;
+import cn.ancono.math.algebra.linear.Vector;
 
 import java.util.List;
 

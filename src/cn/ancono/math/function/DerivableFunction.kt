@@ -1,7 +1,7 @@
 package cn.ancono.math.function
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.calculus.Derivable
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.set.MathSet

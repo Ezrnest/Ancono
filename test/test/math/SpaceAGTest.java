@@ -1,16 +1,16 @@
 package test.math;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution;
-import cn.ancono.math.algebra.linearAlgebra.Matrix;
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
-import cn.ancono.math.algebra.linearAlgebra.Vector;
-import cn.ancono.math.geometry.analytic.spaceAG.*;
+import cn.ancono.math.algebra.linear.LinearEquationSolution;
+import cn.ancono.math.algebra.linear.Matrix;
+import cn.ancono.math.algebra.linear.MatrixSup;
+import cn.ancono.math.algebra.linear.Vector;
+import cn.ancono.math.geometry.analytic.space.*;
 import cn.ancono.math.numberModels.*;
-import cn.ancono.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
-import cn.ancono.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;
-import cn.ancono.math.geometry.analytic.spaceAG.shape.Cube;
-import cn.ancono.math.geometry.analytic.spaceAG.shape.Tetrahedron;
+import cn.ancono.math.geometry.analytic.space.SPoint.SPointGenerator;
+import cn.ancono.math.geometry.analytic.space.SVector.SVectorGenerator;
+import cn.ancono.math.geometry.analytic.space.shape.Cube;
+import cn.ancono.math.geometry.analytic.space.shape.Tetrahedron;
 import cn.ancono.utilities.ArraySup;
 
 import java.util.Random;

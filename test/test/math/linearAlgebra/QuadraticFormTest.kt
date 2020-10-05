@@ -1,6 +1,6 @@
 package test.math.linearAlgebra
 
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup
+import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.component1
 import cn.ancono.math.component2
 import cn.ancono.math.times

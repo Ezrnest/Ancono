@@ -1,6 +1,6 @@
 package cn.ancono.utilities;
 
-import cn.ancono.math.algebra.linearAlgebra.Matrix;
+import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.numberModels.Fraction;
 
 import java.io.OutputStream;

@@ -6,7 +6,7 @@ package cn.ancono.math.function;
 
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.algebra.IPolynomial;
-import cn.ancono.math.algebra.linearAlgebra.Vector;
+import cn.ancono.math.algebra.linear.Vector;
 
 import java.util.function.BiPredicate;
 

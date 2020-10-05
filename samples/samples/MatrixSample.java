@@ -1,7 +1,7 @@
 package samples;
 
-import cn.ancono.math.algebra.linearAlgebra.Matrix;
-import cn.ancono.math.algebra.linearAlgebra.QuadraticForm;
+import cn.ancono.math.algebra.linear.Matrix;
+import cn.ancono.math.algebra.linear.QuadraticForm;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.Multinomial;

@@ -1,17 +1,18 @@
 # Ancono
 
-An object-oriented Math library.
+An object-oriented Math library on JVM platform.
 
 ---
+
 
 ## Introduction
 
 Ancono provides a wide range of basic and advanced math tools, focusing both on simplicity and efficiency. 
-This library includes the following modules: 
+This library contains the following modules: 
 
 1. Math functions: 
     
-    power, gcd, lcm, mod, power and mod, Chinese remainder, Miller-Rabin prime test and more...
+    power, gcd, lcm, mod, power and mod, Chinese remainder, Miller-Rabin prime test, gamma function and more...
     
 2. Number models:
  
@@ -23,7 +24,8 @@ This library includes the following modules:
     
 3. Polynomials, multinomials and expression:
 
-    Ancono enable users to operate polynomials and multinomials on a field. It is also possible to compute 
+    Ancono enable users to operate polynomials and multinomials on a field.  
+    It is also possible to compute 
     and simplify complex expressions. 
     
     See samples <a href="#expressions">here</a>.
@@ -32,9 +34,13 @@ This library includes the following modules:
 
     Ancono supports computations of matrices and vectors on a field. Linear spaces and linear transformations
     are also included. 
+	
+	Matrix class and vector class are provided with full functionality.
+	There are all kinds of methods related to matrix, such as `det`, `rank`, computing solution space,
+	characteristic polynomial, QR decomposition, lambda-matrix and so on. 
     
     See samples <a href="#matrix">here</a>.
-    
+
 5. Plane analytic geometry
     
     Line, triangle, conic sections (including circle, ellipse, hyperbola and parabola) and affine transformations 
@@ -196,7 +202,7 @@ println("Conjunctive norm: ${formula.toConjunctiveNorm()}")
 println("Is equivalent to T: ${formula valueEquals T}")
 ```
 
-More samples are available in src/samples.
+More samples are available in the `samples` folder.
 
 
 ## Number models
@@ -226,8 +232,8 @@ The abstract class `MathObject` is the superclass of almost all Math objects in 
 
 
 ## Usage
-Users can utilize this library by simply import the jar file downloaded from /out/artifacts. If the visualization module 
-will be used, please make sure [JavaFx](https://www.javafxdeveloper.com) is installed.
+Users can utilize this library by simply import the jar file downloaded from `build` or from the 
+[release page](https://github.com/140378476/Ancono/releases). 
 
 ## Language
 Ancono is written by both Java and [Kotlin](https://kotlinlang.org) and you can use it with Java only. However, some 
@@ -236,11 +242,13 @@ extra features (such as operator override) are only possible if you use Kotlin.
 ## Dependencies
 Core:
 * Java: JDK 14
-* JavaFx: 11
 * Kotlin: 1.4
 
 Test:
 * JUnit 4
+
+## Related project
+[AnconoGraphic](https://github.com/140378476/AnconoGraphic) provides graphic extension of this library.  
 
 ## Development
 Project Ancono welcomes anyone to join in the development. 

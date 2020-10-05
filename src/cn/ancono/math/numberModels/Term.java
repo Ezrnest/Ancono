@@ -1584,7 +1584,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         return new Term(map);
     }
 
-    public static Term characters(NavigableMap<String, Fraction> characters) {
+    public static Term characters(Map<String, Fraction> characters) {
         TreeMap<String, Fraction> map = new TreeMap<>(characters);
         return new Term(map);
     }

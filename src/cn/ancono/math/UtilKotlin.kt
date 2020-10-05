@@ -28,7 +28,7 @@ operator fun <T : Any> Vector<T>.unaryMinus() = this.negative()!!
 
 operator fun <T : Any> PVector<T>.unaryMinus() = this.negative()!!
 operator fun <T : Any> SVector<T>.unaryMinus() = this.negative()!!
-operator fun <T : Any> Vector<T>.plus(v: Vector<T>) = Vector.addAll(this, v)!!
+operator fun <T : Any> Vector<T>.plus(v: Vector<T>) = Vector.addV(this, v)!!
 
 operator fun <T : Any> PVector<T>.plus(v: PVector<T>) = this.add(v)!!
 operator fun <T : Any> SVector<T>.plus(v: SVector<T>) = this.add(v)!!

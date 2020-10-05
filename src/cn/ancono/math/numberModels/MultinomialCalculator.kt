@@ -1,7 +1,6 @@
 package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator
 import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Multinomial.*
@@ -174,6 +173,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
     }
 
     override fun exp(a: Multinomial, b: Multinomial): Multinomial {
+        // a^b
         if (a == ZERO) {
             if (b == ZERO) {
                 throw ArithmeticException("0^0")
@@ -184,14 +184,28 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             return ONE
         }
         if (b.isMonomial) {
-            val t = b.first
-            if (t.isInteger) {
-                val l = t.numerator.toLong()
-                return pow(a, if (t.isNegative) {
+            val p = b.first
+            if (p.isInteger) {
+                val l = p.numerator.toLong()
+                return pow(a, if (p.isNegative) {
                     -l
                 } else {
                     l
                 })
+            }
+            if (a.isMonomial) {
+                val x = a.first
+                if (p.isFraction) {
+                    if (p.denominator == BigInteger.TWO) {
+                        val l = p.numerator.toInt() * p.signum
+                        return monomial(x.squareRoot().pow(l))
+                    }
+                    if (x.isCoefficientOne) {
+                        val f = p.toFraction()
+                        val ch = x.characterNoCopy.mapValues { v -> v.value * f }
+                        return monomial(Term.characters(ch))
+                    }
+                }
             }
         }
         throw UnsupportedCalculationException()

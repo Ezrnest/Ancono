@@ -26,4 +26,6 @@ public interface BiMathFunction<P1, P2, R> extends BiFunction<P1, P2, R> {
      */
     @Override
     R apply(P1 x, P2 y);
+
+
 }

@@ -144,10 +144,11 @@ interface DerivableFunction<T : Any, R : Any> : MathFunction<T, R>, Derivable<T,
          */
         fun <T : Any, S : Any> divide(f: DerivableFunction<T, S>, g: DerivableFunction<T, T>,
                                       mc: MathCalculator<T>,
+                                      formalAdd: (S, S) -> S,
                                       formalSubtract: (S, S) -> S,
                                       formalMultiply: (T, S) -> S)
                 : DerivableFunction<T, S> {
-            return DerivableDivide(f, g, mc, formalMultiply, formalSubtract)
+            return DerivableDivide(f, g, mc, formalMultiply, formalAdd, formalSubtract)
         }
 
         /**
@@ -256,9 +257,11 @@ internal class MappedSVDerivableFunction<T : Any, S : Any>(val f: DerivableSVFun
 /**
  * The mapper should not be derived.
  */
-internal open class DerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(fx: DerivableFunction<T, out R1>,
-                                                                            gx: DerivableFunction<T, out R2>,
-                                                                            merger: (R1, R2) -> R) : MergeOf2<T, R1, R2, R>(fx, gx, merger), DerivableFunction<T, R> {
+internal open class DerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(
+        fx: DerivableFunction<T, out R1>,
+        gx: DerivableFunction<T, out R2>,
+        merger: (R1, R2) -> R
+) : MergeOf2<T, R1, R2, R>(fx, gx, merger), DerivableFunction<T, R> {
 
     override val f: DerivableFunction<T, out R1> = fx
 
@@ -271,6 +274,8 @@ internal open class DerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(fx: 
     override val derivative: DerivableFunction<T, R> by lazy {
         DerivableMergeOf2(f.derive(), g.derive(), merger)
     }
+
+
 }
 
 /**
@@ -281,7 +286,8 @@ internal class DerivableMergeOf3<T : Any, R1 : Any, R2 : Any, R3 : Any, S : Any>
                                                                                  val f3: DerivableFunction<T, R3>,
                                                                                  val merger: (R1, R2, R3) -> S)
     : DerivableFunction<T, S> {
-    private val intersectDomain = MathSets.unionOf(f1.domain(), f2.domain(), f3.domain())!!
+
+    val nDomain: MathSet<T> = MathSets.intersectOf(f1.domain(), f2.domain(), f3.domain())
 
     override val derivative: DerivableFunction<T, S> by lazy {
         DerivableMergeOf3(f1.derive(), f2.derive(), f3.derive(), merger)
@@ -292,7 +298,7 @@ internal class DerivableMergeOf3<T : Any, R1 : Any, R2 : Any, R3 : Any, S : Any>
         return merger(f1(x), f2(x), f3(x))
     }
 
-    override fun domain(): MathSet<T> = intersectDomain
+    override fun domain(): MathSet<T> = nDomain
 }
 
 
@@ -417,17 +423,18 @@ internal class DerivableDivide<T : Any, S : Any>(private val f: DerivableFunctio
                                                  private val g: DerivableFunction<T, T>,
                                                  private val mc: MathCalculator<T>,
                                                  private val formalMultiply: (T, S) -> S,
+                                                 private val formalAdd: (S, S) -> S,
                                                  private val formalSubtract: (S, S) -> S
 ) : DerivableFunction<T, S> {
     override val derivative: DerivableFunction<T, S> by lazy {
         val f_ = f.derivative
         val g_ = g.derivative
-        val f_g = DerivableFunction.multiply(g, f_, formalSubtract, formalMultiply)
-        val fg_ = DerivableFunction.multiply(g_, f, formalSubtract, formalMultiply)
+        val f_g = DerivableFunction.multiply(g, f_, formalAdd, formalMultiply)
+        val fg_ = DerivableFunction.multiply(g_, f, formalAdd, formalMultiply)
         val nume = DerivableFunction.subtract(f_g, fg_, formalSubtract)
         val deno = DerivableFunction.compose(g, AbstractSVFunction.pow(Fraction.TWO, mc), mc::add, mc::multiply)
 
-        DerivableDivide(nume, deno, mc, formalMultiply, formalSubtract)
+        DerivableDivide(nume, deno, mc, formalMultiply, formalAdd, formalSubtract)
     }
 
     override fun apply(x: T): S {

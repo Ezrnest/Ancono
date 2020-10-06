@@ -24,7 +24,7 @@ import java.util.function.Function;
 public interface MathFunction<P, R> extends Function<P, R> {
     @Override
     @NotNull
-    R apply(P x);
+    R apply(@NotNull P x);
 
     /**
      * Returns the domain of this MathFunction, the
@@ -56,7 +56,7 @@ public interface MathFunction<P, R> extends Function<P, R> {
         return new MathFunction<>() {
             @NotNull
             @Override
-            public R apply(P x) {
+            public R apply(@NotNull P x) {
                 return f.apply(x);
             }
 
@@ -72,7 +72,7 @@ public interface MathFunction<P, R> extends Function<P, R> {
         return new MathFunction<>() {
             @NotNull
             @Override
-            public R apply(T x) {
+            public R apply(@NotNull T x) {
                 return f.apply(g.apply(x));
             }
 

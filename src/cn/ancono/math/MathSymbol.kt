@@ -47,6 +47,8 @@ object MathSymbol {
 
     const val INTEGRAL = "∫"
 
+    const val PARTIAL = "∂"
+
     const val ADD_ALL = "∑"
     const val MULTIPLY_ALL = "∏"
 

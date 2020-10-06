@@ -675,7 +675,7 @@ public final class FiniteGroups {
 
             @NotNull
             @Override
-            public R apply(T x) {
+            public R apply(@NotNull T x) {
                 int idx1 = ArraySup.firstIndexOf(arr1, y -> g1.getCalculator().isEqual(x, y));
                 int idx2 = fmap[idx1];
                 return arr2[idx2];

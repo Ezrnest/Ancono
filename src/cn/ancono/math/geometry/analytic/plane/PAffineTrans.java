@@ -47,12 +47,13 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
 
     /**
      * Performs the transformation, returns the result as a point.
+     *
      * @param p a point
      * @return the point after translation
      */
     @NotNull
     @Override
-    public Point<T> apply(Point<T> p) {
+    public Point<T> apply(@NotNull Point<T> p) {
         return mat.transform(p).translate(v);
     }
 

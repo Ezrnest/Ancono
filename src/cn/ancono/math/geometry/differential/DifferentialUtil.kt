@@ -1,4 +1,4 @@
-package cn.ancono.math.geometry.analytic
+package cn.ancono.math.geometry.differential
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.linear.Matrix
@@ -6,14 +6,14 @@ import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.function.AbstractSVFunction
 import cn.ancono.math.function.DerivableFunction
 import cn.ancono.math.function.DerivableSVFunction
+import cn.ancono.math.function.NDerivableFunction
 import cn.ancono.math.geometry.analytic.space.SVector
-import cn.ancono.math.geometry.differential.DVFunction
 
 
 /**
- * Contains some utility methods for analytic geometry.
+ * Contains some utility methods for differential geometry.
  */
-object AnalyticUtil {
+object DifferentialUtil {
 
     /**
      * Returns the matrix product of two derivable matrix function as a derivable function.
@@ -64,6 +64,7 @@ object AnalyticUtil {
         val len = length(mc, f)
         @Suppress("UNCHECKED_CAST")
         return DerivableFunction.divide(f, len, mc,
+                { v1, v2 -> Vector.addV(v1, v2) },
                 { v1, v2 -> Vector.subtract(v1, v2) },
                 { k, v -> v.multiplyNumber(k) })
     }
@@ -75,8 +76,25 @@ object AnalyticUtil {
         val len = length(mc, f)
         @Suppress("UNCHECKED_CAST")
         return DerivableFunction.divide(f, len, mc,
+                { v1, v2 -> v1.add(v2) },
                 { v1, v2 -> v1.subtract(v2) },
                 { k, v -> v.multiplyNumber(k) })
+    }
+
+    /**
+     * Returns the inner product of two derivable vector function as a derivable function.
+     */
+    fun <T : Any> innerProduct(mc: MathCalculator<T>, f: NDerivableFunction<T, out Vector<T>>, g: NDerivableFunction<T, out Vector<T>>
+    ): NDerivableFunction<T, T> {
+        return NDerivableFunction.multiply(f, g, mc::add, Vector<T>::innerProduct)
+    }
+
+    /**
+     * Returns the outer product of two derivable vector function as a derivable function.
+     */
+    fun <T : Any> outerProduct(f: NDerivableFunction<T, SVector<T>>, g: NDerivableFunction<T, SVector<T>>
+    ): NDerivableFunction<T, SVector<T>> {
+        return NDerivableFunction.multiply(f, g, SVector<T>::add, SVector<T>::outerProduct)
     }
 
 

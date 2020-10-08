@@ -2,7 +2,6 @@ package cn.ancono.math.geometry.differential
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.function.*
-import cn.ancono.math.geometry.analytic.AnalyticUtil
 import cn.ancono.math.geometry.analytic.space.*
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.set.Interval
@@ -32,7 +31,7 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
      * Returns `ds/dt` of this parametric curve. `ds/dt = |r'(t)|`
      */
     open val ds: DerivableSVFunction<T> by lazy {
-        AnalyticUtil.length(mathCalculator, derivative)
+        DifferentialUtil.length(mathCalculator, derivative)
     }
 //        get() = MathFunction.composeSV(this.derive(), { x -> x.calLength() })
 
@@ -44,7 +43,7 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
         // k(t) = |r' × r''| / |r'|^3
         val r1 = derivative
         val r2 = derivative.derivative
-        val nume = AnalyticUtil.length(mathCalculator, AnalyticUtil.outerProduct(r1, r2))
+        val nume = DifferentialUtil.length(mathCalculator, DifferentialUtil.outerProduct(r1, r2))
         val deno = DerivableFunction.composeSV(ds, AbstractSVFunction.pow(Fraction.of(3L), mathCalculator), mathCalculator)
         DerivableFunction.divideSV(nume, deno, mathCalculator)
     }
@@ -53,9 +52,9 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
         val r1 = derivative
         val r2 = r1.derivative
         val r3 = r2.derivative
-        val nume = AnalyticUtil.mixedProduct(r1, r2, r3, mathCalculator)
-        val w = AnalyticUtil.outerProduct(r1, r2)
-        val deno = AnalyticUtil.innerProduct(mathCalculator, w, w)
+        val nume = DifferentialUtil.mixedProduct(r1, r2, r3, mathCalculator)
+        val w = DifferentialUtil.outerProduct(r1, r2)
+        val deno = DifferentialUtil.innerProduct(mathCalculator, w, w)
         DerivableFunction.divideSV(nume, deno, mathCalculator)
     }
 
@@ -82,7 +81,7 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
      * @see gamma
      */
     open val minorNormalVector: DVFunction<T> by lazy {
-        AnalyticUtil.outerProduct(tangentVector, mainNormalVector)
+        DifferentialUtil.outerProduct(tangentVector, mainNormalVector)
     }
 
 
@@ -90,14 +89,14 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
      * `alpha(t)`,which is a unit vector parallel to tangent vector.
      */
     open val alpha: DVFunction<T> by lazy {
-        AnalyticUtil.unitVectorSpace(mathCalculator, tangentVector)
+        DifferentialUtil.unitVectorSpace(mathCalculator, tangentVector)
     }
 
     /**
      * `beta(t)`,which is a unit vector parallel to main normal vector.
      */
     open val beta: DVFunction<T> by lazy {
-        AnalyticUtil.unitVectorSpace(mathCalculator, mainNormalVector)
+        DifferentialUtil.unitVectorSpace(mathCalculator, mainNormalVector)
     }
 //        get() = MathFunctionSup.mergeOf(alpha, gamma) { a, b -> a.outerProduct(b) }
 
@@ -105,7 +104,7 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
      * `gamma(t)`, which is a unit vector parallel to minor normal vector.
      */
     open val gamma: DVFunction<T> by lazy {
-        AnalyticUtil.outerProduct(alpha, beta)
+        DifferentialUtil.outerProduct(alpha, beta)
     }
 //        get() {
 //            val d = this.derive()

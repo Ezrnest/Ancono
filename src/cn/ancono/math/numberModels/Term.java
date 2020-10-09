@@ -719,19 +719,19 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         return sameNumber0(nc);
     }
 
-    /**
-     * Returns a term that only contains the characters and its coefficient is one.
-     */
-    public Term removeCoefficient() {
-        return new Term(character);
-    }
-
-    /**
-     * Returns a term that only contains the coefficient of the characters.
-     */
-    public Term removeAllChar() {
-        return new Term(signum, numerator, denominator, radical);
-    }
+//    /**
+//     * Returns a term that only contains the characters and its coefficient is one.
+//     */
+//    public Term removeCoefficient() {
+//        return new Term(character);
+//    }
+//
+//    /**
+//     * Returns a term that only contains the coefficient of the characters.
+//     */
+//    public Term removeAllChar() {
+//        return new Term(signum, numerator, denominator, radical);
+//    }
 
 
     /**
@@ -1101,7 +1101,6 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     /**
      * Returns a term who has the identity number part as this but has no character.
      *
-     * @return
      */
     public Term numberPart() {
         if (hasNoChar()) {

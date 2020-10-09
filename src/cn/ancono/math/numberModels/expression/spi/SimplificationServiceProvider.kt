@@ -9,6 +9,7 @@ class SimplificationServiceProvider : SimplificationService {
     override fun getStrategies(): List<SimplificationStrategy> {
         val list = mutableListOf<SimpleStrategy>()
         SimplificationKotlin.addDefault(list)
+//        println("Strategies loaded!")
         return list
     }
 

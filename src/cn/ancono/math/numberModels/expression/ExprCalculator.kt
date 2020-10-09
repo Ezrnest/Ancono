@@ -112,11 +112,14 @@ class ExprCalculator
         val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : MathCalculator<Expression> {
     internal val enabledTags: MutableSet<String> = SimplificationStrategies.getDefaultTags()
     internal val properties: MutableMap<String, String>
+
     // some constants here
     @get:JvmName("getPOne")
     internal val pOne: Multinomial
+
     @get:JvmName("getPZero")
     internal val pZero: Multinomial
+
     @get:JvmName("getPMinusOne")
     internal val pMinusOne: Multinomial
 
@@ -125,6 +128,7 @@ class ExprCalculator
 	 */
     override val zero: Expression
         get() = Expression.ZERO
+
     /*
 	 * @see cn.ancono.math.MathCalculator#getOne()
 	 */
@@ -945,12 +949,41 @@ class ExprCalculator
      * @param sub
      * @return
      */
+    @Suppress("DuplicatedCode")
     fun substitute(expr: Expression, ch: String, sub: Expression): Expression {
         var root = expr.root.cloneNode(null)
         root = root.recurApply({ x ->
             x.resetSimIdentifier()
             val p = getPolynomialPart(x, this) ?: return@recurApply x
             val afterSub = replaceMultinomial(p, ch, sub)
+                    ?: //not changed
+                    return@recurApply x
+            if (x.type == Type.POLYNOMIAL) {
+                //replace the whole
+                afterSub.parent = x.parent
+                return@recurApply afterSub
+            }
+            val comb = x as CombinedNode
+            comb.addChild(afterSub)
+            comb.polynomial = pOne
+            comb
+        }, Integer.MAX_VALUE)
+        //	    root.listNode(0);
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /**
+     * Substitutes the give expression `sub` for the character to the expression.
+     * @return
+     */
+    @Suppress("DuplicatedCode")
+    fun substituteAll(expr: Expression, subMap: Map<String, Expression>): Expression {
+        var root = expr.root.cloneNode(null)
+        root = root.recurApply({ x ->
+            x.resetSimIdentifier()
+            val p = getPolynomialPart(x, this) ?: return@recurApply x
+            val afterSub = replaceMultinomialAll(p, subMap)
                     ?: //not changed
                     return@recurApply x
             if (x.type == Type.POLYNOMIAL) {
@@ -1021,6 +1054,48 @@ class ExprCalculator
                         sub.root.cloneNode(null),
                         newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null))
                 val nodeMul = wrapNodeMultiply(nodeExp, Multinomial.monomial(re))
+                nodes.add(nodeMul)
+            }
+            return wrapNodeAM(true, nodes, remains)
+        }
+
+        internal fun replaceMultinomialAll(mul: Multinomial, replaceMap: Map<String, Expression>): Node? {
+            val chs = replaceMap.keys
+            val charCount = mul.terms.count { t ->
+                t.character.keys.any {
+                    it in chs
+                }
+            }
+            if (charCount == 0) {
+                return null
+            }
+            val nodes = ArrayList<Node>(charCount)
+            val remains = mul.removeAll { t -> t.character.keys.any { it in chs } }
+            for (t in mul.terms) {
+                val c1 = t.character.keys.count {
+                    it in chs
+                }
+                if (c1 == 0) {
+                    continue
+                }
+                val mulNodes = ArrayList<Node>(c1)
+                for ((ch, sub) in replaceMap) {
+                    if (!t.containsChar(ch)) {
+                        continue
+                    }
+                    val pow = t.getCharacterPower(ch)
+                    val nodeExp = wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP,
+                            sub.root.cloneNode(null),
+                            newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null))
+                    mulNodes += nodeExp
+                }
+
+                val num = t.numberPart()
+                val remainChars = t.character.filter { en -> en.key !in chs }
+                val re = num.sameNumber(remainChars)
+
+
+                val nodeMul = wrapNodeAM(false, mulNodes, Multinomial.monomial(re))
                 nodes.add(nodeMul)
             }
             return wrapNodeAM(true, nodes, remains)

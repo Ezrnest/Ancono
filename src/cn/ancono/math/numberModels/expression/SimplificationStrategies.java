@@ -17,6 +17,8 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static cn.ancono.utilities.Printer.print;
+
 
 /**
  * A class provides basic simplification strategies.
@@ -1452,7 +1454,6 @@ public final class SimplificationStrategies {
         }
         loadService();
         for (SimplificationService ss : serviceLoader) {
-//            print(ss.getClass());
             ec.tagAddAll(ss.getTags());
             ss.getProperties().forEach(ec::setProperty);
             ss.getStrategies().forEach(ec.getSimStraHolder()::addStrategy);

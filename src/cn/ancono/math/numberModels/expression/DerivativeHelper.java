@@ -342,6 +342,7 @@ public class DerivativeHelper {
     }
 
     private static Node dFunction(Node.SFunction node, String variableName) {
+        // like f(g(x))
         Node gx = node.child.cloneNode(null);
         Node gx_ = derivativeNode(gx, variableName);
         String functionName_ = node.functionName + "'";

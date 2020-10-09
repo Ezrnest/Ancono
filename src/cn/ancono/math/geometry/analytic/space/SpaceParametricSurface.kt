@@ -28,7 +28,7 @@ interface SpaceParametricSurface<T : Any> : BiVectorFunction<T>, MathCalculatorH
         return apply(x[0], x[1])
     }
 
-    override val n: Int
+    override val paramLength: Int
         get() = 2
 
     /**

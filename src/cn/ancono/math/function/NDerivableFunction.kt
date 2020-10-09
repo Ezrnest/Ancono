@@ -1,7 +1,6 @@
 package cn.ancono.math.function
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.set.MathSet
 import cn.ancono.math.set.MathSets
@@ -128,8 +127,8 @@ interface BiDerivableFunction<T, R> : BiMathFunction<T, T, R> {
  *  It is required that `this.n == 2`.
  */
 fun <T, R> NDerivableFunction<T, R>.asBiDerivable(): BiDerivableFunction<T, R> {
-    require(this.n == 2) {
-        "This function must accept exactly 2 arguments. Actual: ${this.n}"
+    require(this.paramLength == 2) {
+        "This function must accept exactly 2 arguments. Actual: ${this.paramLength}"
     }
     return object : BiDerivableFunction<T, R> {
         override val partial1: BiDerivableFunction<T, R> by lazy {
@@ -156,7 +155,7 @@ fun <T, R> BiDerivableFunction<T, R>.asPDerivable(): NDerivableFunction<T, R> {
             return partials[i]
         }
 
-        override val n: Int
+        override val paramLength: Int
             get() = 2
 
         override fun apply(x: List<T>): R {
@@ -167,8 +166,8 @@ fun <T, R> BiDerivableFunction<T, R>.asPDerivable(): NDerivableFunction<T, R> {
 }
 
 
-internal abstract class CachedPartialNDFunction<T : Any, R : Any>(final override val n: Int) : NDerivableFunction<T, R> {
-    private val partials: Array<NDerivableFunction<T, R>?> = arrayOfNulls(n)
+abstract class CachedPartialNDFunction<T : Any, R : Any>(final override val paramLength: Int) : NDerivableFunction<T, R> {
+    private val partials: Array<NDerivableFunction<T, R>?> = arrayOfNulls(paramLength)
 
     /**
      * Override this method.
@@ -191,9 +190,9 @@ internal open class NDerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(
         val f: NDerivableFunction<T, out R1>,
         val g: NDerivableFunction<T, out R2>,
         val merger: (R1, R2) -> R
-) : CachedPartialNDFunction<T, R>(f.n) {
+) : CachedPartialNDFunction<T, R>(f.paramLength) {
     init {
-        require(f.n == g.n)
+        require(f.paramLength == g.paramLength)
     }
 
     val nDomain: MathSet<List<T>> = MathSets.intersectOf(f.domain(), g.domain())
@@ -218,9 +217,9 @@ internal class NDerivableMergeOf3
         val f2: NDerivableFunction<T, out R2>,
         val f3: NDerivableFunction<T, out R3>,
         val merger: (R1, R2, R3) -> S
-) : CachedPartialNDFunction<T, S>(f1.n) {
+) : CachedPartialNDFunction<T, S>(f1.paramLength) {
     init {
-        require(f1.n == f2.n && f2.n == f3.n)
+        require(f1.paramLength == f2.paramLength && f2.paramLength == f3.paramLength)
     }
 
     private val intersectDomain = MathSets.intersectOf(f1.domain(), f2.domain(), f3.domain())!!
@@ -273,8 +272,8 @@ internal open class NDerivableCompose<T : Any, R : Any, S : Any>(
         private val formalAdd: (S, S) -> S
 ) : NDerivableFunction<T, S> {
 
-    override val n: Int
-        get() = f.n
+    override val paramLength: Int
+        get() = f.paramLength
 
     override fun apply(x: List<T>): S {
         return g(f(x))
@@ -297,11 +296,11 @@ internal class NDerivableDivide<T : Any, S : Any>(private val f: NDerivableFunct
 ) : NDerivableFunction<T, S> {
 
     init {
-        require(f.n == g.n)
+        require(f.paramLength == g.paramLength)
     }
 
-    override val n: Int
-        get() = f.n
+    override val paramLength: Int
+        get() = f.paramLength
 
     override fun partial(i: Int): NDerivableFunction<T, S> {
         val f_ = f.partial(i)

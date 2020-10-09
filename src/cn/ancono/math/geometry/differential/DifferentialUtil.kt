@@ -97,5 +97,26 @@ object DifferentialUtil {
         return NDerivableFunction.multiply(f, g, SVector<T>::add, SVector<T>::outerProduct)
     }
 
+    /**
+     * Returns the length of a derivable vector function as a derivable function.
+     */
+    fun <T : Any> length(mc: MathCalculator<T>, f: NDerivableFunction<T, out Vector<T>>): NDerivableFunction<T, T> {
+        val l2 = innerProduct(mc, f, f)
+        val sqrt = AbstractSVFunction.sqrt(mc)
+        return NDerivableFunction.compose(l2, sqrt, mc::add, mc::multiply)
+    }
+
+    /**
+     * Returns a derivable function of `f(t)/|f(t)|`
+     */
+    fun <T : Any> unitVectorSpace(mc: MathCalculator<T>, f: NDerivableFunction<T, SVector<T>>): NDerivableFunction<T, SVector<T>> {
+        val len = length(mc, f)
+        @Suppress("UNCHECKED_CAST")
+        return NDerivableFunction.divide(f, len, mc,
+                { v1, v2 -> v1.add(v2) },
+                { v1, v2 -> v1.subtract(v2) },
+                { k, v -> v.multiplyNumber(k) })
+    }
+
 
 }

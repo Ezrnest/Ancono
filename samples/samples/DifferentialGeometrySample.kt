@@ -2,17 +2,23 @@ package samples
 
 import cn.ancono.math.calculus.Calculus.derivation
 import cn.ancono.math.function.asFunction
+import cn.ancono.math.function.asNFunction
 import cn.ancono.math.function.invoke
 import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.geometry.differential.NormalCurve
 import cn.ancono.math.geometry.differential.NormalCurveComposed
+import cn.ancono.math.geometry.differential.NormalSurface
 import cn.ancono.math.minus
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
+import cn.ancono.math.numberModels.expression.SimplificationStrategies
 import cn.ancono.math.plus
 import cn.ancono.math.set.Interval
 
 object DifferentialGeometrySample {
+    //    init{
+//        SimplificationStrategies.setEnableSpi(true)
+//    }
     val mc = ExprCalculator.instance
     fun makeCurve(expr: String): NormalCurve<Expression> {
         val (xt, yt, zt) = expr.split(",").map { it.trim() }
@@ -67,8 +73,29 @@ object DifferentialGeometrySample {
             Expression.valueOf("g${num}_(x)"), Expression.valueOf("h${num}_(x)"), mc)
 
     fun SVector<Expression>.derivation(): SVector<Expression> = this.applyFunction { it.derivation() }
+
+
+    fun makeSurface(expr: String): NormalSurface<Expression> {
+        val (xt, yt, zt) = expr.split(",").map { it.trim() }
+        val x = mc.parse(xt).asNFunction("u", "v")
+        val y = mc.parse(yt).asNFunction("u", "v")
+        val z = mc.parse(zt).asNFunction("u", "v")
+        return NormalSurface.fromFunctionXYZ(x, y, z, mc)
+    }
+
+    fun calculateFundForm() {
+        val expr = "a*cos(u)cos(v),a*cos(u)sin(v),a*sin(u)"
+//        ExprCalculator.
+
+        val r = makeSurface(expr)
+        val u = mc.parse("u")
+        val v = mc.parse("v")
+        println(r.E(u, v))
+        println(r.F(u, v))
+        println(r.G(u, v))
+    }
 }
 
 fun main() {
-    DifferentialGeometrySample.computeCurvature()
+    DifferentialGeometrySample.calculateFundForm()
 }

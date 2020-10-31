@@ -24,11 +24,13 @@ This library contains the following modules:
     
 3. Polynomials, multinomials and expression:
 
-    Ancono enable users to operate polynomials and multinomials on a field.  
-    It is also possible to compute 
-    and simplify complex expressions. 
+    Ancono enables users to operate polynomials and multinomials over a field (or even only over some kind of ring).
     
-    See samples <a href="#expressions">here</a>.
+    General expression internally stored as abstract syntax tree is also supported. Expressions can be simplified 
+    using simplification rules. Currently, basic simplification rules are implemented, and user can also add extensions
+    if necessary.
+    
+    See samples: <a href="#polynomials">polynomial</a>, <a href="#expressions">expression</a>.
 
 4. Linear algebra
 
@@ -68,8 +70,18 @@ This library contains the following modules:
     Utilities for derivatives, Taylor series, limits, differential forms and so on are provided.
     
     See samples <a href="#calculus">here</a>.
+
+9. Differential geometry
+
+    Curve and plane in 3-dimensional Euclidean space, computing curvature, torsion, Frenet frame, fundamental forms ... 
     
-9. And more...
+    See samples <a href="#dgeometry">here</a>.
+      
+10. And more...
+
+
+This project is still being developed, more features will be available in the future.
+
 ## Samples
 
 #### <a name="numbers">Using number models</a>: 
@@ -122,6 +134,16 @@ System.out.println("f(x) = " + f);
 System.out.println("g(x) = " + g);
 var h = f.gcd(g);
 System.out.println("gcd(f(x),g(x)) = " + h);
+```
+
+Greatest common divisor of multinomials:
+```
+var f = Multinomial.valueOf("x^2+2xy+y^2"); // = (x+y)^2
+var g = Multinomial.valueOf("x^2+xy+xz+yz"); // = (x+y)(x+z)
+var h = Multinomial.gcd(f,g);
+System.out.println("f = " + f);
+System.out.println("g = " + g);
+System.out.println("gcd(f,g) = " + h);
 ```
 
 
@@ -202,6 +224,33 @@ println("Conjunctive norm: ${formula.toConjunctiveNorm()}")
 println("Is equivalent to T: ${formula valueEquals T}")
 ```
 
+#### <a name="dgeometry">Differential geometry</a>
+Computing curvature and torsion of a curve: (written in Kotlin)
+```kotlin
+val t = mc.parse("t")
+val r1 = makeCurve("t+Sqr3*sin(t), 2cos(t),Sqr3*t-sin(t)") // a helper method
+val r2 = makeCurve("2cos(t/2),2sin(t/2),-t")
+println("r1:")
+println(r1.curvature(t))
+println(r1.torsion(t))
+println("r2:")
+println(r2.curvature(t))
+println(r2.torsion(t))
+```
+
+Computing coefficients of fundamental forms of a surface: 
+
+```kotlin
+val expr = "a*cos(u)cos(v),a*cos(u)sin(v),a*sin(u)"
+val r = makeSurface(expr) // a helper method
+val u = mc.parse("u")
+val v = mc.parse("v")
+println(r.E(u, v))
+println(r.F(u, v))
+println(r.G(u, v))
+```
+
+
 More samples are available in the `samples` folder.
 
 
@@ -215,6 +264,8 @@ provided in `Calculators`.
 Various number models are defined in Ancono, such as fraction, complex and expression. Generally, you can get the 
 corresponding calculator by calling the static method `getCalculator()`.
 
+If user want to use an external number model, simply implement the `MathCalculator` interface and pass the instance of 
+the calculator when needed. Then, it can be used just as other number models.
 
 ### Math Calculator
 

@@ -4,6 +4,7 @@ import cn.ancono.math.algebra.AlgebraUtil;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
+import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.structure.Polynomial;
 
 /*
@@ -32,6 +33,15 @@ public class PolynomialSample {
         System.out.println("gcd(f(x),g(x)) = " + h);
     }
 
+    public static void computeGCD2() {
+        var f = Multinomial.valueOf("x^2+2xy+y^2"); // = (x+y)^2
+        var g = Multinomial.valueOf("x^2 + xy+xz+yz"); // = (x+y)(x+z)
+        var h = Multinomial.gcd(f, g);
+        System.out.println("f = " + f);
+        System.out.println("g = " + g);
+        System.out.println("gcd(f,g) = " + h);
+    }
+
     public static void partialFractionDecomposition() {
         var cal = Calculators.getCalLong();
         var f1 = Polynomial.valueOf(cal, 0L, 1L);
@@ -52,5 +62,7 @@ public class PolynomialSample {
         computeProduct();
         System.out.println();
         computeGCD();
+        System.out.println();
+        computeGCD2();
     }
 }

@@ -85,8 +85,6 @@ object DifferentialGeometrySample {
 
     fun calculateFundForm() {
         val expr = "a*cos(u)cos(v),a*cos(u)sin(v),a*sin(u)"
-//        ExprCalculator.
-
         val r = makeSurface(expr)
         val u = mc.parse("u")
         val v = mc.parse("v")

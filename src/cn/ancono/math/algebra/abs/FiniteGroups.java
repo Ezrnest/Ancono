@@ -137,7 +137,7 @@ public final class FiniteGroups {
             }
             list.add(x);
         }
-        listGenerate(list, gc);
+        generateList(list, gc);
         FiniteSet<T> set = MathSets.fromCollection(list, GroupCalculators.INSTANCE.toMathCalculatorAdd(gc));
         return new FiniteGroupImpl<>(gc, set);
     }
@@ -365,13 +365,13 @@ public final class FiniteGroups {
             }
             list.add(x);
         }
-        listGenerate(list, f);
+        generateList(list, f);
         FiniteSet<T> set = MathSets.fromCollection(list, GroupCalculators.toMathCalculatorAdd(f));
         return new FiniteGroupImpl<>(f, set);
     }
 
 
-    private static <T> void listGenerate(List<T> list, GroupCalculator<T> f) {
+    private static <T> void generateList(List<T> list, GroupCalculator<T> f) {
         for (int i = 1; i < list.size(); i++) {
             T x = list.get(i);
             for (int j = 1; j < list.size(); j++) {
@@ -390,6 +390,24 @@ public final class FiniteGroups {
 
             }
         }
+    }
+
+    private static <T> SortedSet<T> generateComparable(SortedSet<T> s, GroupCalculator<T> f) {
+        var results = new TreeSet<>(s);
+        Collection<T> n1 = s;
+        while (!n1.isEmpty()) {
+            var n2 = new ArrayList<T>();
+            for (var x : n1) {
+                for (var y : results) {
+                    var z = f.apply(x, y);
+                    if (results.add(z)) {
+                        n2.add(z);
+                    }
+                }
+            }
+            n1 = n2;
+        }
+        return results;
     }
 
     /**
@@ -693,6 +711,7 @@ public final class FiniteGroups {
 
     /**
      * A recursive method to determine whether two group tables are isomorphic and returns the mapping.
+     *
      * @param cur the newest that is assigned
      */
     static int[] recurEqual(int size, int[][] t1, int[][] t2, int[] map, int cur) {
@@ -802,22 +821,53 @@ public final class FiniteGroups {
      *
      * @see GroupCalculatorKt#commutator(GroupCalculator, Object, Object)
      */
+
     public static <T> AbstractFiniteGroup<T> commutatorGroup(FiniteGroup<T> g) {
 //        GroupCalculatorKt.commutator()
         var gc = g.getCalculator();
         if (gc.isCommutative()) {
             return identityGroup(gc);
         }
+        if (g.getCalculator().getIdentity() instanceof Comparable) {
+            @SuppressWarnings("unchecked")
+            var comp = (Comparator<T>) Comparator.naturalOrder();
+            return commutatorGroup(g, comp);
+        }
         var list = new ArrayList<T>();
         var elements = g.getSet();
         for (var a : elements) {
             for (var b : elements) {
                 var c = GroupCalculatorKt.commutator(gc, a, b);
-                list.add(c);
+                if (!CollectionSup.containsEqual(list, gc, c)) {
+                    list.add(c);
+                }
             }
         }
-        listGenerate(list, gc);
+        generateList(list, gc);
         return createGroupWithoutCheck(gc, list);
+    }
+
+    /**
+     * Returns the commutator group of g. That is, the subgroup of <code>g</code> containing all the elements like
+     * <pre>a<sup>-1</sup>b<sup>-1</sup>ab</pre>
+     *
+     * @see GroupCalculatorKt#commutator(GroupCalculator, Object, Object)
+     */
+    public static <T> AbstractFiniteGroup<T> commutatorGroup(FiniteGroup<T> g, Comparator<T> comp) {
+        var gc = g.getCalculator();
+        if (gc.isCommutative()) {
+            return identityGroup(gc);
+        }
+        var s = new TreeSet<>(comp);
+        var elements = g.getSet();
+        for (var a : elements) {
+            for (var b : elements) {
+                var c = GroupCalculatorKt.commutator(gc, a, b);
+                s.add(c);
+            }
+        }
+        generateComparable(s, gc);
+        return createGroupWithoutCheck(gc, s);
     }
 
 }

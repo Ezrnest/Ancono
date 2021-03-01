@@ -1880,130 +1880,116 @@ public final class Calculators {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
-    static class IntegerCalModP extends IntegerCalculatorExact {
-        private final int p;
-        private int[] inversed;
+    static class IntegerCalModN extends MathCalculatorAdapter<Integer> {
+        //TODO implement exact divide
+        protected final int n;
 
-        private int[] initInv() {
-            int[] inv = new int[p];
-            inv[1] = 1;
-            for (int i = 2; i < p; i++) {
-                if (inv[i] != 0) {
-                    continue;
-                }
-                for (int j = 2; j < p; j++) {
-                    if (inv[j] != 0) {
-                        continue;
-                    }
-                    if (multiply(i, j) == 1) {
-                        inv[i] = j;
-                        inv[j] = i;
-                        break;
-                    }
-                }
+        IntegerCalModN(int n) {
+            this.n = n;
+
+        }
+
+        protected int modN(int x) {
+            int re = x % n;
+            if (re < 0) {
+                re += n;
             }
-            return inv;
+            return re;
+        }
+
+        protected int modN(long x) {
+            int re = (int) (x % n);
+            if (re < 0) {
+                re += n;
+            }
+            return re;
         }
 
         @Override
-        public boolean isUnit(@NotNull Integer x) {
-            return inversed[x] != 0;
+        public boolean isZero(@NotNull Integer para) {
+            return modN(para) == 0;
         }
 
-        IntegerCalModP(int p) {
-            this.p = p;
-            inversed = initInv();
-        }
-
-        private int modP(int x) {
-            int re = x % p;
-            if (re < 0) {
-                re += p;
-            }
-            return re;
-        }
-
-        private int modP(long x) {
-            int re = (int) (x % p);
-            if (re < 0) {
-                re += p;
-            }
-            return re;
+        @Override
+        public boolean isEqual(@NotNull Integer x, @NotNull Integer y) {
+            return modN(x - y) == 0;
         }
 
         @NotNull
         @Override
         public Integer add(@NotNull Integer x, @NotNull Integer y) {
-            return modP(Math.addExact(x, y));
+            return modN(Math.addExact(x, y));
         }
 
         @NotNull
         @Override
         public Integer subtract(@NotNull Integer x, @NotNull Integer y) {
-            return modP(Math.subtractExact(x, y));
+            return modN(Math.subtractExact(x, y));
         }
 
         @NotNull
         @Override
         public Integer multiply(@NotNull Integer x, @NotNull Integer y) {
-            return modP(Math.multiplyExact(x, y));
+            return modN(Math.multiplyExact(x, y));
         }
 
         private int multiply(int x, int y) {
-            return modP(Math.multiplyExact(x, y));
+            return modN(Math.multiplyExact(x, y));
         }
 
-        private int divide(int a, int b) {
-            if (inversed[b] != 0) {
-                return multiply(a, inversed[b]);
-            }
-            int gcd = MathUtils.gcd(a, b);
-            a /= gcd;
-            b /= gcd;
-            if (inversed[b] == 0) {
-                ExceptionUtil.notExactDivision(a, b);
-            }
-            return multiply(a, inversed[b]);
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            return MathUtils.gcd(x, n) == 1;
         }
+
+
+        private int inverseOf(int x) {
+            var p = MathUtils.gcdUV(x, n);
+            var gcd = p[0];
+            var y = p[1];
+            if (gcd != 1) {
+                ExceptionUtil.notInvertible();
+            }
+            return y;
+        }
+
 
         @NotNull
         @Override
         public Integer divide(@NotNull Integer x, @NotNull Integer y) {
-            return divide(x.intValue(), y.intValue());
+            //noinspection SuspiciousNameCombination
+            return multiply(x.intValue(), inverseOf(y));
         }
 
-//        private int inverseOf(int x) {
+        //        protected int divide(int a, int b) {
 //
 //        }
+//
+//        @NotNull
+//        @Override
+//        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
+//            return divide(x.intValue(), y.intValue());
+//        }
+
 
         @NotNull
         @Override
         public Integer multiplyLong(@NotNull Integer p, long l) {
-            return multiply(p.intValue(), modP(l));
+            return multiply(p.intValue(), modN(l));
         }
 
-        @NotNull
-        @Override
-        public Integer divideLong(@NotNull Integer p, long n) {
-            return divide(p.intValue(), modP(n));
-        }
+//        @NotNull
+//        @Override
+//        public Integer divideLong(@NotNull Integer p, long n) {
+//            return divide(p.intValue(), modN(n));
+//        }
 
-        @NotNull
-        @Override
-        public Integer reciprocal(@NotNull Integer p) {
-            var x = modP(p);
-            if (inversed[x] == 0) {
-                ExceptionUtil.notInvertible();
-            }
-            return inversed[x];
-
-        }
 
         @NotNull
         @Override
         public Integer squareRoot(@NotNull Integer x) {
             int _x = x;
-            for (int n = 0; n < p; n++) {
+            for (int n = 0; n < this.n; n++) {
                 if (multiply(n, n) == _x) {
                     return n;
                 }
@@ -2020,71 +2006,133 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer exp(@NotNull Integer a, @NotNull Integer b) {
-            return MathUtils.powerAndMod(a, b, p);
+            return MathUtils.powerAndMod(a, b, n);
         }
 
-        @Override
-        public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
-            return powerAndMod(at, nt.longValue(), mt);
-        }
-
-        @Override
-        public Integer powerAndMod(Integer at, long n, Integer m) {
-            int a = modP(at);
-            int mod = m;
-            if (mod == 1) {
-                return 0;
-            }
-            if (a == 0 || a == 1) {
-                return a;
-            }
-            int ans = 1;
-            a = a % mod;
-            while (n > 0) {
-                if ((n & 1) == 1) {
-                    ans = multiply(a, ans) % mod;
-                }
-                a = multiply(a, a) % mod;
-                n >>= 1;
-            }
-            return ans;
-        }
+//        @Override
+//        public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
+//            return powerAndMod(at, nt.longValue(), mt);
+//        }
+//
+//        @Override
+//        public Integer powerAndMod(Integer at, long n, Integer m) {
+//            int a = modP(at);
+//            int mod = m;
+//            if (mod == 1) {
+//                return 0;
+//            }
+//            if (a == 0 || a == 1) {
+//                return a;
+//            }
+//            int ans = 1;
+//            a = a % mod;
+//            while (n > 0) {
+//                if ((n & 1) == 1) {
+//                    ans = multiply(a, ans) % mod;
+//                }
+//                a = multiply(a, a) % mod;
+//                n >>= 1;
+//            }
+//            return ans;
+//        }
 
         @NotNull
         @Override
         public Integer negate(@NotNull Integer para) {
-            return modP(-para);
+            return modN(-para);
         }
 
         @NotNull
         @Override
         public Integer abs(@NotNull Integer para) {
-            return modP(para);
+            return modN(para);
         }
+
+    }
+
+    static class IntegerCalModP extends IntegerCalModN {
+        private final int[] inverse;
+
+        private int[] initInv() {
+            int[] inv = new int[n];
+            inv[1] = 1;
+            for (int i = 2; i < n; i++) {
+                if (inv[i] != 0) {
+                    continue;
+                }
+                for (int j = 2; j < n; j++) {
+                    if (inv[j] != 0) {
+                        continue;
+                    }
+                    if (multiply(i, j) == 1) {
+                        inv[i] = j;
+                        inv[j] = i;
+                        break;
+                    }
+                }
+            }
+            return inv;
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            return inverse[x] != 0;
+        }
+
+        IntegerCalModP(int p) {
+            super(p);
+            inverse = initInv();
+        }
+
+        protected int divide(int a, int b) {
+            if (inverse[b] != 0) {
+                return multiply(a, inverse[b]);
+            }
+            int gcd = MathUtils.gcd(a, b);
+            a /= gcd;
+            b /= gcd;
+            if (inverse[b] == 0) {
+                ExceptionUtil.notExactDivision(a, b);
+            }
+            return multiply(a, inverse[b]);
+        }
+
 
         @NotNull
         @Override
-        public Integer divideToInteger(@NotNull Integer a, @NotNull Integer b) {
+        public Integer reciprocal(@NotNull Integer p) {
+            var x = modN(p);
+            if (inverse[x] == 0) {
+                ExceptionUtil.notInvertible();
+            }
+            return inverse[x];
 
-            return divide(a, b);
         }
+
     }
 
     /**
-     * Returns a calculator for integer ring <code>Z<sub>p</sub></code>, where <code>p >= 2</code>.
-     * If <code>p</code> is a prime number, then  <code>Z<sub>p</sub></code> is actually a field.
+     * Returns a calculator for prime field <code>Z<sub>p</sub></code>, where <code>p</code> is a prime number.
+     * <p>
+     * Note: The calculator caches all the modular inverse.
      */
     public static MathCalculator<Integer> getCalIntModP(int p) {
-        if (p <= 1) {
-            throw new IllegalArgumentException("It is required that p > 1");
-        }
         if (!Primes.getInstance().isPrime(p)) {
             throw new IllegalArgumentException("p must be a prime number!");
         }
         return new IntegerCalModP(p);
     }
 
-    //TODO implement calculator for Z mod m, where m is not prime
+    /**
+     * Returns a calculator for ring <code>Z<sub>n</sub></code>, where <code>n >= 2</code>.
+     */
+    public static MathCalculator<Integer> getCalIntModN(int n) {
+        if (n < 2) {
+            throw new IllegalArgumentException("It is required that n >= 2");
+        }
+        return new IntegerCalModN(n);
+    }
+
 
 //
 //    public static RingFraction.RFCalculator<Polynomial<Fraction>> getCalPolyFraction(){

@@ -235,16 +235,9 @@ internal object MatrixSupKt {
         }
 
         val builder = Matrix.getBuilder(n, M.columnCount - n, mc)
-//        for (i in 0 until n) {
-//            for (j in n until M.columnCount) {
-//                builder.set(matrix[i][j],i,j-n)
-//            }
-//        }
         builder.fillArea(0, 0, A, 0, n, n, n)
         return builder.build()
 
-//        NumberModelUtils.g
-//        toNormalForm()
 
     }
 

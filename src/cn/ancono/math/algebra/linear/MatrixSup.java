@@ -790,12 +790,26 @@ public class MatrixSup {
     }
 
     /**
-     * Try to find the inverse of the matrix, where the elements are in a unit ring.
+     * Computes the 'inverse' of the given matrix on a unit ring. This method simply compute the adjugate matrix and
+     * divide it with the determinant (so it is time-consuming).
      * <p>
      * It is required that the calculator of the matrix supports the method
-     * {@link cn.ancono.math.algebra.abs.calculator.UnitRingCalculator#isUnit(Object)}
+     * {@link cn.ancono.math.algebra.abs.calculator.UnitRingCalculator#isUnit(Object)} and
+     * {@link MathCalculator#divide(Object, Object)}
+     *
+     * <p>
+     * This method can be used to compute the modular inverse of a matrix on Z/Zn, where n is not necessarily a prime.
      */
     public static <T> Matrix<T> inverseInRing(Matrix<T> m) {
+        return MatrixSupKt.INSTANCE.inverseInRing(m);
+    }
+
+    /**
+     * Try to find the inverse of the matrix, where the elements are in an Euclidean domain.
+     * <p>
+     * It is required that the calculator of m is an instance of EUDCalculator.
+     */
+    public static <T> Matrix<T> inverseInEUD(Matrix<T> m) {
         return MatrixSupKt.INSTANCE.inverseInEUD(m);
     }
 

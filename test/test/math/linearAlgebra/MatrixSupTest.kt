@@ -23,8 +23,8 @@ class MatrixSupTest {
     }
 
     @Test
-    fun solveInRing() {
-        val mc = Calculators.getCalIntModP(26)
+    fun modularInverse() {
+        val mc = Calculators.getCalIntModN(26)
         val A = MatrixSup.parseMatrixD(
             """
             3 21 20

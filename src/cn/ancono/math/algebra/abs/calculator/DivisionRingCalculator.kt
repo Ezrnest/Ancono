@@ -75,7 +75,11 @@ interface DivisionRingCalculator<T : Any> : UnitRingCalculator<T> {
     @JvmDefault
     operator fun T.div(y: Long) = divideLong(this, y)
 
-
+//    @JvmDefault
+//    override fun isUnit(x: T): Boolean {
+//        // non-zero element in a division ring is always invertible
+//        return !isZero(x)
+//    }
 }
 
 

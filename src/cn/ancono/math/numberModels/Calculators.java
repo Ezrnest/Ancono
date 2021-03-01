@@ -318,6 +318,11 @@ public final class Calculators {
             return MathUtils.divideExact(x, y);
         }
 
+        @Override
+        public @NotNull Integer exactDivide(@NotNull Integer x, @NotNull Integer y) {
+            return MathUtils.divideExact(x, y);
+        }
+
         @NotNull
         @Override
         public Integer multiplyLong(@NotNull Integer p, long l) {
@@ -1881,11 +1886,12 @@ public final class Calculators {
 
         private int[] initInv() {
             int[] inv = new int[p];
-            for (int i = 1; i < p; i++) {
+            inv[1] = 1;
+            for (int i = 2; i < p; i++) {
                 if (inv[i] != 0) {
                     continue;
                 }
-                for (int j = 1; j < p; j++) {
+                for (int j = 2; j < p; j++) {
                     if (inv[j] != 0) {
                         continue;
                     }
@@ -1899,6 +1905,10 @@ public final class Calculators {
             return inv;
         }
 
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            return inversed[x] != 0;
+        }
 
         IntegerCalModP(int p) {
             this.p = p;
@@ -1943,19 +1953,28 @@ public final class Calculators {
             return modP(Math.multiplyExact(x, y));
         }
 
+        private int divide(int a, int b) {
+            if (inversed[b] != 0) {
+                return multiply(a, inversed[b]);
+            }
+            int gcd = MathUtils.gcd(a, b);
+            a /= gcd;
+            b /= gcd;
+            if (inversed[b] == 0) {
+                ExceptionUtil.notExactDivision(a, b);
+            }
+            return multiply(a, inversed[b]);
+        }
+
         @NotNull
         @Override
         public Integer divide(@NotNull Integer x, @NotNull Integer y) {
-            //noinspection SuspiciousNameCombination
-            return multiply(x.intValue(), inverseOf(y));
+            return divide(x.intValue(), y.intValue());
         }
 
-        private int inverseOf(int x) {
-            if (x == 0) {
-                ExceptionUtil.dividedByZero();
-            }
-            return inversed[modP(x)];
-        }
+//        private int inverseOf(int x) {
+//
+//        }
 
         @NotNull
         @Override
@@ -1966,13 +1985,18 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer divideLong(@NotNull Integer p, long n) {
-            return multiply(p.intValue(), inverseOf(modP(n)));
+            return divide(p.intValue(), modP(n));
         }
 
         @NotNull
         @Override
         public Integer reciprocal(@NotNull Integer p) {
-            return inverseOf(p);
+            var x = modP(p);
+            if (inversed[x] == 0) {
+                ExceptionUtil.notInvertible();
+            }
+            return inversed[x];
+
         }
 
         @NotNull
@@ -2041,16 +2065,27 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer divideToInteger(@NotNull Integer a, @NotNull Integer b) {
+
             return divide(a, b);
         }
     }
 
+    /**
+     * Returns a calculator for integer ring <code>Z<sub>p</sub></code>, where <code>p >= 2</code>.
+     * If <code>p</code> is a prime number, then  <code>Z<sub>p</sub></code> is actually a field.
+     */
     public static MathCalculator<Integer> getCalIntModP(int p) {
+        if (p <= 1) {
+            throw new IllegalArgumentException("It is required that p > 1");
+        }
         if (!Primes.getInstance().isPrime(p)) {
             throw new IllegalArgumentException("p must be a prime number!");
         }
         return new IntegerCalModP(p);
     }
+
+    //TODO implement calculator for Z mod m, where m is not prime
+
 //
 //    public static RingFraction.RFCalculator<Polynomial<Fraction>> getCalPolyFraction(){
 //        return RingFraction.Companion.getCalculator(Polynomial.getCalculator(Fraction.Companion.getCalculator()),Polynomial.)

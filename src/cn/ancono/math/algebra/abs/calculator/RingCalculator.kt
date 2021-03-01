@@ -8,6 +8,7 @@ import cn.ancono.utilities.ModelPatterns
  */
 /**
  * The ring calculator defines some basic operations in a group.
+ *
  * @author liyicheng
  * 2018-02-28 18:28
  */

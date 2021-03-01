@@ -22,7 +22,8 @@ import static cn.ancono.utilities.Printer.print;
 import static cn.ancono.utilities.Printer.printnb;
 
 /**
- * Provides some supportive methods for matrix.
+ * Provides some supportive methods for matrix, including matrix operations for 2D-arrays, parsing matrix from string,
+ * solving linear equations and so on.
  *
  * @author lyc
  */
@@ -79,6 +80,8 @@ public class MatrixSup {
         return nega ? mc.negate(re) : re;
     }
 
+//    public static Object[][] identityMatrix
+
     /**
      * Exchange two row in the matrix.Throw IndexOutOfBoundsException if r1 or r2 is out of range.
      *
@@ -116,6 +119,12 @@ public class MatrixSup {
         }
     }
 
+    public static <T> void multiplyAndAddRow(T[][] mat, int r1, int r2, int fromColumn, T f, MathCalculator<T> mc) {
+        for (int i = fromColumn; i < mat[r1].length; i++) {
+            mat[r2][i] = mc.add(mat[r2][i], mc.multiply(mat[r1][i], f));
+        }
+    }
+
     public static <T> void multiplyNumberColumn(T[][] mat, int c, T f, MathCalculator<T> mc) {
         for (int i = 0; i < mat.length; i++) {
             mat[i][c] = mc.multiply(mat[i][c], f);
@@ -124,6 +133,12 @@ public class MatrixSup {
 
     public static <T> void multiplyNumberRow(T[][] mat, int r, T f, MathCalculator<T> mc) {
         for (int i = 0; i < mat[r].length; i++) {
+            mat[r][i] = mc.multiply(mat[r][i], f);
+        }
+    }
+
+    public static <T> void multiplyNumberRow(T[][] mat, int r, int fromColumn, T f, MathCalculator<T> mc) {
+        for (int i = fromColumn; i < mat[r].length; i++) {
             mat[r][i] = mc.multiply(mat[r][i], f);
         }
     }
@@ -694,8 +709,14 @@ public class MatrixSup {
         return p.mapTo(e -> Matrix.diag(e, n, cal), cm);
     }
 
-    public static <T> Matrix<T> toHermitFrom(Matrix<T> m) {
-        //TODO
+    /**
+     * Transform this matrix to Hermit Form
+     *
+     * @param m
+     * @param <T>
+     * @return
+     */
+    public static <T> Matrix<T> toHermitForm(Matrix<T> m) {
         var mc = (IntCalculator<T>) m.getMathCalculator();
         @SuppressWarnings("unchecked")
         T[][] mat = (T[][]) m.getValues();
@@ -766,6 +787,16 @@ public class MatrixSup {
         }
 
         return new DMatrix<>(mat, m.row, m.column, mc);
+    }
+
+    /**
+     * Try to find the inverse of the matrix, where the elements are in a unit ring.
+     * <p>
+     * It is required that the calculator of the matrix supports the method
+     * {@link cn.ancono.math.algebra.abs.calculator.UnitRingCalculator#isUnit(Object)}
+     */
+    public static <T> Matrix<T> inverseInRing(Matrix<T> m) {
+        return MatrixSupKt.INSTANCE.inverseInEUD(m);
     }
 
 

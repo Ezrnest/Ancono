@@ -1,6 +1,7 @@
 package cn.ancono.utilities;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * generate simple number format easily
@@ -31,7 +32,15 @@ public class SNFSupport {
         return new DecimalFormat(sb.toString());
     }
 
-    public static String format(double number, int minSicDigit, int maxShownDigit) {
+    /**
+     * Formats the number
+     *
+     * @param number
+     * @param minSicDigit
+     * @param maxShownDigit
+     * @return
+     */
+    public static NumberFormat format(double number, int minSicDigit, int maxShownDigit) {
 
 
         return null;

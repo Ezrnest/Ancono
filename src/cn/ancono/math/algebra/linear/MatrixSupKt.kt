@@ -1,9 +1,18 @@
 package cn.ancono.math.algebra.linear
 
+import cn.ancono.math.algebra.abs.calculator.EUDCalculator
+import cn.ancono.math.algebra.abs.calculator.RingCalculator
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
-import cn.ancono.math.get
+import cn.ancono.math.component1
+import cn.ancono.math.component2
+import cn.ancono.math.exceptions.ExceptionUtil
+import cn.ancono.utilities.Printer
 import cn.ancono.utilities.structure.Pair
+import java.lang.ArithmeticException
+import java.lang.Exception
 import java.util.*
+
 
 /**
  * A kotlin-based implementation of some matrix-related methods.
@@ -21,7 +30,7 @@ internal object MatrixSupKt {
      * @return
      */
     fun <T : Any> decompositionLU(m: Matrix<T>): Triple<Matrix<T>, Matrix<T>, Matrix<T>> {
-        require(m.isSquare){
+        require(m.isSquare) {
             "The matrix must be square!"
         }
         val mc = m.mathCalculator
@@ -61,16 +70,18 @@ internal object MatrixSupKt {
                 }
             }
         }
-        return Triple(Matrix.fromVectors(true, p),
-                l.build(),
-                Matrix.valueOfNoCopy(matrix, mc))
+        return Triple(
+            Matrix.fromVectors(true, p),
+            l.build(),
+            Matrix.valueOfNoCopy(matrix, mc)
+        )
     }
 
     /**
      * @see Matrix.decompCholesky
      */
     fun <T : Any> decompositionCholesky(A: Matrix<T>): Matrix<T> {
-        require(A.isSquare){
+        require(A.isSquare) {
             "The matrix must be square!"
         }
         val mc = A.mathCalculator
@@ -93,7 +104,7 @@ internal object MatrixSupKt {
 
 
             for (i in (j + 1) until n) {
-                var a = A[i][j]
+                var a = A[i, j]
                 for (k in 0 until j) {
                     a = mc.eval { a - l[i][k] * l[j][k] }
                 }
@@ -102,14 +113,14 @@ internal object MatrixSupKt {
                 // l_{ij} = (a_{ij} - sum(0,j-1,l_{il}l_{jl}))/l_{jj}
             }
         }
-        return Matrix.valueOfNoCopy(l,mc)
+        return Matrix.valueOfNoCopy(l, mc)
     }
 
     /**
      * @see Matrix.decompCholesky
      */
     fun <T : Any> decompositionCholeskyD(A: Matrix<T>): Pair<Matrix<T>, Vector<T>> {
-        require(A.isSquare){
+        require(A.isSquare) {
             "The matrix must be square!"
         }
         val mc = A.mathCalculator
@@ -135,7 +146,7 @@ internal object MatrixSupKt {
 
 
             for (i in (j + 1) until n) {
-                var a = A[i][j]
+                var a = A[i, j]
                 for (k in 0 until j) {
                     a = mc.eval { a - l[i][k] * l[j][k] * d[k] }
                 }
@@ -143,9 +154,116 @@ internal object MatrixSupKt {
                 // l_{ij} = (a_{ij} - sum(0,j-1,d_k * l_{ik}l_{jk}))
             }
         }
-        val L = Matrix.valueOfNoCopy(l,mc)
-        val D = Vector.of(mc,d)
-        return Pair(L,D)
+        val L = Matrix.valueOfNoCopy(l, mc)
+        val D = Vector.of(mc, d)
+        return Pair(L, D)
+    }
+
+
+    /**
+     * Computes the inverse of the matrix on an Euclidean domain.
+     */
+    fun <T : Any> inverseInEUD(M: Matrix<T>): Matrix<T> {
+        //TODO check correctness
+        M.requireSquare()
+        val n = M.column
+        val mc = M.mathCalculator
+
+        @Suppress("UNCHECKED_CAST")
+        val euc = M.mathCalculator as EUDCalculator<T>
+
+
+        @Suppress("UNCHECKED_CAST")
+        val A = Array(n) { i ->
+            Array<Any>(2 * n) { j ->
+                when {
+                    j < n -> {
+                        M[i, j]
+                    }
+                    i == j - n -> {
+                        euc.one
+                    }
+                    else -> {
+                        euc.zero
+                    }
+                }
+            }
+        } as Array<Array<T>>
+//        Printer.printMatrix(A)
+        // to upper triangle
+        for (j in 0 until n) {
+            var i = j
+            while (mc.isZero(A[i][j]) && i < n) {
+                i++
+            }
+            if (i == n) {
+                ExceptionUtil.notInvertible()
+            }
+            if (i != j) {
+                MatrixSup.exchangeRow(A, j, i)
+            }
+            i++
+            outer@
+            while (true) {
+                val p = A[j][j]
+
+                while (i < n) {
+                    val (q, r) = euc.divideAndRemainder(A[i][j], p)
+                    MatrixSup.multiplyAndAddRow(A, j, i, j, euc.negate(q), mc)
+//                    Printer.printMatrix(A)
+                    if (euc.isZero(r)) {
+                        i++
+                        continue
+                    }
+                    MatrixSup.exchangeRow(A, j, i)
+                    continue@outer
+                }
+                try {
+                    val k = mc.reciprocal(p)
+                    MatrixSup.multiplyNumberRow(A, j, j, k, mc)
+                } catch (e: ArithmeticException) {
+                    ExceptionUtil.notInvertible()
+                }
+            }
+        }
+
+        for (j1 in (n - 1) downTo 1) {
+            for (j2 in 0 until j1) {
+                val k = mc.negate(A[j2][j1])
+                MatrixSup.multiplyAndAddRow(A, j1, j2, j1, k, mc)
+            }
+        }
+
+        val builder = Matrix.getBuilder(n, M.columnCount - n, mc)
+//        for (i in 0 until n) {
+//            for (j in n until M.columnCount) {
+//                builder.set(matrix[i][j],i,j-n)
+//            }
+//        }
+        builder.fillArea(0, 0, A, 0, n, n, n)
+        return builder.build()
+
+//        NumberModelUtils.g
+//        toNormalForm()
+
+    }
+
+    /**
+     * Computes the 'inverse' of the given matrix on a unit ring. This method simply compute the adjugate matrix and
+     * divide it with the determinant (so it is time-consuming).
+     *
+     * This method can be used to compute the modular inverse of a matrix on Z/Zn, where n is not necessarily a prime.
+     */
+    fun <T : Any> inverseInRing(M: Matrix<T>): Matrix<T> {
+        val mc = M.mathCalculator
+
+        @Suppress("UNCHECKED_CAST")
+        val rc = M.mathCalculator as UnitRingCalculator<T>
+        val det = M.calDet()
+        if (!rc.isUnit(det)) {
+            ExceptionUtil.notInvertible()
+        }
+        return M.adjugate().applyFunction { x -> mc.divide(x, det) }
     }
 }
 

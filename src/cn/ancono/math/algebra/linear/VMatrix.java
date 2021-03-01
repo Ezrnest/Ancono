@@ -12,9 +12,9 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 /**
- * A matrix compoased of vectors.
- * @author lyc
+ * A matrix composed of vectors.
  *
+ * @author lyc
  */
 final class VMatrix<T> extends Matrix<T> {
     private final Vector<T>[] vs;

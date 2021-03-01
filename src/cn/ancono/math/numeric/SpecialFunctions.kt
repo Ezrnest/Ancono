@@ -7,7 +7,8 @@ import kotlin.math.sqrt
 
 /*
  * Created by liyicheng at 2020-06-02 20:46
- */ /**
+ */
+/**
  * @author liyicheng
  */
 object SpecialFunctions {
@@ -16,8 +17,7 @@ object SpecialFunctions {
     
      */
     private val GAMMA_COEFFICIENTS = doubleArrayOf(
-            676.5203681218851
-            , -1259.1392167224028
+        676.5203681218851, -1259.1392167224028
             , 771.32342877765313
             , -176.61502916214059
             , 12.507343278686905

@@ -103,11 +103,27 @@ abstract class NormalSurface<T : Any> : SpaceParametricSurface<T>, BDVFunction<T
         DifferentialUtil.innerProduct(mathCalculator, unitNormalVector, rv.partial2)
     }
 
+//    open val wingartenTransform
+
+    /**
+     * The Gauss curvature `K`, which is
+     */
+    open val K: NDerivableFunction<T, T> by lazy {
+        TODO()
+    }
+
+    open val H: NDerivableFunction<T, T> by lazy {
+        TODO()
+    }
+
+
     companion object {
-        fun <T : Any> fromFunctionXYZ(a: NDerivableFunction<T, T>,
-                                      b: NDerivableFunction<T, T>,
-                                      c: NDerivableFunction<T, T>,
-                                      mc: MathCalculator<T>): NormalSurface<T> {
+        fun <T : Any> fromFunctionXYZ(
+            a: NDerivableFunction<T, T>,
+            b: NDerivableFunction<T, T>,
+            c: NDerivableFunction<T, T>,
+            mc: MathCalculator<T>
+        ): NormalSurface<T> {
             return NormalSurfaceXYZ(a, b, c, mc)
         }
 

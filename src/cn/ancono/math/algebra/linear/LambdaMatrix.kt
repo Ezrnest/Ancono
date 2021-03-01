@@ -150,6 +150,7 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
             get(i, j)
         }
     }
+//    toNormalForm(data,mathCalculator,)
     toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
     val builder = Matrix.getBuilder(row, column, mc)
     var pos = 0
@@ -172,7 +173,7 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
 }
 
 
-internal fun <T : Any> toNormalForm(data: PData<T>, mc: Polynomial.PolynomialCalculator<T>, fromIdx: Int) {
+//internal fun <T : Any> toNormalForm(data: PData<T>, mc: Polynomial.PolynomialCalculator<T>, fromIdx: Int) {
 //    if (fromIdx >= data.size) {
 //        return
 //    }
@@ -191,7 +192,7 @@ internal fun <T : Any> toNormalForm(data: PData<T>, mc: Polynomial.PolynomialCal
 //    }
 //    toNormalForm(data, mc, fromIdx + 1)
 
-}
+//}
 
 internal fun <T : Any> toNormalForm(data: Array<Array<T>>, mc: EUDCalculator<T>, fromIdx: Int) {
     if (fromIdx >= data.size) {

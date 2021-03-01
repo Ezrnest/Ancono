@@ -4,7 +4,9 @@ import cn.ancono.math.MathUtils
 import java.util.function.DoubleUnaryOperator
 
 
-/*
+/**
+ * Common utilities provided for numeric methods.
+ *
  * Created by liyicheng at 2020-06-02 19:27
  */
 object NumericSup {

@@ -8,7 +8,7 @@ import cn.ancono.utilities.structure.Pair
 
 //Created by lyc at 2020-03-01 13:59
 /**
- * Provides utility algorithms for polynomials on a ring and an UFD.
+ * Provides utility algorithms for polynomials on a ring or an UFD.
  */
 object PolynomialSup {
     /**

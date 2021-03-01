@@ -4,13 +4,20 @@
 package cn.ancono.math.algebra.abs.calculator
 
 import cn.ancono.math.algebra.abs.GroupCalculators
+import cn.ancono.math.exceptions.ExceptionUtil
 
 /**
+ * Describes the calculator for a unit ring, where multiplicative identity exists.
+ *
+ *
  * @author liyicheng
  * 2018-02-28 19:05
  */
 interface UnitRingCalculator<T : Any> : RingCalculator<T> {
 
+    /**
+     * The multiplicative identity element
+     */
     val one: T
 
     /**
@@ -22,6 +29,20 @@ interface UnitRingCalculator<T : Any> : RingCalculator<T> {
             one
         } else super.pow(x, n)
     }
+
+    /**
+     * Determines whether the given element is a unit, namely invertible with respect to multiplication.
+     *
+     * This method is optional.
+     *
+     * @exception UnsupportedOperationException if this method is not implemented.
+     */
+    @JvmDefault
+    fun isUnit(x: T): Boolean {
+        throw UnsupportedOperationException("Not supported")
+    }
+
+
 }
 
 fun <T : Any> UnitRingCalculator<T>.asMonoidCalculator() = GroupCalculators.asMonoidCalculator(this)

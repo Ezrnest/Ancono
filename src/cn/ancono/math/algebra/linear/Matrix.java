@@ -100,6 +100,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return row == column;
     }
 
+    /**
+     * Throws an Exception if this matrix is not square.
+     */
     protected void requireSquare() {
         if (!isSquare()) {
             throw new ArithmeticException("The matrix is not square!");
@@ -260,6 +263,14 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         }
         return new DMatrix<>(re, column, row, getMc());
     }
+
+    /**
+     * Returns the adjugate matrix of this matrix. The (i,j)-th element in the
+     * adjugate matrix <code>A<sup>*</sup></code> of matrix <code>A</code> is equal to <code>(-1)<sup>i+j</sup></code>
+     * times the cofactor of (i,j)-th element in <code>A</code>.
+     *
+     * @see #cofactor(int, int)
+     */
 
     public Matrix<T> adjugate() {
         Object[][] re = new Object[column][row];
@@ -959,8 +970,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                     mat[i][j] = mc.getZero();
                     ops.add(MatrixOperation.multiplyAddRow(j, i, f));
                 }
-
-
             }
         }
         return ops;

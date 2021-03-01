@@ -4,6 +4,7 @@
 package cn.ancono.utilities;
 
 import cn.ancono.math.algebra.abs.EqualRelation;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.utilities.structure.Pair;
 
 import java.util.*;
@@ -321,6 +322,15 @@ public final class CollectionSup {
     public static <T> boolean contains(Collection<T> coll, Predicate<T> pre) {
         for (T t : coll) {
             if (pre.test(t)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static <T> boolean containsEqual(Collection<T> coll, EqualPredicate<T> pre, T x) {
+        for (T t : coll) {
+            if (pre.isEqual(x, t)) {
                 return true;
             }
         }

@@ -314,25 +314,25 @@ object AlgebraUtil {
 
 }
 
-fun main(args: Array<String>) {
-    val mc = Calculators.getCalLongExact()
-//    val nume = Polynomial.valueOf(mc,1L,0L,0L,1L)
-//    val deno = Polynomial.valueOf(mc,0L,-1L,3L,-3L,1L)
-    val nume = Polynomial.valueOf(mc, 6L, 5L)
-    val deno = Polynomial.valueOf(mc, 1L, 1L, 1L)
-
-    println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx")
-//    println(AlgebraUtil.partialFractionInt(nume,deno))
-    val ec = ExprCalculator.instance
-    ec.setProperty(SimplificationStrategies.PROP_MERGE_FRACTION, "false")
-    ec.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "false")
-    val inte = Calculus.intRational(nume, deno, ec, "x")
-    println(inte)
-    ec.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "true")
-    println(ec.differential(inte))
-//    println(AlgebraUtil.polynomialBernoulli(6))
-//    println(AlgebraUtil.polynomialBernoulliBig(20))
-}
+//fun main(args: Array<String>) {
+//    val mc = Calculators.getCalLongExact()
+////    val nume = Polynomial.valueOf(mc,1L,0L,0L,1L)
+////    val deno = Polynomial.valueOf(mc,0L,-1L,3L,-3L,1L)
+//    val nume = Polynomial.valueOf(mc, 6L, 5L)
+//    val deno = Polynomial.valueOf(mc, 1L, 1L, 1L)
+//
+//    println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx")
+////    println(AlgebraUtil.partialFractionInt(nume,deno))
+//    val ec = ExprCalculator.instance
+//    ec.setProperty(SimplificationStrategies.PROP_MERGE_FRACTION, "false")
+//    ec.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "false")
+//    val inte = Calculus.intRational(nume, deno, ec, "x")
+//    println(inte)
+//    ec.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "true")
+//    println(ec.differential(inte))
+////    println(AlgebraUtil.polynomialBernoulli(6))
+////    println(AlgebraUtil.polynomialBernoulliBig(20))
+//}
 
 
 

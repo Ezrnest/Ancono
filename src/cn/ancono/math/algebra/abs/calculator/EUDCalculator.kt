@@ -19,8 +19,8 @@ import cn.ancono.math.exceptions.ExceptionUtil
 interface EUDCalculator<T : Any> : UFDCalculator<T> {
 
     /**
-     * Returns a pair of two elements containing {@code (a / b)}
-     * followed by {@code (a % b)}.
+     * Returns a pair of two elements containing `a / b`
+     * followed by `a % b`.
      *
      * @param
      */

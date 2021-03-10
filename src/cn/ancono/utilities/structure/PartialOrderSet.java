@@ -569,62 +569,62 @@ public class PartialOrderSet<E> extends PartialOrderCollection<E> {
         }
     }
 
-    private static class PairForDebug {
-        final int x, y;
-
-        PairForDebug(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + x + "," + y + ")";
-        }
-
-    }
-
-    public static void main(String[] args) {
-        cn.ancono.utilities.structure.PartialOrderSet<PairForDebug> set = new cn.ancono.utilities.structure.PartialOrderSet<>((A, B) -> A.x <= B.x && A.y >= B.y);
-        Random rd = new Random();
-        PairForDebug[] arr = new PairForDebug[10];
-        for (int i = 0; i < 10; i++) {
-            int left, right;
-            left = rd.nextInt(20) - 10;
-            right = rd.nextInt(20) - 10;
-            if (left > right) {
-                int t = right;
-                right = left;
-                left = t;
-            }
-            PairForDebug p = new PairForDebug(left, right);
-            arr[i] = p;
-            print(p);
-            if (!set.add(p)) {
-                print("Break");
-                break;
-            }
-
-
-        }
-        set.printSet(true);
-        //test code 1
-//		DirectedGraph<String> transGraph = set.graph.mapToGraph(new Function<PairForDebug, String>() {
+//    private static class PairForDebug {
+//        final int x, y;
 //
-//			@Override
-//			public String apply(PairForDebug t) {
-//				return new StringBuilder().append('(').append(t.x).append(',').append(t.y).append(')').toString();
-//			}
-//			
-//		});
-//		transGraph.printGraph();
+//        PairForDebug(int x, int y) {
+//            this.x = x;
+//            this.y = y;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return "(" + x + "," + y + ")";
+//        }
+//
+//    }
 
-        //test code 2
-        print_();
-        cn.ancono.utilities.structure.PartialOrderSet<PairForDebug> upper = (cn.ancono.utilities.structure.PartialOrderSet<PairForDebug>) set.getDirectUpperElements(arr[5]);
-        upper.printSet(true);
-        upper.graph.printGraph();
-    }
+//    public static void main(String[] args) {
+//        cn.ancono.utilities.structure.PartialOrderSet<PairForDebug> set = new cn.ancono.utilities.structure.PartialOrderSet<>((A, B) -> A.x <= B.x && A.y >= B.y);
+//        Random rd = new Random();
+//        PairForDebug[] arr = new PairForDebug[10];
+//        for (int i = 0; i < 10; i++) {
+//            int left, right;
+//            left = rd.nextInt(20) - 10;
+//            right = rd.nextInt(20) - 10;
+//            if (left > right) {
+//                int t = right;
+//                right = left;
+//                left = t;
+//            }
+//            PairForDebug p = new PairForDebug(left, right);
+//            arr[i] = p;
+//            print(p);
+//            if (!set.add(p)) {
+//                print("Break");
+//                break;
+//            }
+//
+//
+//        }
+//        set.printSet(true);
+//        //test code 1
+////		DirectedGraph<String> transGraph = set.graph.mapToGraph(new Function<PairForDebug, String>() {
+////
+////			@Override
+////			public String apply(PairForDebug t) {
+////				return new StringBuilder().append('(').append(t.x).append(',').append(t.y).append(')').toString();
+////			}
+////
+////		});
+////		transGraph.printGraph();
+//
+//        //test code 2
+//        print_();
+//        cn.ancono.utilities.structure.PartialOrderSet<PairForDebug> upper = (cn.ancono.utilities.structure.PartialOrderSet<PairForDebug>) set.getDirectUpperElements(arr[5]);
+//        upper.printSet(true);
+//        upper.graph.printGraph();
+//    }
 
 
 }

@@ -67,16 +67,16 @@ public final class Calculators {
 
     /**
      * Determines whether a<x<b or b<x<a.
-     *
-     * @param x
-     * @param a
-     * @param b
-     * @param mc
-     * @param <T>
-     * @return
      */
     public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, MathCalculator<T> mc) {
         return mc.compare(a, x) * mc.compare(x, b) > 0;
+    }
+
+    /**
+     * Returns {@code (x-a)(y-a)<=0}
+     */
+    public static <T> boolean oppositeSign(T x, T y, T a, MathCalculator<T> mc) {
+        return mc.compare(x, a) * mc.compare(y, a) <= 0;
     }
 
     public static <T> T square(@NotNull T x, MathCalculator<T> mc) {

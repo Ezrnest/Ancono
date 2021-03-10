@@ -1040,25 +1040,6 @@ public class MathUtils {
         return lb - 1;
     }
 
-    /**
-     * Returns the arctan value of y/x.
-     *
-     * @param mc
-     * @param x
-     * @param y
-     * @return
-     */
-    public static <T> T atan(MathCalculator<T> mc, T x, T y) {
-        if (mc.isZero(x)) {
-            int comp = mc.compare(y, mc.getZero());
-            if (comp == 0) {
-                throw new ArithmeticException("x=y=0!");
-            }
-            T pi_2 = mc.divideLong(Objects.requireNonNull(mc.constantValue(MathCalculator.STR_PI)), 2L);
-            return comp > 0 ? pi_2 : mc.negate(pi_2);
-        }
-        return mc.arctan(mc.divide(y, x));
-    }
 
     /**
      * Returns {@code x*y<=0}
@@ -1074,12 +1055,6 @@ public class MathUtils {
         return (x >= a && y <= a) || (x <= a && y >= a);
     }
 
-    /**
-     * Returns {@code (x-a)(y-a)<=0}
-     */
-    public static <T> boolean oppositeSide(T x, T y, T a, MathCalculator<T> mc) {
-        return mc.compare(x, a) * mc.compare(y, a) <= 0;
-    }
 
     /**
      * Determines whether x and y have the same sign.
@@ -1500,11 +1475,75 @@ public class MathUtils {
         return x + (y - x) * k;
     }
 
+    public static long product(long[] array) {
+        long r = 1;
+        for (long l : array) {
+            r *= l;
+        }
+        return r;
+    }
 
-    public static long chineseRemainder(long[] mods, long[] remainers) {
-        ExceptionUtil.notImplemented("");
-        //TODO
-        return 0;
+    public static int product(int[] array) {
+        int r = 1;
+        for (int l : array) {
+            r *= l;
+        }
+        return r;
+    }
+
+    public static double product(double[] array) {
+        double r = 1;
+        for (double l : array) {
+            r *= l;
+        }
+        return r;
+    }
+
+    public static long sum(long[] array) {
+        long r = 0;
+        for (long l : array) {
+            r += l;
+        }
+        return r;
+    }
+
+    public static int sum(int[] array) {
+        int r = 0;
+        for (int l : array) {
+            r += l;
+        }
+        return r;
+    }
+
+    public static double sum(double[] array) {
+        double r = 0;
+        for (double l : array) {
+            r += l;
+        }
+        return r;
+    }
+
+
+    /**
+     * Returns a solution for the modular equations: <code>x mod m<sub>i</sub> = r<sub>i</sub></code>, where
+     * <code>m<sub>i</sub></code> are co-prime integers.
+     *
+     * @param mods       an array of modular, <code>m<sub>i</sub></code>
+     * @param remainders an array of remainders,
+     * @return the solution of the modular equation
+     */
+    public static long chineseRemainder(long[] mods, long[] remainders) {
+        long M = product(mods);
+        long x = 0;
+        for (int i = 0; i < mods.length; i++) {
+            var m = mods[i];
+            var r = remainders[i];
+            var t = M / m;
+            var inv = modInverse(t, m);
+            x += r * t * inv;
+            x %= M;
+        }
+        return x;
     }
 
 

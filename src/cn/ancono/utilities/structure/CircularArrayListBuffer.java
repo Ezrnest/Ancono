@@ -16,7 +16,7 @@ import static cn.ancono.utilities.Printer.print;
  * @author liyicheng
  * 2017-11-04 20:53
  */
-public final class CicularArrayListBuffer<E> extends AbstractList<E> {
+public final class CircularArrayListBuffer<E> extends AbstractList<E> {
 
     private final int bufSize;
     private final ArrayList<E> list;
@@ -25,7 +25,7 @@ public final class CicularArrayListBuffer<E> extends AbstractList<E> {
     /**
      * @param bufSize must be at lease 1.
      */
-    public CicularArrayListBuffer(int bufSize) {
+    public CircularArrayListBuffer(int bufSize) {
         if (bufSize < 1) {
             throw new IllegalArgumentException("bufSize<1");
         }
@@ -88,10 +88,10 @@ public final class CicularArrayListBuffer<E> extends AbstractList<E> {
         return list.get(i);
     }
 
-    public static void main(String[] args) {
-        cn.ancono.utilities.structure.CicularArrayListBuffer<Integer> b = new cn.ancono.utilities.structure.CicularArrayListBuffer<>(16);
-        b.add(123);
-        print(b.getPrevious(0));
-    }
+//    public static void main(String[] args) {
+//        CircularArrayListBuffer<Integer> b = new CircularArrayListBuffer<>(16);
+//        b.add(123);
+//        print(b.getPrevious(0));
+//    }
 
 }

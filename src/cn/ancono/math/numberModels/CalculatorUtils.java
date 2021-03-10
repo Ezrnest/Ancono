@@ -11,6 +11,7 @@ import kotlin.Triple;
 
 import java.math.BigInteger;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -227,4 +228,25 @@ public final class CalculatorUtils {
         }
         return new Triple<>(b, u1, v1);
     }
+
+    /**
+     * Returns the arctan value of y/x.
+     *
+     * @param mc
+     * @param x
+     * @param y
+     * @return
+     */
+    public static <T> T arctan(MathCalculator<T> mc, T x, T y) {
+        if (mc.isZero(x)) {
+            int comp = mc.compare(y, mc.getZero());
+            if (comp == 0) {
+                throw new ArithmeticException("x=y=0!");
+            }
+            T pi_2 = mc.divideLong(Objects.requireNonNull(mc.constantValue(MathCalculator.STR_PI)), 2L);
+            return comp > 0 ? pi_2 : mc.negate(pi_2);
+        }
+        return mc.arctan(mc.divide(y, x));
+    }
+
 }

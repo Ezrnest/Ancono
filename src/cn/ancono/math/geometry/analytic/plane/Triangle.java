@@ -2,7 +2,6 @@ package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.MathUtils;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
@@ -476,7 +475,7 @@ public final class Triangle<T> extends MathObject<T> {
                 AC = A.directVector(C);
         PVector<T> xy = v.reduce(AB, AC);
         T zero = getMc().getZero(), one = getMc().getOne();
-        return MathUtils.oppositeSide(zero, one, xy.x, getMc()) && Calculators.between(zero, one, xy.y, getMc());
+        return Calculators.oppositeSign(zero, one, xy.x, getMc()) && Calculators.between(zero, one, xy.y, getMc());
     }
 
 

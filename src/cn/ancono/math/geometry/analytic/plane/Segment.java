@@ -6,6 +6,7 @@ import cn.ancono.math.MathUtils;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
 import cn.ancono.math.numberModels.CalculatorUtils;
+import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
@@ -76,9 +77,9 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
             return false;
         }
         if (xZero) {
-            return MathUtils.oppositeSide(A.y, B.y, p.y, getMc());
+            return Calculators.oppositeSign(A.y, B.y, p.y, getMc());
         }
-        return MathUtils.oppositeSide(A.x, B.x, p.x, getMc());
+        return Calculators.oppositeSign(A.x, B.x, p.x, getMc());
     }
 
     @Override

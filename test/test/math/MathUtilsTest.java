@@ -33,4 +33,12 @@ public class MathUtilsTest {
             assertEquals("", i, MathUtils.sqrtIntL(i * i + 1));
         }
     }
+
+    @Test
+    public void chineseRemainder() {
+        long[] mods = {3, 5, 7};
+        long[] remainders = {2, 3, 2};
+        long res = MathUtils.chineseRemainder(mods, remainders);
+        assertEquals(23, res);
+    }
 }

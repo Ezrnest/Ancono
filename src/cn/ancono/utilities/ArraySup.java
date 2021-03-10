@@ -335,38 +335,38 @@ public class ArraySup {
     }
 
 
-    /**
-     * make the array random
-     *
-     * @param arr
-     */
-    public static void desort(int[] arr) {
-        Random rd = new Random();
-        int len = arr.length;
-        for (int i = 0; i < len - 1; i++) {
-            int npos = rd.nextInt(len - i) + i;
-            int t = arr[npos];
-            arr[npos] = arr[i];
-            arr[i] = t;
-        }
-    }
+//    /**
+//     * make the array random
+//     *
+//     * @param arr
+//     */
+//    public static void desort(int[] arr) {
+//        Random rd = new Random();
+//        int len = arr.length;
+//        for (int i = 0; i < len - 1; i++) {
+//            int npos = rd.nextInt(len - i) + i;
+//            int t = arr[npos];
+//            arr[npos] = arr[i];
+//            arr[i] = t;
+//        }
+//    }
 
-    /**
-     * make the array random
-     *
-     * @param arr
-     */
-    public static void desort(Object[] arr) {
-        Random rd = new Random();
-        int len = arr.length;
-        for (int i = 0; i < len - 1; i++) {
-            int npos = rd.nextInt(len - i) + i;
-            Object t = arr[npos];
-            arr[npos] = arr[i];
-            arr[i] = t;
-        }
-
-    }
+//    /**
+//     * make the array random
+//     *
+//     * @param arr
+//     */
+//    public static void desort(Object[] arr) {
+//        Random rd = new Random();
+//        int len = arr.length;
+//        for (int i = 0; i < len - 1; i++) {
+//            int npos = rd.nextInt(len - i) + i;
+//            Object t = arr[npos];
+//            arr[npos] = arr[i];
+//            arr[i] = t;
+//        }
+//
+//    }
 
     /**
      * An array whose element is its index.

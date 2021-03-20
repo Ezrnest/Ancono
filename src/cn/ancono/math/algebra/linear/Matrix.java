@@ -1597,7 +1597,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 RB.set(k, j, i);
             }
             var t = Vector.addAll(i, temp);
-            var v = Vector.subtract(u, t);
+            var v = Vector.subtractV(u, t);
             if (v.isZeroVector()) {
                 ws[i] = v;
             } else {
@@ -1633,9 +1633,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      *
      * @return a pair of <code>(L,D)</code>.
      */
-    public Pair<Matrix<T>,Vector<T>> decompCholeskyD(){
+    public Pair<Matrix<T>, Vector<T>> decompCholeskyD() {
         //Created by lyc at 2020-09-29 21:47
-        return  MatrixSupKt.INSTANCE.decompositionCholeskyD(this);
+        return MatrixSupKt.INSTANCE.decompositionCholeskyD(this);
     }
 
 //    /**
@@ -1683,34 +1683,34 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
     @Override
     public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Matrix) {
-            Matrix<N> m = (Matrix<N>) obj;
-            if (m.row == this.row && m.column == this.column) {
-                for (int i = 0; i < row; i++) {
-                    for (int j = 0; j < column; j++) {
-                        T t = mapper.apply(m.get(i, j));
-                        if (!getMc().isEqual(t, get(i, j))) {
-                            return false;
-                        }
-                    }
+        if (!(obj instanceof Matrix)) {
+            return false;
+        }
+        var mc = getMc();
+        Matrix<N> m = (Matrix<N>) obj;
+        if (!this.sizeEquals(m)) {
+            return false;
+        }
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                T t = mapper.apply(m.get(i, j));
+                if (!mc.isEqual(t, get(i, j))) {
+                    return false;
                 }
-                return true;
             }
         }
-        return false;
+        return true;
     }
 
     @Override
     public boolean valueEquals(@NotNull MathObject<T> obj) {
         if (obj instanceof Matrix) {
+            var mc = getMc();
             Matrix<T> m = (Matrix<T>) obj;
-            if (!m.getMathCalculator().equals(this.getMathCalculator())) {
-                return false;
-            }
             if (m.row == this.row && m.column == this.column) {
                 for (int i = 0; i < row; i++) {
                     for (int j = 0; j < column; j++) {
-                        if (!getMc().isEqual(m.get(i, j), get(i, j))) {
+                        if (!mc.isEqual(m.get(i, j), get(i, j))) {
                             return false;
                         }
                     }
@@ -2871,18 +2871,27 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     /**
      * Gets the calculator for <code>n*n</code> matrix.
      */
-    public static <T> MatrixCal<T> getCalculator(int n, MathCalculator<T> mc) {
+    public static <T> MatrixCal<T> calculator(int n, MathCalculator<T> mc) {
         return new SquareMatrixCal<>(mc, n);
     }
 
     /**
-     * Gets the calculator for <code>n*n</code> matrix.
+     * Gets the calculator for <code>row*column</code> matrix.
      */
-    public static <T> MatrixCal<T> getCalculator(int row, int column, MathCalculator<T> mc) {
+    public static <T> MatrixCal<T> calculator(int row, int column, MathCalculator<T> mc) {
         if (row == column) {
-            return getCalculator(row, mc);
+            return calculator(row, mc);
         }
         return new MatrixCal<>(mc, row, column);
+    }
+
+    /**
+     * Gets an calculator for the corresponding type of matrices.
+     *
+     * @param m a matrix
+     */
+    public static <T> MatrixCal<T> calculatorFor(Matrix<T> m) {
+        return calculator(m.getRowCount(), m.getColumnCount(), m.getMathCalculator());
     }
 
     public static class MatrixCal<T> extends MathCalculatorAdapter<Matrix<T>> implements ModuleCalculator<T, Matrix<T>> {

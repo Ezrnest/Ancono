@@ -1905,6 +1905,29 @@ public final class Calculators {
             return re;
         }
 
+        @NotNull
+        @Override
+        public Integer getOne() {
+            return 1;
+        }
+
+        @NotNull
+        @Override
+        public Integer getZero() {
+            return 0;
+        }
+
+        @Override
+        public int compare(@NotNull Integer x, @NotNull Integer y) {
+            return x.compareTo(y);
+        }
+
+        @Override
+        public boolean isComparable() {
+            return true;
+        }
+
+
         @Override
         public boolean isZero(@NotNull Integer para) {
             return modN(para) == 0;

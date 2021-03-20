@@ -64,9 +64,9 @@ object DifferentialUtil {
         val len = length(mc, f)
         @Suppress("UNCHECKED_CAST")
         return DerivableFunction.divide(f, len, mc,
-                { v1, v2 -> Vector.addV(v1, v2) },
-                { v1, v2 -> Vector.subtract(v1, v2) },
-                { k, v -> v.multiplyNumber(k) })
+            { v1, v2 -> Vector.addV(v1, v2) },
+            { v1, v2 -> Vector.subtractV(v1, v2) },
+            { k, v -> v.multiplyNumber(k) })
     }
 
     /**

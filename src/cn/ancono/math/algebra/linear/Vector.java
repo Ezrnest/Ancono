@@ -434,15 +434,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @throws ArithmeticException if dimension doesn't match
      */
     public static <T> Vector<T> addV(Vector<T> v1, Vector<T> v2) {
-        v1.checkSameSize(v2);
-        final int size = v1.getSize();
-        @SuppressWarnings("unchecked")
-        T[] re = (T[]) new Object[size];
-        MathCalculator<T> mc = v1.getMc();
-        for (int i = 0; i < re.length; i++) {
-            re[i] = mc.add(v1.get(i), v2.get(i));
-        }
-        return new DVector<>(re, false, mc);
+        return addV(v1, v2, false);
     }
 
     /**
@@ -451,7 +443,35 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return a column vector as result
      * @throws ArithmeticException if dimension doesn't match
      */
-    public static <T> Vector<T> subtract(Vector<T> v1, Vector<T> v2) {
+    public static <T> Vector<T> subtractV(Vector<T> v1, Vector<T> v2) {
+        return subtractV(v1, v2, false);
+    }
+
+    /**
+     * Adds two vectors, returning either a column vector or a row vector.
+     *
+     * @return a vector, whether it is row vector or column vector is determined by <code>asRow</code>
+     * @throws ArithmeticException if dimension doesn't match
+     */
+    public static <T> Vector<T> addV(Vector<T> v1, Vector<T> v2, boolean asRow) {
+        v1.checkSameSize(v2);
+        final int size = v1.getSize();
+        @SuppressWarnings("unchecked")
+        T[] re = (T[]) new Object[size];
+        MathCalculator<T> mc = v1.getMc();
+        for (int i = 0; i < re.length; i++) {
+            re[i] = mc.add(v1.get(i), v2.get(i));
+        }
+        return new DVector<>(re, asRow, mc);
+    }
+
+    /**
+     * The inversion of {@link #addV(Vector, Vector, boolean)}.
+     *
+     * @return a column, whether it is row vector or column vector is determined by <code>asRow</code>
+     * @throws ArithmeticException if dimension doesn't match
+     */
+    public static <T> Vector<T> subtractV(Vector<T> v1, Vector<T> v2, boolean asRow) {
         v1.checkSameSize(v2);
         final int size = v1.getSize();
         @SuppressWarnings("unchecked")
@@ -460,8 +480,9 @@ public abstract class Vector<T> extends Matrix<T> {
         for (int i = 0; i < re.length; i++) {
             re[i] = mc.subtract(v1.get(i), v2.get(i));
         }
-        return new DVector<>(re, false, mc);
+        return new DVector<>(re, asRow, mc);
     }
+
 
     /**
      * Provides a better efficiency for adding several vectors without creating
@@ -799,7 +820,7 @@ public abstract class Vector<T> extends Matrix<T> {
      */
     public static <T> Vector<T> constant(T c, int size, MathCalculator<T> mc) {
         @SuppressWarnings("unchecked") T[] arr = (T[]) new Object[size];
-        Arrays.fill(arr,c);
+        Arrays.fill(arr, c);
         return new DVector<>(arr, false, mc);
     }
 
@@ -982,8 +1003,52 @@ public abstract class Vector<T> extends Matrix<T> {
         return Matrix.fromVectors(true, vectors).calRank();
     }
 
-    public static <T> LinearSpaceCalculator<T, Vector<T>> getCalculator(MathCalculator<T> mc, int dimension) {
-        return new LinearCalculator<>(mc, dimension);
+    /**
+     * Gets a calculator for vectors.
+     *
+     * @param mc        an instance of LinearSpaceCalculator
+     * @param dimension the dimension(size) of the vector
+     */
+    public static <T> LinearSpaceCalculator<T, Vector<T>> calculatorV(MathCalculator<T> mc, int dimension, boolean isRow) {
+        return new VectorCalculator<>(mc, dimension, isRow);
+    }
+
+    /**
+     * Gets a calculator for column vectors.
+     *
+     * @param mc        an instance of LinearSpaceCalculator
+     * @param dimension the dimension(size) of the vector
+     */
+    public static <T> LinearSpaceCalculator<T, Vector<T>> calculatorV(MathCalculator<T> mc, int dimension) {
+        return new VectorCalculator<>(mc, dimension, false);
+    }
+
+
+    /**
+     * Gets the corresponding calculator for the corresponding type of vectors. This method is
+     * equal to <code>Vector.calculator(v.getMathCalculator(), v.getSize())</code>
+     *
+     * @param v a vector
+     */
+    public static <T> LinearSpaceCalculator<T, Vector<T>> calculatorFor(Vector<T> v) {
+        return calculatorV(v.getMathCalculator(), v.getSize(), v.isRow);
+    }
+
+    /**
+     * Determines whether the two vectors are the same, ignoring the difference of column and row vector.
+     */
+    public static <T> boolean vectorEquals(Vector<T> u, Vector<T> v) {
+        if (u.getSize() != v.getSize()) {
+            return false;
+        }
+        var size = u.getSize();
+        var mc = u.getMathCalculator();
+        for (int i = 0; i < size; i++) {
+            if (!mc.isEqual(u.get(i), v.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -1009,13 +1074,17 @@ public abstract class Vector<T> extends Matrix<T> {
 //	}
 }
 
-class LinearCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
+class VectorCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
     private final MathCalculator<T> mc;
     private final int dimension;
+    private final boolean isRow;
+    private final Vector<T> zero;
 
-    public LinearCalculator(MathCalculator<T> mc, int dimension) {
+    public VectorCalculator(MathCalculator<T> mc, int dimension, boolean isRow) {
         this.mc = mc;
         this.dimension = dimension;
+        this.isRow = isRow;
+        zero = Vector.zeroVector(dimension, isRow, mc);
     }
 
     @NotNull
@@ -1033,7 +1102,7 @@ class LinearCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
     @NotNull
     @Override
     public Vector<T> apply(@NotNull Vector<T> x, @NotNull Vector<T> y) {
-        return Vector.addV(x, y);
+        return Vector.addV(x, y, isRow);
     }
 
     @NotNull
@@ -1044,13 +1113,19 @@ class LinearCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
 
     @NotNull
     @Override
+    public Vector<T> subtract(@NotNull Vector<T> x, @NotNull Vector<T> y) {
+        return Vector.subtractV(x, y, isRow);
+    }
+
+    @NotNull
+    @Override
     public Vector<T> getIdentity() {
-        return Vector.zeroVector(dimension, mc);
+        return zero;
     }
 
     @Override
     public boolean isEqual(@NotNull Vector<T> x, @NotNull Vector<T> y) {
-        return x.valueEquals(y);
+        return Vector.vectorEquals(x, y);
     }
 
     @Override

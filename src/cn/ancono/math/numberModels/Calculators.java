@@ -1772,7 +1772,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static IntegerCalculator getCalIntegerExact() {
+    public static IntegerCalculator integerExact() {
         return IntegerCalculatorExact.cal;
     }
 
@@ -1787,7 +1787,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static IntegerCalculator getCalInteger() {
+    public static IntegerCalculator integer() {
         return IntegerCalculator.cal;
     }
 
@@ -1799,7 +1799,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static LongCalculator getCalLongExact() {
+    public static LongCalculator longExact() {
         return LongCalculatorExact.cal;
     }
 
@@ -1810,7 +1810,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static LongCalculator getCalLong() {
+    public static LongCalculator longCal() {
         return LongCalculator.cal;
     }
 
@@ -1822,7 +1822,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static BigIntegerCalculator getCalBigInteger() {
+    public static BigIntegerCalculator bigInteger() {
         return BigIntegerCalculator.cal;
     }
 
@@ -1836,7 +1836,7 @@ public final class Calculators {
      * @param mc a math context
      * @return a MathCalculator
      */
-    public static MathCalculator<BigDecimal> getCalBigDecimal(MathContext mc) {
+    public static MathCalculator<BigDecimal> bigDecimal(MathContext mc) {
         return new BigDecimalCalculator(mc);
     }
 
@@ -1850,7 +1850,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> getCalDouble() {
+    public static MathCalculator<Double> doubleCal() {
         return DoubleCalculator.dc;
     }
 
@@ -1864,7 +1864,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> getCalDoubleDev() {
+    public static MathCalculator<Double> doubleDev() {
         return DoubleCalculatorWithDeviation.dc;
     }
 
@@ -1876,7 +1876,7 @@ public final class Calculators {
      *
      * @return a MathCalculator
      */
-    public static MathCalculator<Double> getCalDoubleDev(double dev) {
+    public static MathCalculator<Double> doubleDev(double dev) {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
@@ -2116,7 +2116,7 @@ public final class Calculators {
      * <p>
      * Note: The calculator caches all the modular inverse.
      */
-    public static MathCalculator<Integer> getCalIntModP(int p) {
+    public static MathCalculator<Integer> intModP(int p) {
         if (!Primes.getInstance().isPrime(p)) {
             throw new IllegalArgumentException("p must be a prime number!");
         }
@@ -2126,7 +2126,7 @@ public final class Calculators {
     /**
      * Returns a calculator for ring <code>Z<sub>n</sub></code>, where <code>n >= 2</code>.
      */
-    public static MathCalculator<Integer> getCalIntModN(int n) {
+    public static MathCalculator<Integer> intModN(int n) {
         if (n < 2) {
             throw new IllegalArgumentException("It is required that n >= 2");
         }

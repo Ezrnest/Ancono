@@ -102,7 +102,7 @@ internal constructor(
         for (p in set) {
             orb += p.apply(n)
         }
-        return MathSets.fromCollection(orb, Calculators.getCalInteger())
+        return MathSets.fromCollection(orb, Calculators.integer())
     }
 
     companion object {

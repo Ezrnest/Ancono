@@ -25,7 +25,7 @@ public class TestClass {
     public TestClass() {
     }
 
-    MathCalculator<Double> mcd = Calculators.getCalDoubleDev();
+    MathCalculator<Double> mcd = Calculators.doubleDev();
 
     @Test
     public void testAffineTrans() {

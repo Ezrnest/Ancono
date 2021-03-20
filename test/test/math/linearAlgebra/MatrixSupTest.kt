@@ -1,10 +1,8 @@
 package test.math.linearAlgebra
 
-import cn.ancono.math.numberModels.Calculators.IntegerCalculator
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
-import cn.ancono.math.function.MathFunction
 import org.junit.Test
 import test.math.TestUtils
 import kotlin.test.assertTrue
@@ -15,7 +13,7 @@ import kotlin.test.assertTrue
 class MatrixSupTest {
     @Test
     fun toHermitFrom() {
-        val cal = Calculators.getCalIntegerExact()
+        val cal = Calculators.integerExact()
         val m = MatrixSup.parseMatrix("[[1 2 3][4 5 6][7 8 9]]", cal) { s: String -> s.toInt() }
         var w = m.toSmithForm()
         w = w.applyFunction { para: Int? -> cal.abs(para!!) }
@@ -24,7 +22,7 @@ class MatrixSupTest {
 
     @Test
     fun modularInverse() {
-        val mc = Calculators.getCalIntModN(26)
+        val mc = Calculators.intModN(26)
         val A = MatrixSup.parseMatrixD(
             """
             3 21 20

@@ -2114,7 +2114,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 mat2[i][j] = mat[i][j];
             }
         }
-        return new DMatrix<>(mat2, row, column, Calculators.getCalLong());
+        return new DMatrix<>(mat2, row, column, Calculators.longCal());
     }
 
     /**
@@ -2122,7 +2122,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * will be the first dimension's length of the array,and the column count of
      * the matrix will be the second dimension's maximum length of the array.<p>
      * The returned matrix will hold the type Double.<p>
-     * The {@link MathCalculator} will be assigned through method {@link Calculators#getCalDouble()}.
+     * The {@link MathCalculator} will be assigned through method {@link Calculators#doubleCal()}.
      */
     public static Matrix<Double> of(double[][] mat) {
         Objects.requireNonNull(mat);
@@ -2143,7 +2143,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 mat2[i][j] = mat[i][j];
             }
         }
-        return new DMatrix<>(mat2, row, column, Calculators.getCalDouble());
+        return new DMatrix<>(mat2, row, column, Calculators.doubleCal());
     }
 
 
@@ -2172,7 +2172,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 mat2[i][j] = mat[i][j];
             }
         }
-        return new DMatrix<>(mat2, row, column, Calculators.getCalInteger());
+        return new DMatrix<>(mat2, row, column, Calculators.integer());
     }
 
 

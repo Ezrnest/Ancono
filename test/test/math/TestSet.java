@@ -38,7 +38,7 @@ public class TestSet {
         print(set1.toString() + " ∩ " + set2.toString() + " = " + set1.intersect(set2));
     }
 
-    MathCalculator<Integer> mc = Calculators.getCalInteger();
+    MathCalculator<Integer> mc = Calculators.integer();
 
 
     public void testInterval() {

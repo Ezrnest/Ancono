@@ -71,7 +71,7 @@ object Monotonicity {
      * limit result is finite.
      */
     fun cos(x: LimitResult<Double>): Int {
-        return sin(Limit.addConst(x, Calculators.getCalDouble()) { Math.PI / 2 })
+        return sin(Limit.addConst(x, Calculators.doubleCal()) { Math.PI / 2 })
     }
 
 

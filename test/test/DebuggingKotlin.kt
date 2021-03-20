@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     p2()
 }
 fun p2(){
-    val mcd = Calculators.getCalDoubleDev()
+    val mcd = Calculators.doubleDev()
     val str = """
             1 2 5
             1 0 1

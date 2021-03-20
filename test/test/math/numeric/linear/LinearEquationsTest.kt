@@ -49,7 +49,7 @@ class LinearEquationsTest {
     @Test
     fun solveGauss() {
         val n = 4
-        val mc = Calculators.getCalDoubleDev()
+        val mc = Calculators.doubleDev()
         val A = Matrix.of(n, n, mc) { _, _ ->
             Random.nextDouble()
         }

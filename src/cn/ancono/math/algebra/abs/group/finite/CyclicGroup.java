@@ -55,7 +55,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
         for (int n = 0; n < mod; n += generator) {
             list.add(n);
         }
-        return MathSets.fromCollection(list, Calculators.getCalInteger());
+        return MathSets.fromCollection(list, Calculators.integer());
     }
 
     /**
@@ -72,7 +72,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
             n += generator;
         }
         list.trimToSize();
-        return MathSets.fromCollection(list, Calculators.getCalInteger());
+        return MathSets.fromCollection(list, Calculators.integer());
     }
 
     @NotNull

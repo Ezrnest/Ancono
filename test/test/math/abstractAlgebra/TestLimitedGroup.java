@@ -34,7 +34,7 @@ public class TestLimitedGroup {
 	
 	@Test
 	public void test1() {
-        MathCalculator<Integer> mc = Calculators.getCalInteger();
+        MathCalculator<Integer> mc = Calculators.integer();
         GroupCalculator<TransMatrix<Integer>> matmc = new GroupCalculator<>() {
             @Override
             public boolean isCommutative() {

@@ -623,7 +623,7 @@ public final class Permutations {
      * Gets a permutation of the specific array as the method getArray() in
      * Permutation.
      */
-    public static Permutation valueOf(int[] array) {
+    public static Permutation valueOf(int... array) {
         sizeCheck(array.length);
         rangeAndDuplicateCheck(array, array.length);
         return new ArrPermutation(array);
@@ -699,7 +699,7 @@ public final class Permutations {
         return rotateAll(n, n - shift);
     }
 
-    public static Cycle rotate(int size, int[] elements) {
+    public static Cycle rotate(int size, int... elements) {
         sizeCheck(size);
         rangeAndDuplicateCheck(elements, size);
         return new Rotate(size, elements);

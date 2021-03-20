@@ -208,8 +208,7 @@ abstract class AbstractFiniteGroup<T : Any>
             val permutation = IntArray(size)
             for (j in 0 until size) {
                 val b = eleArr[j]
-                val re: T
-                re = if (isRight) {
+                val re: T = if (isRight) {
                     //a * a_i
                     calculator.apply(b, a)
                 } else {
@@ -219,7 +218,7 @@ abstract class AbstractFiniteGroup<T : Any>
                 val index = ArraySup.firstIndexOf(eleArr) { x -> calculator.isEqual(x, re) }
                 permutation[j] = index
             }
-            ps.add(Permutations.valueOf(permutation))
+            ps.add(Permutations.valueOf(*permutation))
             i++
         }
 

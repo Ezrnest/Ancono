@@ -418,7 +418,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      * @param upperBound  exclusive
      */
     public static FiniteInterval<Integer> rangeOf(int downerBound, int upperBound) {
-        return new FiniteInterval<>(Calculators.getCalInteger(), downerBound, upperBound - 1);
+        return new FiniteInterval<>(Calculators.integer(), downerBound, upperBound - 1);
     }
 
 

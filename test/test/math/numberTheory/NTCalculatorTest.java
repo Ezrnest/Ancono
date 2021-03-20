@@ -20,7 +20,7 @@ public class NTCalculatorTest {
 
     @Test
     public void gcdUV1() {
-        var cal = Calculators.getCalInteger();
+        var cal = Calculators.integer();
         var rd = new Random();
         int bound = 1000;
         for (int i = 0; i < 100; i++) {

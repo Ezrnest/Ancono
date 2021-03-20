@@ -18,7 +18,7 @@ import java.util.Random;
 import static cn.ancono.utilities.Printer.print;
 @Deprecated
 public class SpaceAGTest {
-    private static final MathCalculator<Double> mc = Calculators.getCalDouble();
+    private static final MathCalculator<Double> mc = Calculators.doubleCal();
 //	private Map<String,Point<Double>> cube = new HashMap<>();
 //	
 //	{
@@ -36,7 +36,7 @@ public class SpaceAGTest {
 	
 	
 	public void test() {
-        MathCalculator<Double> mc = Calculators.getCalDouble();
+        MathCalculator<Double> mc = Calculators.doubleCal();
         SVector<Double> sv1 = SVector.valueOf(1d, 1d, 0d, mc),
                 sv2 = SVector.valueOf(0d, 1d, 1d, mc);
         print(sv1);
@@ -182,8 +182,8 @@ public class SpaceAGTest {
 	
 	
 	public void proveCenterI2() {
-        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalDouble());
-        MathCalculator<Double> mc = Calculators.getCalDouble();
+        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.doubleCal());
+        MathCalculator<Double> mc = Calculators.doubleCal();
         Random rd = new Random();
         @SuppressWarnings("unchecked")
         SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
@@ -212,8 +212,8 @@ public class SpaceAGTest {
 	
 	
 	public void studyHCenter() {
-        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalDouble());
-        MathCalculator<Double> mc = Calculators.getCalDouble();
+        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.doubleCal());
+        MathCalculator<Double> mc = Calculators.doubleCal();
         Random rd = new Random();
         @SuppressWarnings("unchecked")
         SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
@@ -231,7 +231,7 @@ public class SpaceAGTest {
 	
 	
 	public void studyVertexAngle(){
-        MathCalculator<Double> mc = Calculators.getCalDoubleDev();
+        MathCalculator<Double> mc = Calculators.doubleDev();
         SVectorGenerator<Double> g = new SVectorGenerator<>(mc);
         Random rd = new Random();
         @SuppressWarnings("unchecked")
@@ -256,7 +256,7 @@ public class SpaceAGTest {
 	
 //	@Test
 	public void testMatrix() {
-        MathCalculator<Double> mc = Calculators.getCalDoubleDev();
+        MathCalculator<Double> mc = Calculators.doubleDev();
         final int row = 10;
         for (int n = 0; n < 1000; n++) {
             double[][] mat = new double[row][];

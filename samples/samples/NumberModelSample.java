@@ -21,7 +21,7 @@ public class NumberModelSample {
     }
 
     public static void useComplex() {
-        var cal = Calculators.getCalDouble();
+        var cal = Calculators.doubleCal();
         Complex<Double> z1 = Complex.real(1.0, cal);
         z1 = z1.squareRoot();
         Complex<Double> z2 = Complex.of(1.0, 2.0, cal);

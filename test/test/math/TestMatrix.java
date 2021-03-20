@@ -35,8 +35,8 @@ public class TestMatrix {
     public TestMatrix() {
     }
 
-    MathCalculator<Long> mc = Calculators.getCalLong();
-    MathCalculator<Double> mcd = Calculators.getCalDoubleDev();
+    MathCalculator<Long> mc = Calculators.longCal();
+    MathCalculator<Double> mcd = Calculators.doubleDev();
 
     private <T> boolean isUpperTriangular(Matrix<T> m) {
         var mc = m.getMathCalculator();
@@ -181,8 +181,8 @@ public class TestMatrix {
     @Test
     public void testDecompCholesky() {
         var rd = new Random();
-        Matrix<Double> B = Matrix.of(5,5,Calculators.getCalDoubleDev(),(i,j)->rd.nextDouble());
-        var A = Matrix.multiply(B,B.transpose());
+        Matrix<Double> B = Matrix.of(5, 5, Calculators.doubleDev(), (i, j) -> rd.nextDouble());
+        var A = Matrix.multiply(B, B.transpose());
         var L = A.decompCholesky();
 //        A.congruenceDiagForm().getFirst().printMatrix();
 //        L.printMatrix();
@@ -203,8 +203,8 @@ public class TestMatrix {
     @Test
     public void testDecompCholeskyD() {
         var rd = new Random();
-        Matrix<Double> B = Matrix.of(5,5,Calculators.getCalDoubleDev(),(i,j)->rd.nextDouble());
-        var A = Matrix.multiply(B,B.transpose());
+        Matrix<Double> B = Matrix.of(5, 5, Calculators.doubleDev(), (i, j) -> rd.nextDouble());
+        var A = Matrix.multiply(B, B.transpose());
         var p = A.decompCholeskyD();
         var L = p.getFirst();
         var D = Matrix.diag(p.getSecond());

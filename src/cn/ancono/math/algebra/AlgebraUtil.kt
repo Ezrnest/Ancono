@@ -1,15 +1,11 @@
 package cn.ancono.math.algebra
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathSymbol
 import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
-import cn.ancono.math.calculus.Calculus
 import cn.ancono.math.numberModels.*
-import cn.ancono.math.numberModels.expression.ExprCalculator
-import cn.ancono.math.numberModels.expression.SimplificationStrategies
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.math.numberTheory.combination.CombUtils
 import java.util.*
@@ -143,7 +139,7 @@ object AlgebraUtil {
             MathUtils.lcm(a, f.denominator)
         }
 
-        return this.mapTo(Function { it.multiply(lcm).toLong() }, Calculators.getCalLong())
+        return this.mapTo(Function { it.multiply(lcm).toLong() }, Calculators.longCal())
     }
 
     fun decomposeInt(p: Polynomial<Long>): DecomposedPoly<Fraction> {
@@ -163,7 +159,7 @@ object AlgebraUtil {
             } else {
                 -re
             }
-        }, Calculators.getCalLong()))
+        }, Calculators.longCal()))
     }
 
 

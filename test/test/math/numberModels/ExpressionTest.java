@@ -172,8 +172,8 @@ public class ExpressionTest {
             return 1d;
         };
         assertMathEquals(expr.compute(f, mc), valueOf("(2x+3y)/(x-y)"), mc);
-        assertMathEquals(expr.computeDouble(f2), 16d / 3, Calculators.getCalDoubleDev());
-        assertMathEquals(mc.parse("sin(x)").computeDouble(f2), 1d, Calculators.getCalDoubleDev());
+        assertMathEquals(expr.computeDouble(f2), 16d / 3, Calculators.doubleDev());
+        assertMathEquals(mc.parse("sin(x)").computeDouble(f2), 1d, Calculators.doubleDev());
     }
 
 	@Test

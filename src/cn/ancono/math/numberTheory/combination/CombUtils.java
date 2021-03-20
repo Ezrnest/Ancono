@@ -599,7 +599,7 @@ public final class CombUtils {
             long prev = with.getObj();
             long m = with.getLong();
             return prev * (n - m + 1) / m;
-        }, n + 1, Calculators.getCalLong(), 1L);
+        }, n + 1, Calculators.longCal(), 1L);
     }
 
     /**
@@ -612,7 +612,7 @@ public final class CombUtils {
             var t = BigInteger.valueOf(n - m + 1);
             var mBig = BigInteger.valueOf(m);
             return prev.multiply(t).divide(mBig);
-        }, n + 1, Calculators.getCalBigInteger(), BigInteger.ONE);
+        }, n + 1, Calculators.bigInteger(), BigInteger.ONE);
     }
 
     /**
@@ -677,7 +677,7 @@ public final class CombUtils {
                 sum = sum.add(comb.get(i * 2).multiply(p.get(i)));
             }
             return sum.negate();
-        }, n, Calculators.getCalBigInteger(), initials);
+        }, n, Calculators.bigInteger(), initials);
 //        n = n/2;
 //        BigInteger[] tempTable = new BigInteger[n+1];
 //        for(int i=0;i<EULER_NUMBER_EVEN_LONG.length;i++){

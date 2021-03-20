@@ -23,7 +23,7 @@ class PField(val p: Int) : AbstractFiniteField<Int>() {
         }
     }
 
-    private val mc: MathCalculator<Int> = Calculators.getCalIntModP(p)
+    private val mc: MathCalculator<Int> = Calculators.intModP(p)
 
 
     private val elements: FiniteSet<Int> = MathSets.asSet(mc, *Array(p) { it })

@@ -11,7 +11,7 @@ import cn.ancono.math.numberModels.Multinomial;
  */
 public class MatrixSample {
     public static void sample1() {
-        var cal = Calculators.getCalInteger();
+        var cal = Calculators.integer();
         var calFrac = Fraction.getCalculator();
         var m1 = Matrix.of(cal, 2, 2,
                 1, 2,

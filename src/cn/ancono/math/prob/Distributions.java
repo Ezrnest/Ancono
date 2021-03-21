@@ -6,7 +6,7 @@ package cn.ancono.math.prob;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import static cn.ancono.math.numberTheory.combination.CombUtils.*;
+import static cn.ancono.math.discrete.combination.CombUtils.*;
 
 /**
  * A class provides basic distributions.

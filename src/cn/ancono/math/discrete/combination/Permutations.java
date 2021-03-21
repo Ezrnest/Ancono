@@ -1,9 +1,9 @@
-package cn.ancono.math.numberTheory.combination;
+package cn.ancono.math.discrete.combination;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.numberModels.MathCalculatorAdapter;
-import cn.ancono.math.numberTheory.combination.Permutation.Cycle;
-import cn.ancono.math.numberTheory.combination.Permutation.Transposition;
+import cn.ancono.math.discrete.combination.Permutation.Cycle;
+import cn.ancono.math.discrete.combination.Permutation.Transposition;
 import cn.ancono.math.set.FiniteSet;
 import cn.ancono.math.set.MathSets;
 import cn.ancono.utilities.ArraySup;

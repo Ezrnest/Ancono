@@ -21,7 +21,7 @@ import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.expression.*
 import cn.ancono.math.numberModels.structure.Polynomial
-import cn.ancono.math.numberTheory.combination.CombUtils
+import cn.ancono.math.discrete.combination.CombUtils
 import java.util.function.DoubleUnaryOperator
 
 object Calculus {

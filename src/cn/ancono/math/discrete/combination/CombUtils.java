@@ -1,7 +1,7 @@
 /**
  *
  */
-package cn.ancono.math.numberTheory.combination;
+package cn.ancono.math.discrete.combination;
 
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.Progression;

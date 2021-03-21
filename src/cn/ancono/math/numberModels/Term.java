@@ -6,7 +6,7 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.addableSet.MathAdder;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.Simplifier;
-import cn.ancono.math.numberTheory.combination.CombUtils;
+import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.property.Mergeable;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,7 @@
 package samples;
 
 import cn.ancono.math.algebra.abs.group.finite.PermutationGroup;
-import cn.ancono.math.numberTheory.combination.Permutations;
+import cn.ancono.math.discrete.combination.Permutations;
 
 /*
  * Created by lyc at 2020/3/1

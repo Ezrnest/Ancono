@@ -21,7 +21,7 @@ import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
-import cn.ancono.math.numberTheory.combination.CombUtils;
+import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.ModelPatterns;
 import cn.ancono.utilities.structure.Pair;

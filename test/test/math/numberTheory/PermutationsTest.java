@@ -1,9 +1,9 @@
 package test.math.numberTheory;
 
-import cn.ancono.math.numberTheory.combination.Permutations;
+import cn.ancono.math.discrete.combination.Permutations;
 import org.junit.Test;
 
-import static cn.ancono.math.numberTheory.combination.Permutations.universe;
+import static cn.ancono.math.discrete.combination.Permutations.universe;
 import static org.junit.Assert.*;
 
 public class PermutationsTest {

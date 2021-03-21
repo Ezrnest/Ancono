@@ -1,7 +1,7 @@
 package test.math.abstractAlgebra
 
 import cn.ancono.math.algebra.abs.group.finite.PermutationGroup
-import cn.ancono.math.numberTheory.combination.Permutations
+import cn.ancono.math.discrete.combination.Permutations
 import org.junit.Test
 import kotlin.test.assertSame
 import kotlin.test.assertTrue

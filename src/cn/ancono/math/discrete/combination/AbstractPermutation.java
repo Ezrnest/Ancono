@@ -1,7 +1,7 @@
 /**
  * 2018-03-01
  */
-package cn.ancono.math.numberTheory.combination;
+package cn.ancono.math.discrete.combination;
 
 import org.jetbrains.annotations.NotNull;
 

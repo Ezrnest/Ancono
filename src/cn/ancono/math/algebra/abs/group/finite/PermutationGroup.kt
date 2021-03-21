@@ -4,8 +4,8 @@ import cn.ancono.math.algebra.abs.GroupCalculators
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator
 import cn.ancono.math.numberModels.Calculators
-import cn.ancono.math.numberTheory.combination.Permutation
-import cn.ancono.math.numberTheory.combination.Permutations
+import cn.ancono.math.discrete.combination.Permutation
+import cn.ancono.math.discrete.combination.Permutations
 import cn.ancono.math.set.FiniteSet
 import cn.ancono.math.set.MathSets
 import java.util.*

@@ -3,7 +3,7 @@ package cn.ancono.math.calculus
 import cn.ancono.math.MathUtils
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.structure.Polynomial
-import cn.ancono.math.numberTheory.combination.CombUtils
+import cn.ancono.math.discrete.combination.CombUtils
 
 
 /**

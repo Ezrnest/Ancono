@@ -7,7 +7,7 @@ import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.structure.Polynomial
-import cn.ancono.math.numberTheory.combination.CombUtils
+import cn.ancono.math.discrete.combination.CombUtils
 import java.util.*
 import java.util.function.Function
 import kotlin.collections.ArrayList

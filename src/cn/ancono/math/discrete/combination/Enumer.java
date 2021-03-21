@@ -1,7 +1,7 @@
 /**
  *
  */
-package cn.ancono.math.numberTheory.combination;
+package cn.ancono.math.discrete.combination;
 
 import cn.ancono.math.exceptions.NumberValueException;
 import cn.ancono.utilities.ArraySup;

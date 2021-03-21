@@ -1,4 +1,4 @@
-package cn.ancono.math.numberTheory.combination
+package cn.ancono.math.discrete.combination
 
 
 class CEnumer(n: Int, val m: Int) : Enumer(n) {

@@ -3,7 +3,7 @@
  */
 package test.math;
 
-import cn.ancono.math.numberTheory.combination.Enumer;
+import cn.ancono.math.discrete.combination.Enumer;
 import org.junit.Test;
 
 import static cn.ancono.utilities.Printer.print;

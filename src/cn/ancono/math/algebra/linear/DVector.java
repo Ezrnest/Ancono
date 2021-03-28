@@ -381,7 +381,7 @@ public final class DVector<T> extends Vector<T> {
 
     @NotNull
     @Override
-    public <N> DVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> DVector<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         N[] narr = ArraySup.mapTo(vec, mapper);
         return new DVector<>(narr, isRow, newCalculator);
     }

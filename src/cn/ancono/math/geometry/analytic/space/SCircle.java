@@ -206,9 +206,9 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      */
     @NotNull
     @Override
-    public <N> SCircle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> SCircle<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         SCircle<N> sc = new SCircle<N>(newCalculator,
-                o.mapTo(mapper, newCalculator), mapper.apply(r2), pl.mapTo(mapper, newCalculator));
+                o.mapTo(newCalculator, mapper), mapper.apply(r2), pl.mapTo(newCalculator, mapper));
         fillFields(sc, mapper);
         return sc;
     }

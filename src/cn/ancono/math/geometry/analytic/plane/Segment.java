@@ -38,11 +38,11 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
 
     @NotNull
     @Override
-    public <N> AbstractPlaneCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        var nline = line.mapTo(mapper, newCalculator);
-        var nA = A.mapTo(mapper, newCalculator);
-        var nB = B.mapTo(mapper, newCalculator);
-        var nv = v.mapTo(mapper, newCalculator);
+    public <N> AbstractPlaneCurve<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        var nline = line.mapTo(newCalculator, mapper);
+        var nA = A.mapTo(newCalculator, mapper);
+        var nB = B.mapTo(newCalculator, mapper);
+        var nv = v.mapTo(newCalculator, mapper);
         return new Segment<>(nline, nA, nB, nv, newCalculator);
     }
 

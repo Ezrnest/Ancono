@@ -341,8 +341,8 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
 
     @NotNull
     @Override
-    public <N> Line<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        return new Line<>(newCalculator, p0.mapTo(mapper, newCalculator), vec.mapTo(mapper, newCalculator));
+    public <N> Line<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Line<>(newCalculator, p0.mapTo(newCalculator, mapper), vec.mapTo(newCalculator, mapper));
     }
 
     @Override
@@ -371,7 +371,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     @Override
     public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
         if (obj instanceof Line) {
-            return valueEquals(((Line<N>) obj).mapTo(mapper, getMc()));
+            return valueEquals(((Line<N>) obj).mapTo(getMc(), mapper));
         }
         return false;
     }

@@ -51,7 +51,7 @@ public class MovedShape<T> extends SpaceObject<T> {
      */
     @NotNull
     @Override
-    public <N> MovedShape<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> MovedShape<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         // TODO Auto-generated method stub
         return null;
     }

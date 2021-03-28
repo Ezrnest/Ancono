@@ -295,7 +295,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 
     @NotNull
     @Override
-    public <N> HyperbolaV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> HyperbolaV<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         HyperbolaV<N> nell = new HyperbolaV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
                 , mapper.apply(a), mapper.apply(b), mapper.apply(c)
                 , mapper.apply(a2), mapper.apply(b2), mapper.apply(c2)
@@ -303,11 +303,11 @@ public final class HyperbolaV<T> extends EHSection<T> {
 
 
         nell.e = e == null ? null : mapper.apply(e);
-        nell.f1 = f1 == null ? null : f1.mapTo(mapper, newCalculator);
-        nell.f2 = f2 == null ? null : f2.mapTo(mapper, newCalculator);
+        nell.f1 = f1 == null ? null : f1.mapTo(newCalculator, mapper);
+        nell.f2 = f2 == null ? null : f2.mapTo(newCalculator, mapper);
         if (asys != null) {
             ArrayList<Line<N>> newList = new ArrayList<>(2);
-            asys.forEach(l -> newList.add(l.mapTo(mapper, newCalculator)));
+            asys.forEach(l -> newList.add(l.mapTo(newCalculator, mapper)));
             nell.asys = newList;
         }
         return nell;

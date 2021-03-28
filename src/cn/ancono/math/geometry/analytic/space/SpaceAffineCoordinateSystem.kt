@@ -12,12 +12,17 @@ class SpaceAffineCoordinateSystem<T : Any> internal constructor(val o: SPoint<T>
 
     private val vectorBase = SVector.createBase(i, j, k)
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): SpaceAffineCoordinateSystem<N> {
-        return SpaceAffineCoordinateSystem(o.mapTo(mapper, newCalculator),
-                i.mapTo(mapper, newCalculator),
-                j.mapTo(mapper, newCalculator),
-                k.mapTo(mapper, newCalculator),
-                newCalculator)
+    override fun <N : Any> mapTo(
+        newCalculator: MathCalculator<N>,
+        mapper: Function<T, N>
+    ): SpaceAffineCoordinateSystem<N> {
+        return SpaceAffineCoordinateSystem(
+            o.mapTo(newCalculator, mapper),
+            i.mapTo(newCalculator, mapper),
+            j.mapTo(newCalculator, mapper),
+            k.mapTo(newCalculator, mapper),
+            newCalculator
+        )
     }
 
     override fun valueEquals(obj: MathObject<T>): Boolean {

@@ -38,6 +38,7 @@ public abstract class AbstractSVCompareStructure<T> extends AbstractCompareStruc
     /*
      * @see cn.ancono.math.equation.AbstractCompareStructure#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
+    @NotNull
     @Override
-    public abstract <N> AbstractSVCompareStructure<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> AbstractSVCompareStructure<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

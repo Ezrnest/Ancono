@@ -33,7 +33,7 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
      * @param <N> the new number type.
      * @return a new MathObject of type N
     </N> */
-    abstract fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): MathObject<N>
+    abstract fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N>
 
     /**
      * The equals method describes the equivalence in program of two math objects instead of the equal in math.
@@ -78,7 +78,7 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
      * @throws ClassCastException if `obj` is not using number type `N`
     </N> */
     open fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        return valueEquals(obj.mapTo(mapper, mc))
+        return valueEquals(obj.mapTo(mc, mapper))
     }
 
     /**

@@ -209,7 +209,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
      */
     @NotNull
     @Override
-    public <N> TransMatrix<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> TransMatrix<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         N[][] d2 = gd();
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {

@@ -59,10 +59,10 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 
     @NotNull
     @Override
-    public <N> TransformedCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> TransformedCurve<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         // this should be assured that the returned type is a plane curve of type N.
-        AbstractPlaneCurve<N> npc = original.mapTo(mapper, newCalculator);
-        return new TransformedCurve<N>(newCalculator, npc, backward.mapTo(mapper, newCalculator));
+        AbstractPlaneCurve<N> npc = original.mapTo(newCalculator, mapper);
+        return new TransformedCurve<N>(newCalculator, npc, backward.mapTo(newCalculator, mapper));
     }
 
     /* (non-Javadoc)

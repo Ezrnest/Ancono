@@ -441,10 +441,10 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 
     @NotNull
     @Override
-    public <N> STriangle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        STriangle<N> s = new STriangle<>(newCalculator, pl.mapTo(mapper, newCalculator),
-                A.mapTo(mapper, newCalculator), B.mapTo(mapper, newCalculator), C.mapTo(mapper, newCalculator),
-                a.mapTo(mapper, newCalculator), b.mapTo(mapper, newCalculator), c.mapTo(mapper, newCalculator));
+    public <N> STriangle<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        STriangle<N> s = new STriangle<>(newCalculator, pl.mapTo(newCalculator, mapper),
+                A.mapTo(newCalculator, mapper), B.mapTo(newCalculator, mapper), C.mapTo(newCalculator, mapper),
+                a.mapTo(newCalculator, mapper), b.mapTo(newCalculator, mapper), c.mapTo(newCalculator, mapper));
         fillField(s, mapper);
         return s;
     }

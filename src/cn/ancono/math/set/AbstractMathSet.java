@@ -26,7 +26,7 @@ public abstract class AbstractMathSet<T> extends MathObject<T> implements MathSe
 
     @NotNull
     @Override
-    public abstract <N> AbstractMathSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> AbstractMathSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
 }

@@ -38,7 +38,7 @@ object IndifiniteIntegral {
         val root = p.root
         require(Node.isPolynomial(root))
         val m = Node.getPolynomialPart(root, mc)
-        val poly = Polynomial.fromMultinomial(m, variableName).mapTo(Function { Expression.fromMultinomial(it) }, mc)
+        val poly = Polynomial.fromMultinomial(m, variableName).mapTo(mc, Function { Expression.fromMultinomial(it) })
         val variable = Expression.ofCharacter(variableName)
         return intPolySin0(poly, mc, variable, variableName)
 //        p.root.
@@ -48,7 +48,7 @@ object IndifiniteIntegral {
         val root = p.root
         require(Node.isPolynomial(root))
         val m = Node.getPolynomialPart(root, mc)
-        val poly = Polynomial.fromMultinomial(m, variableName).mapTo(Function { Expression.fromMultinomial(it) }, mc)
+        val poly = Polynomial.fromMultinomial(m, variableName).mapTo(mc, Function { Expression.fromMultinomial(it) })
         val variable = Expression.ofCharacter(variableName)
         return intPolyCos0(poly, mc, variable, variableName)
     }

@@ -286,7 +286,7 @@ object EquationSup {
             }
         }
         if (multiplier != 1L) {
-            equa = equa.mapTo(Function { it.multiply(multiplier) }, equa.mathCalculator)
+            equa = equa.mapTo(equa.mathCalculator, Function { it.multiply(multiplier) })
         }
 
         val first = equa.first()!!.numerator

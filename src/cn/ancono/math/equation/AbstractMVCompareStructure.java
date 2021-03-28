@@ -34,6 +34,7 @@ public abstract class AbstractMVCompareStructure<T> extends AbstractCompareStruc
     public abstract boolean isSolution(List<T> x);
 
 
-    public abstract <N> AbstractMVCompareStructure<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    @NotNull
+    public abstract <N> AbstractMVCompareStructure<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 }

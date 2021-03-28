@@ -844,7 +844,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
     @Override
-    public <N> Polynomial<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Polynomial<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         var arr = ArraySup.mapTo(coes, mapper);
         return new Polynomial<>(newCalculator, arr);
     }
@@ -1037,6 +1037,20 @@ public final class Polynomial<T> extends MathObject<T> implements
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) coes.toArray();
         return valueOf(mc, arr);
+    }
+
+    /**
+     * Creates a polynomial with the given coefficient map.
+     */
+    public static <T> Polynomial<T> valueOf(MathCalculator<T> mc, Map<Integer, T> coeMap) {
+        int maxPow = Collections.max(coeMap.keySet());
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[maxPow + 1];
+        var zero = mc.getZero();
+        for (int i = 0; i <= maxPow; i++) {
+            arr[i] = coeMap.getOrDefault(i, zero);
+        }
+        return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
     }
 
 

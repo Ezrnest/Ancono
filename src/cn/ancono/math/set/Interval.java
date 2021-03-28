@@ -227,7 +227,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      */
     @NotNull
     @Override
-    public abstract <N> Interval<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> Interval<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * Returns the mathematical expression of this interval. Like {@literal (0,2)} or {@literal [2,3)}.

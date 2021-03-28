@@ -5,9 +5,7 @@ package cn.ancono.math.function
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
-import cn.ancono.math.calculus.SDerivable
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import java.util.*
 import java.util.function.Function
 
 /**
@@ -23,7 +21,7 @@ abstract class CombinedFunction<T : Any>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
-    abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): CombinedFunction<N>
+    abstract override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): CombinedFunction<N>
 
     /**
      * Defines the combined function:
@@ -50,8 +48,8 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Add<N> {
-            return Add(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator)
+        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Add<N> {
+            return Add(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
         /*
@@ -123,8 +121,8 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Subtract<N> {
-            return Subtract(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator)
+        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Subtract<N> {
+            return Subtract(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
         /*
@@ -193,8 +191,8 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Multiply<N> {
-            return Multiply(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator)
+        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Multiply<N> {
+            return Multiply(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
         /*
@@ -270,8 +268,8 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Divide<N> {
-            return Divide(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator)
+        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Divide<N> {
+            return Divide(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
         /*
@@ -319,8 +317,8 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Combine<N> {
-            return Combine(f.mapTo(mapper, newCalculator), g.mapTo(mapper, newCalculator), newCalculator)
+        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Combine<N> {
+            return Combine(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
         /*

@@ -101,7 +101,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): SRotateMatrix<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): SRotateMatrix<N> {
         val nmat = Array(3) { i ->
             Array<Any>(3) { j ->
                 mapper.apply(mat[i][j] as T)

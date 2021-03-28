@@ -23,14 +23,14 @@ public class PolynomialTest {
 
     @Test
     public void difference() {
-        var p = Polynomial.valueOf(Calculators.integer(), 1, 2, -3, 4, 5).mapTo(Fraction::of, mc);
+        var p = Polynomial.valueOf(Calculators.integer(), 1, 2, -3, 4, 5).mapTo(mc, Fraction::of);
         assertEquals("p.difference() = p(n)-p(n-1)", p.difference().compute(Fraction.ONE), p.compute(mc.getOne()).subtract(p.compute(mc.getZero())));
 
     }
 
     @Test
     public void sumOfN() {
-        var p = Polynomial.valueOf(Calculators.integer(), 1, 2, -3, 4, 5).mapTo(Fraction::of, mc);
+        var p = Polynomial.valueOf(Calculators.integer(), 1, 2, -3, 4, 5).mapTo(mc, Fraction::of);
         assertTrue("p.sumOfN().difference() = p", p.sumOfN().difference().valueEquals(p));
         assertEquals("p.difference().sumOfN() = p + C", 0, p.difference().sumOfN().subtract(p).getLeadingPower());
     }
@@ -39,9 +39,9 @@ public class PolynomialTest {
     public void testGcd() {
         var calInt = Calculators.integer();
         var cal = Fraction.getCalculator();
-        var f = Polynomial.valueOf(calInt, 1, 2, 1).mapTo(Fraction::of, cal); // 1 + 2x + x^2
-        var g = Polynomial.valueOf(calInt, -2, -1, 1).mapTo(Fraction::of, cal); // -2 - x + x^2
-        var h = Polynomial.valueOf(calInt, 1, 1).mapTo(Fraction::of, cal);
+        var f = Polynomial.valueOf(calInt, 1, 2, 1).mapTo(cal, Fraction::of); // 1 + 2x + x^2
+        var g = Polynomial.valueOf(calInt, -2, -1, 1).mapTo(cal, Fraction::of); // -2 - x + x^2
+        var h = Polynomial.valueOf(calInt, 1, 1).mapTo(cal, Fraction::of);
         assertTrue("", h.valueEquals(f.gcd(g)));
     }
 }

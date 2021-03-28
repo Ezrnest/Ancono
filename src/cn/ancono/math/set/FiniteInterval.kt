@@ -104,7 +104,7 @@ class FiniteInterval<T : Any>(override val mathCalculator: IntCalculator<T>, val
         } else null
     }
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Interval<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Interval<N> {
         return closedInterval(mapper.apply(downer), mapper.apply(upper), newCalculator)
     }
 

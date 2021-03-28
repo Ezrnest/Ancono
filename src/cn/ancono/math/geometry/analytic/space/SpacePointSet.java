@@ -46,7 +46,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
      */
     @NotNull
     @Override
-    public abstract <N> SpacePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> SpacePointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * Returns the intersect of the two space point sets.
@@ -252,7 +252,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
          */
         @NotNull
         @Override
-        public <N> UniversePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> UniversePointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new UniversePointSet<>(newCalculator);
         }
 
@@ -345,7 +345,7 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
          */
         @NotNull
         @Override
-        public <N> EmptyPointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> EmptyPointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new EmptyPointSet<>(newCalculator);
         }
 
@@ -464,10 +464,10 @@ public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<
          */
         @NotNull
         @Override
-        public <N> CombinedSpacePointSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> CombinedSpacePointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             List<SpacePointSet<N>> ln = new ArrayList<>(list.size());
             for (SpacePointSet<T> set : list) {
-                ln.add(set.mapTo(mapper, newCalculator));
+                ln.add(set.mapTo(newCalculator, mapper));
             }
             return new CombinedSpacePointSet<>(newCalculator, ln, flag);
         }

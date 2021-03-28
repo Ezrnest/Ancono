@@ -636,8 +636,8 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 
     @NotNull
     @Override
-    public <N> Circle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        Point<N> op = o.mapTo(mapper, newCalculator);
+    public <N> Circle<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        Point<N> op = o.mapTo(newCalculator, mapper);
         N r2 = mapper.apply(this.r2);
         N r = this.r == null ? null : mapper.apply(this.r);
         N D = mapper.apply(this.D);
@@ -702,7 +702,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
         T E = mc.multiplyLong(o.y, -2);
         T F = mc.subtract(mc.add(mc.multiply(o.x, o.x), mc.multiply(o.y, o.y)), r2);
 //		Printer.print(F);
-        return new Circle<T>(mc, o.mapTo(MathFunction.identity(), mc), r2, D, E, F, r);
+        return new Circle<T>(mc, o.mapTo(mc, MathFunction.identity()), r2, D, E, F, r);
     }
 
     /**
@@ -726,7 +726,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
         T E = mc.multiplyLong(o.y, -2);
         T F = mc.subtract(mc.add(mc.multiply(o.x, o.x), mc.multiply(o.y, o.y)), r2);
 //		Printer.print(F);
-        return new Circle<T>(mc, o.mapTo(MathFunction.identity(), mc), r2, D, E, F, null);
+        return new Circle<T>(mc, o.mapTo(mc, MathFunction.identity()), r2, D, E, F, null);
     }
 
 
@@ -841,8 +841,8 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
             throw new IllegalArgumentException("point is on the line");
         }
         Function<T, T> mapper = MathFunction.identity();
-        l = l.mapTo(mapper, mc);
-        p = p.mapTo(mapper, mc);
+        l = l.mapTo(mc, mapper);
+        p = p.mapTo(mc, mapper);
         T r2 = l.distanceSq(p);
         T D = mc.multiplyLong(p.x, -2);
         T E = mc.multiplyLong(p.y, -2);

@@ -139,7 +139,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      */
     @NotNull
     @Override
-    public abstract <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> SVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * A default implements for the equation.
@@ -181,7 +181,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
         @NotNull
         @Override
-        public <N> DSVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> DSVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newCoes = (N[]) new Object[coes.length];
             for (int i = 0; i < newCoes.length; i++) {
@@ -274,8 +274,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
          */
         @NotNull
         @Override
-        public <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new SVPFEquation<>(newCalculator, (AbstractSVPFunction<N>) f.mapTo(mapper, newCalculator));
+        public <N> SVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new SVPFEquation<>(newCalculator, (AbstractSVPFunction<N>) f.mapTo(newCalculator, mapper));
         }
 
 
@@ -394,7 +394,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public <N> RootEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> RootEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new RootEquation<>(newCalculator, CollectionSup.mapList(roots, mapper));
         }
 
@@ -663,7 +663,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public <N> QEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> QEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new QEquation<>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c)
                     , x1 == null ? null : mapper.apply(x1), x2 == null ? null : mapper.apply(x2), delta == null ? null : mapper.apply(delta), d);
         }
@@ -795,7 +795,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public <N> LEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> LEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new LEquation<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(sol));
         }
 

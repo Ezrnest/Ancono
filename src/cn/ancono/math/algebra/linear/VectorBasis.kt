@@ -395,8 +395,8 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         return DVectorBasis(mc, vectorLength, nBases)
     }
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): VectorBasis<N> {
-        val nVectors = vectors.map { it.mapTo(mapper, newCalculator) }
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
+        val nVectors = vectors.map { it.mapTo(newCalculator, mapper) }
         return DVectorBasis(newCalculator, vectorLength, nVectors)
     }
 
@@ -673,8 +673,8 @@ open class FullVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>,
     fun transMatrixToStandard(): Matrix<T> = vectorMatrixInverse
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): FullVectorBasis<N> {
-        return FullVectorBasis(newCalculator, vectorLength, vectors.map { it.mapTo(mapper, newCalculator) })
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
+        return FullVectorBasis(newCalculator, vectorLength, vectors.map { it.mapTo(newCalculator, mapper) })
     }
 
 }
@@ -715,7 +715,7 @@ class StandardVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, d
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String =
             "StandardVectorBase: dimension=$vectorLength"
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): FullVectorBasis<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
         return StandardVectorBasis(newCalculator, vectorLength)
     }
 
@@ -753,7 +753,7 @@ class ZeroVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, dimen
         return v.isZeroVector
     }
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): VectorBasis<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
         return ZeroVectorBasis(newCalculator, vectorLength)
     }
 }

@@ -24,8 +24,8 @@ public class PolynomialSample {
     public static void computeGCD() {
         var calInt = Calculators.integer();
         var cal = Fraction.getCalculator();
-        var f = Polynomial.valueOf(calInt, 1, 2, 1).mapTo(Fraction::of, cal); // 1 + 2x + x^2
-        var g = Polynomial.valueOf(calInt, -2, -1, 1).mapTo(Fraction::of, cal); // -2 - x + x^2
+        var f = Polynomial.valueOf(calInt, 1, 2, 1).mapTo(cal, Fraction::of); // 1 + 2x + x^2
+        var g = Polynomial.valueOf(calInt, -2, -1, 1).mapTo(cal, Fraction::of); // -2 - x + x^2
         System.out.println("f(x) = " + f);
         System.out.println("g(x) = " + g);
         var h = f.gcd(g);

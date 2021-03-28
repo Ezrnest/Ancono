@@ -109,7 +109,7 @@ object AlgebraUtil {
         //solution = const.factor / first.factor
         val ff = MathUtils.factors(first.absoluteValue)
         val cf = MathUtils.factors(const.absoluteValue)
-        val pf = p.mapTo(Function { Fraction.of(it) }, Fraction.calculator)
+        val pf = p.mapTo(Fraction.calculator, Function { Fraction.of(it) })
         for (nume in cf) {
             for (deno in ff) {
                 var root = Fraction.of(nume, deno)
@@ -127,7 +127,7 @@ object AlgebraUtil {
     }
 
     fun Polynomial<Long>.toFractionPoly(): Polynomial<Fraction> {
-        return this.mapTo(Function { Fraction.of(it) }, Fraction.calculator)
+        return this.mapTo(Fraction.calculator, Function { Fraction.of(it) })
     }
 
     /**
@@ -139,7 +139,7 @@ object AlgebraUtil {
             MathUtils.lcm(a, f.denominator)
         }
 
-        return this.mapTo(Function { it.multiply(lcm).toLong() }, Calculators.longCal())
+        return this.mapTo(Calculators.longCal(), Function { it.multiply(lcm).toLong() })
     }
 
     fun decomposeInt(p: Polynomial<Long>): DecomposedPoly<Fraction> {
@@ -152,14 +152,14 @@ object AlgebraUtil {
         val lcm = p.fold(1L) { g, f ->
             MathUtils.lcm(g, f.denominator)
         }
-        return decomposeInt(p.mapTo(Function { it ->
+        return decomposeInt(p.mapTo(Calculators.longCal(), Function { it ->
             val re = it.numerator * lcm / it.denominator
             if (it.isPositive) {
                 re
             } else {
                 -re
             }
-        }, Calculators.longCal()))
+        }))
     }
 
 

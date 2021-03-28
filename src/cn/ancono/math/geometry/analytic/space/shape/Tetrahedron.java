@@ -378,12 +378,12 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      */
     @NotNull
     @Override
-    public <N> Tetrahedron<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Tetrahedron<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         Tetrahedron<N> te = new Tetrahedron<>(newCalculator,
-                bot.mapTo(mapper, newCalculator),
-                f1.mapTo(mapper, newCalculator),
-                f2.mapTo(mapper, newCalculator),
-                f3.mapTo(mapper, newCalculator));
+                bot.mapTo(newCalculator, mapper),
+                f1.mapTo(newCalculator, mapper),
+                f2.mapTo(newCalculator, mapper),
+                f3.mapTo(newCalculator, mapper));
         fillField(te, mapper);
         return te;
     }
@@ -426,7 +426,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
         if (obj instanceof Tetrahedron) {
             Tetrahedron<N> tr = (Tetrahedron<N>) obj;
-            SPoint<T>[] ar = ArraySup.mapTo(tr.ps, p -> p.mapTo(mapper, getMc()));
+            SPoint<T>[] ar = ArraySup.mapTo(tr.ps, p -> p.mapTo(getMc(), mapper));
             return ArraySup.arrayEqualNoOrder(ps, ar, (p1, p2) -> p1.valueEquals(p2));
         }
         return false;

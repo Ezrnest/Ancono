@@ -560,7 +560,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
 
     @NotNull
     @Override
-    public <N> EllipseV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> EllipseV<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         EllipseV<N> nell = new EllipseV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
                 , mapper.apply(a), mapper.apply(b), mapper.apply(c)
                 , mapper.apply(a2), mapper.apply(b2), mapper.apply(c2)
@@ -568,8 +568,8 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
 
 
         nell.e = e == null ? null : mapper.apply(e);
-        nell.f1 = f1 == null ? null : f1.mapTo(mapper, newCalculator);
-        nell.f2 = f2 == null ? null : f2.mapTo(mapper, newCalculator);
+        nell.f1 = f1 == null ? null : f1.mapTo(newCalculator, mapper);
+        nell.f2 = f2 == null ? null : f2.mapTo(newCalculator, mapper);
         return nell;
     }
 

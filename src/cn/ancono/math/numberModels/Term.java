@@ -221,6 +221,12 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
                 radical.equals(BigInteger.ONE);
     }
 
+//    public int toInt(){
+//        if (!isInteger()) {
+//            throw new ArithmeticException("No an integer!");
+//        }
+//    }
+
     /**
      * Determines whether this term is a fraction without any character.
      */
@@ -891,8 +897,6 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
      * Determines whether this term and another term can be merged.
      * It is required that the radical and characters are the identity unless
      *
-     * @param t
-     * @return
      */
     public boolean canMerge(Term t) {
         if (t.isZero() || this.isZero()) {
@@ -1932,9 +1936,9 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         throw new UnsupportedCalculationException();
     }
 
-    public static void main(String[] args) {
-
-    }
+//    public static void main(String[] args) {
+//
+//    }
 //        var t1 = valueOf("x^2");
 //        var t2 = valueOf("y^2");
 //        var t3 = valueOf("x");

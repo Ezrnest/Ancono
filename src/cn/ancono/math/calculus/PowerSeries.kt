@@ -21,7 +21,7 @@ operator fun <T> IntFunction<T>.invoke(i: Int): T = this.apply(i)
 class PowerSeries<T : Any>(mc: MathCalculator<T>, val coefficient: Coefficient<T>)
     : MathObjectExtend<T>(mc), RingNumberModel<PowerSeries<T>> {
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): MathObject<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
         return PowerSeries(newCalculator, IntFunction { mapper.apply(coefficient.apply(it)) })
     }
 

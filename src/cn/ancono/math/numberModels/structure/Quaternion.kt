@@ -134,7 +134,7 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
             j 	j 	−k 	−1 	i
             k 	k 	j 	−i 	−1
      */
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Quaternion<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Quaternion<N> {
         return Quaternion(mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d), newCalculator)
     }
 

@@ -269,8 +269,8 @@ public class SpaceAGTest {
             Matrix<Double> cofactor = matrix.subMatrix(0, 0, row - 1, row - 1);
             Vector<Double> v = Vector.column(matrix, row);
             Vector<Double> v1 = Vector.column(Matrix.multiply(cofactor, x), 0);
-            v = v.mapTo(d -> d, mc);
-            v1 = v1.mapTo(d -> d, mc);
+            v = v.mapTo(mc, d -> d);
+            v1 = v1.mapTo(mc, d -> d);
             if (!v1.valueEquals(v)) {
                 print("WRONG?---");
                 matrix.printMatrix();

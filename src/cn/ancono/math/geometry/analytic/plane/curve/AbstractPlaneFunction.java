@@ -47,5 +47,5 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
      */
     @NotNull
     @Override
-    public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

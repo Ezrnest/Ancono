@@ -84,9 +84,9 @@ class MobiusTrans<T : Any>(mc: MathCalculator<T>,
         return MobiusTrans(mc, cc, m.multiplyNumber(k))
     }
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): MobiusTrans<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MobiusTrans<N> {
         val ncc = Complex.getCalculator(newCalculator)
-        val nMat = m.mapTo(Function { z -> z.mapTo(mapper, newCalculator) }, ncc)
+        val nMat = m.mapTo(ncc, Function { z -> z.mapTo(newCalculator, mapper) })
         return MobiusTrans(newCalculator, ncc, nMat)
     }
 

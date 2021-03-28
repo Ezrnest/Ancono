@@ -128,7 +128,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      */
     @NotNull
     @Override
-    public <N> QuadraticFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> QuadraticFunction<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new QuadraticFunction<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
     }
 

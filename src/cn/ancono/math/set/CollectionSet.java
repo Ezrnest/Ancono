@@ -89,11 +89,11 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
 
 
     /**
-     * @see MathObject#mapTo(java.util.function.Function, MathCalculator)
+     * @see MathObject#mapTo(MathCalculator, Function)
      */
     @NotNull
     @Override
-    public <N> CollectionSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> CollectionSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         List<N> nlist = new ArrayList<>(list.size());
         for (T t : list) {
             nlist.add(mapper.apply(t));

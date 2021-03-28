@@ -89,5 +89,5 @@ public abstract class Prism<T> extends Polyhedron<T> {
 
     @NotNull
     @Override
-    public abstract <N> Prism<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> Prism<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

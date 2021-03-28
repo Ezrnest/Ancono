@@ -793,7 +793,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 
     @NotNull
     @Override
-    public <N> Line<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Line<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Line<>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
     }
 
@@ -861,7 +861,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
         if (obj instanceof Line) {
             //we just map the line to a new line type T
             Line<N> l = (Line<N>) obj;
-            Line<T> ll = l.mapTo(mapper, getMc());
+            Line<T> ll = l.mapTo(getMc(), mapper);
             return relationWith(ll) == Relation.COINCIDE;
         }
         return false;

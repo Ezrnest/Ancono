@@ -10,7 +10,6 @@ import cn.ancono.math.algebra.IPolynomial
 import cn.ancono.math.calculus.Calculus
 import cn.ancono.math.calculus.Calculus.derivation
 import cn.ancono.math.calculus.Integrable
-import cn.ancono.math.calculus.SDerivable
 import cn.ancono.math.numberModels.CalculatorUtils
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.utilities.ArraySup
@@ -75,7 +74,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     /* (non-Javadoc)
 	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 	 */
-    abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AbstractSVPFunction<N>
+    abstract override fun <N : Any> mapTo(
+        newCalculator: MathCalculator<N>,
+        mapper: Function<T, N>
+    ): AbstractSVPFunction<N>
 
 
     /**
@@ -143,8 +145,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /* (non-Javadoc)
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(mapper: Function<T, N>,
-                                     newCalculator: MathCalculator<N>): SVPFunctionImpl1<N> {
+        override fun <N : Any> mapTo(
+            newCalculator: MathCalculator<N>,
+            mapper: Function<T, N>
+        ): SVPFunctionImpl1<N> {
             return SVPFunctionImpl1(newCalculator, mp, ArraySup.mapTo(coes, mapper))
         }
 
@@ -192,8 +196,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /* (non-Javadoc)
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(mapper: Function<T, N>,
-                                     newCalculator: MathCalculator<N>): SVPFunctionImpl2<N> {
+        override fun <N : Any> mapTo(
+            newCalculator: MathCalculator<N>,
+            mapper: Function<T, N>
+        ): SVPFunctionImpl2<N> {
             val nmap = HashMap<Int, N>(map.size)
             for ((key, value) in map) {
                 nmap[key] = mapper.apply(value)
@@ -258,7 +264,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): LinearFunction<N> {
+        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFunction<N> {
             return LinearFunction(newCalculator, mapper.apply(a), mapper.apply(b))
         }
 
@@ -288,7 +294,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): ConstantFunction<N> {
+        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ConstantFunction<N> {
             return ConstantFunction(newCalculator, mapper.apply(result))
         }
 

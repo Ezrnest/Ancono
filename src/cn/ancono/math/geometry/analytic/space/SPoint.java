@@ -173,7 +173,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 
     @NotNull
     @Override
-    public <N> SPoint<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> SPoint<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new SPoint<>(newCalculator, mapper.apply(x), mapper.apply(y), mapper.apply(z));
     }
 
@@ -321,8 +321,9 @@ public final class SPoint<T> extends SpacePointSet<T> {
         /* (non-Javadoc)
          * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
          */
+        @NotNull
         @Override
-        public <N> SPointGenerator<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> SPointGenerator<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new SPointGenerator<>(newCalculator);
         }
 

@@ -304,10 +304,10 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @NotNull
     @Override
-    public <N> Sphere<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Sphere<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         Sphere<N> sp = new Sphere<N>(newCalculator,
                 r == null ? null : mapper.apply(r)
-                , mapper.apply(r2), o.mapTo(mapper, newCalculator));
+                , mapper.apply(r2), o.mapTo(newCalculator, mapper));
         if (volume != null) {
             sp.volume = mapper.apply(volume);
         }

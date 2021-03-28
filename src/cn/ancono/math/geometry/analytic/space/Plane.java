@@ -707,10 +707,11 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
             return false;
         }
 
+        @NotNull
         @Override
-        public <N> PlaneCoordinateConverter<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new PlaneCoordinateConverter<>(newCalculator, x.mapTo(mapper, newCalculator), y.mapTo(mapper, newCalculator),
-                    O.mapTo(mapper, newCalculator), mapper.apply(unit), p.mapTo(mapper, newCalculator));
+        public <N> PlaneCoordinateConverter<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new PlaneCoordinateConverter<>(newCalculator, x.mapTo(newCalculator, mapper), y.mapTo(newCalculator, mapper),
+                    O.mapTo(newCalculator, mapper), mapper.apply(unit), p.mapTo(newCalculator, mapper));
         }
 
         /* (non-Javadoc)
@@ -724,7 +725,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     @NotNull
     @Override
-    public <N> Plane<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Plane<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Plane<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d));
     }
 
@@ -760,7 +761,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         if (obj instanceof Line) {
             //just map the plane to a new line type T
             Plane<N> l = (Plane<N>) obj;
-            Plane<T> ll = l.mapTo(mapper, getMc());
+            Plane<T> ll = l.mapTo(getMc(), mapper);
             return relationWith(ll) == Relation.COINCIDE;
         }
         return false;

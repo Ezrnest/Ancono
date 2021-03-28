@@ -289,10 +289,10 @@ public final class Segment<T> extends SpacePointSet<T> {
 
     @NotNull
     @Override
-    public <N> Segment<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        return new Segment<>(newCalculator, l.mapTo(mapper, newCalculator)
-                , p1.mapTo(mapper, newCalculator)
-                , p2.mapTo(mapper, newCalculator), comp);
+    public <N> Segment<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Segment<>(newCalculator, l.mapTo(newCalculator, mapper)
+                , p1.mapTo(newCalculator, mapper)
+                , p2.mapTo(newCalculator, mapper), comp);
     }
 
     @Override

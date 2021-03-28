@@ -334,7 +334,7 @@ public final class PVector<T> extends Vector<T> {
 
     @NotNull
     @Override
-    public <N> PVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> PVector<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         PVector<N> sn = new PVector<>(mapper.apply(x), mapper.apply(y), newCalculator);
         if (length != null) {
             sn.length = mapper.apply(length);

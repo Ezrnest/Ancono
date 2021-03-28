@@ -496,13 +496,13 @@ public final class Triangle<T> extends MathObject<T> {
     }
 
     @Override
-    public <N> Triangle<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        return new Triangle<>(newCalculator, A.mapTo(mapper, newCalculator),
-                B.mapTo(mapper, newCalculator),
-                C.mapTo(mapper, newCalculator),
-                a == null ? null : a.mapTo(mapper, newCalculator),
-                b == null ? null : b.mapTo(mapper, newCalculator),
-                c == null ? null : c.mapTo(mapper, newCalculator),
+    public <N> Triangle<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Triangle<>(newCalculator, A.mapTo(newCalculator, mapper),
+                B.mapTo(newCalculator, mapper),
+                C.mapTo(newCalculator, mapper),
+                a == null ? null : a.mapTo(newCalculator, mapper),
+                b == null ? null : b.mapTo(newCalculator, mapper),
+                c == null ? null : c.mapTo(newCalculator, mapper),
                 lenA == null ? null : mapper.apply(lenA),
                 lenB == null ? null : mapper.apply(lenB),
                 lenC == null ? null : mapper.apply(lenC));
@@ -617,9 +617,9 @@ public final class Triangle<T> extends MathObject<T> {
      */
     public static <T> Triangle<T> fromVertex(MathCalculator<T> mc, Point<T> A, Point<T> B, Point<T> C) {
         Function<T, T> mapper = MathFunction.identity();
-        Triangle<T> tri = new Triangle<>(mc, A.mapTo(mapper, mc),
-                B.mapTo(mapper, mc),
-                C.mapTo(mapper, mc));
+        Triangle<T> tri = new Triangle<>(mc, A.mapTo(mc, mapper),
+                B.mapTo(mc, mapper),
+                C.mapTo(mc, mapper));
         if (mc.isZero(tri.areaPN())) {
             throw new IllegalArgumentException("Three points a line.");
         }

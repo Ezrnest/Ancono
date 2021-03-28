@@ -572,7 +572,7 @@ object Calculus {
     fun intRational(nume: Polynomial<Long>, deno: Polynomial<Long>, mc: ExprCalculator, variableName: String = "x")
             : Expression {
         val decomposed = AlgebraUtil.decomposeInt(deno)
-        val eNume = nume.mapTo(java.util.function.Function { x -> Expression.valueOf(x) }, mc)
+        val eNume = nume.mapTo(mc, java.util.function.Function { x -> Expression.valueOf(x) })
         val eDeno = decomposed.map(Expression::valueOf, mc)
         return intFrac(eNume, eDeno, mc, variableName)
     }

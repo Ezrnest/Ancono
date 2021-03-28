@@ -70,8 +70,8 @@ class VectorSpace<T : Any>(override val basis: VectorBasis<T>) : MathObjectExten
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): MathObject<N> {
-        return VectorSpace(basis.mapTo(mapper, newCalculator))
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
+        return VectorSpace(basis.mapTo(newCalculator, mapper))
     }
 
     override fun valueEquals(obj: MathObject<T>): Boolean {

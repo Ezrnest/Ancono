@@ -34,8 +34,8 @@ open class DecomposedPoly<T : Any>(val decomposed: List<Pair<Polynomial<T>, Int>
 
     fun <N : Any> map(mapper: (T) -> N, newCalculator: MathCalculator<N>): DecomposedPoly<N> {
         val mp = java.util.function.Function(mapper)
-        val re = DecomposedPoly(decomposed.map { (poly, n) -> poly.mapTo(mp, newCalculator) to n })
-        re.expandedBackingField = expandedBackingField?.mapTo(mp, newCalculator)
+        val re = DecomposedPoly(decomposed.map { (poly, n) -> poly.mapTo(newCalculator, mp) to n })
+        re.expandedBackingField = expandedBackingField?.mapTo(newCalculator, mp)
         return re
     }
 

@@ -65,7 +65,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
      */
     @NotNull
     @Override
-    public <N> SingletonSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> SingletonSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new SingletonSet<>(newCalculator, mapper.apply(element));
     }
 

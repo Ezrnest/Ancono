@@ -31,5 +31,5 @@ public abstract class AbstractCountableSet<T> extends AbstractMathSet<T> impleme
 
     @NotNull
     @Override
-    public abstract <N> AbstractCountableSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> AbstractCountableSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

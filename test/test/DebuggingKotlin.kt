@@ -20,7 +20,7 @@ fun p2(){
             1 0 1
             0 1 2
         """.trimIndent()
-    val mat = MatrixSup.parseFMatrix(str).mapTo(Function { it.toDouble() },mcd)
+    val mat = MatrixSup.parseFMatrix(str).mapTo(mcd, Function { it.toDouble() })
     val (Q, R) = mat.decompQR()
     Q.printMatrix()
     R.printMatrix()

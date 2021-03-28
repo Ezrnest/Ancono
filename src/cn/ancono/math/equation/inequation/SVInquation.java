@@ -32,5 +32,6 @@ public abstract class SVInquation<T> extends Inequation<T, T> implements SVCompa
         return op.matches(compareZero(compute(x)));
     }
 
-    public abstract <N> SVInquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    @NotNull
+    public abstract <N> SVInquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

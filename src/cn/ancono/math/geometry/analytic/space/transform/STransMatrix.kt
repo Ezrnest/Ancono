@@ -32,8 +32,8 @@ class STransMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val matr
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): STransMatrix<N> {
-        return STransMatrix(newCalculator, matrix.mapTo(mapper, newCalculator))
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): STransMatrix<N> {
+        return STransMatrix(newCalculator, matrix.mapTo(newCalculator, mapper))
     }
 
     override fun valueEquals(obj: MathObject<T>): Boolean {

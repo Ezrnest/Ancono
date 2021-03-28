@@ -239,8 +239,9 @@ public class GTriangle<T> extends MathObject<T> {
     }
 
 
+    @NotNull
     @Override
-    public <N> MathObject<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> MathObject<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         GTriangle<N> tri = new GTriangle<>(newCalculator,
                 mapper.apply(a),
                 mapper.apply(b),

@@ -706,7 +706,7 @@ public class MatrixSup {
     public static <T> Polynomial<Matrix<T>> matrixPolynomial(int n, Polynomial<T> p) {
         var cal = p.getMathCalculator();
         var cm = Matrix.calculator(n, cal);
-        return p.mapTo(e -> Matrix.diag(e, n, cal), cm);
+        return p.mapTo(cm, e -> Matrix.diag(e, n, cal));
     }
 
     /**

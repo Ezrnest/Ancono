@@ -118,5 +118,5 @@ public abstract class Polyhedron<T> extends SpaceObject<T> {
 
     @NotNull
     @Override
-    public abstract <N> Polyhedron<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> Polyhedron<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

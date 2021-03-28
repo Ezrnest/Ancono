@@ -389,10 +389,10 @@ class Test {
 	
 	static void progerssionTest2() {
         Progression<Long> p1 = ProgressionSup.asFirstElementAndDifferece(1L, 1L, Calculators.longCal());
-        Progression<Double> p2 = p1.mapTo(l -> Math.log(Math.abs(l * l - l) + 2), Calculators.doubleCal());
+        Progression<Double> p2 = p1.mapTo(Calculators.doubleCal(), l -> Math.log(Math.abs(l * l - l) + 2));
         p2 = Progression.computeProgression(p2.getMathCalculator(), l -> Math.cos(l * 2 - l * l), p2);
 
-        Progression<BigDecimal> pr = p2.mapTo(d -> new BigDecimal(d * d * d - d * d), Calculators.bigDecimal(MathContext.DECIMAL128));
+        Progression<BigDecimal> pr = p2.mapTo(Calculators.bigDecimal(MathContext.DECIMAL128), d -> new BigDecimal(d * d * d - d * d));
 
         Progression<BigDecimal> prc = Progression.cachedProgression(pr, 0, 100, true);
         Timer t = new Timer();

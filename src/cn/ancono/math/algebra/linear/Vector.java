@@ -337,7 +337,7 @@ public abstract class Vector<T> extends Matrix<T> {
      */
     @NotNull
     @Override
-    public abstract <N> Vector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> Vector<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * Create a new vector with the given elements. A boolean representing whether the

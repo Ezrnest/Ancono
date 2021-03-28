@@ -1052,7 +1052,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         //transform to a temporary matrix to compute the determinant
         //in multinomial
         MathCalculator<Polynomial<T>> mct = Polynomial.getCalculator(mc);
-        Matrix<Polynomial<T>> tmat = this.mapTo(x -> Polynomial.constant(mc, x), mct),
+        Matrix<Polynomial<T>> tmat = this.mapTo(mct, x -> Polynomial.constant(mc, x)),
                 eigen = Matrix.diag(Polynomial.oneX(mc), row, mct);
         tmat = subtract(eigen, tmat);
         return tmat.calDet();
@@ -1670,7 +1670,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
     @NotNull
     @Override
-    public <N> Matrix<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Matrix<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         Object[][] newData = new Object[row][column];
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {

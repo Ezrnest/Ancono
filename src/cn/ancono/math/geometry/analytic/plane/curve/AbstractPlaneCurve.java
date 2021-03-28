@@ -66,7 +66,7 @@ public abstract class AbstractPlaneCurve<T> extends MathObject<T> implements Pla
      */
     @NotNull
     @Override
-    public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
 }

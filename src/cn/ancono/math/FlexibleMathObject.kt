@@ -14,8 +14,7 @@ import java.util.*
  * @author liyicheng
  * at 2018-03-05 20:19
  */
-abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>
-(mc: S) : CalculatorHolder<T, S> {
+abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>(mc: S) : CalculatorHolder<T, S> {
 
     protected val mc: S = Objects.requireNonNull(mc, "Calculator must not be null!")
 

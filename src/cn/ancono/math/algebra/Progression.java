@@ -317,7 +317,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
     @NotNull
     @Override
     public <N> Progression<N> mapTo(
-            @NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+            @NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new MappedProgression<>(newCalculator, mapper, this);
     }
 
@@ -436,7 +436,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 
         @NotNull
         @Override
-        public <N1> Progression<N1> mapTo(@NotNull Function<N, N1> mapper, @NotNull MathCalculator<N1> newCalculator) {
+        public <N1> Progression<N1> mapTo(@NotNull MathCalculator<N1> newCalculator, @NotNull Function<N, N1> mapper) {
             return new MappedProgression<>(newCalculator, this.mapper.andThen(mapper), proSource);
         }
 
@@ -525,7 +525,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull Function<R, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<R, N> mapper) {
             return new CombinedProgression<>(newCalculator, func.andThen(mapper), ps, length);
         }
 
@@ -612,7 +612,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newArr = (N[]) new Object[arr.length];
             for (int i = 0; i < arr.length; i++) {
@@ -751,13 +751,13 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
          */
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newCache = (N[]) new Object[cache.length];
             for (int i = 0; i < newCache.length; i++) {
                 newCache[i] = mapper.apply(cache[i]);
             }
-            return new CachedProgression<>(pro.mapTo(mapper, newCalculator), newCache, startIndex, endIndex);
+            return new CachedProgression<>(pro.mapTo(newCalculator, mapper), newCache, startIndex, endIndex);
         }
 
 
@@ -782,7 +782,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new GeneralFormulaProgression<>(newCalculator, length, l -> mapper.apply(f.apply(l)));
         }
     }
@@ -900,8 +900,8 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return super.mapTo(mapper, newCalculator);
+        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return super.mapTo(newCalculator, mapper);
         }
     }
 

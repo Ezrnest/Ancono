@@ -16,11 +16,11 @@ public class MatrixSample {
         var m1 = Matrix.of(cal, 2, 2,
                 1, 2,
                 4, 5)
-                .mapTo(Fraction::of, calFrac);
+                .mapTo(calFrac, Fraction::of);
         var m2 = Matrix.of(cal, 2, 2,
                 3, -6,
                 -4, 8)
-                .mapTo(Fraction::of, calFrac);
+                .mapTo(calFrac, Fraction::of);
         var m3 = Matrix.multiply(m1, m2);
         m3.printMatrix();
         var det = m3.calDet();

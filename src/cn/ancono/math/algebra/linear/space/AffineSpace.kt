@@ -154,7 +154,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
                 && originVector.valueEquals(obj.originVector, mapper) && vectorBasis.valueEquals(obj.vectorBasis, mapper)
     }
 
-    abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AffineSpace<N>
+    abstract override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AffineSpace<N>
 
 
     companion object {
@@ -207,8 +207,13 @@ fun <T : Any> VectorBasis<T>.toAffineSpace(): AffineSpace<T> {
 internal class DAffineSpace<T : Any>(mc: MathCalculator<T>, originVector: Vector<T>,
                                      vectorBase: VectorBasis<T>) : AffineSpace<T>(mc, originVector, vectorBase) {
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): DAffineSpace<N> {
-        return DAffineSpace(newCalculator, originVector.mapTo(mapper, newCalculator), vectorBasis.mapTo(mapper, newCalculator))
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): DAffineSpace<N> {
+        return DAffineSpace(
+            newCalculator, originVector.mapTo(newCalculator, mapper), vectorBasis.mapTo(
+                newCalculator,
+                mapper
+            )
+        )
     }
 
 }

@@ -30,6 +30,7 @@ public abstract class SVEquation<T> extends Equation<T, T> implements SVCompareS
     /* (non-Javadoc)
      * @see cn.ancono.math.Equation#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
      */
+    @NotNull
     @Override
-    public abstract <N> SVEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> SVEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

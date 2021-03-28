@@ -64,5 +64,5 @@ public abstract class SpaceObject<T> extends SpacePointSet<T> implements Infinit
      */
     @NotNull
     @Override
-    public abstract <N> SpaceObject<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> SpaceObject<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

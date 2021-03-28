@@ -112,9 +112,9 @@ class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val den
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): PFraction<N> {
-        val n2 = nume.mapTo(mapper, newCalculator)
-        val d2 = nume.mapTo(mapper, newCalculator)
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): PFraction<N> {
+        val n2 = nume.mapTo(newCalculator, mapper)
+        val d2 = nume.mapTo(newCalculator, mapper)
         return PFraction(newCalculator, n2, d2)
     }
 

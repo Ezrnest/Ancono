@@ -426,8 +426,10 @@ internal constructor(
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<F, N>, newCalculator: MathCalculator<N>): MultinomialF<N> {
-        return MultinomialF(newCalculator, terms.mapTo(getDefaultTermsSet()) { TermF(it.characters, mapper.apply(it.coefficient)) })
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<F, N>): MultinomialF<N> {
+        return MultinomialF(
+            newCalculator,
+            terms.mapTo(getDefaultTermsSet()) { TermF(it.characters, mapper.apply(it.coefficient)) })
     }
 
     override fun valueEquals(obj: MathObject<F>): Boolean {

@@ -75,7 +75,7 @@ public class TestMatrix {
             for (int j = 0; j < row; j++) {
                 mat[j] = ArraySup.ranDoubleArr(column);
             }
-            Matrix<Double> matrix = Matrix.of(mat).mapTo(x -> x, mcd);
+            Matrix<Double> matrix = Matrix.of(mat).mapTo(mcd, x -> x);
             LinearEquationSolution<Double> solution = MatrixSup.solveLinearEquation(matrix);
             if (solution.getSolutionSituation() != LinearEquationSolution.Situation.NO_SOLUTION) {
                 Vector<Double> base = solution.getSpecialSolution();
@@ -100,7 +100,7 @@ public class TestMatrix {
             for (int j = 0; j < row; j++) {
                 mat[j] = ArraySup.ranDoubleArr(column);
             }
-            Matrix<Double> matrix = Matrix.of(mat).mapTo(x -> x, mcd);
+            Matrix<Double> matrix = Matrix.of(mat).mapTo(mcd, x -> x);
             LinearEquationSolution<Double> solution = MatrixSup.solveHomogeneousLinearEquation(matrix);
             if (solution.getSolutionSituation() != LinearEquationSolution.Situation.NO_SOLUTION) {
                 Vector<Double> base = solution.getSpecialSolution();
@@ -163,7 +163,7 @@ public class TestMatrix {
                 {2, 3, 4, 5},
                 {3, 2, 5, 6},
                 {6, -2, -8, 4}
-        }).mapTo(Fraction::of, Fraction.getCalculator());
+        }).mapTo(Fraction.getCalculator(), Fraction::of);
         var t = A.decompLU();
         var P = t.getFirst();
         var L = t.getSecond();

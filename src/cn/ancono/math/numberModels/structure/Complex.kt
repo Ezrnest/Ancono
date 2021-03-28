@@ -339,7 +339,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
     //	public Complex<T> powf()
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Complex<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Complex<N> {
         return Complex(newCalculator, mapper.apply(a), mapper.apply(b))
     }
 

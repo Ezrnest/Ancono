@@ -122,7 +122,7 @@ public final class Point<T> extends MathObject<T> {
     }
 
     @Override
-    public <N> Point<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Point<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Point<>(newCalculator, mapper.apply(x), mapper.apply(y));
     }
 

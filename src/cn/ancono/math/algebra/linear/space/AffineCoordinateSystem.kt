@@ -114,8 +114,13 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
 
 internal class DAffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension: Int, originVector: Vector<T>, vectorBase: FullVectorBasis<T>) :
         AffineCoordinateSystem<T>(mc, dimension, originVector, vectorBase) {
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AffineSpace<N> {
-        return DAffineCoordinateSystem(newCalculator, dimension, originVector.mapTo(mapper, newCalculator), vectorBasis.mapTo(mapper, newCalculator))
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AffineSpace<N> {
+        return DAffineCoordinateSystem(
+            newCalculator, dimension, originVector.mapTo(newCalculator, mapper), vectorBasis.mapTo(
+                newCalculator,
+                mapper
+            )
+        )
     }
 
 }
@@ -129,7 +134,10 @@ class StandardCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension: Int) :
         require(dimension > 0)
     }
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): StandardCoordinateSystem<N> {
+    override fun <N : Any> mapTo(
+        newCalculator: MathCalculator<N>,
+        mapper: Function<T, N>
+    ): StandardCoordinateSystem<N> {
         return StandardCoordinateSystem(newCalculator, dimension)
     }
 

@@ -247,8 +247,8 @@ internal class DLinearMapping<T : Any> internal constructor(override val transMa
     internal constructor(transMatrix: Matrix<T>)
             : this(transMatrix, transMatrix.columnCount, transMatrix.rowCount, transMatrix.mathCalculator)
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): LinearMapping<N> {
-        return DLinearMapping(transMatrix.mapTo(mapper, newCalculator), dimSrc, dimDest, newCalculator)
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearMapping<N> {
+        return DLinearMapping(transMatrix.mapTo(newCalculator, mapper), dimSrc, dimDest, newCalculator)
     }
 
 
@@ -398,8 +398,8 @@ DLinearTrans<T : Any> internal constructor(
 
     internal constructor(transMatrix: Matrix<T>) : this(transMatrix, transMatrix.rowCount, transMatrix.mathCalculator)
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): LinearTrans<N> {
-        val nMatrix = transMatrix.mapTo(mapper, newCalculator)
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearTrans<N> {
+        val nMatrix = transMatrix.mapTo(newCalculator, mapper)
         return DLinearTrans(nMatrix, dimension, newCalculator)
     }
 }

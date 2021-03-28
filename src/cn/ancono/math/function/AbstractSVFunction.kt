@@ -10,7 +10,6 @@ import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.set.Interval
 import cn.ancono.math.set.IntervalUnion
-import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 
 /**
@@ -33,7 +32,10 @@ protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> 
     /*
 	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 	 */
-    abstract override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): AbstractSVFunction<N>
+    abstract override fun <N : Any> mapTo(
+        newCalculator: MathCalculator<N>,
+        mapper: Function<T, N>
+    ): AbstractSVFunction<N>
 
 
     companion object {
@@ -184,7 +186,7 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Ln<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Ln<N> {
         return Ln(newCalculator)
     }
 
@@ -250,7 +252,7 @@ class Log<T : Any>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Log<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Log<N> {
         return Log(newCalculator, mapper.apply(a))
     }
 
@@ -393,7 +395,7 @@ class Power<T : Any>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Power<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Power<N> {
         return Power(newCalculator, mapper.apply(a), n)
     }
 
@@ -469,7 +471,7 @@ internal constructor(mc: MathCalculator<T>,
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Exp<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Exp<N> {
         return Exp(newCalculator, mapper.apply(c), mapper.apply(a))
     }
 
@@ -523,7 +525,7 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Ex<N> {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Ex<N> {
         return Ex(newCalculator)
     }
 

@@ -107,7 +107,7 @@ public final class ParabolaV<T> extends ConicSection<T> {
      */
     @NotNull
     @Override
-    public <N> ParabolaV<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> ParabolaV<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new ParabolaV<>(newCalculator, mapper.apply(A), mapper.apply(B),
                 mapper.apply(C), mapper.apply(D), mapper.apply(E), mapper.apply(F), mapper.apply(p), onX);
     }

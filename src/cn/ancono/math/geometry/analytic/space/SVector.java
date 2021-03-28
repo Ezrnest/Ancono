@@ -419,7 +419,7 @@ public final class SVector<T> extends Vector<T> {
 
     @NotNull
     @Override
-    public <N> SVector<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> SVector<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         SVector<N> sn = new SVector<>(mapper.apply(x), mapper.apply(y), mapper.apply(z), newCalculator);
         if (length != null) {
             sn.length = mapper.apply(length);
@@ -830,14 +830,14 @@ public final class SVector<T> extends Vector<T> {
 
 
         @Override
-        public <N> SVectorBasis<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> SVectorBasis<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             N[][] ret = ArraySup.mapTo(mat, (T[] arr) ->
                     ArraySup.mapTo(arr, mapper)
             );
             N d = MatrixSup.det3(ret, newCalculator);
-            return new SVectorBasis<>(x.mapTo(mapper, newCalculator),
-                    y.mapTo(mapper, newCalculator),
-                    z.mapTo(mapper, newCalculator), ret, d,
+            return new SVectorBasis<>(x.mapTo(newCalculator, mapper),
+                    y.mapTo(newCalculator, mapper),
+                    z.mapTo(newCalculator, mapper), ret, d,
                     newCalculator);
         }
 
@@ -909,8 +909,9 @@ public final class SVector<T> extends Vector<T> {
         /* (non-Javadoc)
          * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.cn.ancono.utilities.math.MathCalculator)
          */
+        @NotNull
         @Override
-        public <N> SVectorGenerator<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> SVectorGenerator<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new SVectorGenerator<>(newCalculator);
         }
 

@@ -91,7 +91,7 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 
     @NotNull
     @Override
-    public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
     /**

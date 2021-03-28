@@ -61,8 +61,8 @@ class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): LinearFracTrans<N> {
-        return LinearFracTrans(m.mapTo(mapper, newCalculator))
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFracTrans<N> {
+        return LinearFracTrans(m.mapTo(newCalculator, mapper))
     }
 
     override fun valueEquals(obj: MathObject<T>): Boolean {

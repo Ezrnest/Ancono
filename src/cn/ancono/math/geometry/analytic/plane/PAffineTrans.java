@@ -175,8 +175,8 @@ public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T
      * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
      */
     @Override
-    public <N> PAffineTrans<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        return new PAffineTrans<>(newCalculator, mat.mapTo(mapper, newCalculator), v.mapTo(mapper, newCalculator));
+    public <N> PAffineTrans<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new PAffineTrans<>(newCalculator, mat.mapTo(newCalculator, mapper), v.mapTo(newCalculator, mapper));
     }
 
     /* (non-Javadoc)

@@ -1112,7 +1112,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
             RingFraction.getCalculator(getCalculator(), Multinomial.getSimplifier());
 
     private static Polynomial<RingFraction<Multinomial>> injectiveMap(Polynomial<Multinomial> p) {
-        return p.mapTo(m -> RingFraction.valueOf(m, cal), CAL_RF_M);
+        return p.mapTo(CAL_RF_M, m -> RingFraction.valueOf(m, cal));
     }
 
     private static void computeCharPowMap(Multinomial m, Map<String, Long> charMap) {

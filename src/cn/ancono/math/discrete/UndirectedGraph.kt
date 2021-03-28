@@ -1,5 +1,5 @@
 package cn.ancono.math.discrete
-
+//Created by lyc at 2021-03-28 19:32
 interface UndirectedGraph : Graph {
     override fun degIn(a: Node): Int {
         return deg(a)

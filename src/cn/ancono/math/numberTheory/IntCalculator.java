@@ -347,13 +347,6 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
 //        return gcdUV0(a, b);
 //    }
 
-    /**
-     * Determines whether the two numbers <code>a</code> and <code>b</code>
-     * are co-prime.
-     */
-    default boolean isCoprime(T a, T b) {
-        return isEqual(gcd(a, b), getOne());
-    }
 
 //    private Triple<T, T, T> gcdUV0(T a, T b) {
 ////        T[] quotients = (T[]) new Object[4];

@@ -1,5 +1,5 @@
 /**
- * 2018-03-05
+ * 2018-03-05 20:19
  */
 package cn.ancono.math
 
@@ -9,10 +9,14 @@ import cn.ancono.math.numberModels.api.NumberFormatter
 import java.util.*
 
 /**
- * Describes a flexible math object which holds a subclass of EqualPredicate as it 'calculator'. Almost
- * all classes in this module is a subclass of it.
+ * Describes a flexible (computational) math object which holds a subclass of EqualPredicate as it 'calculator' for
+ * computational purpose.
+ *
+ *
+ *
+ *
  * @author liyicheng
- * at 2018-03-05 20:19
+ * @see MathObject
  */
 abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>(mc: S) : CalculatorHolder<T, S> {
 

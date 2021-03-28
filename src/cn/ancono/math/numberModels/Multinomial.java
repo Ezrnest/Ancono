@@ -430,9 +430,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Determines whether this multinomial is invertible and the inverse is also a multinomial.
-     *
-     * @return
+     * Determines whether this multinomial is invertible and the inverse is a multinomial with
+     * non-negative powers of characters.
      */
     public boolean isPolyInvertible() {
         if (isZero()) {

@@ -2,7 +2,7 @@ package samples
 
 import cn.ancono.logic.prop.*
 
-fun main(args: Array<String>) {
+fun main() {
     LogicSample.predicateLogic()
 }
 

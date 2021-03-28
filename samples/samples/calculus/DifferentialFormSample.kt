@@ -6,7 +6,7 @@ import cn.ancono.math.numberModels.expression.ExprCalculator
 /*
  * Created by lyc at 2020/2/29
  */
-fun main(args: Array<String>) {
+fun main() {
     DifferentialFormSample.sample1()
 }
 

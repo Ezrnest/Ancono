@@ -29,8 +29,8 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         throw UnsupportedCalculationException("Adapter")
     }
 
-    override fun isZero(para: T): Boolean {
-        return isEqual(para, zero)
+    override fun isZero(x: T): Boolean {
+        return isEqual(x, zero)
     }
 
     override fun isEqual(x: T, y: T): Boolean {

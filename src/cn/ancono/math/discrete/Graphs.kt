@@ -3,6 +3,8 @@ package cn.ancono.math.discrete
 import java.lang.Double.min
 import java.util.*
 
+//Created by lyc at 2021-03-15
+
 interface GraphBuilder<G> {
     infix fun Int.to(y: Int): Int
 

@@ -188,8 +188,8 @@ abstract class LinearMapping<T : Any> internal constructor(
     }
 
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
-        appendln("Linear mapping, dimSrc=$dimSrc, dimDest=$dimDest, matrix = ")
-        appendln(transMatrix.contentToString(nf))
+        appendLine("Linear mapping, dimSrc=$dimSrc, dimDest=$dimDest, matrix = ")
+        appendLine(transMatrix.contentToString(nf))
     }
 
     override fun apply(x: Vector<T>): Vector<T> {
@@ -336,8 +336,8 @@ internal constructor(
 
 
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
-        appendln("Linear trans, dim=$dimension, matrix = ")
-        appendln(transMatrix.contentToString(nf))
+        appendLine("Linear trans, dim=$dimension, matrix = ")
+        appendLine(transMatrix.contentToString(nf))
     }
 
 

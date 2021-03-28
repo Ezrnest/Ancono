@@ -117,6 +117,12 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return Multinomial(result)
     }
 
+    override fun isUnit(x: Multinomial): Boolean {
+        return x.isPolyInvertible
+        // here we can only perform the inversion on the multinomial ring,
+        // no negative powers are allowed
+    }
+
     override fun divide(x: Multinomial, y: Multinomial): Multinomial {
         return x.divide(y)
     }
@@ -187,11 +193,13 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             val p = b.first
             if (p.isInteger) {
                 val l = p.numerator.toLong()
-                return pow(a, if (p.isNegative) {
-                    -l
-                } else {
-                    l
-                })
+                return pow(
+                    a, if (p.isNegative) {
+                        -l
+                    } else {
+                        l
+                    }
+                )
             }
             if (a.isMonomial) {
                 val x = a.first
@@ -544,7 +552,10 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             return x
         }
 
-        override fun simplify(a: Multinomial, b: Multinomial): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
+        override fun simplify(
+            a: Multinomial,
+            b: Multinomial
+        ): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
             return Multinomial.simplifyFraction(a, b)
         }
     }
@@ -568,6 +579,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
          * @see .SIN_VALUE
          */
         val ARCSIN_VALUE: MutableMap<Multinomial, Multinomial> = TreeMap()
+
         /**
          * this Map contains arctan values
          * @see .TAN_VALUE
@@ -588,13 +600,16 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             SIN_VALUE[ofVal(0L, 1L)] = ZERO
             // sin(0) = 0
             SIN_VALUE[ofVal(1L, 6L)] = monomial(
-                    Term.asFraction(1, 2, 1))
+                Term.asFraction(1, 2, 1)
+            )
             //sin(Pi/6) = 1 / 2
             SIN_VALUE[ofVal(1L, 4L)] = monomial(
-                    Term.asFraction(1, 2, 2))
+                Term.asFraction(1, 2, 2)
+            )
             //sin(Pi/4) =sqr(2)/2
             SIN_VALUE[ofVal(1L, 3L)] = monomial(
-                    Term.asFraction(1, 2, 3))
+                Term.asFraction(1, 2, 3)
+            )
             //sin(Pi/3) = sqr(3) / 2
             SIN_VALUE[ofVal(1L, 2L)] = ONE
             //sin(Pi/2) = 1
@@ -608,12 +623,14 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             TAN_VALUE[ofVal(0L, 1L)] = ZERO
             // tan(0) = 0
             TAN_VALUE[ofVal(1L, 6L)] = monomial(
-                    Term.asFraction(1, 3, 3))
+                Term.asFraction(1, 3, 3)
+            )
             //tan(Pi/6) = Sqr(3)/3
             TAN_VALUE[ofVal(1L, 4L)] = monomial(Term.ONE)
             //tan(Pi/4) = 1
             TAN_VALUE[ofVal(1L, 3L)] = monomial(
-                    Term.asFraction(1, 1, 3))
+                Term.asFraction(1, 1, 3)
+            )
             //tan(Pi/3) = Sqr(3)
 
             TAN_VALUE[ofVal(1L, 12L)] = valueOf("2-Sqr3")

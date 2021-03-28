@@ -59,6 +59,9 @@ public final class Expression implements Computable, Serializable {
         return expr;
     }
 
+    /**
+     * Converts the whole expression to a string in latex format.
+     */
     public String toLatexString() {
         return root.toLatexString();
     }

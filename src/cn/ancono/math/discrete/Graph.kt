@@ -2,7 +2,7 @@ package cn.ancono.math.discrete
 
 typealias Node = Int
 typealias Edge = Pair<Node, Node>
-
+//Created by lyc at 2021-03-02
 /**
  * Describes a general (undirected) graph that has no multiple edges.
  * Generally speaking, in mathematics, the graph can be

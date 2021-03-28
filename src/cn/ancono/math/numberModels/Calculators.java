@@ -268,6 +268,12 @@ public final class Calculators {
         }
 
         @Override
+        public boolean isUnit(@NotNull Integer x) {
+            int t = x;
+            return t == 1 || t == -1;
+        }
+
+        @Override
         public boolean isEqual(@NotNull Integer x, @NotNull Integer y) {
             return x.equals(y);
         }
@@ -859,6 +865,12 @@ public final class Calculators {
             return ONE;
         }
 
+        @Override
+        public boolean isUnit(@NotNull Long x) {
+            long t = x;
+            return t == 1 || t == -1;
+        }
+
         @NotNull
         @Override
         public Long reciprocal(@NotNull Long p) {
@@ -1139,6 +1151,11 @@ public final class Calculators {
         @Override
         public BigInteger getOne() {
             return BigInteger.ONE;
+        }
+
+        @Override
+        public boolean isUnit(@NotNull BigInteger x) {
+            return x.abs().equals(BigInteger.ONE);
         }
 
         @NotNull

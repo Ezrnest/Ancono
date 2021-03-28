@@ -5,6 +5,8 @@ package cn.ancono.math.numberTheory;
 
 import java.util.Arrays;
 
+import static cn.ancono.utilities.Printer.print;
+
 /**
  * The class for getting prime numbers, this class supports
  * long as prime number result to give out, and
@@ -180,12 +182,13 @@ public final class Primes {
      * prime number array if necessary. Returns {@code false}
      * to all input smaller than 2.
      *
-     * @param n
-     * @return
      */
     public boolean isPrime(long n) {
         if (n < 2) {
             return false;
+        }
+        if (n == 2 || n == 3) {
+            return true;
         }
         long sqr = (long) Math.sqrt(n) + 1;
         enlargePrime(sqr);
@@ -297,10 +300,11 @@ public final class Primes {
         return Arrays.binarySearch(par, 0, max_index, p);
     }
 
-//	public static void main(String[] args) {
-//		Primes pr = getInstance();
-////		print(pr.getArray(100));
+    public static void main(String[] args) {
+        Primes pr = getInstance();
+//		print(pr.getArray(100));
+        print(pr.isPrime(2));
 //		print(pr.getPrimesBelow(1000));
-//	}
+    }
 
 }

@@ -351,8 +351,8 @@ class ExprCalculator
     /*
 	 * @see cn.ancono.math.MathCalculator#isZero(java.lang.Object)
 	 */
-    override fun isZero(para: Expression): Boolean {
-        return isEqual(zero, para)
+    override fun isZero(x: Expression): Boolean {
+        return isEqual(zero, x)
     }
 
     /*

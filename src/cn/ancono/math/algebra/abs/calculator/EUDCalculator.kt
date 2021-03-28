@@ -3,6 +3,7 @@ package cn.ancono.math.algebra.abs.calculator
 import cn.ancono.math.component1
 import cn.ancono.math.component2
 import cn.ancono.math.exceptions.ExceptionUtil
+import java.lang.ArithmeticException
 
 
 /*
@@ -133,5 +134,20 @@ interface EUDCalculator<T : Any> : UFDCalculator<T> {
         }
         val v: T = exactDivide(d0 - a * u0, b)
         return Triple(d0, u0, v)
+    }
+
+    /**
+     * Returns the modular inverse of `a` with respect to `p`, that is, find the element `b` such
+     * that `ab = 1 (mod p)`.
+     *
+     * @return the modular inverse of `a`
+     */
+    @JvmDefault
+    fun modInverse(a: T, p: T): T {
+        val (g, u, _) = gcdUV(a, p)
+        if (!isUnit(g)) {
+            throw ArithmeticException("$a is not invertible with respect to $p")
+        }
+        return u
     }
 }

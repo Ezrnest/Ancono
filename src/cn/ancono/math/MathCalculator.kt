@@ -7,26 +7,25 @@ import cn.ancono.math.function.invoke
 import java.util.*
 
 /**
- * Describe a calculator that can calculator the basic operations for
- * number, this interface is create to give some math-based objects full
- * flexibility to all kind of numbers.
+ * Describes a general calculator that can perform basic operations for
+ * number models. This interface is created to give some math objects full
+ * flexibility to operate with all kind of number models.
  *
- *
- * All methods in a math calculator should be consistent.No change should be
- * done to the number when any method is called.
+ * All methods in a math calculator should be consistent. No (explicit) change should be
+ * done to the number model when any method is called.
  *
  *
  * All methods in this calculator may not be operational because of the limit of
- * number's format and so other reasons,so if necessary, an
- * [UnsupportedCalculationException] can be thrown.For some special
+ * number's format and other reasons, so if necessary, an
+ * [UnsupportedCalculationException] can be thrown. For some special
  * operations, exceptional arithmetic condition may occur, so an
  * [ArithmeticException] may be thrown.
  *
  *
  * It is highly recommended that you should only create one instance of the math
- * calculator and pass it all through the calculation. This can keep the
- * calculation result from being different and in some FlexibleMathObject,such
- * as Triangle,may contain other FlexibleMathObject,and some calculation is not
+ * calculator(for one type) and pass it all through the calculation. This can keep the
+ * calculation result from being different and in some FlexibleMathObject, such
+ * as Triangle, may contain other FlexibleMathObject, and some calculation is not
  * strongly made sure that only the calculator from the Triangle itself is
  * used(which means the calculator in Point may be used), so there may be
  * potential safety problems. Therefore, in a multiple-number-type task, you
@@ -35,10 +34,11 @@ import java.util.*
  *
  * A MathCalculator naturally deals with numbers, so it is a subclass of [FieldCalculator].
  * However, it is not strictly required all the operations(addition, multiplication..)
- * must return a number and throwing exceptions is acceptable.
+ * must return a number and, throwing exceptions is acceptable.
  *
- * @param <T> the type of number to deal with
+ * @param <T> the type of number model to deal with
  * @author lyc
+ * @see MathObject
  */
 interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 

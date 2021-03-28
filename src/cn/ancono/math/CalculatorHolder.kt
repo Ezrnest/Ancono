@@ -12,7 +12,7 @@ import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 interface CalculatorHolder<T : Any, S : EqualPredicate<T>> {
 
     /**
-     * Return the calculator this object is using.
+     * Return the calculator used by this object.
      *
      * @return a calculator
      */

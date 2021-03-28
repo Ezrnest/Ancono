@@ -820,7 +820,7 @@ fun LogicFormula.toPrenexNormalForm(): LogicFormula {
 }
 
 
-fun main(args: Array<String>) {
+fun main() {
 //    val ep = "ep".t
 //    val zero = "0".t
 //    val N = "N".t

@@ -425,9 +425,9 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
     }
 
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
-        appendln("VectorBase: dimension=$vectorLength, baseSize=$rank")
+        appendLine("VectorBase: dimension=$vectorLength, baseSize=$rank")
         for (v in vectors) {
-            appendln(v.toString(nf))
+            appendLine(v.toString(nf))
         }
     }
 

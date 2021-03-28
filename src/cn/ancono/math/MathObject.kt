@@ -6,21 +6,30 @@ import cn.ancono.math.numberModels.api.NumberFormatter
 import java.util.function.Function
 
 /**
- * Describes an object that is used in math and is flexible for all type of number models which are used in math.
+ * Describes an object that is used in math and is flexible for all type of number models.
  * The corresponding math calculator should be given when such an object is created and the calculator may
- * be used. For example, an interval may extend this abstract class and the type of bound can be switched from
- * Integer to Double , or other kind of math number.
+ * be used.
+ *
+ * Almost all classes in this module are subclasses of it.
+ * For example, `Interval` extends this abstract class and the type of it bound can be switched from
+ * Integer to Double, or other kinds of numbers.
+ * `Matrix` is also a subclass of `MathObject`, the number stored in it can be fraction, real number or others.
+ *
  * @author lyc
- * @param T the kind of object used, usually a subclass of number
+ * @param T the type of the number model used
  * @see MathCalculator
  */
 abstract class MathObject<T : Any>
 /**
  * Create a flexible math object with the given MathCalculator, the MathCalculator should not
  * be null.
- * @param mc
+ *
+ * @param mc the math calculator
  */
 protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalculator<T>>(mc), MathCalculatorHolder<T> {
+    /**
+     * Gets the `MathCalculator` kept by this math object.
+     */
     override val mathCalculator: MathCalculator<T>
         get() = super.mathCalculator
 
@@ -36,8 +45,8 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
     abstract fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N>
 
     /**
-     * The equals method describes the equivalence in program of two math objects instead of the equal in math.
-     * However
+     * The equals method describes the equivalence in program of two math objects instead of the equality in math.
+     *
      * If the type of number is different, then `false` will be returned.
      */
     override fun equals(other: Any?): Boolean {
@@ -56,8 +65,6 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
     /**
      * Determines whether the two objects using the identity number type is the identity. In this method,
      * [MathCalculator.isEqual] is used instead of `Object.equals()` method.
-     * This method is basically equal to [.valueEquals] as
-     * `this.valueEquals(obj,x -> x)`
      *
      * @param obj another FlexibleMathObject
      * @return `true` if this is equal to obj , else `false`.
@@ -71,12 +78,13 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
      * method is based on math definition so this method should not simply use `equal()` method , instead,
      * [MathCalculator.isEqual] should be used when comparing two numbers. This method
      * provides the equality in math.
+     *
      * @param obj another object, type is the identity as this
      * @param mapper a function
-     * @param <N> another type of number
+     * @param N another type of number
      * @return `true` if this is equal to obj , else `false`.
      * @throws ClassCastException if `obj` is not using number type `N`
-    </N> */
+     */
     open fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         return valueEquals(obj.mapTo(mc, mapper))
     }
@@ -84,8 +92,7 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
     /**
      * Returns a String representing this object, the [NumberFormatter] should
      * be used whenever a number is presented.
-     * @param nf
-     * @return
+     * @param nf a number formatter
      */
     abstract override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String
 
@@ -93,7 +100,6 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
      * Returns a String representing this object, it is recommended that
      * the output of the number model should be formatted
      * through [NumberFormatter.format].
-     * @return
      */
     override fun toString(): String {
         return toString(FlexibleNumberFormatter.getToStringFormatter())

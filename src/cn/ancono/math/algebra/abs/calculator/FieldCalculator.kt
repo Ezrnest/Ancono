@@ -3,8 +3,15 @@
  */
 package cn.ancono.math.algebra.abs.calculator
 
+import cn.ancono.math.numberModels.api.FieldNumberModel
+
 /**
  * A calculator for a field.
+ *
+ * which is commutative
+ *
+ * @see [cn.ancono.math.algebra.abs.structure.Field]
+ * @see [FieldNumberModel]
  * @author liyicheng
  * 2018-02-28 19:29
  */

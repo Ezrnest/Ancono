@@ -1386,6 +1386,11 @@ public final class Polynomial<T> extends MathObject<T> implements
             return para1.multiply(para2);
         }
 
+        @Override
+        public boolean isUnit(@NotNull Polynomial<T> x) {
+            return x.degree == 0;
+        }
+
         /*
          * @see cn.ancono.math.MathCalculator#divide(java.lang.Object, java.lang.Object)
          */
@@ -1631,6 +1636,11 @@ public final class Polynomial<T> extends MathObject<T> implements
             return para1.multiply(para2);
         }
 
+        @Override
+        public boolean isUnit(@NotNull Polynomial<T> x) {
+            return x.degree == 0 && mc.isUnit(x.first());
+        }
+
         /*
          * @see cn.ancono.math.MathCalculator#divide(java.lang.Object, java.lang.Object)
          */
@@ -1762,6 +1772,7 @@ public final class Polynomial<T> extends MathObject<T> implements
     public static class ModPolyCalculator<T> extends PolynomialCalculator<T> {
         private final Polynomial<T> p;
 
+        //TODO implement method divide for modular invertible case
         public ModPolyCalculator(Polynomial<T> p) {
             super(p.getMathCalculator());
             this.p = p;
@@ -1841,6 +1852,14 @@ public final class Polynomial<T> extends MathObject<T> implements
         @Override
         public Polynomial<T> divideToInteger(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
             return super.divideToInteger(a, b);
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Polynomial<T> x) {
+            var t = x.gcdUV(p); //ut + vp = 1
+            var gcd = t.getFirst();
+            return gcd.isOne();
+
         }
 
         @NotNull

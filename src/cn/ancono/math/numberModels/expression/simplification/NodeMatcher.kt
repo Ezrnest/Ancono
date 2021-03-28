@@ -659,7 +659,7 @@ class FractionMatcher(val numeMatcher: NodeMatcher, val denoMatcher: NodeMatcher
 }
 
 
-fun main(args: Array<String>) {
+fun main() {
     val exp = exp("a".ref, "b".ref)
 //    val sin = addPartly(SingleRefMatcher("$123"),exp(sin("x".ref),"2".m),exp(cos("x".ref),"2".m))
     val sin = exp(sin("refX".ref), 2.m) + exp(cos("refX".ref), 2.m)

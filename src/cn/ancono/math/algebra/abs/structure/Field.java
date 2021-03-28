@@ -1,4 +1,4 @@
-/**
+/*
  * 2018-02-28
  */
 package cn.ancono.math.algebra.abs.structure;

@@ -66,7 +66,6 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
         return DAffineCoordinateSystem(mc, dimension, nOriginVector, nVectorBase)
     }
 
-    //TODO
 //    /**
 //     * Returns the linear transformation that transforms this to another affine coordinate system,
 //     * it is required that both coordinate systems have the same dimension.

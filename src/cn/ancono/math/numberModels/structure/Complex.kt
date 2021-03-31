@@ -7,6 +7,7 @@ import cn.ancono.math.function.Bijection
 import cn.ancono.math.geometry.analytic.plane.PVector
 import cn.ancono.math.geometry.analytic.plane.Point
 import cn.ancono.math.geometry.analytic.space.SPoint
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.*
@@ -73,7 +74,7 @@ class ComplexInf<T : Any> internal constructor(mc: MathCalculator<T>) : ComplexE
  *
  * The complex itself requires a type of number to implement A and B,such as
  * `Complex<Double>` and `Complex<Long>`,and complex is a kind of number too.
- * This may cause some waste, to use complex number only as a kind of number type, you may use [ComplexI]
+ * This may cause some waste, to use complex number only as a kind of number type, you may use [cn.ancono.math.numberModels.ComplexI]
  *
  * @author lyc
  *
@@ -472,9 +473,17 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          */
         val i: Complex<T> = imaginary(mc.one, mc)
 
+        override fun of(x: Long): Complex<T> {
+            return real(mc.of(x))
+        }
+
+        override fun of(x: Fraction): Complex<T> {
+            return real(mc.of(x))
+        }
+
         /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
-         */
+                 * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
+                 */
         override val numberClass: Class<Complex<*>>
             get() = Complex::class.java
 
@@ -629,6 +638,13 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         val i: ComplexE<T> = mc.i
         val inf: ComplexE<T> = inf(mc.mc)
 
+        override fun of(x: Long): ComplexE<T> {
+            return mc.of(x)
+        }
+
+        override fun of(x: Fraction): ComplexE<T> {
+            return mc.of(x)
+        }
 
         override fun isZero(x: ComplexE<T>): Boolean {
             return x is Complex && mc.isZero(x)
@@ -939,7 +955,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         }
 
         /**
-         * Returns hte bijection of stereographic projection from north pole (0,0,1).
+         * Returns the bijection of stereographic projection from north pole (0,0,1).
          */
         fun <T : Any> stereographicProjection(mc: MathCalculator<T>): Bijection<SPoint<T>, ComplexE<T>> {
             return object : Bijection<SPoint<T>, ComplexE<T>> {

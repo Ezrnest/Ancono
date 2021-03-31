@@ -3,6 +3,8 @@ package cn.ancono.math.numberModels
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.BigFraction.Companion.ONE
 import cn.ancono.math.numberModels.BigFraction.Companion.ZERO
+import cn.ancono.math.numberModels.BigFraction.Companion.fromFraction
+import cn.ancono.math.numberModels.BigFraction.Companion.valueOf
 import cn.ancono.math.numberModels.Fraction.Companion.EXPRESSION_PATTERN
 import cn.ancono.math.numberModels.api.FieldNumberModel
 import java.io.Serializable
@@ -391,6 +393,14 @@ object BigFractionCalculator : MathCalculatorAdapter<BigFraction>() {
 
     override fun reciprocal(x: BigFraction): BigFraction {
         return x.reciprocal()
+    }
+
+    override fun of(x: Long): BigFraction {
+        return valueOf(x)
+    }
+
+    override fun of(x: Fraction): BigFraction {
+        return fromFraction(x)
     }
 
     override val numberClass: Class<*>

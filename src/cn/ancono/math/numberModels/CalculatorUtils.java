@@ -18,7 +18,7 @@ import java.util.function.IntFunction;
 import java.util.function.LongFunction;
 
 /**
- * Contains some cn.ancono.utilities for MathCalculator
+ * Contains some utilities for MathCalculator
  *
  * @author liyicheng
  * 2017-10-07 15:19

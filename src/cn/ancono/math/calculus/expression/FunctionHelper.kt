@@ -356,7 +356,7 @@ internal constructor(val process: LimitProcessE, val mc: ExprCalculator, hopital
 //        }catch (e : Exception){
 //            print("?")
 //        }
-        val frac = mc.simplify(n / d) //TODO delete clone
+        val frac = mc.simplify(n / d)
         val re = limitNode(frac)
         hopital++
         return re

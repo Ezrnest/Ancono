@@ -279,11 +279,21 @@ object Graphs {
         return cost to path
     }
 
-
+    /**
+     * The most general version of priority search, the method starts from the given starting node and
+     * visits the nodes in the graph according to the order given by the prioritized work bag.
+     * This method will not visit the explored nodes that are marked by [state].
+     *
+     * @param target the searching target, it can be set to `-1` if the method should fully explore the graph.
+     * @param bag an instance of WorkBag, it must be empty and ready for use.
+     * @param state the visit state of each node in the graph, explored nodes should be set to `VISITED`.
+     * @param prev the ancestor for each node, which will be computed. The value should be set to be `-1` for
+     * unexplored nodes.
+     */
     fun generalPrioritySearch(
-        graph: Graph, start: Node, target: Node, bag: WorkBag,
-        state: Array<VisitState>,
-        prev: IntArray,
+            graph: Graph, start: Node, target: Node, bag: WorkBag,
+            state: Array<VisitState>,
+            prev: IntArray,
     ): SearchResult {
         bag.init(start)
         outer@
@@ -315,7 +325,8 @@ object Graphs {
 
 
     /**
-     * A general version of priority search.
+     * A general version of priority search, the method starts from the given starting node and
+     * visits the nodes in the graph according to the order given by the prioritized work bag.
      */
     fun generalPrioritySearch(
         graph: Graph, start: Node, dest: Node,
@@ -358,24 +369,34 @@ object Graphs {
      */
     fun ucs(graph: Graph, start: Node, target: Node, weight: (Node, Node) -> Double): SearchResult {
         return generalPrioritySearch(
-            graph, start, target,
-            PriorityQueueWorkBag(graph, weight)
+                graph, start, target,
+                PriorityQueueWorkBag(graph, weight)
         )
     }
 
+    /**
+     * The A* search algorithm.
+     *
+     * @param weight the non-negative weight of each edge
+     * @param heuristic the heuristic function, it must be consistent
+     */
     fun aStarSearch(
-        graph: Graph,
-        start: Int,
-        dest: Int,
-        weight: (Int, Int) -> Double,
-        heuristic: (Int) -> Double
+            graph: Graph,
+            start: Int,
+            dest: Int,
+            weight: (Int, Int) -> Double,
+            heuristic: (Int) -> Double
     ): SearchResult {
         return generalPrioritySearch(
-            graph, start, dest,
-            PriorityQueueWorkBag(graph, weight, heuristic)
+                graph, start, dest,
+                PriorityQueueWorkBag(graph, weight, heuristic)
         )
     }
 
+    /**
+     * Computes the pairwise shortest path for the given graph. This method provides time complexity of
+     * `O(n^3)`.
+     */
     fun pairwiseShortestPath(graph: Graph, weight: (Node, Node) -> Double): Array<DoubleArray> {
         val dists = Array(graph.n) { DoubleArray(graph.n) { Double.MAX_VALUE } }
         for (i in graph.nodes) {
@@ -394,5 +415,5 @@ object Graphs {
         return dists
     }
 
-
+    //TODO: Euler cycle
 }

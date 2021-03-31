@@ -847,10 +847,22 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
             //TODO
             return super.arcsin(x);
         }
+
+        @NotNull
+        @Override
+        public ComplexI of(long x) {
+            return real(x);
+        }
+
+        @NotNull
+        @Override
+        public ComplexI of(@NotNull Fraction x) {
+            return real(x.toDouble());
+        }
     }
 
 
-    private static ComplexICalculator cal = new ComplexICalculator();
+    private static final ComplexICalculator cal = new ComplexICalculator();
 
     public static ComplexICalculator getCalculator() {
         return cal;

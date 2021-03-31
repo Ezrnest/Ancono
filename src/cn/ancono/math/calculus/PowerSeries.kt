@@ -6,6 +6,7 @@ import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.RingNumberModel
 import cn.ancono.math.numberModels.structure.Polynomial
+import java.lang.UnsupportedOperationException
 import java.util.function.Function
 import java.util.function.IntFunction
 
@@ -13,8 +14,10 @@ import java.util.function.IntFunction
 typealias Coefficient<T> = IntFunction<T>
 
 operator fun <T> IntFunction<T>.invoke(i: Int): T = this.apply(i)
+
 /**
- * The
+ * Describes power series.
+ *
  * Created at 2019/11/25 19:54
  * @author  lyc
  */
@@ -81,7 +84,7 @@ class PowerSeries<T : Any>(mc: MathCalculator<T>, val coefficient: Coefficient<T
 
 
     override fun isZero(): Boolean {
-        TODO("not implemented")
+        throw UnsupportedOperationException() // it seems there is no deterministic way
     }
 
     companion object {

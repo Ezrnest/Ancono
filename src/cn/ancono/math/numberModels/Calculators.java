@@ -586,6 +586,21 @@ public final class Calculators {
 
         @NotNull
         @Override
+        public Integer of(long x) {
+            return Math.toIntExact(x);
+        }
+
+        @NotNull
+        @Override
+        public Integer of(@NotNull Fraction x) {
+            if (x.isInteger()) {
+                return x.toInt();
+            }
+            throw new ArithmeticException();
+        }
+
+        @NotNull
+        @Override
         public Class<Integer> getNumberClass() {
             return Integer.class;
         }
@@ -1062,6 +1077,20 @@ public final class Calculators {
             return x;
         }
 
+        @NotNull
+        @Override
+        public Long of(@NotNull Fraction x) {
+            if (x.isInteger()) {
+                return x.toLong();
+            }
+            throw new ArithmeticException();
+        }
+
+        @NotNull
+        @Override
+        public Long of(long x) {
+            return x;
+        }
 
         @NotNull
         @Override
@@ -1325,6 +1354,21 @@ public final class Calculators {
 
         @NotNull
         @Override
+        public BigInteger of(long x) {
+            return BigInteger.valueOf(x);
+        }
+
+        @NotNull
+        @Override
+        public BigInteger of(@NotNull Fraction x) {
+            if (x.isInteger()) {
+                return BigInteger.valueOf(x.toLong());
+            }
+            throw new ArithmeticException();
+        }
+
+        @NotNull
+        @Override
         public Class<BigInteger> getNumberClass() {
             return BigInteger.class;
         }
@@ -1461,9 +1505,6 @@ public final class Calculators {
         /**
          * This method only provides accuracy of double and throws exception if the number is too big.
          *
-         * @param a
-         * @param b
-         * @return
          */
         @NotNull
         @Override
@@ -1478,6 +1519,18 @@ public final class Calculators {
                 throw new UnsupportedCalculationException("Too big.");
             }
             return BigDecimal.valueOf(Math.pow(ad, ab));
+        }
+
+        @NotNull
+        @Override
+        public BigDecimal of(long x) {
+            return BigDecimal.valueOf(x);
+        }
+
+        @NotNull
+        @Override
+        public BigDecimal of(@NotNull Fraction x) {
+            return BigDecimal.valueOf(x.toDouble());
         }
 
         @NotNull
@@ -1728,6 +1781,18 @@ public final class Calculators {
         @Override
         public Double nroot(@NotNull Double x, long n) {
             return Math.pow(x, 1d / n);
+        }
+
+        @NotNull
+        @Override
+        public Double of(long x) {
+            return (double) x;
+        }
+
+        @NotNull
+        @Override
+        public Double of(@NotNull Fraction x) {
+            return x.toDouble();
         }
 
         @NotNull

@@ -27,10 +27,13 @@ import java.util.function.ToDoubleFunction;
 import static cn.ancono.math.numberModels.expression.ExprFunction.createBasicCalculatorFunctions;
 
 /**
- * Expression is the most universal number model to show a number or a complex
+ * Expression is the most universal number model to represent a number or a complex
  * algebraic expression.
+ * <p>
+ * To get a calculator of Expression, please use <code>ExprCalculator.getInstance()</code>
  *
  * @author liyicheng 2017-11-23 21:31
+ * @see ExprCalculator
  */
 public final class Expression implements Computable, Serializable {
 

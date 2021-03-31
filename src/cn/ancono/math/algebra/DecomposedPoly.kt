@@ -1,6 +1,7 @@
 package cn.ancono.math.algebra
 
 import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numberModels.structure.Polynomial
 
@@ -31,6 +32,21 @@ open class DecomposedPoly<T : Any>(val decomposed: List<Pair<Polynomial<T>, Int>
             }
             return expandedBackingField!!
         }
+
+    val degree: Int
+        get() {
+            return decomposed.sumBy { (p, n) -> p.degree * n }
+        }
+
+    fun compute(x: T): T {
+        val mc = decomposed.first().first.mathCalculator
+        var r = mc.one
+        for ((p, n) in decomposed) {
+            r = mc.eval { r * mc.pow(p.compute(x), n.toLong()) }
+        }
+        return r
+    }
+
 
     fun <N : Any> map(mapper: (T) -> N, newCalculator: MathCalculator<N>): DecomposedPoly<N> {
         val mp = java.util.function.Function(mapper)

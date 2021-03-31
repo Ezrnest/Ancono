@@ -106,7 +106,7 @@ public final class FiniteGroups {
                 arr[i][0] = t;
                 i++;
             }
-        }//TODO check
+        }//TODO check correctness
         for (int i = 1; i < size; i++) {
             for (int j = 1; j < size; j++) {
                 arr[i][j] = f.apply(arr[i][0], arr[0][j]);

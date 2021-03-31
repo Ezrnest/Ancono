@@ -4,6 +4,8 @@ import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
+import cn.ancono.math.numberModels.CalculatorUtils
+import cn.ancono.math.numberModels.Fraction
 import java.util.*
 
 /**
@@ -302,20 +304,20 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
     /**
      * Gets a constant value from the calculator, the constant value is got by its
-     * name as a String. It is recommended that the string should be case
-     * insensitive in case of spelling mistakes. The name of the constant value should be
-     * specified wherever the value is needed. <br></br>
+     * name as a String. The name of the constant value should be
+     * specified wherever the value is needed.
+     *
      * Some common constants are list below:
      *
-     *  * <tt>Pi</tt> :the ratio of the circumference of a circle to its
-     * diameter. See: [Math.PI]
-     *  * <tt>e</tt> :the base of the natural logarithms. See: [Math.E]
-     *  * <tt>i</tt> :the square root of `-1`.
+     *  * <tt>Pi, [STR_PI]</tt> :the ratio of the circumference of a circle to its
+     * diameter.  See: [Math.PI]
+     *  * <tt>e, [STR_E]</tt> :the base of the natural logarithms. See: [Math.E]
+     *  * <tt>i, [STR_I]</tt> :the square root of `-1`.
      *
      *
      * @param name the name of the constant value,case insensitive
      * @return a number that represents the constant value.
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedCalculationException if this operation can not be done. (optional)
      */
     fun constantValue(name: String): T?
 
@@ -460,6 +462,41 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
     operator fun T.compareTo(y: T) = compare(this, y)
 
+    /**
+     * Returns a value that represents the given integer.
+     */
+    fun of(x: Long): T {
+        return one * x
+    }
+
+    /**
+     * Returns a value that represents the given fraction.
+     */
+    fun of(x: Fraction): T {
+        if (x.isZero()) {
+            return zero
+        }
+        var re: T = of(x.numerator)
+        if (x.denominator != 1L) {
+            re = divideLong(re, x.denominator)
+        }
+        if (x.isNegative) {
+            re = negate(re)
+        }
+        return re
+    }
+
+    /**
+     * Returns the number value corresponding to the integer.
+     */
+    val Int.v
+        get() = of(this.toLong())
+
+    /**
+     * Returns the number value corresponding to the integer.
+     */
+    val Long.v
+        get() = of(this)
 
     companion object {
 
@@ -467,10 +504,12 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
          * The string representation of pi.
          */
         const val STR_PI = "Pi"
+
         /**
          * The string representation of e.
          */
         const val STR_E = "e"
+
         /**
          * The string representation of i, the square root of -1.
          * This constant value may not be available.
@@ -592,6 +631,14 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
                 override fun arctan(x: S): S {
                     return f(mc.arctan(f.deply(x)))
+                }
+
+                override fun of(x: Long): S {
+                    return f(mc.of(x))
+                }
+
+                override fun of(x: Fraction): S {
+                    return f(mc.of(x))
                 }
             }
         }

@@ -155,53 +155,56 @@ class MobiusTrans<T : Any>(
          * is required that the given three points are different.
          */
         fun <T : Any> to01Inf(a: ComplexE<T>, b: ComplexE<T>, c: ComplexE<T>): MobiusTrans<T> {
-            val mc: MathCalculator<T> = if (a !is Complex) {
-                if (b !is Complex) {
+            val mc: MathCalculator<T> = if (b !is Complex) {
+                if (a !is Complex) {
                     throw ArithmeticException()
                 }
-                b.mathCalculator
-            } else {
                 a.mathCalculator
+            } else {
+                b.mathCalculator
             }
-            // (x-b)(a-c)
+            // (x-a)(b-c)
             // ----------
-            // (x-c)(a-b)
-            if (a !is Complex) {
-                require(b is Complex && c is Complex)
-                // (x-b)
+            // (x-c)(b-a)
+            if (b !is Complex) {
+                require(a is Complex && c is Complex)
+                // (x-a)
                 // -----
                 // (x-c)
                 val one = Complex.one(mc)
-                return of(one, b.negate(), one, c.negate())
+                return of(one, a.negate(), one, c.negate())
             }
-            if (b !is Complex) {
+            if (a !is Complex) {
                 require(c is Complex)
-                // (a-c)
+                // (b-c)
                 // -----
                 // (x-c)
-                return of(Complex.zero(mc), a - c, Complex.one(mc), -c)
+                return of(Complex.zero(mc), b - c, Complex.one(mc), -c)
             }
             if (c !is Complex) {
-                // (x-b)
+                // (x-a)
                 // ----------
-                // (a-b)
-                return of(Complex.one(mc), -b, Complex.zero(mc), a - b)
+                // (b-a)
+                return of(Complex.one(mc), -a, Complex.zero(mc), b - a)
             }
-            return to01Inf(a, b, c)
+            return to01Inf(b, a, c)
         }
 
         fun <T : Any> to01Inf(a: Complex<T>, b: Complex<T>, c: Complex<T>): MobiusTrans<T> {
-            val a_c = a - c
-            val a_b = a - b
-            return of(a_c, -b * a_c, a_b, -c * a_b)
+            val b_c = b - c
+            val b_a = b - a
+            // (b-c)(x-a)
+            // ----------
+            // (b-a)(x-c)
+            return of(b_c, -a * b_c, b_a, -c * b_a)
         }
 
         /**
          * Returns a Mobius transformation that transforms `a1,b1,c1` to `a2,b2,c2` respectively.
          */
         fun <T : Any> threePoints(
-            a1: ComplexE<T>, b1: ComplexE<T>, c1: ComplexE<T>,
-            a2: ComplexE<T>, b2: ComplexE<T>, c2: ComplexE<T>
+                a1: ComplexE<T>, b1: ComplexE<T>, c1: ComplexE<T>,
+                a2: ComplexE<T>, b2: ComplexE<T>, c2: ComplexE<T>
         ): MobiusTrans<T> {
             return to01Inf(a1, b1, c1).andThen(to01Inf(a2, b2, c2).reciprocal())
         }

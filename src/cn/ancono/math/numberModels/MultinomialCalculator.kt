@@ -23,7 +23,16 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
     override val numberClass: Class<Multinomial>
         get() = Multinomial::class.java
 
-//    override fun asBigInteger(x: Multinomial): BigInteger {
+    override fun of(x: Long): Multinomial {
+        return valueOf(x)
+    }
+
+    override fun of(x: Fraction): Multinomial {
+        return monomial(Term.valueOf(x))
+    }
+
+
+    //    override fun asBigInteger(x: Multinomial): BigInteger {
 //        if (x.isMonomial && x.first.isInteger) {
 //            return x.first.let { t ->
 //                val n = x.first.numerator

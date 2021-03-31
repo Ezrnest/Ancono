@@ -676,8 +676,8 @@ internal constructor(
 
         override val zero: Fraction = ZERO
 
-        override fun isZero(para: Fraction): Boolean {
-            return ZERO == para
+        override fun isZero(x: Fraction): Boolean {
+            return ZERO == x
         }
 
         override fun multiply(x: Fraction, y: Fraction): Fraction {
@@ -811,6 +811,14 @@ internal constructor(
             return if (swap) {
                 Fraction(ad, an, signum)
             } else Fraction(an, ad, signum)
+        }
+
+        override fun of(x: Long): Fraction {
+            return Fraction.of(x)
+        }
+
+        override fun of(x: Fraction): Fraction {
+            return x
         }
 
         companion object {

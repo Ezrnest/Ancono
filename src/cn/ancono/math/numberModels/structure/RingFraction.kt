@@ -5,6 +5,7 @@ import cn.ancono.math.FlexibleMathObject
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.Simplifier
@@ -161,6 +162,7 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>)
         override fun isEqual(x: RingFraction<T>, y: RingFraction<T>): Boolean {
             return mc.isEqual(mc.multiply(x.nume, y.deno), mc.multiply(x.deno, y.nume))
         }
+
     }
 
     companion object {

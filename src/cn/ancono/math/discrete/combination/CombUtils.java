@@ -18,6 +18,7 @@ import static cn.ancono.math.MathUtils.degFactorial;
 
 /**
  * A utility class providing some functions in combination mathematics.
+ *
  * @author liyicheng
  *
  */

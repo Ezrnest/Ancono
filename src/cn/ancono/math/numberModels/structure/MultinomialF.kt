@@ -7,6 +7,7 @@ import cn.ancono.math.algebra.IMTerm
 import cn.ancono.math.algebra.IMultinomial
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.CalculatorUtils
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
@@ -78,6 +79,9 @@ data class TermF<F : Any>
             return nMap
         }
 
+        fun <F : Any> constant(c: F): TermF<F> {
+            return TermF(TreeMap(), c)
+        }
     }
 }
 
@@ -499,6 +503,7 @@ class MultinomialFCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculato
     override val one: MultinomialF<T> = MultinomialF.one(mc)
     override val zero: MultinomialF<T> = MultinomialF.zero(mc)
 
+
     override fun isZero(para: MultinomialF<T>): Boolean {
         return para.isZero()
     }
@@ -549,5 +554,14 @@ class MultinomialFCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculato
 
     override fun pow(x: MultinomialF<T>, n: Long): MultinomialF<T> {
         return x.pow(n)
+    }
+
+    override fun of(x: Long): MultinomialF<T> {
+        return MultinomialF.monomial(TermF.constant(mc.of(x)), mc)
+
+    }
+
+    override fun of(x: Fraction): MultinomialF<T> {
+        return MultinomialF.monomial(TermF.constant(mc.of(x)), mc)
     }
 }

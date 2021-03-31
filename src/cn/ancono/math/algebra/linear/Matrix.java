@@ -10,6 +10,7 @@ import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.MathCalculatorAdapter;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.NumberFormatter;
@@ -2895,10 +2896,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     }
 
     public static class MatrixCal<T> extends MathCalculatorAdapter<Matrix<T>> implements ModuleCalculator<T, Matrix<T>> {
-        private final MathCalculator<T> mc;
-        private final int row;
-        private final int column;
-        private final Matrix<T> zero;
+        protected final MathCalculator<T> mc;
+        protected final int row;
+        protected final int column;
+        protected final Matrix<T> zero;
 
         public MatrixCal(MathCalculator<T> mc, int row, int column) {
             this.mc = mc;
@@ -2915,6 +2916,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         public int getColumn() {
             return column;
         }
+
 
         @NotNull
         @Override
@@ -3024,6 +3026,18 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         @Override
         public @NotNull Matrix<T> getOne() {
             return one;
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> of(long x) {
+            return Matrix.diag(mc.of(x), row, mc);
+        }
+
+        @NotNull
+        @Override
+        public Matrix<T> of(@NotNull Fraction x) {
+            return Matrix.diag(mc.of(x), row, mc);
         }
     }
 }

@@ -4,6 +4,7 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.exceptions.ExceptionUtil
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.function.Function
@@ -215,6 +216,14 @@ class PFractionCalculator<T : Any>(val mc: MathCalculator<T>, val sim: Simplifie
 
     override fun reciprocal(x: PFraction<T>): PFraction<T> {
         return x.reciprocal()
+    }
+
+    override fun of(x: Long): PFraction<T> {
+        return PFraction.of(Polynomial.constant(mc, mc.of(x)))
+    }
+
+    override fun of(x: Fraction): PFraction<T> {
+        return PFraction.of(Polynomial.constant(mc, mc.of(x)))
     }
 
     override val numberClass: Class<*>

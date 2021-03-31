@@ -20,6 +20,11 @@ import static cn.ancono.utilities.ArraySup.ensureCapacityAndAdd;
 /**
  * Provides some useful math functions which are not included in JDK.
  *
+ * <p>
+ * For functions related to combination (factorial, combination,...),
+ * please refer to
+ * {@linkplain cn.ancono.math.discrete.combination.CombUtils}
+ *
  * @author lyc
  */
 @SuppressWarnings("Duplicates")

@@ -208,3 +208,4 @@ internal class UndirectedNodeSubgraph(private val graph: UndirectedGraph, privat
 
 }
 
+//TODO: connectivity, matching

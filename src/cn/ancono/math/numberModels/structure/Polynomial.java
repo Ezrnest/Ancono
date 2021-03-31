@@ -1006,12 +1006,22 @@ public final class Polynomial<T> extends MathObject<T> implements
         return new Polynomial<>(mc, arr);
     }
 
+    /**
+     * Returns the constant polynomial <code>c</code>.
+     */
     public static <T> Polynomial<T> constant(MathCalculator<T> mc, T c) {
         if (mc.isZero(c)) {
             return zero(mc);
         }
         @SuppressWarnings("unchecked") T[] arr = (T[]) new Object[]{c};
         return new Polynomial<>(mc, arr);
+    }
+
+    /**
+     * Returns the linear polynomial <code>ax+b</code>.
+     */
+    public static <T> Polynomial<T> linear(MathCalculator<T> mc, T a, T b) {
+        return twoTerms(mc, a, 1, b);
     }
 
     /**
@@ -1313,6 +1323,18 @@ public final class Polynomial<T> extends MathObject<T> implements
             return mc;
         }
 
+
+        @NotNull
+        @Override
+        public Polynomial<T> of(long x) {
+            return Polynomial.constant(mc, mc.of(x));
+        }
+
+        @NotNull
+        @Override
+        public Polynomial<T> of(@NotNull Fraction x) {
+            return Polynomial.constant(mc, mc.of(x));
+        }
 
         /*
          * @see cn.ancono.math.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
@@ -1935,25 +1957,24 @@ public final class Polynomial<T> extends MathObject<T> implements
     }
 
 
-    private static class PolySimplifier<T> implements Simplifier<Polynomial<T>> {
-        @Override
-        public List<Polynomial<T>> simplify(List<Polynomial<T>> numbers) {
-            //TODO
-            return null;
-        }
-
-        @Override
-        public Polynomial<T> simplify(Polynomial<T> x) {
-            //TODO
-            return null;
-        }
-
-        @Override
-        public Pair<Polynomial<T>, Polynomial<T>> simplify(Polynomial<T> a, Polynomial<T> b) {
-            //TODO
-            return null;
-        }
-    }
+//    private static class PolySimplifier<T> implements Simplifier<Polynomial<T>> {
+//        @Override
+//        public List<Polynomial<T>> simplify(List<Polynomial<T>> numbers) {
+//            return null;
+//        }
+//
+//        @Override
+//        public Polynomial<T> simplify(Polynomial<T> x) {
+//            //TODO
+//            return null;
+//        }
+//
+//        @Override
+//        public Pair<Polynomial<T>, Polynomial<T>> simplify(Polynomial<T> a, Polynomial<T> b) {
+//            //TODO
+//            return null;
+//        }
+//    }
 
 //    public static void main(String[] args) {
 //		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();

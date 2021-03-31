@@ -3,6 +3,7 @@ package cn.ancono.math.equation;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.AbstractSVPFunction;
@@ -10,10 +11,11 @@ import cn.ancono.math.numberModels.CalculatorUtils;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
+import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.math.property.Solveable;
 import cn.ancono.math.set.MathSets;
 import cn.ancono.math.set.SingletonSet;
-import cn.ancono.utilities.CollectionSup;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -370,10 +372,9 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         if (p <= 0) {
             throw new IllegalArgumentException("p <= 0 ");
         }
-        //
 
-        //TODO
-        return null;
+        var list = Collections.singletonList(new Pair<>(Polynomial.ofRoot(mc, a), p));
+        return new RootEquation<>(mc, new DecomposedPoly<>(list));
     }
 
     /**
@@ -384,30 +385,29 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * 2017-10-06 15:59
      */
     public static final class RootEquation<T> extends SVPEquation<T> {
-        private final List<T> roots;
+        private final DecomposedPoly<T> p;
 
 
-        RootEquation(MathCalculator<T> mc, List<T> roots) {
-            super(mc, roots.size());
-            this.roots = roots;
+        RootEquation(MathCalculator<T> mc, DecomposedPoly<T> p) {
+            super(mc, p.getDegree());
+            this.p = p;
         }
 
 
         @Override
         public <N> RootEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new RootEquation<>(newCalculator, CollectionSup.mapList(roots, mapper));
+            return new RootEquation<>(newCalculator, p.map(mapper::apply, newCalculator));
         }
 
         @Override
         public T getCoefficient(int n) {
-            return null;
+            return p.getExpanded().getCoefficient(n);
         }
+
 
         @Override
         public T compute(T x) {
-            T re = getMc().getOne();
-
-            return null;
+            return p.compute(x);
         }
     }
 

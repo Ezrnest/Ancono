@@ -5,6 +5,7 @@ package cn.ancono.math.numberModels.expression
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.MultinomialCalculator
 import cn.ancono.math.numberModels.Term
@@ -31,25 +32,27 @@ import java.util.function.ToDoubleFunction
  * calculator. Then the expression calculator can handle the functions and
  * compute them. A more detailed instruction of expression function can be found
  * in [ExprFunction].
- * <h3>Simplification</h3> Expressions can be mathematically equal but are of
+ *
+ * **Simplification** Expressions can be mathematically equal but are of
  * different Expression, and one of the possible forms can be simpler than
  * others and is more efficient. Therefore, proper simplification is essential
  * for expression calculator. Generally, there are two types of simplification.
- * <P>
+ *
+ *
  * One of them is polynomial simplification, which is already defined in the
  * calculator. The calculator doing polynomial simplification will try to add,
  * subtract, multiply, divide and calculate the functions available as long as
  * the result can be expressed with polynomials. It is normally the basic and
  * default simplification strategy.
-</P> *
- *
- * The other type is
  *
  *
+ * (To be written...)
  *
  *
  *
- * <h3></h3> Each ExprCalculator has a level of simplification, which determines
+ *
+ *
+ * Each ExprCalculator has a level of simplification, which determines
  * how far the calculator should perform the simplification. Generally, a higher
  * level of simplification means that the calculator will try to simplify the
  * expression by using more high-leveled [SimplificationStrategy], thus
@@ -57,16 +60,10 @@ import java.util.function.ToDoubleFunction
  * better to set the level of simplification as high as possible, because a
  * higher level of simplification can also consume lots of time when the
  * expression cannot be simplified. Therefore, a suitable level should be set
- * according to the task. The following is some basic levels:
- *
- *  * level = 0 : Multinomial
+ * according to the task.
  *
  *
- * In this level the calculator will try to
- *  * level = 100 : Merge
  *
- *
- * In this level the calculator will try
  *
  *
  *
@@ -254,11 +251,19 @@ class ExprCalculator
         updateSimplificationIdentifier()
     }
 
+    override fun of(x: Long): Expression {
+        return Expression.valueOf(x)
+    }
+
+    override fun of(x: Fraction): Expression {
+        return Expression.valueOf(x)
+    }
+
     /*
-	 * @see
-	 * cn.ancono.math.MathCalculator#isEqual(java.lang.Object,
-	 * java.lang.Object)
-	 */
+             * @see
+             * cn.ancono.math.MathCalculator#isEqual(java.lang.Object,
+             * java.lang.Object)
+             */
     override fun isEqual(x: Expression, y: Expression): Boolean {
         return x.root.equalNode(y.root, multinomialCalculator)
     }

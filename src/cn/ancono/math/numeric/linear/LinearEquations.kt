@@ -4,6 +4,10 @@ import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
+import cn.ancono.math.component1
+import cn.ancono.math.component2
+import java.util.*
+import kotlin.collections.ArrayList
 
 object LinearEquations {
 
@@ -106,13 +110,68 @@ object LinearEquations {
 //            Printer.printMatrix(matrix)
         }
 //        var re = Array
-        val builder = Matrix.getBuilder(n,M.columnCount - n,mc)
+        val builder = Matrix.getBuilder(n, M.columnCount - n, mc)
 //        for (i in 0 until n) {
 //            for (j in n until M.columnCount) {
 //                builder.set(matrix[i][j],i,j-n)
 //            }
 //        }
-        builder.fillArea(0,0,matrix,0,n,n,M.columnCount-n)
+        builder.fillArea(0, 0, matrix, 0, n, n, M.columnCount - n)
         return builder.build()
     }
+
+    private fun <T : Any> solveDiagonal(D: Matrix<T>, b: Vector<T>): Vector<T> {
+        val n = b.size
+        val mc = b.mathCalculator
+        return Vector.of(b.mathCalculator, (0 until n).map { i ->
+            mc.divide(b[i], D[i, i])
+        })
+    }
+
+    /**
+     * Applies Cholesky's method to solve the linear equation `Ax=b`.
+     */
+    fun <T : Any> solveCholesky(A: Matrix<T>, b: Vector<T>): Vector<T> {
+        val (L, D) = A.decompCholeskyD()
+        val y = solveLower(L, b)
+        val z = solveDiagonal(D, y)
+        return solveUpper(L.transpose(), z)
+    }
+
+    /**
+     * Solves a tri-diagonal linear equation.
+     */
+    fun <T : Any> solveTriDiag(diag: Vector<T>, upper: Vector<T>, lower: Vector<T>, b: Vector<T>): Vector<T> {
+        val n = diag.size
+        require(upper.size == n - 1 && lower.size == n - 1)
+        require(b.size == n)
+        val mc = diag.mathCalculator
+        val u = ArrayList<T>(n)
+        val l = ArrayList<T>(n)
+        val c = upper
+
+        u.add(diag[0])
+        l.add(mc.zero)
+        for (i in 1 until n) {
+            l += mc.eval { lower[i - 1] / u.last() }
+            u += mc.eval { diag[i] - l[i] * c[i - 1] }
+        }
+
+        val y = ArrayList<T>(n)
+        y += b[0]
+        for (i in 1 until n) {
+            y += mc.eval { b[i] - l[i] * y[i - 1] }
+        }
+
+        val x = ArrayList<T>(Collections.nCopies(n, mc.zero))
+        x[n - 1] = mc.eval { y[n - 1] / u[n - 1] }
+        for (i in n - 2 downTo 0) {
+            x[i] = mc.eval {
+                (y[i] - c[i] * x[i + 1]) / u[i]
+            }
+        }
+        return Vector.of(mc, x)
+    }
+
+
 }

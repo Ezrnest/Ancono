@@ -1,10 +1,311 @@
 package cn.ancono.math.calculus
 
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.MathObject
 import cn.ancono.math.MathUtils
-import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.structure.Polynomial
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.discrete.combination.CombUtils
+import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.minus
+import cn.ancono.math.numberModels.api.times
+import cn.ancono.math.numberModels.structure.Polynomial
+import cn.ancono.math.set.Interval
+import java.util.function.Function
 
+/**
+ * Describes a family of polynomials on an interval with respect to a non-negative weight function.
+ * The polynomials are orthogonal under the inner product induced by integrating the product
+ * of two functions and the weight functions.
+ *
+ * Assume the weight function is `w`, then the inner product is
+ *
+ *     (f,g) = ∫f(x)g(x)w(x)dx
+ *
+ * Denote the polynomials as `p_0,p_1,...,p_n,...`, then the degree of `p_n` is `n`,
+ * and `(p_n,p_n) = normSq(n)`, `(p_i,p_j) = 0, i!=j`.
+ *
+ * See: [Orthogonal polynomials](https://en.wikipedia.org/wiki/Orthogonal_polynomials)
+ *
+ *
+ * @author
+ * Created by lyc at 2021-03-31 12:29
+ */
+abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>) : MathObject<T>(mc) {
+
+    /**
+     * The domain on which the polynomials are defined.
+     */
+    abstract val domain: Interval<T>
+
+    /**
+     * The weight function
+     */
+    abstract fun weight(x: T): T
+
+    /**
+     * Return a sequence of the orthogonal
+     */
+    abstract val sequence: Sequence<Polynomial<T>>
+
+    /**
+     * The norm of the orthogonal polynomials that are return
+     *
+     * @param n the index of polynomial, starting from zero.
+     */
+    open fun norm(n: Int): T {
+        return mc.squareRoot(normSq(n))
+    }
+
+    /**
+     * The square
+     */
+    abstract fun normSq(n: Int): T
+
+
+    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+        return "$name Polynomials"
+    }
+
+    override fun valueEquals(obj: MathObject<T>): Boolean {
+        return this == obj
+    }
+
+
+    val generatorUnitized: Sequence<Polynomial<T>>
+        get() = sequence.mapIndexed { n, p -> p.divide(norm(n)) }
+}
+
+/**
+ * The family of Legendre orthogonal polynomials: `L_n`.
+ *
+ * * Domain: `[-1,1]`
+ * * Weight: `w(x) = 1`
+ * * Norm Square: `(L_n,L_n) = 2/(2n+1)`.
+ * * Recurrence relation: `(n+1)T_{n+1}(x) = (2n+1)T_n(x) - nT_{n-1}(x)`
+ *
+ * First several polynomials:
+ *
+ *     L_0(x) = 1
+ *     L_1(x) = x
+ *     L_2(x) = (3x^2 - 1)/2
+ *     L_3(x) = (5x^3 - 3x)/2
+ */
+class LegendreOrthPoly<T : Any>(mc: MathCalculator<T>)
+    : OrthPolynomials<T>("Legendre", mc) {
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
+        return LegendreOrthPoly(newCalculator)
+    }
+
+
+    override fun weight(x: T): T {
+        return mc.one
+    }
+
+    override fun normSq(n: Int): T {
+        return mc.eval { 2.v / (2 * n + 1).v }
+    }
+
+
+    override val domain: Interval<T> = Interval.closedInterval(mc.negate(mc.one), mc.one, mc)
+
+    override val sequence: Sequence<Polynomial<T>> = sequence {
+        var p0 = Polynomial.one(mc)
+        val x = Polynomial.oneX(mc)
+        var p1 = x
+        yield(p0)
+        yield(p1)
+        var n = 1
+        while (true) {
+            var p2 = mc.eval { (2 * n + 1).v * p1.shift(1) - n.v * p0 }
+            p2 = p2.divideLong(n + 1L)
+            yield(p2)
+            p0 = p1
+            p1 = p2
+            n += 1
+        }
+    }
+}
+
+/**
+ * The family of Tchebychev orthogonal polynomials: `T_n`.
+ *
+ * * Domain: `[-1,1]`
+ * * Weight: `w(x) = 1/sqrt(1-x^2)`
+ * * Norm Square: `(T_0,T_0) = pi; (T_n,T_n) = pi/2, n > 0`.
+ * * Recurrence relation: `T_{n+1}(x) = 2xT_n(x) - T_{n-1}(x)`
+ *
+ * First several polynomials:
+ *
+ *     T_0(x) = 1
+ *     T_1(x) = x
+ *     T_2(x) = 2x^2 - 1
+ *     T_3(x) = 4x^3 - 3x
+ *
+ *
+ * Implementation Note: The norm requires constant value pi, calculators must support the constant value.
+ *
+ * See: [Tchebychev orthogonal polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials)
+ */
+class TchebychevOrthPoly<T : Any>(mc: MathCalculator<T>)
+    : OrthPolynomials<T>("Tchebychev", mc) {
+
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): TchebychevOrthPoly<N> {
+        return TchebychevOrthPoly(newCalculator)
+    }
+
+    override fun weight(x: T): T {
+        return mc.eval { one / squareRoot(one - x * x) }
+    }
+
+    override fun normSq(n: Int): T {
+        val pi = mc.constantValue("pi")!!
+        return if (n == 0) {
+            pi
+        } else {
+            mc.divideLong(pi, 2)
+        }
+    }
+
+
+    override val domain: Interval<T> = Interval.closedInterval(mc.negate(mc.one), mc.one, mc)
+
+    override val sequence: Sequence<Polynomial<T>> = sequence {
+        var p0 = Polynomial.one(mc)
+        val x = Polynomial.oneX(mc)
+        var p1 = x
+        yield(p0)
+        yield(p1)
+        var n = 1
+        while (true) {
+            val p2 = mc.eval { p1.shift(1).multiplyLong(2L) - p0 }
+            yield(p2)
+            p0 = p1
+            p1 = p2
+            n += 1
+        }
+    }
+}
+
+/**
+ * The family of Laguerre polynomials, `L_n(x)`
+ *
+ * * Domain: `[0,+∞)`
+ * * Weight: `w(x) = exp(-x)`
+ * * Norm Square: `(L_n,L_n) = (n!)^2`.
+ * * Recurrence relation: `(n+1)L_{n+1}(x) = (2n+1 - x)He_n(x) - nHe_{n-1}'(x)`
+ *
+ * The first several polynomials are
+ *
+ *     L_0(x) = 1
+ *     L_1(x) = -x+1
+ *     L_2(x) = (x^2 - 4x + 2)/2
+ *     L_3(x) = （-x^3 + 9x^2 - 18x + 6）/6
+ *
+ *
+ *
+ * Implementation Note:
+ * Norm values are extremely large, overflow will happen for big `n`.
+ */
+class LaguerreOrthPoly<T : Any>(mc: MathCalculator<T>)
+    : OrthPolynomials<T>("Laguerre", mc) {
+
+
+    override val domain: Interval<T> = Interval.toPositiveInf(mc.zero, true, mc)
+
+
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LaguerreOrthPoly<N> {
+        return LaguerreOrthPoly(newCalculator)
+    }
+
+    override fun weight(x: T): T {
+        return mc.exp(mc.negate(x))
+    }
+
+    override fun normSq(n: Int): T {
+        return mc.pow(norm(n), 2L)
+    }
+
+    override fun norm(n: Int): T {
+        return mc.of(CombUtils.factorial(n))
+    }
+
+
+    override val sequence: Sequence<Polynomial<T>> = sequence {
+        var p0 = Polynomial.one(mc)
+        val n1 = mc.negate(mc.one)
+        var p1 = Polynomial.linear(mc, n1, mc.one)
+        yield(p0)
+        yield(p1)
+        var n = 1
+        while (true) {
+            var p2 = mc.eval {
+                Polynomial.linear(mc, n1, (2 * n + 1).v) * p1 - n.v * p0
+            }
+            p2 = p2.divideLong(n + 1L)
+            yield(p2)
+            p0 = p1
+            p1 = p2
+            n += 1
+        }
+    }
+
+}
+
+
+/**
+ * The family of probabilist's Hermite polynomials, `He_n(x)`
+ *
+ * * Domain: `(-∞,+∞)`
+ * * Weight: `w(x) = exp(-x^2/2)`
+ * * Norm Square: `(He_n,He_n) = sqrt(2pi)n!`.
+ * * Recurrence relation: `He_{n+1}(x) = xHe_n(x) - He_{n-1}'(x)`
+ *
+ * The first several polynomials are
+ *
+ *     He_0(x) = 1
+ *     He_1(x) = x
+ *     He_2(x) = x^2 -1
+ *     He_3(x) = x^3 - 3x
+ *     He_4(x) = x^4 - 6x^2 + 3
+ *
+ *
+ * Implementation Note: The norm requires constant value pi, calculators must support the constant value.
+ * Norm values are extremely large, overflow will happen for big `n`.
+ */
+class HermiteOrthPoly<T : Any>(mc: MathCalculator<T>)
+    : OrthPolynomials<T>("Hermite", mc) {
+
+    override val domain: Interval<T> = Interval.universe(mc)
+
+    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): HermiteOrthPoly<N> {
+        return HermiteOrthPoly(newCalculator)
+    }
+
+
+    override fun weight(x: T): T {
+        return mc.eval { exp(-x * x / 2L) }
+    }
+
+    override fun normSq(n: Int): T {
+        return mc.eval {
+            squareRoot(2.v * constantValue(MathCalculator.STR_PI)!!) *
+                    CombUtils.factorial(n)
+        }
+    }
+
+    override val sequence: Sequence<Polynomial<T>> = sequence {
+        yield(Polynomial.one(mc))
+        var p = Polynomial.oneX(mc)
+        yield(p)
+        while (true) {
+            val p2 = mc.eval { p.shift(1) - p.derivative() }
+            yield(p2)
+            p = p2
+        }
+    }
+
+}
 
 /**
  * Created at 2019/12/26 18:59
@@ -68,20 +369,43 @@ object DefinedPolynomials {
         }
     }
 
-    fun hermitePoly(n: Int): Polynomial<Fraction> {
-        TODO()
-    }
-
-    fun laguerrePoly(n: Int): Polynomial<Fraction> {
-        TODO()
-    }
-
-    fun chebyshevPoly(n: Int): Polynomial<Fraction> {
-        TODO()
-    }
 
     fun bernoulliPoly(n: Int): Polynomial<Fraction> {
         TODO()
+    }
+
+    /**
+     * The generalized Laguerre polynomials.
+     * The recurrence relation is
+     *
+     *     (n+1)L_{n+1}(x) = (2n+1+α - x)L_n(x) - (n+α)L_{n-1}'(x)
+     *
+     *
+     * The first several terms are:
+     *
+     *     L_0(x) = 0
+     *     L_1(x) = -x + 1 + α
+     *
+     */
+    fun <T : Any> generalizedLaguerrePoly(alpha: T, mc: MathCalculator<T>): Sequence<Polynomial<T>> {
+        return sequence {
+            var p0 = Polynomial.one(mc)
+            val n1 = mc.negate(mc.one)
+            var p1 = Polynomial.linear(mc, n1, mc.eval { one + alpha })
+            yield(p0)
+            yield(p1)
+            var n = 1
+            while (true) {
+                val t1 = mc.eval { (2 * n + 1).v + alpha }
+                val t2 = mc.eval { n.v + alpha }
+                var p2 = Polynomial.linear(mc, n1, t1) * p1 - t2 * p0
+                p2 = p2.divideLong(n + 1L)
+                yield(p2)
+                p0 = p1
+                p1 = p2
+                n += 1
+            }
+        }
     }
 }
 

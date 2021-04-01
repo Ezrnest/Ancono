@@ -8,7 +8,6 @@ import cn.ancono.math.property.Composable
 import cn.ancono.math.property.Intersectable
 import cn.ancono.utilities.CollectionSup
 import java.util.function.Function
-import kotlin.collections.ArrayList
 
 
 /**
@@ -463,12 +462,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
             return DVectorBasis(dimension, list)
         }
 
-        /**
-         * Creates a vector base with given vectors, the vectors must be linear irrelevant.
-         */
-        @JvmStatic
-        fun <T : Any> createBase(vectors: List<Vector<T>>): VectorBasis<T> {
-            require(vectors.isNotEmpty())
+        private fun <T : Any> checkIrrelevant(vectors: List<Vector<T>>): List<Vector<T>> {
             val dimension = vectors[0].size
             require(!Vector.isLinearRelevant(vectors)) { "Vectors must be linear irrelevant!" }
 
@@ -478,6 +472,17 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
                 }
                 v.toColumnVector()
             }
+            return copy
+        }
+
+        /**
+         * Creates a vector base with given vectors, the vectors must be linear irrelevant.
+         */
+        @JvmStatic
+        fun <T : Any> createBase(vectors: List<Vector<T>>): VectorBasis<T> {
+            require(vectors.isNotEmpty())
+            val dimension = vectors[0].size
+            val copy = checkIrrelevant(vectors)
             return if (dimension == vectors.size) {
                 FullVectorBasis(dimension, copy)
             } else {
@@ -499,15 +504,9 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         @JvmStatic
         fun <T : Any> createFullBase(vectors: List<Vector<T>>): FullVectorBasis<T> {
             require(vectors.isNotEmpty())
+            require(vectors.size == vectors[0].size)
             val dimension = vectors.size
-            require(!Vector.isLinearRelevant(vectors)) { "Vectors must be linear irrelevant!" }
-
-            val copy = vectors.map { v ->
-                if (v.size != dimension) {
-                    throw IllegalArgumentException("Vector's size ${v.size} is not equal to dimension=$dimension")
-                }
-                v.toColumnVector()
-            }
+            val copy = checkIrrelevant(vectors)
             return FullVectorBasis(dimension, copy)
         }
 
@@ -536,17 +535,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
 
         @JvmStatic
         fun <T : Any> createBaseWithoutCheck(vararg vectors: Vector<T>): VectorBasis<T> {
-            require(vectors.isNotEmpty())
-            val dimension = vectors[0].size
-            val copy = vectors.map { v ->
-                requireVectorSize(dimension, v)
-                v.toColumnVector()
-            }
-            return if (dimension == vectors.size) {
-                FullVectorBasis(dimension, copy)
-            } else {
-                DVectorBasis(dimension, copy)
-            }
+            return createBaseWithoutCheck(vectors.asList())
         }
 
         @JvmStatic

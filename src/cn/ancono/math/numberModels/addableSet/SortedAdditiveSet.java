@@ -5,8 +5,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
- * SortedAdditiveSet ��һ�������,�����ض�����ļ���
- * <p>�˼��Ͽ��Դ���������󣬵�һ����˵��
+ * SortedAdditiveSet
  *
  * @param <E>
  * @author lyc

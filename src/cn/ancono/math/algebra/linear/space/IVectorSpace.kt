@@ -12,6 +12,7 @@ import cn.ancono.math.algebra.linear.Vector
  */
 /**
  * Describe a linear space over vector. The vectors in this vector space are all column vectors.
+ *
  * @author liyicheng
  */
 interface IVectorSpace<T : Any> : FiniteLinearSpace<T, Vector<T>> {

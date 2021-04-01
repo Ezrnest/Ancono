@@ -69,6 +69,11 @@ class VectorSpace<T : Any>(override val basis: VectorBasis<T>) : MathObjectExten
         return VectorSpace(nBasis)
     }
 
+    fun directProduct(w: VectorSpace<T>): VectorSpace<T> {
+        val newBasis = this.basis.directProduct(w.basis)
+        return VectorSpace(newBasis)
+    }
+
 
     override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
         return VectorSpace(basis.mapTo(newCalculator, mapper))

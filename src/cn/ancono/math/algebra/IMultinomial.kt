@@ -15,13 +15,26 @@ interface IMTerm<T : Any> {
         fun <T : Any, MC : EqualPredicate<T>> stringOf(term: IMTerm<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>): String = buildString {
             append(nf.format(term.coefficient, mc))
             if (term.characters.isNotEmpty()) {
+                var hasMul = true
+                append('*')
                 for ((ch, p) in term.characters) {
-                    append('*')
+                    if (ch.length > 1 && !hasMul) {
+                        append('*')
+                    }
                     append(ch)
                     if (p != 1) {
                         append("^")
                         append(p)
                     }
+                    hasMul = if (ch.length > 1 || p != 1) {
+                        append('*')
+                        true
+                    } else {
+                        false
+                    }
+                }
+                if (hasMul) {
+                    deleteCharAt(lastIndex)
                 }
             }
         }
@@ -40,8 +53,20 @@ interface IMultinomial<T : Any> : Iterable<IMTerm<T>> {
 //    fun degreeOf(ch : String) : Int
 
     companion object {
-        fun <T : Any, MC : EqualPredicate<T>> stringOf(m: IMultinomial<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>) = m.joinToString("") {
-            IMTerm.stringOf(it, mc, nf)
+        fun isPlusOrMinus(c: Char): Boolean {
+            return c == '+' || c == '-'
+        }
+
+        fun <T : Any, MC : EqualPredicate<T>> stringOf(m: IMultinomial<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>) = buildString {
+            var start = true
+            for (term in m) {
+                val s = IMTerm.stringOf(term, mc, nf)
+                if (!start && !isPlusOrMinus(s[0]) && !isPlusOrMinus(last())) {
+                    append("+")
+                }
+                append(s)
+                start = false
+            }
         }
     }
 }

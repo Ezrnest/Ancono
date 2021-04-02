@@ -37,7 +37,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         Term low = base.floor(e);
         if (low != null && low.canMerge(e)) {
             base.remove(low);
-
             return mergingAdd(base, low.merge(e));
         }
         Term high = base.higher(e);
@@ -98,6 +97,16 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         }
         return nset;
     }
+
+    static NavigableSet<Term> applyAllSet(NavigableSet<Term> set, UnaryOperator<Term> f) {
+        NavigableSet<Term> nset = getSet();
+        for (Term x : set) {
+            Term re = f.apply(x);
+            nset.add(re);
+        }
+        return nset;
+    }
+
 
     Multinomial(NavigableSet<Term> set) {
         this.terms = set;
@@ -1084,8 +1093,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
             if (t.isZero()) {
                 continue;
             }
-            var x = Term.characterPower(variableName, Fraction.of(i));
-            var re = multiplyToSet(t.terms, x);
+            var pow = Fraction.of(i);
+            var re = applyAllSet(t.terms, x -> x.multiplyChar(variableName, pow));
             mergingAddAll(set, re);
         }
         if (set.isEmpty()) {
@@ -1186,11 +1195,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Returns the greatest common divisor for two multinomials.
-     *
-     * @param m1
-     * @param m2
-     * @return
+     * Returns the greatest common divisor for two multinomials. It is required that
+     * the powers of all characters should be positive integers.
      */
     public static Multinomial gcd(Multinomial m1, Multinomial m2) {
         //first deal with special cases
@@ -1554,7 +1560,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //        var nums = Arrays.asList(
 //                BigInteger.valueOf(2),
 //                BigInteger.valueOf(3),
@@ -1572,10 +1578,10 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 //        var m2 = Multinomial.valueOf("Sqr2+i");
 //        print(m2.conjugations());
 //        print(Multinomial.simplifyFraction(m1, m2));
-        var m1 = Multinomial.valueOf("a^2dk");
-        var m2 = Multinomial.valueOf("a^2*k^2+b^2");
-        print(gcd(m1, m2));
-    }
+//        var m1 = Multinomial.valueOf("a^2dk");
+//        var m2 = Multinomial.valueOf("a^2*k^2+b^2");
+//        print(gcd(m1, m2));
+//    }
 //        var m1 = Multinomial.valueOf("xy+x");
 //        var m2 = Multinomial.valueOf("y+1");
 //        print(m1.compareTo(m2));

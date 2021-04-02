@@ -1190,6 +1190,15 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         return sameNumber0(nmap);
     }
 
+    public Term multiplyChar(String ch, Fraction pow) {
+        if (pow.isZero()) {
+            return this;
+        }
+        var nmap = new TreeMap<>(character);
+        addChar(nmap, ch, pow);
+        return sameNumber0(nmap);
+    }
+
 
     private static Pattern numberPattern = Pattern.compile("[+-]?[\\d.]+");
     private static Pattern charPattern = Pattern.compile("(" + PI_STR + ")|([a-zA-Z]([\\[\\]{}_0-9])*)");
@@ -1372,8 +1381,11 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
 
     }
 
-    private static void addChar(NavigableMap<String, Fraction> character, String cha, Fraction t) {
-        character.merge(cha, t, (ori, toMerge) -> {
+    /**
+     * Adds the character and the corresponding power to the map, removing the character if the resulting power is zero.
+     */
+    private static void addChar(NavigableMap<String, Fraction> cmap, String ch, Fraction t) {
+        cmap.merge(ch, t, (ori, toMerge) -> {
             Fraction re = ori.add(toMerge);
             if (re.isZero()) {
                 return null;

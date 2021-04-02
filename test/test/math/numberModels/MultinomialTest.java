@@ -110,4 +110,12 @@ public class MultinomialTest {
         var m2 = Multinomial.valueOf("y^2+2y+1");
         print(Multinomial.gcd(m1, m2));
     }
+
+    @Test
+    public void gcd2() {
+        var m1 = Multinomial.valueOf("x^-1");
+        var m2 = Multinomial.valueOf("xy^-2");
+        print(Multinomial.gcd(m1, m2));
+    }
+
 }

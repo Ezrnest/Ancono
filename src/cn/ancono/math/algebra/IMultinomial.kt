@@ -45,7 +45,9 @@ interface IMTerm<T : Any> {
  * Created at 2018/12/12 18:51
  * @author  liyicheng
  */
-interface IMultinomial<T : Any> : Iterable<IMTerm<T>> {
+interface IMultinomial<T : Any> {
+    val terms: Iterable<IMTerm<T>>
+
     val size: Int
 
     fun getCoefficient(characters: Map<String, Int>): T?
@@ -59,7 +61,7 @@ interface IMultinomial<T : Any> : Iterable<IMTerm<T>> {
 
         fun <T : Any, MC : EqualPredicate<T>> stringOf(m: IMultinomial<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>) = buildString {
             var start = true
-            for (term in m) {
+            for (term in m.terms) {
                 val s = IMTerm.stringOf(term, mc, nf)
                 if (!start && !isPlusOrMinus(s[0]) && !isPlusOrMinus(last())) {
                     append("+")

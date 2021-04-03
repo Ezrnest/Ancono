@@ -1,6 +1,7 @@
 package test.math.numberModels.structure
 
 import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.structure.MultinomialF
 import cn.ancono.math.numberModels.structure.TermF
 import org.junit.Assert.*
@@ -30,8 +31,18 @@ class MultinomialFTest {
     @Test
     fun testAdd() {
         val mc = Fraction.calculator
-        val f = MultinomialF.one(mc)
+        val f = MultinomialF.parse("1*ab", mc, Fraction::of)
         val g = MultinomialF.parse("1*ab+2*cd", mc, Fraction::of)
+        println(f + g)
+    }
 
+    @Test
+    fun testCreate() {
+        val mc = Fraction.calculator
+        val f = MultinomialF.of(mc,
+                Fraction.ONE to "ab^2",
+                Fraction.NEGATIVE_ONE to "ab^2"
+        )
+        println(f)
     }
 }

@@ -1,20 +1,19 @@
 package cn.ancono.math.numberModels.structure
 
 import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
+import cn.ancono.math.calculus.DifferentialForm
 import cn.ancono.math.numberModels.api.AlgebraModel
+import cn.ancono.math.numberModels.expression.Expression
 import java.util.*
 
+
 /**
- * Describes a multinomial composed with linear independent elements of an algebra `V` on `K`.
- *
- * Created at 2019/9/12 15:51
- * @author  lyc
+ * Template class for general algebra multinomial
  */
-open class AlgebraMultinomial<K : Any, V : Any> internal constructor(
+open class AlgebraMultinomialTemplate<K : Any, V : Any> internal constructor(
         val ac: AlgebraCalculator<K, V>,
         val terms: NavigableSet<V>
-) : AlgebraModel<K, AlgebraMultinomial<K, V>> {
-
+) {
 
     protected fun canMerge(u: V, v: V): Boolean = ac.isLinearDependent(u, v)
 
@@ -76,52 +75,54 @@ open class AlgebraMultinomial<K : Any, V : Any> internal constructor(
         }
     }
 
-    private fun fromTerms(ts: NavigableSet<V>): AlgebraMultinomial<K, V> = AlgebraMultinomial(ac, ts)
+    /**
+     * Override this method to create instances
+     */
+    protected open fun fromTerms(ts: NavigableSet<V>): AlgebraMultinomialTemplate<K, V> = AlgebraMultinomialTemplate(ac, ts)
 
-    override fun add(y: AlgebraMultinomial<K, V>): AlgebraMultinomial<K, V> {
-        return fromTerms(mergeTwo(terms, y.terms))
+    //    protected fun addTerms(ts1: NavigableSet<V>,ts2: NavigableSet<V>) : NavigableSet<V>{
+//        return mergeTwo(ts1, ts2)
+//    }
+//
+    protected fun subtractTerms(ts1: NavigableSet<V>, ts2: NavigableSet<V>): NavigableSet<V> {
+        return mergeTwo(ts1, ts2)
     }
 
-    override fun subtract(y: AlgebraMultinomial<K, V>): AlgebraMultinomial<K, V> {
-        return fromTerms(mergeTwoWith(terms, y.terms) { ac.negate(it) })
-    }
-
-
-    private inline fun applyAll(f: (V) -> V): AlgebraMultinomial<K, V> {
+    protected inline fun applyAllTerms(f: (V) -> V): NavigableSet<V> {
         val re = getTS()
         for (t in terms) {
             re.add(f(t))
         }
-        return fromTerms(re)
+        return re
     }
 
-    override fun negate(): AlgebraMultinomial<K, V> {
-        return applyAll { ac.negate(it) }
+    protected fun negateTerms(): NavigableSet<V> {
+        return applyAllTerms { ac.negate(it) }
     }
 
 
-    private fun singleTerm(t: V): NavigableSet<V> {
+    protected fun singleTerm(t: V): NavigableSet<V> {
         val ts = getTS()
         ts.add(t)
         return ts
     }
 
-    private fun zeroMul(): AlgebraMultinomial<K, V> {
-        val set = singleTerm(ac.zero)
-        return fromTerms(set)
-    }
+//    protected fun zeroMul(): AlgebraMultinomialTemplate<K, V> {
+//        val set = singleTerm(ac.zero)
+//        return fromTerms(set)
+//    }
 
-    override fun multiply(k: K): AlgebraMultinomial<K, V> {
+    protected fun multiplyTerms(k: K): NavigableSet<V> {
         if (ac.scalarCalculator.run { isEqual(k, zero) }) {
-            return zeroMul()
+            return singleTerm(ac.zero)
         }
-        return applyAll { ac.scalarMultiply(k, it) }
+        return applyAllTerms { ac.scalarMultiply(k, it) }
     }
 
     /**
      * The result set must not be modified.
      */
-    private fun mergingMultiply(s1: NavigableSet<V>, s2: NavigableSet<V>): NavigableSet<V> {
+    protected fun mergingMultiply(s1: NavigableSet<V>, s2: NavigableSet<V>): NavigableSet<V> {
         val set = getTS()
         for (x in s1) {
             for (y in s2) {
@@ -132,21 +133,60 @@ open class AlgebraMultinomial<K : Any, V : Any> internal constructor(
     }
 
 
-    override fun multiply(y: AlgebraMultinomial<K, V>): AlgebraMultinomial<K, V> {
-        return fromTerms(mergingMultiply(terms, y.terms))
-    }
+//    override fun multiply(y: AlgebraMultinomialTemplate<K, V>): AlgebraMultinomialTemplate<K, V> {
+//        return fromTerms(mergingMultiply(terms, y.terms))
+//    }
 
-    override fun isZero(): Boolean {
+    protected open fun isZero(): Boolean {
         return terms.size == 1 && ac.isEqual(terms.first(), ac.zero)
     }
 
     override fun toString(): String {
         return terms.joinToString("+")
     }
+}
+
+
+/**
+ * Describes a multinomial composed with linear independent elements of an algebra `V` on `K`.
+ *
+ * Created at 2019/9/12 15:51
+ * @author  lyc
+ */
+class AlgebraMultinomial<K : Any, V : Any> internal constructor(
+        ac: AlgebraCalculator<K, V>,
+        terms: NavigableSet<V>
+) : AlgebraMultinomialTemplate<K, V>(ac, terms), AlgebraModel<K, AlgebraMultinomial<K, V>> {
+    override fun fromTerms(ts: NavigableSet<V>): AlgebraMultinomial<K, V> {
+        return AlgebraMultinomial(ac, ts)
+    }
+
+    override fun add(y: AlgebraMultinomial<K, V>): AlgebraMultinomial<K, V> {
+        return fromTerms(mergeTwo(terms, y.terms))
+    }
+
+    override fun negate(): AlgebraMultinomial<K, V> {
+        return fromTerms(applyAllTerms { ac.negate(it) })
+    }
+
+    override fun subtract(y: AlgebraMultinomial<K, V>): AlgebraMultinomial<K, V> {
+        return fromTerms(subtractTerms(terms, y.terms))
+    }
+
+    override fun isZero(): Boolean {
+        return super.isZero()
+    }
+
+    override fun multiply(k: K): AlgebraMultinomial<K, V> {
+        return fromTerms(multiplyTerms(k))
+    }
+
+    override fun multiply(y: AlgebraMultinomial<K, V>): AlgebraMultinomial<K, V> {
+        return fromTerms(mergingMultiply(terms, y.terms))
+    }
+
 
     companion object {
-
-
         private fun <V : Any> getTS(comp: Comparator<V>): NavigableSet<V> {
             return TreeSet(comp)
         }
@@ -176,6 +216,5 @@ open class AlgebraMultinomial<K : Any, V : Any> internal constructor(
             s.add(ac.zero)
             return AlgebraMultinomial(ac, s)
         }
-
     }
 }

@@ -300,7 +300,9 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
-    override fun pow(x: T, n: Long): T
+    override fun pow(x: T, n: Long): T {
+        return super.pow(x, n)
+    }
 
     /**
      * Gets a constant value from the calculator, the constant value is got by its

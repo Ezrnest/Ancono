@@ -14,8 +14,8 @@ object DifferentialFormSample {
     fun sample1() {
         val ec = ExprCalculator.instance
         val vars = listOf("x", "y", "z", "w")
-        val w = DifferentialForm.valueOf(ec.parse("xyzw"))
-        val v = DifferentialForm.valueOf(ec.parse("x+y+z+w"))
+        val w = DifferentialForm.of(ec.parse("xyzw"), ec)
+        val v = DifferentialForm.of(ec.parse("x+y+z+w"), ec)
         println(w)
         println(v)
         val w2 = w.differential(vars)
@@ -30,7 +30,7 @@ object DifferentialFormSample {
 
     fun sample2() {
         val ec = ExprCalculator.instance
-        val w = DifferentialForm.valueOf(ec.one, "w")
+        val w = DifferentialForm.of(ec.one, ec, "w")
         println(w)
     }
 }

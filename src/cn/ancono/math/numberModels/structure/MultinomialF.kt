@@ -22,24 +22,19 @@ import java.util.regex.Pattern
 typealias CharMap = NavigableMap<String, Int>
 typealias TermSet<T> = NavigableSet<TermF<T>>
 
-object LexicographicalComparator : Comparator<TermF<*>> {
-    override fun compare(o1: TermF<*>, o2: TermF<*>): Int {
-        return CollectionSup.compareLexi(o1.characters, o2.characters)
-    }
 
-}
 
 /*
  * Created at 2018/12/12 18:49
  * @author  liyicheng
  */
-data class TermF<F : Any>(override val coefficient: F, override val characters: CharMap) : IMTerm<F>, Comparable<TermF<F>> {
+data class TermF<F : Any>(override val coefficient: F, override val characters: CharMap) : IMTerm<F> {
 
     constructor(coe: F) : this(coe, Collections.emptyNavigableMap())
 
-    override fun compareTo(other: TermF<F>): Int {
-        return LexicographicalComparator.compare(this, other)
-    }
+//    override fun compareTo(other: TermF<F>): Int {
+//        return LexicographicalComparator.compare(this, other)
+//    }
 
     fun getCharPow(ch: String): Int {
         return characters.getOrDefault(ch, 0)
@@ -116,6 +111,7 @@ data class TermF<F : Any>(override val coefficient: F, override val characters: 
 
         private val CHAR_PATTERN = Pattern.compile("((?<ch1>[a-zA-Z]_?\\d*)|(\\{(?<ch2>[^}]+)\\}))(\\^(?<pow>[+-]?\\d+))?")
 
+
         fun parseChar(chs: String): CharMap {
             val map = TreeMap<String, Int>()
             val matcher = CHAR_PATTERN.matcher(chs)
@@ -131,8 +127,26 @@ data class TermF<F : Any>(override val coefficient: F, override val characters: 
             return map
         }
 
+        /**
+         * Parses the character part and combines it with the coefficient to build a term. The format of
+         * character is:
+         *
+         *     character  ::= ch1 | ("{" ch2 "}")
+         *     ch1        ::= [a-zA-Z]\w*
+         *     ch2        ::= [^{]+
+         *     power      ::= (+|-)? \d+
+         *
+         * `ch1` or `ch2` will be the characters stored in the resulting term.
+         *
+         */
         fun <F : Any> parse(coe: F, chs: String): TermF<F> {
             return TermF(coe, parseChar(chs))
+        }
+    }
+
+    object TermComparator : Comparator<TermF<*>> {
+        override fun compare(o1: TermF<*>, o2: TermF<*>): Int {
+            return CollectionSup.compareLexi(o1.characters, o2.characters)
         }
     }
 }
@@ -146,16 +160,18 @@ internal constructor(
         /**
          * A navigable set, non-empty.
          */
-        val terms: NavigableSet<TermF<F>>) :
+        internal val ts: NavigableSet<TermF<F>>) :
 
         MathObjectExtend<F>(mc),
         IMultinomial<F>,
         AlgebraModel<F, MultinomialF<F>> {
 
     init {
-        require(terms.isNotEmpty())
+        require(ts.isNotEmpty())
     }
 
+    override val terms: NavigableSet<TermF<F>>
+        get() = Collections.unmodifiableNavigableSet(ts)
     //    internal val terms : TermSet<T>
 //    init{
 //        if(terms.isNotEmpty()){
@@ -168,14 +184,15 @@ internal constructor(
 //    }
 
     val characters: Set<String>
-        get() = terms.flatMapTo(TreeSet()) {
+        get() = ts.flatMapTo(TreeSet()) {
             it.characters.keys
         }
+
 
     private fun fromTerms(ts: TermSet<F>): MultinomialF<F> = MultinomialF(mc, ts)
 
     private fun getTS(): TermSet<F> {
-        return TreeSet(terms.comparator())
+        return TreeSet(ts.comparator())
     }
 
     private fun getTS(set: TermSet<F>): TermSet<F> {
@@ -297,17 +314,17 @@ internal constructor(
 
 
     override fun add(y: MultinomialF<F>): MultinomialF<F> {
-        return fromTerms(mergeTwo(terms, y.terms))
+        return fromTerms(mergeTwo(ts, y.ts))
     }
 
     override fun subtract(y: MultinomialF<F>): MultinomialF<F> {
-        return fromTerms(mergeTwoWith(terms, y.terms) { -it })
+        return fromTerms(mergeTwoWith(ts, y.ts) { -it })
     }
 
 
     private inline fun applyAll(f: (TermF<F>) -> TermF<F>): MultinomialF<F> {
         val re = getTS()
-        for (t in terms) {
+        for (t in ts) {
             re.add(f(t))
         }
         return fromTerms(re)
@@ -356,7 +373,7 @@ internal constructor(
 
 
     override fun multiply(y: MultinomialF<F>): MultinomialF<F> {
-        return fromTerms(mergingMultiply(terms, y.terms))
+        return fromTerms(mergingMultiply(ts, y.ts))
     }
 
     fun pow(n: Long): MultinomialF<F> {
@@ -364,28 +381,28 @@ internal constructor(
     }
 
     override fun isZero(): Boolean {
-        return terms.size == 1 && terms.first().isZero()
+        return ts.size == 1 && ts.first().isZero()
     }
 
     fun isConstant(): Boolean {
-        return terms.size == 1 && terms.first().isConstant()
+        return ts.size == 1 && ts.first().isConstant()
     }
 
     fun isOne(): Boolean {
-        return terms.size == 1 && terms.first().run { characters.isEmpty() && coefficient == mc.one }
+        return ts.size == 1 && ts.first().run { characters.isEmpty() && coefficient == mc.one }
     }
 
     fun divideAndRemainder(y: MultinomialF<F>): Pair<MultinomialF<F>, MultinomialF<F>> {
-        val m = getTS(terms)
+        val m = getTS(ts)
         val q = singleTerm(zeroTerm())
-        multinomialDivision(m, y.terms, q)
+        multinomialDivision(m, y.ts, q)
         return fromTerms(q) to fromTerms(m)
     }
 
     fun exactDivide(y: MultinomialF<F>): MultinomialF<F> {
-        val m = getTS(terms)
+        val m = getTS(ts)
         val q = singleTerm(zeroTerm())
-        multinomialDivision(m, y.terms, q)
+        multinomialDivision(m, y.ts, q)
         if (m.isNotEmpty()) {
             ExceptionUtil.notExactDivision(this, y)
         }
@@ -419,7 +436,7 @@ internal constructor(
         while (remainChars.containsAll(divisorChars)) {
             val head = m.first()
 
-            if (head > divisorHead) {
+            if (TermF.TermComparator.compare(head, divisorHead) > 0) {
                 //can't divide
                 break
             }
@@ -452,21 +469,21 @@ internal constructor(
     override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<F, N>): MultinomialF<N> {
         return MultinomialF(
                 newCalculator,
-                terms.mapTo(getDefaultTermsSet()) { TermF(mapper.apply(it.coefficient), it.characters) })
+                ts.mapTo(getDefaultTermsSet()) { TermF(mapper.apply(it.coefficient), it.characters) })
     }
 
     override fun valueEquals(obj: MathObject<F>): Boolean {
         if (obj !is MultinomialF) {
             return false
         }
-        if (terms.size != obj.terms.size) {
+        if (ts.size != obj.ts.size) {
             return false
         }
-        if (terms.comparator() != obj.terms.comparator()) {
+        if (ts.comparator() != obj.ts.comparator()) {
             return false
         }
-        val it1 = terms.iterator()
-        val it2 = obj.terms.iterator()
+        val it1 = ts.iterator()
+        val it2 = obj.ts.iterator()
         while (it1.hasNext()) {
             val t1 = it1.next()
             val t2 = it2.next()
@@ -485,21 +502,18 @@ internal constructor(
     }
 
     override val size: Int
-        get() = terms.size
+        get() = ts.size
 
     override fun getCoefficient(characters: Map<String, Int>): F? {
-        return terms.find { it.characters == characters }?.coefficient
-    }
-
-    override fun iterator(): Iterator<IMTerm<F>> {
-        return terms.iterator()
+        return ts.find { it.characters == characters }?.coefficient
     }
 
 
     companion object {
         internal fun <F : Any> getDefaultTermsSet(): NavigableSet<TermF<F>> {
-            return TreeSet(LexicographicalComparator)
+            return TreeSet(TermF.TermComparator)
         }
+
 
         fun <F : Any> monomial(t: TermF<F>, mc: MathCalculator<F>): MultinomialF<F> {
             val s = getDefaultTermsSet<F>()
@@ -518,17 +532,24 @@ internal constructor(
 
         fun <F : Any> of(mc: MathCalculator<F>, terms: List<TermF<F>>): MultinomialF<F> {
             val set = getDefaultTermsSet<F>()
-            set.addAll(terms)
-            return MultinomialF(mc, set)
+            val re = MultinomialF(mc, set)
+            re.mergingAddAll(set, terms)
+            if (set.isEmpty()) {
+                return zero(mc)
+            }
+            return re
         }
 
         fun <F : Any> of(mc: MathCalculator<F>, vararg terms: TermF<F>): MultinomialF<F> {
             return of(mc, terms.asList())
         }
 
-
+        /**
+         * Returns a multinomial built from the given coefficients and character strings.
+         * The format
+         */
         fun <F : Any> of(mc: MathCalculator<F>, vararg terms: Pair<F, String>): MultinomialF<F> {
-            return of(mc, terms.map { (c, s) -> TermF(c, TermF.parseChar(s)) })
+            return of(mc, terms.map { (c, s) -> TermF.parse(c, s) })
         }
 
         private val PLUS_AND_MINUS = "+-".toCharArray()
@@ -591,7 +612,7 @@ internal constructor(
         fun <F : Any> asPolynomial(m: MultinomialF<F>, ch: String, mmc: MultinomialFCalculator<F>): Polynomial<MultinomialF<F>> {
             val mc = m.mc
             var deg = 0
-            for (f in m.terms) {
+            for (f in m.ts) {
                 val pow: Int = f.getCharPow(ch)
                 if (pow < 0) {
                     throw ArithmeticException("Unsupported exponent for:[$ch] in $f")
@@ -602,7 +623,7 @@ internal constructor(
             }
 
             val arr = ArrayList(Collections.nCopies(deg + 1, mmc.zero))
-            for (f in m.terms) {
+            for (f in m.ts) {
                 val pow = f.getCharPow(ch)
                 val coe = monomial(f.removeChar(ch), mc)
                 arr[pow] = arr[pow].add(coe)
@@ -613,13 +634,13 @@ internal constructor(
         fun <F : Any> fromPolynomialM(p: IPolynomial<MultinomialF<F>>, ch: String): MultinomialF<F> {
             val mc = p.constant().mc
             val dummy = zero(mc)
-            val result = dummy.terms
+            val result = dummy.ts
             for (i in 0..p.leadingPower) {
                 val coe = p.getCoefficient(i)
                 if (coe.isZero()) {
                     continue
                 }
-                dummy.mergingAddAllWith(result, coe.terms) { it.multiplyChar(ch, i) }
+                dummy.mergingAddAllWith(result, coe.ts) { it.multiplyChar(ch, i) }
             }
             return MultinomialF(mc, result)
         }
@@ -684,7 +705,7 @@ class MultinomialFCalculator<T : Any>(val mc: MathCalculator<T>)
     private fun gcd0(a: MultinomialF<T>, b: MultinomialF<T>): MultinomialF<T> {
         // consider m1 and m2 as polynomial on fraction ring of multinomial
         // see the similar method in Multinomial
-        val ch: String = a.terms.asSequence().flatMap { it.characters.keys }.first()
+        val ch: String = a.ts.asSequence().flatMap { it.characters.keys }.first()
         val p1 = MultinomialF.asPolynomial(a, ch, this) // Polynomial<Multinomial>
 
         val p2 = MultinomialF.asPolynomial(b, ch, this)
@@ -694,11 +715,8 @@ class MultinomialFCalculator<T : Any>(val mc: MathCalculator<T>)
     }
 
     override fun gcd(a: MultinomialF<T>, b: MultinomialF<T>): MultinomialF<T> {
-        /*
-        Created by liyicheng at 2020/2/27
-        */
-
-        //first deal with special cases
+        //Created by lyc at 2021-04-02 17:4
+        // see the corresponding method in Multinomial
         if (a.isZero()) {
             return b
         }

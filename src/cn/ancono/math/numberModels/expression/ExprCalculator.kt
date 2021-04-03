@@ -9,6 +9,7 @@ import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.MultinomialCalculator
 import cn.ancono.math.numberModels.Term
+import cn.ancono.math.numberModels.api.FunctionCalculator
 import cn.ancono.math.numberModels.api.Simplifier
 import cn.ancono.math.numberModels.expression.Node.*
 import cn.ancono.math.numberModels.expression.anno.AllowModify
@@ -106,7 +107,7 @@ class ExprCalculator
          *
          * @return the ss
          */
-        val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : MathCalculator<Expression> {
+        val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : FunctionCalculator<Expression> {
     internal val enabledTags: MutableSet<String> = SimplificationStrategies.getDefaultTags()
     internal val properties: MutableMap<String, String>
 
@@ -1021,18 +1022,21 @@ class ExprCalculator
         return Expression(simplify(nroot))
     }
 
+
     /**
-     * Returns the differential of an expression.
+     * Returns the differential of an expression as a function of the given variable.
      */
-    @JvmOverloads
-    fun differential(expr: Expression, variableName: String = "x", times: Int = 1): Expression {
-        var re = expr
-        repeat(times) {
-            re = differential0(re, variableName)
+    override fun differential(f: Expression, variable: String, order: Int): Expression {
+        var re = f
+        repeat(order) {
+            re = differential0(re, variable)
         }
         return re
     }
 
+    fun differential(f: Expression, variable: String = "x"): Expression {
+        return differential0(f, variable)
+    }
 
     companion object {
 

@@ -83,10 +83,6 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         throwFor()
     }
 
-    override fun pow(x: T, n: Long): T {
-        throwFor()
-    }
-
     override fun exp(a: T, b: T): T {
         return exp(multiply(ln(a), b))
     }

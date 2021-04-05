@@ -1,6 +1,7 @@
 # Ancono
 
-An object-oriented math library on JVM platform.
+An object-oriented and functional view of mathematics besides a math library on JVM platform.
+
 
 ---
 

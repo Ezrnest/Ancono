@@ -42,7 +42,7 @@ import java.util.function.Function;
  * In addition to the operations provided by matrix object,
  * the matrix class itself provides several static methods for basic matrix calculation such as {@link
  * #add(Matrix, Matrix)}
- * and {@link #multiply(Matrix, Matrix)}.To do more complex operations or to have better
+ * and {@link #multiply(Matrix, Matrix)}. To do more complex operations or to have better
  * time performance , you can seek {@linkplain MatrixSup} for some useful methods.
  * <p>
  * To create a Matrix , you can either use a two-dimension array as parameter or

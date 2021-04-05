@@ -71,7 +71,7 @@ class PowerSeries<T : Any>(mc: MathCalculator<T>, val coefficient: Coefficient<T
     }
 
     fun toPolynomial(n: Int): Polynomial<T> {
-        return Polynomial.valueOf(mc, (0..n).map { coefficient(it) })
+        return Polynomial.of(mc, (0..n).map { coefficient(it) })
     }
 
 //    /**

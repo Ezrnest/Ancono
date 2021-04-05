@@ -206,9 +206,10 @@ public final class SVector<T> extends Vector<T> {
      * @return this × s
      */
     public SVector<T> outerProduct(SVector<T> s) {
-        T nx = getMc().subtract(getMc().multiply(y, s.z), getMc().multiply(s.y, z));
-        T ny = getMc().subtract(getMc().multiply(z, s.x), getMc().multiply(s.z, x));
-        T nz = getMc().subtract(getMc().multiply(x, s.y), getMc().multiply(s.x, y));
+        var mc = getMc();
+        T nx = mc.subtract(mc.multiply(y, s.z), mc.multiply(s.y, z));
+        T ny = mc.subtract(mc.multiply(z, s.x), mc.multiply(s.z, x));
+        T nz = mc.subtract(mc.multiply(x, s.y), mc.multiply(s.x, y));
         return new SVector<T>(nx, ny, nz, getMc());
     }
 
@@ -430,15 +431,6 @@ public final class SVector<T> extends Vector<T> {
         return sn;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append('(').append(x)
-                .append(',').append(y)
-                .append(',').append(z)
-                .append(')');
-        return sb.toString();
-    }
 
     private int hashCode = 0;
 

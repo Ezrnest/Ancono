@@ -840,6 +840,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return
          */
         @Suppress("UNCHECKED_CAST")
+        @JvmStatic
         fun <T : Any> zero(mc: MathCalculator<T>): Complex<T> {
             var c: Complex<T>? = zeros[mc] as Complex<T>?
             if (c == null) {
@@ -868,6 +869,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         /**
          * Gets the value of `1`.
          */
+        @JvmStatic
         fun <T : Any> one(mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.one, mc.zero)
         }
@@ -875,6 +877,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         /**
          * Gets the value of `i`.
          */
+        @JvmStatic
         fun <T : Any> i(mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.zero, mc.one)
         }
@@ -892,6 +895,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
             return Complex(mc, a, mc.zero)
         }
 
+        @JvmStatic
         fun <T : Any> inf(mc: MathCalculator<T>): ComplexE<T> {
             return ComplexInf(mc)
         }

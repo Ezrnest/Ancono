@@ -102,7 +102,7 @@ protected constructor(mc: MathCalculator<T>) : FlexibleMathObject<T, MathCalcula
      * through [NumberFormatter.format].
      */
     override fun toString(): String {
-        return toString(FlexibleNumberFormatter.getToStringFormatter())
+        return toString(FlexibleNumberFormatter.getDefaultFormatter())
     }
 }
 

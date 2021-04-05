@@ -221,6 +221,15 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
                 radical.equals(BigInteger.ONE);
     }
 
+    /**
+     * Converts this terms to be an integer.
+     */
+    public int toInt() {
+        if (!isInteger()) {
+            throw new ArithmeticException();
+        }
+        return numerator.intValueExact();
+    }
 //    public int toInt(){
 //        if (!isInteger()) {
 //            throw new ArithmeticException("No an integer!");
@@ -237,17 +246,30 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         return character.isEmpty() && radical.equals(BigInteger.ONE);
     }
 
+
+    /**
+     * Converts this term to a fraction,
+     * throws an exception if this term cannot be represented as a fraction.
+     */
+    public Fraction toFraction() {
+        if (!isFraction()) {
+            throw new ArithmeticException("Not a fraction:" + this);
+        }
+        return numberPartToFraction();
+    }
+
     /**
      * Converts the numerator and denominator of this term to a Fraction.
      *
      * @return a Fraction
      */
-    public Fraction toFraction() {
+    public Fraction numberPartToFraction() {
         if (signum == 0) {
             return Fraction.ZERO;
         }
         return Fraction.of(signum, numerator.longValueExact(), denominator.longValueExact());
     }
+
 
     /**
      * Determines whether this term have coefficient of one.

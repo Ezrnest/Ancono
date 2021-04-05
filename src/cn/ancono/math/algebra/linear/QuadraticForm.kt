@@ -27,7 +27,7 @@ class QuadraticForm {
                 if (!term.isRational) {
                     throw IllegalArgumentException("Not rational")
                 }
-                val f = term.toFraction()
+                val f = term.numberPart().toFraction()
                 val tch = term.character
                 when {
                     tch.size == 1 -> {

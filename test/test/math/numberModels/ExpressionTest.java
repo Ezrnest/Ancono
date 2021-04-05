@@ -56,16 +56,16 @@ public class ExpressionTest {
 
 	@Test
 	public void testFractionSimplify1() {
-		Expression x = Expression.fromMultinomial(Multinomial.valueOf("a+b")),
-				y = Expression.fromMultinomial(Multinomial.valueOf("a")),
-				z = Expression.fromMultinomial(Multinomial.valueOf("b"));
-		y = mc.multiply(sin, y);
-		z = mc.multiply(sin, z);
-		y = mc.divide(y, x);
-		z = mc.divide(z, x);
-		x = mc.add(y, z);
-		assertEquals("((a)*sin(x))/(a+b)+((b)*sin(x))/(a+b) = sin(x)" , x.toString(), "sin(x)");
-	}
+        Expression x = Expression.fromMultinomial(Multinomial.parse("a+b")),
+                y = Expression.fromMultinomial(Multinomial.parse("a")),
+                z = Expression.fromMultinomial(Multinomial.parse("b"));
+        y = mc.multiply(sin, y);
+        z = mc.multiply(sin, z);
+        y = mc.divide(y, x);
+        z = mc.divide(z, x);
+        x = mc.add(y, z);
+        assertEquals("((a)*sin(x))/(a+b)+((b)*sin(x))/(a+b) = sin(x)", x.toString(), "sin(x)");
+    }
 	@Test
 	public void testFractionSimplify2() {
 		Expression x = mc.divide(sin, cos),
@@ -94,12 +94,12 @@ public class ExpressionTest {
 	}
 
 	@Test
-    public void testMerge(){
+    public void testMerge() {
         SimplificationStrategies.setCalRegularization(mc);
-        Expression x = mc.squareRoot(Expression.fromMultinomial(Multinomial.valueOf("a+b"))),
-                y = Expression.fromMultinomial(Multinomial.valueOf("a")),
-                z = Expression.fromMultinomial(Multinomial.valueOf("b"));
-        printAndList(mc.add(mc.multiply(x,y),mc.multiply(x,z)));
+        Expression x = mc.squareRoot(Expression.fromMultinomial(Multinomial.parse("a+b"))),
+                y = Expression.fromMultinomial(Multinomial.parse("a")),
+                z = Expression.fromMultinomial(Multinomial.parse("b"));
+        printAndList(mc.add(mc.multiply(x, y), mc.multiply(x, z)));
     }
 
     @Test

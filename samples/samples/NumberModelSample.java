@@ -1,8 +1,11 @@
 package samples;
 
+import cn.ancono.math.algebra.linear.Matrix;
+import cn.ancono.math.geometry.projective.MobiusTrans;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.structure.Complex;
+
 /*
  * Created by lyc at 2020/2/29
  */
@@ -29,9 +32,47 @@ public class NumberModelSample {
         System.out.println(z3);
     }
 
+    public static void mobiusTrans() {
+        var mc = Calculators.doubleDev();
+        var one = Complex.one(mc);
+        var i = Complex.i(mc);
+        var n_i = i.negate();
+        var f = MobiusTrans.Companion.to01Inf(one, i, n_i);
+        //creates a Mobius transformation that maps 1,i,-1 to 0,1,inf
+        System.out.println(f);
+        System.out.println(f.apply(i));
+        System.out.println(f.inverse().apply(Complex.inf(mc)));
+    }
+
+    public static void zModP1() {
+        var mc = Calculators.intModP(29);
+        var x = 4;
+        var y = mc.reciprocal(x);
+        System.out.println(y); // y = 22
+        System.out.println(mc.multiply(x, y));
+        // 4 * 22 = 88 = 1 + 3 * 29 = 1
+    }
+
+    public static void zModP() {
+        var mc = Calculators.intModP(29);
+        System.out.println();
+        var matrix = Matrix.of(mc, 2, 2,
+                1, 2,
+                3, 4);
+        System.out.println("M = ");
+        matrix.printMatrix();
+        System.out.println("Inverse of M in Z mod 29 is");
+        var inv = matrix.inverse();
+        inv.printMatrix();
+        System.out.println("Check their product:");
+        Matrix.multiply(matrix, inv).printMatrix();
+    }
+
 
     public static void main(String[] args) {
-        useFraction1();
-        useComplex();
+//        useFraction1();
+//        useComplex();
+//        mobiusTrans();
+        zModP();
     }
 }

@@ -278,7 +278,7 @@ public final class Expression implements Computable, Serializable {
                 Pair<String, Boolean> p = list.get(0);
                 String s = p.getFirst();
                 try {
-                    Multinomial l = Multinomial.valueOf(s);
+                    Multinomial l = Multinomial.parse(s);
                     return new Node.Poly(parent, p.getSecond() ? l : l.negate());
                 } catch (NumberFormatException ignored) {
                 }
@@ -464,7 +464,7 @@ public final class Expression implements Computable, Serializable {
 
         Multinomial parseWithExceptionDetail(String expr, int offset) {
             try {
-                return Multinomial.valueOf(expr);
+                return Multinomial.parse(expr);
             } catch (NumberFormatException ex) {
                 throwFor(ex.getMessage() + ": ", offset);
                 //exception here
@@ -493,7 +493,7 @@ public final class Expression implements Computable, Serializable {
     /**
      * Expression constant ten.
      */
-    public static final Expression TEN = fromMultinomial(Multinomial.valueOf(10L));
+    public static final Expression TEN = fromMultinomial(Multinomial.of(10L));
 
     /**
      * Expression constant negative one

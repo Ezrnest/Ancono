@@ -1159,14 +1159,14 @@ public final class SimplificationStrategies {
                     List<Pair<Node, BigInteger>> powers = en.getValue();
                     if (powers.size() == 1) {
                         Pair<Node, BigInteger> p = powers.get(0);
-                        Node exponent = Node.wrapNodeMultiply(p.getFirst(), Multinomial.valueOf(p.getSecond()));
+                        Node exponent = Node.wrapNodeMultiply(p.getFirst(), Multinomial.of(p.getSecond()));
                         Pair<Node, BigInteger> result = new Pair<>(Node.wrapNodeDF("exp", down, exponent),
                                 BigInteger.ONE);
                         nlist.add(result);
                     } else {
                         List<Node> adds = new ArrayList<>(powers.size());
                         for (Pair<Node, BigInteger> pair : powers) {
-                            Node exponent = Node.wrapNodeMultiply(pair.getFirst(), Multinomial.valueOf(pair.getSecond()));
+                            Node exponent = Node.wrapNodeMultiply(pair.getFirst(), Multinomial.of(pair.getSecond()));
                             adds.add(exponent);
                         }
                         Node expo = Node.wrapNodeAM(true, adds);

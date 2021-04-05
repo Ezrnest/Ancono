@@ -1009,7 +1009,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * @param expr a string representing the multinomial
      * @return a new multinomial.
      */
-    public static Multinomial valueOf(String expr) {
+    public static Multinomial parse(String expr) {
         expr = expr.trim();
         if (expr.isEmpty()) {
             throw new NumberFormatException("Empty!");
@@ -1044,7 +1044,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * @param val a BigInteger
      * @return a Multinomial
      */
-    public static Multinomial valueOf(BigInteger val) {
+    public static Multinomial of(BigInteger val) {
         return monomial(Term.valueOf(val));
     }
 
@@ -1437,7 +1437,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      *
      * @param n a long
      */
-    public static Multinomial valueOf(long n) {
+    public static Multinomial of(long n) {
         if (n == 0) {
             return ZERO;
         } else if (n == -1) {

@@ -57,6 +57,7 @@ data class RefDForm(val name: String, override val n: Int) : AtomicDForm() {
 //}
 
 /**
+ * A single term in a differential form.
  *
  * Created at 2019/9/14 14:59
  * @author  lyc
@@ -243,7 +244,7 @@ class DFBaseCalculator<T : Any>(val mc: FunctionCalculator<T>) : AlgebraCalculat
 
 /**
  * Defines a differential form on number model type `T`,
- * it is required that the
+ * it is required that the calculator of `T` is a FunctionCalculator, that is, it supports differential.
  */
 class DifferentialForm<T : Any> internal constructor(terms: NavigableSet<DFBase<T>>, val dc: DFBaseCalculator<T>) :
         AlgebraMultinomialTemplate<T, DFBase<T>>(dc, terms),
@@ -296,7 +297,7 @@ class DifferentialForm<T : Any> internal constructor(terms: NavigableSet<DFBase<
     }
 //
     /**
-     * Computes the outer differential of this differential form. A list of variable names is required.
+     * Computes the exterior differential of this differential form. A list of variable names is required.
      */
     fun differential(variables: List<String> = DefaultVariables): DifferentialForm<T> {
         val re = getTS()
@@ -498,5 +499,6 @@ class DiffFormCalculator<T : Any>(val mc: FunctionCalculator<T>)
     override fun gpow(x: DifferentialForm<T>, n: Long): DifferentialForm<T> {
         return multiplyLong(x, n)
     }
+
 
 }

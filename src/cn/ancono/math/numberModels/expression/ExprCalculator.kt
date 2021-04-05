@@ -410,7 +410,7 @@ class ExprCalculator
             val p1 = toPolynomial(x.root).p
             return Expression(newPolyNode(multinomialCalculator.multiplyLong(p1, n), null))
         }
-        var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.valueOf(n))
+        var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.of(n))
         root = simplify(root)
         return Expression(root)
     }
@@ -453,7 +453,7 @@ class ExprCalculator
 	 * long)
 	 */
     override fun pow(x: Expression, n: Long): Expression {
-        var root: Node = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(Multinomial.valueOf(n), null))
+        var root: Node = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(Multinomial.of(n), null))
         root = simplify(root)
         return Expression(root)
     }

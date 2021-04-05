@@ -491,7 +491,7 @@ private object ExpProcessor2 : CFPAdapter(ExprFunction.FUNCTION_NAME_EXP, 2) {
         if (!exp.isMonomial || !exp.first.isRational) {
             return null
         }
-        val pow = exp.first.toFraction()
+        val pow = exp.first.numberPartToFraction()
         return Limit.power(x, pow, mc)
     }
 

@@ -534,11 +534,13 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         }
 
         @JvmStatic
+        @SafeVarargs
         fun <T : Any> createBaseWithoutCheck(vararg vectors: Vector<T>): VectorBasis<T> {
             return createBaseWithoutCheck(vectors.asList())
         }
 
         @JvmStatic
+        @SafeVarargs
         fun <T : Any> generate(vararg vectors: Vector<T>): VectorBasis<T> {
             return Vector.maximumLinearIrrelevant(*vectors)
         }

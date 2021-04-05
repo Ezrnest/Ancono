@@ -590,15 +590,16 @@ internal constructor(
                 if (end == -1) {
                     end = expr.length
                 }
-                val part = expr.substring(idx, end)
+                val part = expr.substring(idx, end).trim()
 
                 val idxOfMul = part.lastIndexOf('*')
                 if (idxOfMul == -1) {
-                    terms.add(TermF.constant(parser(part)))
+                    terms.add(TermF.constant(ParserUtils.parseCoefficient(part, parser, mc)))
                 } else {
-                    val coe = part.substring(0, idxOfMul)
+                    val strCoe = part.substring(0, idxOfMul)
+                    val coe = ParserUtils.parseCoefficient(strCoe, parser, mc)
                     val chs = part.substring(idxOfMul + 1)
-                    terms.add(TermF.parse(parser(coe), chs))
+                    terms.add(TermF.parse(coe, chs))
                 }
 
 
@@ -628,7 +629,7 @@ internal constructor(
                 val coe = monomial(f.removeChar(ch), mc)
                 arr[pow] = arr[pow].add(coe)
             }
-            return Polynomial.valueOf(mmc, arr)
+            return Polynomial.of(mmc, arr)
         }
 
         fun <F : Any> fromPolynomialM(p: IPolynomial<MultinomialF<F>>, ch: String): MultinomialF<F> {

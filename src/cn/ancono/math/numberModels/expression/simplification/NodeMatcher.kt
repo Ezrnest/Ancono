@@ -46,7 +46,7 @@ interface NodeMatcher {
 }
 
 val String.m: PolyMatcher
-    get() = PolyMatcher(Multinomial.valueOf(this))
+    get() = PolyMatcher(Multinomial.parse(this))
 
 val String.ref: SingleRefMatcher
     get() = SingleRefMatcher(this)
@@ -90,7 +90,7 @@ val monomial = polyOf { it.isMonomial }
  * Gets a matcher that matches the Int.
  */
 val Int.m: PolyMatcher
-    get() = PolyMatcher(Multinomial.valueOf(this.toLong()))
+    get() = PolyMatcher(Multinomial.of(this.toLong()))
 
 val Multinomial.m: PolyMatcher
     get() = PolyMatcher(this)

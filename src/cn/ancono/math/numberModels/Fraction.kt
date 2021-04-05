@@ -270,6 +270,7 @@ internal constructor(
         return Fraction(nNum, denominator, signum)
     }
 
+
     /**
      * Return the value of `this - num`
      * @param num a number
@@ -1181,7 +1182,6 @@ internal constructor(
 fun Long.toFrac(): Fraction = Fraction.of(this)
 
 fun Int.toFrac(): Fraction = Fraction.of(this.toLong())
-
 
 //fun main(args: Array<String>) {
 ////    val f1 = Fraction.valueOf(-4, 3)

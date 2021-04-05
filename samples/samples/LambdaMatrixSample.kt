@@ -16,7 +16,7 @@ fun main() {
 
 
     val expr = "10x^2+8xy+24xz+2y^2-28yz+z^2"
-    val B = QuadraticForm.representationMatrix(Multinomial.valueOf(expr))
+    val B = QuadraticForm.representationMatrix(Multinomial.parse(expr))
     B.printMatrix()
     val (J, P) = B.congruenceDiagForm()
     J.printMatrix()

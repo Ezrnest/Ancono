@@ -24,7 +24,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         get() = Multinomial::class.java
 
     override fun of(x: Long): Multinomial {
-        return valueOf(x)
+        return of(x)
     }
 
     override fun of(x: Fraction): Multinomial {
@@ -623,10 +623,10 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             SIN_VALUE[ofVal(1L, 2L)] = ONE
             //sin(Pi/2) = 1
 
-            SIN_VALUE[ofVal(1L, 12L)] = valueOf("Sqr6/4-Sqr2/4")
+            SIN_VALUE[ofVal(1L, 12L)] = parse("Sqr6/4-Sqr2/4")
             //sin(Pi/12) = sqr6/4-sqr2/4
 
-            SIN_VALUE[ofVal(5L, 12L)] = valueOf("Sqr6/4+Sqr2/4")
+            SIN_VALUE[ofVal(5L, 12L)] = parse("Sqr6/4+Sqr2/4")
             //sin(Pi/12) = sqr6/4-sqr2/4
 
             TAN_VALUE[ofVal(0L, 1L)] = ZERO
@@ -642,9 +642,9 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             )
             //tan(Pi/3) = Sqr(3)
 
-            TAN_VALUE[ofVal(1L, 12L)] = valueOf("2-Sqr3")
+            TAN_VALUE[ofVal(1L, 12L)] = parse("2-Sqr3")
             //tan(Pi/12) = 2-Sqr3
-            TAN_VALUE[ofVal(5L, 12L)] = valueOf("2+Sqr3")
+            TAN_VALUE[ofVal(5L, 12L)] = parse("2+Sqr3")
             //tan(Pi/12) = 2+Sqr3
 
             for ((p, value) in SIN_VALUE) {

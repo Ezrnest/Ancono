@@ -10,8 +10,8 @@ class DifferentialFormTest {
         val ec = ExprCalculator.instance
         val one = ec.one
 //        val mc = DifferentialForm
-        val f = DifferentialForm.of(ec.parse("x^2"), "x", "y", "z")
-        val g = DifferentialForm.of(one, "a", "b", "c")
+        val f = DifferentialForm.of(ec.parse("x^2"), ec, "x", "y", "z")
+        val g = DifferentialForm.of(one, ec, "a", "b", "c")
         println(f)
         println(f.differential("x"))
     }

@@ -773,7 +773,7 @@ public final class Polynomial<T> extends MathObject<T> implements
     private static <T> Polynomial<T> sumOfX1(MathCalculator<T> mc) {
         //1+2+...n = (n+1)n / 2 = 1/2 * n^2 + 1/2 * n
         var half = mc.divideLong(mc.getOne(), 2L);
-        return Polynomial.valueOf(mc, mc.getZero(), half, half);
+        return Polynomial.of(mc, mc.getZero(), half, half);
     }
 
     private static <T> Polynomial<T> sumOfX2(MathCalculator<T> mc) {
@@ -781,7 +781,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 3), mc);
         var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
         var c3 = CalculatorUtils.valueOfFraction(Fraction.of(1, 6), mc);
-        return Polynomial.valueOf(mc, mc.getZero(), c3, c2, c1);
+        return Polynomial.of(mc, mc.getZero(), c3, c2, c1);
     }
 
     private static <T> Polynomial<T> sumOfX3(MathCalculator<T> mc) {
@@ -789,7 +789,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 4), mc);
         var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
         var o = mc.getZero();
-        return Polynomial.valueOf(mc, o, o, c1, c2, c1);
+        return Polynomial.of(mc, o, o, c1, c2, c1);
     }
 
     /**
@@ -1030,7 +1030,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * @param coes coefficients of the polynomial, <code>null</code> will be treated as zero.
      */
     @SafeVarargs
-    public static <T> Polynomial<T> valueOf(MathCalculator<T> mc, T... coes) {
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, T... coes) {
         if (coes.length == 0) {
             return zero(mc);
         }
@@ -1043,16 +1043,16 @@ public final class Polynomial<T> extends MathObject<T> implements
         return new Polynomial<>(mc, trimLeadingZerosAndCopy(coes, mc));
     }
 
-    public static <T> Polynomial<T> valueOf(MathCalculator<T> mc, List<T> coes) {
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, List<T> coes) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) coes.toArray();
-        return valueOf(mc, arr);
+        return of(mc, arr);
     }
 
     /**
      * Creates a polynomial with the given coefficient map.
      */
-    public static <T> Polynomial<T> valueOf(MathCalculator<T> mc, Map<Integer, T> coeMap) {
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, Map<Integer, T> coeMap) {
         int maxPow = Collections.max(coeMap.keySet());
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[maxPow + 1];
@@ -1063,9 +1063,68 @@ public final class Polynomial<T> extends MathObject<T> implements
         return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
     }
 
+    /**
+     * Parses the given string to be a polynomial.
+     * <p></p>
+     * The format of a polynomial can be described as follows:
+     * <pre> polynomial ::= term ([+-] term)*
+     * term ::= [+-]* coefficient ("*"? "x^" pow)?
+     * pow  ::= \d+
+     * </pre>
+     */
+    public static <T> Polynomial<T> parse(String expr, MathCalculator<T> mc, Function<String, T> parser) {
+        var terms = new HashMap<Integer, T>();
+        int idx = 0;
+        var length = expr.length();
+        while (idx < length) {
+            int start = idx;
+            while (start < length) {
+                var c = expr.charAt(start);
+                if (c != '+' && c != '-') {
+                    break;
+                }
+                start++;
+            }
+//                for(i in )
+            var end = start;
+            for (; end < length; end++) {
+                var c = expr.charAt(end);
+                if (c == '+' || c == '-') {
+                    break;
+                }
+            }
+            var part = expr.substring(idx, end).trim();
+
+            var idxOfX = part.lastIndexOf('x');
+            if (idxOfX == -1) {
+                terms.merge(0, ParserUtils.parseCoefficient(part, parser, mc), mc::add);
+            } else {
+                T coe;
+                if (idxOfX == 0) {
+                    coe = mc.getOne();
+                } else {
+                    coe = ParserUtils.parseCoefficient(part.substring(0, idxOfX - 1), parser, mc);
+                }
+
+
+                var strCh = part.substring(idxOfX);
+                var idxPow = strCh.indexOf('^');
+                int pow;
+                if (idxPow == -1) {
+                    pow = 1;
+                } else {
+                    pow = Integer.parseInt(strCh.substring(idxPow + 1));
+                }
+                terms.merge(pow, coe, mc::add);
+            }
+            idx = end;
+
+        }
+        return of(mc, terms);
+    }
 
     /**
-     * Returns <code>x^p</code>, where p is a non-negative integer.
+     * Returns <code>x<sup>p</sup></code>, where p is a non-negative integer.
      */
     public static <T> Polynomial<T> powerX(int p, MathCalculator<T> mc) {
         if (p < 0) {
@@ -1079,7 +1138,7 @@ public final class Polynomial<T> extends MathObject<T> implements
     }
 
     /**
-     * Returns <code>k*x^p</code>, where p is a non-negative integer.
+     * Returns <code>k*x<sup>p</sup></code>, where p is a non-negative integer.
      */
     public static <T> Polynomial<T> powerX(int p, T k, MathCalculator<T> mc) {
         if (p < 0) {
@@ -1158,7 +1217,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * Returns a polynomial of <code>x - root</code>
      */
     public static <T> Polynomial<T> ofRoot(MathCalculator<T> mc, T root) {
-        return valueOf(mc, mc.negate(root), mc.getOne());
+        return of(mc, mc.negate(root), mc.getOne());
     }
 
     /**
@@ -1932,8 +1991,8 @@ public final class Polynomial<T> extends MathObject<T> implements
         list.addAll(Arrays.asList(g.coes));
         int pos = f.coes.length;
         list = sim.simplify(list);
-        f = valueOf(mc, list.subList(0, pos));
-        g = valueOf(mc, list.subList(pos, list.size()));
+        f = of(mc, list.subList(0, pos));
+        g = of(mc, list.subList(pos, list.size()));
         return adjustSign(f, g, mc, sim);
     }
 

@@ -5,10 +5,10 @@ import cn.ancono.math.numberModels.expression.ExprFunction
 import cn.ancono.math.numberModels.expression.Node
 
 val Int.p: Node.Poly
-    get() = Node.newPolyNode(Multinomial.valueOf(this.toLong()))
+    get() = Node.newPolyNode(Multinomial.of(this.toLong()))
 
 val String.p: Node.Poly
-    get() = Node.newPolyNode(Multinomial.valueOf(this))
+    get() = Node.newPolyNode(Multinomial.parse(this))
 
 val Multinomial.p: Node.Poly
     get() = Node.newPolyNode(this)

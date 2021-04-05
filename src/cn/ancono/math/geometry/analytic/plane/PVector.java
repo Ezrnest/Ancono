@@ -349,11 +349,9 @@ public final class PVector<T> extends Vector<T> {
     @NotNull
     @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        StringBuilder sb = new StringBuilder();
-        sb.append('(').append(nf.format(x, getMc()))
-                .append(',').append(nf.format(y, getMc()))
-                .append(')');
-        return sb.toString();
+        return '(' + nf.format(x, getMc()) +
+                ',' + nf.format(y, getMc()) +
+                ')';
     }
 
     private int hashCode = 0;

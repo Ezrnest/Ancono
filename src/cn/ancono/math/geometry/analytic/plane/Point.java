@@ -176,7 +176,7 @@ public final class Point<T> extends MathObject<T> {
      */
     @Override
     public String toString() {
-        return toString(FlexibleNumberFormatter.getToStringFormatter());
+        return toString(FlexibleNumberFormatter.getDefaultFormatter());
     }
 
     /**

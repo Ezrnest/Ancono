@@ -1,10 +1,12 @@
 package cn.ancono.math.numberModels;
 
+import cn.ancono.math.MathCalculator;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.structure.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 public final class ParserUtils {
     private ParserUtils() {
@@ -137,5 +139,32 @@ public final class ParserUtils {
         return c >= '0' && c <= '9';
     }
 
+
+    public static <T> T parseCoefficient(String s, Function<String, T> parser, MathCalculator<T> mc) {
+        s = s.trim();
+        if (s.charAt(s.length() - 1) == '*') {
+            s = s.substring(0, s.length() - 1);
+        }
+        int i = 0;
+        boolean positive = true;
+        while (i < s.length()) {
+            char c = s.charAt(i++);
+            if (c == '-') {
+                positive = !positive;
+            } else if (c != '+') {
+                break;
+            }
+        }
+        T coe;
+        if (i == s.length()) {
+            coe = mc.getOne();
+        } else {
+            coe = parser.apply(s.substring(i).trim());
+        }
+        if (!positive) {
+            coe = mc.negate(coe);
+        }
+        return coe;
+    }
 
 }

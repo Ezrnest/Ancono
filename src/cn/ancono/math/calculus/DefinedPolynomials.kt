@@ -328,7 +328,7 @@ object DefinedPolynomials {
 
     fun bernsteinPolyList(n: Int): List<Polynomial<Fraction>> {
         val coes = CombUtils.binomialsOf(n)
-        val t_1 = Polynomial.valueOf(Fraction.calculator, Fraction.ONE, Fraction.NEGATIVE_ONE)
+        val t_1 = Polynomial.of(Fraction.calculator, Fraction.ONE, Fraction.NEGATIVE_ONE)
         var base = Polynomial.powerX(n, Fraction.calculator)
         val re = ArrayList<Polynomial<Fraction>>(n + 1)
         for (i in (0..n)) {

@@ -33,7 +33,7 @@ object CalculusSample {
         val mc = ExprCalculator.instance
         val expr = mc.parse("(x^6+3x^4+3x^2+1)/(x^12+6x^10+15x^8+20x^6+15x^4+6x^2+1)")
         println(expr)
-        val m = Multinomial.valueOf("1/x+x")
+        val m = Multinomial.parse("1/x+x")
         println(m)
         val p1 = LimitProcess("x", LimitValue.valueOf(Expression.valueOf("2")), LimitDirection.LEFT)
         val p2 = LimitProcess<Expression>("x", LimitValue.infinity(), LimitDirection.LEFT)
@@ -44,8 +44,8 @@ object CalculusSample {
         val mcl = Calculators.longExact()
 //    val nume = Polynomial.valueOf(mc,1L,0L,0L,1L)
 //    val deno = Polynomial.valueOf(mc,0L,-1L,3L,-3L,1L)
-        val nume = Polynomial.valueOf(mcl, 0L, 1L)
-        val deno = Polynomial.valueOf(mcl, 1, 0, 0, 1L)
+        val nume = Polynomial.of(mcl, 0L, 1L)
+        val deno = Polynomial.of(mcl, 1, 0, 0, 1L)
 
         println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx")
 //    println(AlgebraUtil.partialFractionInt(nume,deno))

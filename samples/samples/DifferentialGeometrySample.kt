@@ -88,6 +88,8 @@ object DifferentialGeometrySample {
         val r = makeSurface(expr)
         val u = mc.parse("u")
         val v = mc.parse("v")
+
+        // coefficients of the first fundamental form
         println(r.E(u, v))
         println(r.F(u, v))
         println(r.G(u, v))

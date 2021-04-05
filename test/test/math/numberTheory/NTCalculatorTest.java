@@ -42,7 +42,7 @@ public class NTCalculatorTest {
         for (int i = 0; i <= deg; i++) {
             coes.add(Fraction.of(ints.next()));
         }
-        return Polynomial.valueOf(cal, coes);
+        return Polynomial.of(cal, coes);
     }
 
     @Test

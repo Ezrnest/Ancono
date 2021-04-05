@@ -22,13 +22,13 @@ object AlgebraUtil {
     fun <T : Any> expandOfRoots(roots: List<T>, mc: MathCalculator<T>): Polynomial<T> {
         return when (roots.size) {
             0 -> Polynomial.zero(mc)
-            1 -> Polynomial.valueOf(mc, roots.first(), mc.one)
+            1 -> Polynomial.of(mc, roots.first(), mc.one)
             2 -> {
                 val x1 = roots[0]
                 val x2 = roots[1]
                 val c = mc.multiply(x1, x2)
                 val b = mc.negate(mc.add(x1, x2))
-                Polynomial.valueOf(mc, c, b, mc.one)
+                Polynomial.of(mc, c, b, mc.one)
             }
             else -> {
                 val mid = roots.size / 2
@@ -62,7 +62,7 @@ object AlgebraUtil {
         val list = (0..n).map { k ->
             CombUtils.numBernoulli(n - k).multiply(comb.get(k.toLong()))
         }
-        return Polynomial.valueOf(Fraction.calculator, list)
+        return Polynomial.of(Fraction.calculator, list)
     }
 
     /**
@@ -87,7 +87,7 @@ object AlgebraUtil {
                 list[k] = b.multiply(comb.get(k.toLong()))
             }
         }
-        return Polynomial.valueOf(BigFraction.calculator, *list)
+        return Polynomial.of(BigFraction.calculator, *list)
     }
 
 //    /**
@@ -243,7 +243,7 @@ object AlgebraUtil {
         val re = arrayListOf<Pair<Polynomial<T>, SinglePoly<T>>>()
         for ((t, isBi) in terms) {
             if (isBi) {
-                re += Polynomial.valueOf(mc, solution[index], solution[index + 1]) to t
+                re += Polynomial.of(mc, solution[index], solution[index + 1]) to t
                 index += 2
             } else {
                 re += Polynomial.constant(mc, solution[index]) to t

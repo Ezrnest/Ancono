@@ -4,7 +4,6 @@
 package cn.ancono.math.calculus
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathSymbol
 import cn.ancono.math.algebra.AlgebraUtil
 import cn.ancono.math.algebra.DecomposedPoly
 import cn.ancono.math.algebra.IPolynomial
@@ -14,7 +13,6 @@ import cn.ancono.math.function.SVFunction
 import cn.ancono.math.function.SVPFunction
 import cn.ancono.math.function.invoke
 import cn.ancono.math.get
-import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
@@ -353,10 +351,10 @@ object Calculus {
 //            println("?")
 //        }
         val t2 = mc.run { b / a / 2 }
-        val sub = Polynomial.valueOf(mc, t2, mc.one)
+        val sub = Polynomial.of(mc, t2, mc.one)
         // a (x + b/2a)^2 +(4ac-b^2)/4a
         val t = mc.run { c - t2 * t2 }
-        val re = Polynomial.valueOf(mc, t, mc.zero, a)
+        val re = Polynomial.of(mc, t, mc.zero, a)
         return re to sub
     }
 
@@ -483,7 +481,7 @@ object Calculus {
     fun intDeno1(a: Expression, b: Expression, mc: ExprCalculator, variableName: String = "x"): Expression {
         // 1/(ax+b)
         // > ln(ax+b)/a
-        return mc.run { ln(Expression.fromPolynomialE(Polynomial.valueOf(mc, b, a), variableName)) / a }
+        return mc.run { ln(Expression.fromPolynomialE(Polynomial.of(mc, b, a), variableName)) / a }
     }
 
     /**
@@ -505,7 +503,7 @@ object Calculus {
         val b = d[1]
         val c = d[0]
         val (nDeno, sub) = makeSubstitute(a, b, c, mc)
-        val nNume = nume.substitute(Polynomial.valueOf(mc, mc.negate(sub[0]), mc.one))// sub nume
+        val nNume = nume.substitute(Polynomial.of(mc, mc.negate(sub[0]), mc.one))// sub nume
         val reSub = integrationFrac2Pow0(nNume[1], nNume[0], nDeno[2], nDeno[0], deno.pow, mc, variableName)
         return mc.substitute(reSub, variableName, Expression.fromPolynomialE(sub, variableName))
     }
@@ -527,7 +525,7 @@ object Calculus {
      * Integration of x/(px^2+q)^n
      */
     private fun integrationFrac2SingleX(p: Expression, q: Expression, pow: Int, mc: ExprCalculator, variableName: String): Expression {
-        val deno = SinglePoly(null, Polynomial.valueOf(mc, q, p), pow)
+        val deno = SinglePoly(null, Polynomial.of(mc, q, p), pow)
         val reX2 = integrationDeno(deno, mc, variableName)
         val x2 = Expression.fromTerm(Term.characterPower(variableName, Fraction.TWO))
         return mc.divideLong(mc.substitute(reX2, variableName, x2), 2L)

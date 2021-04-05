@@ -364,20 +364,6 @@ public final class DVector<T> extends Vector<T> {
         return new DVector<>(ArraySup.mapTo(vec, f), isRow, getMc());
     }
 
-    /*
-     * @see cn.ancono.math.algebra.abstractAlgebra.linearAlgebra.Vector#toString(cn.ancono.math.numberModels.api.NumberFormatter)
-     */
-    @NotNull
-    @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        for (int i = 0, size = getSize(); i < size; i++) {
-            sb.append(nf.format(get(i), getMc())).append(',');
-        }
-        sb.setCharAt(sb.length() - 1, ']');
-        return sb.toString();
-    }
 
     @NotNull
     @Override

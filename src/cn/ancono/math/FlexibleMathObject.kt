@@ -58,7 +58,7 @@ abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>(mc: S) : Calcu
      * @return
      */
     override fun toString(): String {
-        return toString(FlexibleNumberFormatter.getToStringFormatter())
+        return toString(FlexibleNumberFormatter.getDefaultFormatter())
     }
 
 

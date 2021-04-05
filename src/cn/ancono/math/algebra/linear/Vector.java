@@ -322,13 +322,11 @@ public abstract class Vector<T> extends Matrix<T> {
     @Override
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        int size = getSize();
-        for (int i = 0; i < size; i++) {
-            sb.append(nf.format(get(i), getMc())).append(",");
+        sb.append('(');
+        for (int i = 0, size = getSize(); i < size; i++) {
+            sb.append(nf.format(get(i), getMc())).append(',');
         }
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append(")");
+        sb.setCharAt(sb.length() - 1, ')');
         return sb.toString();
     }
 

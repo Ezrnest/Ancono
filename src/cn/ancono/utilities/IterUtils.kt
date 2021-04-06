@@ -5,52 +5,91 @@ package cn.ancono.utilities
  * Contains some utilities for iterators and sequences.
  */
 object IterUtils {
-    class ProductIterator<T>(val iterables: List<Iterable<T>>) : Iterator<List<T>> {
+
+
+    open class ProductIteratorNoCopy<T>(val iterables: List<Iterable<T>>) : Iterator<List<T>> {
         val iterators = Array(iterables.size) { i ->
             iterables[i].iterator()
         }
-        var elements: MutableList<T>? = if (iterators.all { it.hasNext() }) {
-            iterators.mapTo(ArrayList(iterators.size)) { it.next() }
-        } else {
-            null
+        private var ready: Int = 1
+
+        val elements: MutableList<T?>
+
+        init {
+
+            elements = iterators.mapTo(ArrayList(iterators.size)) {
+                if (it.hasNext()) {
+                    it.next()
+                } else {
+                    ready = 2
+                    null
+                }
+            }
+
+        }
+
+        protected fun prepareNext() {
+            if (ready != 0) {
+                return
+            }
+
+            for (i in iterators.lastIndex downTo 0) {
+                val it = iterators[i]
+                if (it.hasNext()) {
+                    elements[i] = it.next()
+                    ready = 1
+                    return
+                } else {
+                    iterators[i] = iterables[i].iterator()
+                    elements[i] = iterators[i].next()
+                }
+            }
+            ready = 2
         }
 
 
         override fun hasNext(): Boolean {
-            return elements != null
+            prepareNext()
+            return ready == 1
         }
 
         override fun next(): List<T> {
-            val t = elements ?: throw NoSuchElementException()
-            val re = ArrayList(t)
-            for (i in iterators.lastIndex downTo 1) {
-                val it = iterators[i]
-                if (it.hasNext()) {
-                    t[i] = it.next()
-                    return re
-                } else {
-                    iterators[i] = iterables[i].iterator()
-                    t[i] = iterators[i].next()
-                }
+            if (!hasNext()) {
+                throw NoSuchElementException()
             }
-            if (iterators[0].hasNext()) {
-                t[0] = iterators[0].next()
-            } else {
-                elements = null
-            }
-            return re
-        }
+            ready = 0
+            @Suppress("UNCHECKED_CAST")
+            return elements as List<T>
 
+        }
+    }
+
+    class ProductIterator<T>(iterables: List<Iterable<T>>) : ProductIteratorNoCopy<T>(iterables) {
+        override fun next(): List<T> {
+            return ArrayList(super.next())
+        }
     }
 
     /**
      * Returns a sequence corresponding to the cartesian product of the given iterables.
+     *
+     * @param its a list of iterables
+     *
+     * @param copy whether to directly return the backing list in the sequence iterator or make a
+     * copy of it. If `copy = false`, the resulting sequence is read-only-traversable.
+     * That is, each element in the sequence should only be used before subsequent invocations of `next()` and `hasNext()`.
+     * Setting it to `false` can provide better performance.
+     *
      */
-    fun <T> prod(its: List<Iterable<T>>): Sequence<List<T>> {
+    fun <T> prod(its: List<Iterable<T>>, copy: Boolean = true): Sequence<List<T>> {
         if (its.isEmpty()) {
             return emptySequence()
         }
-        return Sequence { ProductIterator(its) }
+        return if (copy) {
+            Sequence { ProductIterator(its) }
+        } else {
+            Sequence { ProductIteratorNoCopy(its) }
+        }
     }
 
     /**
@@ -62,42 +101,82 @@ object IterUtils {
         return prod(its.asList())
     }
 
-    class IndexIterator(val ranges: List<IntProgression>) : Iterator<IntArray> {
+    open class IndexIteratorNoCopy(val ranges: List<IntProgression>) : Iterator<IntArray> {
         val indices = IntArray(ranges.size) { ranges[it].first }
+        private var ready: Int = 0 // 0: non-determined, 1: ready, 2: exhausted
+
+//        private operator fun IntProgression.contains(x : Int) : Boolean  = this.first <= x && x <= this.last
+
+        init {
+            val nonEmpty = ranges.all { !it.isEmpty() }
+            ready = if (nonEmpty) {
+                1
+            } else {
+                2
+            }
+        }
+
+        private fun prepareNext() {
+            if (ready != 0) {
+                return
+            }
+            for (i in indices.lastIndex downTo 0) {
+                val range = ranges[i]
+                if (indices[i] != range.last) {
+                    indices[i] += range.step
+                    ready = 1
+                    return
+                } else {
+                    indices[i] = range.first
+                }
+
+            }
+            ready = 2 // end
+//            val range = ranges[0]
+//            indices[0] ++
+//            ready = indices[0] <= range.last
+        }
 
         override fun hasNext(): Boolean {
-            return indices[0] in ranges[0]
+            prepareNext()
+            return ready == 1
+//            return indices.any {   }
+//            return indices[0] in ranges[0]
         }
 
         override fun next(): IntArray {
             if (!hasNext()) {
                 throw NoSuchElementException()
             }
-            val t = indices.copyOf()
-            for (i in indices.lastIndex downTo 1) {
-                val range = ranges[i]
-                indices[i] += range.step
-                if (indices[i] in range) {
-                    return t
-                } else {
-                    indices[i] = range.first
-                }
-            }
-            val range = ranges[0]
-            indices[0] += range.step
-            return t
+            ready = 0
+            return indices
+        }
+    }
+
+    class IndexIterator(ranges: List<IntProgression>) : IndexIteratorNoCopy(ranges) {
+        override fun next(): IntArray {
+            return super.next().copyOf()
         }
     }
 
     /**
      * Returns a sequence corresponding to the cartesian product of the given int progressions.
      *
+     *
+     * @param copy whether to directly return the backing int array in the sequence iterator or make a
+     * copy of it. If `copy = false`, the resulting sequence is read-only-traversable.
+     * That is, each element in the sequence should only be used before subsequent invocations of `next()` and `hasNext()`.
+     * Setting it to `false` can provide better performance.
      */
-    fun prodIdx(ranges: List<IntProgression>): Sequence<IntArray> {
+    fun prodIdx(ranges: List<IntProgression>, copy: Boolean = true): Sequence<IntArray> {
         return if (ranges.isEmpty()) {
             emptySequence()
         } else {
-            Sequence { IndexIterator(ranges) }
+            if (copy) {
+                Sequence { IndexIterator(ranges) }
+            } else {
+                Sequence { IndexIteratorNoCopy(ranges) }
+            }
         }
     }
 
@@ -111,10 +190,30 @@ object IterUtils {
     }
 
     /**
+     * Returns a sequence corresponding to the cartesian product of the given int progressions.
+     *
+     * This method is a no-copy version of the corresponding `prodIdx` method.
+     *
+     *  @see prodIdx
+     */
+    fun prodIdxN(vararg ranges: IntProgression): Sequence<IntArray> {
+        return prodIdx(ranges.asList(), copy = false)
+    }
+
+    /**
      * Returns the cartesian product of `[0,bounds[i])`.
      */
     fun prodIdx(bounds: IntArray): Sequence<IntArray> {
         return prodIdx(bounds.map { b -> 0 until b })
+    }
+
+    /**
+     * Returns the cartesian product of `[0,bounds[i])`.
+     *
+     * This method is a no-copy version of the corresponding `prodIdx` method.
+     */
+    fun prodIdxN(bounds: IntArray): Sequence<IntArray> {
+        return prodIdx(bounds.map { b -> 0 until b }, copy = false)
     }
 
     /**

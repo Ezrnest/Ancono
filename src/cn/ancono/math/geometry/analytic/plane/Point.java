@@ -15,12 +15,13 @@ import java.util.function.Function;
  * @param <T> the type of number
  * @author lyc
  */
-public final class Point<T> extends MathObject<T> {
+public final class Point<T> implements MathObject<T> {
 
     public final T x, y;
+    private final MathCalculator<T> mc;
 
     public Point(MathCalculator<T> mc, T x, T y) {
-        super(mc);
+        this.mc = mc;
         this.x = x;
         this.y = y;
     }
@@ -50,7 +51,7 @@ public final class Point<T> extends MathObject<T> {
      * @return a vector
      */
     public PVector<T> getVector() {
-        return PVector.valueOf(x, y, getMc());
+        return PVector.valueOf(x, y, mc);
     }
 
     /**
@@ -61,9 +62,9 @@ public final class Point<T> extends MathObject<T> {
      * @return {@literal (x-p.x)^2 + (y-p.y)^2}
      */
     public T distanceSq(Point<T> p) {
-        T dx = getMc().subtract(x, p.x);
-        T dy = getMc().subtract(y, p.y);
-        return getMc().add(getMc().multiply(dx, dx), getMc().multiply(dy, dy));
+        T dx = mc.subtract(x, p.x);
+        T dy = mc.subtract(y, p.y);
+        return mc.add(mc.multiply(dx, dx), mc.multiply(dy, dy));
     }
 
     /**
@@ -76,7 +77,7 @@ public final class Point<T> extends MathObject<T> {
      * @see Point#distance(Point)
      */
     public T distance(Point<T> p) {
-        return getMc().squareRoot(distanceSq(p));
+        return mc.squareRoot(distanceSq(p));
     }
 
     /**
@@ -90,12 +91,12 @@ public final class Point<T> extends MathObject<T> {
      * @return the proportion point.
      */
     public Point<T> proportionPoint(Point<T> p, T k) {
-        T de = getMc().add(k, getMc().getOne());
-        T xN = getMc().add(getMc().multiply(k, p.x), x);
-        T yN = getMc().add(getMc().multiply(k, p.y), y);
-        xN = getMc().divide(xN, de);
-        yN = getMc().divide(yN, de);
-        return new Point<>(getMc(), xN, yN);
+        T de = mc.add(k, mc.getOne());
+        T xN = mc.add(mc.multiply(k, p.x), x);
+        T yN = mc.add(mc.multiply(k, p.y), y);
+        xN = mc.divide(xN, de);
+        yN = mc.divide(yN, de);
+        return new Point<>(mc, xN, yN);
     }
 
     /**
@@ -105,9 +106,9 @@ public final class Point<T> extends MathObject<T> {
      * @return middle point
      */
     public Point<T> middle(Point<T> p) {
-        T xm = getMc().divideLong(getMc().add(x, p.x), 2);
-        T ym = getMc().divideLong(getMc().add(y, p.y), 2);
-        return new Point<T>(getMc(), xm, ym);
+        T xm = mc.divideLong(mc.add(x, p.x), 2);
+        T ym = mc.divideLong(mc.add(y, p.y), 2);
+        return new Point<T>(mc, xm, ym);
     }
 
     /**
@@ -118,7 +119,7 @@ public final class Point<T> extends MathObject<T> {
      * @return {@literal (x+v.x,y+v.y)}
      */
     public Point<T> translate(PVector<T> v) {
-        return new Point<>(getMc(), getMc().add(x, v.x), getMc().add(y, v.y));
+        return new Point<>(mc, mc.add(x, v.x), mc.add(y, v.y));
     }
 
     @Override
@@ -140,7 +141,7 @@ public final class Point<T> extends MathObject<T> {
 
     @Override
     public int hashCode() {
-        int h = getMc().hashCode();
+        int h = mc.hashCode();
         h = h * 31 + x.hashCode();
         h = h * 31 + y.hashCode();
         return h;
@@ -150,7 +151,7 @@ public final class Point<T> extends MathObject<T> {
     public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
         if (obj instanceof Point) {
             Point<N> p = (Point<N>) obj;
-            return getMc().isEqual(x, mapper.apply(p.x)) && getMc().isEqual(y, mapper.apply(p.y));
+            return mc.isEqual(x, mapper.apply(p.x)) && mc.isEqual(y, mapper.apply(p.y));
         }
         return false;
     }
@@ -162,7 +163,7 @@ public final class Point<T> extends MathObject<T> {
         }
         if (obj instanceof Point) {
             Point<T> p = (Point<T>) obj;
-            return getMc().isEqual(x, p.x) && getMc().isEqual(y, p.y);
+            return mc.isEqual(x, p.x) && mc.isEqual(y, p.y);
         }
         return false;
     }
@@ -176,7 +177,7 @@ public final class Point<T> extends MathObject<T> {
      */
     @Override
     public String toString() {
-        return toString(FlexibleNumberFormatter.getDefaultFormatter());
+        return toString(FlexibleNumberFormatter.defaultFormatter());
     }
 
     /**
@@ -190,8 +191,14 @@ public final class Point<T> extends MathObject<T> {
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         StringBuilder sb = new StringBuilder();
         sb.append("( ");
-        sb.append(nf.format(x, getMc())).append(" , ").append(nf.format(y, getMc())).append(" )");
+        sb.append(nf.format(x, mc)).append(" , ").append(nf.format(y, mc)).append(" )");
         return sb.toString();
+    }
+
+    @NotNull
+    @Override
+    public MathCalculator<T> getMathCalculator() {
+        return mc;
     }
 
     /**
@@ -233,10 +240,10 @@ public final class Point<T> extends MathObject<T> {
      */
     public PVector<T> directVector(Point<T> p) {
         @SuppressWarnings("SuspiciousNameCombination")
-        T vx = getMc().subtract(p.x, x);
+        T vx = mc.subtract(p.x, x);
         @SuppressWarnings("SuspiciousNameCombination")
-        T vy = getMc().subtract(p.y, y);
-        return PVector.valueOf(vx, vy, getMc());
+        T vy = mc.subtract(p.y, y);
+        return PVector.valueOf(vx, vy, mc);
     }
 
     public static <T> Point<T> fromVector(PVector<T> v) {

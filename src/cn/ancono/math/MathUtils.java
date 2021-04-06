@@ -668,6 +668,28 @@ public class MathUtils {
     }
 
     /**
+     * Returns a non-negative integer of <code>a mod m</code>
+     */
+    public static int mod(int a, int m) {
+        var re = a % m;
+        if (re < 0) {
+            re += m;
+        }
+        return re;
+    }
+
+    /**
+     * Returns a non-negative integer of <code>a mod m</code>
+     */
+    public static long mod(long a, long m) {
+        var re = a % m;
+        if (re < 0) {
+            re += m;
+        }
+        return re;
+    }
+
+    /**
      * Returns {@code (a^n) % mod}, for example, {@code powerAndMod(2,2,3) = 1}.This
      * method will not check overflow.
      *

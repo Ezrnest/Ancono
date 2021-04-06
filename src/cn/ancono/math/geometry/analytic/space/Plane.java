@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.space;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
@@ -577,7 +578,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @author liyicheng
      * 2017-09-22 17:24
      */
-    public static class PlaneCoordinateConverter<T> extends MathObject<T> {
+    public static class PlaneCoordinateConverter<T> extends AbstractMathObject<T> {
         final T D, unit;
         final SVector<T> x, y;
         final SPoint<T> O;

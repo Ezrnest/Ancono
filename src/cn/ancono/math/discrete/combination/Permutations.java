@@ -99,7 +99,6 @@ public final class Permutations {
         /*
          * @see cn.ancono.math.numberTheory.combination.Permutation#apply(int[])
          */
-        @NotNull
         @Override
         public int[] apply(int[] array) {
             if (array.length < size) {
@@ -271,7 +270,6 @@ public final class Permutations {
         /*
          * @see cn.ancono.math.numberTheory.combination.Permutation#apply(int[])
          */
-        @NotNull
         @Override
         public int[] apply(int[] array) {
             return array;
@@ -500,7 +498,6 @@ public final class Permutations {
         /*
          * @see cn.ancono.math.numberTheory.combination.Permutation#apply(int[])
          */
-        @NotNull
         @Override
         public int[] apply(int[] array) {
             if (elements.length == 1) {

@@ -30,7 +30,7 @@ public interface FlexibleNumberFormatter<T, S extends EqualPredicate<T>> {
      * <code>toString()</code> for fallback.
      */
     @SuppressWarnings("unchecked")
-    static <T, S extends EqualPredicate<T>> FlexibleNumberFormatter<T, S> getDefaultFormatter() {
+    static <T, S extends EqualPredicate<T>> FlexibleNumberFormatter<T, S> defaultFormatter() {
         return (FlexibleNumberFormatter<T, S>) defaultFormatter;
     }
 

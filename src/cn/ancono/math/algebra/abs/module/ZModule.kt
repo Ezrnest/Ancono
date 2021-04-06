@@ -56,8 +56,10 @@ class ZModuleCalFromAGroup<Z : Any, V : Any>(val ic: IntCalculator<Z>, val gc: G
 class ZModuleFromAGroup<Z : Any, V : Any>(val cal: IntCalculator<Z>,
                                           private val group: AbelianGroup<V>)
 //Created by lyc at 2020-03-11 18:8
-    : FlexibleMathObject<Z, IntCalculator<Z>>(cal),
+    : FlexibleMathObject<Z, IntCalculator<Z>>,
         ZModule<Z, V> {
+    override val mathCalculator: IntCalculator<Z>
+        get() = cal
 
     private val moduleCal: ModuleCalculator<Z, V> = ZModuleCalFromAGroup(cal, group.calculator)
 
@@ -159,5 +161,7 @@ class ZModuleFromAGroup<Z : Any, V : Any>(val cal: IntCalculator<Z>,
         return group.set
     }
 
-
+    override fun toString(): String {
+        return toString(FlexibleNumberFormatter.defaultFormatter())
+    }
 }

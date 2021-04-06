@@ -1,8 +1,6 @@
 package cn.ancono.math.calculus
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathUtils
+import cn.ancono.math.*
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.discrete.combination.CombUtils
 import cn.ancono.math.numberModels.Fraction
@@ -31,7 +29,7 @@ import java.util.function.Function
  * @author
  * Created by lyc at 2021-03-31 12:29
  */
-abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>) : MathObject<T>(mc) {
+abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
 
     /**
      * The domain on which the polynomials are defined.

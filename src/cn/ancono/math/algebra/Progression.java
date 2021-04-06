@@ -1,5 +1,6 @@
 package cn.ancono.math.algebra;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.function.BiMathFunction;
@@ -28,7 +29,7 @@ import java.util.stream.StreamSupport;
  * @param <T> the type of number returned as the number in the progression
  * @author lyc
  */
-public abstract class Progression<T> extends MathObject<T> implements Iterable<T> {
+public abstract class Progression<T> extends AbstractMathObject<T> implements Iterable<T> {
     /**
      * The length of this progression, set it as UNLIMITED to indicate this progression is
      * unlimited.
@@ -349,7 +350,7 @@ public abstract class Progression<T> extends MathObject<T> implements Iterable<T
                 Iterator<T> it1 = this.iterator();
                 Iterator<T> it2 = pro.iterator();
                 while (i-- > 0) {
-                    if (getMc().isEqual(it1.next(), it2.next()) == false) {
+                    if (!getMc().isEqual(it1.next(), it2.next())) {
                         return false;
                     }
                 }

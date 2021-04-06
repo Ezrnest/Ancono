@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.space;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
@@ -27,7 +28,7 @@ import java.util.function.Function;
  * @param <T>
  * @author liyicheng
  */
-public abstract class SpacePointSet<T> extends MathObject<T> implements MathSet<SPoint<T>> {
+public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements MathSet<SPoint<T>> {
 
     protected SpacePointSet(MathCalculator<T> mc) {
         super(mc);

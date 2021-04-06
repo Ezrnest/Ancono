@@ -173,5 +173,7 @@ object LinearEquations {
         return Vector.of(mc, x)
     }
 
+//    fun solveJacobi(A : Matrix<Double>)
+
 
 }

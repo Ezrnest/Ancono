@@ -5,6 +5,7 @@ package cn.ancono.math.geometry.analytic.plane.curve;
  *
  */
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
@@ -20,7 +21,7 @@ import java.util.function.Function;
  * @param <T>
  * @author liyicheng
  */
-public abstract class AbstractPlaneCurve<T> extends MathObject<T> implements PlanePointSet<T> {
+public abstract class AbstractPlaneCurve<T> extends AbstractMathObject<T> implements PlanePointSet<T> {
 
     protected AbstractPlaneCurve(MathCalculator<T> mc) {
         super(mc);

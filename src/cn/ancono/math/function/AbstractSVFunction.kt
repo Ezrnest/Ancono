@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.function
 
+import cn.ancono.math.AbstractMathObject
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.calculus.Derivable
@@ -20,7 +21,7 @@ import java.util.function.Function
  * 2017-10-06 10:02
  */
 abstract class AbstractSVFunction<T : Any>
-protected constructor(mc: MathCalculator<T>) : MathObject<T>(mc), SVFunction<T> {
+protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunction<T> {
 
     /**
      * Returns the String representation of this function, the prefix 'f(x)='

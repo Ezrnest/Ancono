@@ -9,6 +9,8 @@ import kotlin.math.sqrt
  * Created by liyicheng at 2020-06-02 20:46
  */
 /**
+ * Contains numeric implementations of several special functions.
+ *
  * @author liyicheng
  */
 object SpecialFunctions {
@@ -36,6 +38,10 @@ object SpecialFunctions {
     }
 
 
+    /**
+     * Computes the value of the Gamma function.
+     *
+     */
     fun gamma(z: ComplexI): ComplexI {
         // this algorithm is based on https://en.wikipedia.org/wiki/Lanczos_approximation
         val y: ComplexI
@@ -55,5 +61,25 @@ object SpecialFunctions {
     fun gamma(x: Double): Double {
         return gamma(real(x)).re()
     }
+
+    /*
+    TODO: implement CDF of normal and other distribution, beta function, zeta function and ...
+
+     */
+
+    /**
+     * Cumulative density function for standard normal distribution, usually denoted as `Φ(x)`.
+     */
+    fun normalCDF(x: Double): Double {
+        TODO()
+    }
+
+    /**
+     * The inverse of cdf of standard normal distribution.
+     */
+    fun normalPPF(x: Double): Double {
+        TODO()
+    }
+
 
 }

@@ -1,7 +1,9 @@
 package cn.ancono.math.numberModels.structure
 
+import cn.ancono.math.AbstractMathObject
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
+import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.geometry.analytic.plane.PVector
@@ -22,7 +24,7 @@ Created by liyicheng 2020/2/24
 /**
  * Describes the expanded complex including the infinity point.
  */
-sealed class ComplexE<T : Any> constructor(mc: MathCalculator<T>) : MathObject<T>(mc) {
+sealed class ComplexE<T : Any> constructor(mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
 
     abstract fun isInf(): Boolean
 

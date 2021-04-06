@@ -175,7 +175,8 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
     }
 
     /**
-     * Applies this permutation to an array.
+     * Applies this permutation to an array. The <code>i</code>-th element in the resulting
+     * array will be equal to the <code>apply(i)</code>-th element in the original array.
      */
     default <T> T[] apply(T[] array) {
         if (array.length < size()) {
@@ -190,8 +191,9 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
 
     /**
      * Applies this permutation to an integer array.
+     * The <code>i</code>-th element in the resulting
+     * array will be equal to the <code>apply(i)</code>-th element in the original array.
      */
-    @NotNull
     default int[] apply(int[] array) {
         if (array.length < size()) {
             throw new IllegalArgumentException("array's length!=" + size());
@@ -205,6 +207,8 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
 
     /**
      * Applies this permutation to an array.
+     * The <code>i</code>-th element in the resulting
+     * array will be equal to the <code>apply(i)</code>-th element in the original array.
      */
     default double[] apply(double[] array) {
         if (array.length < size()) {
@@ -219,6 +223,8 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
 
     /**
      * Applies this permutation to an array.
+     * The <code>i</code>-th element in the resulting
+     * array will be equal to the <code>apply(i)</code>-th element in the original array.
      */
     default boolean[] apply(boolean[] array) {
         if (array.length < size()) {
@@ -233,6 +239,8 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
 
     /**
      * Applies this permutation to an array.
+     * The <code>i</code>-th element in the resulting
+     * array will be equal to the <code>apply(i)</code>-th element in the original array.
      */
     default long[] apply(long[] array) {
         if (array.length < size()) {
@@ -373,7 +381,6 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
         /*
          * @see cn.ancono.math.numberTheory.combination.Permutation#apply(int[])
          */
-        @NotNull
         @Override
         default int[] apply(int[] array) {
             ArraySup.swap(array, getFirst(), getSecond());
@@ -482,7 +489,6 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
         /*
          * @see cn.ancono.math.numberTheory.combination.Permutation#apply(int[])
          */
-        @NotNull
         @Override
         default int[] apply(int[] array) {
             if (length() == 1) {

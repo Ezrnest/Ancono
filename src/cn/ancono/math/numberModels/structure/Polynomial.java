@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.numberModels.structure;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
@@ -39,7 +40,7 @@ import java.util.function.IntFunction;
  * @author liyicheng
  * @see IPolynomial
  *///created by liyicheng at 2017-11-21 17:10
-public final class Polynomial<T> extends MathObject<T> implements
+public final class Polynomial<T> extends AbstractMathObject<T> implements
         IPolynomial<T>,
         Comparable<Polynomial<T>>,
         AlgebraModel<T, Polynomial<T>>,

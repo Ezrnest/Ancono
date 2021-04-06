@@ -31,14 +31,17 @@ import java.util.function.Function
  * [Field of fractions](https://en.wikipedia.org/wiki/Field_of_fractions)
  */
 open class RingFraction<T : Any>
-internal constructor(nume: T, deno: T, mc: RingCalculator<T>)
-    : FlexibleMathObject<T, RingCalculator<T>>(mc) {
+internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
+    : FlexibleMathObject<T, RingCalculator<T>> {
+    override val mathCalculator: RingCalculator<T>
+        get() = mc
 
     /**
      * Gets the numerator of the fraction.
      * @return numerator
      */
     val nume: T = Objects.requireNonNull(nume)
+
     /**
      * Gets the denominator of the fraction.
      * @return denominator
@@ -53,6 +56,10 @@ internal constructor(nume: T, deno: T, mc: RingCalculator<T>)
         return "(" + nf.format(nume, mc) +
                 ")/(" + nf.format(deno, mc) +
                 ')'.toString()
+    }
+
+    override fun toString(): String {
+        return toString(FlexibleNumberFormatter.defaultFormatter())
     }
 
     fun <N : Any> mapTo(mapper: Function<T, N>, ringCalculator: RingCalculator<N>): RingFraction<N> {

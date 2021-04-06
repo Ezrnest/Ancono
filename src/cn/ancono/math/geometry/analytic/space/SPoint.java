@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.space;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
@@ -297,7 +298,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
         return new SPoint<T>(mc, xm, ym, zm);
     }
 
-    public static class SPointGenerator<T> extends MathObject<T> {
+    public static class SPointGenerator<T> extends AbstractMathObject<T> {
 
         /**
          * @param mc

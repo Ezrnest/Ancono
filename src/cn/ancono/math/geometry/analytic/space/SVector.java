@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.space;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.*;
@@ -877,7 +878,7 @@ public final class SVector<T> extends Vector<T> {
 
     }
 
-    public static class SVectorGenerator<T> extends MathObject<T> {
+    public static class SVectorGenerator<T> extends AbstractMathObject<T> {
 
         /**
          * @param mc

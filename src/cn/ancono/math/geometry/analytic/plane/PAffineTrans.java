@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.plane;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.function.MathFunction;
@@ -26,7 +27,7 @@ import java.util.function.Function;
  * @author liyicheng
  *
  */
-public final class PAffineTrans<T> extends MathObject<T> implements PointTrans<T>, Invertible<PAffineTrans<T>> {
+public final class PAffineTrans<T> extends AbstractMathObject<T> implements PointTrans<T>, Invertible<PAffineTrans<T>> {
     /*
      * Describes the transformation matrix as:
      * a1 b1

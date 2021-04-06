@@ -18,29 +18,25 @@ import java.util.*
  * @author liyicheng
  * @see MathObject
  */
-abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>(mc: S) : CalculatorHolder<T, S> {
+interface FlexibleMathObject<T : Any, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
 
-    protected val mc: S = Objects.requireNonNull(mc, "Calculator must not be null!")
+//    protected val mc: S = Objects.requireNonNull(mc, "Calculator must not be null!")
 
     override val mathCalculator: S
-        get() = mc
+//        get() = mc
 
 
-    /**
-     * The equals method describes the equivalence in program of two math objects instead of the equal in math.
-     * If the type of number is different, then `false` will be returned.
-     */
-    override fun equals(other: Any?): Boolean {
-        return super.equals(other)
-    }
-
-    /**
-     * A good `hashCode` method is recommended for every subclass extends the FlexibleMathObject, and
-     * this method should be implemented whenever `equals()` is implemented.
-     */
-    override fun hashCode(): Int {
-        return super.hashCode()
-    }
+//    /**
+//     * The equals method describes the equivalence in program of two math objects instead of the equal in math.
+//     * If the type of number is different, then `false` will be returned.
+//     */
+//    override fun equals(other: Any?): Boolean
+//
+//    /**
+//     * A good `hashCode` method is recommended for every subclass extends the FlexibleMathObject, and
+//     * this method should be implemented whenever `equals()` is implemented.
+//     */
+//    override fun hashCode(): Int
 
     /**
      * Returns a String representing this object, the [NumberFormatter] should
@@ -49,7 +45,7 @@ abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>(mc: S) : Calcu
      * @return
      * @see FlexibleNumberFormatter
      */
-    abstract fun toString(nf: FlexibleNumberFormatter<T, S>): String
+    fun toString(nf: FlexibleNumberFormatter<T, S>): String
 
     /**
      * Returns a String representing this object, it is recommended that
@@ -57,9 +53,7 @@ abstract class FlexibleMathObject<T : Any, S : EqualPredicate<T>>(mc: S) : Calcu
      * through [NumberFormatter.format].
      * @return
      */
-    override fun toString(): String {
-        return toString(FlexibleNumberFormatter.getDefaultFormatter())
-    }
+    override fun toString(): String
 
 
 }

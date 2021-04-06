@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.*;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 /**
  * A geometric triangle
  */
-public class GTriangle<T> extends MathObject<T> {
+public class GTriangle<T> extends AbstractMathObject<T> {
     /**
      * sides
      */

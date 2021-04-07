@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * The default implement for Matrix, this class
+ * The default implement for Matrix. The internal storage is based on two-dimensional array.
  *
  * @author liyicheng
  */

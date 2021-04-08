@@ -4,6 +4,7 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.MathUtils
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.discrete.combination.Permutations
@@ -14,6 +15,7 @@ import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.utilities.IterUtils
 import java.lang.IllegalArgumentException
 import java.lang.IndexOutOfBoundsException
+import java.lang.Integer.max
 import java.lang.StringBuilder
 import java.util.*
 import java.util.function.Function
@@ -351,42 +353,26 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
         }
 
 
-//        fun <T : Any> einsum(x: Tensor<T>, y: Tensor<T>, xAxis: IntArray, yAxis: IntArray): Tensor<T> {
-////            val amX
-//            val amXX = arrayListOf<Int>()
-//            require(xAxis.size == yAxis.size)
-//
-//
-//            val shape = run {
-//                val sh = arrayListOf<Int>()
-//                sh.toIntArray()
-//            }
-//            val mc = x.mathCalculator
-//            val result = ATensor.constant(mc.zero, shape, mc)
-//            val data = result.data
-//            var pos = 0
-//
-////            fun buildIdxTo(idxR : Index, )
-//            val fullIdxX = IntArray(x.dim)
-//            val fullIdxY = IntArray(y.dim)
-//            val rDim = shape.size
-//            val mDim = 1
-//            for (idxR in result.indices) {
-//                for (l in 0 until rDim) {
-//                    fullIdxX[amRX[l]] = idxR[l]
-//                    fullIdxY[amRY[l]] = idxR[l]
-//                }
-//                var res = mc.zero
-//                for(idxT : Index in mulIdx){
-//                    for (l in 0 until mDim) {
-//                        fullIdxX[xAxis[l]] = idxT[l]
-//                        fullIdxY[yAxis[l]] = idxT[l]
-//                    }
-//                }
-//                pos++
-//            }
-////            for(idx in IterUtils)
-//        }
+        /**
+         * Returns the einsum of several tensors defined by the given expression.
+         *
+         *
+         * Examples:
+         *
+         *      | Expression | Required Shapes | Result Shape | Description                 |
+         *      |------------|-----------------|--------------|-----------------------------|
+         *      | i->i       | (a)             | (a)          | identity                    |
+         *      | i->        | (a)             | (1)          | sum                         |
+         *      | ij->ji     | (a,b)           | (b,a)        | transpose                   |
+         *      | ii         | (a,a)           | (a)          | trace                       |
+         *      | ii->i      | (a,a)           | (1)          | diagonal                    |
+         *      | ij,ij->ij  | (a,b),(a,b)     | (a,b)        | element-wise multiplication |
+         *      | ij,jk->ik  | (a,b),(b,c)     | (a,c)        | matrix multiplication       |
+         */
+        fun <T : Any> einsum(expr: String, vararg tensors: Tensor<T>): MutableTensor<T> {
+            return TensorUtils.einsum(tensors.asList(), expr)
+        }
+
     }
 
 }
@@ -1449,18 +1435,188 @@ internal object TensorUtils {
         }
         return true
     }
+
+    /**
+     * Returns the general einsum of several tensors, assume `R = resShape.size`,
+     * `M = mulShape.size`, then the general formula is
+     *
+     *      result[i_1,...,i_R] = sum(j_1,...,j_M; prod(k; t_k[tIdx]))
+     *      where tIdx[l] = i_{tToResList[k][l]} or j_{tToMulList[k][l]}
+     *
+     *
+     * @param resShape the shape of resulting tensors
+     * @param mulShape the shape of multiplying axes
+     * @param tToResList whose element represents a tensor's axis that is only selected.
+     * @param tToMulList whose element represents a tensor's axis that will be multiplied (with other tensors'
+     * corresponding axes)
+     */
+    fun <T : Any> einsum(ts: List<Tensor<T>>,
+                         resShape: IntArray, mulShape: IntArray,
+                         tToResList: List<IntArray>, tToMulList: List<IntArray>,
+                         mc: MathCalculator<T>): ATensor<T> {
+        val n = ts.size
+        val result = ATensor.constant(mc.zero, resShape, mc)
+        val data = result.data
+        val tIdxList = Array(ts.size) { IntArray(ts[it].dim) }
+
+        val mIndices = IterUtils.prodIdxN(mulShape)
+        fun placeIdx(partIdx: Index, tToPartList: List<IntArray>) {
+            for (k in 0 until n) {
+                val tToPart = tToPartList[k]
+                val tIdx = tIdxList[k]
+                for (l in tToPart.indices step 2) {
+                    val axisT = tToPart[l]
+                    val axisR = tToPart[l + 1]
+                    tIdx[axisT] = partIdx[axisR]
+                }
+            }
+        }
+
+        var pos = 0
+        for (rIdx in result.indices) {
+            placeIdx(rIdx, tToResList)
+            //place the indices corresponds to res part
+            var re = mc.zero
+            for (mIdx in mIndices) {
+                placeIdx(mIdx, tToMulList)
+                //place the indices corresponds to mul part
+                var mul = mc.one
+                for (k in 0 until n) {
+                    val t = ts[k]
+                    val tIdx = tIdxList[k]
+                    mul = mc.eval { mul * t[tIdx] }
+                }
+                re = mc.eval { re + mul }
+            }
+            data[pos++] = re
+        }
+        return result
+    }
+
+    val CHAR_PATTERN = "\\w\\d*".toRegex()
+
+//    private fun charAppearOnce(chs : List<String>) : Pair<Set<String>,List<String>>{
+//        val set = hashSetOf<String>()
+//    }
+
+
+    fun <T : Any> einsum(ts: List<Tensor<T>>, expr: String): MutableTensor<T> {
+        require(ts.isNotEmpty())
+        val i1 = expr.indexOf("->")
+        val tAxes = if (i1 >= 0) {
+            expr.substring(0, i1)
+        } else {
+            expr
+        }.split(",").also {
+            require(it.size == ts.size) {
+                "Count mismatch: ${it.size} tensors are required but ${ts.size} is given. "
+
+            }
+        }.mapIndexed { i, s ->
+            CHAR_PATTERN.findAll(s.trim()).map {
+                it.value
+            }.toList().also {
+                require(it.size == ts[i].dim) {
+                    "Dim mismatch for ${i + 1}-th tensor: " +
+                            "${it.size} is required but given tensor dim = ${ts[i].dim}. " +
+                            "Expr=[${expr}], tensor dims=${ts.joinToString { t -> t.dim.toString() }}"
+                }
+            }
+        }
+        val charCount = sortedMapOf<String, Int>().also {
+            tAxes.asSequence().flatten().forEach { s -> it.merge(s, 1, Int::plus) }
+        }
+        val chars = charCount.keys
+        val res: List<String> = if (i1 >= 0) {
+            val s = expr.substring(i1 + 2)
+            CHAR_PATTERN.findAll(s.trim()).map {
+                it.value
+            }.toList()
+        } else {
+            charCount.entries.filter { it.value == 1 }.map { it.key }
+        }
+
+        val mul = chars.toSortedSet().also { it.removeAll(res) }
+        val chToResIdx = res.withIndex().associate { it.value to it.index }
+        val chToMulIdx = mul.withIndex().associate { it.value to it.index }
+        fun shapeFor(part: Collection<String>): IntArray {
+            return if (part.isEmpty()) {
+                intArrayOf(1)
+            } else {
+                IntArray(part.size)
+            }
+        }
+
+        val resShape = shapeFor(res)
+        val mulShape = shapeFor(mul)
+        val n = ts.size
+        val tToResList = ArrayList<IntArray>(n)
+        val tToMulList = ArrayList<IntArray>(n)
+        for (k in 0 until n) {
+            val t = ts[k]
+            val tShape = t.shape
+            val axes = tAxes[k]
+            val tToRes = arrayListOf<Int>()
+            val tToMul = arrayListOf<Int>()
+            for (l in 0 until t.dim) {
+                val ch = axes[l]
+                fun addIdxAndCheckShape(chToPartIdx: Map<String, Int>, tToPart: MutableList<Int>, partShape: IntArray) {
+                    val idx = chToPartIdx[ch] ?: return
+                    if (partShape[idx] == 0) {
+                        partShape[idx] = tShape[idx]
+                    } else {
+                        require(partShape[idx] == tShape[idx]) {
+                            "Shape mismatch for ${l + 1}-th tensor at axis $idx, " +
+                                    "required length=${partShape[idx]} but ${tShape[idx]} is given. " +
+                                    "Expr=[${expr}], shapes=${ts.joinToString { it.shape.contentToString() }}"
+
+                        }
+                    }
+                    tToPart += l
+                    tToPart += idx
+                }
+                addIdxAndCheckShape(chToResIdx, tToRes, resShape)
+                addIdxAndCheckShape(chToMulIdx, tToMul, mulShape)
+            }
+            tToResList += tToRes.toIntArray()
+            tToMulList += tToMul.toIntArray()
+        }
+        //TODO optimize the order of mul
+        return einsum(ts, resShape, mulShape, tToResList, tToMulList, ts[0].mathCalculator)
+    }
+
 }
 
 fun main() {
     val mc = Calculators.integer()
-    val shape = intArrayOf(2, 3)
-    val shape2 = intArrayOf(3, 2)
+    val shape = intArrayOf(3, 3)
+    val shape2 = intArrayOf(3, 3)
 //    val v = Tensor.zeros(mc, *shape)
 //    val w = Tensor.ones(mc, *shape)
-    val u = Tensor.of(shape, mc) { it.sum() }
+    val u = Tensor.of(shape, mc) { it[0] + 2 * it[1] }
     val w = Tensor.of(shape2, mc) { it[0] }
-//    println(u)
-//    println(w)
+    println(u)
+    println(w)
+    println()
+//    val r = TensorUtils.einsum(listOf(u, w),
+//            intArrayOf(3, 3, 3, 3),
+//            intArrayOf(1),
+//            listOf(intArrayOf(0, 1), intArrayOf(2, 3)),
+//            listOf(intArrayOf(), intArrayOf()),
+////            listOf(intArrayOf(0,0), intArrayOf(0,1)),
+//            mc)
+//    println(r)
+//    println(r.valueEquals(u.wedge(w)))
+
+    println(Tensor.einsum("ii", u)) // trace
+    println(Tensor.einsum("ij->", u)) // sum
+    println(Tensor.einsum("ii->i", u)) // diagonal
+    println(Tensor.einsum("ij->ji", u)) // transpose
+
+    println(Tensor.einsum("ij,ij->ij", u, w)) // element-wise multiplication
+
+    println(Tensor.einsum("ij,jk->ik", u, w)) // matrix multiplication
+
 //
 //    println()
 //    println(u.sum())

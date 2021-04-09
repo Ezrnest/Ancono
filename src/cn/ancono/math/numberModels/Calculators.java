@@ -35,10 +35,6 @@ public final class Calculators {
      * Determines whether the two numbers are the identity in sign, which means they are both positive, negative or
      * zero.
      *
-     * @param x
-     * @param y
-     * @param mc
-     * @return
      */
     public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, MathCalculator<T> mc) {
         T z = mc.getZero();
@@ -2239,6 +2235,143 @@ public final class Calculators {
     }
 
 
+    static class BooleanCalculator extends MathCalculatorAdapter<Boolean> {
+
+        @NotNull
+        @Override
+        public Boolean getOne() {
+            return true;
+        }
+
+        @NotNull
+        @Override
+        public Boolean getZero() {
+            return false;
+        }
+
+        @Override
+        public boolean isZero(@NotNull Boolean x) {
+            return !x;
+        }
+
+        @Override
+        public boolean isEqual(@NotNull Boolean x, @NotNull Boolean y) {
+            return x == y;
+        }
+
+        @Override
+        public int compare(@NotNull Boolean x, @NotNull Boolean y) {
+            return Boolean.compare(x, y);
+        }
+
+        @Override
+        public boolean isComparable() {
+            return true;
+        }
+
+        @NotNull
+        @Override
+        public Boolean add(@NotNull Boolean x, @NotNull Boolean y) {
+            return x ^ y;
+        }
+
+        @NotNull
+        @Override
+        public Boolean negate(@NotNull Boolean x) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean abs(@NotNull Boolean para) {
+            return para;
+        }
+
+        @NotNull
+        @Override
+        public Boolean subtract(@NotNull Boolean x, @NotNull Boolean y) {
+            return add(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Boolean multiply(@NotNull Boolean x, @NotNull Boolean y) {
+            return x && y;
+        }
+
+        @NotNull
+        @Override
+        public Boolean divide(@NotNull Boolean x, @NotNull Boolean y) {
+            if (!y) {
+                ExceptionUtil.dividedByZero();
+            }
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean multiplyLong(@NotNull Boolean x, long n) {
+            return x && n % 2 != 0;
+        }
+
+        @NotNull
+        @Override
+        public Boolean divideLong(@NotNull Boolean x, long n) {
+            if (n % 2 == 0) {
+                ExceptionUtil.dividedByZero();
+            }
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean reciprocal(@NotNull Boolean x) {
+            if (!x) {
+                ExceptionUtil.dividedByZero();
+            }
+            return true;
+        }
+
+        @NotNull
+        @Override
+        public Boolean squareRoot(@NotNull Boolean x) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean nroot(@NotNull Boolean x, long n) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Class<?> getNumberClass() {
+            return Boolean.class;
+        }
+
+        @NotNull
+        @Override
+        public Boolean pow(@NotNull Boolean x, long n) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean of(long x) {
+            return x % 2 != 0;
+        }
+
+        static BooleanCalculator INSTANCE = new BooleanCalculator();
+    }
+
+
+    /**
+     * Returns a calculator for boolean as binary field F2.
+     */
+    public static MathCalculator<Boolean> bool() {
+        return BooleanCalculator.INSTANCE;
+    }
 //
 //    public static RingFraction.RFCalculator<Polynomial<Fraction>> getCalPolyFraction(){
 //        return RingFraction.Companion.getCalculator(Polynomial.getCalculator(Fraction.Companion.getCalculator()),Polynomial.)

@@ -1,5 +1,6 @@
 package test.math.linearAlgebra
 
+import cn.ancono.math.T
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.component1
 import cn.ancono.math.component2
@@ -18,7 +19,7 @@ class QuadraticFormTest {
         val A = MatrixSup.parseFMatrix(str1)
         val (J, P) = A.congruenceDiagForm()
         kotlin.test.assertTrue {
-            (P.transpose() * A * P).valueEquals(J)
+            (P.T * A * P).valueEquals(J)
         }
     }
 

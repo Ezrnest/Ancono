@@ -1,5 +1,6 @@
 package cn.ancono.math.numeric.linear
 
+import cn.ancono.math.T
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
@@ -135,7 +136,7 @@ object LinearEquations {
         val (L, D) = A.decompCholeskyD()
         val y = solveLower(L, b)
         val z = solveDiagonal(D, y)
-        return solveUpper(L.transpose(), z)
+        return solveUpper(L.T, z)
     }
 
     /**

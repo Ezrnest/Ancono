@@ -250,8 +250,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
     /**
      * Return the transpose of this matrix: <code>N = this<sup>T</sup></code>.
-     * The new Matrix's row count = <code>this.column</code>
-     * , new Matrix's column count = <code>this.row</code>.
+     * The new matrix's row count = <code>this.column</code>
+     * , new matrix's column count = <code>this.row</code>.
      *
      * @return <tt>this<sup>T</sup></tt>
      */

@@ -24,6 +24,13 @@ operator fun <T> Matrix<T>.times(mat: Matrix<T>) = Matrix.multiply(this, mat)!!
 operator fun <T> Matrix<T>.minus(mat: Matrix<T>) = Matrix.subtract(this, mat)!!
 operator fun <T> Matrix<T>.plus(mat: Matrix<T>) = Matrix.add(this, mat)!!
 operator fun <T> Matrix<T>.unaryMinus() = this.negative()!!
+
+/**
+ * Returns the transpose of this matrix.
+ */
+val <T> Matrix<T>.T: Matrix<T>
+    get() = this.transpose()
+
 operator fun <T : Any> Vector<T>.unaryMinus() = this.negative()!!
 
 operator fun <T : Any> PVector<T>.unaryMinus() = this.negative()!!

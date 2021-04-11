@@ -71,7 +71,8 @@ object IterUtils {
     }
 
     /**
-     * Returns a sequence corresponding to the cartesian product of the given iterables.
+     * Returns a sequence corresponding to the cartesian product of the given iterables. The last iterable is
+     * iterated over first.
      *
      * @param its a list of iterables
      *
@@ -161,6 +162,7 @@ object IterUtils {
 
     /**
      * Returns a sequence corresponding to the cartesian product of the given int progressions.
+     * The last dimension is iterated over first.
      *
      *
      * @param copy whether to directly return the backing int array in the sequence iterator or make a

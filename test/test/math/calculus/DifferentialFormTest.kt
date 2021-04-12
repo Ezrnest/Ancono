@@ -11,7 +11,7 @@ class DifferentialFormTest {
         val one = ec.one
 //        val mc = DifferentialForm
         val f = DifferentialForm.of(ec.parse("x^2"), ec, "x", "y", "z")
-        val g = DifferentialForm.of(one, ec, "a", "b", "c")
+//        val g = DifferentialForm.of(one, ec, "a", "b", "c")
         println(f)
         println(f.differential("x"))
     }

@@ -4,7 +4,6 @@ import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
-import cn.ancono.math.numberModels.CalculatorUtils
 import cn.ancono.math.numberModels.Fraction
 import java.util.*
 
@@ -75,7 +74,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @return the class
      */
     @JvmDefault
-    override val numberClass: Class<*>
+    override val numberClass: Class<T>
         get() = zero.javaClass
 
     /**
@@ -528,7 +527,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
                 override val isComparable: Boolean = mc.isComparable
                 override val zero: S = f(mc.zero)
                 override val one: S = f(mc.one)
-                override val numberClass: Class<*> = zero::class.java
+                override val numberClass: Class<S> = zero.javaClass
 
                 override fun isEqual(x: S, y: S): Boolean = mc.isEqual(f.deply(x), f.deply(y))
 

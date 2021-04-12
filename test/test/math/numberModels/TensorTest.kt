@@ -162,4 +162,15 @@ class TensorTest {
         assertTrue(v.slice(null, 0, null).valueEquals(u))
         assertTrue(v.slice(null, 1, null).valueEquals(w))
     }
+
+    @Test
+    fun testCreate() {
+        val mc = Calculators.integer()
+        val t = Tensor.of(listOf(
+                listOf(1, 2, 3),
+                listOf(3, 4, 5)),
+                mc)
+        assertArrayEquals(intArrayOf(2, 3), t.shape)
+        assertEquals(18, t.sumAll())
+    }
 }

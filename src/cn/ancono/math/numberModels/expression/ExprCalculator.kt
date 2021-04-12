@@ -142,7 +142,7 @@ class ExprCalculator
     /*
      * @see cn.ancono.math.MathCalculator#getNumberClass()
      */
-    override val numberClass: Class<*>
+    override val numberClass: Class<Expression>
         get() = Expression::class.java
 
 

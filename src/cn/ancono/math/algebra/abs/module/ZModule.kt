@@ -46,7 +46,7 @@ class ZModuleCalFromAGroup<Z : Any, V : Any>(val ic: IntCalculator<Z>, val gc: G
         return gc.isEqual(x, y)
     }
 
-    override val numberClass: Class<*>
+    override val numberClass: Class<V>
         get() = gc.numberClass
 }
 

@@ -214,8 +214,8 @@ class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<R
     override val one: RandomVariable<T> = ConstantDist(mc.one)
     override val zero: RandomVariable<T> = ConstantDist(mc.zero)
 
-    override fun isZero(para: RandomVariable<T>): Boolean {
-        if (para == zero) {
+    override fun isZero(x: RandomVariable<T>): Boolean {
+        if (x == zero) {
             return true
         }
         throw UnsupportedCalculationException()
@@ -330,7 +330,7 @@ class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<R
     }
 
 
-    override val numberClass: Class<*>
+    override val numberClass: Class<RandomVariable<T>>
         get() = super.numberClass
 
     override fun RandomVariable<T>.div(y: RandomVariable<T>): RandomVariable<T> {

@@ -167,7 +167,7 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         return super.gpow(x, n)
     }
 
-    override val numberClass: Class<*>
+    override val numberClass: Class<T>
         get() = zero.javaClass
 
 

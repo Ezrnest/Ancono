@@ -27,6 +27,6 @@ interface MonoidCalculator<T : Any> : SemigroupCalculator<T> {
      * Returns the class of the number.
      */
     @JvmDefault
-    val numberClass: Class<*>
+    val numberClass: Class<T>
         get() = identity.javaClass
 }

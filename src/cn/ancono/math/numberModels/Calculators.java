@@ -2346,7 +2346,7 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Class<?> getNumberClass() {
+        public Class<Boolean> getNumberClass() {
             return Boolean.class;
         }
 

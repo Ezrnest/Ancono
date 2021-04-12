@@ -10,10 +10,11 @@ import java.util.function.Function
  * Created at 2018/12/28 16:38
  * @author  liyicheng
  */
-fun main(args: Array<String>) {
+fun main() {
     p2()
 }
-fun p2(){
+
+fun p2() {
     val mcd = Calculators.doubleDev()
     val str = """
             1 2 5

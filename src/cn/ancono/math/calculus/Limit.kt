@@ -74,7 +74,7 @@ object Limit {
         val (f, constant) = expr.terms.partition { it.containsChar(variable) }
 
         if (!process.value.isFinite) {
-            val top = f.maxBy { t -> t.getCharacterPower(variable) }!! // x^666
+            val top = f.maxByOrNull { t: Term -> t.getCharacterPower(variable) }!! // x^666
             val lim = limitOf(top, process)
             return Limit.addConst(lim, mc) { Expression.fromMultinomial(Multinomial.fromTerms(constant)) }
         }
@@ -86,7 +86,7 @@ object Limit {
                     Expression.fromMultinomial(expr), variable, value)
             return LimitResult.finiteValueOf(re, signum * signum0)
         }
-        val bot = f.minBy { it.getCharacterPower(variable) }!!// x ^ (-666)
+        val bot = f.minByOrNull { it: Term -> it.getCharacterPower(variable) }!!// x ^ (-666)
         val lim = limitOf(bot, process, mc)
         return Limit.addConst(lim, mc) { Expression.fromMultinomial(Multinomial.fromTerms(constant)) }
     }
@@ -138,8 +138,8 @@ object Limit {
         val f2 = deno.terms
         if (process.value.isFinite) {
             // x -> 0, find the lowest term
-            val low1 = f1.minBy { it.getCharacterPower(variable) }!!
-            val low2 = f2.minBy { it.getCharacterPower(variable) }!!
+            val low1 = f1.minByOrNull { it: Term -> it.getCharacterPower(variable) }!!
+            val low2 = f2.minByOrNull { it: Term -> it.getCharacterPower(variable) }!!
             val p1 = low1.getCharacterPower(variable)
             val p2 = low2.getCharacterPower(variable)
             val signum = p1.signum * p2.signum * process.direction.signum()
@@ -156,8 +156,8 @@ object Limit {
             }
         } else {
             //x -> Inf, find the highest term
-            val top1 = f1.maxBy { it.getCharacterPower(variable) }!!
-            val top2 = f2.maxBy { it.getCharacterPower(variable) }!!
+            val top1 = f1.maxByOrNull { it: Term -> it.getCharacterPower(variable) }!!
+            val top2 = f2.maxByOrNull { it: Term -> it.getCharacterPower(variable) }!!
             val p1 = top1.getCharacterPower(variable)
             val p2 = top2.getCharacterPower(variable)
             val signum = p1.signum * p2.signum * process.direction.signum()

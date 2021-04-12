@@ -344,8 +344,8 @@ object BigFractionCalculator : MathCalculatorAdapter<BigFraction>() {
     override val zero: BigFraction
         get() = ZERO
 
-    override fun isZero(para: BigFraction): Boolean {
-        return para.isZero()
+    override fun isZero(x: BigFraction): Boolean {
+        return x.isZero()
     }
 
     override fun isEqual(x: BigFraction, y: BigFraction): Boolean {
@@ -403,6 +403,6 @@ object BigFractionCalculator : MathCalculatorAdapter<BigFraction>() {
         return fromFraction(x)
     }
 
-    override val numberClass: Class<*>
+    override val numberClass: Class<BigFraction>
         get() = BigFraction::class.java
 }

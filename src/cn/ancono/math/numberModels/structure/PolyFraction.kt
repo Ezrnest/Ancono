@@ -226,6 +226,6 @@ class PFractionCalculator<T : Any>(val mc: MathCalculator<T>, val sim: Simplifie
         return PFraction.of(Polynomial.constant(mc, mc.of(x)))
     }
 
-    override val numberClass: Class<*>
+    override val numberClass: Class<PFraction<T>>
         get() = super.numberClass
 }

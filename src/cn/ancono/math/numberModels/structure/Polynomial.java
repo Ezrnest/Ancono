@@ -1603,10 +1603,12 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         /*
          * @see cn.ancono.math.MathCalculator#getNumberClass()
          */
+        @SuppressWarnings("unchecked")
         @NotNull
         @Override
-        public Class<?> getNumberClass() {
-            return Polynomial.class;
+        public Class<Polynomial<T>> getNumberClass() {
+            var t = (Class<?>) Polynomial.class;
+            return (Class<Polynomial<T>>) t;
         }
 
         /*
@@ -1842,10 +1844,12 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         /*
          * @see cn.ancono.math.MathCalculator#getNumberClass()
          */
+        @SuppressWarnings("unchecked")
         @NotNull
         @Override
-        public Class<?> getNumberClass() {
-            return Polynomial.class;
+        public Class<Polynomial<T>> getNumberClass() {
+            var t = (Class<?>) Polynomial.class;
+            return (Class<Polynomial<T>>) t;
         }
 
     }

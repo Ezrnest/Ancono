@@ -3013,6 +3013,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         public T getRZero() {
             return mc.getZero();
         }
+
+        @SuppressWarnings("UNCHECKED_CAST")
+        @NotNull
+        @Override
+        public Class<Matrix<T>> getNumberClass() {
+            return (Class<Matrix<T>>) (Class<?>) Matrix.class;
+        }
     }
 
     public static class SquareMatrixCal<T> extends MatrixCal<T> {

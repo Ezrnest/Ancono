@@ -780,8 +780,14 @@ public final class Permutations {
         /*
          * @see cn.ancono.math.numberTheory.combination.Permutations#isEqual(cn.ancono.math.numberTheory.combination.Permutation, cn.ancono.math.numberTheory.combination.Permutation)
          */
-        public boolean isEqual(Permutation p1, Permutation p2) {
+        public boolean isEqual(@NotNull Permutation p1, @NotNull Permutation p2) {
             return Permutations.isEqual(p1, p2);
+        }
+
+        @NotNull
+        @Override
+        public Class<Permutation> getNumberClass() {
+            return Permutation.class;
         }
     };
 

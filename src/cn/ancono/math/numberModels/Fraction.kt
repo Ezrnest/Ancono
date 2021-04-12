@@ -647,7 +647,7 @@ internal constructor(
 
 
     class FractionCalculator : MathCalculatorAdapter<Fraction>() {
-        override val numberClass: Class<*> = Fraction::class.java
+        override val numberClass: Class<Fraction> = Fraction::class.java
 
         override fun isEqual(x: Fraction, y: Fraction): Boolean {
             return x == y

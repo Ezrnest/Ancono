@@ -108,11 +108,11 @@ abstract class NormalSurface<T : Any> : SpaceParametricSurface<T>, BDVFunction<T
     /**
      * The Gauss curvature `K`, which is
      */
-    open val K: NDerivableFunction<T, T> by lazy {
+    open val K: NDerivableFunction<T, T> by lazy<NDerivableFunction<T, T>> {
         TODO()
     }
 
-    open val H: NDerivableFunction<T, T> by lazy {
+    open val H: NDerivableFunction<T, T> by lazy<NDerivableFunction<T, T>> {
         TODO()
     }
 

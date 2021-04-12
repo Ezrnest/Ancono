@@ -1,6 +1,5 @@
 package cn.ancono.math.numberModels.structure
 
-import cn.ancono.math.AbstractMathObject
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
@@ -82,7 +81,7 @@ class ComplexInf<T : Any> internal constructor(mc: MathCalculator<T>) : ComplexE
  *
  */
 class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : ComplexE<T>(mc),
-    FieldNumberModel<Complex<T>> {
+        FieldNumberModel<Complex<T>> {
 
 
     private val a: T = Objects.requireNonNull(a)
@@ -435,15 +434,15 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
             val sb = StringBuilder()
             sb.append('(')
-                .append(nf.format(a, mc))
-                .append(")")
-                .append('+')
+                    .append(nf.format(a, mc))
+                    .append(")")
+                    .append('+')
             if (mc.isEqual(b, mc.one)) {
                 sb.append('i')
             } else {
                 sb.append('(')
-                    .append(nf.format(b, mc))
-                    .append(")i")
+                        .append(nf.format(b, mc))
+                        .append(")i")
             }
             return sb.toString()
         }
@@ -486,8 +485,9 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         /* (non-Javadoc)
                  * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
                  */
-        override val numberClass: Class<Complex<*>>
-            get() = Complex::class.java
+        override val numberClass: Class<Complex<T>>
+            @Suppress("UNCHECKED_CAST")
+            get() = Complex::class.java as Class<Complex<T>>
 
         override fun isEqual(x: Complex<T>, y: Complex<T>): Boolean {
             return x.valueEquals(y)
@@ -812,12 +812,15 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
 
         fun crossRatio(
-            x1: ComplexE<T>, x2: ComplexE<T>,
-            x3: ComplexE<T>, x4: ComplexE<T>
+                x1: ComplexE<T>, x2: ComplexE<T>,
+                x3: ComplexE<T>, x4: ComplexE<T>
         ): ComplexE<T> {
             return crossRatio(x1, x2, x3, x4, mc.mc)
         }
 
+        override val numberClass: Class<ComplexE<T>>
+            @Suppress("UNCHECKED_CAST")
+            get() = ComplexE::class.java as Class<ComplexE<T>>
     }
 
 
@@ -994,8 +997,8 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
 
         private fun <T : Any> minusFrac(
-            x: ComplexE<T>, y1: ComplexE<T>, y2: ComplexE<T>,
-            mc: MathCalculator<T>
+                x: ComplexE<T>, y1: ComplexE<T>, y2: ComplexE<T>,
+                mc: MathCalculator<T>
         ): ComplexE<T> {
             // (x-y1)/(x-y2)
             if (x !is Complex) {
@@ -1037,9 +1040,9 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          */
         @JvmStatic
         fun <T : Any> crossRatio(
-            x1: ComplexE<T>, x2: ComplexE<T>,
-            x3: ComplexE<T>, x4: ComplexE<T>,
-            mc: MathCalculator<T>
+                x1: ComplexE<T>, x2: ComplexE<T>,
+                x3: ComplexE<T>, x4: ComplexE<T>,
+                mc: MathCalculator<T>
         ): ComplexE<T> {
 
             //  (x1-x3)(x2-x4)/((x1-x4)(x2-x3))

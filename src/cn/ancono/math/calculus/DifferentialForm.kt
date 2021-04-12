@@ -482,7 +482,7 @@ class DiffFormCalculator<T : Any>(val mc: FunctionCalculator<T>)
     }
 
 
-    override val numberClass: Class<*>
+    override val numberClass: Class<DifferentialForm<T>>
         get() = super<MathCalculatorAdapter>.numberClass
 
     @Suppress("OverridingDeprecatedMember")

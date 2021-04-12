@@ -4,12 +4,9 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.MathUtils
-import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.discrete.combination.Permutations
-import cn.ancono.math.numberModels.Tensor.Companion.DOTS
-import cn.ancono.math.numberModels.Tensor.Companion.NEW_AXIS
 import cn.ancono.math.numberModels.Tensor.Companion.checkShape
 import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
@@ -160,8 +157,6 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
     }
 
 
-//    fun einsum()
-
     /**
      * Returns the wedge product of this tensor and `y`.
      *
@@ -289,6 +284,9 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
     }
 
 
+    /**
+     * Broadcasts this tensor to the given shape.
+     */
     fun broadcastTo(vararg newShape: Int): Tensor<T> {
         return TensorUtils.broadcastTo(this, newShape)
     }
@@ -449,6 +447,32 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
         fun <T : Any> of(shape: IntArray, mc: MathCalculator<T>, supplier: (Index) -> T): MutableTensor<T> {
             checkValidShape(shape)
             return ATensor.buildFromSequence(mc, shape.clone(), IterUtils.prodIdxN(shape).map(supplier))
+        }
+
+        /**
+         * Creates a tensor from the given multi-dimensional list/array. [elements] (and its
+         * nesting lists) can contain either elements
+         * of type `T` or lists, and the shape in each dimension should be consistent.
+         *
+         *
+         */
+        fun <T : Any> of(elements: List<Any>, mc: MathCalculator<T>): MutableTensor<T> {
+            return ATensor.fromNestingList(elements, mc)
+        }
+
+        /**
+         * Creates a tensor of the given [shape] with its [elements], it is required that the length of
+         * [elements] is equal to the product of [shape].
+         */
+        fun <T : Any> of(shape: IntArray, mc: MathCalculator<T>, vararg elements: T): MutableTensor<T> {
+            checkValidShape(shape)
+            val size = MathUtils.product(shape)
+            require(elements.size == size) {
+                "$size elements expected but ${elements.size} is given!"
+            }
+            val data = Arrays.copyOf(elements, size, Array<Any>::class.java)
+            @Suppress("UNCHECKED_CAST")
+            return ATensor(mc, shape, data as Array<T>)
         }
 
         /**
@@ -1281,6 +1305,57 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
             return ATensor(mc, shape, data as Array<T>)
         }
 
+
+        private fun <T : Any> recurAdd(list: List<Any>, shape: IntArray, level: Int, pos: Int,
+                                       dest: Array<T>, clz: Class<T>): Int {
+            val size = shape[level]
+            require(list.size == size) {
+                "Required length at axis $level is $size, but ${list.size} is given!"
+            }
+            var p = pos
+            if (level == shape.lastIndex) {
+                for (e in list) {
+                    dest[p++] = clz.cast(e)
+                }
+                return pos + size
+            }
+            for (e in list) {
+                require(e is List<*>) {
+                    "Nesting level mismatch!"
+                }
+                @Suppress("UNCHECKED_CAST")
+                p = recurAdd(e as List<Any>, shape, level + 1, p, dest, clz)
+            }
+            return p
+        }
+
+        fun <T : Any> fromNestingList(list: List<Any>, mc: MathCalculator<T>): ATensor<T> {
+            val sh = arrayListOf<Int>()
+            val clz = mc.numberClass
+            var l = list
+            while (true) {
+                require(l.isNotEmpty())
+                sh += l.size
+                val e = l[0]
+                if (clz.isInstance(e)) {
+                    break
+                }
+                require(e is List<*>) {
+                    "Elements in the given list should be either list or object of required type. " +
+                            "Given: $e"
+                }
+                @Suppress("UNCHECKED_CAST")
+                l = e as List<Any>
+            }
+            val shape = sh.toIntArray()
+            val size = MathUtils.product(shape)
+
+            @Suppress("UNCHECKED_CAST")
+            val data = arrayOfNulls<Any>(size) as Array<T>
+            val pos = recurAdd(list, shape, 0, 0, data, clz)
+            assert(pos == size)
+            return ATensor(mc, shape, data)
+        }
     }
 
 }
@@ -1289,15 +1364,15 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
 fun main() {
     val mc = Calculators.integer()
     val shape = intArrayOf(3, 3)
-    val shape2 = intArrayOf(1)
+    val shape2 = intArrayOf(3)
 //    val v = Tensor.zeros(mc, *shape)
 //    val w = Tensor.ones(mc, *shape)
-    val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
-    val w = Tensor.of(shape2, mc) { it[0] + 1 }
-    println(u)
-    println(w)
-
-    println(u + w)
+//    val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
+//    val w = Tensor.of(shape2, mc) { it[0] + 1 }
+//    println(u)
+//    println(w)
+//
+//    println(u + w)
 //    println()
 //    val z = u.slice(0..1, null).reshape(4, -1)
 //    println(z)
@@ -1353,4 +1428,6 @@ fun main() {
 //    println(u.permute(intArrayOf(1,0))[0])
 //    u += w
 //    println(u)
+
+
 }

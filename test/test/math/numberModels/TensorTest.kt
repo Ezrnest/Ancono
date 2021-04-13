@@ -137,6 +137,19 @@ class TensorTest {
     }
 
     @Test
+    fun testEinsum5() {
+        val mc = Calculators.integer()
+        val shape = intArrayOf(2, 2, 3)
+        val shape2 = intArrayOf(2, 3, 4)
+        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
+        val w = Tensor.of(shape2, mc) { it[0] + 1 }
+
+        val r1 = u.matmul(w, r = 2)
+        val r2 = Tensor.einsum("ijk,jkl->il", u, w)
+        assertTrue(r1.valueEquals(r2))
+    }
+
+    @Test
     fun testConcat() {
         val mc = Calculators.integer()
         val shape = intArrayOf(3, 2)

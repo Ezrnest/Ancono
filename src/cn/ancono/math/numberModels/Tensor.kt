@@ -10,15 +10,9 @@ import cn.ancono.math.discrete.combination.Permutations
 import cn.ancono.math.numberModels.Tensor.Companion.checkShape
 import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberModels.api.plus
-import cn.ancono.utilities.ArraySup
 import cn.ancono.utilities.IterUtils
-import java.lang.IllegalArgumentException
-import java.lang.IndexOutOfBoundsException
-import java.lang.StringBuilder
 import java.util.*
 import java.util.function.Function
-import kotlin.collections.ArrayList
 
 typealias Index = IntArray
 
@@ -158,7 +152,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
 
 
     /**
-     * Returns the wedge product of this tensor and `y`.
+     * Returns the wedge product of this tensor and [y].
      *
      * The tensor product of two tensor `z = x⊗y` has the
      * shape of `x.shape + y.shape`, here `+` means concatenation of two arrays.
@@ -171,6 +165,33 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
     fun wedge(y: Tensor<T>): Tensor<T> {
         return TensorUtils.wedge(this, y)
     }
+
+    /**
+     * Returns the inner product of this tensor and [y], which is the sum of the element-wise product of this and `y`.
+     */
+    fun inner(y: Tensor<T>): T {
+        return TensorUtils.inner(this, y)
+    }
+
+    /**
+     * Returns the matrix multiplication of this and [y].
+     *
+     * To perform matrix multiplication of rank `r` for two tensors `x,y`, first it is
+     * required that the last `r` dimensions of `x` and first `r` dimensions of `y` have
+     * the same shape.
+     * The resulting tensor `z` has the shape of `x.shape[:-r] + y.shape[r:]`.
+     * Denote `i, j, k` indices of length `x.dim-r, y.dim-r, r` respectively, the following
+     * equation is satisfied:
+     *
+     *     z[i,j] = sum(k, x[i,k] * y[k,j])
+     *
+     *
+     *
+     */
+    fun matmul(y: Tensor<T>, r: Int = 1): Tensor<T> {
+        return TensorUtils.matmul(this, y, r)
+    }
+
 
     /**
      * Returns the sum of all the elements in this tensor.
@@ -186,6 +207,10 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
     fun sum(vararg axes: Int): Tensor<T> {
         return TensorUtils.sum(this, axes.asList())
     }
+
+//    fun trace() : Tensor<T>
+
+//    fun diagonal() : Tensor<T>
 
 
     /*
@@ -300,7 +325,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
 //    operator fun get(vararg ranges: Any?): Tensor<T>{
 //    return slice(ranges.asList())
 //    }
-//
+
 
 
     /**
@@ -496,15 +521,15 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          *
          * Examples:
          *
-         *      | Expression | Required Shapes | Result Shape | Description                 |
-         *      |------------|-----------------|--------------|-----------------------------|
-         *      | i->i       | (a)             | (a)          | identity                    |
-         *      | i->        | (a)             | (1)          | sum                         |
-         *      | ij->ji     | (a,b)           | (b,a)        | transpose                   |
-         *      | ii         | (a,a)           | (a)          | trace                       |
-         *      | ii->i      | (a,a)           | (1)          | diagonal                    |
-         *      | ij,ij->ij  | (a,b),(a,b)     | (a,b)        | element-wise multiplication |
-         *      | ij,jk->ik  | (a,b),(b,c)     | (a,c)        | matrix multiplication       |
+         *      | Expression | Required Shapes | Result Shape | Description                 | Equivalent Method
+         *      |------------|-----------------|--------------|-----------------------------|-------------------------
+         *      | i->i       | (a)             | (a)          | identity                    | x
+         *      | i->        | (a)             | (1)          | sum                         | x.sum()
+         *      | ij->ji     | (a,b)           | (b,a)        | transpose                   | x.transpose()
+         *      | ii         | (a,a)           | (a)          | trace                       | x.trace()
+         *      | ii->i      | (a,a)           | (1)          | diagonal                    | x.trace().sum()
+         *      | ij,ij->ij  | (a,b),(a,b)     | (a,b)        | element-wise multiplication | x.multiply(y)
+         *      | ij,jk->ik  | (a,b),(b,c)     | (a,c)        | matrix multiplication       | x.matmul(y)
          */
         fun <T : Any> einsum(expr: String, vararg tensors: Tensor<T>): MutableTensor<T> {
             return TensorUtils.einsum(tensors.asList(), expr)
@@ -517,7 +542,6 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
         fun <T : Any> scalar(x: T, mc: MathCalculator<T>): MutableTensor<T> {
             return constants(x, mc, 1)
         }
-
 
         /**
          * Concatenate several tensors as a view.
@@ -726,6 +750,11 @@ interface MutableTensor<T : Any> : Tensor<T> {
 
     override fun wedge(y: Tensor<T>): MutableTensor<T> {
         return TensorUtils.wedge(this, y)
+    }
+
+
+    override fun matmul(y: Tensor<T>, r: Int): MutableTensor<T> {
+        return TensorUtils.matmul(this, y, r)
     }
 
     override fun sum(vararg axes: Int): MutableTensor<T> {
@@ -1094,14 +1123,6 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
         Arrays.fill(data, v)
     }
 
-//    /**
-//     * A low-level api for direct access.
-//     */
-//    fun setPos(pos : Int, v : T){
-//        data[pos] = v
-//    }
-
-
     private inline fun inlineApplyAll(f: (T) -> T): ATensor<T> {
         for (i in 0 until size) {
             data[i] = f(data[i])
@@ -1363,12 +1384,16 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
 
 fun main() {
     val mc = Calculators.integer()
-    val shape = intArrayOf(3, 3)
-    val shape2 = intArrayOf(3)
+    val shape = intArrayOf(2, 2, 3)
+    val shape2 = intArrayOf(2, 3, 4)
 //    val v = Tensor.zeros(mc, *shape)
 //    val w = Tensor.ones(mc, *shape)
-//    val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
-//    val w = Tensor.of(shape2, mc) { it[0] + 1 }
+    val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
+    val w = Tensor.of(shape2, mc) { it[0] + 1 }
+
+    val r1 = u.matmul(w, r = 2)
+    val r2 = Tensor.einsum("ijk,jkl->il", u, w)
+    println(r1.valueEquals(r2))
 //    println(u)
 //    println(w)
 //

@@ -6,9 +6,7 @@ import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.utilities.ArraySup
 import cn.ancono.utilities.IterUtils
-import java.lang.IllegalArgumentException
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 /*
@@ -532,6 +530,17 @@ internal object TensorUtils {
         val (x, y) = broadcast(x0, y0)
         val mc = x.mathCalculator
         return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.divide(x[idx], y[idx]) })
+    }
+
+    fun <T : Any> inner(x: Tensor<T>, y: Tensor<T>): T {
+        require(x.isSameShape(y)) {
+            "Two tensor must have the same shape for inner!" +
+                    "Given shapes: ${x.shape.contentToString()}, ${y.shape.contentToString()}."
+        }
+        val mc = x.mathCalculator
+        return x.elementSequence().zip(y.elementSequence()).fold(mc.zero) { re, (a, b) ->
+            mc.eval { re + a * b }
+        }
     }
 
     fun <T : Any> wedge(x: Tensor<T>, y: Tensor<T>): MutableTensor<T> {
@@ -1064,8 +1073,41 @@ internal object TensorUtils {
 
     }
 
-    fun <T : Any> tensorDot(x: Tensor<T>, y: Tensor<T>): MutableTensor<T> {
-        TODO()
+    fun <T : Any> matmul(x: Tensor<T>, y: Tensor<T>, r: Int): MutableTensor<T> {
+        val shape1 = x.shape
+        val shape2 = y.shape
+        val dim1 = shape1.size
+        val dim2 = shape2.size
+        val mc = x.mathCalculator
+        require(dim1 >= r && dim2 >= r)
+        if (dim1 == r && dim2 == r) {
+            return Tensor.scalar(x.inner(y), mc)
+        }
+        val mShape = shape1.sliceArray(dim1 - r until dim1)
+        require(mShape.contentEquals(shape2.sliceArray(0 until r)))
+        var rShape = shape1.sliceArray(0 until (dim1 - r)) + shape2.sliceArray(r until dim2)
+        if (rShape.isEmpty()) {
+            rShape = intArrayOf(1)
+        }
+        val result = ATensor.zeros(rShape, mc)
+        val data = result.data
+        val xIdx = IntArray(dim1)
+        val yIdx = IntArray(dim2)
+        val mIndices = IterUtils.prodIdxN(mShape)
+        var pos = 0
+        for (rIdx in result.indices) {
+            rIdx.copyInto(xIdx, endIndex = dim1 - r)
+            rIdx.copyInto(yIdx, destinationOffset = r, startIndex = dim1 - r)
+            var re = mc.zero
+            for (mIdx in mIndices) {
+                mIdx.copyInto(xIdx, destinationOffset = dim1 - r)
+                mIdx.copyInto(yIdx)
+                re = mc.eval { re + x[xIdx] * y[yIdx] }
+            }
+            data[pos++] = re
+        }
+        return result
+
     }
 
 }

@@ -453,10 +453,16 @@ Core:
 * Kotlin: 1.4
 
 Test:
+
 * JUnit 4
 
 ## Related project
-[AnconoGraphic](https://github.com/140378476/AnconoGraphic) provides graphic extension of this library.  
+
+[AnconoGraphic](https://github.com/140378476/AnconoGraphic) provides graphic extension of this library.
 
 ## Development
-Project Ancono welcomes anyone to join in the development. 
+
+Project Ancono welcomes anyone to join in the development.
+
+Modules to be added in future: Calculators for finite field `GF(p^n)`, computational number theory and computational
+algebraic geometry, numeric methods(interpolation, integration, optimization,...).

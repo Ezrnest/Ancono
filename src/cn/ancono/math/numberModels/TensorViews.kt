@@ -7,6 +7,7 @@ import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.utilities.ArraySup
 import cn.ancono.utilities.IterUtils
 import java.util.*
+import kotlin.math.min
 
 
 /*
@@ -21,7 +22,7 @@ open class SlicedView<T : Any>(
          */
         protected val ranges: List<IntProgression>,
         /**
-         * Maps the axis to t's axis. `axisMap.size = this.dim`.
+         * Maps the axis to [tensor]'s axis. `axisMap.size = this.dim`.
          *
          * `axisMap[i] = -1` means a new axis.
          */
@@ -185,9 +186,6 @@ class MutableSliceView<T : Any>(
         return super<MutableTensor>.transpose(axis1, axis2)
     }
 
-    override fun wedge(y: Tensor<T>): MutableTensor<T> {
-        return super<MutableTensor>.wedge(y)
-    }
 
     override fun setAll(v: T) {
         originalIndicesNoOrder.forEach { idx -> t[idx] = v }
@@ -253,6 +251,7 @@ class MutableConcatView<T : Any>(axis: Int, tensors: List<MutableTensor<T>>, sha
     : ConcatView<T>(axis, tensors, shape), MutableTensor<T> {
     override val ts: List<MutableTensor<T>> = tensors
     override fun set(idx: Index, v: T) {
+        checkIdx(idx)
         val k = ArraySup.binarySearchFloor(axisLevels, 0, axisLevels.size, idx[axis])
         val nIdx = idx.copyOf()
         nIdx[axis] -= axisLevels[k]
@@ -296,6 +295,7 @@ class MutableStackView<T : Any>(axis: Int, tensors: List<MutableTensor<T>>, shap
     : StackView<T>(axis, tensors, shape), MutableTensor<T> {
     override val ts: List<MutableTensor<T>> = tensors
     override fun set(idx: Index, v: T) {
+        checkIdx(idx)
         val nIdx = transIdx(idx)
         val k = idx[axis]
         ts[k][nIdx] = v
@@ -396,6 +396,7 @@ class MutableReshapedView<T : Any>(tensor: MutableTensor<T>, shape: IntArray)
     : ReshapedView<T>(tensor, shape), MutableTensor<T> {
     override val t: MutableTensor<T> = tensor
     override fun set(idx: Index, v: T) {
+        checkIdx(idx)
         val pos = toPos(idx)
         val tIdx = toIdx(pos)
         t[tIdx] = v
@@ -463,6 +464,39 @@ class BroadcastView<T : Any>(
 
 }
 
+open class IndexMapView<T : Any>(
+        open val tensor: Tensor<T>,
+        /**
+         * Axis map.
+         *
+         *     tIdx[i] = idx[am[i]]
+         */
+        val am: IntArray,
+        val offsets: IntArray,
+        shape: IntArray) : AbstractTensor<T>(tensor.mathCalculator, shape) {
+
+    protected fun mapIdx(idx: Index): IntArray {
+        val tIdx = offsets.clone()
+        for (i in tIdx.indices) {
+            tIdx[i] += idx[am[i]]
+        }
+        return tIdx
+    }
+
+    override fun getChecked(idx: Index): T {
+        val tIdx = mapIdx(idx)
+        return tensor[tIdx]
+    }
+}
+
+class MutableIndexMapView<T : Any>(override val tensor: MutableTensor<T>, am: IntArray, offsets: IntArray, shape: IntArray) :
+        IndexMapView<T>(tensor, am, offsets, shape), MutableTensor<T> {
+    override fun set(idx: Index, v: T) {
+        checkIdx(idx)
+        val tIdx = mapIdx(idx)
+        tensor[tIdx] = v
+    }
+}
 
 internal object TensorUtils {
 
@@ -838,11 +872,14 @@ internal object TensorUtils {
         return einsum(ts, resShape, mulShape, tToResList, tToMulList, ts[0].mathCalculator)
     }
 
+
     fun <T : Any> sumInOneAxis(t: Tensor<T>, sumAxis: Int): MutableTensor<T> {
-//        if(t.dim)
         val mc = t.mathCalculator
         val axis = addIfNegative(sumAxis, t.dim)
         require(axis in 0 until t.dim)
+        if (t.dim == 1) {
+            return Tensor.scalar(t.sumAll(), t.mathCalculator)
+        }
         val tShape = t.shape
         val shape = IntArray(t.dim - 1)
         tShape.copyInto(shape, 0, 0, axis)
@@ -865,6 +902,9 @@ internal object TensorUtils {
         return result
     }
 
+    /**
+     * Returns the sum of [t] in given [sumAxes] and [remAxes], it is required that both axes are non-empty.
+     */
     fun <T : Any> sumInAxes(t: Tensor<T>, sumAxes: IntArray, remAxes: IntArray): MutableTensor<T> {
         val mc = t.mathCalculator
         val tShape = t.shape
@@ -1110,4 +1150,66 @@ internal object TensorUtils {
 
     }
 
+    private fun prepareDiag(x: Tensor<*>, axis1: Int, axis2: Int, offset: Int): Triple<IntArray, IntArray, IntArray> {
+        require(x.dim >= 2) {
+            "The given tensor's dim must >= 2!"
+        }
+        val dim = x.dim
+        val ax1 = addIfNegative(axis1, dim)
+        val ax2 = addIfNegative(axis2, dim)
+        require(ax1 in 0 until dim && ax2 in 0 until dim) {
+            "Invalid axes: $axis1, $axis2 for tensor dim=$dim. "
+        }
+        require(ax1 != ax2) {
+            "The two axes for diagonal must not be the same!"
+        }
+        val am = IntArray(dim)
+        // xIdx[i] = idx[am[i]], x: i <-> view: am[i]
+        val offsets = IntArray(dim)
+        val shape = IntArray(dim - 1)
+        val xShape = x.shape
+
+        fun computeShape(ax1: Int, ax2: Int, offset: Int): Int {
+            val s = min(xShape[ax1], xShape[ax2] - offset)
+            require(s > 0) {
+                "The resulting tensor is empty! " +
+                        "Diagonal in axes $axis1,$axis2 with offset=$offset, " +
+                        "tensor shape=${x.shape.contentToString()}."
+            }
+            return s
+        }
+        if (offset >= 0) {
+            shape[dim - 2] = computeShape(ax1, ax2, offset)
+            offsets[ax2] = offset
+        } else {
+            shape[dim - 2] = computeShape(ax2, ax1, -offset)
+            offsets[ax1] = -offset
+        }
+
+
+        var pos = 0
+        for (i in 0 until dim) {
+            if (i == ax1 || i == ax2) {
+                continue
+            }
+            am[i] = pos
+            shape[pos] = xShape[i]
+            pos++
+        }
+        am[ax1] = dim - 2
+        am[ax2] = dim - 2
+
+        return Triple(am, offsets, shape)
+
+    }
+
+    fun <T : Any> diagonal(x: Tensor<T>, axis1: Int, axis2: Int, offset: Int): Tensor<T> {
+        val (am, offsets, shape) = prepareDiag(x, axis1, axis2, offset)
+        return IndexMapView(x, am, offsets, shape)
+    }
+
+    fun <T : Any> diagonal(x: MutableTensor<T>, axis1: Int, axis2: Int, offset: Int): MutableTensor<T> {
+        val (am, offsets, shape) = prepareDiag(x, axis1, axis2, offset)
+        return MutableIndexMapView(x, am, offsets, shape)
+    }
 }

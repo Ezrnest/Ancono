@@ -5,12 +5,11 @@ import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
+import cn.ancono.math.discrete.combination.CombUtils
 import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.structure.Polynomial
-import cn.ancono.math.discrete.combination.CombUtils
 import java.util.*
 import java.util.function.Function
-import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
 
 object AlgebraUtil {
@@ -93,11 +92,6 @@ object AlgebraUtil {
 //    /**
 //     * Tries the find solution of a polynomial of integer coefficient.
 //     */
-//    @JvmStatic
-//    fun <T : Any> tryFindSolutions(p: Polynomial<T>, mc: IntCalculator<T>) {
-//        TODO()
-//
-//    }
 
     @JvmStatic
     fun findOneRationalRoot(p: Polynomial<Long>): Fraction? {

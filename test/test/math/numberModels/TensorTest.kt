@@ -8,6 +8,7 @@ import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numberModels.get
 import org.junit.Assert.*
 import org.junit.Test
+import test.math.TestUtils.assertValueEquals
 
 class TensorTest {
     @Test
@@ -52,7 +53,7 @@ class TensorTest {
 //        println(u)
 //        println(w)
 //        println()
-        assertTrue(u.wedge(w).slice(0, 1).valueEquals(w))
+        assertValueEquals(w, u.wedge(w).slice(0, 1))
     }
 
     @Test
@@ -70,7 +71,7 @@ class TensorTest {
                 listOf(intArrayOf(0, 0, 1, 1), intArrayOf(0, 0, 1, 1)),
                 listOf(intArrayOf(), intArrayOf()),
                 mc)//element-wise multiplication
-        assertTrue(r.valueEquals(u * w))
+        assertValueEquals(r, u * w)
 
 
         r = TensorUtils.einsum(listOf(u),
@@ -79,7 +80,7 @@ class TensorTest {
                 listOf(intArrayOf(0, 0, 1, 0)),
                 listOf(intArrayOf()),
                 mc)//diagonal elements
-        assertTrue(r.valueEquals(Tensor.of(intArrayOf(3), mc) { it[0] * 2 }))
+        assertValueEquals(r, Tensor.of(intArrayOf(3), mc) { it[0] * 2 })
 
         r = TensorUtils.einsum(listOf(u),
                 intArrayOf(1),
@@ -95,7 +96,7 @@ class TensorTest {
                 listOf(intArrayOf(0, 0, 1, 1), intArrayOf(0, 2, 1, 3)),
                 listOf(intArrayOf(), intArrayOf()),
                 mc) // wedge(outer product)
-        assertTrue(r.valueEquals(u.wedge(w)))
+        assertValueEquals(r, u.wedge(w))
     }
 
     @Test
@@ -123,8 +124,8 @@ class TensorTest {
         val mc = Calculators.integer()
         val shape = intArrayOf(3, 3)
         val u = Tensor.of(shape, mc) { it[0] + 2 * it[1] }
-        assertTrue(TensorUtils.sumInOneAxis(u, 1).valueEquals(Tensor.einsum("ij->i", u)))
-        assertTrue(TensorUtils.sumInOneAxis(u, 0).valueEquals(Tensor.einsum("ij->j", u)))
+        assertValueEquals(TensorUtils.sumInOneAxis(u, 1), Tensor.einsum("ij->i", u))
+        assertValueEquals(TensorUtils.sumInOneAxis(u, 0), Tensor.einsum("ij->j", u))
     }
 
     @Test
@@ -132,8 +133,8 @@ class TensorTest {
         val mc = Calculators.integer()
         val shape = intArrayOf(2, 3, 4)
         val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
-        assertTrue(u.sum(-1).valueEquals(Tensor.einsum("ijk->ij", u)))
-        assertTrue(u.sum(0, 1).valueEquals(Tensor.einsum("ijk->k", u)))
+        assertValueEquals(u.sum(-1), Tensor.einsum("ijk->ij", u))
+        assertValueEquals(u.sum(0, 1), Tensor.einsum("ijk->k", u))
     }
 
     @Test
@@ -146,7 +147,7 @@ class TensorTest {
 
         val r1 = u.matmul(w, r = 2)
         val r2 = Tensor.einsum("ijk,jkl->il", u, w)
-        assertTrue(r1.valueEquals(r2))
+        assertValueEquals(r1, r2)
     }
 
     @Test
@@ -172,8 +173,8 @@ class TensorTest {
         val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
         val w = Tensor.of(shape2, mc) { it[0] }
         val v = Tensor.stackM(u, w, axis = 1)
-        assertTrue(v.slice(null, 0, null).valueEquals(u))
-        assertTrue(v.slice(null, 1, null).valueEquals(w))
+        assertValueEquals(v.slice(null, 0, null), u)
+        assertValueEquals(v.slice(null, 1, null), w)
     }
 
     @Test
@@ -186,4 +187,32 @@ class TensorTest {
         assertArrayEquals(intArrayOf(2, 3), t.shape)
         assertEquals(18, t.sumAll())
     }
+
+    @Test
+    fun testDiag() {
+        val mc = Calculators.integer()
+        val a = Tensor.of((0..3).toList(), mc).reshape(2, 2)
+        assertValueEquals(Tensor.of(listOf(0, 3), mc), a.diagonal())
+        assertValueEquals(Tensor.scalar(1, mc), a.diagonal(1))
+
+        val b = Tensor.of((0..7).toList(), mc).reshape(2, 2, 2)
+        assertValueEquals(Tensor.of(intArrayOf(2, 2), mc, 0, 6, 1, 7),
+                b.diagonal(0, 0, 1))
+
+    }
+
+    @Test
+    fun testTrace() {
+        val mc = Calculators.integer()
+        val a = Tensor.of((0..3).toList(), mc).reshape(2, 2)
+        val t = Tensor.of(listOf(3), mc)
+        val tr = a.trace()
+        assertValueEquals(t, tr)
+
+        val b = Tensor.of((0..7).toList(), mc).reshape(2, 2, 2)
+        assertValueEquals(Tensor.of(listOf(6, 8), mc),
+                b.trace(0, 1))
+
+    }
+
 }

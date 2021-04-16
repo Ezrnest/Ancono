@@ -35,7 +35,6 @@ public final class Calculators {
     /**
      * Determines whether the two numbers are the identity in sign, which means they are both positive, negative or
      * zero.
-     *
      */
     public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, MathCalculator<T> mc) {
         T z = mc.getZero();
@@ -1516,7 +1515,6 @@ public final class Calculators {
 
         /**
          * This method only provides accuracy of double and throws exception if the number is too big.
-         *
          */
         @NotNull
         @Override
@@ -2217,7 +2215,7 @@ public final class Calculators {
         }
 
         @Override
-        public Integer getP() {
+        public int getP() {
             return getModular();
         }
 
@@ -2238,24 +2236,128 @@ public final class Calculators {
         }
 
         @Override
-        public Integer getP() {
+        public int getP() {
             return getModular();
         }
+    }
+
+    static class ZMod2Calculator extends ZModNCalculator implements ZModPCalculator<Integer> {
+        ZMod2Calculator() {
+            super(2);
+        }
+
+        @Override
+        public int getP() {
+            return 2;
+        }
+
+        @Override
+        public boolean isEqual(@NotNull Integer x, @NotNull Integer y) {
+            return (x - y) % 2 == 0;
+        }
+
+        @Override
+        public @NotNull Integer add(@NotNull Integer x, @NotNull Integer y) {
+            return (x + y) % 2;
+        }
+
+        @Override
+        public @NotNull Integer subtract(@NotNull Integer x, @NotNull Integer y) {
+            return (x + y) % 2; // -y = y
+        }
+
+
+        @Override
+        public @NotNull Integer multiply(@NotNull Integer x, @NotNull Integer y) {
+            return (x * y) % 2;
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            return x % 2 == 1;
+        }
+
+        @Override
+        protected int inverseOf(int x) {
+            if (x % 2 == 0) {
+                ExceptionUtil.notInvertible();
+            }
+            return x;
+        }
+
+        @Override
+        public @NotNull Integer divide(@NotNull Integer x, @NotNull Integer y) {
+            if (y % 2 == 0) {
+                ExceptionUtil.dividedByZero();
+            }
+            return x;
+        }
+
+        @Override
+        public @NotNull Integer multiplyLong(@NotNull Integer p, long l) {
+            return (int) ((p * (l % 2)) % 2);
+        }
+
+        @Override
+        public @NotNull Integer divideLong(@NotNull Integer x, long n) {
+            if (n % 2 == 0) {
+                ExceptionUtil.dividedByZero();
+            }
+            return x;
+        }
+
+        @Override
+        public @NotNull Integer squareRoot(@NotNull Integer x) {
+            return x;
+        }
+
+        @Override
+        public @NotNull Integer pow(@NotNull Integer p, long exp) {
+            if (p == 0 && exp == 0) {
+                ExceptionUtil.zeroExponent();
+            }
+            return p;
+        }
+
+        @Override
+        public @NotNull Integer exp(@NotNull Integer a, @NotNull Integer b) {
+            if (a == 0 && b == 0) {
+                ExceptionUtil.zeroExponent();
+            }
+            return a;
+        }
+
+        @Override
+        public @NotNull Integer negate(@NotNull Integer para) {
+            return para;
+        }
+
+        @Override
+        public @NotNull Integer abs(@NotNull Integer para) {
+            return para;
+        }
+
+        static final ZMod2Calculator INSTANCE = new ZMod2Calculator();
     }
 
     private static final int PRIME_CHECK_THRESHOLD = 1024;
     private static final int USE_CACHE_THRESHOLD = 1024;
 
+    public static ZModPCalculator<Integer> intMod2() {
+        return ZMod2Calculator.INSTANCE;
+    }
 
     /**
      * Returns a calculator for prime field <code>Z<sub>p</sub></code>, where <code>p</code> is a prime number.
      * <p></p>
      * <p>
-     * It is required that the given integer p is a
+     * It is required that the given integer p is a prime number.
      * <p>
-     * Note: The calculator caches all the modular inverse.
      */
     public static ZModPCalculator<Integer> intModP(int p) {
+        if (p == 2) {
+            return intMod2();
+        }
         if (p <= PRIME_CHECK_THRESHOLD) {
             if (!Primes.getInstance().isPrime(p)) {
                 throw new IllegalArgumentException("p must be a prime number!");

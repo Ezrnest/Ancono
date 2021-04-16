@@ -4,14 +4,14 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.IPolynomial;
+import cn.ancono.math.algebra.PolynomialUtil;
+import cn.ancono.math.discrete.combination.Permutation;
+import cn.ancono.math.discrete.combination.Permutations;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberModels.structure.Polynomial;
-import cn.ancono.math.numberModels.structure.PolynomialSup;
 import cn.ancono.math.numberModels.structure.RingFraction;
-import cn.ancono.math.discrete.combination.Permutation;
-import cn.ancono.math.discrete.combination.Permutations;
 import cn.ancono.utilities.CollectionSup;
 import cn.ancono.utilities.ModelPatterns;
 import cn.ancono.utilities.structure.Pair;
@@ -21,8 +21,6 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.function.*;
-
-import static cn.ancono.utilities.Printer.print;
 
 /**
  * An improved class for multinomial.
@@ -1227,7 +1225,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         var p1 = Polynomial.fromMultinomial(m1, ch); // Polynomial<Multinomial>
         var p2 = Polynomial.fromMultinomial(m2, ch);
 
-        var gcd = PolynomialSup.subResultantGCD(p1, p2);
+        var gcd = PolynomialUtil.subResultantGCD(p1, p2);
         return fromPolynomialM(gcd, ch);
 //        //extract the gcd of coefficient first
 //        var c1 = p1.getNonZeroCoefficients();

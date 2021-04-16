@@ -1,8 +1,12 @@
 package cn.ancono.math.calculus
 
-import cn.ancono.math.*
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.MathObject
+import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.discrete.combination.CombUtils
+import cn.ancono.math.numberModels.BigFraction
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.minus
@@ -369,7 +373,37 @@ object DefinedPolynomials {
 
 
     fun bernoulliPoly(n: Int): Polynomial<Fraction> {
-        TODO()
+        require(n >= 0)
+        val comb = CombUtils.binomialsOf(n)
+        val list = (0..n).map { k ->
+            CombUtils.numBernoulli(n - k).multiply(comb.get(k.toLong()))
+        }
+        return Polynomial.of(Fraction.calculator, list)
+    }
+
+    /**
+     * Returns the n-th Bernoulli polynomial.
+     */
+    @JvmStatic
+    fun polynomialBernoulliBig(n: Int): Polynomial<BigFraction> {
+        require(n >= 0)
+        val list = arrayOfNulls<BigFraction>(n + 1)
+        val comb = CombUtils.binomialsBigOf(n)
+        val evenBernoulli = CombUtils.numBernoulliEvenBig(n / 2 + 1)
+        for (k in 0..n) {
+            val i = n - k
+            if (i % 2 == 1) {
+                list[k] = if (i == 1) {
+                    BigFraction.fromFraction(CombUtils.numBernoulli(1)).multiply(comb.get(1L))
+                } else {
+                    BigFraction.ZERO
+                }
+            } else {
+                val b = evenBernoulli.get(i / 2L)
+                list[k] = b.multiply(comb.get(k.toLong()))
+            }
+        }
+        return Polynomial.of(BigFraction.calculator, *list)
     }
 
     /**

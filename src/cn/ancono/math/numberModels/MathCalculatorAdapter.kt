@@ -24,6 +24,9 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
             throwFor()
         }
 
+    override val characteristic: Long
+        get() = 0
+
     @Throws(UnsupportedCalculationException::class)
     private fun throwFor(): Nothing {
         throw UnsupportedCalculationException("Adapter")

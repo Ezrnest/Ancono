@@ -160,7 +160,10 @@ object NumberModels {
         }
     }
 
-    fun <T : FieldNumberModel<T>> fieldCalculator(zero: T, one: T) = object : FieldCalculator<T> {
+    fun <T : FieldNumberModel<T>> fieldCalculator(zero: T, one: T, ch: Long) = object : FieldCalculator<T> {
+
+        override val characteristic: Long = ch
+
         override fun multiply(x: T, y: T): T {
             return x * y
         }

@@ -1,18 +1,12 @@
 package cn.ancono.math;
 
-import cn.ancono.math.equation.Type;
-import cn.ancono.math.equation.inequation.SVPInequation;
 import cn.ancono.math.exceptions.ExceptionUtil;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
-import cn.ancono.math.numberModels.ComplexI;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberTheory.Primes;
-import cn.ancono.math.set.IntervalUnion;
-import cn.ancono.utilities.ArraySup;
-import cn.ancono.utilities.ModelPatterns;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Random;
 
 import static cn.ancono.utilities.ArraySup.ensureCapacityAndAdd;
 
@@ -792,7 +786,7 @@ public class MathUtils {
      * @param mod the modular, must be less than 2<<31, or overflow may happen.
      */
     public static int powerAndMod(int a, long n, int mod) {
-        return (int) powerAndMod((long) a, n, (long) mod);
+        return (int) powerAndMod(a, n, (long) mod);
     }
 
     /**

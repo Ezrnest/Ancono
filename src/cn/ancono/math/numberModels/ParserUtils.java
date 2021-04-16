@@ -142,6 +142,9 @@ public final class ParserUtils {
 
     public static <T> T parseCoefficient(String s, Function<String, T> parser, MathCalculator<T> mc) {
         s = s.trim();
+        if (s.length() == 0) {
+            return mc.getOne();
+        }
         if (s.charAt(s.length() - 1) == '*') {
             s = s.substring(0, s.length() - 1);
         }

@@ -8,7 +8,6 @@ import cn.ancono.math.numberModels.api.FieldNumberModel
 /**
  * A calculator for a field.
  *
- * which is commutative
  *
  * @see [cn.ancono.math.algebra.abs.structure.Field]
  * @see [FieldNumberModel]
@@ -21,9 +20,14 @@ interface FieldCalculator<T : Any> : DivisionRingCalculator<T> {
      */
     override fun multiply(x: T, y: T): T
 
-
     @JvmDefault
     override val isMultiplyCommutative: Boolean
         get() = true
+
+    /**
+     * Gets the characteristic of this field.
+     */
+    val characteristic: Long
+
 
 }

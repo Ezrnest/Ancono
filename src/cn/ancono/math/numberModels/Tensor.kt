@@ -16,12 +16,13 @@ import java.util.function.Function
 
 typealias Index = IntArray
 
-/**
+/*
  * Created at 2019/9/12 11:11
  *
  * Specified by lyc at 2021-03-31 22:26
  * @author  lyc
  */
+
 /**
  * ## Mathematical Description
  *
@@ -157,7 +158,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * The tensor product of two tensor `z = x⊗y` has the
      * shape of `x.shape + y.shape`, here `+` means concatenation of two arrays.
      *
-     * The `[i,j]` element of `z` is equal to the scalar product of `x[i]` and `y[j]`, that is,
+     * The `[i,j]` element of `z` is equal to the scalar product of `x[ i ]` and `y[ j ]`, that is,
      *
      *     z[i,j] = x[i] * y[j]
      *
@@ -393,7 +394,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
 
     /**
      * Returns a axis-permuted view of this tensor.
-     * The `i`-th axis in the resulting tensor corresponds to the `newAxis[i]`-th axis in this tensor.
+     * The `i`-th axis in the resulting tensor corresponds to the `newAxis[ i ]`-th axis in this tensor.
      *
      * @param newAxis its size should be equal to `this.dim`.
      */
@@ -667,7 +668,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          */
         fun <T : Any> stack(ts: List<Tensor<T>>, axis: Int = 0): Tensor<T> {
             val (ax, shape) = TensorUtils.prepareStack(ts, axis)
-            return StackView(axis, ts, shape)
+            return StackView(ax, ts, shape)
         }
 
         /**
@@ -689,7 +690,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          */
         fun <T : Any> stackM(ts: List<MutableTensor<T>>, axis: Int = 0): MutableTensor<T> {
             val (ax, shape) = TensorUtils.prepareStack(ts, axis)
-            return MutableStackView(axis, ts, shape)
+            return MutableStackView(ax, ts, shape)
         }
 
         /**
@@ -831,6 +832,10 @@ interface MutableTensor<T : Any> : Tensor<T> {
 
     override fun sum(vararg axes: Int): MutableTensor<T> {
         return TensorUtils.sum(this, axes.asList())
+    }
+
+    override fun diagonal(offset: Int, axis1: Int, axis2: Int): MutableTensor<T> {
+        return TensorUtils.diagonal(this, axis1, axis2, offset)
     }
 
 

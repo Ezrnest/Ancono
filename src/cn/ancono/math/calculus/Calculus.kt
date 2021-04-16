@@ -4,10 +4,11 @@
 package cn.ancono.math.calculus
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.AlgebraUtil
 import cn.ancono.math.algebra.DecomposedPoly
 import cn.ancono.math.algebra.IPolynomial
+import cn.ancono.math.algebra.PolynomialUtil
 import cn.ancono.math.algebra.SinglePoly
+import cn.ancono.math.discrete.combination.CombUtils
 import cn.ancono.math.function.AbstractSVPFunction
 import cn.ancono.math.function.SVFunction
 import cn.ancono.math.function.SVPFunction
@@ -17,9 +18,11 @@ import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.api.plus
-import cn.ancono.math.numberModels.expression.*
+import cn.ancono.math.numberModels.expression.DerivativeHelper
+import cn.ancono.math.numberModels.expression.ExprCalculator
+import cn.ancono.math.numberModels.expression.Expression
+import cn.ancono.math.numberModels.expression.Node
 import cn.ancono.math.numberModels.structure.Polynomial
-import cn.ancono.math.discrete.combination.CombUtils
 import java.util.function.DoubleUnaryOperator
 
 object Calculus {
@@ -551,7 +554,7 @@ object Calculus {
         val (q, r) = nume.divideAndRemainder(deno.expanded)
         val partA = Expression.fromPolynomialE(integrate(q), variableName)
 
-        val partials = AlgebraUtil.partialFraction(r, deno)
+        val partials = PolynomialUtil.partialFraction(r, deno)
         var partB = mc.zero
         for ((n, d) in partials) {
             val term = if (d.base.degree == 2) {
@@ -569,7 +572,7 @@ object Calculus {
      */
     fun intRational(nume: Polynomial<Long>, deno: Polynomial<Long>, mc: ExprCalculator, variableName: String = "x")
             : Expression {
-        val decomposed = AlgebraUtil.decomposeInt(deno)
+        val decomposed = PolynomialUtil.decomposeInt(deno)
         val eNume = nume.mapTo(mc, java.util.function.Function { x -> Expression.valueOf(x) })
         val eDeno = decomposed.map(Expression::valueOf, mc)
         return intFrac(eNume, eDeno, mc, variableName)

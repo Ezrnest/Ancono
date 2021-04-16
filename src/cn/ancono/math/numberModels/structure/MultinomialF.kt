@@ -6,7 +6,7 @@ import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.IMTerm
 import cn.ancono.math.algebra.IMultinomial
 import cn.ancono.math.algebra.IPolynomial
-import cn.ancono.math.algebra.PolynomialSup.subResultantGCD
+import cn.ancono.math.algebra.PolynomialUtil.subResultantGCD
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.*

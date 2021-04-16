@@ -8,7 +8,7 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.IPolynomial;
-import cn.ancono.math.algebra.PolynomialSup;
+import cn.ancono.math.algebra.PolynomialUtil;
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator;
 import cn.ancono.math.algebra.linear.Matrix;
@@ -664,7 +664,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * returned polynomial is one.
      * <br>
      * This method assumes division can be done on <code>T</code>. If <code>T</code> is actually a ring, please use
-     * {@linkplain PolynomialSup#primitiveGCD(Polynomial, Polynomial)} instead.
+     * {@linkplain PolynomialUtil#primitiveGCD(Polynomial, Polynomial)} instead.
      */
     @NotNull
     @Override
@@ -1020,10 +1020,11 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public static <T> Polynomial<T> twoTerms(MathCalculator<T> mc, T a, int n, T b) {
         var arr = getZeroArr(n, mc);
-
+        if (mc.isZero(a)) {
+            return constant(mc, b);
+        }
         arr[n] = a;
         arr[0] = b;
-        arr = trimLeadingZeros(arr, mc);
 
         return new Polynomial<>(mc, arr);
     }
@@ -1102,7 +1103,9 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * <p></p>
      * The format of a polynomial can be described as follows:
      * <pre> polynomial ::= term ([+-] term)*
-     * term ::= [+-]* coefficient ("*"? "x^" pow)?
+     * term ::= [+-]* t1 | ch
+     * t1   ::= coefficient ("*"? ch )?
+     * ch   ::= "x" ("^" pow)?
      * pow  ::= \d+
      * </pre>
      */
@@ -1166,8 +1169,8 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[p + 1];
-        arr[p] = mc.getOne();
         Arrays.fill(arr, mc.getZero());
+        arr[p] = mc.getOne();
         return new Polynomial<>(mc, arr);
     }
 
@@ -1796,7 +1799,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> exactDivide(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
-            var pair = PolynomialSup.pseudoDivision(x, y);
+            var pair = PolynomialUtil.pseudoDivision(x, y);
             if (!pair.getSecond().isZero()) {
                 ExceptionUtil.notExactDivision(x, y);
             }
@@ -1805,7 +1808,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
         @Override
         public boolean isExactDivide(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return PolynomialSup.pseudoDivisionR(a, b).isZero();
+            return PolynomialUtil.pseudoDivisionR(a, b).isZero();
         }
 
 
@@ -1896,7 +1899,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> gcd(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return PolynomialSup.subResultantGCD(a, b);
+            return PolynomialUtil.subResultantGCD(a, b);
         }
 
 

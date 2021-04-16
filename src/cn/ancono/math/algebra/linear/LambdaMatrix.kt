@@ -1,12 +1,11 @@
 package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.*
-import cn.ancono.math.algebra.AlgebraUtil
+import cn.ancono.math.algebra.PolynomialUtil
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.structure.Polynomial
 import java.util.*
 import kotlin.math.min
@@ -69,7 +68,7 @@ object LambdaMatrixSup {
         val invFac = normalFormInvFac(nForm)
         val primaryFactor = TreeMap<Fraction, ArrayList<Int>>()
         for (p in invFac) {
-            val des = AlgebraUtil.decomposeFrac(p)
+            val des = PolynomialUtil.decomposeFrac(p)
             for (pr in des.decomposed) {
                 if (pr.first.degree >= 2) {
                     return null

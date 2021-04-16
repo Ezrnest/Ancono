@@ -1,12 +1,10 @@
 package samples;
 
-import cn.ancono.math.algebra.AlgebraUtil;
+import cn.ancono.math.algebra.PolynomialUtil;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.structure.Polynomial;
-
-import java.util.Collections;
 
 /*
  * Created by lyc at 2020/3/1
@@ -49,7 +47,7 @@ public class PolynomialSample {
         var f3 = Polynomial.of(cal, 2L, 1L).pow(3);
 
         var f = f1.multiply(f2).multiply(f3);
-        var result = AlgebraUtil.partialFractionInt(Polynomial.one(cal), f);
+        var result = PolynomialUtil.partialFractionInt(Polynomial.one(cal), f);
         var parts = result.stream().map(p -> p.getFirst() + " * 1/" + p.getSecond()).reduce((x, y) -> x + " + " + y);
         System.out.println("1/(" + f + ") = ");
         System.out.println(parts.orElseThrow());

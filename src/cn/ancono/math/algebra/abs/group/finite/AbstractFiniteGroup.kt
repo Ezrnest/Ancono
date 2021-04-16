@@ -20,7 +20,6 @@ import cn.ancono.math.set.FiniteSet
 import cn.ancono.math.set.MathSets
 import cn.ancono.utilities.ArraySup
 import cn.ancono.utilities.CollectionSup
-import java.util.*
 import java.util.function.Function
 import java.util.function.Predicate
 import java.util.function.ToIntFunction
@@ -222,7 +221,9 @@ abstract class AbstractFiniteGroup<T : Any>
             i++
         }
 
-        return PermutationGroup.groupOfChecked(MathSets.fromCollection(ps, Permutations.getMathCalculator()))
+        return PermutationGroup.groupOfChecked(
+                MathSets.fromCollection(ps, Permutations.getCalculator(size))
+        )
     }
 
 

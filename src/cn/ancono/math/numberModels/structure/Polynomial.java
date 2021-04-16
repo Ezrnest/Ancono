@@ -1,4 +1,4 @@
-/**
+/*
  * 2017-11-21
  */
 package cn.ancono.math.numberModels.structure;
@@ -8,11 +8,13 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.IPolynomial;
+import cn.ancono.math.algebra.PolynomialSup;
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.algebra.linear.Vector;
+import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.Point;
@@ -22,7 +24,6 @@ import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
-import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.ModelPatterns;
 import cn.ancono.utilities.structure.Pair;
@@ -195,7 +196,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
 
     @Override
-    public Polynomial<T> negate() {
+    public @NotNull Polynomial<T> negate() {
         var mc = getMc();
         T[] result = getArr(coes.length);
         for (int i = 0; i < coes.length; i++) {
@@ -305,6 +306,16 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     /**
+     * Determines whether this polynomial is invertible, that is, whether this polynomial is a
+     *
+     * @return
+     */
+    @Override
+    public boolean isUnit() {
+        return isConstant() && getMc().isUnit(getCoefficient(0));
+    }
+
+    /**
      * Returns <code>k*this</code>
      */
     @NotNull
@@ -399,7 +410,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      *
      * @param g a non-zero polynomial
      */
-    public kotlin.Pair<Polynomial<T>, Polynomial<T>> divideAndRemainder(Polynomial<T> g) {
+    public kotlin.@NotNull Pair<Polynomial<T>, Polynomial<T>> divideAndRemainder(Polynomial<T> g) {
         var f = this;
         var mc = getMc();
         int deg1 = f.degree, deg2 = g.degree;
@@ -449,6 +460,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     public Polynomial<T> divideToInteger(@NotNull Polynomial<T> g) {
         return divideAndRemainder(g).getFirst();
     }
+
 
     /**
      * Returns the remainder of the division of <code>this</code> and <code>g</code>.
@@ -511,6 +523,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
         return ModelPatterns.binaryProduce(exp, one(mc), this, Polynomial::multiply);
     }
+
 
     /**
      * 'Shifts' this polynomial by multiplying <code>x<sup>d</sup></code>. If {@code d} is negative, the terms of
@@ -734,6 +747,14 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     /**
+     * Determines whether this polynomial is square-free, which means it
+     * has no duplicated root.
+     */
+    public boolean isSquarefree() {
+        return !hasDuplicatedRoot();
+    }
+
+    /**
      * Returns a polynomial containing only terms of degree <= n in this polynomial.
      *
      * @param n a non-negative integer
@@ -845,7 +866,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
     @Override
-    public <N> Polynomial<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> @NotNull Polynomial<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         var arr = ArraySup.mapTo(coes, mapper);
         return new Polynomial<>(newCalculator, arr);
     }
@@ -1060,6 +1081,18 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         var zero = mc.getZero();
         for (int i = 0; i <= maxPow; i++) {
             arr[i] = coeMap.getOrDefault(i, zero);
+        }
+        return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
+    }
+
+    /**
+     * Creates a polynomial with the given coefficient supplier.
+     */
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, int degree, IntFunction<T> supplier) {
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[degree + 1];
+        for (int i = 0; i <= degree; i++) {
+            arr[i] = supplier.apply(i);
         }
         return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
     }
@@ -1354,6 +1387,30 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public static <T> ModPolyCalculator<T> getModCal(Polynomial<T> p) {
         return new ModPolyCalculator<>(p);
+    }
+
+
+    /**
+     * Returns
+     *
+     * @param x
+     * @param n
+     * @param mod
+     * @param <T>
+     * @return
+     */
+    public static <T> Polynomial<T> powerAndMod(Polynomial<T> x, long n, Polynomial<T> mod) {
+        if (n < 0) {
+            throw new IllegalArgumentException("n < 0");
+        }
+        if (n == 0 || mod.isUnit()) {
+            return Polynomial.zero(x.getMathCalculator());
+        }
+        if (n == 1) {
+            return x;
+        }
+        var mc = x.getMathCalculator();
+        return ModelPatterns.binaryProduce(n, one(mc), x, (a, b) -> a.multiply(b).mod(mod));
     }
 
 
@@ -1710,6 +1767,8 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         public boolean isZero(@NotNull Polynomial<T> para) {
             return isEqual(zero, para);
         }
+
+
 
         /*
          * @see cn.ancono.math.MathCalculator#multiply(java.lang.Object, java.lang.Object)

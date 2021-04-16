@@ -168,8 +168,8 @@ class PFractionCalculator<T : Any>(val mc: MathCalculator<T>, val sim: Simplifie
     override val one: PFraction<T> = PFraction.one(mc)
     override val zero: PFraction<T> = PFraction.zero(mc)
 
-    override fun isZero(para: PFraction<T>): Boolean {
-        return para.isZero()
+    override fun isZero(x: PFraction<T>): Boolean {
+        return x.isZero()
     }
 
     override fun isEqual(x: PFraction<T>, y: PFraction<T>): Boolean {

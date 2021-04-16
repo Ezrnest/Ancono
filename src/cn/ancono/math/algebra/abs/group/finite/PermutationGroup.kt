@@ -3,13 +3,12 @@ package cn.ancono.math.algebra.abs.group.finite
 import cn.ancono.math.algebra.abs.GroupCalculators
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator
-import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.discrete.combination.Permutations
+import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.set.FiniteSet
 import cn.ancono.math.set.MathSets
 import java.util.*
-import java.util.function.Predicate
 
 /**
  * @author liyicheng
@@ -81,8 +80,7 @@ internal constructor(
      * Returns the stabilizers of several points [n] in this group as a subgroup.
      */
     fun stabilizer(vararg n: Int): PermutationGroup {
-        requireNotNull(n)
-        val re = MathSets.filter(set, Permutations.getMathCalculator(), Predicate { it.apply(n).contentEquals(n) })
+        val re = MathSets.filter(set, calculator) { it.apply(n).contentEquals(n) }
         return PermutationGroup(permutationSize, re)
     }
 
@@ -90,7 +88,7 @@ internal constructor(
      * Returns the stabilizers of point [n] in this group as a subgroup.
      */
     fun stabilizer(n: Int): PermutationGroup {
-        val re = MathSets.filter(set, Permutations.getMathCalculator(), Predicate { it.apply(n) == n })
+        val re = MathSets.filter(set, calculator) { it.apply(n) == n }
         return PermutationGroup(permutationSize, re)
     }
 

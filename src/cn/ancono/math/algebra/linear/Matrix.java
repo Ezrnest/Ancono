@@ -1023,8 +1023,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             throw new ArithmeticException("Not square");
         }
         T tr = get(0, 0);
+        var mc = getMc();
         for (int i = 1; i < row; i++) {
-            tr = getMc().add(tr, get(i, i));
+            tr = mc.add(tr, get(i, i));
         }
         return tr;
     }

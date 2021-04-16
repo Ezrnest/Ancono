@@ -3,7 +3,6 @@ package cn.ancono.math.algebra.abs.calculator
 import cn.ancono.math.component1
 import cn.ancono.math.component2
 import cn.ancono.math.exceptions.ExceptionUtil
-import java.lang.ArithmeticException
 
 
 /*
@@ -48,6 +47,14 @@ interface EUDCalculator<T : Any> : UFDCalculator<T> {
      */
     @JvmDefault
     fun remainder(a: T, b: T): T = divideAndRemainder(a, b).second
+
+
+    /**
+     * Returns `a mod b`, which is generally the same as [remainder]. Note that
+     * the result may differ with respect to a unit in the ring.
+     */
+    @JvmDefault
+    fun mod(a: T, b: T): T = remainder(a, b)
 
     @JvmDefault
     override fun exactDivide(x: T, y: T): T {
@@ -149,5 +156,40 @@ interface EUDCalculator<T : Any> : UFDCalculator<T> {
             throw ArithmeticException("$a is not invertible with respect to $p")
         }
         return u
+    }
+
+
+    /**
+     * Returns `(a^n) mod m`, where `n` is a long.
+     *
+     *
+     * For example, `powerAndMod(2,2,3) = 1`, and
+     * `powerAndMod(3,9,7) = 6`.
+     *
+     * @param x a number
+     * @param n the power, a non-negative number.
+     * @param m the modular.
+     */
+    @JvmDefault
+    fun powerAndMod(x: T, n: Long, m: T): T {
+        var a = x
+        require(n >= 0) { "n<0" }
+        if (isEqual(m, one)) {
+            return zero
+        }
+        if (isEqual(a, one)) {
+            return one
+        }
+        var ans = one
+        var p = n
+        a = mod(a, m)
+        while (p > 0) {
+            if (p and 1 == 1L) {
+                ans = mod(multiply(a, ans), m)
+            }
+            a = mod(multiply(a, a), m)
+            p = p shr 1
+        }
+        return ans
     }
 }

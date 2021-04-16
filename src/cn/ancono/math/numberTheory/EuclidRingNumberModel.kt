@@ -1,5 +1,6 @@
 package cn.ancono.math.numberTheory
 
+import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.api.RingNumberModel
 import cn.ancono.math.numberModels.api.times
 
@@ -12,6 +13,10 @@ import cn.ancono.math.numberModels.api.times
  */
 interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<T> {
 
+    /**
+     * Determines whether this number is a unit in the ring, which mean it is invertible with respect to multiplication.
+     */
+    fun isUnit(): Boolean
 
     /**
      * Returns the greatest common divisor of `this` and `y`.
@@ -57,9 +62,24 @@ interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<
         return q to r
     }
 
+    @JvmDefault
     fun divideToInteger(y: T): T = divideAndRemainder(y).first
 
+    @JvmDefault
+    fun exactDivide(y: T): T {
+        val (q, r) = divideAndRemainder(y)
+        if (!r.isZero()) {
+            ExceptionUtil.notExactDivision(this, y)
+        }
+        return q
+    }
+
+    @JvmDefault
     fun remainder(y: T): T = divideAndRemainder(y).second
+
+    @JvmDefault
+    fun mod(y: T): T = remainder(y)
+
 
     fun isCoprime(y: T): Boolean
 

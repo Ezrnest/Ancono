@@ -13,6 +13,7 @@ package cn.ancono.math.algebra.abs.ring
  */
 class GaussIntRing {
     init {
-        TODO()
+
     }
+    //TODO
 }

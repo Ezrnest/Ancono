@@ -3,6 +3,7 @@ package cn.ancono.math.calculus
 import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.AlgebraModel
@@ -500,5 +501,7 @@ class DiffFormCalculator<T : Any>(val mc: FunctionCalculator<T>)
         return multiplyLong(x, n)
     }
 
-
+    override fun isUnit(x: DifferentialForm<T>): Boolean {
+        throw UnsupportedCalculationException()
+    }
 }

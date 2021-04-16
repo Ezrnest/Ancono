@@ -1,7 +1,6 @@
 package cn.ancono.math.discrete.combination;
 
-import cn.ancono.math.MathCalculator;
-import cn.ancono.math.numberModels.MathCalculatorAdapter;
+import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
 import cn.ancono.math.discrete.combination.Permutation.Cycle;
 import cn.ancono.math.discrete.combination.Permutation.Transposition;
 import cn.ancono.math.set.FiniteSet;
@@ -776,12 +775,37 @@ public final class Permutations {
         return true;
     }
 
-    private static final MathCalculator<Permutation> mc = new MathCalculatorAdapter<Permutation>() {
-        /*
-         * @see cn.ancono.math.numberTheory.combination.Permutations#isEqual(cn.ancono.math.numberTheory.combination.Permutation, cn.ancono.math.numberTheory.combination.Permutation)
-         */
-        public boolean isEqual(@NotNull Permutation p1, @NotNull Permutation p2) {
-            return Permutations.isEqual(p1, p2);
+    private static final class PermutationCalculator implements GroupCalculator<Permutation> {
+        private final int size;
+
+        PermutationCalculator(int size) {
+            if (size <= 0) {
+                throw new IllegalArgumentException("size < 0");
+            }
+            this.size = size;
+        }
+
+        @Override
+        public boolean isEqual(Permutation x, Permutation y) {
+            return Permutations.isEqual(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Permutation inverse(@NotNull Permutation x) {
+            return x.inverse();
+        }
+
+        @NotNull
+        @Override
+        public Permutation getIdentity() {
+            return Permutations.identity(this.size);
+        }
+
+        @NotNull
+        @Override
+        public Permutation apply(@NotNull Permutation x, @NotNull Permutation y) {
+            return x.compose(y);
         }
 
         @NotNull
@@ -789,10 +813,11 @@ public final class Permutations {
         public Class<Permutation> getNumberClass() {
             return Permutation.class;
         }
-    };
+    }
 
-    public static MathCalculator<Permutation> getMathCalculator() {
-        return mc;
+
+    public static GroupCalculator<Permutation> getCalculator(int size) {
+        return new PermutationCalculator(size);
     }
 
 
@@ -812,7 +837,7 @@ public final class Permutations {
         for (int[] arr : Enumer.permutation(n, n)) {
             list[i++] = new ArrPermutation(arr);
         }
-        return MathSets.asSet(mc, list);
+        return MathSets.asSet(getCalculator(n), list);
     }
 
     public static Iterable<Permutation> universeIterable(int n) {
@@ -836,7 +861,7 @@ public final class Permutations {
                 list[i++] = p;
             }
         }
-        return MathSets.asSet(mc, list);
+        return MathSets.asSet(getCalculator(n), list);
     }
 
     /**

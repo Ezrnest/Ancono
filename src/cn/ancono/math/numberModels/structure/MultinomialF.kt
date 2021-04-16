@@ -6,15 +6,14 @@ import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.IMTerm
 import cn.ancono.math.algebra.IMultinomial
 import cn.ancono.math.algebra.IPolynomial
+import cn.ancono.math.algebra.PolynomialSup.subResultantGCD
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberModels.structure.PolynomialSup.subResultantGCD
 import cn.ancono.utilities.CollectionSup
 import cn.ancono.utilities.ModelPatterns
-import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.function.Function
 import java.util.regex.Pattern
@@ -392,6 +391,14 @@ internal constructor(
         return ts.size == 1 && ts.first().run { characters.isEmpty() && coefficient == mc.one }
     }
 
+    fun isUnit(): Boolean {
+        if (ts.size != 1) {
+            return false
+        }
+        val t = ts.first()
+        return t.isConstant() && mc.isUnit(t.coefficient)
+    }
+
     fun divideAndRemainder(y: MultinomialF<F>): Pair<MultinomialF<F>, MultinomialF<F>> {
         val m = getTS(ts)
         val q = singleTerm(zeroTerm())
@@ -661,6 +668,10 @@ class MultinomialFCalculator<T : Any>(val mc: MathCalculator<T>)
 
     override fun isEqual(x: MultinomialF<T>, y: MultinomialF<T>): Boolean {
         return x.valueEquals(y)
+    }
+
+    override fun isUnit(x: MultinomialF<T>): Boolean {
+        return x.isUnit()
     }
 
     override fun compare(x: MultinomialF<T>, y: MultinomialF<T>): Int {

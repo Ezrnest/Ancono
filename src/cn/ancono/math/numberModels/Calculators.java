@@ -9,6 +9,7 @@ import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberTheory.IntCalculator;
 import cn.ancono.math.numberTheory.Primes;
+import cn.ancono.math.numberTheory.ZModPCalculator;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
@@ -451,7 +452,7 @@ public final class Calculators {
          */
         @NotNull
         @Override
-        public Integer mod(Integer a, Integer b) {
+        public Integer mod(@NotNull Integer a, @NotNull Integer b) {
             int x = a, y = b;
             return Math.abs(x) % Math.abs(y);
         }
@@ -482,7 +483,7 @@ public final class Calculators {
         }
 
         @Override
-        public Triple<Integer, Integer, Integer> gcdUV(Integer a, Integer b) {
+        public @NotNull Triple<Integer, Integer, Integer> gcdUV(@NotNull Integer a, @NotNull Integer b) {
             int[] arr = MathUtils.gcdUV(a, b);
             return new Triple<>(arr[0], arr[1], arr[2]);
         }
@@ -566,8 +567,8 @@ public final class Calculators {
         }
 
         @Override
-        public Integer powerAndMod(Integer a, long n, Integer m) {
-            return MathUtils.powerAndMod(a, n, m);
+        public @NotNull Integer powerAndMod(@NotNull Integer x, long n, @NotNull Integer m) {
+            return MathUtils.powerAndMod(x, n, m);
         }
 
         @Override
@@ -956,12 +957,22 @@ public final class Calculators {
          */
         @NotNull
         @Override
-        public Long mod(Long a, Long b) {
+        public Long mod(@NotNull Long a, @NotNull Long b) {
             long x = a, y = b;
             return Math.abs(x) % Math.abs(y);
         }
 
-//        /**
+        @Override
+        public Long powerAndMod(Long a, Long n, Long m) {
+            return MathUtils.powerAndMod(a, n, m);
+        }
+
+        @Override
+        public @NotNull Long powerAndMod(@NotNull Long x, long n, @NotNull Long m) {
+            return MathUtils.powerAndMod(x, n, m);
+        }
+
+        //        /**
 //         *
 //         */
 //        @Override
@@ -987,7 +998,7 @@ public final class Calculators {
         }
 
         @Override
-        public Triple<Long, Long, Long> gcdUV(Long a, Long b) {
+        public @NotNull Triple<Long, Long, Long> gcdUV(@NotNull Long a, @NotNull Long b) {
             long[] arr = MathUtils.gcdUV(a, b);
             return new Triple<>(arr[0], arr[1], arr[2]);
         }
@@ -1249,7 +1260,7 @@ public final class Calculators {
          * @see IntCalculator#mod(java.lang.Object, java.lang.Object)
          */
         @Override
-        public BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
+        public @NotNull BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.mod(b.abs());
         }
 
@@ -1341,6 +1352,11 @@ public final class Calculators {
         @Override
         public BigInteger powerAndMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
             return a.modPow(n, mod);
+        }
+
+        @Override
+        public @NotNull BigInteger powerAndMod(@NotNull BigInteger x, long n, @NotNull BigInteger m) {
+            return x.modPow(BigInteger.valueOf(n), m);
         }
 
         @Override
@@ -1641,7 +1657,7 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Double addX(@NotNull Object... ps) {
+        public Double addX(@NotNull Object @NotNull ... ps) {
             double sum = 0;
             for (Object d : ps) {
                 sum += (Double) d;
@@ -1651,7 +1667,7 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Double multiplyX(@NotNull Object... ps) {
+        public Double multiplyX(@NotNull Object @NotNull ... ps) {
             double sum = 1;
             for (Object d : ps) {
                 sum *= (Double) d;
@@ -1958,11 +1974,10 @@ public final class Calculators {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
-    static class IntegerCalModN extends MathCalculatorAdapter<Integer> {
-        //TODO implement exact divide
+    public static class ZModNCalculator extends MathCalculatorAdapter<Integer> {
         protected final int n;
 
-        IntegerCalModN(int n) {
+        ZModNCalculator(int n) {
             this.n = n;
 
         }
@@ -1981,6 +1996,10 @@ public final class Calculators {
                 re += n;
             }
             return re;
+        }
+
+        public int getModular() {
+            return n;
         }
 
         @NotNull
@@ -2044,7 +2063,7 @@ public final class Calculators {
         }
 
 
-        private int inverseOf(int x) {
+        protected int inverseOf(int x) {
             var p = MathUtils.gcdUV(x, n);
             var gcd = p[0];
             var y = p[1];
@@ -2057,11 +2076,16 @@ public final class Calculators {
 
         @NotNull
         @Override
+        public Integer reciprocal(@NotNull Integer x) {
+            return inverseOf(x);
+        }
+
+        @NotNull
+        @Override
         public Integer divide(@NotNull Integer x, @NotNull Integer y) {
             //noinspection SuspiciousNameCombination
             return multiply(x.intValue(), inverseOf(y));
         }
-
         //        protected int divide(int a, int b) {
 //
 //        }
@@ -2079,7 +2103,13 @@ public final class Calculators {
             return multiply(p.intValue(), modN(l));
         }
 
-//        @NotNull
+        @NotNull
+        @Override
+        public Integer divideLong(@NotNull Integer x, long n) {
+            return multiply(x.intValue(), inverseOf(modN(n)));
+        }
+
+        //        @NotNull
 //        @Override
 //        public Integer divideLong(@NotNull Integer p, long n) {
 //            return divide(p.intValue(), modN(n));
@@ -2151,7 +2181,8 @@ public final class Calculators {
 
     }
 
-    static class IntegerCalModP extends IntegerCalModN {
+
+    static class ZModPCalculatorCached extends ZModNCalculator implements ZModPCalculator<Integer> {
         private final int[] inverse;
 
         private int[] initInv() {
@@ -2180,48 +2211,66 @@ public final class Calculators {
             return inverse[x] != 0;
         }
 
-        IntegerCalModP(int p) {
+        ZModPCalculatorCached(int p) {
             super(p);
             inverse = initInv();
         }
 
-        protected int divide(int a, int b) {
-            if (inverse[b] != 0) {
-                return multiply(a, inverse[b]);
-            }
-            int gcd = MathUtils.gcd(a, b);
-            a /= gcd;
-            b /= gcd;
-            if (inverse[b] == 0) {
-                ExceptionUtil.notExactDivision(a, b);
-            }
-            return multiply(a, inverse[b]);
+        @Override
+        public Integer getP() {
+            return getModular();
         }
 
-
-        @NotNull
         @Override
-        public Integer reciprocal(@NotNull Integer p) {
-            var x = modN(p);
+        protected int inverseOf(int x) {
+            x = modN(x);
             if (inverse[x] == 0) {
                 ExceptionUtil.notInvertible();
             }
             return inverse[x];
-
         }
 
     }
 
+    static class ZModPCalculatorGCD extends ZModNCalculator implements ZModPCalculator<Integer> {
+        ZModPCalculatorGCD(int n) {
+            super(n);
+        }
+
+        @Override
+        public Integer getP() {
+            return getModular();
+        }
+    }
+
+    private static final int PRIME_CHECK_THRESHOLD = 1024;
+    private static final int USE_CACHE_THRESHOLD = 1024;
+
+
     /**
      * Returns a calculator for prime field <code>Z<sub>p</sub></code>, where <code>p</code> is a prime number.
+     * <p></p>
+     * <p>
+     * It is required that the given integer p is a
      * <p>
      * Note: The calculator caches all the modular inverse.
      */
-    public static MathCalculator<Integer> intModP(int p) {
-        if (!Primes.getInstance().isPrime(p)) {
-            throw new IllegalArgumentException("p must be a prime number!");
+    public static ZModPCalculator<Integer> intModP(int p) {
+        if (p <= PRIME_CHECK_THRESHOLD) {
+            if (!Primes.getInstance().isPrime(p)) {
+                throw new IllegalArgumentException("p must be a prime number!");
+            }
+        } else {
+            var x = BigInteger.valueOf(p);
+            if (!x.isProbablePrime(100)) {
+                throw new IllegalArgumentException("p must be a prime number!");
+            }
         }
-        return new IntegerCalModP(p);
+        if (p <= USE_CACHE_THRESHOLD) {
+            return new ZModPCalculatorCached(p);
+        } else {
+            return new ZModPCalculatorGCD(p);
+        }
     }
 
     /**
@@ -2231,7 +2280,7 @@ public final class Calculators {
         if (n < 2) {
             throw new IllegalArgumentException("It is required that n >= 2");
         }
-        return new IntegerCalModN(n);
+        return new ZModNCalculator(n);
     }
 
 

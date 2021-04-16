@@ -163,7 +163,9 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @param b the modulus
      * @return {@code a mod b}
      */
-    T mod(T a, T b);
+    @Override
+    @NotNull
+    T mod(@NotNull T a, @NotNull T b);
 
     /**
      * Returns the remainder:{@code a % b}. If {@code a>0}, then the result will
@@ -476,7 +478,7 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * For example, {@code powerAndMod(2,2,3) = 1}, and
      * {@code powerAndMod(3,9,7) = 6}.
      *
-     * @param a a number, positive.
+     * @param a a number.
      * @param n a non-negative number.
      * @param m the modular.
      */
@@ -484,12 +486,12 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
         if (isNegative(n)) {
             throw new IllegalArgumentException("n<0");
         }
-        if (!isPositive(a)) {
-            throw new IllegalArgumentException("a<=0");
-        }
-        if (!isPositive(m)) {
-            throw new IllegalArgumentException("mod<=0");
-        }
+//        if (!isPositive(a)) {
+//            throw new IllegalArgumentException("a<=0");
+//        }
+//        if (!isPositive(m)) {
+//            throw new IllegalArgumentException("mod<=0");
+//        }
 
         T one = getOne();
         if (isEqual(m, one)) {
@@ -509,17 +511,6 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
             n = divideToInteger(n, two);
         }
         return ans;
-        // long ans = 1;
-        // a = a % mod;
-        // while(n>0){
-        // if((n&1)==1){
-        // ans = (a*ans)%mod;
-        //
-        // }
-        // a = (a*a) % mod;
-        // n>>=1;
-        // }
-        // return ans;
     }
 
     /**
@@ -528,38 +519,16 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * For example, {@code powerAndMod(2,2,3) = 1}, and
      * {@code powerAndMod(3,9,7) = 6}.
      *
-     * @param a a number, positive.
+     * @param x a number, positive.
      * @param n a non-negative number.
      * @param m the modular.
      */
-    default T powerAndMod(T a, long n, T m) {
-        if (n < 0) {
-            throw new IllegalArgumentException("n<0");
-        }
-        if (!isPositive(a)) {
-            throw new IllegalArgumentException("a<=0");
-        }
-        if (!isPositive(m)) {
-            throw new IllegalArgumentException("mod<=0");
-        }
-
-        T one = getOne();
-        if (isEqual(m, one)) {
-            return getZero();
-        }
-        if (isEqual(a, one)) {
-            return one;
-        }
-        T ans = one;
-        a = mod(a, m);
-        while (n > 0) {
-            if ((n & 1) == 1) {
-                ans = mod(multiply(a, ans), m);
-            }
-            a = mod(multiply(a, a), m);
-            n >>= 1;
-        }
-        return ans;
+    @NotNull
+    @Override
+    default T powerAndMod(@NotNull T x, long n, @NotNull T m) {
+        return EUDCalculator.super.powerAndMod(x, n, m);
     }
 
 }
+
+

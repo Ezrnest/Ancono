@@ -5,8 +5,6 @@ package cn.ancono.math.numberTheory;
 
 import java.util.Arrays;
 
-import static cn.ancono.utilities.Printer.print;
-
 /**
  * The class for getting prime numbers, this class supports
  * long as prime number result to give out, and
@@ -300,11 +298,11 @@ public final class Primes {
         return Arrays.binarySearch(par, 0, max_index, p);
     }
 
-    public static void main(String[] args) {
-        Primes pr = getInstance();
-//		print(pr.getArray(100));
-        print(pr.isPrime(2));
-//		print(pr.getPrimesBelow(1000));
-    }
+//    public static void main(String[] args) {
+//        Primes pr = getInstance();
+////		print(pr.getArray(100));
+//        print(pr.isPrime(2));
+////		print(pr.getPrimesBelow(1000));
+//    }
 
 }

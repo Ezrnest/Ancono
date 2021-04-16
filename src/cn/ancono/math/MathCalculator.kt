@@ -5,7 +5,6 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
 import cn.ancono.math.numberModels.Fraction
-import java.util.*
 
 /**
  * Describes a general calculator that can perform basic operations for
@@ -76,6 +75,10 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     @JvmDefault
     override val numberClass: Class<T>
         get() = zero.javaClass
+
+
+    override val characteristic: Long
+        get() = 0
 
     /**
      * Compare the two numbers and determines whether these two numbers are the

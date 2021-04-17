@@ -151,13 +151,15 @@ public final class ParserUtils {
         int i = 0;
         boolean positive = true;
         while (i < s.length()) {
-            char c = s.charAt(i++);
+            char c = s.charAt(i);
             if (c == '-') {
                 positive = !positive;
             } else if (c != '+') {
                 break;
             }
+            i++;
         }
+
         T coe;
         if (i == s.length()) {
             coe = mc.getOne();

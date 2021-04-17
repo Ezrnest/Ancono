@@ -235,6 +235,7 @@ object PolynomialUtil {
         return mat to vec
     }
 
+    @JvmStatic
     fun solveMultinomialEquation(ms: List<Multinomial>, mConst: Multinomial = Multinomial.ZERO)
             : Vector<Multinomial> {
         return MatrixSup.solveLinearEquation(buildMultinomialEquation(ms, mConst).first).oneSolution
@@ -426,9 +427,10 @@ object PolynomialUtil {
         }
     }
 
+
     @Suppress("LocalVariableName")
-    private fun <T : Any> squarefreeFactorize0(A: Polynomial<T>, mc: ZModPCalculator<T>)
-            : MutableList<Pair<Int, Polynomial<T>>> {
+    internal fun <T : Any> squarefreeFactorizeChP(A: Polynomial<T>, p: Int)
+            : List<Pair<Polynomial<T>, Int>> {
         //Created by lyc at 2021-04-15 22:19
         /*
         Reference:
@@ -465,10 +467,9 @@ object PolynomialUtil {
 
 
          */
-        val p = mc.p
         var e = 1 // record the power extracted
         var T0 = A // the remaining polynomial
-        val result = arrayListOf<Pair<Int, Polynomial<T>>>()
+        val result = arrayListOf<Pair<Polynomial<T>, Int>>()
 
         while (!T0.isConstant) {
             val T1 = T0.derivative()
@@ -501,7 +502,7 @@ object PolynomialUtil {
                 val Ar = V.exactDivide(W)
                 // A_r is the remaining one, report it
                 if (!Ar.isConstant) {
-                    result += e * r to Ar
+                    result += Ar to e * r
                 }
                 // V,T should be reduced
                 V = W
@@ -516,34 +517,70 @@ object PolynomialUtil {
         return result
     }
 
+    fun <T : Any> squarefreeFactorizeCh0(p: Polynomial<T>): List<Pair<Polynomial<T>, Int>> {
+        if (p.degree < 1) {
+            return emptyList()
+        }
+        if (p.degree == 1) {
+            return listOf(p to 1)
+        }
+        /*
+        Explanation:
+        Assume p = \prod{r} p_r^r is the squarefree factorization, then
+            p' = \sum{k} (\prod{r!=k} p_r^r) k p_k^{k-1},
+        so
+            f_1 = (p, p') = \prod{r >= 2} p_r^{r-1}
+            g_1 = p / f_1 = \prod{r} p_r
+        denote g_k = \prod{r >= k} p_k and f_k = \prod{r >= k+1} p_r^{r-k},
+        then we have
+            g_{k+1} = (g_k, f_k),
+            f_{k+1} = f_k / g_{k+1}
+            p_k     = g_k / g_{k+1}
+        we use the formula above to get all p_k
+         */
+        val result = arrayListOf<Pair<Polynomial<T>, Int>>()
+        var k = 1
+        var f = p.gcd(p.derivative()) // f_k
+        var g = p.exactDivide(f) // g_k
+        while (g.degree > 0) {
+            val h = g.gcd(f) //g_{k+1} = (g_k, f_k)
+            val pk = g.exactDivide(h) //  p_k = g_k / g_{k+1}
+            if (pk.degree > 0) {
+                result += pk to k
+            }
+            f = f.exactDivide(h) // f_{k+1} = f_k / g_{k+1}
+            g = h
+            k++
+        }
+        return result
+    }
+
     /**
-     * Calculates the square-free factorization in `Z mod P` for the given polynomial [A].
+     * Calculates the square-free factorization for a polynomial in a field of characteristic zero or `p`.
      *
-     * The square-free factorization of a polynomial `A` is
+     * The square-free factorization of a polynomial `f` is
      *
-     *     A = prod(r, A_r^r)
-     *     where A_r is square-free and co-prime.
+     *     f = prod(r, f_r^r)
+     *     where f_r is square-free and co-prime.
      *
      * For example, polynomial `x^2 + 2x + 1` is factorized to be `(x+1)^2`, and the
      * result of this method will be a list containing only one element `(2, x+1)`.
      *
      * @return a list containing all the non-constant square-free factors with their degree
-     * in [A].
+     * in [f].
      *
      *
      */
-    fun <T : Any> squarefreeFactorizeModP(A: Polynomial<T>): List<Pair<Int, Polynomial<T>>> {
-        require(A.mathCalculator is ZModPCalculator) {
-            "A ZModPCalculator is required!"
+    @JvmStatic
+    fun <T : Any> squarefreeFactorize(f: Polynomial<T>): List<Pair<Polynomial<T>, Int>> {
+        val mc = f.mathCalculator
+        val p = Math.toIntExact(mc.characteristic)
+        val m = f.monic()
+        return if (p == 0) {
+            squarefreeFactorizeCh0(m)
+        } else {
+            squarefreeFactorizeChP(m, p)
         }
-        val mc = A.mathCalculator as ZModPCalculator
-        if (A.first() == 1) {
-            return squarefreeFactorize0(A, mc)
-        }
-        val t = A.first()
-        val B = A.divide(t)
-        return squarefreeFactorize0(B, mc)
-
     }
 
     /**
@@ -715,8 +752,8 @@ object PolynomialUtil {
             list += f
             return
         }
-        //Created by lyc at 2021-04-16 21:44
         /*
+        //Created by lyc at 2021-04-16 21:44
         See Proposition 3.4.6, page 128 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
 
@@ -768,8 +805,8 @@ object PolynomialUtil {
 
     private fun polySplitZMod2Recur(a: Polynomial<Int>, d: Int, mc: ZModPCalculator<Int>,
                                     list: MutableList<Polynomial<Int>>) {
-        //Created by lyc at 2021-04-16 22:44
         /*
+        //Created by lyc at 2021-04-16 22:44
         See Proposition 3.4.6, page 129 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
          */
@@ -817,12 +854,13 @@ object PolynomialUtil {
      *
      * @return a [DecomposedPoly] that represents the factorization of [f]
      */
+    @JvmStatic
     fun factorizeModP(f: Polynomial<Int>): DecomposedPoly<Int> {
-        val squarefree = squarefreeFactorizeModP(f)
+        val squarefree = squarefreeFactorize(f)
         val results = arrayListOf<Pair<Polynomial<Int>, Int>>()
         val mc = f.mathCalculator as ZModPCalculator<Int>
         val p = mc.p
-        for ((k, ak) in squarefree) {
+        for ((ak, k) in squarefree) {
             val distinct = distinctDegreeFactorizeModP(ak, mc)
 //            println(ak)
 //            println(distinct)
@@ -841,15 +879,15 @@ object PolynomialUtil {
             it.first
         }
         return DecomposedPoly(results)
-
     }
+
 
 }
 
 
 fun main() {
 //    val mc = Calculators.intModP(17)
-//    val fc = Fraction.calculator
+    val fc = Fraction.calculator
 //    val A = Polynomial.of(mc, 1, 0, 1)//.mapTo(fc) {Fraction.of(it.toLong())}
 //    val B = Polynomial.of(mc, 2, 1)//.mapTo(fc) {Fraction.of(it.toLong())}
 //    val V = A * B
@@ -859,12 +897,14 @@ fun main() {
 ////    println(Polynomial.powerX(17,fc).mod(V))
 ////    println(A.gcd(A.derivative()))
 //    println(PolynomialSup.isIrreducibleModP(A))
-    val mc = Calculators.intMod2()
+    val mc = Calculators.integer()
 
-    val f = Polynomial.parse("x^105+1", mc, String::toInt)
+    val f = Polynomial.parse("x^2+2x+1", mc, String::toInt).mapTo(fc) { Fraction.of(it.toLong()) }
+    val g = Polynomial.parse("x^2+2", mc, String::toInt).mapTo(fc) { Fraction.of(it.toLong()) }
 //    println(PolynomialSup.squarefreeFactorizeModP(f))
-    val factors = PolynomialUtil.factorizeModP(f)
-    println(factors)
+//    val factors = PolynomialUtil.factorizeModP(f)
+//    println(factors)
+    println(PolynomialUtil.squarefreeFactorize(f))
 //    val t = Polynomial.parse("x^12 + x^9 + x^6 + x^3 + 1",mc,String::toInt)
 //    println(PolynomialSup.polySplitZMod2(4,t,mc))
 }

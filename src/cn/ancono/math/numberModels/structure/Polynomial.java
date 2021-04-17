@@ -7,6 +7,7 @@ import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.PolynomialUtil;
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
@@ -1140,9 +1141,8 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
                 if (idxOfX == 0) {
                     coe = mc.getOne();
                 } else {
-                    coe = ParserUtils.parseCoefficient(part.substring(0, idxOfX - 1), parser, mc);
+                    coe = ParserUtils.parseCoefficient(part.substring(0, idxOfX), parser, mc);
                 }
-
 
                 var strCh = part.substring(idxOfX);
                 var idxPow = strCh.indexOf('^');
@@ -1772,7 +1772,6 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
 
 
-
         /*
          * @see cn.ancono.math.MathCalculator#multiply(java.lang.Object, java.lang.Object)
          */
@@ -2082,8 +2081,24 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return simplifyCoefficient(f, g, mc, sim);
     }
 
-
-//    private static class PolySimplifier<T> implements Simplifier<Polynomial<T>> {
+    /**
+     * Calculates the square-free factorization for a polynomial in a field of characteristic zero or <code>p</code>.
+     * <p></p>
+     * The square-free factorization of a polynomial <code>f</code> is
+     *
+     * <pre> f = ∏<sub>r</sub>f<sub>r</sub><sup>r</sup> </pre>
+     * where <code>f<sub>r</sub></code> is square-free and co-prime.
+     * <p></p>
+     * For example, polynomial `x^2 + 2x + 1` is factorized to be `(x+1)^2`, and the
+     * result of this method will be a list containing only one element `(2, x+1)`.
+     *
+     * @return a list containing all the non-constant square-free factors with their degree
+     * in <code>f</code>.
+     */
+    public static <T> DecomposedPoly<T> squarefreeFactorize(Polynomial<T> f) {
+        return new DecomposedPoly<>(f, PolynomialUtil.squarefreeFactorize(f));
+    }
+    //    private static class PolySimplifier<T> implements Simplifier<Polynomial<T>> {
 //        @Override
 //        public List<Polynomial<T>> simplify(List<Polynomial<T>> numbers) {
 //            return null;

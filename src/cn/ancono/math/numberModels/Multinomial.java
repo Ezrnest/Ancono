@@ -1071,7 +1071,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     public static Multinomial fromPolynomialT(IPolynomial<Term> p, String variableName) {
         NavigableSet<Term> set = getSet();
         for (int i = 0; i <= p.getLeadingPower(); i++) {
-            Term t = p.getCoefficient(i);
+            Term t = p.get(i);
             if (t.isZero()) {
                 continue;
             }
@@ -1087,7 +1087,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     public static Multinomial fromPolynomialM(IPolynomial<Multinomial> p, String variableName) {
         NavigableSet<Term> set = getSet();
         for (int i = 0; i <= p.getLeadingPower(); i++) {
-            Multinomial t = p.getCoefficient(i);
+            Multinomial t = p.get(i);
             if (t.isZero()) {
                 continue;
             }

@@ -13,7 +13,6 @@ import cn.ancono.math.function.AbstractSVPFunction
 import cn.ancono.math.function.SVFunction
 import cn.ancono.math.function.SVPFunction
 import cn.ancono.math.function.invoke
-import cn.ancono.math.get
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
@@ -140,7 +139,7 @@ object Calculus {
         val mc = f.mathCalculator
         for (i in 1..f.degree) {
             //(Ax^i)' = iA*x^(i-1)
-            cns[i - 1] = mc.multiplyLong(f.getCoefficient(i), i.toLong())
+            cns[i - 1] = mc.multiplyLong(f.get(i), i.toLong())
         }
         return AbstractSVPFunction.valueOf(mc, *cns)
     }
@@ -169,7 +168,7 @@ object Calculus {
         val mc = f.mathCalculator
         for (i in 0..f.degree) {
             //(Ax^(i+1))' = (i+1)*Ax^i
-            cns[i + 1] = mc.divideLong(f.getCoefficient(i), (i + 1).toLong())
+            cns[i + 1] = mc.divideLong(f.get(i), (i + 1).toLong())
         }
         cns[0] = mc.zero
         return AbstractSVPFunction.valueOf(mc, *cns)
@@ -374,7 +373,7 @@ object Calculus {
                 1 -> {
                     // 1/(ax+b)
                     // > ln(ax+b)/a
-                    return mc.run { ln(Expression.fromPolynomialE(d, variableName)) / d.getCoefficient(1) }
+                    return mc.run { ln(Expression.fromPolynomialE(d, variableName)) / d.get(1) }
                 }
                 2 -> {
                     // 1/(ax^2+bx+c)

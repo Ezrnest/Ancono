@@ -64,7 +64,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
     public SVPEquation<T> simplify(Simplifier<T> sim) {
         List<T> list = new ArrayList<>(mp + 1);
         for (int i = 0; i <= mp; i++) {
-            list.add(getCoefficient(i));
+            list.add(get(i));
         }
         list = sim.simplify(list);
         return valueOf(list, getMc());
@@ -229,7 +229,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public T getCoefficient(int n) {
+        public T get(int n) {
             return coes[n];
         }
 
@@ -259,8 +259,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
          * @see cn.ancono.math.SVPEquation#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*
@@ -341,7 +341,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         @SuppressWarnings("unchecked")
         T[] list = (T[]) new Object[size];
         for (int i = 0; i < size; i++) {
-            list[i] = m.getCoefficient(i);
+            list[i] = m.get(i);
         }
         return new DSVPEquation<>(mc, list);
     }
@@ -400,8 +400,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public T getCoefficient(int n) {
-            return p.getExpanded().getCoefficient(n);
+        public T get(int n) {
+            return p.getExpanded().get(n);
         }
 
 
@@ -716,7 +716,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public T getCoefficient(int n) {
+        public T get(int n) {
             switch (n) {
                 case 0:
                     return c;
@@ -771,7 +771,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public T getCoefficient(int n) {
+        public T get(int n) {
             switch (n) {
                 case 0:
                     return b;

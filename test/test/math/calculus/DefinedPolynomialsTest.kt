@@ -44,7 +44,7 @@ class DefinedPolynomialsTest {
         val ps = HermiteOrthPoly(mc)
         kotlin.test.assertTrue {
             val p3 = ps.sequence.take(5).last()
-            p3.getCoefficient(2) == Fraction.of("-6")
+            p3.get(2) == Fraction.of("-6")
         }
     }
 

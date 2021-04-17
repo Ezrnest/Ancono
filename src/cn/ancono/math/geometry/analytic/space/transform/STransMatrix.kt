@@ -64,5 +64,5 @@ class STransMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val matr
  * Returns a vector of (x,y,z,1)T, which is a column vector.
  */
 fun <T : Any> SPoint<T>.extendVector(): Vector<T> {
-    return Vector.of(mathCalculator, x, y, z, mathCalculator.one)
+    return Vector.vOf(mathCalculator, x, y, z, mathCalculator.one)
 }

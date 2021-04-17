@@ -156,7 +156,7 @@ public final class Expression implements Computable, Serializable {
     public static Expression fromPolynomialE(IPolynomial<Expression> p, String variableName) {
         List<Node> terms = new ArrayList<>();
         for (int i = 0; i <= p.getLeadingPower(); i++) {
-            Expression coeExpr = p.getCoefficient(i);
+            Expression coeExpr = p.get(i);
             Node root = coeExpr.root;
             if (root.getType() == Node.Type.POLYNOMIAL) {
                 if (((Node.Poly) root).p.isZero()) {

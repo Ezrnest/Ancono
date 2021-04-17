@@ -543,7 +543,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         Matrix<T> re = Matrix.diag(p.constant(), column, mc);
         for (int i = p.getDegree() - 1; i > -1; i--) {
             re = multiply(re, this);
-            re = add(Matrix.diag(p.getCoefficient(i), column, mc), re);
+            re = add(Matrix.diag(p.get(i), column, mc), re);
         }
         return re;
     }

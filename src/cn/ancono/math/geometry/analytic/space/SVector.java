@@ -77,7 +77,7 @@ public final class SVector<T> extends Vector<T> {
         arr[0] = x;
         arr[1] = y;
         arr[2] = z;
-        return Vector.of(getMc(), true, arr);
+        return Vector.vOf(getMc(), true, arr);
     }
 
 
@@ -162,6 +162,11 @@ public final class SVector<T> extends Vector<T> {
         arr[1] = y;
         arr[2] = z;
         return arr;
+    }
+
+    @Override
+    public List<T> toList() {
+        return Arrays.asList(x, y, z);
     }
 
     /**

@@ -31,9 +31,6 @@ public final class PVector<T> extends Vector<T> {
     private T length, lengthSq;
 
     /**
-     * @param row
-     * @param column
-     * @param mc
      */
     protected PVector(T x, T y, MathCalculator<T> mc) {
         super(2, false, mc);
@@ -91,6 +88,11 @@ public final class PVector<T> extends Vector<T> {
         arr[0] = x;
         arr[1] = y;
         return arr;
+    }
+
+    @Override
+    public List<T> toList() {
+        return Arrays.asList(x, y);
     }
 
     /* (non-Javadoc)
@@ -162,7 +164,7 @@ public final class PVector<T> extends Vector<T> {
         T[] arr = (T[]) Array.newInstance(x.getClass(), 2);
         arr[0] = x;
         arr[1] = y;
-        return Vector.of(getMc(), true, arr);
+        return Vector.vOf(getMc(), true, arr);
     }
 
     @Override
@@ -296,7 +298,8 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Returns a SVector that has the identity direct of this but length is given.
-     * @param length the length
+     *
+     * @param len the length
      * @return a new SVector
      */
     public PVector<T> parallel(T len) {

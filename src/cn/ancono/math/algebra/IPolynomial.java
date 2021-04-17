@@ -1,4 +1,4 @@
-/**
+/*
  * 2017-10-06
  */
 package cn.ancono.math.algebra;
@@ -9,7 +9,6 @@ import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.function.BiPredicate;
@@ -18,18 +17,23 @@ import java.util.function.BiPredicate;
 /**
  * A polynomial is an math expression of a variable, usually called {@code x}, with
  * defined operations <i>add</i> and <i>multiply</i>. Generally, a polynomial can be shown as
- * <pre>a<sub>n</sub>*x<sup>n</sup> + ... + a<sub>1</sub>*x + a<sub>0</sub>, (a<sub>n</sub>!=0,n>=0)</pre>
- * The operator <code>x<sup>n</sup></code> represents
- * for multiply {@code x} for {@code n} times. {@code n} is called the power of {@code x} and
- * <code>a<sub>n</sub></code> is called the coefficient.
+ * <pre>a<sub>n</sub>*x<sup>n</sup> + ... + a<sub>1</sub>*x + a<sub>0</sub>, n >= 0
+ * and a<sub>n</sub>!=0 or n = 0 </pre>
+ * The operator <code>x<sup>r</sup></code> represents
+ * for multiply {@code x} for {@code r} times. {@code r} is called the power of {@code x} and
+ * <code>a<sub>r</sub></code> is called the coefficient.
+ * <br>
+ * <code>n</code> is the leading power of this polynomial. If the polynomial is non-zero,
+ * the degree of a polynomial is <code>n</code>, and degree of zero polynomial is defined to be <code>-1</code>.
  *
  * @author liyicheng
  * 2017-10-06 16:51
  */
-public interface IPolynomial<T> extends Iterable<T> {
+public interface IPolynomial<T> {
     /**
      * Gets the degree of this polynomial, which is the max power of x.
-     * The degree of zero polynomial is <code>-1</code>.
+     * <br>
+     * Note: The degree of zero polynomial is <code>-1</code>.
      *
      * @return the degree of polynomial.
      */
@@ -39,20 +43,20 @@ public interface IPolynomial<T> extends Iterable<T> {
      * Returns the power of the leading term. This method is equivalent to
      * <code>max(getDegree(),0)</code>
      *
-     * @return
      */
     default int getLeadingPower() {
         return Math.max(getDegree(), 0);
     }
 
     /**
-     * Gets the number of the corresponding index, throws {@link IndexOutOfBoundsException}
-     * if {@code n<0}.
+     * Gets the coefficient for the given power.
+     * <p></p>
+     * For <code> n > this.degree </code>, zero will be returned,
+     * but it is always required that <code>n >= 0</code>
      *
      * @param n the power of the variable.
-     * @return
      */
-    T getCoefficient(int n);
+    T get(int n);
 
     /**
      * Determines whether this polynomial is a constant (including zero).
@@ -62,27 +66,28 @@ public interface IPolynomial<T> extends Iterable<T> {
     }
 
     /**
-     * Iterators the coefficient from the lowest one(a0).
+     * Gets a iterable for its coefficients, which can iterate
+     * Iterators the coefficient from the lowest one(<code>a<sub>0</sub></code>) to the
+     * leading one(<code>a<sub>n</sub></code>).
      */
     @NotNull
-    @Override
-    public default Iterator<T> iterator() {
-        return new It<>(this);
+    public default Iterable<T> coefficients() {
+        return () -> new It<>(this);
     }
 
 
     /**
-     * Returns the leading term of this polynomial.
+     * Returns the coefficient of the leading term of this polynomial.
      */
     default T first() {
-        return getCoefficient(getLeadingPower());
+        return get(getLeadingPower());
     }
 
     /**
-     * Returns the constant term of this polynomial.
+     * Returns the constant of this polynomial.
      */
     default T constant() {
-        return getCoefficient(0);
+        return get(0);
     }
 
     /**
@@ -94,7 +99,7 @@ public interface IPolynomial<T> extends Iterable<T> {
         }
         int mp = m1.getDegree();
         for (int i = 0; i <= mp; i++) {
-            if (!equal.test(m1.getCoefficient(i), m2.getCoefficient(i))) {
+            if (!equal.test(m1.get(i), m2.get(i))) {
                 return false;
             }
         }
@@ -111,7 +116,7 @@ public interface IPolynomial<T> extends Iterable<T> {
         }
         int mp = m1.getDegree();
         for (int i = 0; i <= mp; i++) {
-            if (!m1.getCoefficient(i).equals(m2.getCoefficient(i))) {
+            if (!m1.get(i).equals(m2.get(i))) {
                 return false;
             }
         }
@@ -133,7 +138,7 @@ public interface IPolynomial<T> extends Iterable<T> {
         int hash = 0;
         int mp = m.getDegree();
         for (int i = 0; i <= mp; i++) {
-            hash = hash * 31 + m.getCoefficient(i).hashCode();
+            hash = hash * 31 + m.get(i).hashCode();
         }
         return hash;
     }
@@ -141,13 +146,13 @@ public interface IPolynomial<T> extends Iterable<T> {
     public static <T> String stringOf(IPolynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         int maxPower = m.getDegree();
         if (maxPower <= 0) {
-            return nf.format(m.getCoefficient(0), mc);
+            return nf.format(m.get(0), mc);
         }
         StringBuilder sb = new StringBuilder();
         for (int i = maxPower; i > 0; i--) {
-            if (mc.isZero(m.getCoefficient(i)))
+            if (mc.isZero(m.get(i)))
                 continue;
-            T a = m.getCoefficient(i);
+            T a = m.get(i);
             if (mc.isEqual(mc.getOne(), a)) {
                 if (i != 1) {
                     sb.append("x^").append(i);
@@ -155,7 +160,7 @@ public interface IPolynomial<T> extends Iterable<T> {
                     sb.append("x");
                 }
             } else {
-                sb.append(nf.format(m.getCoefficient(i), mc));
+                sb.append(nf.format(m.get(i), mc));
                 if (i != 1) {
                     sb.append("*x^").append(i);
                 } else {
@@ -165,8 +170,8 @@ public interface IPolynomial<T> extends Iterable<T> {
             sb.append(" + ");
 
         }
-        if (!mc.isZero(m.getCoefficient(0))) {
-            sb.append(nf.format(m.getCoefficient(0), mc));
+        if (!mc.isZero(m.get(0))) {
+            sb.append(nf.format(m.get(0), mc));
         } else {
             sb.delete(sb.length() - 3, sb.length());
 
@@ -182,9 +187,9 @@ public interface IPolynomial<T> extends Iterable<T> {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[length];
         for (int i = 0; i < length; i++) {
-            arr[i] = fx.getCoefficient(i);
+            arr[i] = fx.get(i);
         }
-        return Vector.of(mc, arr);
+        return Vector.vOf(mc, arr);
     }
 
     /**
@@ -195,7 +200,7 @@ public interface IPolynomial<T> extends Iterable<T> {
         int p = 0;
         T re;
         do {
-            re = s.getCoefficient(p);
+            re = s.get(p);
         } while (mc.isZero(re));
         return re;
     }
@@ -230,7 +235,7 @@ class It<T> implements ListIterator<T> {
     public T next() {
         try {
             int index = n + 1;
-            T t = f.getCoefficient(n);
+            T t = f.get(n);
             n = index;
             return t;
         } catch (IndexOutOfBoundsException ex) {
@@ -269,7 +274,7 @@ class It<T> implements ListIterator<T> {
     public T previous() {
         try {
             int index = n - 1;
-            T t = f.getCoefficient(n);
+            T t = f.get(n);
             n = index;
             return t;
         } catch (IndexOutOfBoundsException ex) {

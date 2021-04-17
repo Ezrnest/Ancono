@@ -7,6 +7,7 @@ import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Fraction;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.math.numberTheory.IntCalculator;
 import cn.ancono.utilities.ArraySup;
@@ -633,12 +634,12 @@ public class MatrixSup {
         var builder = Matrix.getBuilder(size, size, p1.getMathCalculator());
         for (int row = 0; row < m; row++) {
             for (int i = 0; i <= n; i++) {
-                builder.set(p1.getCoefficient(n - i), row, i + row);
+                builder.set(p1.get(n - i), row, i + row);
             }
         }
         for (int row = m; row < size; row++) {
             for (int i = 0; i <= m; i++) {
-                builder.set(p2.getCoefficient(m - i), row, i + row - m);
+                builder.set(p2.get(m - i), row, i + row - m);
             }
         }
         return builder.build();
@@ -814,6 +815,9 @@ public class MatrixSup {
     }
 
 
+    public static <T> String toLatexString(Matrix<T> m) {
+        return MatrixSupKt.INSTANCE.toLatexString(m, NumberFormatter.getToStringFormatter(), "pmatrix");
+    }
 //
 //    public static void main(String[] args) {
 //        var mc = Calculators.getCalculatorInteger();

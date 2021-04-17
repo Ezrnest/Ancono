@@ -8,7 +8,6 @@ import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.component1
 import cn.ancono.math.component2
 import java.util.*
-import kotlin.collections.ArrayList
 
 object LinearEquations {
 
@@ -32,7 +31,7 @@ object LinearEquations {
             }
             x[i] = mc.eval { (b[i]- t) / U[i,i] }
         }
-        return Vector.of(mc,*x)
+        return Vector.vOf(mc, *x)
     }
 
     /**
@@ -54,7 +53,7 @@ object LinearEquations {
             }
             x += mc.eval { (b[i]- t) / L[i,i] }
         }
-        return Vector.of(mc,x)
+        return Vector.vOf(mc, x)
     }
 
 
@@ -124,7 +123,7 @@ object LinearEquations {
     private fun <T : Any> solveDiagonal(D: Matrix<T>, b: Vector<T>): Vector<T> {
         val n = b.size
         val mc = b.mathCalculator
-        return Vector.of(b.mathCalculator, (0 until n).map { i ->
+        return Vector.vOf(b.mathCalculator, (0 until n).map { i ->
             mc.divide(b[i], D[i, i])
         })
     }
@@ -171,7 +170,7 @@ object LinearEquations {
                 (y[i] - c[i] * x[i + 1]) / u[i]
             }
         }
-        return Vector.of(mc, x)
+        return Vector.vOf(mc, x)
     }
 
 //    fun solveJacobi(A : Matrix<Double>)

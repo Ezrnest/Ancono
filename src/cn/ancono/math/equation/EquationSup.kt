@@ -145,13 +145,13 @@ object EquationSup {
         val mc = sv.mathCalculator
         when (sv.mp) {
             1 -> {
-                return Arrays.asList(mc.negate(mc.divide(sv.getCoefficient(0),
-                        sv.getCoefficient(1))))
+                return Arrays.asList(mc.negate(mc.divide(sv.get(0),
+                        sv.get(1))))
             }
             2 -> {
-                val a = sv.getCoefficient(2)
-                val b = sv.getCoefficient(1)
-                val c = sv.getCoefficient(0)
+                val a = sv.get(2)
+                val b = sv.get(1)
+                val c = sv.get(0)
                 var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
                 // x1 = (-b + sqr(delta)) / 2a
                 // x2 = (-b - sqr(delta)) / 2a
@@ -280,7 +280,7 @@ object EquationSup {
         var equa = equation.simplify(Fraction.fractionSimplifier)
 
         var multiplier = 1L
-        for (f in equa) {
+        for (f in equa.coefficients()) {
             if (!f.isInteger) {
                 multiplier = MathUtils.lcm(multiplier, f.denominator)
             }
@@ -295,7 +295,7 @@ object EquationSup {
         var lastIndex = 0
         while (const == 0L) {
             lastIndex++
-            const = equa.getCoefficient(lastIndex).numerator
+            const = equa.get(lastIndex).numerator
             result.add(Fraction.ZERO)
         }
         //solution = const.factor / first.factor

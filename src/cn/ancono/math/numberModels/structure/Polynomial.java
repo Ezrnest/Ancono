@@ -91,9 +91,9 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
      */
     @Override
-    public T getCoefficient(int n) {
+    public T get(int n) {
         if (n < 0) {
-            throw new IndexOutOfBoundsException("For n=" + n);
+            throw new IndexOutOfBoundsException("n = " + n + " < 0 !");
         }
         if (n > degree) {
             return getMc().getZero();
@@ -105,13 +105,21 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return IPolynomial.coefficientVector(this, getMathCalculator());
     }
 
+    /**
+     * Gets the coefficients in this polynomial as a immutable list.
+     */
+    @Override
+    public @NotNull List<T> coefficients() {
+        return Arrays.asList(coes);
+    }
+
     public boolean isZero() {
         return degree < 0;
     }
 
     public boolean isOne() {
         var mc = getMc();
-        return degree == 0 && mc.isEqual(mc.getOne(), getCoefficient(0));
+        return degree == 0 && mc.isEqual(mc.getOne(), get(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -248,12 +256,12 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         if (degree < 0) {
             return getMc().getZero();
         }
-        T re = getCoefficient(degree);
+        T re = get(degree);
         var mc = getMc();
         for (int i = degree - 1; i > -1; i--) {
             //noinspection SuspiciousNameCombination
             re = mc.multiply(re, x); // left-multiply x.
-            re = mc.add(getCoefficient(i), re);
+            re = mc.add(get(i), re);
         }
         return re;
     }
@@ -266,10 +274,10 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             return zero(getMc());
         }
         var mc = getMc();
-        var re = constant(mc, getCoefficient(degree));
+        var re = constant(mc, get(degree));
         for (int i = degree - 1; i > -1; i--) {
             re = sub.multiply(re);
-            re = constant(mc, getCoefficient(i)).add(re);
+            re = constant(mc, get(i)).add(re);
         }
         return re;
     }
@@ -280,10 +288,10 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * maps the coefficient using the <code>injection</code>.
      */
     public <V extends AlgebraModel<T, V>> V homoMap(V x, Function<T, V> injection) {
-        var re = injection.apply(getCoefficient(getLeadingPower()));
+        var re = injection.apply(get(getLeadingPower()));
         for (int i = degree - 1; i > -1; i--) {
             re = x.multiply(re);
-            re = injection.apply(getCoefficient(i)).add(re);
+            re = injection.apply(get(i)).add(re);
         }
         return re;
     }
@@ -299,10 +307,10 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public Polynomial<T> monic() {
         var mc = getMc();
-        if (isZero() || mc.isEqual(mc.getOne(), getCoefficient(degree))) {
+        if (isZero() || mc.isEqual(mc.getOne(), get(degree))) {
             return this;
         }
-        T k = getCoefficient(degree);
+        T k = get(degree);
         return divide(k);
     }
 
@@ -313,7 +321,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     @Override
     public boolean isUnit() {
-        return isConstant() && getMc().isUnit(getCoefficient(0));
+        return isConstant() && getMc().isUnit(get(0));
     }
 
     /**
@@ -516,7 +524,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         var mc = getMc();
         if (this.degree <= 0) {
             //single
-            return constant(mc, mc.pow(getCoefficient(0), exp));
+            return constant(mc, mc.pow(get(0), exp));
         }
         long mp = exp * this.degree;
         if (mp > Integer.MAX_VALUE || mp < 0) {
@@ -917,8 +925,8 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
         var mc = getMc();
         for (int i = mp; i > -1; i--) {
-            T a = getCoefficient(i);
-            T b = o.getCoefficient(i);
+            T a = get(i);
+            T b = o.get(i);
             int t = mc.compare(a, b);
             if (t != 0) {
                 return t;
@@ -1232,7 +1240,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
         T[] arr = getArr(p.getDegree() + 1);
         for (int i = 0; i <= degree; i++) {
-            arr[i] = p.getCoefficient(i);
+            arr[i] = p.get(i);
         }
 
         return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
@@ -1639,7 +1647,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> abs(@NotNull Polynomial<T> para) {
-            if (mc.compare(para.getCoefficient(para.degree), mc.getZero()) < 0) {
+            if (mc.compare(para.get(para.degree), mc.getZero()) < 0) {
                 return negate(para);
             }
             return para;
@@ -1881,7 +1889,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> abs(@NotNull Polynomial<T> para) {
-            if (mc.compare(para.getCoefficient(para.degree), mc.getZero()) < 0) {
+            if (mc.compare(para.get(para.degree), mc.getZero()) < 0) {
                 return negate(para);
             }
             return para;
@@ -1974,7 +1982,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             }
             if (p.degree == 0) {
                 //single
-                return constant(mc, mc.pow(p.getCoefficient(0), exp));
+                return constant(mc, mc.pow(p.get(0), exp));
             }
             long mp = exp * p.degree;
             if (mp > Integer.MAX_VALUE || mp < 0) {

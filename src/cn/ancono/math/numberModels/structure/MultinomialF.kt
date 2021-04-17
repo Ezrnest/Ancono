@@ -644,7 +644,7 @@ internal constructor(
             val dummy = zero(mc)
             val result = dummy.ts
             for (i in 0..p.leadingPower) {
-                val coe = p.getCoefficient(i)
+                val coe = p.get(i)
                 if (coe.isZero()) {
                     continue
                 }

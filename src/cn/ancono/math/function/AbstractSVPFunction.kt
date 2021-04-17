@@ -44,10 +44,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
      * through f(x) = a0+x(a1+x(a2+.....)
      */
     override fun apply(x: T): T {
-        var re = getCoefficient(mp)
+        var re = get(mp)
         for (i in mp - 1 downTo -1 + 1) {
             re = mc.multiply(x, re)
-            re = mc.add(getCoefficient(i), re)
+            re = mc.add(get(i), re)
         }
         return re
     }
@@ -138,7 +138,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /* (non-Javadoc)
 		 * @see cn.ancono.math.function.AbstractSVPFunction#getCoefficient(int)
 		 */
-        override fun getCoefficient(n: Int): T {
+        override fun get(n: Int): T {
             return coes[n]
         }
 
@@ -189,7 +189,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /* (non-Javadoc)
 		 * @see cn.ancono.math.function.AbstractSVPFunction#getCoefficient(int)
 		 */
-        override fun getCoefficient(n: Int): T {
+        override fun get(n: Int): T {
             return map.getOrDefault(n, mc.zero)
         }
 
@@ -249,7 +249,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.function.AbstractSVPFunction#getCoefficient(int)
 		 */
-        override fun getCoefficient(n: Int): T {
+        override fun get(n: Int): T {
             when (n) {
                 0 -> {
                     return b
@@ -322,7 +322,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.function.SVPFunction#getCoefficient(int)
 		 */
-        override fun getCoefficient(n: Int): T {
+        override fun get(n: Int): T {
             if (n != 0) {
                 throw IndexOutOfBoundsException("n!=0")
             }
@@ -437,7 +437,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             val size = m.degree + 1
             val list = arrayOfNulls<Any>(size) as Array<T>
             for (i in 0 until size) {
-                list[i] = m.getCoefficient(i)
+                list[i] = m.get(i)
             }
             return SVPFunctionImpl1(mc, size - 1, list)
         }
@@ -465,7 +465,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
             val mc = p1.mathCalculator
             for (i in 0..max) {
-                coes[i] = mc.add(p1.getCoefficient(i), p2.getCoefficient(i))
+                coes[i] = mc.add(p1.get(i), p2.get(i))
             }
             return valueOf(mc, *coes)
         }
@@ -481,7 +481,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
             val mc = p1.mathCalculator
             for (i in 0..max) {
-                coes[i] = mc.subtract(p1.getCoefficient(i), p2.getCoefficient(i))
+                coes[i] = mc.subtract(p1.get(i), p2.get(i))
             }
             return valueOf(mc, *coes)
         }
@@ -520,7 +520,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
                 val max2 = p2.degree
                 while (j <= max2) {
                     val t = i + j
-                    val coe = mc.multiply(p1.getCoefficient(i), p2.getCoefficient(j))
+                    val coe = mc.multiply(p1.get(i), p2.get(j))
                     map.compute(t) { _, c -> if (c == null) coe else mc.add(c, coe) }
                     j++
                 }
@@ -540,7 +540,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
                     val max2 = p2.degree
                     while (j <= max2) {
                         val t = i + j
-                        val coe = mc.multiply(p1.getCoefficient(i), p2.getCoefficient(j))
+                        val coe = mc.multiply(p1.get(i), p2.get(j))
                         if (arr[t] == null) {
                             arr[t] = coe
                         } else {

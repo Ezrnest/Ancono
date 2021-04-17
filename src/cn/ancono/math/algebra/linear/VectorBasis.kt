@@ -99,7 +99,7 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
         val result = Array<Any>(rank) { i ->
             vectors[i].innerProduct(cordInThisBase)
         } as Array<T>
-        return Vector.of(cordInThisBase.mathCalculator, *result)
+        return Vector.vOf(cordInThisBase.mathCalculator, *result)
     }
 
     fun canReduce(vb: IVectorBasis<T>): Boolean {

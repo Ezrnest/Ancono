@@ -22,12 +22,13 @@ public interface SVPFunction<T> extends SVFunction<T>, MathCalculatorHolder<T>, 
     /**
      * Returns the coefficient {@code x^n},if {@code n==0} then the
      * coefficient {@code a0} will be returned.
+     *
      * @param n the power of {@code x}
      * @return the coefficient
      * @throws IndexOutOfBoundsException if {@code n} is bigger than {@code getMaxPower()} or
-     * it is smaller than 0.
+     *                                   it is smaller than 0.
      */
-    public T getCoefficient(int n);
+    public T get(int n);
 
     /**
      * Returns the max power of x in this equation.

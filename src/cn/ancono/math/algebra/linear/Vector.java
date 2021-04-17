@@ -67,6 +67,11 @@ public abstract class Vector<T> extends Matrix<T> {
      */
     public abstract T[] toArray(T[] arr);
 
+    /**
+     * Gets an immutable list containing all the elements in this vector in order.
+     */
+    public abstract List<T> toList();
+
     /*
      * @see cn.ancono.math.algebra.abstractAlgebra.linearAlgebra.Matrix#getValues()
      */
@@ -350,11 +355,11 @@ public abstract class Vector<T> extends Matrix<T> {
      * @param isRow decides whether the vector return is a row-vector
      * @param fs    the numbers,null values will be considered as ZERO
      * @return a newly created vector
-     * @see DVector#of(boolean, long[])
+     * @see DVector#vOf(boolean, long[])
      */
     @SafeVarargs
-    public static <T> Vector<T> of(MathCalculator<T> mc, boolean isRow,
-                                   T... fs) {
+    public static <T> Vector<T> vOf(MathCalculator<T> mc, boolean isRow,
+                                    T... fs) {
         @SuppressWarnings("unchecked")
         T[] vec = (T[]) new Object[fs.length];
         for (int i = 0; i < vec.length; i++) {
@@ -367,7 +372,7 @@ public abstract class Vector<T> extends Matrix<T> {
     /**
      * Returns a column vector from the given elements.
      */
-    public static <T> Vector<T> of(MathCalculator<T> mc, List<T> elements) {
+    public static <T> Vector<T> vOf(MathCalculator<T> mc, List<T> elements) {
         @SuppressWarnings("unchecked")
         T[] vec = (T[]) elements.toArray();
         for (int i = 0; i < vec.length; i++) {
@@ -391,7 +396,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return a newly created vector
      * @see DVector#of(Object[][], MathCalculator)
      */
-    public static Vector<Long> of(boolean isRow, long[] ns) {
+    public static Vector<Long> vOf(boolean isRow, long[] ns) {
         Long[] vec = new Long[ns.length];
         for (int i = 0; i < vec.length; i++) {
             vec[i] = ns[i];
@@ -405,11 +410,11 @@ public abstract class Vector<T> extends Matrix<T> {
      *
      * @param fs the numbers
      * @return a newly created column vector
-     * @see #of(MathCalculator, boolean, Object[])
+     * @see #vOf(MathCalculator, boolean, Object[])
      */
     @SafeVarargs
-    public static <T> Vector<T> of(MathCalculator<T> mc, T... fs) {
-        return of(mc, false, fs);
+    public static <T> Vector<T> vOf(MathCalculator<T> mc, T... fs) {
+        return vOf(mc, false, fs);
     }
 
     /**
@@ -417,10 +422,10 @@ public abstract class Vector<T> extends Matrix<T> {
      *
      * @param arr the numbers
      * @return a newly created vector
-     * @see #of(boolean, long[])
+     * @see #vOf(boolean, long[])
      */
-    public static Vector<Long> of(long[] arr) {
-        return of(false, arr);
+    public static Vector<Long> vOf(long[] arr) {
+        return vOf(false, arr);
     }
 
 
@@ -802,7 +807,7 @@ public abstract class Vector<T> extends Matrix<T> {
     /**
      * Returns a column vector whose n-th element is <code>f.apply(n)</code>, 0<= n <=length-1
      */
-    public static <T> Vector<T> valueOf(int length, MathCalculator<T> mc, IntFunction<T> f) {
+    public static <T> Vector<T> vOf(int length, MathCalculator<T> mc, IntFunction<T> f) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[length];
         for (int i = 0; i < length; i++) {

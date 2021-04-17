@@ -1,16 +1,13 @@
 package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator
-import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.component1
 import cn.ancono.math.component2
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.utilities.Printer
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.utilities.structure.Pair
-import java.lang.ArithmeticException
-import java.lang.Exception
 import java.util.*
 
 
@@ -155,7 +152,7 @@ internal object MatrixSupKt {
             }
         }
         val L = Matrix.valueOfNoCopy(l, mc)
-        val D = Vector.of(mc, d)
+        val D = Vector.vOf(mc, d)
         return Pair(L, D)
     }
 
@@ -257,6 +254,19 @@ internal object MatrixSupKt {
             ExceptionUtil.notInvertible()
         }
         return M.adjugate().applyFunction { x -> mc.divide(x, det) }
+    }
+
+    fun <T : Any> toLatexString(M: Matrix<T>, formatter: NumberFormatter<T> = NumberFormatter.getToStringFormatter(), displayType: String = "pmatrix"): String = buildString {
+        val mc = M.mathCalculator
+        append("\\begin{$displayType}")
+        appendLine()
+        for (i in 0 until M.rowCount) {
+            (0 until M.columnCount).joinTo(this, separator = " & ", postfix = "\\\\") { j ->
+                formatter.format(M[i, j], mc)
+            }
+            appendLine()
+        }
+        append("\\end{$displayType}")
     }
 }
 

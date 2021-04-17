@@ -5,7 +5,6 @@ package cn.ancono.math.equation.inequation;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.equation.Type;
@@ -146,8 +145,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*
@@ -195,8 +194,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*
@@ -232,8 +231,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
         @Override
         public Interval<T> getSolution() {
             if (solution == null) {
-                T a = f.getCoefficient(1);
-                T b = f.getCoefficient(0);
+                T a = f.get(1);
+                T b = f.get(0);
                 //ax+b ? 0
                 // x ? -b/a
                 T x = getMc().negate(getMc().divide(b, a));
@@ -294,8 +293,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*

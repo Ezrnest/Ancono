@@ -2,11 +2,11 @@ package cn.ancono.math.algebra.linear;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.function.MathFunction;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -99,6 +99,11 @@ public final class DVector<T> extends Vector<T> {
         if (arr.length > vec.length)
             arr[vec.length] = null;
         return arr;
+    }
+
+    @Override
+    public List<T> toList() {
+        return Arrays.asList(vec);
     }
 
     @Override

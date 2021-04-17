@@ -197,7 +197,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      * @see cn.ancono.math.function.SVPFunction#getCoefficient(int)
      */
     @Override
-    public T getCoefficient(int n) {
+    public T get(int n) {
         switch (n) {
             case 0:
                 return c;
@@ -237,12 +237,12 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         StringBuilder sb = new StringBuilder();
         for (int i = 2; i > 0; i--) {
-            if (getMc().isZero(getCoefficient(i)))
+            if (getMc().isZero(get(i)))
                 continue;
-            sb.append(nf.format(getCoefficient(i), getMc())).append("*x^").append(i).append(" + ");
+            sb.append(nf.format(get(i), getMc())).append("*x^").append(i).append(" + ");
         }
-        if (getMc().isZero(getCoefficient(0)) == false) {
-            sb.append(nf.format(getCoefficient(0), getMc()));
+        if (getMc().isZero(get(0)) == false) {
+            sb.append(nf.format(get(0), getMc()));
         } else {
             sb.delete(sb.length() - 3, sb.length());
         }

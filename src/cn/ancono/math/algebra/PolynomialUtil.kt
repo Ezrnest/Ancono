@@ -64,7 +64,7 @@ object PolynomialUtil {
      * a polynomial of long.
      */
     fun Polynomial<Fraction>.toLongPoly(): Polynomial<Long> {
-        val lcm = this.fold(1L) { a, f ->
+        val lcm = this.coefficients().fold(1L) { a, f ->
             MathUtils.lcm(a, f.denominator)
         }
 
@@ -78,7 +78,7 @@ object PolynomialUtil {
     }
 
     fun decomposeFrac(p: Polynomial<Fraction>): DecomposedPoly<Fraction> {
-        val lcm = p.fold(1L) { g, f ->
+        val lcm = p.coefficients().fold(1L) { g, f ->
             MathUtils.lcm(g, f.denominator)
         }
         return decomposeInt(p.mapTo(Calculators.longCal()) { it ->
@@ -147,14 +147,14 @@ object PolynomialUtil {
             val poly = all.divideToInteger(t.expanded)
             if (isBi) {
                 for (i in 0..poly.degree) {
-                    val coe = poly.getCoefficient(i)
+                    val coe = poly.get(i)
                     matBuilder.set(coe, i, index)
                     matBuilder.set(coe, i + 1, index + 1)
                 }
                 index += 2
             } else {
                 for (i in 0..poly.degree) {
-                    val coe = poly.getCoefficient(i)
+                    val coe = poly.get(i)
                     matBuilder.set(coe, i, index)
                 }
                 index++
@@ -162,7 +162,7 @@ object PolynomialUtil {
         }
 
         for (i in 0 until all.degree) {
-            matBuilder.set(nume.getCoefficient(i), i, coeCount)
+            matBuilder.set(nume.get(i), i, coeCount)
         }
         val mat = matBuilder.build()
 //        mat.printMatrix()
@@ -423,7 +423,7 @@ object PolynomialUtil {
         require(f.degree % p == 0)
         val d = f.degree / p
         return Polynomial.of(f.mathCalculator, d) { i ->
-            f.getCoefficient(i * p)
+            f.get(i * p)
         }
     }
 
@@ -718,8 +718,8 @@ object PolynomialUtil {
         }
         val factors = MathUtils.factorReduce(n.toLong())
         for (factor in factors) {
-            val t = n.toLong() / factor[0]
-            val xPnq = Polynomial.powerAndMod(x, MathUtils.power(t, n), f)
+            val t = (n / factor[0]).toInt()
+            val xPnq = Polynomial.powerAndMod(x, MathUtils.power(p.toLong(), t), f)
             // x^{p^{n/q}}
             val g = (xPnq - x).gcd(f)
             if (!g.isUnit()) {
@@ -887,24 +887,22 @@ object PolynomialUtil {
 
 fun main() {
 //    val mc = Calculators.intModP(17)
-    val fc = Fraction.calculator
+//    val fc = Fraction.calculator
 //    val A = Polynomial.of(mc, 1, 0, 1)//.mapTo(fc) {Fraction.of(it.toLong())}
 //    val B = Polynomial.of(mc, 2, 1)//.mapTo(fc) {Fraction.of(it.toLong())}
 //    val V = A * B
 ////    println(Polynomial.powerAndMod(Polynomial.oneX(mc),17L,A*B))
 ////    println(PolynomialSup.squarefreeFactorizeModP(A*A*B))
 ////    println(PolynomialSup.distinctDegreeFactorizeModP(A * B, mc))
-////    println(Polynomial.powerX(17,fc).mod(V))
-////    println(A.gcd(A.derivative()))
-//    println(PolynomialSup.isIrreducibleModP(A))
-    val mc = Calculators.integer()
+    val mc = Calculators.intMod2()
 
-    val f = Polynomial.parse("x^2+2x+1", mc, String::toInt).mapTo(fc) { Fraction.of(it.toLong()) }
-    val g = Polynomial.parse("x^2+2", mc, String::toInt).mapTo(fc) { Fraction.of(it.toLong()) }
+    val f = Polynomial.parse("1+x+x^3+x^4+x^6", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }
+    val g = Polynomial.parse("x^4+x", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }
 //    println(PolynomialSup.squarefreeFactorizeModP(f))
 //    val factors = PolynomialUtil.factorizeModP(f)
 //    println(factors)
-    println(PolynomialUtil.squarefreeFactorize(f))
+    println(PolynomialUtil.factorizeModP(g))
+    println(PolynomialUtil.isIrreducibleModP(f))
 //    val t = Polynomial.parse("x^12 + x^9 + x^6 + x^3 + 1",mc,String::toInt)
 //    println(PolynomialSup.polySplitZMod2(4,t,mc))
 }

@@ -1,11 +1,15 @@
 package samples
 
 //import cn.ancono.math.geometry.visual.visual2D.Plotting
+import cn.ancono.math.prob.RandomVariables
 import cn.ancono.math.prob.RandomVariables.bernoulli
 import cn.ancono.math.prob.RandomVariables.binomial
 import cn.ancono.math.prob.RandomVariables.estimateDist
 import cn.ancono.math.prob.RandomVariables.iid
 import cn.ancono.math.prob.RandomVariables.sumInt
+import cn.ancono.math.prob.getAsSequence
+import cn.ancono.math.prob.minus
+import cn.ancono.math.prob.times
 
 
 /*
@@ -46,9 +50,17 @@ object ProbSample {
         println(c2.contentToString())
     }
 
+    fun rvAlgebra() {
+        val X = RandomVariables.normal(0.0, 1.0)
+        val Y = RandomVariables.constant(1.0)
+        println(X.getAsSequence().take(5).toList()) // random numbers from normal dist.
+        val Z = Y * X - X // random variable algebra
+        println(Z.getAsSequence().take(5).toList()) // all zeros
+    }
+
 
 }
 
 fun main() {
-    ProbSample.construct()
+    ProbSample.rvAlgebra()
 }

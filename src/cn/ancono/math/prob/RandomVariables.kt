@@ -34,15 +34,24 @@ fun <T, R> RandomVariable<T>.map(f: (T) -> R): RandomVariable<R> {
     return UnaryMappedRV(this, f)
 }
 
+
 operator fun DoubleRV.unaryMinus(): DoubleRV {
-    return this.map<Double,Double>(Double::unaryMinus as (Double)->Double)
+    return this.map(Double::unaryMinus as (Double) -> Double)
 //    return this.map
 }
+
 
 /**
  * Provides methods of constructing random variables.
  */
 object RandomVariables {
+
+    /**
+     * Returns the given constant as a random variable.
+     */
+    fun <T : Any> constant(c: T): RandomVariable<T> {
+        return ConstantDist(c)
+    }
 
     /**
      * Returns a random variable of uniform distribution.
@@ -304,4 +313,5 @@ object RandomVariables {
         val data = DoubleArray(counting.size) { i -> counting[i].toDouble() / times }
         return data
     }
+
 }

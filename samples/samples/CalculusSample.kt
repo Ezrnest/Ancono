@@ -4,13 +4,11 @@ import cn.ancono.math.MathSymbol
 import cn.ancono.math.calculus.*
 import cn.ancono.math.calculus.Limit.limitOf
 import cn.ancono.math.calculus.LimitProcess.Companion.toZero
-import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Multinomial
+import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
-import cn.ancono.math.numberModels.expression.SimplificationStrategies
 import cn.ancono.math.numberModels.structure.Polynomial
-import kotlin.jvm.JvmStatic
 
 
 /*
@@ -41,21 +39,6 @@ object CalculusSample {
         val t = Limit.limitOf(m, p2, mc)
         println(t)
 
-        val mcl = Calculators.longExact()
-//    val nume = Polynomial.valueOf(mc,1L,0L,0L,1L)
-//    val deno = Polynomial.valueOf(mc,0L,-1L,3L,-3L,1L)
-        val nume = Polynomial.of(mcl, 0L, 1L)
-        val deno = Polynomial.of(mcl, 1, 0, 0, 1L)
-
-        println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx")
-//    println(AlgebraUtil.partialFractionInt(nume,deno))
-        mc.setProperty(SimplificationStrategies.PROP_MERGE_FRACTION, "false")
-        mc.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "false")
-        mc.setProperty(SimplificationStrategies.PROP_FRACTION_TO_EXP, "true")
-
-        val inte = Calculus.intRational(nume, deno, mc, "x")
-        println(inte)
-        mc.setProperty(SimplificationStrategies.PROP_ENABLE_EXPAND, "true")
 //        println(mc.differential(inte))
 //
 //        val p = mc.parseExpr("p")
@@ -66,11 +49,22 @@ object CalculusSample {
 //        println("f(x) = $diff")
 //        println("${MathSymbol.INTEGRAL}f(x)dx = $re + c")
 
-
     }
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        limitSample()
+    fun integrateRational() {
+        val mc = ExprCalculator.instance
+        val mcl = Calculators.longExact()
+        val nume = Polynomial.parse("x", mcl, String::toLong)
+        val deno = Polynomial.parse("x^3 + 1", mcl, String::toLong)
+
+        println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx =")
+        val integral = Calculus.intRational(nume, deno, mc, "x")
+        println(integral)
     }
+
+
+}
+
+fun main() {
+    CalculusSample.integrateRational()
 }

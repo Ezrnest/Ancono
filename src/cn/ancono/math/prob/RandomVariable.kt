@@ -42,7 +42,7 @@ sealed class RandomVariable<out T> {
          *
          * Note that the calculator can not support methods `isEqual` and `compare`.
          */
-        fun <T : Any> getCalculator(mc: MathCalculator<T>): MathCalculator<RandomVariable<T>> {
+        fun <T : Any> getCalculator(mc: MathCalculator<T>): RVCalculator<T> {
             return RVCalculator(mc)
         }
     }
@@ -309,7 +309,7 @@ class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<R
         }
     }
 
-    override fun constantValue(name: String): RandomVariable<T>? {
+    override fun constantValue(name: String): RandomVariable<T> {
         return ConstantDist(mc.constantValue(name)!!)
     }
 
@@ -331,7 +331,8 @@ class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<R
 
 
     override val numberClass: Class<RandomVariable<T>>
-        get() = super.numberClass
+        @Suppress("UNCHECKED_CAST")
+        get() = RandomVariable::class.java as Class<RandomVariable<T>>
 
     override fun RandomVariable<T>.div(y: RandomVariable<T>): RandomVariable<T> {
         return divide(this, y)

@@ -79,13 +79,20 @@ This library contains the following modules:
 
    See examples <a href="#calculus">here</a>.
 
-10. Differential geometry
+10. Probability
+
+    Probability spaces and random variables. Ancono provides a framework resembling the mathematic view of random
+    variables.
+
+    See examples <a href="#prob">here</a>.
+
+11. Differential geometry
 
     Curve and plane in 3-dimensional Euclidean space, computing curvature, torsion, Frenet frame, fundamental forms ...
 
     See examples <a href="#dgeometry">here</a>.
 
-11. Graph theory
+12. Graph theory
 
     Graphs, priority-first search, connected components, Euclidean cycle and so on.
 
@@ -394,6 +401,19 @@ var mc=Expression.getCalculator();
 //result = 1
 ```
 
+**Integrating rational function**:(in Kotlin)
+
+```kotlin
+val mc = ExprCalculator.instance
+val mcl = Calculators.longExact()
+val nume = Polynomial.parse("x", mcl, String::toLong)
+val deno = Polynomial.parse("x^3 + 1", mcl, String::toLong)
+
+println("${MathSymbol.INTEGRAL} ($nume) / ($deno) dx =")
+val integral = Calculus.intRational(nume, deno, mc, "x")
+println(integral)
+```
+
 #### <a name="logic">Logic</a>
 
 **Proposition logic (written in Kotlin)**:
@@ -405,6 +425,18 @@ println("Is tautology: ${formula.isTautology}")
 println("Main disjunctive norm: ${formula.toMainDisjunctiveNorm()}")
 println("Conjunctive norm: ${formula.toConjunctiveNorm()}")
 println("Is equivalent to T: ${formula valueEquals T}")
+```
+
+#### <a name="prob">Probability</a>
+
+**Random variables**: (written in Kotlin)
+
+```kotlin
+val X = RandomVariables.normal(0.0,1.0)
+val Y = RandomVariables.constant(1.0)
+println(X.getAsSequence().take(5).toList()) // random numbers from normal dist.
+val Z = Y * X - X // random variable algebra
+println(Z.getAsSequence().take(5).toList()) // all zeros
 ```
 
 #### <a name="dgeometry">Differential geometry</a>

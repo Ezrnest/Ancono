@@ -305,7 +305,7 @@ public final class IntervalI<T> extends Interval<T> {
     @NotNull
     @Override
     public String toString() {
-        return toString(NumberFormatter.getToStringFormatter());
+        return toString(NumberFormatter.defaultFormatter());
     }
 
     /* (non-Javadoc)

@@ -256,7 +256,7 @@ internal object MatrixSupKt {
         return M.adjugate().applyFunction { x -> mc.divide(x, det) }
     }
 
-    fun <T : Any> toLatexString(M: Matrix<T>, formatter: NumberFormatter<T> = NumberFormatter.getToStringFormatter(), displayType: String = "pmatrix"): String = buildString {
+    fun <T : Any> toLatexString(M: Matrix<T>, formatter: NumberFormatter<T> = NumberFormatter.defaultFormatter(), displayType: String = "pmatrix"): String = buildString {
         val mc = M.mathCalculator
         append("\\begin{$displayType}")
         appendLine()

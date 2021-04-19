@@ -331,7 +331,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
                 Iterator<T> it1 = this.iterator();
                 Iterator<N> it2 = pro.iterator();
                 while (i-- > 0) {
-                    if (getMc().isEqual(it1.next(), mapper.apply(it2.next())) == false) {
+                    if (!getMc().isEqual(it1.next(), mapper.apply(it2.next()))) {
                         return false;
                     }
                 }
@@ -846,7 +846,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
             int nlen = len + len << 1;
             if (nlen < 0 || nlen > ArraySup.MAX_ARRAY_SIZE || nlen < expectLength) {
                 //overflow
-                nlen = expectLength < ArraySup.MAX_ARRAY_SIZE ? expectLength : ArraySup.MAX_ARRAY_SIZE;
+                nlen = Math.min(expectLength, ArraySup.MAX_ARRAY_SIZE);
             }
             storage = Arrays.copyOf(storage, nlen);
         }

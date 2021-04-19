@@ -573,7 +573,7 @@ object Calculus {
             : Expression {
         val decomposed = PolynomialUtil.decomposeInt(deno)
         val eNume = nume.mapTo(mc, java.util.function.Function { x -> Expression.valueOf(x) })
-        val eDeno = decomposed.map(Expression::valueOf, mc)
+        val eDeno = decomposed.map(mc, Expression::valueOf)
         return intFrac(eNume, eDeno, mc, variableName)
     }
 

@@ -181,13 +181,13 @@ corresponding `MathCalculator` and one can get it via method `getMathCalculator(
 
 ```java
 var a=Fraction.of("1/2");
-        System.out.println(a);
-        var b=Fraction.ONE;
-        var c=a.add(b);
-        c=c.subtract(Fraction.ZERO);
-        c=c.multiply(a);
-        c=c.add(1);
-        System.out.println(c);
+System.out.println(a);
+var b=Fraction.ONE;
+var c=a.add(b);
+c=c.subtract(Fraction.ZERO);
+c=c.multiply(a);
+c=c.add(1);
+System.out.println(c);
 //Result: 7/4
 ```
 
@@ -204,11 +204,11 @@ println(c)
 
 ```java
 var cal=Calculators.doubleCal();
-        Complex<Double> z1=Complex.real(1.0,cal);
-        z1=z1.squareRoot();
-        Complex<Double> z2=Complex.of(1.0,2.0,cal);
-        Complex<Double> z3=z1.multiply(z2);
-        System.out.println(z3);
+Complex<Double> z1=Complex.real(1.0,cal);
+z1=z1.squareRoot();
+Complex<Double> z2=Complex.of(1.0,2.0,cal);
+Complex<Double> z3=z1.multiply(z2);
+System.out.println(z3);
 //Result: (1.0)+(2.0)i
 ```
 
@@ -216,31 +216,31 @@ Mobius transformation and extended complex:
 
 ```java
 var mc=Calculators.doubleDev(); // double calculator with deviation
-        var one=Complex.one(mc);
-        var i=Complex.i(mc);
-        var n_i=i.negate();
-        var f=MobiusTrans.Companion.to01Inf(one,i,n_i);
+var one=Complex.one(mc);
+var i=Complex.i(mc);
+var n_i=i.negate();
+var f=MobiusTrans.Companion.to01Inf(one,i,n_i);
 //creates a Mobius transformation that maps 1,i,-1 to 0,1,inf
-        System.out.println(f);
-        System.out.println(f.apply(i)); // 1
-        System.out.println(f.inverse().apply(Complex.inf(mc))); // -i
+System.out.println(f);
+System.out.println(f.apply(i)); // 1
+System.out.println(f.inverse().apply(Complex.inf(mc))); // -i
 ```
 
 **Calculations in Z mod p**
 
 ```java
 var mc=Calculators.intModP(29);
-        System.out.println();
-        var matrix=Matrix.of(mc,2,2,
-        1,2,
-        3,4);
-        System.out.println("M = ");
-        matrix.printMatrix();
-        System.out.println("Inverse of M in Z mod 29 is");
-        var inv=matrix.inverse();
-        inv.printMatrix();
-        System.out.println("Check their product:");
-        Matrix.multiply(matrix,inv).printMatrix();
+System.out.println();
+var matrix=Matrix.of(mc,2,2,
+                     1,2,
+                     3,4);
+System.out.println("M = ");
+matrix.printMatrix();
+System.out.println("Inverse of M in Z mod 29 is");
+var inv=matrix.inverse();
+inv.printMatrix();
+System.out.println("Check their product:");
+Matrix.multiply(matrix,inv).printMatrix();
 ```
 
 #### <a name="polynomials">Polynomials:</a>
@@ -250,25 +250,25 @@ var mc=Calculators.intModP(29);
 ```java
 var cal=Calculators.doubleCal();
 // we use double as the type of the coefficient of the polynomials
-        var f=Polynomial.of(cal,1.0,1.0,2.0,3.0); // 1 + x + 2x^2 + 3 x^3
-        var g=Polynomial.binomialPower(2.0,3,cal); // (x-2)^3
-        System.out.println("f(x) = "+f);
-        System.out.println("g(x) = "+g);
-        var h=f.multiply(g);
-        System.out.println("f(x)g(x) = "+h);
+var f=Polynomial.of(cal,1.0,1.0,2.0,3.0); // 1 + x + 2x^2 + 3 x^3
+var g=Polynomial.binomialPower(2.0,3,cal); // (x-2)^3
+System.out.println("f(x) = "+f);
+System.out.println("g(x) = "+g);
+var h=f.multiply(g);
+System.out.println("f(x)g(x) = "+h);
 ```
 
 **Greatest common divisor**:
 
 ```java
 var calInt=Calculators.integer();
-        var cal=Fraction.getCalculator();
-        var f=Polynomial.of(calInt,1,2,1).mapTo(Fraction::of,cal); // 1 + 2x + x^2
-        var g=Polynomial.of(calInt,-2,-1,1).mapTo(Fraction::of,cal); // -2 - x + x^2
-        System.out.println("f(x) = "+f);
-        System.out.println("g(x) = "+g);
-        var h=f.gcd(g);
-        System.out.println("gcd(f(x),g(x)) = "+h);
+var cal=Fraction.getCalculator();
+var f=Polynomial.of(calInt,1,2,1).mapTo(Fraction::of,cal); // 1 + 2x + x^2
+var g=Polynomial.of(calInt,-2,-1,1).mapTo(Fraction::of,cal); // -2 - x + x^2
+System.out.println("f(x) = "+f);
+System.out.println("g(x) = "+g);
+var h=f.gcd(g);
+System.out.println("gcd(f(x),g(x)) = "+h);
 ```
 
 **Greatest common divisor of multinomials**:
@@ -298,12 +298,12 @@ System.out.println("The inverse of g(x) in Z2[x]/(x^23+1) is: " +h);
 
 ```java
 var cal=Expression.getCalculator();
-        var f1=cal.parse("(x^2+3x+2)/(x+1)+sin(Pi/2)+exp(t)");
-        System.out.println(f1);
-        var f2=cal.parse("y+1");
-        System.out.println(f2);
-        var f3=cal.divide(f1,f2);
-        System.out.println(f3);
+var f1=cal.parse("(x^2+3x+2)/(x+1)+sin(Pi/2)+exp(t)");
+System.out.println(f1);
+var f2=cal.parse("y+1");
+System.out.println(f2);
+var f3=cal.divide(f1,f2);
+System.out.println(f3);
 ```
 
 #### <a name="linearAlg">Linear Algebra</a>
@@ -312,19 +312,35 @@ var cal=Expression.getCalculator();
 
 ```java
 var cal=Calculators.integer();
-        var calFrac=Fraction.getCalculator();
-        var m1=Matrix.of(cal,2,2,
-        1,2,
-        4,5).mapTo(Fraction::of,calFrac);
-        var m2=Matrix.of(cal,2,2,
-        3,-6,
-        -4,8).mapTo(Fraction::of,calFrac);
-        var m3=Matrix.multiply(m1,m2);
-        m3.printMatrix();
-        var det=m3.calDet();
-        var rank=m3.calRank();
-        System.out.println("Det of the matrix: "+det);
-        System.out.println("Rank of the matrix: "+rank);
+var calFrac=Fraction.getCalculator();
+var m1=Matrix.of(cal,2,2,
+                 1,2,
+                 4,5).mapTo(Fraction::of,calFrac);
+var m2=Matrix.of(cal,2,2,
+                 3,-6,
+                 -4,8).mapTo(Fraction::of,calFrac);
+var m3=Matrix.multiply(m1,m2);
+m3.printMatrix();
+var det=m3.calDet();
+var rank=m3.calRank();
+System.out.println("Det of the matrix: "+det);
+System.out.println("Rank of the matrix: "+rank);
+```
+
+Matrix polynomial:
+
+```java
+var mc = Fraction.getCalculator();
+var m = MatrixSup.parseFMatrix("1 1 0\n0 1 0\n0 0 2");
+System.out.println("M = ");
+m.printMatrix();
+var f = m.charPoly();
+System.out.println("Characteristic polynomial f(x) = "+f);
+var matrixCal = Matrix.calculatorFor(m);
+var fm = f.mapTo(matrixCal, x -> Matrix.diag(x, 3, mc));
+var result = fm.compute(m);
+System.out.println("f(M) = ");
+result.printMatrix();
 ```
 
 **Vector:**
@@ -363,12 +379,12 @@ System.out.println("Coefficients = " + coe);
 
 ```java
 var G=PermutationGroup.symmetricGroup(4); // S_4
-        var H=PermutationGroup.generateFrom(
-        Permutations.swap(4,0,1),
-        Permutations.swap(4,2,3));
-        var H1=G.normalizer(H);
-        System.out.println(H1.getSet());
-        System.out.println(G.indexOf(H1));
+var H=PermutationGroup.generateFrom(
+    Permutations.swap(4,0,1),
+    Permutations.swap(4,2,3));
+var H1=G.normalizer(H);
+System.out.println(H1.getSet());
+System.out.println(G.indexOf(H1));
 ```
 
 #### <a name="planeAG">Plane Analytic Geometry</a>
@@ -377,16 +393,16 @@ var G=PermutationGroup.symmetricGroup(4); // S_4
 
 ```java
 var mc=Expression.getCalculator();
-        var str="x1,y1,x2,y2,x3,y3".split(","); // coordinates
-        var A=Point.valueOf(mc.parse(str[0]),mc.parse(str[1]),mc);
-        var B=Point.valueOf(mc.parse(str[2]),mc.parse(str[3]),mc);
-        var C=Point.valueOf(mc.parse(str[4]),mc.parse(str[5]),mc);
-        var triangle=Triangle.fromVertex(A,B,C);
+var str="x1,y1,x2,y2,x3,y3".split(","); // coordinates
+var A=Point.valueOf(mc.parse(str[0]),mc.parse(str[1]),mc);
+var B=Point.valueOf(mc.parse(str[2]),mc.parse(str[3]),mc);
+var C=Point.valueOf(mc.parse(str[4]),mc.parse(str[5]),mc);
+var triangle=Triangle.fromVertex(A,B,C);
 
-        var G=triangle.centerG(); //gravity center
-        var area=triangle.area(); // area of the triangle
-        System.out.println(G);
-        System.out.println(area);
+var G=triangle.centerG(); //gravity center
+var area=triangle.area(); // area of the triangle
+System.out.println(G);
+System.out.println(area);
 ```
 
 #### <a name="calculus">Calculus</a>
@@ -395,9 +411,9 @@ var mc=Expression.getCalculator();
 
 ```java
 var mc=Expression.getCalculator();
-        var expr=mc.parse("sin(x)/x");
-        var result=Limit.limitOf(expr,LimitProcess.Companion.toZero(mc),mc);
-        System.out.println("as x -> 0, lim sin(x)/x = "+result);
+var expr=mc.parse("sin(x)/x");
+var result=Limit.limitOf(expr,LimitProcess.Companion.toZero(mc),mc);
+System.out.println("as x -> 0, lim sin(x)/x = "+result);
 //result = 1
 ```
 

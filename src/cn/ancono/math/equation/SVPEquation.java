@@ -396,7 +396,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
         @Override
         public <N> RootEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new RootEquation<>(newCalculator, p.map(mapper::apply, newCalculator));
+            return new RootEquation<>(newCalculator, p.map(newCalculator, mapper::apply));
         }
 
         @Override

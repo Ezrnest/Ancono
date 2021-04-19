@@ -1,9 +1,6 @@
 package samples;
 
-import cn.ancono.math.algebra.linear.Matrix;
-import cn.ancono.math.algebra.linear.QuadraticForm;
-import cn.ancono.math.algebra.linear.Vector;
-import cn.ancono.math.algebra.linear.VectorBasis;
+import cn.ancono.math.algebra.linear.*;
 import cn.ancono.math.geometry.analytic.space.SVector;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
@@ -79,12 +76,28 @@ public class LinearAlgebraExamples {
         System.out.println("u × v = " + u.outerProduct(v));
     }
 
+    public static void verifyCaleyHamilton() {
+        var mc = Fraction.getCalculator();
+        var m = MatrixSup.parseFMatrix("1 1 0\n0 1 0\n0 0 2");
+        System.out.println("M = ");
+        m.printMatrix();
+        var f = m.charPoly();
+        System.out.println("Characteristic polynomial f(x) = " + f);
+        var matrixCal = Matrix.calculatorFor(m);
+        var fm = f.mapTo(matrixCal, x -> Matrix.diag(x, 3, mc));
+        var result = fm.compute(m);
+        System.out.println("f(M) = ");
+        result.printMatrix();
+    }
+
 
     public static void main(String[] args) {
-        sample1();
-        System.out.println();
-        quadraticForm();
-        System.out.println();
-        vector();
+//        sample1();
+//        System.out.println();
+//        quadraticForm();
+//        System.out.println();
+//        vector();
+//        System.out.println();
+        verifyCaleyHamilton();
     }
 }

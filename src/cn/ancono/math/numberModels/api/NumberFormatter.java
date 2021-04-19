@@ -8,7 +8,6 @@ import cn.ancono.math.MathObject;
 import cn.ancono.utilities.SNFSupport;
 
 import java.text.NumberFormat;
-import java.util.Objects;
 
 /**
  * The formatter for a type of number. This is use by the output of 
@@ -38,14 +37,20 @@ public interface NumberFormatter<T> extends FlexibleNumberFormatter<T, MathCalcu
         return decimalFormatter(3);
     }
 
-    static final NumberFormatter<?> toString = (x, mc) -> Objects.toString(x);
+    NumberFormatter<Object> defaultFormatter = (number, mc) -> {
+        try {
+            return SNFSupport.format((Number) number);
+        } catch (IllegalArgumentException ignore) {
+        }
+        return number.toString();
+    };
 
     /**
      * Returns a number formatter that simply calls <code>toString()</code>.
      */
     @SuppressWarnings("unchecked")
-    public static <T> NumberFormatter<T> getToStringFormatter() {
-        return (NumberFormatter<T>) toString;
+    public static <T> NumberFormatter<T> defaultFormatter() {
+        return (NumberFormatter<T>) defaultFormatter;
     }
 
 }

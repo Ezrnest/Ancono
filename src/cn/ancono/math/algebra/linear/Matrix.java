@@ -1745,7 +1745,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * Returns a string representation of this matrix in detail.
      */
     public String contentToString() {
-        return contentToString(NumberFormatter.getToStringFormatter());
+        return contentToString(NumberFormatter.defaultFormatter());
     }
 
 
@@ -3015,11 +3015,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             return mc.getZero();
         }
 
-        @SuppressWarnings("UNCHECKED_CAST")
+
         @NotNull
         @Override
         public Class<Matrix<T>> getNumberClass() {
-            return (Class<Matrix<T>>) (Class<?>) Matrix.class;
+            @SuppressWarnings("unchecked")
+            var t = (Class<Matrix<T>>) (Class<?>) Matrix.class;
+            return t;
         }
     }
 

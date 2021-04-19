@@ -302,6 +302,10 @@ public class MatrixSup {
         return parseMatrix(data, mc, parser);
     }
 
+    /**
+     * Parse a string representing a matrix in fraction with spaces as column deliminator and line separator
+     * as row deliminator.
+     */
     public static Matrix<Fraction> parseFMatrix(String str) {
         return parseMatrixD(str, Fraction.getCalculator(), Fraction::of);
     }
@@ -815,8 +819,14 @@ public class MatrixSup {
     }
 
 
-    public static <T> String toLatexString(Matrix<T> m) {
-        return MatrixSupKt.INSTANCE.toLatexString(m, NumberFormatter.getToStringFormatter(), "pmatrix");
+    /**
+     * Returns a string representing this matrix in latex format.
+     */
+    public static <T> String toLatexString(Matrix<T> m, NumberFormatter<T> formatter) {
+        if (formatter == null) {
+            formatter = NumberFormatter.defaultFormatter();
+        }
+        return MatrixSupKt.INSTANCE.toLatexString(m, formatter, "pmatrix");
     }
 //
 //    public static void main(String[] args) {

@@ -158,7 +158,7 @@ public abstract class Node implements Computable, Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        toString(sb, NumberFormatter.getToStringFormatter(), false);
+        toString(sb, NumberFormatter.defaultFormatter(), false);
         return sb.toString();
     }
 

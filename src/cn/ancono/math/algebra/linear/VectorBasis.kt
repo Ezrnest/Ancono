@@ -69,7 +69,7 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
         requireVectorSize(v)
         val mat = Matrix.fromVectors(false, *vectors.toTypedArray(), v);
         return MatrixSup.determineSolutionType(mat) !=
-                LinearEquationSolution.Situation.NO_SOLUTION
+                LinearEquationSolution.Situation.EMPTY
     }
 
     /**

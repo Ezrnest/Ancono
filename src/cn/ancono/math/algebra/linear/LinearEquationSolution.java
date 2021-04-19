@@ -18,9 +18,9 @@ import static cn.ancono.utilities.Printer.printnb;
 public class LinearEquationSolution<T> {
 
     public enum Situation {
-        NO_SOLUTION,
-        SINGLE_SOLUTION,
-        UNBOUNDED_SOLUTION,
+        EMPTY,
+        UNIQUE,
+        INFINITE,
     }
 
 
@@ -40,8 +40,8 @@ public class LinearEquationSolution<T> {
 
 
     @Nullable
-    public AffineSpace<T> asLinearSpace() {
-        if (sit == Situation.NO_SOLUTION) {
+    public AffineSpace<T> asAffineSpace() {
+        if (sit == Situation.EMPTY) {
             return null;
         }
         return AffineSpace.Companion.valueOf(specialSolution, Objects.requireNonNull(solutionSpace()));
@@ -49,7 +49,7 @@ public class LinearEquationSolution<T> {
 
     @Nullable
     public VectorBasis<T> solutionSpace() {
-        if (sit == Situation.NO_SOLUTION) {
+        if (sit == Situation.EMPTY) {
             return null;
         }
         if (baseSolutions == null) {
@@ -64,7 +64,7 @@ public class LinearEquationSolution<T> {
      * Return a LinearEquationSolution that represent no solution
      */
     public static <T> LinearEquationSolution<T> noSolution(Matrix<T> equ) {
-        return new LinearEquationSolution<>(equ, Situation.NO_SOLUTION, null, null);
+        return new LinearEquationSolution<>(equ, Situation.EMPTY, null, null);
     }
 
     /**
@@ -73,7 +73,7 @@ public class LinearEquationSolution<T> {
      * @param n the number of variables.
      */
     public static <T> LinearEquationSolution<T> zeroSolution(int n, Matrix<T> equation, MathCalculator<T> mc) {
-        return new LinearEquationSolution<T>(equation, Situation.SINGLE_SOLUTION, Vector.zeroVector(n, mc), null);
+        return new LinearEquationSolution<T>(equation, Situation.UNIQUE, Vector.zeroVector(n, mc), null);
     }
 
 
@@ -120,10 +120,10 @@ public class LinearEquationSolution<T> {
      * returned.
      */
     public Vector<T> getOneSolution() {
-        if (sit == Situation.NO_SOLUTION) {
+        if (sit == Situation.EMPTY) {
             return null;
         }
-        if (sit == Situation.SINGLE_SOLUTION) {
+        if (sit == Situation.UNIQUE) {
             return specialSolution;
         }
         return specialSolution.isZeroVector() ? Vector.addV(specialSolution, baseSolutions[0]) : specialSolution;
@@ -135,14 +135,14 @@ public class LinearEquationSolution<T> {
      */
     public void printSolution() {
         switch (sit) {
-            case NO_SOLUTION:
+            case EMPTY:
                 print("NO solution");
                 break;
-            case SINGLE_SOLUTION:
+            case UNIQUE:
                 //print the solution
                 specialSolution.printMatrix();
                 break;
-            case UNBOUNDED_SOLUTION:
+            case INFINITE:
                 printSolu0();
                 break;
             default:
@@ -217,14 +217,14 @@ public class LinearEquationSolution<T> {
             if (situation != null) {
                 boolean pass = false;
                 switch (situation) {
-                    case NO_SOLUTION:
+                    case EMPTY:
                         break;
-                    case SINGLE_SOLUTION:
+                    case UNIQUE:
                         if (base != null) {
                             pass = true;
                         }
                         break;
-                    case UNBOUNDED_SOLUTION:
+                    case INFINITE:
                         if (base != null && ss != null) {
                             pass = true;
                         }

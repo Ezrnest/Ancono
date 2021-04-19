@@ -109,7 +109,7 @@ abstract class AffineSpace<T : Any>(mc: MathCalculator<T>,
         list.add(s.originVector - this.originVector)
         val mat = Matrix.fromVectors(false, list)
         val solution = MatrixSup.solveLinearEquation(mat)
-        if (solution.solutionSituation == LinearEquationSolution.Situation.NO_SOLUTION) {
+        if (solution.solutionSituation == LinearEquationSolution.Situation.EMPTY) {
             //no intersection
             return null
         }

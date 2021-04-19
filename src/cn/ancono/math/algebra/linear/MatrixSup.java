@@ -407,10 +407,10 @@ public class MatrixSup {
         //extract the k solution
         final int numberOfKSolution = len - rank;
         if (numberOfKSolution == 0) {
-            sb.setSituation(Situation.SINGLE_SOLUTION);
+            sb.setSituation(Situation.UNIQUE);
             return sb.build();
         } else {
-            sb.setSituation(Situation.UNBOUNDED_SOLUTION);
+            sb.setSituation(Situation.INFINITE);
             DVector<T>[] vs = new DVector[numberOfKSolution];
             int searchPos = 0;
             int curCol = 0;
@@ -450,7 +450,7 @@ public class MatrixSup {
      * where <b>A</b> is the given {@code coefficientMatrix}.
      */
     @SuppressWarnings("unchecked")
-    public static <T> LinearEquationSolution<T> solveHomogeneousLinearEquation(Matrix<T> coefficientMatrix) {
+    public static <T> LinearEquationSolution<T> solveHomo(Matrix<T> coefficientMatrix) {
         Matrix<T> cm = coefficientMatrix;
         MathCalculator<T> mc = coefficientMatrix.getMathCalculator();
         final int n = cm.column;
@@ -471,15 +471,18 @@ public class MatrixSup {
             }
         }
 
-
         if (rank == n) {
             return LinearEquationSolution.zeroSolution(n, null, coefficientMatrix.getMathCalculator());
         }
         SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
         Vector<T> base = Vector.zeroVector(n, mc);
         sb.setBase(base);
+        sb.setSituation(Situation.INFINITE);
+        if (rank == 0) {
+            sb.setVariableSolution(Vector.unitVectors(n, mc).toArray(new Vector[0]));
+            return sb.build();
+        }
         final int numberOfKSolution = n - rank;
-        sb.setSituation(Situation.UNBOUNDED_SOLUTION);
         DVector<T>[] vs = new DVector[numberOfKSolution];
         int searchPos = 0;
         int curCol = 0;
@@ -496,7 +499,12 @@ public class MatrixSup {
             int sPos = 0;
             for (int i = 0; i < n; i++) {
                 if (i == baseColumns[sPos]) {
-                    solution[i] = mat[sPos][curCol];
+                    try {
+                        solution[i] = mat[sPos][curCol];
+
+                    } catch (Exception e) {
+                        print(e);
+                    }
                     sPos++;
                 } else {
                     solution[i] = zero;
@@ -559,13 +567,13 @@ public class MatrixSup {
         if (rank < step.row && !mc.isZero(data[rank][len])) {
             //the rank of the expanded matrix is bigger.
             //NO SOLUTION
-            return Situation.NO_SOLUTION;
+            return Situation.EMPTY;
         }
         final int numberOfKSolution = len - rank;
         if (numberOfKSolution == 0) {
-            return Situation.SINGLE_SOLUTION;
+            return Situation.UNIQUE;
         } else {
-            return Situation.UNBOUNDED_SOLUTION;
+            return Situation.INFINITE;
         }
 //        Matrix<T> coeMatrix = expandedMatrix.subMatrix(0,0,expandedMatrix.row-1,expandedMatrix.column-2);
 //        boolean isHomogeneous = expandedMatrix.getColumn(expandedMatrix.column-1).isZeroVector();
@@ -638,12 +646,12 @@ public class MatrixSup {
         var builder = Matrix.getBuilder(size, size, p1.getMathCalculator());
         for (int row = 0; row < m; row++) {
             for (int i = 0; i <= n; i++) {
-                builder.set(p1.get(n - i), row, i + row);
+                builder.set(row, i + row, p1.get(n - i));
             }
         }
         for (int row = m; row < size; row++) {
             for (int i = 0; i <= m; i++) {
-                builder.set(p2.get(m - i), row, i + row - m);
+                builder.set(row, i + row - m, p2.get(m - i));
             }
         }
         return builder.build();

@@ -205,7 +205,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 //		mat.printMatrix();
         LinearEquationSolution<T> so = MatrixSup
                 .solveLinearEquation(mat);
-        if (so.getSolutionSituation() != Situation.UNBOUNDED_SOLUTION) {
+        if (so.getSolutionSituation() != Situation.INFINITE) {
             return null;
         }
 //		so.printSolution();

@@ -1,10 +1,13 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.*
+import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.PolynomialUtil
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.component1
+import cn.ancono.math.component2
+import cn.ancono.math.minus
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.structure.Polynomial
 import java.util.*
@@ -128,10 +131,10 @@ private fun buildJordanForm(primaryFactor: Map<Fraction, List<Int>>, origin: Mat
         val lambda = pr.key
         for (n in pr.value) {
             for (i in 0 until n) {
-                builder.set(lambda, idx + i, idx + i)
+                builder.set(idx + i, idx + i, lambda)
             }
             for (i in 0 until n - 1) {
-                builder.set(Fraction.ONE, idx + i, idx + i + 1)
+                builder.set(idx + i, idx + i + 1, Fraction.ONE)
             }
             idx += n
         }
@@ -161,10 +164,10 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
         }
         val deg = t.degree
         for (j in 0 until deg) {
-            builder.set(mc.negate(t[j]), pos + j, pos + deg - 1)
+            builder.set(pos + j, pos + deg - 1, mc.negate(t[j]))
         }
         for (j in 0 until (deg - 1)) {
-            builder.set(one, pos + 1 + j, pos + j)
+            builder.set(pos + 1 + j, pos + j, one)
         }
         pos += deg
     }

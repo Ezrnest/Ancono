@@ -1,6 +1,7 @@
 package samples
 
 import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.BigFraction
 import cn.ancono.math.times
@@ -25,9 +26,19 @@ object LinearEquationSample {
         val b = H * x
         println(b)
     }
+
+    fun solve1() {
+        val matrix = MatrixSup.parseFMatrix("""
+            0 0 0
+            0 1 2
+            0 0 1
+        """.trimIndent())
+        val space = matrix.solutionSpace()
+        println(space)
+    }
 }
 
 fun main() {
 
-    LinearEquationSample.solveHilbertMatrixEquation()
+    LinearEquationSample.solve1()
 }

@@ -444,7 +444,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 
         Printer.printMatrix(mat);
         LinearEquationSolution<T> sov = MatrixSup.solveLinearEquation(mat, mc);
-        if (sov.getSolutionSituation() == Situation.UNBOUNDED_SOLUTION) {
+        if (sov.getSolutionSituation() == Situation.INFINITE) {
             throw new IllegalArgumentException("Four points identity plane");
         }
         Vector<T> vec = sov.getSpecialSolution();

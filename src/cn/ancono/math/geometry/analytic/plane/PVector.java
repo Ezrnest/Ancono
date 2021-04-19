@@ -430,7 +430,7 @@ public final class PVector<T> extends Vector<T> {
         mat[1][2] = this.y;
 
         LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, getMc());
-        if (sol.getSolutionSituation() != Situation.SINGLE_SOLUTION) {
+        if (sol.getSolutionSituation() != Situation.UNIQUE) {
             throw new ArithmeticException("Not single?");
         }
         return fromVector(sol.getSpecialSolution());

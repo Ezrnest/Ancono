@@ -53,12 +53,12 @@ internal object MatrixSupKt {
                 MatrixSup.exchangeRow(matrix, k, maxIdx)
                 Collections.swap(p, k, maxIdx)
             }
-            l.set(mc.one, k, k)
+            l.set(k, k, mc.one)
             for (i in (k + 1) until m.rowCount) {
                 val lambda = mc.eval {
                     matrix[i][k] / matrix[k][k]
                 }
-                l.set(lambda, i, k)
+                l.set(i, k, lambda)
                 matrix[i][k] = mc.zero
                 for (j in (k + 1) until m.columnCount) {
                     matrix[i][j] = mc.eval {

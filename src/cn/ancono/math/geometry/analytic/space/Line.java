@@ -134,7 +134,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     public boolean hasIntersectPoint(Line<T> l) {
         Matrix<T> m = createEquation(l);
         LinearEquationSolution<T> sov = MatrixSup.solveLinearEquation(m);
-        return sov.getSolutionSituation() != LinearEquationSolution.Situation.NO_SOLUTION;
+        return sov.getSolutionSituation() != LinearEquationSolution.Situation.EMPTY;
     }
 
     /**
@@ -149,10 +149,10 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     public SPoint<T> intersectPoint(Line<T> l) {
         Matrix<T> m = createEquation(l);
         LinearEquationSolution<T> sov = MatrixSup.solveLinearEquation(m);
-        if (sov.getSolutionSituation() == LinearEquationSolution.Situation.UNBOUNDED_SOLUTION) {
+        if (sov.getSolutionSituation() == LinearEquationSolution.Situation.INFINITE) {
             throw new ArithmeticException("Coincide!");
         }
-        if (sov.getSolutionSituation() == LinearEquationSolution.Situation.NO_SOLUTION) {
+        if (sov.getSolutionSituation() == LinearEquationSolution.Situation.EMPTY) {
             return null;
         }
 

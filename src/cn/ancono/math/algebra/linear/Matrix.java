@@ -1141,7 +1141,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 }
             }
             Matrix<T> A = subtract(this, Matrix.diag(x, row, mc));
-            LinearEquationSolution<T> solution = MatrixSup.solveHomogeneousLinearEquation(A);
+            LinearEquationSolution<T> solution = MatrixSup.solveHomo(A);
             Vector<T>[] ks = solution.getBaseSolutions();
             for (Vector<T> k1 : ks) {
                 result.add(new Pair<>(x, k1));
@@ -1444,7 +1444,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * Returns the solution space of this matrix.
      */
     public VectorBasis<T> solutionSpace() {
-        return MatrixSup.solveHomogeneousLinearEquation(this).solutionSpace();
+        return MatrixSup.solveHomo(this).solutionSpace();
     }
 
     /**
@@ -1588,7 +1588,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         ws[0] = vecs.get(0);
         if (!ws[0].isZeroVector()) {
             var length = ws[0].calLength();
-            RB.set(length, 0, 0);
+            RB.set(0, 0, length);
             ws[0] = ws[0].multiplyNumber(mc.reciprocal(length));
         }
         for (int i = 1; i < row; i++) {
@@ -1596,7 +1596,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             for (int j = 0; j < i; j++) {
                 var k = u.innerProduct(ws[j]);
                 temp[j] = ws[j].multiplyNumber(k);
-                RB.set(k, j, i);
+                RB.set(j, i, k);
             }
             var t = Vector.addAll(i, temp);
             var v = Vector.subtractV(u, t);
@@ -1604,7 +1604,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
                 ws[i] = v;
             } else {
                 var length = v.calLength();
-                RB.set(length, i, i);
+                RB.set(i, i, length);
                 ws[i] = v.multiplyNumber(mc.reciprocal(length));
             }
         }
@@ -2752,7 +2752,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             }
         }
 
-        public MatrixBuilder<T> set(T x, int i, int j) {
+        public MatrixBuilder<T> set(int i, int j, T x) {
             checkDisposed();
             rowRangeCheck(i);
             columnRangeCheck(j);

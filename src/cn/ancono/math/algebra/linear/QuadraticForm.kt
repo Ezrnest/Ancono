@@ -36,7 +36,7 @@ class QuadraticForm {
                             throw IllegalArgumentException("Not quadratic form!")
                         }
                         val idx = chMap[en.key]!!
-                        builder.set(f, idx, idx)
+                        builder.set(idx, idx, f)
                     }
                     tch.size == 2 -> {
                         val en1 = tch.firstEntry()
@@ -47,8 +47,8 @@ class QuadraticForm {
                         val i = chMap[en1.key]!!
                         val j = chMap[en2.key]!!
                         val half = f / 2
-                        builder.set(half, i, j)
-                        builder.set(half, j, i)
+                        builder.set(i, j, half)
+                        builder.set(j, i, half)
                     }
                     else -> throw IllegalArgumentException("Not quadratic form!")
                 }

@@ -630,6 +630,7 @@ public abstract class Vector<T> extends Matrix<T> {
         return new DVector<>(arr, false, mc);
     }
 
+
     /**
      * Returns a list of all unit vectors of the given length.
      */

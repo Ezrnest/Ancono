@@ -77,7 +77,7 @@ public class TestMatrix {
             }
             Matrix<Double> matrix = Matrix.of(mat).mapTo(mcd, x -> x);
             LinearEquationSolution<Double> solution = MatrixSup.solveLinearEquation(matrix);
-            if (solution.getSolutionSituation() != LinearEquationSolution.Situation.NO_SOLUTION) {
+            if (solution.getSolutionSituation() != LinearEquationSolution.Situation.EMPTY) {
                 Vector<Double> base = solution.getSpecialSolution();
                 Vector<Double>[] ks = solution.getBaseSolutions();
                 if (ks != null) {
@@ -101,8 +101,8 @@ public class TestMatrix {
                 mat[j] = ArraySup.ranDoubleArr(column);
             }
             Matrix<Double> matrix = Matrix.of(mat).mapTo(mcd, x -> x);
-            LinearEquationSolution<Double> solution = MatrixSup.solveHomogeneousLinearEquation(matrix);
-            if (solution.getSolutionSituation() != LinearEquationSolution.Situation.NO_SOLUTION) {
+            LinearEquationSolution<Double> solution = MatrixSup.solveHomo(matrix);
+            if (solution.getSolutionSituation() != LinearEquationSolution.Situation.EMPTY) {
                 Vector<Double> base = solution.getSpecialSolution();
                 Vector<Double>[] ks = solution.getBaseSolutions();
                 if (ks != null) {

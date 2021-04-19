@@ -516,7 +516,7 @@ public final class SVector<T> extends Vector<T> {
         mat[2][3] = this.z;
 
         LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, getMc());
-        if (sol.getSolutionSituation() != Situation.SINGLE_SOLUTION) {
+        if (sol.getSolutionSituation() != Situation.UNIQUE) {
             throw new ArithmeticException("Not single?");
         }
         return fromVector(sol.getSpecialSolution());

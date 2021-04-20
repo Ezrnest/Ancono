@@ -578,6 +578,6 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
         if (comp != 0) {
             return comp;
         }
-        return MathUtils.signum(index() - o.index());
+        return Long.signum(index() - o.index());
     }
 }

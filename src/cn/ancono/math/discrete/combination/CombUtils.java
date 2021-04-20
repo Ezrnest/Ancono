@@ -656,11 +656,34 @@ public final class CombUtils {
         return EULER_NUMBER_EVEN_LONG[n];
     }
 
+    /**
+     * Computes the n-th Katalan number. This method do not consider the overflow.
+     */
+    public static long numKatalan(int n) {
+        long[] katList = new long[n];
+        katList[0] = 1;
+        return ck0(n - 1, katList);
+    }
+
+    private static long ck0(int n, long[] katList) {
+        if (katList[n] != 0) {
+            return katList[n];
+        }
+        long sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += ck0(i, katList) * ck0(n - i - 1, katList);
+        }
+        katList[n] = sum;
+        return sum;
+    }
+
 
     /**
-     * Returns a progression of Euler number of even index. The progression starts from 0 and has the length of <code>n</code>.<p></p>
+     * Returns a progression of Euler number of even index. The progression starts from 0 and has the length of
+     * <code>n</code>.<p></p>
      * The leading several terms are
      * <pre>1, -1, 5, -61, 1385, -50521, 2702765, -199360981</pre>
+     *
      * @param n the length of the progression
      */
     public static Progression<BigInteger> numEulerEvenBig(int n) {

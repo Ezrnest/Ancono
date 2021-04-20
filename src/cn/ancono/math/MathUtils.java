@@ -29,58 +29,41 @@ public class MathUtils {
 //    }
 
     /**
-     * Calculate two numbers' GCD.Make sure that these two numbers are both bigger than zero.
+     * Returns the great common divisor (GCD) of two numbers, the result will always be non-negative.
+     * <p></p>
+     * Note: It follows from common conventions that <code>gcd(a, 0) = gcd(0, a) = a</code>
      *
      * @param n1 a number
      * @param n2 another number
-     * @return GCD of n1 and n2
+     * @return <code>gcd(n1, n2)</code>
      */
     public static long gcd(long n1, long n2) {
-        //use Euclid's gcd algorithm
-        long t;
+        //use Euclidean gcd algorithm
         while (n2 != 0) {
-            t = n2;
+            long t = n2;
             n2 = n1 % n2;
             n1 = t;
         }
-        return n1;
+        return Math.abs(n1);
     }
 
     /**
-     * Calculate two numbers' GCD of int. Make sure that these two numbers are both bigger than zero.
+     * Returns the great common divisor (GCD) of two numbers, the result will always be non-negative.
+     * <p></p>
+     * Note: It follows from common conventions that <code>gcd(a, 0) = gcd(0, a) = a</code>
      *
      * @param n1 a number
      * @param n2 another number
-     * @return GCD of n1 and n2
+     * @return <code>gcd(n1, n2)</code>
      */
     public static int gcd(int n1, int n2) {
         //use Euclid's gcd algorithm
-        int t;
         while (n2 != 0) {
-            t = n2;
+            int t = n2;
             n2 = n1 % n2;
             n1 = t;
         }
-        return n1;
-    }
-
-    /**
-     * Computes the greatest common divisor of two numbers and a pair of number (u,v) such that
-     * <pre>ua+vb=gcd(a,b)</pre>
-     * If one of a or b is zero, then gcd(a,b) is another one.
-     *
-     * @return an int array of <code>{gcd(a,b), u, v}</code>.
-     */
-    public static int[] gcdUV(int a, int b) {
-        int[] result = gcdUV0(Math.abs(a), Math.abs(b));
-        //deal with negative values
-        if (a < 0) {
-            result[1] = -result[1];
-        }
-        if (b < 0) {
-            result[2] = -result[2];
-        }
-        return result;
+        return Math.abs(n1);
     }
 
     static int[] gcdUV0(int a, int b) {
@@ -118,26 +101,26 @@ public class MathUtils {
             return new int[]{a, 1, 0};
         }
         /*
-        Explanation of the algorithm: 
+        Explanation of the algorithm:
         we want to maintain the following equation while computing the gcd using the Euclid's algorithm
         let d0=a, d1=b, d2, d3 ... be the sequence of remainders in Euclid's algorithm,
-        then we have 
+        then we have
             a*1 + b*0 = d0
             a*0 + b*1 = d1
-        let 
+        let
             u0 = 1, v0 = 0
             u1 = 0, v1 = 1
-        then we want to build a sequence of u_i, v_i such that 
+        then we want to build a sequence of u_i, v_i such that
             a*u_i + b*v_i = d_i,
         when we find the d_n = gcd(a,b), the corresponding u_n and v_n is what we want.
-        We have: 
+        We have:
             d_i = q_i * d_{i+1} + d_{i+2}        (by Euclid's algorithm
-        so 
+        so
             a*u_i + b*v_i = q_i * (a*u_{i+1} + b*v_{i+1}) + (a*u_{i+2} + b*v_{i+2})
             u_i - q_i * u_{i+1} = u_{i+2}
             v_i - q_i * v_{i+1} = v_{i+2}
-        but it is only necessary for us to record u_i, since v_i can be calculated from the equation 
-            a*u_i + b*v_i = d_i 
+        but it is only necessary for us to record u_i, since v_i can be calculated from the equation
+            a*u_i + b*v_i = d_i
          */
         int d0 = a;
         int d1 = b;
@@ -156,16 +139,17 @@ public class MathUtils {
         return new int[]{d0, u0, v};
     }
 
-
     /**
-     * Computes the greatest common divisor of two numbers and a pair of number (u,v) such that
+     * Computes the greatest common divisor of two numbers and a pair of number <code>(u,v)</code> such that
      * <pre>ua+vb=gcd(a,b)</pre>
-     * If one of a or b is zero, then gcd(a,b) is another one.
+     * <p>
+     * The returned <code>gcd(a,b)</code> will always be positive.
+     * It follows from common conventions that <code>gcd(a, 0) = gcd(0, a) = a</code>
      *
-     * @return an long array of <code>{gcd(a,b), u, v}</code>.
+     * @return an int array of <code>[gcd(a,b), u, v]</code>.
      */
-    public static long[] gcdUV(long a, long b) {
-        long[] result = gcdUV0(Math.abs(a), Math.abs(b));
+    public static int[] gcdUV(int a, int b) {
+        int[] result = gcdUV0(Math.abs(a), Math.abs(b));
         //deal with negative values
         if (a < 0) {
             result[1] = -result[1];
@@ -175,6 +159,7 @@ public class MathUtils {
         }
         return result;
     }
+
 
     static long[] gcdUV0(long a, long b) {
 //        long[] quotients = new long[4];
@@ -231,36 +216,60 @@ public class MathUtils {
     }
 
     /**
-     * Calculate the two numbers' least common multiple.The parameters are required to be positive,
-     * if either of them is negative,the result is unspecified.
+     * Computes the greatest common divisor of two numbers and a pair of number (u,v) such that
+     * <pre>ua+vb=gcd(a,b)</pre>
+     *
+     * The returned <code>gcd(a,b)</code> will always be positive.
+     * It follows from common conventions that <code>gcd(a, 0) = gcd(0, a) = a</code>
+     *
+     * @return an array of <code>[gcd(a,b), u, v]</code>.
+     */
+    public static long[] gcdUV(long a, long b) {
+        long[] result = gcdUV0(Math.abs(a), Math.abs(b));
+        //deal with negative values
+        if (a < 0) {
+            result[1] = -result[1];
+        }
+        if (b < 0) {
+            result[2] = -result[2];
+        }
+        return result;
+    }
+
+
+    /**
+     * Calculate the two numbers' least common multiple(LCM). The result will always be positive.
+     * <p></p>
+     * Note: It follows from common conventions that <code>lcm(a, 0) = lcm(0, a) = 0</code>
      *
      * @param n1 a number
      * @param n2 another number
-     * @return LCM of n1 and n2.
+     * @return <code>lcm(n1, n2)</code>
      */
     public static long lcm(long n1, long n2) {
         long gcd = gcd(n1, n2);
-        return n1 / gcd * n2;
+        return Math.abs(n1 / gcd * n2);
     }
 
     /**
-     * Calculate the two int numbers' least common multiple.The parameters are required to be positive,
-     * if either of them is negative,the result is unspecified.
+     * Calculate the two numbers' least common multiple(LCM). The result will always be positive.
+     * <p></p>
+     * Note: It follows from common conventions that <code>lcm(a, 0) = lcm(0, a) = 0</code>
      *
      * @param n1 a number
      * @param n2 another number
-     * @return LCM of n1 and n2.
+     * @return <code>lcm(n1, n2)</code>
      */
     public static int lcm(int n1, int n2) {
         int gcd = gcd(n1, n2);
-        return n1 / gcd * n2;
+        return Math.abs(n1 / gcd * n2);
     }
 
     /**
-     * Calculate the numbers' GCD.The numbers are required to be positive.
-     *
-     * @param ls an array of numbers,at least one element.
+     * Returns the greatest common divisor of all the given numbers, the result will always be positive.
+     * @param ls an array of numbers with at least one element.
      * @return the GCD of {@code ls}
+     * @see #gcd(long, long)
      */
     public static long gcd(long... ls) {
         if (ls.length < 2) {
@@ -275,12 +284,11 @@ public class MathUtils {
 
 
     /**
-     * Calculate the numbers' GCD and LCM.The result will be stored in an array with two
-     * elements.The numbers are required to be positive.
+     * Calculate the least common multiplier (LCM) of the given numbers' LCM, the result will always be positive.
      *
-     * @param ls an array of numbers,at least one element.
-     * @return an array,first element of which is the GCD of {@code ls},and the
-     * second element is the LCM of {@code ls}.
+     * @param ls an array of numbers with at least one element.
+     * @return the LCM of <code>ls</code>
+     * @see #lcm(long, long)
      */
     public static long lcm(long... ls) {
         if (ls.length < 2) {
@@ -293,13 +301,23 @@ public class MathUtils {
         return lcm;
     }
 
+    /**
+     * Calculate the two numbers' least common multiple(LCM). The result will always be positive.
+     * <p></p>
+     * Note: It follows from common conventions that <code>lcm(a, 0) = lcm(0, a) = 0</code>
+     *
+     * @param n1 a number
+     * @param n2 another number
+     * @return <code>lcm(n1, n2)</code>
+     */
     public static BigInteger lcm(BigInteger n1, BigInteger n2) {
         BigInteger gcd = n1.gcd(n2);
         return n1.divide(gcd).multiply(n2);
     }
 
     /**
-     * Returns the max number k that {@code |b|%|a|^k==0} while {@code |b|%|a|^(k+1)!=0}.
+     * Returns the max number <code>k</code> that {@code |b|%|a|^k==0} while {@code |b|%|a|^(k+1)!=0}, that
+     * is, the degree of of <code>a</code> in <code>b</code>.
      *
      * @param a a number except {@code 0,1,-1}.
      * @param b another number
@@ -322,8 +340,8 @@ public class MathUtils {
     }
 
     /**
-     * Returns the max number k that {@code |b|%|a|^k==0} while {@code |b|%|a|^(k+1)!=0}, with
-     * its parameters are ints.
+     * Returns the max number <code>k</code> that {@code |b|%|a|^k==0} while {@code |b|%|a|^(k+1)!=0}, that
+     * is, the degree of of <code>a</code> in <code>b</code>.
      *
      * @param a a number except {@code 0,1,-1}.
      * @param b another number
@@ -873,29 +891,7 @@ public class MathUtils {
         return doMillerRabin(x, 25);
     }
 
-    /**
-     * Computes the n-th katalan number. This method do not consider the overflow.
-     *
-     * @param n
-     * @return
-     */
-    public static long calculateKatalan(int n) {
-        long[] katList = new long[n];
-        katList[0] = 1;
-        return ck0(n - 1, katList);
-    }
 
-    private static long ck0(int n, long[] katList) {
-        if (katList[n] != 0) {
-            return katList[n];
-        }
-        long sum = 0;
-        for (int i = 0; i < n; i++) {
-            sum += ck0(i, katList) * ck0(n - i - 1, katList);
-        }
-        katList[n] = sum;
-        return sum;
-    }
 
     /**
      * Reduce the number to an array representing each digit of the radix. The
@@ -1008,8 +1004,9 @@ public class MathUtils {
     }
 
     /**
-     * Returns the integer value of the square root of @{@code n}.
-     * <pre>[sqrt(n)]</pre>
+     * Returns the integer value of the square root of {@code n}, that is, an integer <code>m</code>
+     * such that <code>m<sup>2</sup> <= n < <code>(m+1)<sup>2</sup></code></code>.
+     *
      *
      * @param n a positive number.
      * @return {@code [sqrt(n)]}
@@ -1065,14 +1062,14 @@ public class MathUtils {
     /**
      * Returns {@code x*y<=0}
      */
-    public static boolean oppositeSignum(double x, double y) {
+    public static boolean isOppositeSign(double x, double y) {
         return (x >= 0d && y <= 0d) || (x <= 0d && y >= 0d);
     }
 
     /**
      * Returns {@code (x-a)(y-a)<=0}
      */
-    public static boolean oppositeSide(double x, double y, double a) {
+    public static boolean isOppositeSide(double x, double y, double a) {
         return (x >= a && y <= a) || (x <= a && y >= a);
     }
 
@@ -1080,7 +1077,7 @@ public class MathUtils {
     /**
      * Determines whether x and y have the same sign.
      */
-    public static boolean sameSignum(int x, int y) {
+    public static boolean isSameSign(int x, int y) {
         if (x > 0) {
             return y > 0;
         } else if (x == 0) {
@@ -1090,39 +1087,18 @@ public class MathUtils {
         }
     }
 
-    public static int signum(int x) {
-        return Integer.signum(x);
-    }
 
-    public static int signum(long x) {
-        return Long.signum(x);
-    }
-
+    /**
+     * Returns the sign number of <code>x</code> as an int.
+     */
     public static int signum(double x) {
         return Double.compare(x, 0);
     }
 
-    /**
-     * Determines whether {@code x} is closer to zero than {@code y}(or equal),
-     * in other words returns {@code Math.abs(x) <= Math.abs(y)}
-     *
-     * @param x
-     * @param y
-     * @return
-     */
-    public static boolean closerToZero(double x, double y) {
-        return Math.abs(x) <= Math.abs(y);
-    }
 
     /**
      * Returns the so-called 'Tschebyscheff distance':
      * {@code max(abs(x1-x2), abs(y1-y2))}
-     *
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
-     * @return
      */
     public static double tschebyscheffDistance(double x1, double y1, double x2, double y2) {
         return Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2));
@@ -1133,12 +1109,6 @@ public class MathUtils {
      * <pre>(abs(x1-x2)^p+abs(y1-y2)^p)^(1/p)</pre>
      * If {@code p==Double.POSITIVE_INFINITY}, then returns the tschebyscheff distance.
      *
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
-     * @param p
-     * @return
      */
     public static double distanceP(double x1, double y1, double x2, double y2, double p) {
         if (p == Double.POSITIVE_INFINITY) {
@@ -1567,5 +1537,7 @@ public class MathUtils {
         return x;
     }
 
-
+//    public static void main(String[] args) {
+//        System.out.println(gcd(10L,6L));
+//    }
 }

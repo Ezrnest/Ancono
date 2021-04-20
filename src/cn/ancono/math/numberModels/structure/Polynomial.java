@@ -977,8 +977,30 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @param ps a non-empty array
      */
     @SafeVarargs
-    public static <T> Polynomial<T> addAll(Polynomial<T>... ps) {
-        return NumberModelUtils.sigma(ps, 0, ps.length);
+    public static <T> Polynomial<T> sum(Polynomial<T>... ps) {
+        return sum(Arrays.asList(ps));
+    }
+
+    /**
+     * Adds all the polynomials.
+     *
+     * @param ps a non-empty array
+     */
+    public static <T> Polynomial<T> sum(List<Polynomial<T>> ps) {
+        var deg = -1;
+        for (var p : ps) {
+            if (p.degree > deg) {
+                deg = p.degree;
+            }
+        }
+        var mc = ps.get(0).getMathCalculator();
+        T[] result = getZeroArr(deg, mc);
+        for (var p : ps) {
+            for (int i = 0; i <= p.degree; i++) {
+                result[i] = mc.add(result[i], p.get(i));
+            }
+        }
+        return new Polynomial<>(mc, trimLeadingZeros(result, mc));
     }
 
     /**
@@ -1075,6 +1097,11 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return new Polynomial<>(mc, trimLeadingZerosAndCopy(coes, mc));
     }
 
+    /**
+     * Creates a polynomial of <code>sigma(coes[i]*x^i)</code>.
+     *
+     * @param coes coefficients of the polynomial, <code>null</code> will be treated as zero.
+     */
     public static <T> Polynomial<T> of(MathCalculator<T> mc, List<T> coes) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) coes.toArray();
@@ -1131,7 +1158,6 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
                 }
                 start++;
             }
-//                for(i in )
             var end = start;
             for (; end < length; end++) {
                 var c = expr.charAt(end);
@@ -1175,9 +1201,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         if (p < 0) {
             throw new IllegalArgumentException("p<0");
         }
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) new Object[p + 1];
-        Arrays.fill(arr, mc.getZero());
+        T[] arr = getZeroArr(p, mc);
         arr[p] = mc.getOne();
         return new Polynomial<>(mc, arr);
     }

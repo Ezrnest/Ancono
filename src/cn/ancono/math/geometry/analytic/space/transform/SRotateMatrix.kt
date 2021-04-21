@@ -58,8 +58,6 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         return ArraySup.deepCopy(mat)
     }
 
-    override fun negative(): SRotateMatrix<T> = negate()
-
     override fun multiplyNumber(n: Long): SRotateMatrix<T> = mapTo0 { x ->
         mc.multiplyLong(x, n)
     }

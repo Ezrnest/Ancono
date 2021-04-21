@@ -1,4 +1,4 @@
-/**
+/*
  *
  */
 package cn.ancono.math.numberTheory;
@@ -288,7 +288,6 @@ public final class Primes {
     /**
      * Returns the instance.
      *
-     * @return
      */
     public static Primes getInstance() {
         return pr;

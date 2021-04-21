@@ -241,10 +241,10 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         }
 
         /**
-         * @see cn.ancono.math.set.InfiniteSet#cardinalNumber()
+         * @see cn.ancono.math.set.InfiniteSet#cardinality()
          */
         @Override
-        public int cardinalNumber() {
+        public int cardinality() {
             return CARDINAL_REAL;
         }
 

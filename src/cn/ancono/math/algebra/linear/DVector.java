@@ -107,7 +107,7 @@ public final class DVector<T> extends Vector<T> {
     }
 
     @Override
-    public DVector<T> negative() {
+    public DVector<T> negate() {
         int len = isRow ? column : row;
         @SuppressWarnings("unchecked")
         T[] reV = (T[]) new Object[len];
@@ -320,19 +320,6 @@ public final class DVector<T> extends Vector<T> {
         return isRow;
     }
 
-    /**
-     * Return the value of |this|.The value will be a non-zero value.
-     *
-     * @return |this|
-     */
-    @Override
-    public T calLength() {
-        T re = getMc().getZero();
-        for (int i = 0; i < vec.length; i++) {
-            re = getMc().add(getMc().multiply(vec[i], vec[i]), re);
-        }
-        return getMc().squareRoot(re);
-    }
 
     /**
      * Calculate the square of |this|,which has full precision and use T as the
@@ -342,21 +329,23 @@ public final class DVector<T> extends Vector<T> {
      * @return |this|^2
      */
     @Override
-    public T calLengthSq() {
-        T re = getMc().getZero();
-        for (int i = 0; i < vec.length; i++) {
-            re = getMc().add(getMc().multiply(vec[i], vec[i]), re);
+    public T normSq() {
+        var mc = getMc();
+        T re = mc.getZero();
+        for (T t : vec) {
+            re = mc.add(mc.multiply(t, t), re);
         }
         return re;
     }
 
     @Override
     public DVector<T> unitVector() {
-        T l = calLength();
+        T l = norm();
+        var mc = getMc();
         @SuppressWarnings("unchecked")
         T[] vecn = (T[]) new Object[this.vec.length];
         for (int i = 0; i < vecn.length; i++) {
-            vecn[i] = getMc().divide(vec[i], l);
+            vecn[i] = mc.divide(vec[i], l);
         }
         return new DVector<>(vecn, isRow, getMc());
     }

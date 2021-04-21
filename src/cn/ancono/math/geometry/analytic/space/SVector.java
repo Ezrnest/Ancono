@@ -65,7 +65,7 @@ public final class SVector<T> extends Vector<T> {
 
 
     @Override
-    public SVector<T> negative() {
+    public SVector<T> negate() {
         return new SVector<>(getMc().negate(x), getMc().negate(y), getMc().negate(z), getMc());
     }
 
@@ -226,15 +226,15 @@ public final class SVector<T> extends Vector<T> {
      * @return |this|
      */
     @Override
-    public T calLength() {
+    public T norm() {
         if (length == null) {
-            length = getMc().squareRoot(calLengthSq());
+            length = getMc().squareRoot(normSq());
         }
         return length;
     }
 
     @Override
-    public T calLengthSq() {
+    public T normSq() {
         if (lenSq == null) {
             lenSq = innerProduct(this);
         }
@@ -277,7 +277,7 @@ public final class SVector<T> extends Vector<T> {
      */
     public <R> R angle(SVector<T> s, MathFunction<T, R> arccos) {
         T pro = innerProduct(s);
-        pro = getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
+        pro = getMc().divide(pro, getMc().multiply(norm(), s.norm()));
         return arccos.apply(pro);
     }
 
@@ -290,7 +290,7 @@ public final class SVector<T> extends Vector<T> {
      */
     public T angleCos(SVector<T> s) {
         T pro = innerProduct(s);
-        return getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
+        return getMc().divide(pro, getMc().multiply(norm(), s.norm()));
     }
 
     /**
@@ -321,7 +321,7 @@ public final class SVector<T> extends Vector<T> {
      *
      */
     public boolean isOfSameDirection(SVector<T> s) {
-        if (s.isZeroVector()) {
+        if (s.isZero()) {
             throw new ArithmeticException("s==0");
         }
         if (!isParallel(s)) {
@@ -357,7 +357,7 @@ public final class SVector<T> extends Vector<T> {
      */
     @Override
     public SVector<T> unitVector() {
-        T length = calLength();
+        T length = norm();
         SVector<T> s = new SVector<>(getMc().divide(x, length),
                 getMc().divide(y, length),
                 getMc().divide(z, length), getMc());
@@ -373,7 +373,7 @@ public final class SVector<T> extends Vector<T> {
      * @return a new SVector
      */
     public SVector<T> parallel(T len) {
-        T length = calLength();
+        T length = norm();
         SVector<T> s = new SVector<>(getMc().multiply(len, getMc().divide(x, length)),
                 getMc().multiply(len, getMc().divide(y, length)),
                 getMc().multiply(len, getMc().divide(z, length)), getMc());
@@ -386,7 +386,7 @@ public final class SVector<T> extends Vector<T> {
      *
      * @return
      */
-    public boolean isZeroVector() {
+    public boolean isZero() {
         var mc = getMathCalculator();
         return mc.isZero(x) && mc.isZero(y) && mc.isZero(z);
     }
@@ -408,7 +408,7 @@ public final class SVector<T> extends Vector<T> {
      * @return
      */
     public SVector<T> perpendicular(SVector<T> v) {
-        T k = getMc().negate(getMc().divide(innerProduct(v), calLengthSq()));
+        T k = getMc().negate(getMc().divide(innerProduct(v), normSq()));
         T nx = getMc().add(v.x, getMc().multiply(k, x));
         T ny = getMc().add(v.y, getMc().multiply(k, y));
         T nz = getMc().add(v.z, getMc().multiply(k, z));
@@ -684,8 +684,8 @@ public final class SVector<T> extends Vector<T> {
     public static <T> SVector<T> angledVector(SVector<T> v, SVector<T> n, T tan) {
         MathCalculator<T> mc = v.getMathCalculator();
         SVector<T> perp = n.outerProduct(v);
-        SVector<T> res = perp.multiplyNumber(v.calLength());
-        res = res.add(v.multiplyNumber(mc.divide(perp.calLength(), tan)));
+        SVector<T> res = perp.multiplyNumber(v.norm());
+        res = res.add(v.multiplyNumber(mc.divide(perp.norm(), tan)));
         return res;
     }
 
@@ -703,10 +703,10 @@ public final class SVector<T> extends Vector<T> {
         List<SVector<T>> list = new ArrayList<>(2);
         MathCalculator<T> mc = v.getMathCalculator();
         SVector<T> perp = n.outerProduct(v);
-        SVector<T> res = perp.multiplyNumber(mc.multiply(tan, v.calLength()));
-        SVector<T> t = v.multiplyNumber(perp.calLength());
+        SVector<T> res = perp.multiplyNumber(mc.multiply(tan, v.norm()));
+        SVector<T> t = v.multiplyNumber(perp.norm());
         list.add(res.add(t));
-        list.add(res.negative().add(t));
+        list.add(res.negate().add(t));
         return list;
     }
 

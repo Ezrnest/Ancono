@@ -26,6 +26,7 @@ import java.util.function.Function;
  * @author liyicheng
  *
  */
+@SuppressWarnings("SuspiciousNameCombination")
 public final class PVector<T> extends Vector<T> {
     public final T x, y;
     private T length, lengthSq;
@@ -99,9 +100,9 @@ public final class PVector<T> extends Vector<T> {
      * @see cn.ancono.math.AbstractVector#calLength()
      */
     @Override
-    public T calLength() {
+    public T norm() {
         if (length == null) {
-            length = getMc().squareRoot(calLengthSq());
+            length = getMc().squareRoot(normSq());
         }
         return length;
     }
@@ -111,7 +112,7 @@ public final class PVector<T> extends Vector<T> {
      * @see cn.ancono.math.AbstractVector#calLengthSq()
      */
     @Override
-    public T calLengthSq() {
+    public T normSq() {
         if (lengthSq == null) {
             lengthSq = getMc().add(getMc().multiply(x, x), getMc().multiply(y, y));
         }
@@ -151,7 +152,7 @@ public final class PVector<T> extends Vector<T> {
      * @see cn.ancono.math.Matrix#negative()
      */
     @Override
-    public PVector<T> negative() {
+    public PVector<T> negate() {
         return new PVector<T>(getMc().negate(x), getMc().negate(y), getMc());
     }
 
@@ -248,7 +249,7 @@ public final class PVector<T> extends Vector<T> {
      */
     public <R> R angle(PVector<T> s, MathFunction<T, R> arccos) {
         T pro = innerProduct(s);
-        pro = getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
+        pro = getMc().divide(pro, getMc().multiply(norm(), s.norm()));
         return arccos.apply(pro);
     }
 
@@ -260,13 +261,11 @@ public final class PVector<T> extends Vector<T> {
      */
     public T angleCos(PVector<T> s) {
         T pro = innerProduct(s);
-        return getMc().divide(pro, getMc().multiply(calLength(), s.calLength()));
+        return getMc().divide(pro, getMc().multiply(norm(), s.norm()));
     }
 
     /**
      * Determines whether the two vectors are parallel.
-     * @param s
-     * @return
      */
     public boolean isParallel(PVector<T> s) {
         return getMc().isEqual(getMc().multiply(x, s.y), getMc().multiply(y, s.x));
@@ -287,7 +286,7 @@ public final class PVector<T> extends Vector<T> {
      */
     @Override
     public PVector<T> unitVector() {
-        T length = calLength();
+        T length = norm();
         PVector<T> s = new PVector<>(getMc().divide(x, length),
                 getMc().divide(y, length),
                 getMc());
@@ -303,7 +302,7 @@ public final class PVector<T> extends Vector<T> {
      * @return a new SVector
      */
     public PVector<T> parallel(T len) {
-        T length = calLength();
+        T length = norm();
         PVector<T> s = new PVector<>(getMc().multiply(len, getMc().divide(x, length)),
                 getMc().multiply(len, getMc().divide(y, length)),
                 getMc());
@@ -313,9 +312,9 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Determines whether this vector is a zero vector.
-     * @return
      */
-    public boolean isZeroVector() {
+    public boolean isZero() {
+        //noinspection SuspiciousNameCombination
         return getMc().isZero(x) && getMc().isZero(y);
     }
 

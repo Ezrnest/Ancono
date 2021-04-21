@@ -236,7 +236,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      */
     public Line<T> perpendicular(SPoint<T> p) {
         SVector<T> v = perpendicularVector(p);
-        if (v.isZeroVector()) {
+        if (v.isZero()) {
             throw new ArithmeticException("Line contains point");
         }
         return new Line<>(getMc(), p, v);
@@ -283,13 +283,13 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      */
     public T distanceSq(Line<T> l) {
         SVector<T> s = vec.outerProduct(l.vec);
-        if (s.isZeroVector()) {
+        if (s.isZero()) {
             return getMc().getZero();
         }
         SVector<T> d = SVector.vector(p0, l.p0);
         T t = s.innerProduct(d);
         t = getMc().multiply(t, t);
-        return getMc().divide(t, s.calLengthSq());
+        return getMc().divide(t, s.normSq());
     }
 
     /**
@@ -301,12 +301,12 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      */
     public T distance(Line<T> l) {
         SVector<T> s = vec.outerProduct(l.vec);
-        if (s.isZeroVector()) {
+        if (s.isZero()) {
             return getMc().getZero();
         }
         SVector<T> d = SVector.vector(p0, l.p0);
         T t = getMc().abs(s.innerProduct(d));
-        return getMc().divide(t, s.calLength());
+        return getMc().divide(t, s.norm());
     }
 
     /**
@@ -316,7 +316,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      * @return the distance
      */
     public T distanceSq(SPoint<T> p) {
-        return perpendicularVector(p).calLengthSq();
+        return perpendicularVector(p).normSq();
     }
 
     /**
@@ -326,7 +326,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      * @return the distance
      */
     public T distance(SPoint<T> p) {
-        return perpendicularVector(p).calLength();
+        return perpendicularVector(p).norm();
     }
 
     /**
@@ -511,7 +511,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
         if (p == null) {
             throw new NullPointerException();
         }
-        if (vec.isZeroVector()) {
+        if (vec.isZero()) {
             throw new IllegalArgumentException("ZERO vector!");
         }
         return new Line<>(mc, p, vec);

@@ -166,13 +166,13 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
             area = getMc().divideLong(
                     a.getDirectVector()
                             .outerProduct(
-                                    c.getDirectVector()).calLength(), 2l);
+                                    c.getDirectVector()).norm(), 2l);
         }
         return area;
     }
 
     public T areaSq() {
-        return getMc().divideLong(a.getDirectVector().outerProduct(c.getDirectVector()).calLengthSq(), 4l);
+        return getMc().divideLong(a.getDirectVector().outerProduct(c.getDirectVector()).normSq(), 4l);
     }
 
     /**

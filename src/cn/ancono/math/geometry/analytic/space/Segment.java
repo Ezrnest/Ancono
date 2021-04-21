@@ -99,7 +99,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return the length of this segment.
      */
     public T getLength() {
-        return v.calLength();
+        return v.norm();
     }
 
     /**
@@ -108,7 +108,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return the square of the length of this segment.
      */
     public T getLengthSq() {
-        return v.calLengthSq();
+        return v.normSq();
     }
 
     /**
@@ -263,7 +263,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return a new segment
      */
     public Segment<T> reverse() {
-        return new Segment<>(getMc(), l, p2, p1, v == null ? null : v.negative(), comp);
+        return new Segment<>(getMc(), l, p2, p1, v == null ? null : v.negate(), comp);
     }
 
     @Override

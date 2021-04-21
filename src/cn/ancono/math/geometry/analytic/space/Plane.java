@@ -250,7 +250,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return
      */
     public Plane<T> moveDistance(T dis) {
-        Plane<T> p = new Plane<T>(getMc(), a, b, c, getMc().subtract(d, getMc().multiply(getNormalVector().calLength(), dis)));
+        Plane<T> p = new Plane<T>(getMc(), a, b, c, getMc().subtract(d, getMc().multiply(getNormalVector().norm(), dis)));
         p.normalVector = normalVector;
         return p;
     }
@@ -347,7 +347,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
             //the point is on this plane.
             return p;
         }
-        T k = getMc().negate(getMc().divide(t, getNormalVector().calLengthSq()));
+        T k = getMc().negate(getMc().divide(t, getNormalVector().normSq()));
         T px = getMc().add(p.x, getMc().multiply(a, k));
         T py = getMc().add(p.y, getMc().multiply(b, k));
         T pz = getMc().add(p.z, getMc().multiply(c, k));
@@ -362,7 +362,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public T distanceSq(SPoint<T> p) {
         T t = substitute(p);
-        return getMc().divide(getMc().multiply(t, t), getNormalVector().calLengthSq());
+        return getMc().divide(getMc().multiply(t, t), getNormalVector().normSq());
     }
 
     /**
@@ -383,7 +383,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public T distanceDirected(SPoint<T> p) {
         T t = substitute(p);
-        return getMc().divide(t, getNormalVector().calLength());
+        return getMc().divide(t, getNormalVector().norm());
     }
 
     /**
@@ -392,7 +392,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return a new plane
      */
     public Plane<T> reverse() {
-        SVector<T> nor = getNormalVector().negative();
+        SVector<T> nor = getNormalVector().negate();
         return new Plane<>(getMc(), nor, getMc().negate(d));
     }
 
@@ -856,7 +856,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return
      */
     public static <T> Plane<T> pointNormalVector(SPoint<T> p, SVector<T> nv) {
-        if (nv.isZeroVector()) {
+        if (nv.isZero()) {
             throw new IllegalArgumentException("zero vector");
         }
         MathCalculator<T> mc = p.getMathCalculator();
@@ -929,7 +929,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         //a = jy - qz , b = kz - jx , c = qx - ky
         // or (a,b,c) = v1 �� v2 (outer product)
         SVector<T> abc = v1.outerProduct(v2);
-        if (abc.isZeroVector()) {
+        if (abc.isZero()) {
             return null;
         }
         SVector<T> pv = p.getVector();
@@ -954,7 +954,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         //a = jy - qz , b = kz - jx , c = qx - ky
         // or (a,b,c) = v1 �� v2 (outer product)
         SVector<T> abc = v1.outerProduct(v2);
-        if (abc.isZeroVector()) {
+        if (abc.isZero()) {
             throw new IllegalArgumentException("v1 // v2");
         }
         SVector<T> pv = p.getVector();

@@ -91,14 +91,34 @@ public abstract class Vector<T> extends Matrix<T> {
         }
     }
 
+    /**
+     * Returns the square of the Euclidean norm of this vector, which
+     * is equal to the sum of square of each element.
+     * <p></p>
+     * This method is generally the same as <code>this.inner(this)</code>.
+     *
+     * @return <code>|this|^2</code>
+     */
+    public T normSq() {
+        var mc = getMc();
+        T re = mc.getZero();
+        int size = getSize();
+        for (int i = 0; i < size; i++) {
+            T t = get(i);
+            re = mc.add(mc.multiply(t, t), re);
+        }
+        return re;
+    }
 
     /**
-     * Return the value of |this|.The value will be a non-negative value.
+     * Return the Euclidean norm of this vector, which
+     * is equal to the square root of the sum of square of each elements.
+     * The result is non-negative.
      *
-     * @return |this|
+     * @return <code>|this|</code>
      */
-    public T calLength() {
-        return getMc().squareRoot(calLengthSq());
+    public T norm() {
+        return getMc().squareRoot(normSq());
     }
 
     /**
@@ -110,24 +130,13 @@ public abstract class Vector<T> extends Matrix<T> {
      *
      * @return a vector
      */
-    public abstract Vector<T> unitVector();
-
-    /**
-     * Calculate the square of |this|,which has full precision and use T as the
-     * returning result.The result is equal to use {@link #inner(Vector)} as
-     * {@code innerProduct(this)} but this method will have a better performance.
-     *
-     * @return |this|^2
-     */
-    public T calLengthSq() {
+    public Vector<T> unitVector() {
         var mc = getMc();
-        T re = mc.getZero();
-        int size = getSize();
-        for (int i = 0; i < size; i++) {
-            T t = get(i);
-            re = mc.add(mc.multiply(t, t), re);
+        var norm = norm();
+        if (mc.isZero(norm)) {
+            throw new ArithmeticException("This vector is zero!");
         }
-        return re;
+        return this.multiplyNumber(mc.reciprocal(norm));
     }
 
     protected final void checkSameSize(Vector<?> v) {
@@ -185,14 +194,14 @@ public abstract class Vector<T> extends Matrix<T> {
      */
     public T angleCos(Vector<T> v) {
         T pro = inner(v);
-        return getMc().divide(pro, getMc().multiply(calLength(), v.calLength()));
+        return getMc().divide(pro, getMc().multiply(norm(), v.norm()));
     }
 
 
     /**
      * Determines whether this vector is a zero vector.
      */
-    public boolean isZeroVector() {
+    public boolean isZero() {
         var mc = getMc();
         for (int i = 0, size = getSize(); i < size; i++) {
             if (!mc.isZero(get(i))) {
@@ -207,7 +216,7 @@ public abstract class Vector<T> extends Matrix<T> {
      */
     public boolean isUnitVector() {
         var mc = getMc();
-        return mc.isEqual(calLengthSq(), mc.getOne());
+        return mc.isEqual(normSq(), mc.getOne());
     }
 
 
@@ -222,7 +231,7 @@ public abstract class Vector<T> extends Matrix<T> {
     public boolean isParallel(Vector<T> v) {
         // dimension check
         checkSameSize(v);
-        if (isZeroVector() || v.isZeroVector()) {
+        if (isZero() || v.isZero()) {
             return true;
         }
         var mc = getMc();
@@ -276,7 +285,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @see cn.ancono.math.algebra.abstractAlgebra.linearAlgebra.Matrix#negative()
      */
     @Override
-    public abstract Vector<T> negative();
+    public abstract Vector<T> negate();
 
     /* (non-Javadoc)
      * @see cn.ancono.math.algebra.abstractAlgebra.linearAlgebra.Matrix#transportMatrix()
@@ -579,8 +588,8 @@ public abstract class Vector<T> extends Matrix<T> {
     public static <T> T cosValueOfIntersectionAngle(Vector<T> v1, Vector<T> v2) {
         T re = v1.inner(v2);
         MathCalculator<T> mc = v1.getMc();
-        T d1 = v1.calLength();
-        T d2 = v2.calLength();
+        T d1 = v1.norm();
+        T d2 = v2.norm();
         if (mc.isEqual(mc.getZero(), d1) || mc.isEqual(mc.getZero(), d2)) {
             throw new ArithmeticException("Zero vector");
         }
@@ -753,7 +762,7 @@ public abstract class Vector<T> extends Matrix<T> {
         Vector<T> prev = vs[0];
         for (int i = 1; i < n; i++) {
             temp1[i - 1] = prev.multiplyNumber(mc.negate(
-                    mc.reciprocal(prev.calLengthSq())));
+                    mc.reciprocal(prev.normSq())));
 
             Vector<T> vec = vs[i];
             for (int j = 0; j < i; j++) {
@@ -1056,6 +1065,40 @@ public abstract class Vector<T> extends Matrix<T> {
         return true;
     }
 
+    /**
+     * Returns the vector of minimum norm in the Z-span of <code>a,b</code>, that is,
+     * a vector <code>v</code> such that
+     * <pre>|v| = min {|ma + nb| : m, n in Z}</pre>
+     */
+    public static Vector<Double> shortestSpan(Vector<Double> a, Vector<Double> b) {
+        if (a.getSize() != b.getSize()) {
+            throw new IllegalArgumentException("a.size != b.size!");
+        }
+        var A = a.normSq();
+        var B = b.normSq();
+        if (A < B) {
+            var t = a;
+            a = b;
+            b = t;
+            var t2 = A;
+            A = B;
+            B = t2;
+        }
+        while (true) {
+            var n = a.inner(b);
+            var r = Math.round(n / B);
+            var T = A - 2 * r * n + r * r * B;
+            if (T >= B) {
+                return b;
+            }
+            var t = Vector.subtractV(a, b.multiplyNumber(r));
+            a = b;
+            b = t;
+            A = B;
+            B = T;
+        }
+    }
+
 
 //	public static void main(String[] args) {
 //	    var v1 = Vector.createVector(new long[]{1,3,14});
@@ -1113,7 +1156,7 @@ class VectorCalculator<T> implements LinearSpaceCalculator<T, Vector<T>> {
     @NotNull
     @Override
     public Vector<T> inverse(@NotNull Vector<T> x) {
-        return x.negative();
+        return x.negate();
     }
 
     @NotNull

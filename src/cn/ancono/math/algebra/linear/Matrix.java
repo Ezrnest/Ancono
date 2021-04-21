@@ -246,7 +246,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      *
      * @return {@code -this}
      */
-    public abstract Matrix<T> negative();
+    public abstract Matrix<T> negate();
 
     /**
      * Return the transpose of this matrix: <code>N = this<sup>T</sup></code>.
@@ -1586,8 +1586,8 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         @SuppressWarnings("unchecked")
         Vector<T>[] temp = new Vector[row];
         ws[0] = vecs.get(0);
-        if (!ws[0].isZeroVector()) {
-            var length = ws[0].calLength();
+        if (!ws[0].isZero()) {
+            var length = ws[0].norm();
             RB.set(0, 0, length);
             ws[0] = ws[0].multiplyNumber(mc.reciprocal(length));
         }
@@ -1600,10 +1600,10 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             }
             var t = Vector.addAll(i, temp);
             var v = Vector.subtractV(u, t);
-            if (v.isZeroVector()) {
+            if (v.isZero()) {
                 ws[i] = v;
             } else {
-                var length = v.calLength();
+                var length = v.norm();
                 RB.set(i, i, length);
                 ws[i] = v.multiplyNumber(mc.reciprocal(length));
             }
@@ -1780,7 +1780,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
         @SuppressWarnings("unchecked")
         @Override
-        public Matrix<T> negative() {
+        public Matrix<T> negate() {
             Object[][] ne = new Object[row][column];
             for (int i = dx; i < row + dx; i++) {
                 for (int j = dy; j < column + dy; j++) {
@@ -2958,7 +2958,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         @NotNull
         @Override
         public Matrix<T> negate(@NotNull Matrix<T> x) {
-            return x.negative();
+            return x.negate();
         }
 
         @NotNull

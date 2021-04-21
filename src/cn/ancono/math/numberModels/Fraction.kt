@@ -335,8 +335,8 @@ internal constructor(
             return ONE
         }
         val p = abs(n)
-        val nume: Long = MathUtils.power(numerator, p)
-        val deno: Long = MathUtils.power(denominator, p)
+        val nume: Long = MathUtils.pow(numerator, p)
+        val deno: Long = MathUtils.pow(denominator, p)
         return if (n > 0) {
             Fraction(nume, deno)
         } else {
@@ -402,8 +402,8 @@ internal constructor(
         if (this.isNegative) {
             an = -an
         }
-        an = MathUtils.power(an, bn)
-        ad = MathUtils.power(ad, bn)
+        an = MathUtils.pow(an, bn)
+        ad = MathUtils.pow(ad, bn)
         return if (exp.isNegative) {
             adjustSign(ad, an)
         } else {
@@ -781,7 +781,7 @@ internal constructor(
                 return ZERO
             }
             var d1 = d.absoluteValue
-            val deno = MathUtils.power(10L, precision - 1)
+            val deno = MathUtils.pow(10L, precision - 1)
             //		deno*= 10L;
             while (d1 < deno.toDouble()) {
                 d1 *= 10.0
@@ -897,7 +897,7 @@ internal constructor(
                 val n1 = m.group(1).toLong()
                 val n2 = m.group(2)
                 val digits = n2.length
-                val deno = MathUtils.power(10L, digits)
+                val deno = MathUtils.pow(10L, digits)
                 val nume = n1 * deno + n2.toLong()
                 return of(nume, deno)
             }

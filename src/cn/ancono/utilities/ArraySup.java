@@ -17,46 +17,24 @@ public class ArraySup {
     public static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
 
-    public static void fillArr(int[] arr, int num) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = num;
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static <T> T[] fillArr(int length, T t, Class<T> clazz) {
         T[] array = (T[]) Array.newInstance(clazz, length);
-        for (int i = 0; i < array.length; i++) {
-            array[i] = t;
-        }
+        Arrays.fill(array, t);
         return array;
-    }
-
-
-    public static void fillArr(boolean[] arr, boolean b) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = b;
-        }
-
     }
 
 
     public static int[] fillArr(int length, int num) {
         int[] arr = new int[length];
-        for (int i = 0; i < length; i++) {
-            arr[i] = num;
-        }
+        Arrays.fill(arr, num);
         return arr;
-
     }
 
     public static char[] fillArr(int length, char num) {
         char[] arr = new char[length];
-        for (int i = 0; i < length; i++) {
-            arr[i] = num;
-        }
+        Arrays.fill(arr, num);
         return arr;
-
     }
 
     public static void ranFillArr(int[] arr) {
@@ -69,8 +47,6 @@ public class ArraySup {
     /**
      * Randomly fill the array by given random
      *
-     * @param arr
-     * @param rd
      */
     public static void ranFillArr(int[] arr, Random rd) {
         for (int i = 0; i < arr.length; i++) {
@@ -286,37 +262,6 @@ public class ArraySup {
         return arr;
     }
 
-    /**
-     * calculate the sum of the array from start (inclusive) to end (exclusive)
-     *
-     * @param arr
-     * @param start
-     * @param end
-     * @return
-     */
-    public static int getSum(int[] arr, int start, int end) {
-        int sum = 0;
-        for (int i = start; i < end; i++) {
-            sum += arr[i];
-        }
-        return sum;
-    }
-
-    public static int getSum(int[] arr) {
-        return getSum(arr, 0, arr.length);
-    }
-
-    public static double getSum(double[] arr, int start, int end) {
-        double sum = 0;
-        for (int i = start; i < end; i++) {
-            sum += arr[i];
-        }
-        return sum;
-    }
-
-    public static double getSum(double[] arr) {
-        return getSum(arr, 0, arr.length);
-    }
 
     public static int findMaxPos(int[] arr) {
         int maxPos = 0;

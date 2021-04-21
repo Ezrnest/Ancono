@@ -69,7 +69,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
      * @see cn.ancono.math.Matrix#negative()
      */
     @Override
-    public TransMatrix<T> negative() {
+    public TransMatrix<T> negate() {
         T[][] d2 = gd();
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
@@ -416,7 +416,7 @@ public final class TransMatrix<T> extends Matrix<T> implements Composable<TransM
      * to the given vector. The vector must be non-zero.
      */
     public static <T> TransMatrix<T> rotateXAxisTo(PVector<T> v) {
-        if (v.isZeroVector()) {
+        if (v.isZero()) {
             throw new IllegalArgumentException("zero vector.");
         }
         v = v.unitVector();

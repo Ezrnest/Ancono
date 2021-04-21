@@ -11,8 +11,8 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static cn.ancono.math.MathUtils.sum;
 import static cn.ancono.utilities.ArraySup.fillArr;
-import static cn.ancono.utilities.ArraySup.getSum;
 
 /**
  * this class help users with easier usage of printing.
@@ -273,7 +273,7 @@ public class Printer {
 //		
         int len = 0;
         int t0 = 0;
-        len = getSum(setWidth) + setWidth.length + 1 << 3;// add up to it: both side of the line should have fraction and space
+        len = sum(setWidth) + setWidth.length + 1 << 3;// add up to it: both side of the line should have fraction and space
         StringBuilder sb = new StringBuilder(len * mat.length);
         for (int i = 0; i < mat.length; i++) {
             if (i == 0)
@@ -290,24 +290,11 @@ public class Printer {
                 sb.append(temp);
                 int t = setWidth[j] - temp.length();
                 if (t < 0)
-                    throw new IllegalArgumentException("Width " + setWidth + " is too small for" + temp);
+                    throw new IllegalArgumentException("Width " + Arrays.toString(setWidth) + " is too small for" + temp);
                 fillBlank(sb, t + 1);
             }
 
-            t0 = getSum(setWidth, j, setWidth.length) + setWidth.length - j;
-            if (t0 != 0) {
-                fillBlank(sb, t0);
-            }
-
-
-            if (i == 0)
-                sb.append('┐');
-            else if (i == mat.length - 1)
-                sb.append('┘');
-            else
-                sb.append('│');
-
-            sb.append(System.lineSeparator());
+            appendSuffix(mat, setWidth, sb, i, j);
         }
         print(sb.toString());
 
@@ -434,7 +421,7 @@ public class Printer {
                 width[j] = Math.max(ma[i][j].length(), width[j]);
             }
         }
-        int len = getSum(width) + co + 1 << 3;// add up to it: both side of the line should have fraction and space
+        int len = sum(width) + co + 1 << 3;// add up to it: both side of the line should have fraction and space
 
         StringBuilder sb = new StringBuilder(len * mat.length);
         int t0 = 0;
@@ -454,21 +441,26 @@ public class Printer {
                 fillBlank(sb, t + 1);
             }
 
-            t0 = getSum(width, j, width.length) + width.length - j;
-            if (t0 != 0) {
-                fillBlank(sb, t0);
-            }
-
-            if (i == 0)
-                sb.append('┐');
-            else if (i == mat.length - 1)
-                sb.append('┘');
-            else
-                sb.append('│');
-
-            sb.append(System.lineSeparator());
+            appendSuffix(mat, width, sb, i, j);
         }
         print(sb.toString());
+    }
+
+    private static void appendSuffix(double[][] mat, int[] width, StringBuilder sb, int i, int j) {
+        int t0;
+        t0 = sum(width, j, width.length) + width.length - j;
+        if (t0 != 0) {
+            fillBlank(sb, t0);
+        }
+
+        if (i == 0)
+            sb.append('┐');
+        else if (i == mat.length - 1)
+            sb.append('┘');
+        else
+            sb.append('│');
+
+        sb.append(System.lineSeparator());
     }
 
 
@@ -762,8 +754,6 @@ public class Printer {
             String[][] ma = ArraySup.mapTo2(mat, Object::toString, String.class);
             print(StringSup.formatMatrix(ma));
         }
-
-
     }
 
 //    public static void main(String[] args) {

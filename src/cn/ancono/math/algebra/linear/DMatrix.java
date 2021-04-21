@@ -49,7 +49,7 @@ class DMatrix<T> extends Matrix<T> implements Serializable {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Matrix<T> negative() {
+    public Matrix<T> negate() {
         Object[][] ne = new Object[row][column];
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {

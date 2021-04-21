@@ -46,12 +46,12 @@ abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>)
     abstract fun weight(x: T): T
 
     /**
-     * Return a sequence of the orthogonal
+     * Returns the sequence of the orthogonal polynomials.
      */
     abstract val sequence: Sequence<Polynomial<T>>
 
     /**
-     * The norm of the orthogonal polynomials that are return
+     * The norm of the `n-th` orthogonal polynomial.
      *
      * @param n the index of polynomial, starting from zero.
      */
@@ -60,7 +60,7 @@ abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>)
     }
 
     /**
-     * The square
+     * The square of the norm of the `n-th` orthogonal polynomial.
      */
     abstract fun normSq(n: Int): T
 
@@ -74,7 +74,7 @@ abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>)
     }
 
 
-    val generatorUnitized: Sequence<Polynomial<T>>
+    val sequenceUnitized: Sequence<Polynomial<T>>
         get() = sequence.mapIndexed { n, p -> p.divide(norm(n)) }
 }
 

@@ -2,7 +2,6 @@ package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.MathUtils;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
 import cn.ancono.math.numberModels.CalculatorUtils;
@@ -121,7 +120,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
      * @return
      */
     public T length() {
-        return v.calLength();
+        return v.norm();
     }
 
     /**
@@ -130,7 +129,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
      * @return
      */
     public T lengthSq() {
-        return v.calLengthSq();
+        return v.normSq();
     }
 
     @Override

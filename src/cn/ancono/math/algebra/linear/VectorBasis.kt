@@ -741,7 +741,7 @@ class ZeroVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, dimen
     }
 
     override fun canReduce(v: Vector<T>): Boolean {
-        return v.isZeroVector
+        return v.isZero
     }
 
     override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {

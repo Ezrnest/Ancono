@@ -52,10 +52,10 @@ public abstract class SpaceObject<T> extends SpacePointSet<T> implements Infinit
     public abstract T surfaceArea();
 
     /**
-     * @see cn.ancono.math.set.InfiniteSet#cardinalNumber()
+     * @see cn.ancono.math.set.InfiniteSet#cardinality()
      */
     @Override
-    public int cardinalNumber() {
+    public int cardinality() {
         return CARDINAL_REAL;
     }
 

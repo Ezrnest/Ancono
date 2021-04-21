@@ -384,7 +384,7 @@ public final class CombUtils {
      * @return
      */
     public static long multinomial(int p, int... ns) {
-        checkSumArray(p, ArraySup.getSum(ns), ns);
+        checkSumArray(p, MathUtils.sum(ns), ns);
         long r = factorial(p);
         for (int n : ns) {
             r /= factorial(n);
@@ -412,7 +412,7 @@ public final class CombUtils {
      */
     @SuppressWarnings("Duplicates")
     public static BigInteger multinomialB(int p, int... ns) {
-        checkSumArray(p, ArraySup.getSum(ns), ns);
+        checkSumArray(p, MathUtils.sum(ns), ns);
         Primes pr = Primes.getInstance();
         pr.enlargePrime(p);
         final int len = pr.getCount(p);
@@ -501,7 +501,7 @@ public final class CombUtils {
         }
         int t = m - 1;
         long re = n % 2 == 0 ? t : -t;
-        return re + MathUtils.power(t, n);
+        return re + MathUtils.pow(t, n);
     }
 
     /**
@@ -520,7 +520,7 @@ public final class CombUtils {
         }
         int t = n - 1;
         long re = m % 2 == 0 ? t : -t;
-        re += MathUtils.power(t, m);
+        re += MathUtils.pow(t, m);
         return re / n;
     }
 

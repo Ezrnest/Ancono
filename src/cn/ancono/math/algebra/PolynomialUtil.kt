@@ -707,7 +707,7 @@ object PolynomialUtil {
         val p = mc.p
         val n = f.degree
         val x = Polynomial.oneX(mc)
-        val xPn = Polynomial.powerAndMod(x, MathUtils.power(p.toLong(), n), f)
+        val xPn = Polynomial.powerAndMod(x, MathUtils.pow(p.toLong(), n), f)
         // x^{p^n}
         if (!xPn.valueEquals(x)) {
             return false
@@ -715,7 +715,7 @@ object PolynomialUtil {
         val factors = MathUtils.factorReduce(n.toLong())
         for (factor in factors) {
             val t = (n / factor[0]).toInt()
-            val xPnq = Polynomial.powerAndMod(x, MathUtils.power(p.toLong(), t), f)
+            val xPnq = Polynomial.powerAndMod(x, MathUtils.pow(p.toLong(), t), f)
             // x^{p^{n/q}}
             val g = (xPnq - x).gcd(f)
             if (!g.isUnit()) {
@@ -769,7 +769,7 @@ object PolynomialUtil {
 
         while (true) {
             val t = randomPolynomial(rd, d, mc)
-            val power = (MathUtils.power(mc.p.toLong(), d) - 1) / 2
+            val power = (MathUtils.pow(mc.p.toLong(), d) - 1) / 2
             val tp = Polynomial.powerAndMod(t, power, f) - Polynomial.one(mc)
             val g = f.gcd(tp)
             if (g.degree == 0 || g.degree == f.degree) {

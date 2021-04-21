@@ -5,6 +5,7 @@ import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
+import cn.ancono.math.minus
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
@@ -81,13 +82,8 @@ object PolynomialUtil {
         val lcm = p.coefficients().fold(1L) { g, f ->
             MathUtils.lcm(g, f.denominator)
         }
-        return decomposeInt(p.mapTo(Calculators.longCal()) { it ->
-            val re = it.numerator * lcm / it.denominator
-            if (it.isPositive) {
-                re
-            } else {
-                -re
-            }
+        return decomposeInt(p.mapTo(Calculators.longCal()) {
+            it.numerator * lcm / it.denominator
         })
     }
 
@@ -148,21 +144,21 @@ object PolynomialUtil {
             if (isBi) {
                 for (i in 0..poly.degree) {
                     val coe = poly.get(i)
-                    matBuilder.set(coe, i, index)
-                    matBuilder.set(coe, i + 1, index + 1)
+                    matBuilder.set(i, index, coe)
+                    matBuilder.set(i + 1, index + 1, coe)
                 }
                 index += 2
             } else {
                 for (i in 0..poly.degree) {
                     val coe = poly.get(i)
-                    matBuilder.set(coe, i, index)
+                    matBuilder.set(i, index, coe)
                 }
                 index++
             }
         }
 
         for (i in 0 until all.degree) {
-            matBuilder.set(nume.get(i), i, coeCount)
+            matBuilder.set(i, coeCount, nume.get(i))
         }
         val mat = matBuilder.build()
 //        mat.printMatrix()
@@ -223,12 +219,12 @@ object PolynomialUtil {
         for ((c, m) in ms.withIndex()) {
             for (t in m.terms) {
                 val idx = terms[t.characterPart()]!!
-                builder.set(Multinomial.monomial(t.numberPart()), idx, c)
+                builder.set(idx, c, Multinomial.monomial(t.numberPart()))
             }
         }
         for (t in mConst.terms) {
             val idx = terms[t.characterPart()]!!
-            builder.set(Multinomial.monomial(t.numberPart()), idx, ms.size)
+            builder.set(idx, ms.size, Multinomial.monomial(t.numberPart()))
         }
         val mat = builder.build()
         val vec = terms.keys.mapTo(ArrayList(terms.size), Multinomial::monomial)
@@ -794,7 +790,7 @@ object PolynomialUtil {
      *
      * @return a list of all it irreducible factors
      */
-    fun cantorZassSplit(d: Int, product: Polynomial<Int>, mc: ZModPCalculator<Int>)
+    fun splitCantorZass(d: Int, product: Polynomial<Int>, mc: ZModPCalculator<Int>)
             : List<Polynomial<Int>> {
         require(mc.p > 2)
         val results = arrayListOf<Polynomial<Int>>()
@@ -807,7 +803,7 @@ object PolynomialUtil {
                                     list: MutableList<Polynomial<Int>>) {
         /*
         //Created by lyc at 2021-04-16 22:44
-        See Proposition 3.4.6, page 129 of
+        See Algorithm 3.4.6, page 129 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
          */
 
@@ -839,13 +835,137 @@ object PolynomialUtil {
      *
      * @return a list of all it irreducible factors
      */
-    fun polySplitZMod2(d: Int, f: Polynomial<Int>, mc: ZModPCalculator<Int>)
+    fun splitZMod2(d: Int, f: Polynomial<Int>, mc: ZModPCalculator<Int>)
             : List<Polynomial<Int>> {
         require(mc.p == 2)
         val results = arrayListOf<Polynomial<Int>>()
         polySplitZMod2Recur(f, d, mc, results)
         return results
     }
+
+    private fun buildPowerMatrix(A: Polynomial<Int>, p: Int): Matrix<Int> {
+        val n = A.degree
+        val mc = A.mathCalculator
+        val builder = Matrix.getBuilder(n, n, mc)
+        builder[0, 0] = 1
+        for (k in 1 until n) {
+            val xpk = Polynomial.powerX(p * k, mc)
+            val m = xpk.mod(A)
+            for (i in 0 until n) {
+                builder[i, k] = m[i]
+            }
+        }
+        return builder.build()
+    }
+
+
+    @Suppress("unused")
+    internal fun splitBerlekampSmallP(A: Polynomial<Int>, p: Int): List<Polynomial<Int>> {
+        /*
+        //Created by lyc at 2021-04-19 19:14
+        See Algorithm 3.4.10, page 132 of
+        'A Course in Computational Algebraic Number Theory', Henri Cohen
+
+        Note: this method is not used because of its slowness
+         */
+        val Q = buildPowerMatrix(A, p)
+        val mc = A.mathCalculator
+        val n = A.degree
+        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace()!!.vectors
+        val r = vectors.size
+        var E = listOf(A)
+        val constants = (0 until p).map { s -> Polynomial.constant(mc, s) }
+        for (j in 1 until r) {
+            if (E.size == r) {
+                break
+            }
+            val v = vectors[j]
+            val T = Polynomial.of(mc, v.toList())
+            val newE = ArrayList<Polynomial<Int>>(E.size)
+            var k = E.size
+            for (i in E.indices) {
+                val B = E[i]
+                if (B.degree <= 1) {
+                    newE += B
+                    continue
+                }
+                k--
+                for (s in 0 until p) {
+                    val g = B.gcd(T - constants[s])
+                    if (g.degree >= 1) {
+                        newE += g
+                        k++
+                        if (k == r) {
+                            break
+                        }
+                    }
+                }
+                if (k == r) {
+                    newE.addAll(E.subList(i + 1, E.size))
+                    break
+                }
+            }
+            E = newE
+        }
+        return E
+    }
+
+    @Suppress("unused")
+    internal fun splitBerlekampP3(A: Polynomial<Int>, p: Int): List<Polynomial<Int>> {
+        /*
+        //Created by lyc at 2021-04-19 19:15
+        See Algorithm 3.4.11, page 133 of
+        'A Course in Computational Algebraic Number Theory', Henri Cohen
+
+        Note: this method is not used because of its slowness
+         */
+        require(p >= 3)
+        val Q = buildPowerMatrix(A, p)
+        val mc = A.mathCalculator
+        val n = A.degree
+        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace()!!.vectors
+        val ts = vectors.map { v -> Polynomial.of(mc, v.toList()) }
+        val r = vectors.size
+        var E = listOf(A)
+        val rd = Random()
+        val one = Polynomial.one(mc)
+        while (true) {
+            if (E.size == r) {
+                break
+            }
+            val coefficients = (0 until r).map { i ->
+                val c = rd.nextInt(p)
+                c * ts[i]
+            }
+            val T = Polynomial.sum(coefficients)
+            var k = E.size
+            val newE = ArrayList<Polynomial<Int>>(E.size)
+            for (i in E.indices) {
+                val B = E[i]
+                if (B.degree <= 1) {
+                    newE += B
+                    continue
+                }
+                val pow = Polynomial.powerAndMod(T, (p - 1L) / 2, B)
+                val D = B.gcd(pow - one)
+                if (D.degree > 0 && D.degree < B.degree) {
+                    newE += D
+                    newE += B.exactDivide(D)
+                    k++
+                    if (k == r) {
+                        newE.addAll(E.subList(i + 1, E.size))
+                        break
+                    }
+                } else {
+                    newE += B
+                }
+
+            }
+            E = newE
+        }
+        return E
+    }
+
 
     /**
      * Factorize the given polynomial in `Z_p`, where `p` is a prime.
@@ -866,9 +986,9 @@ object PolynomialUtil {
 //            println(distinct)
             for ((d, product) in distinct) {
                 val factors = if (p == 2) {
-                    polySplitZMod2(d, product, mc)
+                    splitZMod2(d, product, mc)
                 } else {
-                    cantorZassSplit(d, product, mc)
+                    splitCantorZass(d, product, mc)
                 }
                 for (factor in factors) {
                     results.add(factor to k)
@@ -880,7 +1000,6 @@ object PolynomialUtil {
         }
         return DecomposedPoly(results)
     }
-
 
 }
 
@@ -894,15 +1013,29 @@ fun main() {
 ////    println(Polynomial.powerAndMod(Polynomial.oneX(mc),17L,A*B))
 ////    println(PolynomialSup.squarefreeFactorizeModP(A*A*B))
 ////    println(PolynomialSup.distinctDegreeFactorizeModP(A * B, mc))
-    val mc = Calculators.intMod2()
+    val mc = Calculators.intModP(31)
 
     val f = Polynomial.parse("1+x+x^3+x^4+x^6", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }
     val g = Polynomial.parse("x^4+x", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }
-//    println(PolynomialSup.squarefreeFactorizeModP(f))
-//    val factors = PolynomialUtil.factorizeModP(f)
+    val factors = PolynomialUtil.factorizeModP(f)
 //    println(factors)
-    println(PolynomialUtil.factorizeModP(g))
-    println(PolynomialUtil.isIrreducibleModP(f))
+
+//    val prod = (0 until (mc.p-1)).map { Polynomial.linear(mc, 1, it) }.reduce(Polynomial<Int>::multiply)
+//    measureTimeMillis {
+//        repeat(1000){
+//            PolynomialUtil.splitCantorZass(1,prod,mc)
+//        }
+//    }.also { println(it) }
+//    measureTimeMillis {
+//        repeat(1000){
+//            PolynomialUtil.splitBerlekampSmallP(prod,mc.p)
+//        }
+//    }.also { println(it) }
+//    measureTimeMillis {
+//        repeat(1000) {
+//            PolynomialUtil.splitBerlekampP3(prod, mc.p)
+//        }
+//    }.also { println(it) }
 //    val t = Polynomial.parse("x^12 + x^9 + x^6 + x^3 + 1",mc,String::toInt)
 //    println(PolynomialSup.polySplitZMod2(4,t,mc))
 }

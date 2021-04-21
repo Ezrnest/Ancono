@@ -9,6 +9,7 @@ import cn.ancono.math.numberModels.Fraction.Companion.EXPRESSION_PATTERN
 import cn.ancono.math.numberModels.api.FieldNumberModel
 import java.io.Serializable
 import java.math.BigInteger
+import kotlin.math.absoluteValue
 
 
 /**
@@ -304,7 +305,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
             if (f.isZero()) {
                 return ZERO
             }
-            return BigFraction(f.signum, f.numerator.toBigInteger(), f.denominator.toBigInteger())
+            return BigFraction(f.signum, f.numerator.absoluteValue.toBigInteger(), f.denominator.toBigInteger())
         }
 
         /**
@@ -367,8 +368,8 @@ object BigFractionCalculator : MathCalculatorAdapter<BigFraction>() {
         return x.negate()
     }
 
-    override fun abs(para: BigFraction): BigFraction {
-        return para.abs()
+    override fun abs(x: BigFraction): BigFraction {
+        return x.abs()
     }
 
     override fun subtract(x: BigFraction, y: BigFraction): BigFraction {

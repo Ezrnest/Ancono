@@ -159,12 +159,12 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     /**
      * Returns the absolute value of this number.
      *
-     * @param para a number
-     * @return `|para|`
+     * @param x a number
+     * @return `|x|`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    fun abs(para: T): T
+    fun abs(x: T): T
 
     /**
      * Returns the result of `para1-para2`,this method should return the identity
@@ -484,9 +484,6 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
         if (x.denominator != 1L) {
             re = divideLong(re, x.denominator)
         }
-        if (x.isNegative) {
-            re = negate(re)
-        }
         return re
     }
 
@@ -546,8 +543,8 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
                     return f(mc.negate(f.deply(x)))
                 }
 
-                override fun abs(para: S): S {
-                    return f(mc.abs(f.deply(para)))
+                override fun abs(x: S): S {
+                    return f(mc.abs(f.deply(x)))
                 }
 
                 override fun subtract(x: S, y: S): S = f(mc.subtract(f.deply(x), f.deply(y)))

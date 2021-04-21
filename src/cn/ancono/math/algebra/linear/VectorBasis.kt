@@ -97,7 +97,7 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
         requireVectorSize(rank, cordInThisBase)
         @Suppress("UNCHECKED_CAST")
         val result = Array<Any>(rank) { i ->
-            vectors[i].innerProduct(cordInThisBase)
+            vectors[i].inner(cordInThisBase)
         } as Array<T>
         return Vector.vOf(cordInThisBase.mathCalculator, *result)
     }

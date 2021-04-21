@@ -329,8 +329,8 @@ class ExprCalculator
     /*
 	 * @see cn.ancono.math.MathCalculator#abs(java.lang.Object)
 	 */
-    override fun abs(para: Expression): Expression {
-        var rt: Node = wrapCloneNodeSF("abs", para.root)
+    override fun abs(x: Expression): Expression {
+        var rt: Node = wrapCloneNodeSF("abs", x.root)
         rt = simplify(rt)
         return Expression(rt)
     }

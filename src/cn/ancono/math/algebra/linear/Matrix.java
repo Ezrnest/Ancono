@@ -1594,7 +1594,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         for (int i = 1; i < row; i++) {
             var u = vecs.get(i);
             for (int j = 0; j < i; j++) {
-                var k = u.innerProduct(ws[j]);
+                var k = u.inner(ws[j]);
                 temp[j] = ws[j].multiplyNumber(k);
                 RB.set(j, i, k);
             }

@@ -336,7 +336,7 @@ public final class DVector<T> extends Vector<T> {
 
     /**
      * Calculate the square of |this|,which has full precision and use T as the
-     * returning result.The result is equal to use {@link #innerProduct(Vector)} as
+     * returning result.The result is equal to use {@link #inner(Vector)} as
      * {@code scalarProduct(this,this)} but this method will have a better performance.
      *
      * @return |this|^2

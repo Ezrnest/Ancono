@@ -1670,11 +1670,11 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
          */
         @NotNull
         @Override
-        public Polynomial<T> abs(@NotNull Polynomial<T> para) {
-            if (mc.compare(para.get(para.degree), mc.getZero()) < 0) {
-                return negate(para);
+        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
+            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
+                return negate(x);
             }
-            return para;
+            return x;
         }
 
         /**
@@ -1912,11 +1912,11 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
          */
         @NotNull
         @Override
-        public Polynomial<T> abs(@NotNull Polynomial<T> para) {
-            if (mc.compare(para.get(para.degree), mc.getZero()) < 0) {
-                return negate(para);
+        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
+            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
+                return negate(x);
             }
-            return para;
+            return x;
         }
 
         /**

@@ -513,4 +513,4 @@ Test:
 Project Ancono welcomes anyone to join in the development.
 
 Modules to be added in future: Calculators for finite field `GF(p^n)`, computational number theory and computational
-algebraic geometry, numeric methods(interpolation, integration, optimization,...).
+algebraic geometry, numeric methods(interpolation, integration, optimization,...) and more unit tests.

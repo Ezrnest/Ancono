@@ -2,11 +2,11 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
+import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.addableSet.MathAdder;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.Simplifier;
-import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.property.Mergeable;
 import org.jetbrains.annotations.NotNull;
 
@@ -1156,7 +1156,8 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     }
 
     public Term sameChar(Fraction fraction) {
-        return new Term(fraction.getSignum(), BigInteger.valueOf(fraction.getNumerator()), BigInteger.valueOf(fraction.getDenominator()), BigInteger.ONE, this.character);
+        return new Term(fraction.getSignum(), BigInteger.valueOf(fraction.getNumeratorAbs()),
+                BigInteger.valueOf(fraction.getDenominator()), BigInteger.ONE, this.character);
     }
 
     public Term sameChar(int signum, BigInteger numerator, BigInteger denominator, BigInteger radical) {
@@ -1829,7 +1830,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     }
 
     public static Term valueOf(Fraction f) {
-        return new Term(f.getSignum(), BigInteger.valueOf(f.getNumerator())
+        return new Term(f.getSignum(), BigInteger.valueOf(f.getNumeratorAbs())
                 , BigInteger.valueOf(f.getDenominator()), BigInteger.ONE);
     }
 

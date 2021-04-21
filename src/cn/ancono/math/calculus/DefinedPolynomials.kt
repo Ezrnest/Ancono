@@ -324,7 +324,7 @@ object DefinedPolynomials {
     fun bernsteinPoly(n: Int, i: Int): Polynomial<Fraction> {
         // B_{n,i} = C_n^i * t^i * (1-t)^{n-i}
         val a = Polynomial.binomialPower(Fraction.NEGATIVE_ONE, n - i, Fraction.calculator)
-        val coe = Fraction.of(MathUtils.powMinusOne(n - i), CombUtils.combination(n, i), 1L)
+        val coe = Fraction.of(MathUtils.powOfMinusOne(n - i), CombUtils.combination(n, i), 1L)
         return a.multiply(coe).shift(i)
     }
 

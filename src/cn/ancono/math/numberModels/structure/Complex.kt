@@ -509,8 +509,8 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * This method overrides the normal `abs()` method and it
          * is equal to modulus of the complex.(|z|)
          */
-        override fun abs(para: Complex<T>): Complex<T> {
-            return real(para.modulus())
+        override fun abs(x: Complex<T>): Complex<T> {
+            return real(x.modulus())
         }
 
         override fun subtract(x: Complex<T>, y: Complex<T>): Complex<T> {
@@ -675,11 +675,11 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
             }
         }
 
-        override fun abs(para: ComplexE<T>): ComplexE<T> {
-            return if (para !is Complex) {
+        override fun abs(x: ComplexE<T>): ComplexE<T> {
+            return if (x !is Complex) {
                 inf
             } else {
-                mc.abs(para)
+                mc.abs(x)
             }
         }
 

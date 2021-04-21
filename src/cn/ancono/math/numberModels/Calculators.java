@@ -298,8 +298,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Integer abs(@NotNull Integer para) {
-            return Math.abs(para);
+        public Integer abs(@NotNull Integer x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -635,8 +635,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Long abs(@NotNull Long para) {
-            return Math.abs(para);
+        public Long abs(@NotNull Long x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -822,8 +822,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Long abs(@NotNull Long para) {
-            return Math.abs(para);
+        public Long abs(@NotNull Long x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -1148,8 +1148,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigInteger abs(@NotNull BigInteger para) {
-            return para.abs();
+        public BigInteger abs(@NotNull BigInteger x) {
+            return x.abs();
         }
 
         @NotNull
@@ -1428,8 +1428,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigDecimal abs(@NotNull BigDecimal para) {
-            return para.abs();
+        public BigDecimal abs(@NotNull BigDecimal x) {
+            return x.abs();
         }
 
         @NotNull
@@ -1586,8 +1586,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Double abs(@NotNull Double para) {
-            return Math.abs(para);
+        public Double abs(@NotNull Double x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -2173,8 +2173,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Integer abs(@NotNull Integer para) {
-            return modN(para);
+        public Integer abs(@NotNull Integer x) {
+            return modN(x);
         }
 
     }
@@ -2333,8 +2333,8 @@ public final class Calculators {
         }
 
         @Override
-        public @NotNull Integer abs(@NotNull Integer para) {
-            return para;
+        public @NotNull Integer abs(@NotNull Integer x) {
+            return x;
         }
 
         static final ZMod2Calculator INSTANCE = new ZMod2Calculator();
@@ -2434,8 +2434,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Boolean abs(@NotNull Boolean para) {
-            return para;
+        public Boolean abs(@NotNull Boolean x) {
+            return x;
         }
 
         @NotNull

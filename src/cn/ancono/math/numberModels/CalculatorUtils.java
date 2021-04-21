@@ -77,9 +77,6 @@ public final class CalculatorUtils {
         if (x.getDenominator() != 1) {
             re = mc.divideLong(re, x.getDenominator());
         }
-        if (x.isNegative()) {
-            re = mc.negate(re);
-        }
         return re;
     }
 

@@ -27,7 +27,7 @@ object DifferentialUtil {
      */
     fun <T : Any> innerProduct(mc: MathCalculator<T>, f: DerivableFunction<T, out Vector<T>>, g: DerivableFunction<T, out Vector<T>>
     ): DerivableSVFunction<T> {
-        return DerivableFunction.multiplySV(f, g, mc::add, Vector<T>::innerProduct)
+        return DerivableFunction.multiplySV(f, g, mc::add, Vector<T>::inner)
     }
 
     /**
@@ -86,7 +86,7 @@ object DifferentialUtil {
      */
     fun <T : Any> innerProduct(mc: MathCalculator<T>, f: NDerivableFunction<T, out Vector<T>>, g: NDerivableFunction<T, out Vector<T>>
     ): NDerivableFunction<T, T> {
-        return NDerivableFunction.multiply(f, g, mc::add, Vector<T>::innerProduct)
+        return NDerivableFunction.multiply(f, g, mc::add, Vector<T>::inner)
     }
 
     /**

@@ -6,7 +6,6 @@ package cn.ancono.math
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.NumberFormatter
-import java.util.*
 
 /**
  * Describes a flexible (computational) math object which holds a subclass of EqualPredicate as it 'calculator' for
@@ -20,10 +19,8 @@ import java.util.*
  */
 interface FlexibleMathObject<T : Any, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
 
-//    protected val mc: S = Objects.requireNonNull(mc, "Calculator must not be null!")
 
     override val mathCalculator: S
-//        get() = mc
 
 
 //    /**

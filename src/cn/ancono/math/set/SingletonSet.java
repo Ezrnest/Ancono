@@ -1,4 +1,4 @@
-/**
+/*
  * 2017-09-08
  */
 package cn.ancono.math.set;

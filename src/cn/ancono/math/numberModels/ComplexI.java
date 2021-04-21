@@ -269,7 +269,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         long p, q;
         if (f.getSignum() == -1) {
             p = f.getDenominator();
-            q = f.getNumerator();
+            q = f.getNumeratorAbs();
         } else {
             p = f.getNumerator();
             q = f.getDenominator();
@@ -714,8 +714,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
         @NotNull
         @Override
-        public ComplexI abs(@NotNull ComplexI para) {
-            return para.modAsC();
+        public ComplexI abs(@NotNull ComplexI x) {
+            return x.modAsC();
         }
 
         @NotNull

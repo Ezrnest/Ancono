@@ -56,7 +56,7 @@ interface ILinearSpace<T : Any> : CoordinateSystem<T> {
      * Computes the inner product of the two vectors in the vector base.
      */
     fun innerProduce(v1: Vector<T>, v2: Vector<T>): T {
-        return toStandardCord(v1).innerProduct(toStandardCord(v2))
+        return toStandardCord(v1).inner(toStandardCord(v2))
     }
 
     /**

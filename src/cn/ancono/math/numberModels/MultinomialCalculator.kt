@@ -99,8 +99,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.negate()
     }
 
-    override fun abs(para: Multinomial): Multinomial {
-        return para
+    override fun abs(x: Multinomial): Multinomial {
+        return x
     }
 
     override fun subtract(x: Multinomial, y: Multinomial): Multinomial {

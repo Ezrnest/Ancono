@@ -243,8 +243,8 @@ class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<R
         return x.map(mc::negate)
     }
 
-    override fun abs(para: RandomVariable<T>): RandomVariable<T> {
-        return para.map(mc::abs)
+    override fun abs(x: RandomVariable<T>): RandomVariable<T> {
+        return x.map(mc::abs)
     }
 
     override fun subtract(x: RandomVariable<T>, y: RandomVariable<T>): RandomVariable<T> {

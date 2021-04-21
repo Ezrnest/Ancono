@@ -25,7 +25,7 @@ fun interface InnerProduct<in T : Any, out F : Any> {
          */
         fun <T : Any> canonical(): InnerProduct<Vector<T>, T> {
             return InnerProduct { x, y ->
-                x.innerProduct(y)
+                x.inner(y)
             }
         }
     }

@@ -54,7 +54,7 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         throwFor()
     }
 
-    override fun abs(para: T): T {
+    override fun abs(x: T): T {
         throwFor()
     }
 

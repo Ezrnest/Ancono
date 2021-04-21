@@ -316,15 +316,16 @@ class Power<T : Any>
         if (mc.isZero(a)) {
             return mc.zero
         }
+        val p = n.abs()
         var t: T
-        if (n.denominator == 1L) {
-            t = mc.pow(x, n.numerator)
-        } else if (n.numerator == 1L) {
-            t = mc.nroot(x, n.denominator)
+        t = if (p.denominator == 1L) {
+            mc.pow(x, p.numerator)
+        } else if (p.numerator == 1L) {
+            mc.nroot(x, p.denominator)
         } else {
-            t = mc.nroot(mc.pow(x, n.numerator), n.denominator)
+            mc.nroot(mc.pow(x, p.numerator), p.denominator)
         }
-        if (n.signum < 0) {
+        if (n.isNegative) {
             t = mc.reciprocal(t)
         }
         return mc.multiply(a, t)

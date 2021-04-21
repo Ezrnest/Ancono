@@ -18,6 +18,7 @@ import cn.ancono.math.set.IntervalUnion
 import cn.ancono.math.set.MathSets
 import java.util.*
 import java.util.function.Function
+import kotlin.math.absoluteValue
 
 /**
  * This class provides useful static methods to do transformation between equation,
@@ -289,13 +290,13 @@ object EquationSup {
             equa = equa.mapTo(equa.mathCalculator, Function { it.multiply(multiplier) })
         }
 
-        val first = equa.first()!!.numerator
-        var const = equa.constant()!!.numerator
+        val first = equa.first()!!.numerator.absoluteValue
+        var const = equa.constant()!!.numerator.absoluteValue
         val result = TreeSet<Fraction>()
         var lastIndex = 0
         while (const == 0L) {
             lastIndex++
-            const = equa.get(lastIndex).numerator
+            const = equa.get(lastIndex).numerator.absoluteValue
             result.add(Fraction.ZERO)
         }
         //solution = const.factor / first.factor

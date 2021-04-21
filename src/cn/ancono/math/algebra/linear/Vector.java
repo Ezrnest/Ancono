@@ -114,7 +114,7 @@ public abstract class Vector<T> extends Matrix<T> {
 
     /**
      * Calculate the square of |this|,which has full precision and use T as the
-     * returning result.The result is equal to use {@link #innerProduct(Vector)} as
+     * returning result.The result is equal to use {@link #inner(Vector)} as
      * {@code innerProduct(this)} but this method will have a better performance.
      *
      * @return |this|^2
@@ -145,7 +145,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return the inner(scalar) product of this two vectors.
      * @throws ArithmeticException if dimension doesn't match
      */
-    public T innerProduct(Vector<T> v) {
+    public T inner(Vector<T> v) {
         checkSameSize(v);
         var mc = getMc();
         final int size = getSize();
@@ -164,7 +164,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return {@code true} of the vectors are perpendicular
      */
     public boolean isPerpendicular(Vector<T> v) {
-        return getMc().isZero(innerProduct(v));
+        return getMc().isZero(inner(v));
     }
 
     /**
@@ -184,7 +184,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @return <pre>this · v / (|this| |v|)</pre>
      */
     public T angleCos(Vector<T> v) {
-        T pro = innerProduct(v);
+        T pro = inner(v);
         return getMc().divide(pro, getMc().multiply(calLength(), v.calLength()));
     }
 
@@ -225,10 +225,11 @@ public abstract class Vector<T> extends Matrix<T> {
         if (isZeroVector() || v.isZeroVector()) {
             return true;
         }
+        var mc = getMc();
         final int size = getSize();
         int not0 = 0;
-        while (getMc().isZero(get(not0))) {
-            if (!getMc().isZero(v.get(not0))) {
+        while (mc.isZero(get(not0))) {
+            if (!mc.isZero(v.get(not0))) {
                 return false;
             }
             not0++;
@@ -239,7 +240,7 @@ public abstract class Vector<T> extends Matrix<T> {
         T t1 = get(not0);
         T t2 = v.get(not0);
         for (int i = not0 + 1; i < size; i++) {
-            if (!getMc().isEqual(getMc().multiply(t1, v.get(i)), getMc().multiply(t2, get(i)))) {
+            if (!mc.isEqual(mc.multiply(t1, v.get(i)), mc.multiply(t2, get(i)))) {
                 return false;
             }
         }
@@ -576,7 +577,7 @@ public abstract class Vector<T> extends Matrix<T> {
      * @throws ArithmeticException if one of the vectors is zero vector
      */
     public static <T> T cosValueOfIntersectionAngle(Vector<T> v1, Vector<T> v2) {
-        T re = v1.innerProduct(v2);
+        T re = v1.inner(v2);
         MathCalculator<T> mc = v1.getMc();
         T d1 = v1.calLength();
         T d2 = v2.calLength();
@@ -756,7 +757,7 @@ public abstract class Vector<T> extends Matrix<T> {
 
             Vector<T> vec = vs[i];
             for (int j = 0; j < i; j++) {
-                temp2[j] = list.get(j).multiplyNumber(temp1[j].innerProduct(vec));
+                temp2[j] = list.get(j).multiplyNumber(temp1[j].inner(vec));
             }
             temp2[i] = vec;
             Vector<T> result = addAll(i + 1, temp2);

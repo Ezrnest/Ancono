@@ -24,10 +24,6 @@ import static cn.ancono.utilities.ArraySup.ensureCapacityAndAdd;
 @SuppressWarnings("Duplicates")
 public class MathUtils {
 
-//    public static void main(String[] args) {
-//        print(gcdUV(5,13));
-//    }
-
     /**
      * Returns the great common divisor (GCD) of two numbers, the result will always be non-negative.
      * <p></p>
@@ -143,7 +139,7 @@ public class MathUtils {
      * Computes the greatest common divisor of two numbers and a pair of number <code>(u,v)</code> such that
      * <pre>ua+vb=gcd(a,b)</pre>
      * <p>
-     * The returned <code>gcd(a,b)</code> will always be positive.
+     * The result <code>gcd(a,b)</code> will always be positive.
      * It follows from common conventions that <code>gcd(a, 0) = gcd(0, a) = a</code>
      *
      * @return an int array of <code>[gcd(a,b), u, v]</code>.
@@ -218,8 +214,8 @@ public class MathUtils {
     /**
      * Computes the greatest common divisor of two numbers and a pair of number (u,v) such that
      * <pre>ua+vb=gcd(a,b)</pre>
-     *
-     * The returned <code>gcd(a,b)</code> will always be positive.
+     * <p>
+     * The result <code>gcd(a,b)</code> will always be positive.
      * It follows from common conventions that <code>gcd(a, 0) = gcd(0, a) = a</code>
      *
      * @return an array of <code>[gcd(a,b), u, v]</code>.
@@ -267,6 +263,7 @@ public class MathUtils {
 
     /**
      * Returns the greatest common divisor of all the given numbers, the result will always be positive.
+     *
      * @param ls an array of numbers with at least one element.
      * @return the GCD of {@code ls}
      * @see #gcd(long, long)
@@ -428,7 +425,7 @@ public class MathUtils {
     }
 
     /**
-     * Calculate the square root of {@code n}.If n cannot be expressed as
+     * Calculate the square root of {@code n}. If n cannot be expressed as
      * a square of an integer,then {@code -1} will be returned. Throws an
      * exception if {@code n<0}
      *
@@ -476,8 +473,16 @@ public class MathUtils {
         return re;
     }
 
+    /**
+     * Determines whether <code>n</code> is perfect square, that is, there exists <code>m</code>
+     * such that <code>n = m^2</code>.
+     */
     public static boolean isPerfectSquare(long n) {
-        return squareRootExact(n) >= 0;
+        if (n < 0) {
+            return false;
+        }
+        var sqrt = sqrtInt(n);
+        return sqrt * sqrt == n;
     }
 
     /**
@@ -487,7 +492,7 @@ public class MathUtils {
      * @param p > -1
      * @return n^p
      * @throws ArithmeticException if p < 0 or p==0&&n==0
-     * @see MathUtils#power(long, int)
+     * @see MathUtils#pow(long, int)
      * @deprecated bad time performance
      */
     @Deprecated
@@ -531,7 +536,7 @@ public class MathUtils {
      * @return n ^ p
      * @throws ArithmeticException if p < 0 or p==0&&n==0
      */
-    public static long power(long n, int p) {
+    public static long pow(long n, int p) {
         if (p < 0) {
             throw new ArithmeticException("Cannot calculate as integer");
         } else if (p == 0) {
@@ -598,11 +603,10 @@ public class MathUtils {
     }
 
     /**
-     * find the number n :
+     * find the number <code>n</code> such that
      * {@code n=2^k, 2^(k-1) < num < n}
      *
      * @param num num>0
-     * @return
      */
     public static int findMin2T(int num) {
         int n = 1;
@@ -634,6 +638,7 @@ public class MathUtils {
      * @throws IllegalArgumentException if {@code n<=0} or {@code x<0}
      */
     public static long rootN(long x, int n) {
+        //TODO better implementation
         if (n <= 0) {
             throw new IllegalArgumentException("n<=0");
         }
@@ -661,11 +666,7 @@ public class MathUtils {
     }
 
     /**
-     * A fast version of power.
-     *
-     * @param p
-     * @param n
-     * @return
+     * Power using binary reduce.
      */
     private static long powerF(long n, int p) {
         long re = 1L;
@@ -708,7 +709,7 @@ public class MathUtils {
      * @param a   a number, positive
      * @param n   must be >=0, if n < 0, than it is taken as 0 and 1 will be returned.
      * @param mod the modular, must be less than 2<<63, or overflow may happen.
-     * @return
+     * @return {@code (a^n) % mod}
      */
     public static long powerAndMod(long a, long n, long mod) {
         if (a < 0) {
@@ -769,7 +770,7 @@ public class MathUtils {
 
     /**
      * Returns the mod inverse of <code>a</code> mod <code>p</code>. That is, a number <code>u</code> such that
-     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are coprime.
+     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are co-prime.
      */
     public static int modInverse(int a, int p) {
         //Created by lyc at 2020-03-03 16:50
@@ -783,7 +784,7 @@ public class MathUtils {
 
     /**
      * Returns the mod inverse of <code>a</code> mod <code>p</code>. That is, a number <code>u</code> such that
-     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are coprime.
+     * <code>a * u = 1 (mod p)</code>. It is required that <code>a</code> and <code>p</code> are co-prime.
      */
     public static long modInverse(long a, long p) {
         //Created by lyc at 2020-03-03 16:50
@@ -854,11 +855,23 @@ public class MathUtils {
     }
 
     /**
+     * Produces Miller-Rabin prime number test algorithm for the number x. If this
+     * method returns true, then the number is almost a prime number( 1/(2<<50) chance of not
+     * being one).
+     *
+     * @param x a number,positive
+     * @return true if the number passes the test.
+     * @see MathUtils#doMillerRabin(long, long)
+     */
+    public static boolean doMillerRabin(long x) {
+        return doMillerRabin(x, 25);
+    }
+
+    /**
      * Produces a random long number x (x>=0 && x < bound) according to the random.
      *
      * @param rd    a random
      * @param bound exclusive
-     * @return
      */
     public static long randomLong(Random rd, long bound) {
         if (bound <= Integer.MAX_VALUE) {
@@ -877,20 +890,6 @@ public class MathUtils {
             }
         }
     }
-
-    /**
-     * Produces Miller-Rabin prime number test algorithm for the number x.If this
-     * method returns true, then the number is almost a prime number( 1/(2<<50) chance of not
-     * being one).
-     *
-     * @param x a number,positive
-     * @return true if the number passes the test.
-     * @see MathUtils#doMillerRabin(long, long)
-     */
-    public static boolean doMillerRabin(long x) {
-        return doMillerRabin(x, 25);
-    }
-
 
 
     /**
@@ -1003,23 +1002,20 @@ public class MathUtils {
         return result;
     }
 
+
     /**
      * Returns the integer value of the square root of {@code n}, that is, an integer <code>m</code>
      * such that <code>m<sup>2</sup> <= n < <code>(m+1)<sup>2</sup></code></code>.
      *
-     *
      * @param n a positive number.
      * @return {@code [sqrt(n)]}
      */
-    public static long sqrtIntL(long n) {
+    public static long sqrtInt(long n) {
         if (n < 0) {
             throw new ArithmeticException("n<0");
         }
-        if (n < 16) {
-            return sqrtInt0(n, 0);
-        }
         if (n >= 9223372030926249001L) {
-            //to prevent the overflow
+            //to prevent overflow
             return 3037000499L;
         }
         return (long) Math.sqrt(n);
@@ -1048,14 +1044,6 @@ public class MathUtils {
 //            }
 //            return -1;
 //        });
-    }
-
-
-    private static long sqrtInt0(long n, long lb) {
-        while (lb * lb <= n) {
-            lb++;
-        }
-        return lb - 1;
     }
 
 
@@ -1108,7 +1096,6 @@ public class MathUtils {
      * Returns the distance of (x1,y2) and (x2,y2) defined in space Lp, which is equal to
      * <pre>(abs(x1-x2)^p+abs(y1-y2)^p)^(1/p)</pre>
      * If {@code p==Double.POSITIVE_INFINITY}, then returns the tschebyscheff distance.
-     *
      */
     public static double distanceP(double x1, double y1, double x2, double y2, double p) {
         if (p == Double.POSITIVE_INFINITY) {
@@ -1130,7 +1117,6 @@ public class MathUtils {
      *
      * @param x a number
      * @param p a positive number
-     * @return
      */
     public static double maxBelow(double x, double p) {
         p = Math.abs(p);
@@ -1152,7 +1138,6 @@ public class MathUtils {
      *
      * @param x a positive number
      * @param p a positive number
-     * @return
      */
     public static long maxBelowK(double x, double p) {
         if (p > x) {
@@ -1203,14 +1188,14 @@ public class MathUtils {
         }
         //two ways
         Primes pr = Primes.getInstance();
-        if (n <= FACTOR_ENUMERATE_THREHOLD && !pr.isPrimesAvailable(n / 2 + 1)) {
+        if (n <= FACTOR_ENUMERATE_THRESHOLD && !pr.isPrimesAvailable(n / 2 + 1)) {
             return factorsEnumerate(n);
         } else {
             return factorsUsingPrimes(n);
         }
     }
 
-    private static final long FACTOR_ENUMERATE_THREHOLD = 10000;
+    private static final long FACTOR_ENUMERATE_THRESHOLD = 10000;
 
     private static long[] factorsEnumerate(long n) {
         long[] factors = new long[16];
@@ -1234,12 +1219,9 @@ public class MathUtils {
     }
 
     /**
-     * @param fr
-     * @param factors
-     * @param order   order in fr
-     * @param base    multiplied previously
-     * @param index   index in factors
-     * @return
+     * @param order order in fr
+     * @param base  multiplied previously
+     * @param index index in factors
      */
     private static int addFactor(long[][] fr, long[] factors, int order, long base, int index) {
         if (order == fr.length) {
@@ -1249,7 +1231,7 @@ public class MathUtils {
         long[] pFactor = fr[order];
         int maxPower = Math.toIntExact(pFactor[1]);
         for (int i = 0; i <= maxPower; i++) {
-            index = addFactor(fr, factors, order + 1, base * power(pFactor[0], i), index);
+            index = addFactor(fr, factors, order + 1, base * pow(pFactor[0], i), index);
         }
         return index;
     }
@@ -1257,7 +1239,7 @@ public class MathUtils {
 
     /**
      * Returns a two-dimension array representing the
-     * number's prime factors and the corresponding times.
+     * number's prime factors and the corresponding powers.
      * <P>For example, <text> factorReduce(6)={{2,1},{3,1}} </text>
      */
     public static long[][] factorReduce(long n) {
@@ -1309,7 +1291,7 @@ public class MathUtils {
     public static long fromFactors(long[][] factorsAndPower) {
         long re = 1;
         for (long[] f : factorsAndPower) {
-            re *= power(f[0], Math.toIntExact(f[1]));
+            re *= pow(f[0], Math.toIntExact(f[1]));
         }
         return re;
     }
@@ -1327,7 +1309,7 @@ public class MathUtils {
         Primes pr = Primes.getInstance();
         pr.ensurePrimesNumber(factorPower.length - 1);
         for (int i = 0; i < factorPower.length; i++) {
-            re *= power(pr.getPrime(i), factorPower[i]);
+            re *= pow(pr.getPrime(i), factorPower[i]);
         }
         return re;
     }
@@ -1362,7 +1344,7 @@ public class MathUtils {
                 continue;
             }
             //1+a+a^2+...+a^p = (a^(p+1)-1)/(a-1)
-            long t = power(factor[0], Math.toIntExact(factor[1] + 1)) - 1;
+            long t = pow(factor[0], Math.toIntExact(factor[1] + 1)) - 1;
             t /= (factor[0] - 1);
             sum *= t;
         }
@@ -1390,9 +1372,9 @@ public class MathUtils {
         for (long[] factor : factors) {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).floor());
-            base *= power(factor[0], basePow);
+            base *= pow(factor[0], basePow);
             int rePow = Fraction.of(basePow).divide(exp).toInt();
-            result *= power(factor[0], rePow);
+            result *= pow(factor[0], rePow);
         }
         return new long[]{result, base};
     }
@@ -1438,9 +1420,9 @@ public class MathUtils {
         for (long[] factor : factors) {
             long pow = factor[1];
             int basePow = Math.toIntExact(exp.multiply(pow).ceil());
-            base *= power(factor[0], basePow);
+            base *= pow(factor[0], basePow);
             int rePow = Fraction.of(basePow).divide(exp).toInt();
-            result *= power(factor[0], rePow);
+            result *= pow(factor[0], rePow);
         }
         return new long[]{result, base};
     }
@@ -1452,9 +1434,9 @@ public class MathUtils {
 //    }
 
     /**
-     * Returns the power of <code>-1</code>.
+     * Returns <code>(-1)<sup>pow</sup></code>.
      */
-    public static int powMinusOne(int pow) {
+    public static int powOfMinusOne(int pow) {
         if (pow % 2 == 0) {
             return 1;
         } else {
@@ -1462,8 +1444,21 @@ public class MathUtils {
         }
     }
 
+    /**
+     * Returns <code>x + (y - x) * k</code>.
+     *
+     * @param k the interpolate factor.
+     */
     public static double interpolate(double x, double y, double k) {
         return x + (y - x) * k;
+    }
+
+    public static double product(double[] array) {
+        double r = 1;
+        for (double l : array) {
+            r *= l;
+        }
+        return r;
     }
 
     public static long product(long[] array) {
@@ -1482,10 +1477,10 @@ public class MathUtils {
         return r;
     }
 
-    public static double product(double[] array) {
-        double r = 1;
+    public static double sum(double[] array) {
+        double r = 0;
         for (double l : array) {
-            r *= l;
+            r += l;
         }
         return r;
     }
@@ -1506,38 +1501,124 @@ public class MathUtils {
         return r;
     }
 
-    public static double sum(double[] array) {
+    public static double sum(double[] array, int start, int end) {
         double r = 0;
-        for (double l : array) {
-            r += l;
+        for (int i = start; i < end; i++) {
+            r += array[i];
+        }
+        return r;
+    }
+
+    public static long sum(long[] array, int start, int end) {
+        long r = 0;
+        for (int i = start; i < end; i++) {
+            r += array[i];
+        }
+        return r;
+    }
+
+    public static int sum(int[] array, int start, int end) {
+        int r = 0;
+        for (int i = start; i < end; i++) {
+            r += array[i];
         }
         return r;
     }
 
 
+    public static double inner(double[] x, double[] y) {
+        if (x.length != y.length) {
+            throw new IllegalArgumentException("The length must be the same! Given: " + x.length + ", " + y.length);
+        }
+        double result = 0;
+        for (int i = 0; i < x.length; i++) {
+            result += x[i] * y[i];
+        }
+        return result;
+    }
+
+    public static long inner(long[] x, long[] y) {
+        if (x.length != y.length) {
+            throw new IllegalArgumentException("The length must be the same! Given: " + x.length + ", " + y.length);
+        }
+        long result = 0;
+        for (int i = 0; i < x.length; i++) {
+            result += x[i] * y[i];
+        }
+        return result;
+    }
+
+    public static int inner(int[] x, int[] y) {
+        if (x.length != y.length) {
+            throw new IllegalArgumentException("The length must be the same! Given: " + x.length + ", " + y.length);
+        }
+        int result = 0;
+        for (int i = 0; i < x.length; i++) {
+            result += x[i] * y[i];
+        }
+        return result;
+    }
+
+
     /**
-     * Returns a solution for the modular equations: <code>x mod m<sub>i</sub> = r<sub>i</sub></code>, where
+     * Returns a solution for the modular equations: <pre>x mod m<sub>i</sub> = r<sub>i</sub>,</pre> where
      * <code>m<sub>i</sub></code> are co-prime integers.
+     * The result is guaranteed to be minimal non-negative solution.
      *
      * @param mods       an array of modular, <code>m<sub>i</sub></code>
      * @param remainders an array of remainders,
      * @return the solution of the modular equation
      */
     public static long chineseRemainder(long[] mods, long[] remainders) {
-        long M = product(mods);
-        long x = 0;
-        for (int i = 0; i < mods.length; i++) {
-            var m = mods[i];
-            var r = remainders[i];
-            var t = M / m;
-            var inv = modInverse(t, m);
-            x += r * t * inv;
-            x %= M;
+//        long M = product(mods);
+//        long x = 0;
+//        for (int i = 0; i < mods.length; i++) {
+//            var m = mods[i];
+//            var r = remainders[i];
+//            var t = M / m;
+//            var inv = modInverse(t, m);
+//            x += r * t * inv;
+//            x %= M;
+//        }
+//        return x;
+        //Created by lyc at 2021-04-20 20:31
+        /*
+        Proof of this algorithm:
+        Invariant: x satisfies: x = rem[j] mod m[j] for j < i
+         */
+        long m = mods[0];
+        long x = remainders[0];
+        for (int i = 1; i < mods.length; i++) {
+            var t = gcdUV(m, mods[i]);
+            var u = t[1];
+            var v = t[2];
+            // um + v m[i] = 1
+            x = u * m * remainders[i] + v * mods[i] * x;
+            // x mod m[i] = um*rem[i] mod m[i] =(1-v m[i])rem[i] mod m[i] = rem[i]
+            // for j < i, x mod m[j] = v * m[i] * x mod m[j] = (1-um)x mod m[j] = x
+            m = m * mods[i];
+            x %= m;
+            // x in (-m,m)
+        }
+        if (x < 0) {
+            x += m; //make it non-negative
         }
         return x;
     }
 
+
+    public static long primitiveRoot(long p) {
+        if (p <= 2) {
+            throw new IllegalArgumentException("p must be an odd prime!");
+        }
+        //TODO
+        return 0;
+    }
+
 //    public static void main(String[] args) {
-//        System.out.println(gcd(10L,6L));
+////        System.out.println(chineseRemainder(new long[]{3L,5L},new long[]{1,2}));
+//        for (long i = 0; i < 20; i++) {
+//            System.out.println(i+": "+sqrtInt(i));
+//        }
 //    }
 }

@@ -192,4 +192,38 @@ interface EUDCalculator<T : Any> : UFDCalculator<T> {
         }
         return ans
     }
+
+
+    /**
+     * Returns the result `x` such that
+     *
+     *     x = remainders[i] (mod mods[i])
+     *
+     * @param mods a list of the modular, they must be co-prime
+     *
+     */
+    @JvmDefault
+    fun chineseRemainder(mods: List<T>, remainders: List<T>): T {
+//        val prod: T = mods.reduce(this::multiply)
+//        var x: T = zero
+//        for (i in mods.indices) {
+//            val m: T = mods[i]
+//            val r: T = remainders[i]
+//            val t = exactDivide(prod,m)
+//            val inv = this.modInverse(t, m)
+//            x += r * t * inv
+//            x = mod(x,prod)
+//        }
+//        return x
+        //Created by lyc at 2021-04-20 20:31
+        var m: T = mods[0]
+        var x: T = remainders[0]
+        for (i in 1 until mods.size) {
+            val (_, u, v) = gcdUV(m, mods[i])
+            x = u * m * remainders[i] + v * mods[i] * x
+            m *= mods[i]
+            x = mod(x, m)
+        }
+        return x
+    }
 }

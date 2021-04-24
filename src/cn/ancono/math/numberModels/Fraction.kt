@@ -5,7 +5,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.api.FieldNumberModel
 import cn.ancono.math.numberModels.api.Simplifier
-import cn.ancono.math.numberTheory.NaiveNumberTheory
+import cn.ancono.math.numberTheory.NTUtils
 import cn.ancono.utilities.ArraySup
 import java.io.Serializable
 import java.util.regex.Pattern
@@ -841,7 +841,7 @@ internal constructor(
 
         @JvmStatic
         fun continuousFraction(x: Double, len: Int): LongArray {
-            return NaiveNumberTheory.continuousFractionReduce(x, len)
+            return NTUtils.continuousFractionReduce(x, len)
         }
 
         /**

@@ -1,7 +1,6 @@
 package cn.ancono.math.function
 
 import cn.ancono.math.MathCalculatorHolder
-import cn.ancono.math.calculus.Calculus.derivation
 import cn.ancono.math.numberModels.api.DivisionRingNumberModel
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
@@ -22,7 +21,7 @@ class ExprFunction(val expr: Expression,
 
     override fun isZero(): Boolean {
         val rt = expr.root
-        return rt.type == Node.Type.POLYNOMIAL && Node.getPolynomialPart(rt, null).isZero
+        return rt.type == Node.Type.POLYNOMIAL && Node.getPolynomialPart(rt, null).isZero()
     }
 
     override fun add(y: ExprFunction): ExprFunction {
@@ -92,7 +91,7 @@ class NExprFunction(val expr: Expression,
 
     override fun isZero(): Boolean {
         val rt = expr.root
-        return rt.type == Node.Type.POLYNOMIAL && Node.getPolynomialPart(rt, null).isZero
+        return rt.type == Node.Type.POLYNOMIAL && Node.getPolynomialPart(rt, null).isZero()
     }
 
     override fun add(y: NExprFunction): NExprFunction {

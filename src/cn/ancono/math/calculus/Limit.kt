@@ -97,7 +97,7 @@ object Limit {
     @JvmStatic
     fun fractionPoly(nume: Multinomial, deno: Multinomial, process: LimitProcessE,
                      mc: ExprCalculator = ExprCalculator.instance): LimitResultE {
-        if (deno.isZero) {
+        if (deno.isZero()) {
             ExceptionUtil.dividedByZero()
         }
         val reNume = limitOf(nume, process, mc)

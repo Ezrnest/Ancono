@@ -70,8 +70,8 @@ operator fun <T : Any> Complex<T>.component1() = this.re()
 operator fun <T : Any> Complex<T>.component2() = this.im()
 
 //operator fun <T : Any> IPolynomial<T>.get(n: Int) = this.get(n)!!
-operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)!!
-operator fun Multinomial.times(y: Multinomial) = this.multiply(y)!!
+operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)
+operator fun Multinomial.times(y: Multinomial) = this.multiply(y)
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!
 operator fun Multinomial.div(y: Term) = this.divide(y)!!
 

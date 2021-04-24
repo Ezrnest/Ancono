@@ -233,11 +233,11 @@ public final class Calculators {
         }
 
         /**
-         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
-        public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
-            return MathUtils.powerAndMod(at, nt, mt);
+        public Integer powMod(Integer at, Integer nt, Integer mt) {
+            return MathUtils.powMod(at, nt, mt);
         }
 
 
@@ -558,16 +558,16 @@ public final class Calculators {
         }
 
         /**
-         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
-        public Integer powerAndMod(Integer a, Integer n, Integer m) {
-            return MathUtils.powerAndMod(a, n, m);
+        public Integer powMod(Integer a, Integer n, Integer m) {
+            return MathUtils.powMod(a, n, m);
         }
 
         @Override
         public @NotNull Integer powerAndMod(@NotNull Integer x, long n, @NotNull Integer m) {
-            return MathUtils.powerAndMod(x, n, m);
+            return MathUtils.powMod(x, n, m);
         }
 
         @Override
@@ -770,8 +770,8 @@ public final class Calculators {
          *
          */
         @Override
-        public Long powerAndMod(Long at, Long nt, Long mt) {
-            return MathUtils.powerAndMod(at, nt, mt);
+        public Long powMod(Long at, Long nt, Long mt) {
+            return MathUtils.powMod(at, nt, mt);
         }
 
         @NotNull
@@ -962,13 +962,13 @@ public final class Calculators {
         }
 
         @Override
-        public Long powerAndMod(Long a, Long n, Long m) {
-            return MathUtils.powerAndMod(a, n, m);
+        public Long powMod(Long a, Long n, Long m) {
+            return MathUtils.powMod(a, n, m);
         }
 
         @Override
         public @NotNull Long powerAndMod(@NotNull Long x, long n, @NotNull Long m) {
-            return MathUtils.powerAndMod(x, n, m);
+            return MathUtils.powMod(x, n, m);
         }
 
         //        /**
@@ -1346,10 +1346,10 @@ public final class Calculators {
         }
 
         /**
-         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
-        public BigInteger powerAndMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
+        public BigInteger powMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
             return a.modPow(n, mod);
         }
 
@@ -2129,13 +2129,13 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer pow(@NotNull Integer p, long exp) {
-            return MathUtils.powerAndMod(p, exp, p);
+            return MathUtils.powMod(p, exp, p);
         }
 
         @NotNull
         @Override
         public Integer exp(@NotNull Integer a, @NotNull Integer b) {
-            return MathUtils.powerAndMod(a, b, n);
+            return MathUtils.powMod(a, b, n);
         }
 
 //        @Override

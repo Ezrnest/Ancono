@@ -534,7 +534,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
 
     override fun isExactDivide(a: Multinomial, b: Multinomial): Boolean {
         val (_, r) = a.divideAndRemainder(b)
-        return r.isZero
+        return r.isZero()
     }
     //    override fun divideAndRemainder(a: Multinomial, b: Multinomial): cn.ancono.cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
 //        val arr = a.divideAndRemainder(b)

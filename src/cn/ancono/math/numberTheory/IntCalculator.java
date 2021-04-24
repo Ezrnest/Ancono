@@ -475,14 +475,14 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
     /**
      * Returns {@code (a^n) mod m}.
      * <p>
-     * For example, {@code powerAndMod(2,2,3) = 1}, and
-     * {@code powerAndMod(3,9,7) = 6}.
+     * For example, {@code powMod(2,2,3) = 1}, and
+     * {@code powMod(3,9,7) = 6}.
      *
      * @param a a number.
      * @param n a non-negative number.
      * @param m the modular.
      */
-    default T powerAndMod(T a, T n, T m) {
+    default T powMod(T a, T n, T m) {
         if (isNegative(n)) {
             throw new IllegalArgumentException("n<0");
         }

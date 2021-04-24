@@ -23,6 +23,7 @@ import cn.ancono.math.numberModels.expression.Expression
 import cn.ancono.math.numberModels.expression.Node
 import cn.ancono.math.numberModels.structure.Polynomial
 import java.util.function.DoubleUnaryOperator
+import kotlin.math.abs
 
 object Calculus {
     /**
@@ -213,7 +214,7 @@ object Calculus {
             if (nextX.isNaN() || nextX.isInfinite()) {
                 return null
             }
-            val d = Math.abs(x - nextX)
+            val d = abs(x - nextX)
             if (d <= rootDelta) {
                 return nextX
             } else if (d > maxSearchRange) {

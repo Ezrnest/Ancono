@@ -17,7 +17,10 @@ import static cn.ancono.utilities.ArraySup.ensureCapacityAndAdd;
  * <p>
  * For functions related to combination (factorial, combination,...),
  * please refer to
- * {@linkplain cn.ancono.math.discrete.combination.CombUtils}
+ * {@linkplain cn.ancono.math.discrete.combination.CombUtils}.
+ * For more functions related to number theory (e.g. Legendre symbol, ...)
+ * please refer to
+ * {@linkplain cn.ancono.math.numberTheory.NTUtils}
  *
  * @author lyc
  */
@@ -485,60 +488,18 @@ public class MathUtils {
         return sqrt * sqrt == n;
     }
 
-    /**
-     * Return the value of n^p.
-     *
-     * @param n a number
-     * @param p > -1
-     * @return n^p
-     * @throws ArithmeticException if p < 0 or p==0&&n==0
-     * @see MathUtils#pow(long, int)
-     * @deprecated bad time performance
-     */
-    @Deprecated
-    public static long power0(long n, int p) {
-        if (p < 0) {
-            throw new ArithmeticException("Cannot calculate as integer");
-        } else if (p == 0) {
-            if (n == 0) {
-                throw new ArithmeticException("0^0");
-            } else {
-                return 1;
-            }
-        }
-        // calculate two power:
-        int p2 = 1;
-        int n2 = 1;
-        while (n2 <= p) {
-            n2 *= 2;
-            p2++;
-        }
-        long[] powers = new long[p2];
-        powers[0] = n;
-        for (int i = 1; i < p2; i++) {
-            powers[i] = powers[i - 1] * powers[i - 1];
-        }
-        long re = 1;
-        for (int i = 0; i < p2; i++) {
-            if ((p & 1) == 1) {
-                re *= powers[i];
-            }
-            p >>>= 1;
-        }
-        return re;
-    }
 
     /**
-     * Return the value of n^p.
+     * Return the value of <code>n^p</code>.
      *
      * @param n a number
-     * @param p > -1
-     * @return n ^ p
-     * @throws ArithmeticException if p < 0 or p==0&&n==0
+     * @param p a non-negative integer
+     * @return <code>n^p</code>.
+     * @throws ArithmeticException if <code>p < 0</code> or <code>p==0 && n==0</code>.
      */
     public static long pow(long n, int p) {
         if (p < 0) {
-            throw new ArithmeticException("Cannot calculate as integer");
+            throw new ArithmeticException("Negative power: " + p);
         } else if (p == 0) {
             if (n == 0L) {
                 throw new ArithmeticException("0^0");
@@ -681,7 +642,10 @@ public class MathUtils {
     }
 
     /**
-     * Returns a non-negative integer of <code>a mod m</code>
+     * Returns a non-negative integer of <code>a mod m</code>, it is required that
+     * <code>m</code> is positive.
+     *
+     * @param m a positive integer
      */
     public static int mod(int a, int m) {
         var re = a % m;
@@ -692,7 +656,10 @@ public class MathUtils {
     }
 
     /**
-     * Returns a non-negative integer of <code>a mod m</code>
+     * Returns a non-negative integer of <code>a mod m</code>, it is required that
+     * <code>m</code> is positive.
+     *
+     * @param m a positive integer
      */
     public static long mod(long a, long m) {
         var re = a % m;
@@ -703,21 +670,21 @@ public class MathUtils {
     }
 
     /**
-     * Returns {@code (a^n) % mod}, for example, {@code powerAndMod(2,2,3) = 1}.This
-     * method will not check overflow.
+     * Returns {@code (a^n) % mod}, that is, the power of <code>a</code> modulo <code>m</code>,
+     * the result will always be in <code>[0, mod)</code>
+     * <p></p>
+     * For example, {@code powMod(2,2,3) = 1}.
      *
-     * @param a   a number, positive
-     * @param n   must be >=0, if n < 0, than it is taken as 0 and 1 will be returned.
-     * @param mod the modular, must be less than 2<<63, or overflow may happen.
+     * <p></p>
+     * This method will not check for overflow.
+     *
+     * @param a   an integer
+     * @param n   the power
+     * @param mod a positive modular
      * @return {@code (a^n) % mod}
      */
-    public static long powerAndMod(long a, long n, long mod) {
-        if (a < 0) {
-            throw new IllegalArgumentException("a<0");
-        }
-        if (mod == 1) {
-            return 0;
-        }
+    public static long powMod(long a, long n, long mod) {
+        a = mod(a, mod);
         if (a == 0 || a == 1) {
             return a;
         }
@@ -736,20 +703,21 @@ public class MathUtils {
     }
 
     /**
-     * Returns {@code (a^n) % mod}, with number as int. For example, {@code powerAndMod(2,2,3) = 1}.This
-     * method will not check overflow.
+     * Returns {@code (a^n) % mod}, that is, the power of <code>a</code> modulo <code>m</code>,
+     * the result will always be in <code>[0, mod)</code>
+     * <p></p>
+     * For example, {@code powMod(2,2,3) = 1}.
      *
-     * @param a   a number, positive
-     * @param n   must be >=0, if n < 0, than it is taken as 0 and 1 will be returned.
-     * @param mod the modular, must be less than 2<<31, or overflow may happen.
+     * <p></p>
+     * This method will not check for overflow.
+     *
+     * @param a   an integer
+     * @param n   the power
+     * @param mod a positive modular
+     * @return {@code (a^n) % mod}
      */
-    public static int powerAndMod(int a, int n, int mod) {
-        if (a < 0) {
-            throw new IllegalArgumentException("a<0");
-        }
-        if (mod == 1) {
-            return 0;
-        }
+    public static int powMod(int a, int n, int mod) {
+        a = mod(a, mod);
         if (a == 0 || a == 1) {
             return a;
         }
@@ -765,6 +733,24 @@ public class MathUtils {
             n >>= 1;
         }
         return ans;
+    }
+
+    /**
+     * Returns {@code (a^n) % mod}, that is, the power of <code>a</code> modulo <code>m</code>,
+     * the result will always be in <code>[0, mod)</code>
+     * <p></p>
+     * For example, {@code powMod(2,2,3) = 1}.
+     *
+     * <p></p>
+     * This method will not check for overflow.
+     *
+     * @param a   an integer
+     * @param n   the power
+     * @param mod a positive modular
+     * @return {@code (a^n) % mod}
+     */
+    public static int powMod(int a, long n, int mod) {
+        return (int) powMod(a, n, (long) mod);
     }
 
 
@@ -796,17 +782,6 @@ public class MathUtils {
         return arr[1];
     }
 
-    /**
-     * {@code (a^n) % mod}, with number as int. For example, {@code powerAndMod(2,2,3) = 1}.
-     * This method will not check overflow.
-     *
-     * @param a   a number, positive
-     * @param n   must be >=0, if n < 0, than it is taken as 0 and 1 will be returned.
-     * @param mod the modular, must be less than 2<<31, or overflow may happen.
-     */
-    public static int powerAndMod(int a, long n, int mod) {
-        return (int) powerAndMod(a, n, (long) mod);
-    }
 
     /**
      * Produces Miller-Rabin prime number test algorithm for the number x.If this
@@ -839,7 +814,7 @@ public class MathUtils {
         Random rd = new Random();
         for (int i = 0; i < round; i++) {
             long a = randomLong(rd, x);
-            long t = powerAndMod(a, d, x);
+            long t = powMod(a, d, x);
             if (t == 1) {
                 return false;
 
@@ -1193,6 +1168,14 @@ public class MathUtils {
         } else {
             return factorsUsingPrimes(n);
         }
+    }
+
+    /**
+     * Returns the proper divisors of [n], which are its factors except [n] itself.
+     */
+    public static long[] properDivisors(long n) {
+        var factors = MathUtils.factors(n);
+        return Arrays.copyOf(factors, factors.length - 1);
     }
 
     private static final long FACTOR_ENUMERATE_THRESHOLD = 10000;
@@ -1606,19 +1589,39 @@ public class MathUtils {
         return x;
     }
 
-
+    /**
+     * Returns the primitive root modulo <code>p</code>, that is,
+     * an integer <code>a</code> that generates the modular multiplication
+     * group <code>(Z_p)^*</code>.
+     * <p></p>
+     * The order of <code>a</code> in <code>(Z_p)^*</code> is exactly <code>p-1</code>.
+     *
+     * @return a primitive root of <code>p</code>.
+     */
     public static long primitiveRoot(long p) {
-        if (p <= 2) {
+        if (p < 2) {
             throw new IllegalArgumentException("p must be an odd prime!");
         }
-        //TODO
-        return 0;
+        if (p == 2) {
+            return 1;
+        }
+        var q = p - 1;
+        var factors = factors(q);
+        Outer:
+        for (long a = 2; a < p; a++) {
+            for (int i = 1; i < factors.length; i++) {
+                var e = powMod(a, q / factors[i], p);
+                if (e == 1) {
+                    continue Outer;
+                }
+            }
+            return a;
+        }
+        throw new ArithmeticException("No primitive root for p!");
     }
 
 //    public static void main(String[] args) {
 ////        System.out.println(chineseRemainder(new long[]{3L,5L},new long[]{1,2}));
-//        for (long i = 0; i < 20; i++) {
-//            System.out.println(i+": "+sqrtInt(i));
-//        }
+//        System.out.println(primitiveRoot(5));
 //    }
 }

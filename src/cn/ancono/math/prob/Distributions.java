@@ -22,11 +22,12 @@ public final class Distributions {
     }
 
     /**
-     * Returns the binomial distribution:{@code b(k;n,p)}.<br>
+     * Returns the binomial distribution: {@code b(k;n,p)}.<br>
      * The number is equal to the probability of getting {@code k} times
      * in {@code n} Bernoulli trails.
      * <pre>(n,k)*p^k*(1-p)^(n-k)</pre>
      * where (n,k) means the binomial coefficient.
+     *
      * @param k the number of event excepted to happen
      * @param n the total number of trails
      * @param p the probability

@@ -1,7 +1,6 @@
 package cn.ancono.math.prob
 
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.exp
 import kotlin.math.ln
 
@@ -31,6 +30,7 @@ typealias Event = Map<ProbSpace<*>, Any>
  * @param E the type of point in this space.
  */
 interface ProbSpace<out E : Any> {
+
 
     /**
      * Randomly returns a point in this probability space.
@@ -220,7 +220,7 @@ class PoissonSpace(val k: Double) : AbstractProbSpace<Int>() {
  *
  *     p(x) = e^(-x)
  */
-class StandardExpSpace() : AbstractProbSpace<Double>() {
+class StandardExpSpace : AbstractProbSpace<Double>() {
 
     override fun randomPoint(): Double {
         val d = rd.nextDouble()

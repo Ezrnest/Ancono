@@ -37,7 +37,12 @@ import java.util.function.IntFunction;
 
 
 /**
- * Represents polynomials of one variable on a field <code>T</code>.
+ * Represents polynomials of one variable with number model type <code>T</code>.
+ * <p></p>
+ * Generally, for methods that only require addition and multiplication of the number model, including
+ * polynomial addition and multiplication, it is sufficient that the number model forms a ring.
+ * However, for methods including <code>gcd, mod</code>, it is required that number model forms a field.
+ * You can find additional methods for polynomials on a ring in {@linkplain PolynomialUtil}.
  *
  * @author liyicheng
  * @see IPolynomial
@@ -1010,7 +1015,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     @SafeVarargs
     public static <T> Polynomial<T> multiplyAll(Polynomial<T>... ps) {
-        return NumberModelUtils.multiplyAll(ps, 0, ps.length);
+        return NumberModelUtils.productBinary(ps, 0, ps.length);
     }
 
     /**
@@ -1335,8 +1340,8 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             if (mc.isZero(t)) {
                 continue;
             }
-            var m1 = i == 0 ? one(mc) : NumberModelUtils.multiplyAll(rootPoly, 0, i);
-            var m2 = i == points.length - 1 ? one(mc) : NumberModelUtils.multiplyAll(rootPoly, i + 1, points.length);
+            var m1 = i == 0 ? one(mc) : NumberModelUtils.productBinary(rootPoly, 0, i);
+            var m2 = i == points.length - 1 ? one(mc) : NumberModelUtils.productBinary(rootPoly, i + 1, points.length);
             var single = m1.multiply(m2);
             var curRoot = roots[i];
             IntFunction<T> f = (int j) -> mc.subtract(curRoot, roots[j]);

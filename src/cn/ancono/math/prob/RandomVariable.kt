@@ -50,7 +50,10 @@ sealed class RandomVariable<out T> {
 
 fun <T : Any> RandomVariable<T>.getAsSequence(): Sequence<T> = generateSequence { this.get() }
 
-abstract class SimpleRV<E : Any, out T>() : RandomVariable<T>() {
+/**
+ * A simple random variable is only involved with single probability space.
+ */
+abstract class SimpleRV<E : Any, out T> : RandomVariable<T>() {
     abstract val space: ProbSpace<E>
 
     override val spaces: Set<ProbSpace<*>>
@@ -70,7 +73,7 @@ abstract class SimpleRV<E : Any, out T>() : RandomVariable<T>() {
 
 }
 
-abstract class ComposedRV<out T>() : RandomVariable<T>() {
+abstract class ComposedRV<out T> : RandomVariable<T>() {
 
     abstract val rvs: List<RandomVariable<*>>
 
@@ -124,7 +127,7 @@ class MappedRV<out T, S>(override val rvs: List<RandomVariable<S>>, val mapping:
 }
 
 
-class ConstantDist<out T>(val c: T) : SimpleRV<Unit, T>() {
+class ConstantRV<out T>(val c: T) : SimpleRV<Unit, T>() {
     override fun fromPoint(e: Unit): T {
         return c
     }
@@ -136,7 +139,7 @@ class ConstantDist<out T>(val c: T) : SimpleRV<Unit, T>() {
 /**
  * A random variable that simply returns the event.
  */
-class IdentityVariable<E : Any, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E>() {
+class IdentityRV<E : Any, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E>() {
     override fun fromPoint(e: E): E {
         return e
     }
@@ -154,7 +157,7 @@ class IdentityVariable<E : Any, S : ProbSpace<E>>(override val space: S) : Simpl
 //    }
 //}
 
-class NormalDist(val a: Double, val sigma: Double, override val space: StandardNormalDistSpace) : SimpleRV<Double, Double>() {
+class NormalRV(val a: Double, val sigma: Double, override val space: StandardNormalDistSpace) : SimpleRV<Double, Double>() {
     init {
         require(sigma > 0)
     }
@@ -199,7 +202,7 @@ class NormalDist(val a: Double, val sigma: Double, override val space: StandardN
 //}
 
 
-class ExpDist(val k: Double, override val space: StandardExpSpace) : SimpleRV<Double, Double>() {
+class ExpRV(val k: Double, override val space: StandardExpSpace) : SimpleRV<Double, Double>() {
     override fun fromPoint(e: Double): Double {
         return e / k
     }
@@ -211,8 +214,8 @@ class ExpDist(val k: Double, override val space: StandardExpSpace) : SimpleRV<Do
  * Note that the calculator can not support methods `isEqual` and `compare`.
  */
 class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<RandomVariable<T>>() {
-    override val one: RandomVariable<T> = ConstantDist(mc.one)
-    override val zero: RandomVariable<T> = ConstantDist(mc.zero)
+    override val one: RandomVariable<T> = ConstantRV(mc.one)
+    override val zero: RandomVariable<T> = ConstantRV(mc.zero)
 
     override fun isZero(x: RandomVariable<T>): Boolean {
         if (x == zero) {
@@ -310,7 +313,7 @@ class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<R
     }
 
     override fun constantValue(name: String): RandomVariable<T> {
-        return ConstantDist(mc.constantValue(name)!!)
+        return ConstantRV(mc.constantValue(name)!!)
     }
 
     override fun exp(x: RandomVariable<T>): RandomVariable<T> {

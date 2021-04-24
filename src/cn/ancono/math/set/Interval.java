@@ -222,9 +222,6 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
     public abstract Interval<T> intersect(Interval<T> iv);
 
 
-    /**
-     * @see cn.ancono.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
-     */
     @NotNull
     @Override
     public abstract <N> Interval<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);

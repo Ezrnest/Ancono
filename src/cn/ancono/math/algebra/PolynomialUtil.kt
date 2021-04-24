@@ -20,7 +20,8 @@ import kotlin.math.absoluteValue
 
 //Created by lyc at 2020-03-01 13:59
 /**
- * Provides utility algorithms for polynomials.
+ * Provides utility algorithms for polynomials, including partial fraction decomposition, pseudo division and
+ * GCD for polynomial on a ring, factorizing and so on.
  */
 object PolynomialUtil {
 
@@ -1000,6 +1001,8 @@ object PolynomialUtil {
         }
         return DecomposedPoly(results)
     }
+
+    //TODO factorizing polynomial on Z
 
 }
 

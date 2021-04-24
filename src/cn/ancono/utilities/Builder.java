@@ -32,7 +32,6 @@ public interface Builder<T, S extends cn.ancono.utilities.Builder<T, S, I>, I> {
     /**
      * Check the state of this builder whether it finishes building.
      *
-     * @return
      */
     boolean isBuilt();
 }

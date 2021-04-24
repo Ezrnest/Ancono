@@ -50,14 +50,14 @@ object RandomVariables {
      * Returns the given constant as a random variable.
      */
     fun <T : Any> constant(c: T): RandomVariable<T> {
-        return ConstantDist(c)
+        return ConstantRV(c)
     }
 
     /**
      * Returns a random variable of uniform distribution.
      */
     fun uniform(lower: Double = 0.0, upper: Double = 1.0): SimpleRV<Double, Double> {
-        return IdentityVariable(IntervalSpace(lower, upper))
+        return IdentityRV(IntervalSpace(lower, upper))
     }
 
     /**
@@ -67,7 +67,7 @@ object RandomVariables {
      *     P{ X = 1 } = 1-p
      */
     fun bernoulli(p: Double = 0.5): SimpleRV<Int, Int> {
-        return IdentityVariable(BernoulliSpace(p))
+        return IdentityRV(BernoulliSpace(p))
     }
 
     /**
@@ -76,7 +76,7 @@ object RandomVariables {
      *     P{ X = n } = q^(n-1) * p    ( n > 0 )
      */
     fun geometry(p: Double = 0.5): SimpleRV<Int, Int> {
-        return IdentityVariable(GeomSpace(p))
+        return IdentityRV(GeomSpace(p))
     }
 
 
@@ -89,7 +89,7 @@ object RandomVariables {
         if (n == 1) {
             return bernoulli(p)
         }
-        return IdentityVariable(BinomialSpace(p, n))
+        return IdentityRV(BinomialSpace(p, n))
     }
 
     /**
@@ -101,7 +101,7 @@ object RandomVariables {
         if (n == 1) {
             return geometry(p)
         }
-        return IdentityVariable(PascalSpace(p, n))
+        return IdentityRV(PascalSpace(p, n))
     }
 
     /**
@@ -111,7 +111,7 @@ object RandomVariables {
      * @param sigma the square root of the variance
      */
     fun normal(a: Double = 0.0, sigma: Double = 1.0): SimpleRV<Double, Double> {
-        return NormalDist(a, sigma, StandardNormalDistSpace())
+        return NormalRV(a, sigma, StandardNormalDistSpace())
     }
 
     /**
@@ -120,7 +120,7 @@ object RandomVariables {
      *     P{ X = n } = k^n / n! * e^(-k)     (n>=0)
      */
     fun poisson(k: Double = 1.0): SimpleRV<Int, Int> {
-        return IdentityVariable(PoissonSpace(k))
+        return IdentityRV(PoissonSpace(k))
     }
 
     /**
@@ -129,7 +129,7 @@ object RandomVariables {
      *     p(x) = ke^(-kx)    ( x > 0 )
      */
     fun exponent(k: Double = 1.0): SimpleRV<Double, Double> {
-        return ExpDist(k, StandardExpSpace())
+        return ExpRV(k, StandardExpSpace())
     }
 
     /**

@@ -31,7 +31,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
     public static final double ANGLE_DOWNER_BOUND = -Math.PI;
     public static final ComplexI ZERO = new ComplexI(0d, 0d),
             ONE = new ComplexI(1d, 0d),
-            I_ONE = new ComplexI(0d, 1d),
+            I = new ComplexI(0d, 1d),
             PI = new ComplexI(Math.PI, 0d),
             E = new ComplexI(Math.E, 0d);
 
@@ -444,7 +444,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         return new ComplexI(a, 0d);
     }
 
-    public static ComplexI imaginary(double b) {
+    public static ComplexI imag(double b) {
         return new ComplexI(0d, b);
     }
 
@@ -814,7 +814,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         @Override
         public ComplexI constantValue(@NotNull String name) {
             if (name.equals("i")) {
-                return ComplexI.I_ONE;
+                return ComplexI.I;
             } else if (name.equalsIgnoreCase("pi")) {
                 return ComplexI.PI;
             } else if (name.equals("e")) {

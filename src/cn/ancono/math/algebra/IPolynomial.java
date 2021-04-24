@@ -25,6 +25,9 @@ import java.util.function.BiPredicate;
  * <br>
  * <code>n</code> is the leading power of this polynomial. If the polynomial is non-zero,
  * the degree of a polynomial is <code>n</code>, and degree of zero polynomial is defined to be <code>-1</code>.
+ * <p></p>
+ *
+ *
  *
  * @author liyicheng
  * 2017-10-06 16:51
@@ -71,7 +74,7 @@ public interface IPolynomial<T> {
      * leading one(<code>a<sub>n</sub></code>).
      */
     @NotNull
-    public default Iterable<T> coefficients() {
+    default Iterable<T> coefficients() {
         return () -> new It<>(this);
     }
 
@@ -93,7 +96,7 @@ public interface IPolynomial<T> {
     /**
      * Determines whether the two polynomial are equal.
      */
-    public static <T, S> boolean isEqual(IPolynomial<T> m1, IPolynomial<S> m2, BiPredicate<T, S> equal) {
+    static <T, S> boolean isEqual(IPolynomial<T> m1, IPolynomial<S> m2, BiPredicate<T, S> equal) {
         if (m1.getDegree() != m2.getDegree()) {
             return false;
         }
@@ -110,7 +113,7 @@ public interface IPolynomial<T> {
      * Determines whether the two polynomial are equal, using the
      * equals() method in object.
      */
-    public static boolean isEqual(IPolynomial<?> m1, IPolynomial<?> m2) {
+    static boolean isEqual(IPolynomial<?> m1, IPolynomial<?> m2) {
         if (m1.getDegree() != m2.getDegree()) {
             return false;
         }
@@ -134,7 +137,7 @@ public interface IPolynomial<T> {
      *
      * @param m a Polynomial
      */
-    public static int hashCodeOf(IPolynomial<?> m) {
+    static int hashCodeOf(IPolynomial<?> m) {
         int hash = 0;
         int mp = m.getDegree();
         for (int i = 0; i <= mp; i++) {
@@ -143,7 +146,7 @@ public interface IPolynomial<T> {
         return hash;
     }
 
-    public static <T> String stringOf(IPolynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    static <T> String stringOf(IPolynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         int maxPower = m.getDegree();
         if (maxPower <= 0) {
             return nf.format(m.get(0), mc);

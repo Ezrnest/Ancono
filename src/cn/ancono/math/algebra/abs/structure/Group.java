@@ -46,7 +46,7 @@ public interface Group<T> extends Monoid<T> {
         if (s instanceof FiniteSet) {
             return ((FiniteSet<T>) s).size();
         } else if (s instanceof InfiniteSet) {
-            return -((InfiniteSet<T>) s).cardinalNumber() - 1;
+            return -((InfiniteSet<T>) s).cardinality() - 1;
         }
         throw new UnsupportedOperationException();
     }

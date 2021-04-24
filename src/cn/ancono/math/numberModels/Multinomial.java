@@ -9,9 +9,9 @@ import cn.ancono.math.discrete.combination.Permutation;
 import cn.ancono.math.discrete.combination.Permutations;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.api.Computable;
+import cn.ancono.math.numberModels.api.RingNumberModel;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberModels.structure.Polynomial;
-import cn.ancono.math.numberModels.structure.RingFraction;
 import cn.ancono.utilities.CollectionSup;
 import cn.ancono.utilities.ModelPatterns;
 import cn.ancono.utilities.structure.Pair;
@@ -28,7 +28,7 @@ import java.util.function.*;
  *
  * @see Term
  */
-public class Multinomial implements Comparable<Multinomial>, Computable, Serializable {
+public class Multinomial implements Comparable<Multinomial>, Computable, Serializable, RingNumberModel<Multinomial> {
     final NavigableSet<Term> terms;
 
     static boolean mergingAdd(NavigableSet<Term> base, Term e) {
@@ -70,9 +70,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      * The result set must not be modified.
      *
-     * @param s1
-     * @param s2
-     * @return
      */
     static NavigableSet<Term> mergingMultiply(NavigableSet<Term> s1, NavigableSet<Term> s2) {
         if (ZERO.terms.equals(s1) || ZERO.terms.equals(s2)) {
@@ -171,6 +168,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      * Determines whether this multinomial is zero
      */
+    @Override
     public boolean isZero() {
         return isMonomial() && getFirst().isZero();
     }
@@ -367,7 +365,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      *
      * @return {@code -this}
      */
-    public Multinomial negate() {
+    @Override
+    public @NotNull Multinomial negate() {
         if (ZERO.equals(this)) {
             return ZERO;
         }
@@ -378,13 +377,15 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return new Multinomial(nset);
     }
 
-    public Multinomial add(Multinomial m) {
+    @Override
+    public @NotNull Multinomial add(Multinomial m) {
         NavigableSet<Term> set = getSet(terms);
         mergingAddAll(set, m.terms);
         return new Multinomial(set);
     }
 
-    public Multinomial subtract(Multinomial m) {
+    @Override
+    public @NotNull Multinomial subtract(Multinomial m) {
         NavigableSet<Term> set = getSet(terms);
         for (Term x : m.terms) {
             mergingAdd(set, x.negate());
@@ -403,7 +404,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-    public Multinomial multiply(Multinomial m) {
+    @Override
+    public @NotNull Multinomial multiply(@NotNull Multinomial m) {
         if (ZERO.equals(this) || ZERO.equals(m)) {
             return ZERO;
         }
@@ -460,7 +462,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         var pair = extractGCD();
         var m0 = pair.getSecond();
         if (!m0.containsOnlyAlgebraicChar()) {
-            throw new UnsupportedCalculationException("Not invertible: 1/(" + this.toString() + ")");
+            throw new UnsupportedCalculationException("Not invertible: 1/(" + this + ")");
         }
         return inverseSqr(m0).divide(pair.getFirst());
     }
@@ -589,8 +591,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * For example, coprimeBaseReduction(1,2,3) = (2,3); coprimeBaseReduction(2,3,6) = (2,3);
      * coprimeBaseReduction(30,42) = (5,6,7)
      *
-     * @param numbers
-     * @return
      */
     private static List<BigInteger> coprimeBaseReduction(List<BigInteger> numbers) {
         List<BigInteger> result = new ArrayList<>(numbers.size());
@@ -827,9 +827,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Determines whether this multinomial cont
-     *
-     * @return
+     * Determines whether this multinomial contains no character.
      */
     public boolean containsNoChar() {
         for (Term x : terms) {
@@ -840,7 +838,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return true;
     }
 
-    private static Set<String> AlgebraicChars = new HashSet<>();
+    private static final Set<String> AlgebraicChars = new HashSet<>();
 
     static {
         AlgebraicChars.add(Term.I_STR);
@@ -856,7 +854,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Returns the count of the terms that have the character of {@code targer}.
+     * Returns the count of the terms that have the character of {@code target}.
      */
     public int containsCharCount(String target) {
         int count = 0;
@@ -1114,12 +1112,12 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-    private static MathCalculator<RingFraction<Multinomial>> CAL_RF_M =
-            RingFraction.getCalculator(getCalculator(), Multinomial.getSimplifier());
+//    private static final MathCalculator<RingFraction<Multinomial>> CAL_RF_M =
+//            RingFraction.getCalculator(getCalculator(), Multinomial.getSimplifier());
 
-    private static Polynomial<RingFraction<Multinomial>> injectiveMap(Polynomial<Multinomial> p) {
-        return p.mapTo(CAL_RF_M, m -> RingFraction.valueOf(m, cal));
-    }
+//    private static Polynomial<RingFraction<Multinomial>> injectiveMap(Polynomial<Multinomial> p) {
+//        return p.mapTo(CAL_RF_M, m -> RingFraction.valueOf(m, cal));
+//    }
 
     private static void computeCharPowMap(Multinomial m, Map<String, Long> charMap) {
         for (var t : m.terms) {
@@ -1426,8 +1424,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         if (f == null) {
             return null;
         }
-        BigInteger x = Term.asInteger(f);
-        return x;
+        return Term.asInteger(f);
     }
 
     /**
@@ -1503,7 +1500,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      */
     public Multinomial primarySymmetryReduce() {
         return primarySymmetryReduce(x ->
-                MathSymbol.GREEK_SIGMA + Integer.toString(x + 1));
+                MathSymbol.GREEK_SIGMA + (x + 1));
     }
 
     /**

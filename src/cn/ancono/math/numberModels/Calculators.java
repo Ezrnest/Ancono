@@ -8,6 +8,7 @@ import cn.ancono.math.MathUtils;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberTheory.IntCalculator;
+import cn.ancono.math.numberTheory.NTUtils;
 import cn.ancono.math.numberTheory.Primes;
 import cn.ancono.math.numberTheory.ZModPCalculator;
 import kotlin.Triple;
@@ -2228,6 +2229,11 @@ public final class Calculators {
             return inverse[x];
         }
 
+        @Override
+        public @NotNull Integer squareRoot(@NotNull Integer x) {
+            return (int) NTUtils.INSTANCE.sqrtModP(x, getP());
+        }
+
     }
 
     static class ZModPCalculatorGCD extends ZModNCalculator implements ZModPCalculator<Integer> {
@@ -2238,6 +2244,11 @@ public final class Calculators {
         @Override
         public int getP() {
             return getModular();
+        }
+
+        @Override
+        public @NotNull Integer squareRoot(@NotNull Integer x) {
+            return (int) NTUtils.INSTANCE.sqrtModP(x, getP());
         }
     }
 
@@ -2336,6 +2347,7 @@ public final class Calculators {
         public @NotNull Integer abs(@NotNull Integer x) {
             return x;
         }
+
 
         static final ZMod2Calculator INSTANCE = new ZMod2Calculator();
     }

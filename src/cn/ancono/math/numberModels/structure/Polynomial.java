@@ -554,8 +554,12 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
         var mc = getMc();
         T[] arr = getArr(degree + d + 1);
-        System.arraycopy(coes, 0, arr, d, degree + 1);
-        Arrays.fill(arr, 0, d, mc.getZero());
+        if (d < 0) {
+            System.arraycopy(coes, -d, arr, 0, degree + 1 + d);
+        } else {
+            System.arraycopy(coes, 0, arr, d, degree + 1);
+            Arrays.fill(arr, 0, d, mc.getZero());
+        }
         return new Polynomial<>(mc, arr);
     }
 

@@ -63,6 +63,15 @@ public class PolynomialSample {
         System.out.println("The inverse of g(x) in Z2[x]/(x^23+1) is: " + h);
     }
 
+    public static void factorizeModP() {
+        System.out.println("In Z_31 we have");
+        System.out.println("x^8+x = ");
+        var mc = Calculators.intModP(31);
+        var f = Polynomial.parse("x^8+x", mc, Integer::parseInt);
+        var decomposed = PolynomialUtil.factorizeModP(f);
+        System.out.println(decomposed);
+    }
+
 
     public static void main(String[] args) {
         partialFractionDecomposition();
@@ -73,6 +82,7 @@ public class PolynomialSample {
         System.out.println();
         computeGCD2();
         System.out.println();
-        findComplement();
+        factorizeModP();
+        System.out.println();
     }
 }

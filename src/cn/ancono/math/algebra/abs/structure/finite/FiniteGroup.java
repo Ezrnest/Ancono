@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.algebra.abs.structure.finite;
 
+import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.abs.FiniteGroups;
 import cn.ancono.math.algebra.abs.group.Homomorphism;
 import cn.ancono.math.algebra.abs.group.NotASubgroupException;
@@ -119,5 +120,26 @@ public interface FiniteGroup<T> extends Group<T> {
      */
     default FiniteGroup<T> commutatorGroup() {
         return FiniteGroups.commutatorGroup(this);
+    }
+
+
+    /**
+     * Returns the order of <code>x</code> in the finite group.
+     */
+    default long order(T x) {
+        long e = index();
+        var factors = MathUtils.factorReduce(e);
+        var mc = getCalculator();
+        var one = mc.getIdentity();
+        for (long[] factor : factors) {
+            var p = factor[0];
+            e = e / MathUtils.pow(p, (int) factor[1]);
+            var x1 = mc.gpow(x, e);
+            while (!mc.isEqual(x1, one)) {
+                x1 = mc.gpow(x1, p);
+                e *= p;
+            }
+        }
+        return e;
     }
 }

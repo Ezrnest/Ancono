@@ -488,6 +488,20 @@ public class MathUtils {
         return sqrt * sqrt == n;
     }
 
+//    /**
+//     * Power using binary reduce.
+//     */
+//    private static long powerF(long n, int p) {
+//        long re = 1L;
+//        while (p > 0) {
+//            if ((p & 1) != 0) {
+//                re *= n;
+//            }
+//            n *= n;
+//            p >>= 1;
+//        }
+//        return re;
+//    }
 
     /**
      * Return the value of <code>n^p</code>.
@@ -502,10 +516,9 @@ public class MathUtils {
             throw new ArithmeticException("Negative power: " + p);
         } else if (p == 0) {
             if (n == 0L) {
-                throw new ArithmeticException("0^0");
-            } else {
-                return 1L;
+                ExceptionUtil.zeroExponent();
             }
+            return 1L;
         }
         long re = 1L;
         while (p > 0) {
@@ -613,7 +626,7 @@ public class MathUtils {
         //try from 2.
         long t;
         while (true) {
-            t = powerF(root, n);
+            t = pow(root, n);
             if (t == x) {
                 break;
             }
@@ -626,20 +639,6 @@ public class MathUtils {
         return root;
     }
 
-    /**
-     * Power using binary reduce.
-     */
-    private static long powerF(long n, int p) {
-        long re = 1L;
-        while (p > 0) {
-            if ((p & 1) != 0) {
-                re *= n;
-            }
-            n *= n;
-            p >>= 1;
-        }
-        return re;
-    }
 
     /**
      * Returns a non-negative integer of <code>a mod m</code>, it is required that

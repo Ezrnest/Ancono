@@ -2,6 +2,7 @@ package cn.ancono.math.algebra
 
 import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
@@ -14,6 +15,7 @@ import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numberModels.structure.Polynomial
+import cn.ancono.math.numberModels.structure.Polynomial.*
 import cn.ancono.math.numberTheory.ZModPCalculator
 import java.util.*
 import kotlin.math.absoluteValue
@@ -108,7 +110,7 @@ object PolynomialUtil {
             }
             return
         }
-        val factor = Polynomial.ofRoot(Fraction.calculator, rt)
+        val factor = ofRoot(Fraction.calculator, rt)
         list.merge(factor, 1) { t, u -> t + u }
         val remains = p.toFractionPoly().divideToInteger(factor)
         decomposion0(remains.toLongPoly(), list)
@@ -168,10 +170,10 @@ object PolynomialUtil {
         val re = arrayListOf<Pair<Polynomial<T>, SinglePoly<T>>>()
         for ((t, isBi) in terms) {
             if (isBi) {
-                re += Polynomial.of(mc, solution[index], solution[index + 1]) to t
+                re += of(mc, solution[index], solution[index + 1]) to t
                 index += 2
             } else {
-                re += Polynomial.constant(mc, solution[index]) to t
+                re += constant(mc, solution[index]) to t
                 index++
             }
         }
@@ -261,10 +263,10 @@ object PolynomialUtil {
 
         val d = B.first()
         var R = A
-        var Q = Polynomial.zero(mc)
+        var Q = zero(mc)
         var e = m - n + 1
         while (!R.isZero() && R.degree >= B.degree) {
-            val S = Polynomial.powerX(R.degree - B.degree, R.first(), mc)
+            val S = powerX(R.degree - B.degree, R.first(), mc)
             Q = d * Q + S
             R = d * R - S * B
             e -= 1
@@ -301,7 +303,7 @@ object PolynomialUtil {
         var R = A
         var e = m - n + 1
         while (!R.isZero() && R.degree >= B.degree) {
-            val S = Polynomial.powerX(R.degree - B.degree, R.first(), mc)
+            val S = powerX(R.degree - B.degree, R.first(), mc)
             R = d * R - S * B
             e -= 1
         }
@@ -346,7 +348,7 @@ object PolynomialUtil {
                 break
             }
             if (R.isConstant) {
-                B = Polynomial.one(mc)
+                B = one(mc)
                 break
             }
             A = B
@@ -399,7 +401,7 @@ object PolynomialUtil {
                 break
             }
             if (R.isConstant) {
-                B = Polynomial.one(mc)
+                B = one(mc)
                 break
             }
             A = B
@@ -419,7 +421,7 @@ object PolynomialUtil {
     private fun <T : Any> polynomialChDiv(f: Polynomial<T>, p: Int): Polynomial<T> {
         require(f.degree % p == 0)
         val d = f.degree / p
-        return Polynomial.of(f.mathCalculator, d) { i ->
+        return of(f.mathCalculator, d) { i ->
             f.get(i * p)
         }
     }
@@ -624,7 +626,7 @@ object PolynomialUtil {
 
          */
         var V = A // the remaining polynomial
-        val X = Polynomial.oneX(mc) // the polynomial x
+        val X = oneX(mc) // the polynomial x
         var W = X // x^{p^d} (mod A)
         var d = 0 // the degree d
         val result = arrayListOf<Pair<Int, Polynomial<T>>>()
@@ -643,7 +645,7 @@ object PolynomialUtil {
                 }
                 break
             }
-            W = Polynomial.powerAndMod(W, p.toLong(), V) // compute next W
+            W = powerAndMod(W, p.toLong(), V) // compute next W
             val t = W - X // x^{p^d} - x
             val Ad = t.gcd(V)
             if (!Ad.isUnit()) {
@@ -707,8 +709,8 @@ object PolynomialUtil {
         val mc = f.mathCalculator as ZModPCalculator
         val p = mc.p
         val n = f.degree
-        val x = Polynomial.oneX(mc)
-        val xPn = Polynomial.powerAndMod(x, MathUtils.pow(p.toLong(), n), f)
+        val x = oneX(mc)
+        val xPn = powerAndMod(x, MathUtils.pow(p.toLong(), n), f)
         // x^{p^n}
         if (!xPn.valueEquals(x)) {
             return false
@@ -716,7 +718,7 @@ object PolynomialUtil {
         val factors = MathUtils.factorReduce(n.toLong())
         for (factor in factors) {
             val t = (n / factor[0]).toInt()
-            val xPnq = Polynomial.powerAndMod(x, MathUtils.pow(p.toLong(), t), f)
+            val xPnq = powerAndMod(x, MathUtils.pow(p.toLong(), t), f)
             // x^{p^{n/q}}
             val g = (xPnq - x).gcd(f)
             if (!g.isUnit()) {
@@ -733,7 +735,7 @@ object PolynomialUtil {
     private fun randomPolynomial(rd: Random, d: Int, mc: ZModPCalculator<Int>): Polynomial<Int> {
         val degree = rd.nextInt(2 * d - 1) + 1
         val p = mc.p
-        return Polynomial.of(mc, degree) { i ->
+        return of(mc, degree) { i ->
             if (i == degree) {
                 1
             } else {
@@ -771,7 +773,7 @@ object PolynomialUtil {
         while (true) {
             val t = randomPolynomial(rd, d, mc)
             val power = (MathUtils.pow(mc.p.toLong(), d) - 1) / 2
-            val tp = Polynomial.powerAndMod(t, power, f) - Polynomial.one(mc)
+            val tp = powerAndMod(t, power, f) - one(mc)
             val g = f.gcd(tp)
             if (g.degree == 0 || g.degree == f.degree) {
                 continue
@@ -812,7 +814,7 @@ object PolynomialUtil {
             list += a
             return
         }
-        var t = Polynomial.oneX(mc)
+        var t = oneX(mc)
         while (true) {
             var c = t
             repeat(d - 1) {
@@ -820,7 +822,7 @@ object PolynomialUtil {
             }
             val b = a.gcd(c)
             if (b.degree == 0 || b.degree == a.degree) {
-                t *= Polynomial.powerX(2, mc) // t = t * (x^2)
+                t *= powerX(2, mc) // t = t * (x^2)
                 continue
             }
             val aDb = a.exactDivide(b)
@@ -850,7 +852,7 @@ object PolynomialUtil {
         val builder = Matrix.getBuilder(n, n, mc)
         builder[0, 0] = 1
         for (k in 1 until n) {
-            val xpk = Polynomial.powerX(p * k, mc)
+            val xpk = powerX(p * k, mc)
             val m = xpk.mod(A)
             for (i in 0 until n) {
                 builder[i, k] = m[i]
@@ -875,13 +877,13 @@ object PolynomialUtil {
         val vectors = (Q - Matrix.identity(n, mc)).solutionSpace()!!.vectors
         val r = vectors.size
         var E = listOf(A)
-        val constants = (0 until p).map { s -> Polynomial.constant(mc, s) }
+        val constants = (0 until p).map { s -> constant(mc, s) }
         for (j in 1 until r) {
             if (E.size == r) {
                 break
             }
             val v = vectors[j]
-            val T = Polynomial.of(mc, v.toList())
+            val T = of(mc, v.toList())
             val newE = ArrayList<Polynomial<Int>>(E.size)
             var k = E.size
             for (i in E.indices) {
@@ -925,11 +927,11 @@ object PolynomialUtil {
         val mc = A.mathCalculator
         val n = A.degree
         val vectors = (Q - Matrix.identity(n, mc)).solutionSpace()!!.vectors
-        val ts = vectors.map { v -> Polynomial.of(mc, v.toList()) }
+        val ts = vectors.map { v -> of(mc, v.toList()) }
         val r = vectors.size
         var E = listOf(A)
         val rd = Random()
-        val one = Polynomial.one(mc)
+        val one = one(mc)
         while (true) {
             if (E.size == r) {
                 break
@@ -938,7 +940,7 @@ object PolynomialUtil {
                 val c = rd.nextInt(p)
                 c * ts[i]
             }
-            val T = Polynomial.sum(coefficients)
+            val T = sum(coefficients)
             var k = E.size
             val newE = ArrayList<Polynomial<Int>>(E.size)
             for (i in E.indices) {
@@ -947,7 +949,7 @@ object PolynomialUtil {
                     newE += B
                     continue
                 }
-                val pow = Polynomial.powerAndMod(T, (p - 1L) / 2, B)
+                val pow = powerAndMod(T, (p - 1L) / 2, B)
                 val D = B.gcd(pow - one)
                 if (D.degree > 0 && D.degree < B.degree) {
                     newE += D
@@ -1002,6 +1004,71 @@ object PolynomialUtil {
         return DecomposedPoly(results)
     }
 
+    private fun findRootModP0(f: Polynomial<Int>,
+                              mc: ZModPCalculator<Int>,
+                              results: MutableList<Int>, rd: Random) {
+        if (f.degree <= 0) {
+            return
+        }
+        if (f.degree == 1) {
+            results += mc.eval { negate(divide(f[0], f[1])) }
+            return
+        }
+        if (f.degree == 2) {
+            val a2 = f[2]
+            val a1 = f[1]
+            val a0 = f[0]
+            val d = MathUtils.mod(a1 * a1 - 4 * a0 * a2, mc.p)
+            val e = mc.squareRoot(d)
+            results += mc.eval { divide(-a1 + e, 2 * a2) }
+            results += mc.eval { divide(-a1 - e, 2 * a2) }
+            return
+        }
+        val p = mc.p
+        if (f.degree >= p) {
+            for (i in 0 until p) {
+                if (mc.isZero(f.compute(i))) {
+                    results += i
+                }
+            }
+            return
+        }
+        while (true) {
+            val a = rd.nextInt(p)
+            val t = linear(mc, 1, a)
+            val h = powerAndMod(t, (p - 1) / 2L, f)
+            val g = (h - one(mc)).gcd(f)
+            if (g.degree == 0 || g.degree == f.degree) {
+                continue
+            }
+            findRootModP0(g, mc, results, rd)
+            findRootModP0(f.exactDivide(g), mc, results, rd)
+        }
+    }
+
+
+    /**
+     * Finds the roots
+     */
+    fun findRootsModP(f: Polynomial<Int>): List<Int> {
+        val mc = f.mathCalculator as ZModPCalculator<Int>
+        if (mc.p == 2) {
+            return (0..1).filter { f.compute(it) % 2 == 0 }
+        }
+        val p = mc.p
+        val x = oneX(mc)
+        val t = powerAndMod(x, p.toLong(), f)
+        var g = (t - x).gcd(f)
+        val results = arrayListOf<Int>()
+        if (g.compute(0) == 0) {
+            results += 0
+            g = g.shift(-1)
+        }
+        findRootModP0(g, mc, results, Random())
+        results.sort()
+        return results
+    }
+
     //TODO factorizing polynomial on Z
 
 }
@@ -1018,9 +1085,10 @@ fun main() {
 ////    println(PolynomialSup.distinctDegreeFactorizeModP(A * B, mc))
     val mc = Calculators.intModP(31)
 
-    val f = Polynomial.parse("1+x+x^3+x^4+x^6", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }
-    val g = Polynomial.parse("x^4+x", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }
-    val factors = PolynomialUtil.factorizeModP(f)
+    val f = parse("x+x^8", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }
+    println(PolynomialUtil.factorizeModP(f))
+    println(PolynomialUtil.findRootsModP(f))
+    println((0 until 31).filter { f.compute(it) == 0 })
 //    println(factors)
 
 //    val prod = (0 until (mc.p-1)).map { Polynomial.linear(mc, 1, it) }.reduce(Polynomial<Int>::multiply)

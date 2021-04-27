@@ -1424,10 +1424,9 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     /**
-     * Returns a
+     * Returns a calculator for quotient field `T[x]/(p)`.
      *
      * @param p an irreducible polynomial.
-     * @return a
      */
     public static <T> ModPolyCalculator<T> getModCal(Polynomial<T> p) {
         return new ModPolyCalculator<>(p);
@@ -1435,15 +1434,13 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
 
     /**
-     * Returns
+     * Returns the result of <code>x^n</code> modulo <code>mod</code>.
      *
-     * @param x
-     * @param n
-     * @param mod
-     * @param <T>
-     * @return
+     * @param x   a polynomial
+     * @param n   a non-negative integer
+     * @param mod the modular
      */
-    public static <T> Polynomial<T> powerAndMod(Polynomial<T> x, long n, Polynomial<T> mod) {
+    public static <T> Polynomial<T> powMod(Polynomial<T> x, long n, Polynomial<T> mod) {
         if (n < 0) {
             throw new IllegalArgumentException("n < 0");
         }
@@ -1960,7 +1957,6 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     public static class ModPolyCalculator<T> extends PolynomialCalculator<T> {
         private final Polynomial<T> p;
 
-        //TODO implement method divide for modular invertible case
         public ModPolyCalculator(Polynomial<T> p) {
             super(p.getMathCalculator());
             this.p = p;

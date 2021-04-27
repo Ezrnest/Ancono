@@ -11,7 +11,7 @@ import cn.ancono.math.MathCalculator;
 public interface ZModPCalculator<T> extends MathCalculator<T> {
 
 
-    int getP();
+    long getP();
 
     @Override
     default long getCharacteristic() {

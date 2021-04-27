@@ -645,7 +645,7 @@ object PolynomialUtil {
                 }
                 break
             }
-            W = powerAndMod(W, p.toLong(), V) // compute next W
+            W = powMod(W, p, V) // compute next W
             val t = W - X // x^{p^d} - x
             val Ad = t.gcd(V)
             if (!Ad.isUnit()) {
@@ -710,7 +710,7 @@ object PolynomialUtil {
         val p = mc.p
         val n = f.degree
         val x = oneX(mc)
-        val xPn = powerAndMod(x, MathUtils.pow(p.toLong(), n), f)
+        val xPn = powMod(x, MathUtils.pow(p.toLong(), n), f)
         // x^{p^n}
         if (!xPn.valueEquals(x)) {
             return false
@@ -718,7 +718,7 @@ object PolynomialUtil {
         val factors = MathUtils.factorReduce(n.toLong())
         for (factor in factors) {
             val t = (n / factor[0]).toInt()
-            val xPnq = powerAndMod(x, MathUtils.pow(p.toLong(), t), f)
+            val xPnq = powMod(x, MathUtils.pow(p.toLong(), t), f)
             // x^{p^{n/q}}
             val g = (xPnq - x).gcd(f)
             if (!g.isUnit()) {
@@ -734,7 +734,7 @@ object PolynomialUtil {
      */
     private fun randomPolynomial(rd: Random, d: Int, mc: ZModPCalculator<Int>): Polynomial<Int> {
         val degree = rd.nextInt(2 * d - 1) + 1
-        val p = mc.p
+        val p = mc.p.toInt()
         return of(mc, degree) { i ->
             if (i == degree) {
                 1
@@ -773,7 +773,7 @@ object PolynomialUtil {
         while (true) {
             val t = randomPolynomial(rd, d, mc)
             val power = (MathUtils.pow(mc.p.toLong(), d) - 1) / 2
-            val tp = powerAndMod(t, power, f) - one(mc)
+            val tp = powMod(t, power, f) - one(mc)
             val g = f.gcd(tp)
             if (g.degree == 0 || g.degree == f.degree) {
                 continue
@@ -840,7 +840,7 @@ object PolynomialUtil {
      */
     fun splitZMod2(d: Int, f: Polynomial<Int>, mc: ZModPCalculator<Int>)
             : List<Polynomial<Int>> {
-        require(mc.p == 2)
+        require(mc.p == 2L)
         val results = arrayListOf<Polynomial<Int>>()
         polySplitZMod2Recur(f, d, mc, results)
         return results
@@ -949,7 +949,7 @@ object PolynomialUtil {
                     newE += B
                     continue
                 }
-                val pow = powerAndMod(T, (p - 1L) / 2, B)
+                val pow = powMod(T, (p - 1L) / 2, B)
                 val D = B.gcd(pow - one)
                 if (D.degree > 0 && D.degree < B.degree) {
                     newE += D
@@ -982,7 +982,7 @@ object PolynomialUtil {
         val squarefree = squarefreeFactorize(f)
         val results = arrayListOf<Pair<Polynomial<Int>, Int>>()
         val mc = f.mathCalculator as ZModPCalculator<Int>
-        val p = mc.p
+        val p = Math.toIntExact(mc.p)
         for ((ak, k) in squarefree) {
             val distinct = distinctDegreeFactorizeModP(ak, mc)
 //            println(ak)
@@ -1018,13 +1018,16 @@ object PolynomialUtil {
             val a2 = f[2]
             val a1 = f[1]
             val a0 = f[0]
-            val d = MathUtils.mod(a1 * a1 - 4 * a0 * a2, mc.p)
+            val d = mc.eval {
+                subtract(multiply(a1, a1), 4 * multiply(a0, a2))
+            }
             val e = mc.squareRoot(d)
             results += mc.eval { divide(-a1 + e, 2 * a2) }
             results += mc.eval { divide(-a1 - e, 2 * a2) }
             return
         }
-        val p = mc.p
+
+        val p = Math.toIntExact(mc.p)
         if (f.degree >= p) {
             for (i in 0 until p) {
                 if (mc.isZero(f.compute(i))) {
@@ -1036,7 +1039,7 @@ object PolynomialUtil {
         while (true) {
             val a = rd.nextInt(p)
             val t = linear(mc, 1, a)
-            val h = powerAndMod(t, (p - 1) / 2L, f)
+            val h = powMod(t, (p - 1) / 2L, f)
             val g = (h - one(mc)).gcd(f)
             if (g.degree == 0 || g.degree == f.degree) {
                 continue
@@ -1048,16 +1051,19 @@ object PolynomialUtil {
 
 
     /**
-     * Finds the roots
+     * Finds the roots of a polynomial on `Z_p`, it is required that
+     * the MathCalculator of [f] is a [ZModPCalculator].
+     *
+     * @return a sorted list of roots
      */
     fun findRootsModP(f: Polynomial<Int>): List<Int> {
         val mc = f.mathCalculator as ZModPCalculator<Int>
-        if (mc.p == 2) {
+        if (mc.p == 2L) {
             return (0..1).filter { f.compute(it) % 2 == 0 }
         }
         val p = mc.p
         val x = oneX(mc)
-        val t = powerAndMod(x, p.toLong(), f)
+        val t = powMod(x, p, f)
         var g = (t - x).gcd(f)
         val results = arrayListOf<Int>()
         if (g.compute(0) == 0) {
@@ -1069,7 +1075,7 @@ object PolynomialUtil {
         return results
     }
 
-    //TODO factorizing polynomial on Z
+//TODO factorizing polynomial on Z
 
 }
 
@@ -1083,6 +1089,9 @@ fun main() {
 ////    println(Polynomial.powerAndMod(Polynomial.oneX(mc),17L,A*B))
 ////    println(PolynomialSup.squarefreeFactorizeModP(A*A*B))
 ////    println(PolynomialSup.distinctDegreeFactorizeModP(A * B, mc))
+//    BigInteger.pro
+//    val ps = Primes.getInstance().getPrimesBelow(100000)
+//    val p = ps.last().toInt()
     val mc = Calculators.intModP(31)
 
     val f = parse("x+x^8", mc, String::toInt)//.mapTo(fc) { Fraction.of(it.toLong()) }

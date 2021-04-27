@@ -2037,23 +2037,23 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer add(@NotNull Integer x, @NotNull Integer y) {
-            return modN(Math.addExact(x, y));
+            return modN((long) x + y);
         }
 
         @NotNull
         @Override
         public Integer subtract(@NotNull Integer x, @NotNull Integer y) {
-            return modN(Math.subtractExact(x, y));
+            return modN((long) x + y);
         }
 
         @NotNull
         @Override
         public Integer multiply(@NotNull Integer x, @NotNull Integer y) {
-            return modN(Math.multiplyExact(x, y));
+            return multiply(x.intValue(), y.intValue());
         }
 
         private int multiply(int x, int y) {
-            return modN(Math.multiplyExact(x, y));
+            return modN((long) x * y);
         }
 
         @Override
@@ -2124,13 +2124,14 @@ public final class Calculators {
                     return n;
                 }
             }
-            throw new UnsupportedCalculationException();
+            //TODO better implement
+            throw new ArithmeticException("Not square root for x=" + x + " in Z mod " + n);
         }
 
         @NotNull
         @Override
         public Integer pow(@NotNull Integer p, long exp) {
-            return MathUtils.powMod(p, exp, p);
+            return MathUtils.powMod(p, exp, this.n);
         }
 
         @NotNull
@@ -2178,6 +2179,11 @@ public final class Calculators {
             return modN(x);
         }
 
+        @NotNull
+        @Override
+        public Integer of(long x) {
+            return modN(x);
+        }
     }
 
 
@@ -2216,7 +2222,7 @@ public final class Calculators {
         }
 
         @Override
-        public int getP() {
+        public long getP() {
             return getModular();
         }
 
@@ -2242,7 +2248,7 @@ public final class Calculators {
         }
 
         @Override
-        public int getP() {
+        public long getP() {
             return getModular();
         }
 
@@ -2258,7 +2264,7 @@ public final class Calculators {
         }
 
         @Override
-        public int getP() {
+        public long getP() {
             return 2;
         }
 
@@ -2361,6 +2367,7 @@ public final class Calculators {
 
     /**
      * Returns a calculator for prime field <code>Z<sub>p</sub></code>, where <code>p</code> is a prime number.
+     * The implementation guarantees that no overflow will happen in this calculator.
      * <p></p>
      * <p>
      * It is required that the given integer p is a prime number.
@@ -2535,9 +2542,5 @@ public final class Calculators {
     public static MathCalculator<Boolean> bool() {
         return BooleanCalculator.INSTANCE;
     }
-//
-//    public static RingFraction.RFCalculator<Polynomial<Fraction>> getCalPolyFraction(){
-//        return RingFraction.Companion.getCalculator(Polynomial.getCalculator(Fraction.Companion.getCalculator()),Polynomial.)
-//    }
 
 }

@@ -106,15 +106,15 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * shape of `max(x.shape, y.shape)`, here `max` means element-wise maximum of two arrays.
      */
     override fun add(y: Tensor<T>): Tensor<T> {
-        return TensorUtils.add(this, y)
+        return TensorImpl.add(this, y)
     }
 
     /**
-     * Returns the negate of this tensor.
+     * Returns the negate of this tensor as a new tensor.
      *
      */
     override fun negate(): Tensor<T> {
-        return TensorUtils.negate(this)
+        return TensorImpl.negate(this)
     }
 
     /**
@@ -124,14 +124,21 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * shape of `max(x.shape, y.shape)`, here `max` means element-wise maximum of two arrays.
      */
     override fun subtract(y: Tensor<T>): Tensor<T> {
-        return TensorUtils.subtract(this, y)
+        return TensorImpl.subtract(this, y)
     }
 
     /**
-     * Returns the result of multiplying this tensor with a scalar.
+     * Returns the result of multiplying this tensor with a scalar as a new tensor.
      */
     override fun multiply(k: T): Tensor<T> {
-        return TensorUtils.multiply(this, k)
+        return TensorImpl.multiply(this, k)
+    }
+
+    /**
+     * Returns the result of dividing this tensor with a scalar as a new tensor.
+     */
+    override fun divide(k: T): Tensor<T> {
+        return TensorImpl.divide(this, k)
     }
 
     /**
@@ -139,7 +146,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      *
      */
     override fun multiply(y: Tensor<T>): Tensor<T> {
-        return TensorUtils.multiply(this, y)
+        return TensorImpl.multiply(this, y)
     }
 
     /**
@@ -148,7 +155,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * @throws ArithmeticException if zero-division happens
      */
     fun divide(y: Tensor<T>): Tensor<T> {
-        return TensorUtils.divide(this, y)
+        return TensorImpl.divide(this, y)
     }
 
 
@@ -169,7 +176,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * @see einsum
      */
     infix fun wedge(y: Tensor<T>): Tensor<T> {
-        return TensorUtils.wedge(this, y)
+        return TensorImpl.wedge(this, y)
     }
 
     /**
@@ -181,7 +188,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * @see einsum
      */
     infix fun inner(y: Tensor<T>): T {
-        return TensorUtils.inner(this, y)
+        return TensorImpl.inner(this, y)
     }
 
     /**
@@ -204,7 +211,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      *
      */
     fun matmul(y: Tensor<T>, r: Int = 1): Tensor<T> {
-        return TensorUtils.matmul(this, y, r)
+        return TensorImpl.matmul(this, y, r)
     }
 
 
@@ -223,7 +230,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      *
      */
     fun sum(vararg axes: Int): Tensor<T> {
-        return TensorUtils.sum(this, axes.asList())
+        return TensorImpl.sum(this, axes.asList())
     }
 
     /**
@@ -259,7 +266,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      *
      */
     fun diagonal(offset: Int = 0, axis1: Int = -2, axis2: Int = -1): Tensor<T> {
-        return TensorUtils.diagonal(this, axis1, axis2, offset)
+        return TensorImpl.diagonal(this, axis1, axis2, offset)
     }
 
 
@@ -321,7 +328,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * @see [slice]
      */
     fun slice(slices: List<Any?>): Tensor<T> {
-        val (am, ranges, ns) = TensorUtils.computeSliceView(this, slices)
+        val (am, ranges, ns) = TensorImpl.computeSliceView(this, slices)
         return SlicedView(this, ranges, am, ns)
     }
 
@@ -331,7 +338,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      *
      */
     fun newAxisAt(axis: Int = -1): Tensor<T> {
-        val (am, ranges, ns) = TensorUtils.newAxisSliceView(this, axis)
+        val (am, ranges, ns) = TensorImpl.newAxisSliceView(this, axis)
         return SlicedView(this, ranges, am, ns)
     }
 
@@ -349,7 +356,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      */
     fun reshape(vararg newShape: Int): Tensor<T> {
         val sh = newShape.clone()
-        TensorUtils.prepareNewShape(this, sh)
+        TensorImpl.prepareNewShape(this, sh)
         return ReshapedView(this, sh)
     }
 
@@ -367,7 +374,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      * Broadcasts this tensor to the given shape.
      */
     fun broadcastTo(vararg newShape: Int): Tensor<T> {
-        return TensorUtils.broadcastTo(this, newShape)
+        return TensorImpl.broadcastTo(this, newShape)
     }
 
 
@@ -408,8 +415,8 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
      */
     fun transpose(axis1: Int = -1, axis2: Int = -2): Tensor<T> {
         return permute(Permutations.swap(dim,
-                TensorUtils.addIfNegative(axis1, dim),
-                TensorUtils.addIfNegative(axis2, dim)))
+                TensorImpl.addIfNegative(axis1, dim),
+                TensorImpl.addIfNegative(axis2, dim)))
     }
 
 
@@ -436,7 +443,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
 
 
     override fun isLinearRelevant(v: Tensor<T>): Boolean {
-        return TensorUtils.isLinearDependent(this, v)
+        return TensorImpl.isLinearDependent(this, v)
     }
 
     /*
@@ -601,7 +608,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          * @see matmul
          */
         fun <T : Any> einsum(expr: String, vararg tensors: Tensor<T>): MutableTensor<T> {
-            return TensorUtils.einsum(tensors.asList(), expr)
+            return TensorImpl.einsum(tensors.asList(), expr)
         }
 
 
@@ -621,7 +628,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          * tensor of shape `(a,b+c)`.
          */
         fun <T : Any> concat(ts: List<Tensor<T>>, axis: Int = 0): Tensor<T> {
-            val (ax, shape) = TensorUtils.prepareConcat(ts, axis)
+            val (ax, shape) = TensorImpl.prepareConcat(ts, axis)
             return ConcatView(ax, ts, shape)
         }
 
@@ -645,7 +652,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          * tensor of shape `(a,b+c)`.
          */
         fun <T : Any> concatM(ts: List<MutableTensor<T>>, axis: Int = 0): MutableTensor<T> {
-            val (ax, shape) = TensorUtils.prepareConcat(ts, axis)
+            val (ax, shape) = TensorImpl.prepareConcat(ts, axis)
             return MutableConcatView(ax, ts, shape)
         }
 
@@ -667,7 +674,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          * of shape `(2,a,b)`.
          */
         fun <T : Any> stack(ts: List<Tensor<T>>, axis: Int = 0): Tensor<T> {
-            val (ax, shape) = TensorUtils.prepareStack(ts, axis)
+            val (ax, shape) = TensorImpl.prepareStack(ts, axis)
             return StackView(ax, ts, shape)
         }
 
@@ -689,7 +696,7 @@ interface Tensor<T : Any> : MathObject<T>, AlgebraModel<T, Tensor<T>> {
          * of shape `(2,a,b)`.
          */
         fun <T : Any> stackM(ts: List<MutableTensor<T>>, axis: Int = 0): MutableTensor<T> {
-            val (ax, shape) = TensorUtils.prepareStack(ts, axis)
+            val (ax, shape) = TensorImpl.prepareStack(ts, axis)
             return MutableStackView(ax, ts, shape)
         }
 
@@ -797,50 +804,54 @@ interface MutableTensor<T : Any> : Tensor<T> {
     }
 
     override fun add(y: Tensor<T>): MutableTensor<T> {
-        return TensorUtils.add(this, y)
+        return TensorImpl.add(this, y)
     }
 
     override fun negate(): MutableTensor<T> {
-        return TensorUtils.negate(this)
+        return TensorImpl.negate(this)
     }
 
     override fun subtract(y: Tensor<T>): MutableTensor<T> {
-        return TensorUtils.subtract(this, y)
+        return TensorImpl.subtract(this, y)
     }
 
     override fun multiply(k: T): MutableTensor<T> {
-        return TensorUtils.multiply(this, k)
+        return TensorImpl.multiply(this, k)
+    }
+
+    override fun divide(k: T): MutableTensor<T> {
+        return TensorImpl.multiply(this, k)
     }
 
     override fun multiply(y: Tensor<T>): MutableTensor<T> {
-        return TensorUtils.multiply(this, y)
+        return TensorImpl.multiply(this, y)
     }
 
     override fun divide(y: Tensor<T>): MutableTensor<T> {
-        return TensorUtils.divide(this, y)
+        return TensorImpl.divide(this, y)
     }
 
 
     override infix fun wedge(y: Tensor<T>): MutableTensor<T> {
-        return TensorUtils.wedge(this, y)
+        return TensorImpl.wedge(this, y)
     }
 
 
     override fun matmul(y: Tensor<T>, r: Int): MutableTensor<T> {
-        return TensorUtils.matmul(this, y, r)
+        return TensorImpl.matmul(this, y, r)
     }
 
     override fun sum(vararg axes: Int): MutableTensor<T> {
-        return TensorUtils.sum(this, axes.asList())
+        return TensorImpl.sum(this, axes.asList())
     }
 
     override fun diagonal(offset: Int, axis1: Int, axis2: Int): MutableTensor<T> {
-        return TensorUtils.diagonal(this, axis1, axis2, offset)
+        return TensorImpl.diagonal(this, axis1, axis2, offset)
     }
 
 
     override fun slice(slices: List<Any?>): MutableTensor<T> {
-        val (am, ranges, ns) = TensorUtils.computeSliceView(this, slices)
+        val (am, ranges, ns) = TensorImpl.computeSliceView(this, slices)
         return MutableSliceView(this, ranges, am, ns)
     }
 
@@ -849,7 +860,7 @@ interface MutableTensor<T : Any> : Tensor<T> {
     }
 
     override fun newAxisAt(axis: Int): MutableTensor<T> {
-        val (am, ranges, ns) = TensorUtils.newAxisSliceView(this, axis)
+        val (am, ranges, ns) = TensorImpl.newAxisSliceView(this, axis)
         return MutableSliceView(this, ranges, am, ns)
     }
 
@@ -894,7 +905,7 @@ interface MutableTensor<T : Any> : Tensor<T> {
 
     override fun reshape(vararg newShape: Int): MutableTensor<T> {
         val sh = newShape.clone()
-        TensorUtils.prepareNewShape(this, sh)
+        TensorImpl.prepareNewShape(this, sh)
         return MutableReshapedView(this, sh)
     }
 
@@ -1122,13 +1133,6 @@ abstract class AbstractMutableTensor<T : Any>(mc: MathCalculator<T>, shape: IntA
         return super<MutableTensor>.subtract(y)
     }
 
-    override fun multiply(k: T): MutableTensor<T> {
-        return super<MutableTensor>.multiply(k)
-    }
-
-    override fun multiply(y: Tensor<T>): MutableTensor<T> {
-        return super<MutableTensor>.multiply(y)
-    }
 
     override fun divide(y: Tensor<T>): MutableTensor<T> {
         return super<MutableTensor>.divide(y)
@@ -1147,7 +1151,8 @@ abstract class AbstractMutableTensor<T : Any>(mc: MathCalculator<T>, shape: IntA
 /**
  * An array-implementation of tensor.
  */
-class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
+class ATensor<T : Any>
+internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
     : AbstractMutableTensor<T>(mc, shape) {
     private val shifts: IntArray = IntArray(dim)
 
@@ -1233,7 +1238,7 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
     }
 
     override fun negate(): MutableTensor<T> {
-        return inlineApplyAll(mc::negate)
+        return copy().inlineApplyAll(mc::negate)
     }
 
     override fun subtract(y: Tensor<T>): MutableTensor<T> {
@@ -1244,7 +1249,11 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
     }
 
     override fun multiply(k: T): MutableTensor<T> {
-        return applyAll { t -> mc.multiply(k, t) }.copy()
+        return applyAll { t -> mc.multiply(k, t) }
+    }
+
+    override fun divide(k: T): MutableTensor<T> {
+        return applyAll { t -> mc.divide(k, t) }
     }
 
     override fun multiply(y: Tensor<T>): MutableTensor<T> {
@@ -1302,7 +1311,7 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
 
     override fun reshape(vararg newShape: Int): MutableTensor<T> {
         val sh = newShape.clone()
-        TensorUtils.prepareNewShape(this, sh)
+        TensorImpl.prepareNewShape(this, sh)
         return ATensor(mc, sh, data)
     }
 
@@ -1383,7 +1392,7 @@ class ATensor<T : Any>(mc: MathCalculator<T>, shape: IntArray, val data: Array<T
         }
 
         @Suppress("UNCHECKED_CAST")
-        fun <T : Any> wedeg(x: ATensor<T>, y: ATensor<T>): ATensor<T> {
+        fun <T : Any> wedge(x: ATensor<T>, y: ATensor<T>): ATensor<T> {
             val mc = x.mc
             val shape = x.shape + y.shape
             val size = x.size * y.size

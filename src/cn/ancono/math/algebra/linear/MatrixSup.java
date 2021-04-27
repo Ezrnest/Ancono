@@ -7,7 +7,6 @@ import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Fraction;
-import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.math.numberTheory.IntCalculator;
 import cn.ancono.utilities.ArraySup;
@@ -52,34 +51,34 @@ public class MatrixSup {
         }
     }
 
-    /**
-     * Return det(mat), this method use elementary operation to simplify the matrix first and then
-     * calculate the result.
-     *
-     * @param mat a square Matrix
-     * @return det(mat)
-     * @deprecated use {@link Matrix#calDet()} instead.
-     */
-    @Deprecated
-    public static <T> T fastDet(Matrix<T> mat) {
-        if (mat.row != mat.column) {
-            throw new ArithmeticException("Cannot calculate det for: " + mat.row + "*" + mat.column);
-        }
-        @SuppressWarnings("unchecked") T[][] mar = (T[][]) mat.getValues();
-        List<MatrixOperation<T>> ops = mat.toUpperTri0(mar, mat.row, mat.column);
-        boolean nega = false;
-        for (MatrixOperation<T> mo : ops) {
-            if (mo.ope == MatrixOperation.Operation.EXCHANGE_ROW) {
-                nega = !nega;
-            }
-        }
-        var mc = mat.getMathCalculator();
-        T re = mar[0][0];
-        for (int i = 1; i < mat.row; i++) {
-            re = mc.multiply(re, mar[i][i]);
-        }
-        return nega ? mc.negate(re) : re;
-    }
+//    /**
+//     * Return det(mat), this method use elementary operation to simplify the matrix first and then
+//     * calculate the result.
+//     *
+//     * @param mat a square Matrix
+//     * @return det(mat)
+//     * @deprecated use {@link Matrix#calDet()} instead.
+//     */
+//    @Deprecated
+//    public static <T> T fastDet(Matrix<T> mat) {
+//        if (mat.row != mat.column) {
+//            throw new ArithmeticException("Cannot calculate det for: " + mat.row + "*" + mat.column);
+//        }
+//        @SuppressWarnings("unchecked") T[][] mar = (T[][]) mat.getValues();
+//        List<MatrixOperation<T>> ops = mat.toUpperTri0(mar, mat.row, mat.column);
+//        boolean nega = false;
+//        for (MatrixOperation<T> mo : ops) {
+//            if (mo.ope == MatrixOperation.Operation.EXCHANGE_ROW) {
+//                nega = !nega;
+//            }
+//        }
+//        var mc = mat.getMathCalculator();
+//        T re = mar[0][0];
+//        for (int i = 1; i < mat.row; i++) {
+//            re = mc.multiply(re, mar[i][i]);
+//        }
+//        return nega ? mc.negate(re) : re;
+//    }
 
 //    public static Object[][] identityMatrix
 
@@ -106,7 +105,6 @@ public class MatrixSup {
             ma[i][c2] = t;
         }
     }
-
 
     public static <T> void multiplyAndAddColumn(T[][] mat, int c1, int c2, T f, MathCalculator<T> mc) {
         for (int i = 0; i < mat.length; i++) {
@@ -499,46 +497,18 @@ public class MatrixSup {
             int sPos = 0;
             for (int i = 0; i < n; i++) {
                 if (i == baseColumns[sPos]) {
-                    try {
-                        solution[i] = mat[sPos][curCol];
-
-                    } catch (Exception e) {
-                        print(e);
-                    }
+                    solution[i] = mat[sPos][curCol];
                     sPos++;
                 } else {
                     solution[i] = zero;
                 }
             }
             solution[curCol] = negativeOne;
-            vs[s] = new DVector<T>(solution, false, mc);
+            vs[s] = new DVector<>(solution, false, mc);
             curCol++;
         }
         sb.setVariableSolution(vs);
         return sb.build();
-//		sb.setSituation(Situation.UNBOUNDED_SOLUTION);
-//		
-//		Vector<T>[] vs = new Vector[numberOfKSolution];
-//		
-//		for(int i=0;i<numberOfKSolution;i++) {
-//			T[] solution = (T[]) new Object[n];
-//			int column = i+ rank;
-//			for(int j=0;j<rank;j++) {
-//				solution[j] =(T) step.data[j][column];
-//			}
-//			for(int j=rank;j<n;j++) {
-//				if(j==column) {
-//					solution[j]= netagiveOne;
-//				}else {
-//					solution[j] = zero;
-//				}
-//			}
-//			vs[i] = new DVector<T>(solution, false, mc);
-//		}
-//		sb.setVariableSolution(vs);
-//		return sb.build();
-
-
     }
 
     @SuppressWarnings("unchecked")
@@ -575,9 +545,6 @@ public class MatrixSup {
         } else {
             return Situation.INFINITE;
         }
-//        Matrix<T> coeMatrix = expandedMatrix.subMatrix(0,0,expandedMatrix.row-1,expandedMatrix.column-2);
-//        boolean isHomogeneous = expandedMatrix.getColumn(expandedMatrix.column-1).isZeroVector();
-//        int coeMatrixRank = coeMatrix.calRank();
     }
 
     /**
@@ -639,81 +606,12 @@ public class MatrixSup {
         return Matrix.diag((T[]) eigenvalues.toArray(), mat.getMathCalculator());
     }
 
-    public static <T> Matrix<T> sylvesterDet(Polynomial<T> p1, Polynomial<T> p2) {
-        int n = p1.getDegree();
-        int m = p2.getDegree();
-        int size = m + n;
-        var builder = Matrix.getBuilder(size, size, p1.getMathCalculator());
-        for (int row = 0; row < m; row++) {
-            for (int i = 0; i <= n; i++) {
-                builder.set(row, i + row, p1.get(n - i));
-            }
-        }
-        for (int row = m; row < size; row++) {
-            for (int i = 0; i <= m; i++) {
-                builder.set(row, i + row - m, p2.get(m - i));
-            }
-        }
-        return builder.build();
-    }
-
-    /**
-     * Returns the eigenmatrix of `M`, which is equal to `λI-M`
-     */
-    public static <T> Matrix<Polynomial<T>> charMatrix(Matrix<T> m, MathCalculator<Polynomial<T>> mcp) {
-        if (m.row != m.column) {
-            throw new IllegalArgumentException("M must be square!");
-        }
-        var mc = m.getMathCalculator();
-        @SuppressWarnings({"unchecked"})
-        Polynomial<T>[][] data = (Polynomial<T>[][]) new Polynomial[m.row][m.column];
-        for (int i = 0; i < m.row; i++) {
-            for (int j = 0; j < m.column; j++) {
-                if (i == j) {
-                    data[i][j] = Polynomial.ofRoot(mc, m.get(i, j));
-                } else {
-                    data[i][j] = Polynomial.constant(mc, mc.negate(m.get(i, j)));
-                }
-            }
-        }
-        return new DMatrix<>(data, m.row, m.column, mcp);
-
-    }
-
-    /**
-     * Returns the eigenmatrix of `M`, which is equal to `λI-M`
-     */
-    public static <T> Matrix<Polynomial<T>> charMatrix(Matrix<T> m) {
-        return charMatrix(m, Polynomial.getCalculator(m.getMathCalculator()));
-    }
-
-    /**
-     * Determines whether the two matrices are similar.
-     */
-    public static <T> boolean isSimilar(Matrix<T> a, Matrix<T> b) {
-        var pc = Polynomial.getCalculator(a.getMathCalculator());
-        var x = charMatrix(a, pc);
-        var y = charMatrix(b, pc);
-        x = LambdaMatrixKt.toNormalForm(x);
-        y = LambdaMatrixKt.toNormalForm(y);
-        return x.valueEquals(y);
-    }
-
-    /**
-     * Returns the Frobenius normal form of the given matrix, which is a
-     * matrix similar to the given matrix.
-     */
-    public static <T> Matrix<T> frobeniusForm(Matrix<T> mat) {
-        var pc = Polynomial.getCalculator(mat.getMathCalculator());
-        var x = charMatrix(mat, pc);
-        return LambdaMatrixKt.toFrobeniusForm(x, mat.getMathCalculator());
-    }
 
     /**
      * Returns the Jordan normal form of the given matrix and the transformation matrix.
      */
     public static @Nullable Pair<Matrix<Fraction>, Matrix<Fraction>> jordanFormAndTrans(Matrix<Fraction> mat) {
-        return LambdaMatrixSup.INSTANCE.jordanFormAndTrans(mat);
+        return LambdaMatrixSup.jordanFormAndTrans(mat);
     }
 
     public static <T> Polynomial<Matrix<T>> matrixPolynomial(int n, Polynomial<T> p) {
@@ -723,11 +621,8 @@ public class MatrixSup {
     }
 
     /**
-     * Transform this matrix to Hermit Form
-     *
-     * @param m
-     * @param <T>
-     * @return
+     * Transform this matrix to Hermit Form. It is required that the calculator is a
+     * {@linkplain cn.ancono.math.algebra.abs.calculator.EUDCalculator}.
      */
     public static <T> Matrix<T> toHermitForm(Matrix<T> m) {
         var mc = (IntCalculator<T>) m.getMathCalculator();
@@ -757,8 +652,8 @@ public class MatrixSup {
                 var d = triple.getFirst();
                 var u = triple.getSecond();
                 var v = triple.getThird();
-                var k1 = mc.exactDivide(mat[i][k], d);
-                var k2 = mc.exactDivide(mat[i][j], d);
+                var k1 = mc.divideToInteger(mat[i][k], d);
+                var k2 = mc.divideToInteger(mat[i][j], d);
                 for (int p = 0; p < m.row; p++) {
                     var t = mc.add(mc.multiply(u, mat[k][p]), mc.multiply(v, mat[j][p]));
                     mat[j][p] = mc.subtract(mc.multiply(k1, mat[j][p]), mc.multiply(k2, mat[k][p]));
@@ -827,15 +722,6 @@ public class MatrixSup {
     }
 
 
-    /**
-     * Returns a string representing this matrix in latex format.
-     */
-    public static <T> String toLatexString(Matrix<T> m, NumberFormatter<T> formatter) {
-        if (formatter == null) {
-            formatter = NumberFormatter.defaultFormatter();
-        }
-        return MatrixSupKt.INSTANCE.toLatexString(m, formatter, "pmatrix");
-    }
 //
 //    public static void main(String[] args) {
 //        var mc = Calculators.getCalculatorInteger();

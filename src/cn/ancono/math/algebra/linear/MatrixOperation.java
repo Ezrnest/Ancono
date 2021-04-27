@@ -64,6 +64,11 @@ public class MatrixOperation<T> {
         }
     }
 
+    @Override
+    public String toString() {
+        return toDetail();
+    }
+
     public static <T> MatrixOperation<T> exchangeRow(int r1, int r2) {
         return new MatrixOperation<>(Operation.EXCHANGE_ROW, r1, r2, null);
     }

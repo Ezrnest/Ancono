@@ -20,7 +20,7 @@ object LinearEquationSample {
         val H = Matrix.of(n, n, mc) { i, j ->
             BigFraction.valueOf(BigInteger.ONE, BigInteger.valueOf(i + j + 1L))
         }
-        val x = Vector.vOf(n, mc) {
+        val x = Vector.vOf(n, mc, false) {
             mc.one
         }
         val b = H * x

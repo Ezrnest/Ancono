@@ -17,7 +17,7 @@ class QuadraticFormTest {
         1 -1 1 3
     """.trimIndent()
         val A = MatrixSup.parseFMatrix(str1)
-        val (J, P) = A.congruenceDiagForm()
+        val (J, P) = A.toCongDiagForm()
         kotlin.test.assertTrue {
             (P.T * A * P).valueEquals(J)
         }

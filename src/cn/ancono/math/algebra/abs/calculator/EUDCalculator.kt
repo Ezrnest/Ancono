@@ -139,7 +139,7 @@ interface EUDCalculator<T : Any> : UFDCalculator<T> {
             u0 = u1
             u1 = u2
         }
-        val v: T = exactDivide(d0 - a * u0, b)
+        val v: T = divideToInteger(d0 - a * u0, b) // discard the possible remainder caused by numeric imprecision
         return Triple(d0, u0, v)
     }
 

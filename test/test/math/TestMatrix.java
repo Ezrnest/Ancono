@@ -52,6 +52,7 @@ public class TestMatrix {
     }
 
     //	@Test
+    @Test
     public void testEigenEquation() {
         Matrix<Long> mat = Matrix.of(new long[][]{{1, 0}, {0, 4}});
         SVPEquation<Long> equation = mat.charEquation(), expected = SVPEquation.quadratic(1L, -5L, 4L, mc);
@@ -66,7 +67,7 @@ public class TestMatrix {
         assertTrue("EigenEquation:", expected.valueEquals(equation));
     }
 
-    //	@Test
+    @Test
     public void testSolveEquation() {
         int row = 8;
         int column = 10;
@@ -187,7 +188,7 @@ public class TestMatrix {
 //        A.congruenceDiagForm().getFirst().printMatrix();
 //        L.printMatrix();
 //        A.printMatrix();
-        var R = Matrix.multiply(L,L.transpose());
+        var R = Matrix.multiply(L, L.transpose());
 //        R.printMatrix();
 //        var A = Matrix.of(new double[][]{
 //                {4, -1, 1},
@@ -197,7 +198,7 @@ public class TestMatrix {
 //        var L = A.decompCholesky();
 //        L.printMatrix();
 //        var R = Matrix.multiply(L,L.transpose());
-        assertTrue("A = LL^T",A.valueEquals(R));
+        assertTrue("A = LL^T", A.valueEquals(R));
     }
 
     @Test
@@ -212,7 +213,7 @@ public class TestMatrix {
 //        A.congruenceDiagForm().getFirst().printMatrix();
 //        L.printMatrix();
 //        A.printMatrix();
-        var R = Matrix.multiply(Matrix.multiply(L,D),L.transpose());
+        var R = Matrix.multiply(Matrix.multiply(L, D), L.transpose());
 
 //        R.printMatrix();
 //        var A = Matrix.of(new double[][]{
@@ -223,6 +224,6 @@ public class TestMatrix {
 //        var L = A.decompCholesky();
 //        L.printMatrix();
 //        var R = Matrix.multiply(L,L.transpose());
-        assertTrue("A = LDL^T",A.valueEquals(R));
+        assertTrue("A = LDL^T", A.valueEquals(R));
     }
 }

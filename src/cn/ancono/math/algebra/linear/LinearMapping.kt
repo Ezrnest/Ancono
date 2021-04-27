@@ -110,6 +110,9 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
         }
     }
 
+    override fun divide(k: K): ALinearMapping<K, V, U> {
+        return multiply(linearCalculator.scalarCalculator.reciprocal(k))
+    }
 
     open fun <W : Any> composeLinear(g: ALinearMapping<K, U, W>): ALinearMapping<K, V, W> {
         val f = this

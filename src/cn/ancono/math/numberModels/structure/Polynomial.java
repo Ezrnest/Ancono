@@ -13,7 +13,6 @@ import cn.ancono.math.algebra.PolynomialUtil;
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator;
 import cn.ancono.math.algebra.linear.Matrix;
-import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.exceptions.ExceptionUtil;
@@ -841,7 +840,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @return a square matrix whose size is <code>this.degree + g.degree</code>.
      */
     public Matrix<T> sylvesterMatrix(Polynomial<T> g) {
-        return MatrixSup.sylvesterDet(this, g);
+        return Matrix.sylvesterDet(this, g);
     }
 
     /**

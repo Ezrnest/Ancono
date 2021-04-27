@@ -318,6 +318,10 @@ internal constructor(
         return DLinearTrans(transMatrix.multiplyNumber(k), dimension, mc)
     }
 
+    override fun divide(k: T): LinearTrans<T> {
+        return multiply(mc.reciprocal(k))
+    }
+
     override fun isLinearRelevant(v: LinearTrans<T>): Boolean {
         return isLinearRelevant(this, v)
     }
@@ -389,8 +393,7 @@ internal constructor(
 
 }
 
-class
-DLinearTrans<T : Any> internal constructor(
+class DLinearTrans<T : Any> internal constructor(
         override val transMatrix: Matrix<T>,
         dimension: Int,
         mc: MathCalculator<T>

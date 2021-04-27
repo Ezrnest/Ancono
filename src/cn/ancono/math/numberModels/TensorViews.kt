@@ -109,7 +109,7 @@ open class SlicedView<T : Any>(
     }
 
     override fun slice(slices: List<Any?>): Tensor<T> {
-        val (am, ranges, sh) = TensorUtils.computeSliceView(this, slices)
+        val (am, ranges, sh) = TensorImpl.computeSliceView(this, slices)
         val (newAxisMap, newRanges) = composeSliceTo(am, ranges)
         return SlicedView(this.t, newRanges, newAxisMap, sh)
     }
@@ -151,13 +151,13 @@ class MutableSliceView<T : Any>(
 //    }
 
     override fun slice(slices: List<Any?>): MutableTensor<T> {
-        val (am, ranges, sh) = TensorUtils.computeSliceView(this, slices)
+        val (am, ranges, sh) = TensorImpl.computeSliceView(this, slices)
         val (newAxisMap, newRanges) = composeSliceTo(am, ranges)
         return MutableSliceView(this.t, newRanges, newAxisMap, sh)
     }
 
     override fun newAxisAt(axis: Int): MutableTensor<T> {
-        val (am, ranges, sh) = TensorUtils.newAxisSliceView(this, axis)
+        val (am, ranges, sh) = TensorImpl.newAxisSliceView(this, axis)
         val (newAxisMap, newRanges) = composeSliceTo(am, ranges)
         return MutableSliceView(this.t, newRanges, newAxisMap, sh)
     }
@@ -498,7 +498,7 @@ class MutableIndexMapView<T : Any>(override val tensor: MutableTensor<T>, am: In
     }
 }
 
-internal object TensorUtils {
+internal object TensorImpl {
 
     fun addIfNegative(a: Int, m: Int): Int {
         return if (a < 0) {
@@ -545,6 +545,14 @@ internal object TensorUtils {
     }
 
     /**
+     * Returns the result of dividing this tensor with a scalar.
+     */
+    fun <T : Any> divide(x: Tensor<T>, k: T): MutableTensor<T> {
+        val mc = x.mathCalculator
+        return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.divide(k, x[idx]) })
+    }
+
+    /**
      * Returns the **element-wise** product of this tensor and `y`.
      *
      */
@@ -579,7 +587,7 @@ internal object TensorUtils {
 
     fun <T : Any> wedge(x: Tensor<T>, y: Tensor<T>): MutableTensor<T> {
         if (x is ATensor && y is ATensor) {
-            return ATensor.wedeg(x, y)
+            return ATensor.wedge(x, y)
         }
         val shape = x.shape + y.shape
         val mc = x.mathCalculator

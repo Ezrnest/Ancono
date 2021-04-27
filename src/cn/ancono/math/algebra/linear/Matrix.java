@@ -5,6 +5,7 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.MathObjectExtend;
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
 import cn.ancono.math.algebra.abs.calculator.ModuleCalculator;
+import cn.ancono.math.algebra.abs.calculator.UFDCalculator;
 import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
@@ -28,7 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * A matrix is like a two dimension array,but the number in the matrix
+ * A matrix is like a two dimension array, but the number in the matrix
  * is unchangeable. A n*m matrix has n rows and m columns. m,n=1,2,3,4,5...,
  * this matrix also provides some basic matrix operations such as elementary
  * operations of matrix.
@@ -43,7 +44,7 @@ import java.util.function.Function;
  * the matrix class itself provides several static methods for basic matrix calculation such as {@link
  * #add(Matrix, Matrix)}
  * and {@link #multiply(Matrix, Matrix)}. To do more complex operations or to have better
- * time performance , you can seek {@linkplain MatrixSup} for some useful methods.
+ * time performance, you can seek {@linkplain MatrixSup} for some useful methods.
  * <p>
  * To create a Matrix , you can either use a two-dimension array as parameter or
  * directly call some prepared methods.No construction function is available for the safety of the
@@ -248,13 +249,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     public abstract Matrix<T> negate();
 
-    /**
-     * Return the transpose of this matrix: <code>N = this<sup>T</sup></code>.
-     * The new matrix's row count = <code>this.column</code>
-     * , new matrix's column count = <code>this.row</code>.
-     *
-     * @return <tt>this<sup>T</sup></tt>
-     */
+
     public Matrix<T> transpose() {
         Object[][] re = new Object[column][row];
         for (int l = 0; l < row; ++l) {
@@ -272,7 +267,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      *
      * @see #cofactor(int, int)
      */
-
     public Matrix<T> adjugate() {
         Object[][] re = new Object[column][row];
         var mc = getMc();
@@ -607,6 +601,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 //
 //    }
 
+
     private T detGaussBareiss() {
         //Created by lyc at 2020-03-05 19:18
         /*
@@ -629,6 +624,16 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
          */
 
         var mc = getMc();
+        BiFunction<T, T, T> division;
+        if (mc instanceof UFDCalculator) {
+            @SuppressWarnings("unchecked")
+            var ufd = ((EUDCalculator<T>) mc);
+            division = ufd::divideToInteger;
+            // avoid numeric imprecision
+            // for example, in Polynomial<Double>
+        } else {
+            division = mc::divide;
+        }
         @SuppressWarnings("unchecked")
         T[][] mat = (T[][]) getValues();
         int n = getRowCount();
@@ -661,7 +666,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             for (int i = k + 1; i < n; i++) {
                 for (int j = k + 1; j < n; j++) {
                     T t = mc.subtract(mc.multiply(p, mat[i][j]), mc.multiply(mat[i][k], mat[k][j]));
-                    mat[i][j] = mc.divide(t, d);
+                    mat[i][j] = division.apply(t, d); //
                 }
             }
             d = p;
@@ -1065,7 +1070,7 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      * <pre>λI-this</pre>which is a matrix of polynomial.
      */
     public Matrix<Polynomial<T>> charMatrix() {
-        return MatrixSup.charMatrix(this);
+        return charMatrix(this, Polynomial.getCalculator(getMathCalculator()));
     }
 
     /**
@@ -1454,6 +1459,9 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return VectorBasis.generate(columnVectors());
     }
 
+    /**
+     * Returns the row space of this matrix.
+     */
     public VectorBasis<T> rowSpace() {
         return VectorBasis.generate(rowVectors());
     }
@@ -1478,17 +1486,20 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
 
 
     /**
-     * Returns the frobenius form of this matrix.
+     * Returns the Frobenius normal form of this matrix, which is a
+     * matrix similar to the given matrix.
      */
-    public Matrix<T> frobeniusForm() {
-        return MatrixSup.frobeniusForm(this);
+    public Matrix<T> toFrobeniusForm() {
+        var pc = Polynomial.getCalculator(getMathCalculator());
+        var x = charMatrix(this, pc);
+        return LambdaMatrixKt.toFrobeniusForm(x, getMathCalculator());
     }
 
     /**
      * Transform this matrix to diagonal with congruence transformation. Returns a pair of matrix <code>(J,P)</code>
      * such that <code>P^T*this*P = J</code> and <code>J</code> is a diagonal matrix.
      */
-    public Pair<Matrix<T>, Matrix<T>> congruenceDiagForm() {
+    public Pair<Matrix<T>, Matrix<T>> toCongDiagForm() {
         if (!isSquare()) {
             throw new IllegalArgumentException("The matrix must be a square matrix!");
         }
@@ -1640,17 +1651,13 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
         return MatrixSupKt.INSTANCE.decompositionCholeskyD(this);
     }
 
-//    /**
-//     * Transforms this matrix to Hermite normal form. It is required that the math calculator is UFDCalculator.
-//     *
-//     * @return
-//     */
-//    public Matrix<T> toHermiteForm() {
-//
-//
-//
-//        return null;
-//    }
+    /**
+     * Transform this matrix to Hermit Form. It is required that the calculator is a
+     * {@linkplain cn.ancono.math.algebra.abs.calculator.EUDCalculator}.
+     */
+    public Matrix<T> toHermitForm() {
+        return MatrixSup.toHermitForm(this);
+    }
 
     /**
      * Transforms this matrix to Smith normal form, a diagonal matrix with the following property:
@@ -1668,6 +1675,16 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
     public Matrix<T> toSmithForm() {
         //Created by lyc at 2020-03-10 14:54
         return LambdaMatrixSup.toSmithForm(this);
+    }
+
+    /**
+     * Transforms this matrix to (upper) Hessenberg form.
+     */
+    public Matrix<T> toHessenbergForm() {
+        @SuppressWarnings("unchecked")
+        T[][] data = (T[][]) getValues();
+
+        return null;
     }
 
     @NotNull
@@ -1996,17 +2013,6 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             Arrays.fill(datum, t);
         }
     }
-
-//    /**
-//     * Fill the data with 0 if null
-//     */
-//    private static <T> void fillDataForNull(T[][] data, MathCalculator<T> mc) {
-//        for (int i = 0; i < data.length; i++) {
-//            for (int j = 0; j < data[i].length; j++) {
-//                data[i][j] = data[i][j] == null ? mc.getZero() : data[i][j];
-//            }
-//        }
-//    }
 
     private static void checkSize(int row, int column) {
         if (row < 1 || column < 1) {
@@ -2492,6 +2498,16 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
      */
     public void printMatrix() {
         Printer.printMatrix(getValues());
+    }
+
+    /**
+     * Returns a string representing this matrix in latex format.
+     */
+    public String toLatexString(NumberFormatter<T> formatter) {
+        if (formatter == null) {
+            formatter = NumberFormatter.defaultFormatter();
+        }
+        return MatrixSupKt.INSTANCE.toLatexString(this, formatter, "pmatrix");
     }
 
     /**
@@ -3050,4 +3066,60 @@ public abstract class Matrix<T> extends MathObjectExtend<T> implements Invertibl
             return Matrix.diag(mc.of(x), row, mc);
         }
     }
+
+
+    public static <T> Matrix<T> sylvesterDet(Polynomial<T> p1, Polynomial<T> p2) {
+        int n = p1.getDegree();
+        int m = p2.getDegree();
+        int size = m + n;
+        var builder = Matrix.getBuilder(size, size, p1.getMathCalculator());
+        for (int row = 0; row < m; row++) {
+            for (int i = 0; i <= n; i++) {
+                builder.set(row, i + row, p1.get(n - i));
+            }
+        }
+        for (int row = m; row < size; row++) {
+            for (int i = 0; i <= m; i++) {
+                builder.set(row, i + row - m, p2.get(m - i));
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     * Returns the eigenmatrix of `M`, which is equal to `λI-M`
+     */
+    public static <T> Matrix<Polynomial<T>> charMatrix(Matrix<T> m, MathCalculator<Polynomial<T>> mcp) {
+        if (m.row != m.column) {
+            throw new IllegalArgumentException("M must be square!");
+        }
+        var mc = m.getMathCalculator();
+        @SuppressWarnings({"unchecked"})
+        Polynomial<T>[][] data = (Polynomial<T>[][]) new Polynomial[m.row][m.column];
+        for (int i = 0; i < m.row; i++) {
+            for (int j = 0; j < m.column; j++) {
+                if (i == j) {
+                    data[i][j] = Polynomial.ofRoot(mc, m.get(i, j));
+                } else {
+                    data[i][j] = Polynomial.constant(mc, mc.negate(m.get(i, j)));
+                }
+            }
+        }
+        return new DMatrix<>(data, m.row, m.column, mcp);
+
+    }
+
+    /**
+     * Determines whether the two matrices are similar.
+     */
+    public static <T> boolean isSimilar(Matrix<T> a, Matrix<T> b) {
+        var pc = Polynomial.getCalculator(a.getMathCalculator());
+        var x = charMatrix(a, pc);
+        var y = charMatrix(b, pc);
+        x = LambdaMatrixKt.toNormalForm(x);
+        y = LambdaMatrixKt.toNormalForm(y);
+        return x.valueEquals(y);
+    }
+
+
 }

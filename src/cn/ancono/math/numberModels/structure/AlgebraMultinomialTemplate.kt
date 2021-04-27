@@ -1,9 +1,7 @@
 package cn.ancono.math.numberModels.structure
 
 import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
-import cn.ancono.math.calculus.DifferentialForm
 import cn.ancono.math.numberModels.api.AlgebraModel
-import cn.ancono.math.numberModels.expression.Expression
 import java.util.*
 
 
@@ -179,6 +177,10 @@ class AlgebraMultinomial<K : Any, V : Any> internal constructor(
 
     override fun multiply(k: K): AlgebraMultinomial<K, V> {
         return fromTerms(multiplyTerms(k))
+    }
+
+    override fun divide(k: K): AlgebraMultinomial<K, V> {
+        return multiply(ac.scalarCalculator.reciprocal(k))
     }
 
     override fun multiply(y: AlgebraMultinomial<K, V>): AlgebraMultinomial<K, V> {

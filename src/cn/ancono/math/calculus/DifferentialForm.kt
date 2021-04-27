@@ -332,6 +332,10 @@ class DifferentialForm<T : Any> internal constructor(terms: NavigableSet<DFBase<
         return fromTerms(multiplyTerms(k))
     }
 
+    override fun divide(k: T): DifferentialForm<T> {
+        return multiply(ac.scalarCalculator.reciprocal(k))
+    }
+
     override fun multiply(y: DifferentialForm<T>): DifferentialForm<T> {
         return fromTerms(mergingMultiply(terms, y.terms))
     }

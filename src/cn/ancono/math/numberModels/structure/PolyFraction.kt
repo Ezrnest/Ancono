@@ -47,6 +47,16 @@ class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val den
         return PFraction(mc, nume.multiply(k), deno)
     }
 
+    override fun divide(k: T): PFraction<T> {
+        if (isZero()) {
+            return this
+        }
+        if (mc.isZero(k)) {
+            ExceptionUtil.dividedByZero()
+        }
+        return PFraction(mc, nume, deno.multiply(k))
+    }
+
     fun multiplyLong(k: Long): PFraction<T> {
         if (k == 0L) {
             return zero(mc)

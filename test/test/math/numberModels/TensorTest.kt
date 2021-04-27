@@ -2,7 +2,7 @@ package test.math.numberModels
 
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Tensor
-import cn.ancono.math.numberModels.TensorUtils
+import cn.ancono.math.numberModels.TensorImpl
 import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numberModels.get
@@ -65,7 +65,7 @@ class TensorTest {
 //    val w = Tensor.ones(mc, *shape)
         val u = Tensor.of(shape, mc) { it.sum() }
         val w = Tensor.of(shape2, mc) { it[0] }
-        var r = TensorUtils.einsum(listOf(u, w),
+        var r = TensorImpl.einsum(listOf(u, w),
                 intArrayOf(3, 3),
                 intArrayOf(1),
                 listOf(intArrayOf(0, 0, 1, 1), intArrayOf(0, 0, 1, 1)),
@@ -74,7 +74,7 @@ class TensorTest {
         assertValueEquals(r, u * w)
 
 
-        r = TensorUtils.einsum(listOf(u),
+        r = TensorImpl.einsum(listOf(u),
                 intArrayOf(3),
                 intArrayOf(1),
                 listOf(intArrayOf(0, 0, 1, 0)),
@@ -82,7 +82,7 @@ class TensorTest {
                 mc)//diagonal elements
         assertValueEquals(r, Tensor.of(intArrayOf(3), mc) { it[0] * 2 })
 
-        r = TensorUtils.einsum(listOf(u),
+        r = TensorImpl.einsum(listOf(u),
                 intArrayOf(1),
                 intArrayOf(3),
                 listOf(intArrayOf()),
@@ -90,7 +90,7 @@ class TensorTest {
                 mc) // trace
         assertEquals(6, r[0])
 
-        r = TensorUtils.einsum(listOf(u, w),
+        r = TensorImpl.einsum(listOf(u, w),
                 intArrayOf(3, 3, 3, 3),
                 intArrayOf(1),
                 listOf(intArrayOf(0, 0, 1, 1), intArrayOf(0, 2, 1, 3)),
@@ -124,8 +124,8 @@ class TensorTest {
         val mc = Calculators.integer()
         val shape = intArrayOf(3, 3)
         val u = Tensor.of(shape, mc) { it[0] + 2 * it[1] }
-        assertValueEquals(TensorUtils.sumInOneAxis(u, 1), Tensor.einsum("ij->i", u))
-        assertValueEquals(TensorUtils.sumInOneAxis(u, 0), Tensor.einsum("ij->j", u))
+        assertValueEquals(TensorImpl.sumInOneAxis(u, 1), Tensor.einsum("ij->i", u))
+        assertValueEquals(TensorImpl.sumInOneAxis(u, 0), Tensor.einsum("ij->j", u))
     }
 
     @Test

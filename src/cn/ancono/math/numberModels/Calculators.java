@@ -2361,6 +2361,9 @@ public final class Calculators {
     private static final int PRIME_CHECK_THRESHOLD = 1024;
     private static final int USE_CACHE_THRESHOLD = 1024;
 
+    /**
+     * Gets a calculator of `Z_2`, the binary field.
+     */
     public static ZModPCalculator<Integer> intMod2() {
         return ZMod2Calculator.INSTANCE;
     }

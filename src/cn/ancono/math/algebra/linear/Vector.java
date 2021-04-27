@@ -818,13 +818,13 @@ public abstract class Vector<T> extends Matrix<T> {
     /**
      * Returns a column vector whose n-th element is <code>f.apply(n)</code>, 0<= n <=length-1
      */
-    public static <T> Vector<T> vOf(int length, MathCalculator<T> mc, IntFunction<T> f) {
+    public static <T> Vector<T> vOf(int length, MathCalculator<T> mc, boolean isRow, IntFunction<T> f) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[length];
         for (int i = 0; i < length; i++) {
             arr[i] = Objects.requireNonNull(f.apply(i));
         }
-        return new DVector<>(arr, false, mc);
+        return new DVector<>(arr, isRow, mc);
     }
 
     /**

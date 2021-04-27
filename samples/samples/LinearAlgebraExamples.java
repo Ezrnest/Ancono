@@ -36,7 +36,7 @@ public class LinearAlgebraExamples {
         var A = QuadraticForm.representationMatrix(Multinomial.parse(expr));
         System.out.println("A = ");
         A.printMatrix();
-        var pair = A.congruenceDiagForm();
+        var pair = A.toCongDiagForm();
         var J = pair.getFirst();
         var P = pair.getSecond();
         System.out.println("P = ");

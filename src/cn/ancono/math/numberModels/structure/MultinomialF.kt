@@ -340,6 +340,10 @@ internal constructor(
         return applyAll { TermF(it.coefficient * k, it.characters) }
     }
 
+    override fun divide(k: F): MultinomialF<F> {
+        return multiply(mc.reciprocal(k))
+    }
+
     /**
      * The result set must not be modified.
      *

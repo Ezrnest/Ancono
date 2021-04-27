@@ -93,13 +93,32 @@ interface DivisionRingNumberModel<T : DivisionRingNumberModel<T>> : RingNumberMo
 interface FieldNumberModel<T : FieldNumberModel<T>> : DivisionRingNumberModel<T>
 
 /**
- * Describe the number model for a linear space,
+ * Describes the number model of a (left) module.
  */
-interface VectorModel<K, V : VectorModel<K, V>> : GroupNumberModel<V> {
+interface ModuleModel<R, V : ModuleModel<R, V>> : GroupNumberModel<V> {
+
+
     /**
      * Performs the scalar multiplication.
      */
-    fun multiply(k: K): V
+    fun multiply(k: R): V
+
+
+}
+
+/**
+ * Describe the number model for a linear space,
+ */
+interface VectorModel<K, V : VectorModel<K, V>> : ModuleModel<K, V> {
+    /**
+     * Performs the scalar multiplication.
+     */
+    override fun multiply(k: K): V
+
+    /**
+     * Performs the scalar division.
+     */
+    fun divide(k: K): V
 
     fun isLinearRelevant(v: V): Boolean {
         throw UnsupportedOperationException()
@@ -107,7 +126,8 @@ interface VectorModel<K, V : VectorModel<K, V>> : GroupNumberModel<V> {
 }
 
 inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.times(k: K) = multiply(k)
-inline operator fun <K, V : VectorModel<K, V>> K.times(v: VectorModel<K, V>) = v.multiply(this)
+inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.div(k: K) = divide(k)
+inline operator fun <K, V : ModuleModel<K, V>> K.times(v: ModuleModel<K, V>) = v.multiply(this)
 
 
 interface AlgebraModel<K, V : AlgebraModel<K, V>> : VectorModel<K, V>, RingNumberModel<V> {

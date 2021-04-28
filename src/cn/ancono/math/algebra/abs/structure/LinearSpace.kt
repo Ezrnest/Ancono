@@ -10,7 +10,7 @@ import cn.ancono.math.set.MathSets
  * Created at 2018/10/8 21:53
  * @author  liyicheng
  */
-interface LinearSpace<K : Any, V : Any> : Module<K, V> {
+interface LinearSpace<K, V> : Module<K, V> {
 
     override val scalars: Field<K>
         get() = FieldFromCal(calculator.scalarCalculator, MathSets.universe())
@@ -22,7 +22,7 @@ interface LinearSpace<K : Any, V : Any> : Module<K, V> {
 /**
  * Describes a linear space of finite dimension.
  */
-interface FiniteLinearSpace<K : Any, V : Any> : LinearSpace<K, V> {
+interface FiniteLinearSpace<K, V> : LinearSpace<K, V> {
 //Created by lyc at 2020-03-07 17:50
     /**
      * Gets the dimension of this linear space.
@@ -45,7 +45,7 @@ interface FiniteLinearSpace<K : Any, V : Any> : LinearSpace<K, V> {
 /**
  * Describes a basis of a finite linear space.
  */
-interface FiniteLinearBasis<T : Any, V : Any> : FiniteGenerator<T, V> {
+interface FiniteLinearBasis<T, V> : FiniteGenerator<T, V> {
     override fun getElements(): List<V>
 
     /**

@@ -10,7 +10,7 @@ import cn.ancono.math.property.FiniteGenerator
 /**
  * @author liyicheng
  */
-interface FinitelyGeneratedModule<T : Any, V : Any> : Module<T, V> {
+interface FinitelyGeneratedModule<T, V> : Module<T, V> {
 
     /**
      * Returns the generators, which are finite.

@@ -196,24 +196,25 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * Returns {@code this^p}.This method is based on multiply operation.If
      * {@code p==0},ONE will be returned.<p>
      *
-     * @param p
+     * @param n
      * @return {@code this^p}
      * @see #powArg(long)
      */
-    public ComplexI pow(long p) {
-        if (p < 0) {
-            return this.reciprocal().pow(-p);
+    @Override
+    public @NotNull ComplexI pow(long n) {
+        if (n < 0) {
+            return this.reciprocal().pow(-n);
         }
 //		if(p==0){
 //			return ONE;
 //		}
         ComplexI t = ONE, mul = this;
-        while (p != 0) {
-            if ((p & 1) != 0) {
+        while (n != 0) {
+            if ((n & 1) != 0) {
                 t = t.multiply(mul);
             }
             mul = mul.multiply(mul);
-            p >>= 1;
+            n >>= 1;
         }
         return t;
     }

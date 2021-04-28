@@ -5,14 +5,33 @@ package cn.ancono.math.numberModels.api
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
+import cn.ancono.utilities.ModelPatterns
 
 
 interface MonoidNumberModel<T : MonoidNumberModel<T>> {
     fun add(y: T): T
+
+    /**
+     * 'multiply' this with the given long, which is the result of summing `this`
+     * for `k` times.
+     */
+    @JvmDefault
+    fun multiply(n: Long): T {
+        @Suppress("UNCHECKED_CAST")
+        val x = this as T
+        return ModelPatterns.binaryProduce(n, x) { a, b -> a.add(b) }
+    }
 }
 
 interface MulMonoidNumberModel<T : MulMonoidNumberModel<T>> {
     fun multiply(y: T): T
+
+    @JvmDefault
+    fun pow(n: Long): T {
+        @Suppress("UNCHECKED_CAST")
+        val x = this as T
+        return ModelPatterns.binaryProduce(n, x) { a, b -> a.multiply(b) }
+    }
 }
 
 
@@ -34,6 +53,19 @@ interface GroupNumberModel<T : GroupNumberModel<T>> : MonoidNumberModel<T> {
      * Returns `this - y`, which should be equal to `add(negate(y))`.
      */
     fun subtract(y: T): T = add(y.negate())
+
+    @JvmDefault
+    override fun multiply(n: Long): T {
+        if (n < 0) {
+            return negate().multiply(n)
+        }
+        @Suppress("UNCHECKED_CAST")
+        val x = this as T
+        if (n == 0L) {
+            return x.subtract(x)
+        }
+        return super.multiply(n)
+    }
 }
 
 /**
@@ -54,6 +86,19 @@ interface MulGroupNumberModel<T : MulGroupNumberModel<T>> : MulMonoidNumberModel
      * Returns `this - y`, which should be equal to `add(negate(y))`.
      */
     fun divide(y: T): T = multiply(y.reciprocal())
+
+    @JvmDefault
+    override fun pow(n: Long): T {
+        if (n < 0) {
+            return reciprocal().pow(n)
+        }
+        @Suppress("UNCHECKED_CAST")
+        val x = this as T
+        if (n == 0L) {
+            return x.divide(x)
+        }
+        return super.pow(n)
+    }
 }
 
 inline operator fun <T : MonoidNumberModel<T>> MonoidNumberModel<T>.plus(y: T): T = add(y)
@@ -132,6 +177,9 @@ inline operator fun <K, V : ModuleModel<K, V>> K.times(v: ModuleModel<K, V>) = v
 
 interface AlgebraModel<K, V : AlgebraModel<K, V>> : VectorModel<K, V>, RingNumberModel<V> {
     override fun multiply(y: V): V
+
+//    @JvmDefault
+//    operator fun times(y: V):V = multiply(y)
 }
 
 inline operator fun <K, V : AlgebraModel<K, V>> AlgebraModel<K, V>.times(y: V) = multiply(y)

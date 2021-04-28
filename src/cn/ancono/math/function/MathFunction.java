@@ -23,8 +23,7 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface MathFunction<P, R> extends Function<P, R> {
     @Override
-    @NotNull
-    R apply(@NotNull P x);
+    R apply(P x);
 
     /**
      * Returns the domain of this MathFunction, the
@@ -70,9 +69,8 @@ public interface MathFunction<P, R> extends Function<P, R> {
 
     static <T, S, R> MathFunction<T, R> compose(MathFunction<S, R> f, MathFunction<T, S> g) {
         return new MathFunction<>() {
-            @NotNull
             @Override
-            public R apply(@NotNull T x) {
+            public R apply(T x) {
                 return f.apply(g.apply(x));
             }
 
@@ -90,9 +88,8 @@ public interface MathFunction<P, R> extends Function<P, R> {
 
     static <T, S> SVFunction<T> composeSV(MathFunction<T, S> f, MathFunction<S, T> g) {
         return new SVFunction<T>() {
-            @NotNull
             @Override
-            public T apply(@NotNull T x) {
+            public T apply(T x) {
                 return g.apply(f.apply(x));
             }
 

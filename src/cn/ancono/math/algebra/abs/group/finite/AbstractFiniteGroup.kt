@@ -29,7 +29,7 @@ import java.util.function.ToIntFunction
  * @author liyicheng
  * 2018-03-01 19:13
  */
-abstract class AbstractFiniteGroup<T : Any>
+abstract class AbstractFiniteGroup<T>
     : FiniteGroup<T> {
     private var mc: MathCalculator<T>? = null
 

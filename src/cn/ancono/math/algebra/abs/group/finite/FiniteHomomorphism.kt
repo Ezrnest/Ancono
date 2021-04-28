@@ -11,7 +11,7 @@ import cn.ancono.math.function.invoke
  * Created at 2018/10/13 19:35
  * @author  liyicheng
  */
-open class FiniteHomomorphism<T : Any, S : Any, G : FiniteGroup<T>, H : FiniteGroup<S>, K : FiniteGroup<T>>(
+open class FiniteHomomorphism<T, S, G : FiniteGroup<T>, H : FiniteGroup<S>, K : FiniteGroup<T>>(
         mapping: HomomorphismMapping<T, S>,
         origin: G,
         dest: H,
@@ -22,15 +22,15 @@ open class FiniteHomomorphism<T : Any, S : Any, G : FiniteGroup<T>, H : FiniteGr
 
     companion object {
 
-        public fun <T : Any, S : Any, G : FiniteGroup<T>, H : FiniteGroup<S>> of(mapping: HomomorphismMapping<T, S>,
-                                                                                 origin: G,
-                                                                                 dest: H): FiniteHomomorphism<T, S, G, H, FiniteGroup<T>> {
+        public fun <T, S, G : FiniteGroup<T>, H : FiniteGroup<S>> of(mapping: HomomorphismMapping<T, S>,
+                                                                     origin: G,
+                                                                     dest: H): FiniteHomomorphism<T, S, G, H, FiniteGroup<T>> {
             val kernel = computeKernel(mapping, origin, dest)
             return FiniteHomomorphism(mapping, origin, dest, kernel)
         }
 
 
-        private fun <T : Any, S : Any, G : FiniteGroup<T>, H : FiniteGroup<S>>
+        private fun <T, S, G : FiniteGroup<T>, H : FiniteGroup<S>>
                 computeKernel(mapping: HomomorphismMapping<T, S>, origin: G, dest: H): FiniteGroup<T> {
             val destGC = dest.calculator
             val list = origin.set.filter { x -> destGC.isEqual(mapping.invoke(x), destGC.identity) }

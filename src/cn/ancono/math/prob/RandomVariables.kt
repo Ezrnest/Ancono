@@ -49,7 +49,7 @@ object RandomVariables {
     /**
      * Returns the given constant as a random variable.
      */
-    fun <T : Any> constant(c: T): RandomVariable<T> {
+    fun <T> constant(c: T): RandomVariable<T> {
         return ConstantRV(c)
     }
 
@@ -202,7 +202,7 @@ object RandomVariables {
     /**
      * Returns a list of independent identically distributed random variables.
      */
-    fun <T, E : Any> iid(x: SimpleRV<E, T>, n: Int): List<SimpleRV<List<E>, T>> {
+    fun <T, E> iid(x: SimpleRV<E, T>, n: Int): List<SimpleRV<List<E>, T>> {
         val space = ProductSpace(Collections.nCopies(n, x.space))
 
         return (0 until n).map { i ->

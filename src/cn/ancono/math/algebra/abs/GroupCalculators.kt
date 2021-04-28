@@ -24,7 +24,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T> createComposing(id: T, equalPredicate: EqualPredicate<T>): GroupCalculator<T> where T : Any, T : Composable<T>, T : Invertible<T> {
+    fun <T> createComposing(id: T, equalPredicate: EqualPredicate<T>): GroupCalculator<T> where T : Composable<T>, T : Invertible<T> {
         return object : GroupCalculator<T> {
             override val identity: T
                 get() = id
@@ -49,7 +49,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T> createComposing(id: T): GroupCalculator<T> where T : Any, T : Composable<T>, T : Invertible<T> {
+    fun <T> createComposing(id: T): GroupCalculator<T> where T : Composable<T>, T : Invertible<T> {
         return object : GroupCalculator<T> {
             override val identity: T
                 get() = id
@@ -110,7 +110,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T : Any> toMathCalculatorAdd(gc: GroupCalculator<T>): MathCalculator<T> {
+    fun <T> toMathCalculatorAdd(gc: GroupCalculator<T>): MathCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
             /*
@@ -155,7 +155,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T : Any> toMathCalculatorEqual(gc: EqualPredicate<T>): MathCalculator<T> {
+    fun <T> toMathCalculatorEqual(gc: EqualPredicate<T>): MathCalculator<T> {
         return if (gc is MathCalculator<*>) {
             gc as MathCalculator<T>
         } else object : MathCalculatorAdapter<T>() {
@@ -173,7 +173,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T : Any> toMathCalculatorRing(rc: RingCalculator<T>): MathCalculator<T> {
+    fun <T> toMathCalculatorRing(rc: RingCalculator<T>): MathCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
             override val zero: T
@@ -216,7 +216,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T : Any> toMathCalculatorDR(fc: DivisionRingCalculator<T>): MathCalculator<T> {
+    fun <T> toMathCalculatorDR(fc: DivisionRingCalculator<T>): MathCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
             override val one: T
@@ -268,7 +268,7 @@ object GroupCalculators {
     }
 
     @JvmStatic
-    fun <T : Any> asSemigroupCalculator(rc: RingCalculator<T>): SemigroupCalculator<T> {
+    fun <T> asSemigroupCalculator(rc: RingCalculator<T>): SemigroupCalculator<T> {
         return object : SemigroupCalculator<T> {
             override fun apply(x: T, y: T): T {
                 return rc.multiply(x, y)
@@ -281,7 +281,7 @@ object GroupCalculators {
     }
 
     @JvmStatic
-    fun <T : Any> asMonoidCalculator(uc: UnitRingCalculator<T>): MonoidCalculator<T> {
+    fun <T> asMonoidCalculator(uc: UnitRingCalculator<T>): MonoidCalculator<T> {
         return object : MonoidCalculator<T> {
             override val identity: T
                 get() = uc.one
@@ -297,7 +297,7 @@ object GroupCalculators {
     }
 
     @JvmStatic
-    fun <T : Any> asGroupCalculator(dc: DivisionRingCalculator<T>): GroupCalculator<T> {
+    fun <T> asGroupCalculator(dc: DivisionRingCalculator<T>): GroupCalculator<T> {
         return object : GroupCalculator<T> {
             override fun inverse(x: T): T {
                 return dc.reciprocal(x)
@@ -322,12 +322,12 @@ object GroupCalculators {
      * @param f
      * @return
      */
-    fun <T : Any, S : Any> isomorphism(gc: GroupCalculator<T>, f: Bijection<T, S>): GroupCalculator<S> {
+    fun <T, S> isomorphism(gc: GroupCalculator<T>, f: Bijection<T, S>): GroupCalculator<S> {
         return IsoGC(gc, f)
     }
 
 
-    internal class IsoGC<T : Any, S : Any>(val origin: GroupCalculator<T>, val f: Bijection<T, S>)
+    internal class IsoGC<T, S>(val origin: GroupCalculator<T>, val f: Bijection<T, S>)
         : GroupCalculator<S> {
 
         override val isCommutative: Boolean

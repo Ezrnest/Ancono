@@ -192,7 +192,7 @@ public interface IPolynomial<T> {
         for (int i = 0; i < length; i++) {
             arr[i] = fx.get(i);
         }
-        return Vector.vOf(mc, arr);
+        return Vector.of(mc, arr);
     }
 
     /**

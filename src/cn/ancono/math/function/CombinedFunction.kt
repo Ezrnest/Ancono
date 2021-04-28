@@ -14,14 +14,14 @@ import java.util.function.Function
  * @author liyicheng
  * 2017-10-13 19:18
  */
-abstract class CombinedFunction<T : Any>
+abstract class CombinedFunction<T>
 /**
  *
  */ internal constructor(protected open val f: AbstractSVFunction<T>, protected open val g: AbstractSVFunction<T>, mc: MathCalculator<T>?) : AbstractSVFunction<T>(mc!!) {
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
-    abstract override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): CombinedFunction<N>
+    abstract override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): CombinedFunction<N>
 
     /**
      * Defines the combined function:
@@ -31,7 +31,7 @@ abstract class CombinedFunction<T : Any>
      * @author liyicheng
      * 2017-10-13 19:25
     </T> */
-    open class Add<T : Any>
+    open class Add<T>
     /**
      * @param f
      * @param g
@@ -48,7 +48,7 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Add<N> {
+        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Add<N> {
             return Add(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -71,7 +71,7 @@ abstract class CombinedFunction<T : Any>
         }
     }
 
-//    class AddD<T:Any>
+//    class AddD<T>
 //    /**
 //     * @param f
 //     * @param g
@@ -104,7 +104,7 @@ abstract class CombinedFunction<T : Any>
      * @author liyicheng
      * 2017-10-13 19:25
     </T> */
-    open class Subtract<T : Any>
+    open class Subtract<T>
     /**
      * @param f
      * @param g
@@ -121,7 +121,7 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Subtract<N> {
+        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Subtract<N> {
             return Subtract(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -144,7 +144,7 @@ abstract class CombinedFunction<T : Any>
         }
     }
 
-//    class SubtractD<T:Any>
+//    class SubtractD<T>
 //    /**
 //     * @param f
 //     * @param g
@@ -176,7 +176,7 @@ abstract class CombinedFunction<T : Any>
      * @author liyicheng
      * 2017-10-13 19:25
     </T> */
-    open class Multiply<T : Any>
+    open class Multiply<T>
     /**
      *
      */
@@ -191,7 +191,7 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Multiply<N> {
+        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Multiply<N> {
             return Multiply(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -214,7 +214,7 @@ abstract class CombinedFunction<T : Any>
         }
     }
 
-//    class MultiplyD<T:Any>
+//    class MultiplyD<T>
 //    /**
 //     * @param f
 //     * @param g
@@ -251,7 +251,7 @@ abstract class CombinedFunction<T : Any>
      * @author liyicheng
      * 2017-10-13 19:25
     </T> */
-    open class Divide<T : Any>
+    open class Divide<T>
     /**
      * @param f
      * @param g
@@ -268,7 +268,7 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Divide<N> {
+        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Divide<N> {
             return Divide(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -300,7 +300,7 @@ abstract class CombinedFunction<T : Any>
      * @author liyicheng
      * 2017-10-13 19:25
     </T> */
-    open class Combine<T : Any>
+    open class Combine<T>
     /**
      * @param f
      * @param g
@@ -317,7 +317,7 @@ abstract class CombinedFunction<T : Any>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
-        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Combine<N> {
+        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Combine<N> {
             return Combine(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -340,7 +340,7 @@ abstract class CombinedFunction<T : Any>
         }
     }
 
-//    class CombineD<T:Any>
+//    class CombineD<T>
 //    /**
 //     * @param f
 //     * @param g
@@ -365,32 +365,32 @@ abstract class CombinedFunction<T : Any>
 //    }
 
     companion object {
-        fun <T : Any> add(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Add<T> {
+        fun <T> add(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Add<T> {
             return Add(f, g, mc)
         }
 
-        fun <T : Any> subtract(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Subtract<T> {
+        fun <T> subtract(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Subtract<T> {
             return Subtract(f, g, mc)
         }
 
-        fun <T : Any> multiply(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Multiply<T> {
+        fun <T> multiply(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Multiply<T> {
             return Multiply(f, g, mc)
         }
 
-        fun <T : Any> divide(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Divide<T> {
+        fun <T> divide(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Divide<T> {
             return Divide(f, g, mc)
         }
 
-//        fun <T : Any> addOfDerivable(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Add<T> {
+//        fun <T> addOfDerivable(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Add<T> {
 //            return AddD(Objects.requireNonNull(f), Objects.requireNonNull(g), mc)
 //        }
 
-//        fun <T : Any> combineOfDerivable(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): CombineD<T> {
+//        fun <T> combineOfDerivable(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): CombineD<T> {
 //            return CombineD(Objects.requireNonNull(f),
 //                    Objects.requireNonNull(g), mc)
 //        }
 //
-//        fun <T : Any> multiplyOfDerivable(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): MultiplyD<T> {
+//        fun <T> multiplyOfDerivable(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): MultiplyD<T> {
 //            return MultiplyD(Objects.requireNonNull(f),
 //                    Objects.requireNonNull(g), mc)
 //        }

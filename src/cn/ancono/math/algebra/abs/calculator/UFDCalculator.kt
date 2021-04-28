@@ -8,7 +8,7 @@ package cn.ancono.math.algebra.abs.calculator
  *
  *
  */
-interface UFDCalculator<T : Any> : UnitRingCalculator<T> {
+interface UFDCalculator<T> : UnitRingCalculator<T> {
 
 
     /**

@@ -1,8 +1,6 @@
 package cn.ancono.math.geometry.analytic.space
 
 import cn.ancono.math.MathCalculatorHolder
-import cn.ancono.math.function.BiMathFunction
-import cn.ancono.math.function.MathFunction
 import cn.ancono.math.function.NMathFunction
 
 
@@ -18,7 +16,7 @@ typealias BiVectorFunction<T> = NMathFunction<T, SVector<T>>
 /**
  * Describes a parametric surface in `R^3` as a two-variable function `r(u,v)`
  */
-interface SpaceParametricSurface<T : Any> : BiVectorFunction<T>, MathCalculatorHolder<T> {
+interface SpaceParametricSurface<T> : BiVectorFunction<T>, MathCalculatorHolder<T> {
 
     override fun apply(vararg ts: T): SVector<T> {
         return apply(ts[0], ts[1])

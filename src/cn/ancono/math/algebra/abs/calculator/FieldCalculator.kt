@@ -14,7 +14,7 @@ import cn.ancono.math.numberModels.api.FieldNumberModel
  * @author liyicheng
  * 2018-02-28 19:29
  */
-interface FieldCalculator<T : Any> : DivisionRingCalculator<T> {
+interface FieldCalculator<T> : DivisionRingCalculator<T> {
     /**
      * Returns the result of `x*y`, which should be commutative.
      */

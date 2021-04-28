@@ -8,11 +8,11 @@ import cn.ancono.math.set.MathSet
 /*
  * Created by liyicheng at 2020-03-06 15:19
  */
-//abstract class AbstractField<T:Any> : AbstractRing<T>(), Field<T> {
+//abstract class AbstractField<T> : AbstractRing<T>(), Field<T> {
 //
 //}
 
-class FieldFromCal<T : Any>(private val fc: FieldCalculator<T>, private val mathSet: MathSet<T>) : Field<T> {
+class FieldFromCal<T>(private val fc: FieldCalculator<T>, private val mathSet: MathSet<T>) : Field<T> {
     override fun getCalculator(): FieldCalculator<T> {
         return fc
     }

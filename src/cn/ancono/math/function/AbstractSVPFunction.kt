@@ -23,7 +23,7 @@ import kotlin.math.max
  * @see SVPFunction
  */
 @Suppress("UNCHECKED_CAST")
-abstract class AbstractSVPFunction<T : Any>
+abstract class AbstractSVPFunction<T>
 /**
  * @param mc
  */
@@ -74,9 +74,9 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     /* (non-Javadoc)
 	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 	 */
-    abstract override fun <N : Any> mapTo(
-        newCalculator: MathCalculator<N>,
-        mapper: Function<T, N>
+    abstract override fun <N> mapTo(
+            newCalculator: MathCalculator<N>,
+            mapper: Function<T, N>
     ): AbstractSVPFunction<N>
 
 
@@ -98,7 +98,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     /* (non-Javadoc)
 	 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
 	 */
-    override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         if (obj !is SVPFunction<*>) {
             return false
         }
@@ -117,7 +117,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     }
 
 
-    internal class SVPFunctionImpl1<T : Any>
+    internal class SVPFunctionImpl1<T>
     /**
      * @param mc
      * @param maxp
@@ -145,9 +145,9 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /* (non-Javadoc)
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(
-            newCalculator: MathCalculator<N>,
-            mapper: Function<T, N>
+        override fun <N> mapTo(
+                newCalculator: MathCalculator<N>,
+                mapper: Function<T, N>
         ): SVPFunctionImpl1<N> {
             return SVPFunctionImpl1(newCalculator, mp, ArraySup.mapTo(coes, mapper))
         }
@@ -180,7 +180,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
      *
      * @param <T>
     </T> */
-    internal class SVPFunctionImpl2<T : Any>
+    internal class SVPFunctionImpl2<T>
     /**
      *
      */
@@ -196,9 +196,9 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /* (non-Javadoc)
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(
-            newCalculator: MathCalculator<N>,
-            mapper: Function<T, N>
+        override fun <N> mapTo(
+                newCalculator: MathCalculator<N>,
+                mapper: Function<T, N>
         ): SVPFunctionImpl2<N> {
             val nmap = HashMap<Int, N>(map.size)
             for ((key, value) in map) {
@@ -232,7 +232,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
      *
      * @param <T>
     </T> */
-    class LinearFunction<T : Any>
+    class LinearFunction<T>
     /**
      * @param mc
      */
@@ -264,7 +264,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFunction<N> {
+        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFunction<N> {
             return LinearFunction(newCalculator, mapper.apply(a), mapper.apply(b))
         }
 
@@ -275,12 +275,12 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
      * always returns the identity result.
      * @author
      */
-    class ConstantFunction<T : Any> internal constructor(mc: MathCalculator<T>,
-                                                         /**
-                                                          * Returns the result.
-                                                          * @return
-                                                          */
-                                                         val result: T) : AbstractSVPFunction<T>(mc, 0), SVFunction<T> {
+    class ConstantFunction<T> internal constructor(mc: MathCalculator<T>,
+                                                   /**
+                                                    * Returns the result.
+                                                    * @return
+                                                    */
+                                                   val result: T) : AbstractSVPFunction<T>(mc, 0), SVFunction<T> {
 
 
         /*
@@ -294,11 +294,11 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
 		 */
-        override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ConstantFunction<N> {
+        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ConstantFunction<N> {
             return ConstantFunction(newCalculator, mapper.apply(result))
         }
 
-        override fun <S : Any> mapTo(mapper: Bijection<T, S>): DerivableSVFunction<S> {
+        override fun <S> mapTo(mapper: Bijection<T, S>): DerivableSVFunction<S> {
             return super<AbstractSVPFunction>.mapTo(mapper)
         }
 
@@ -341,7 +341,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @return a new single variable polynomial function
          */
         @SafeVarargs
-        fun <T : Any> valueOf(mc: MathCalculator<T>, vararg coes: T?): AbstractSVPFunction<T> {
+        fun <T> valueOf(mc: MathCalculator<T>, vararg coes: T?): AbstractSVPFunction<T> {
             var ncoes: Array<T> = Array<Any?>(coes.size) {
                 if (coes[it] == null) {
                     mc.zero
@@ -364,7 +364,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param mc a [MathCalculator]
          * @return a new single variable polynomial function
          */
-        fun <T : Any> valueOf(coes: List<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
+        fun <T> valueOf(coes: List<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
             val arr = coes.toTypedArray<Any?>() as Array<T>
             return SVPFunctionImpl1(mc, arr.size - 1, arr)
         }
@@ -375,7 +375,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param mc a [MathCalculator]
          * @return a new single variable polynomial function
          */
-        fun <T : Any> valueOf(coes: Map<Int, T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
+        fun <T> valueOf(coes: Map<Int, T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
             val map = HashMap<Int, T>()
             var mp = 0
             for ((key, value) in coes) {
@@ -393,7 +393,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param mc a [MathCalculator]
          * @return a new ConstantFunction
          */
-        fun <T : Any> constant(c: T, mc: MathCalculator<T>): ConstantFunction<T> {
+        fun <T> constant(c: T, mc: MathCalculator<T>): ConstantFunction<T> {
             return ConstantFunction(mc, c)
         }
 
@@ -406,7 +406,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param mc a [MathCalculator]
          * @return a new LinearFunction
          */
-        fun <T : Any> linear(a: T, b: T, mc: MathCalculator<T>): LinearFunction<T> {
+        fun <T> linear(a: T, b: T, mc: MathCalculator<T>): LinearFunction<T> {
             return LinearFunction(mc, a, b)
         }
 
@@ -420,7 +420,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param mc a [MathCalculator]
          * @return a new QuadraticFunction
          */
-        fun <T : Any> quadratic(a: T, b: T, c: T, mc: MathCalculator<T>): QuadraticFunction<T> {
+        fun <T> quadratic(a: T, b: T, c: T, mc: MathCalculator<T>): QuadraticFunction<T> {
             return QuadraticFunction(mc, a, b, c)
         }
 
@@ -430,7 +430,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param mc a [MathCalculator]
          * @return an [AbstractSVPFunction]
          */
-        fun <T : Any> fromPolynomial(m: IPolynomial<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
+        fun <T> fromPolynomial(m: IPolynomial<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
             if (m is AbstractSVPFunction<*>) {
                 return m as AbstractSVPFunction<T>
             }
@@ -449,7 +449,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @return an [AbstractSVPFunction]
          * @throws ClassCastException if `!(m instanceof MathCalculatorHolder)`;
          */
-        fun <T : Any> fromPolynomial(m: IPolynomial<T>): AbstractSVPFunction<T> {
+        fun <T> fromPolynomial(m: IPolynomial<T>): AbstractSVPFunction<T> {
             val holder = m as MathCalculatorHolder<T>
             return fromPolynomial(m, holder.mathCalculator)
         }
@@ -460,7 +460,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param p2
          * @return
          */
-        fun <T : Any> add(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
+        fun <T> add(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
             val max = max(p1.degree, p2.degree)
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
             val mc = p1.mathCalculator
@@ -476,7 +476,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param p2
          * @return
          */
-        fun <T : Any> subtract(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
+        fun <T> subtract(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
             val max = max(p1.degree, p2.degree)
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
             val mc = p1.mathCalculator
@@ -494,7 +494,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param p2
          * @return
          */
-        fun <T : Any> multiply(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
+        fun <T> multiply(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
             val max = p1.degree + p2.degree
             return if (max < MAX_ARRAY_THREHOLD) {
                 multiplyToArr(p1, p2, max)
@@ -510,7 +510,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param max
          * @return
          */
-        private fun <T : Any> multiplyToMap(p1: SVPFunction<T>, p2: SVPFunction<T>, max: Int): AbstractSVPFunction<T> {
+        private fun <T> multiplyToMap(p1: SVPFunction<T>, p2: SVPFunction<T>, max: Int): AbstractSVPFunction<T> {
             val mc = p1.mathCalculator
             val map = HashMap<Int, T>()
             var i = 0
@@ -529,7 +529,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
             return SVPFunctionImpl2(mc, max, map)
         }
 
-        private fun <T : Any> multiplyToArr(p1: SVPFunction<T>, p2: SVPFunction<T>, max: Int): AbstractSVPFunction<T> {
+        private fun <T> multiplyToArr(p1: SVPFunction<T>, p2: SVPFunction<T>, max: Int): AbstractSVPFunction<T> {
             val mc = p1.mathCalculator
             val arr = arrayOfNulls<Any>(max + 1) as Array<T?>
             run {

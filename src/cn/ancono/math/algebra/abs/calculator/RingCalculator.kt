@@ -12,7 +12,7 @@ import cn.ancono.utilities.ModelPatterns
  * @author liyicheng
  * 2018-02-28 18:28
  */
-interface RingCalculator<T : Any> : GroupCalculator<T> {
+interface RingCalculator<T> : GroupCalculator<T> {
     /**
      * Returns `true` because a ring is always an Abelian group by its
      * addition.
@@ -71,7 +71,7 @@ interface RingCalculator<T : Any> : GroupCalculator<T> {
      */
     @JvmDefault
     fun pow(x: T, n: Long): T {
-        return ModelPatterns.binaryProduce(n, x, { a: T, b: T -> multiply(a, b) })
+        return ModelPatterns.binaryProduce(n, x) { a: T, b: T -> multiply(a, b) }
     }
 
     /**
@@ -127,4 +127,4 @@ interface RingCalculator<T : Any> : GroupCalculator<T> {
 }
 
 
-fun <T : Any> RingCalculator<T>.asSemigroupCalculator() = GroupCalculators.asSemigroupCalculator(this)
+fun <T> RingCalculator<T>.asSemigroupCalculator() = GroupCalculators.asSemigroupCalculator(this)

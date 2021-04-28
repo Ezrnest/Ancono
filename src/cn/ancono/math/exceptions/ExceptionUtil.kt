@@ -66,7 +66,7 @@ object ExceptionUtil {
      * For example, `2` is exact not divisible by `3`.
      */
     @JvmStatic
-    fun notExactDivision(x: Any, y: Any): Nothing {
+    fun notExactDivision(x: Any?, y: Any?): Nothing {
         throw ArithmeticException("Not exact division: $x / $y")
     }
 }

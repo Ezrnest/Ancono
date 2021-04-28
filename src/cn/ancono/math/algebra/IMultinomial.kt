@@ -7,12 +7,12 @@ import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 /**
  * The single term of a multinomial.
  */
-interface IMTerm<T : Any> {
+interface IMTerm<T> {
     val characters: Map<String, Int>
     val coefficient: T
 
     companion object {
-        fun <T : Any, MC : EqualPredicate<T>> stringOf(term: IMTerm<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>): String = buildString {
+        fun <T, MC : EqualPredicate<T>> stringOf(term: IMTerm<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>): String = buildString {
             append(nf.format(term.coefficient, mc))
             if (term.characters.isNotEmpty()) {
                 var hasMul = true
@@ -45,7 +45,7 @@ interface IMTerm<T : Any> {
  * Created at 2018/12/12 18:51
  * @author  liyicheng
  */
-interface IMultinomial<T : Any> {
+interface IMultinomial<T> {
     val terms: Iterable<IMTerm<T>>
 
     val size: Int
@@ -59,7 +59,7 @@ interface IMultinomial<T : Any> {
             return c == '+' || c == '-'
         }
 
-        fun <T : Any, MC : EqualPredicate<T>> stringOf(m: IMultinomial<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>) = buildString {
+        fun <T, MC : EqualPredicate<T>> stringOf(m: IMultinomial<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>) = buildString {
             var start = true
             for (term in m.terms) {
                 val s = IMTerm.stringOf(term, mc, nf)

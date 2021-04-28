@@ -5,7 +5,6 @@ package cn.ancono.math.function;
 
 import cn.ancono.math.property.Invertible;
 import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -31,7 +30,7 @@ public interface Bijection<P, R> extends MathFunction<P, R>, Invertible<Bijectio
      * @param y the parameter
      * @return <pre>f<sup>-1</sup>(y)</pre>
      */
-    P deply(@NotNull R y);
+    P deply(R y);
 
 
     /**

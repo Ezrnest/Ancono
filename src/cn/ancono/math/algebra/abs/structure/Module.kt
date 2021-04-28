@@ -18,7 +18,7 @@ import cn.ancono.math.set.MathSets
  * @author  liyicheng
  *
  */
-interface Module<R : Any, V : Any> : AbelianGroup<V> {
+interface Module<R, V> : AbelianGroup<V> {
 
     val scalars: Ring<R>
         get() = RingFromCal(calculator.scalarCalculator, MathSets.universe())

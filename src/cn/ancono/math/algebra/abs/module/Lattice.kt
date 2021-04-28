@@ -8,7 +8,7 @@ package cn.ancono.math.algebra.abs.module
  * Describes a lattice in a vector space. A lattice is a finitely generated Abelian group
  * in a real vector space
  */
-interface Lattice<Z : Any, V : Any> : ZModule<Z, V>, FinitelyGeneratedModule<Z, V> {
+interface Lattice<Z, V> : ZModule<Z, V>, FinitelyGeneratedModule<Z, V> {
 
 
 }

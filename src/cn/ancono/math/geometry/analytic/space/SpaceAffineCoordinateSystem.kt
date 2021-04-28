@@ -4,24 +4,24 @@ import cn.ancono.math.*
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import java.util.function.Function
 
-class SpaceAffineCoordinateSystem<T : Any> internal constructor(val o: SPoint<T>,
-                                                                val i: SVector<T>,
-                                                                val j: SVector<T>,
-                                                                val k: SVector<T>,
-                                                                mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
+class SpaceAffineCoordinateSystem<T> internal constructor(val o: SPoint<T>,
+                                                          val i: SVector<T>,
+                                                          val j: SVector<T>,
+                                                          val k: SVector<T>,
+                                                          mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
 
     private val vectorBase = SVector.createBase(i, j, k)
 
-    override fun <N : Any> mapTo(
-        newCalculator: MathCalculator<N>,
-        mapper: Function<T, N>
+    override fun <N> mapTo(
+            newCalculator: MathCalculator<N>,
+            mapper: Function<T, N>
     ): SpaceAffineCoordinateSystem<N> {
         return SpaceAffineCoordinateSystem(
-            o.mapTo(newCalculator, mapper),
-            i.mapTo(newCalculator, mapper),
-            j.mapTo(newCalculator, mapper),
-            k.mapTo(newCalculator, mapper),
-            newCalculator
+                o.mapTo(newCalculator, mapper),
+                i.mapTo(newCalculator, mapper),
+                j.mapTo(newCalculator, mapper),
+                k.mapTo(newCalculator, mapper),
+                newCalculator
         )
     }
 
@@ -50,7 +50,7 @@ class SpaceAffineCoordinateSystem<T : Any> internal constructor(val o: SPoint<T>
 
 
     companion object {
-        fun <T : Any> valueOf(o: SPoint<T>, i: SVector<T>, j: SVector<T>, k: SVector<T>): SpaceAffineCoordinateSystem<T> {
+        fun <T> valueOf(o: SPoint<T>, i: SVector<T>, j: SVector<T>, k: SVector<T>): SpaceAffineCoordinateSystem<T> {
             require(!SVector.isOnSamePlane(i, j, k))
             return SpaceAffineCoordinateSystem(o, i, j, k, o.mathCalculator)
         }

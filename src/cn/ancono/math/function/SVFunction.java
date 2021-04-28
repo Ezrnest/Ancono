@@ -20,12 +20,12 @@ public interface SVFunction<T> extends MathFunction<T, T>, Mappable<T> {
 
     /**
      * Returns the result of {@code f(x)}.
+     *
      * @param x variable x
      * @return {@code f(x)}
      */
-    @NotNull
     @Override
-    T apply(@NotNull T x);
+    T apply(T x);
 
     @Override
     @NotNull

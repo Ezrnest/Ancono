@@ -8,7 +8,7 @@ package cn.ancono.math.algebra.abs.calculator
  * @author liyicheng
  * 2018-02-27 17:40
  */
-interface MonoidCalculator<T : Any> : SemigroupCalculator<T> {
+interface MonoidCalculator<T> : SemigroupCalculator<T> {
     /**
      * Returns the identity element of the semigroup.
      */
@@ -19,7 +19,7 @@ interface MonoidCalculator<T : Any> : SemigroupCalculator<T> {
         return if (n == 0L) {
             identity
         } else {
-            super<SemigroupCalculator>.gpow(x, n)
+            super.gpow(x, n)
         }
     }
 
@@ -28,5 +28,6 @@ interface MonoidCalculator<T : Any> : SemigroupCalculator<T> {
      */
     @JvmDefault
     val numberClass: Class<T>
-        get() = identity.javaClass
+        @Suppress("UNCHECKED_CAST")
+        get() = (identity as Any).javaClass as Class<T>
 }

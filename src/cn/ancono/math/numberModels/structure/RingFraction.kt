@@ -5,7 +5,6 @@ import cn.ancono.math.FlexibleMathObject
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.Simplifier
@@ -30,7 +29,7 @@ import java.util.function.Function
  *
  * [Field of fractions](https://en.wikipedia.org/wiki/Field_of_fractions)
  */
-open class RingFraction<T : Any>
+open class RingFraction<T>
 internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
     : FlexibleMathObject<T, RingCalculator<T>> {
     override val mathCalculator: RingCalculator<T>
@@ -62,7 +61,7 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
         return toString(FlexibleNumberFormatter.defaultFormatter())
     }
 
-    fun <N : Any> mapTo(mapper: Function<T, N>, ringCalculator: RingCalculator<N>): RingFraction<N> {
+    fun <N> mapTo(mapper: Function<T, N>, ringCalculator: RingCalculator<N>): RingFraction<N> {
         return RingFraction(mapper.apply(nume), mapper.apply(deno), ringCalculator)
     }
 
@@ -88,9 +87,9 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
         return mc.isEqual(mc.multiply(nume, f.deno), mc.multiply(deno, f.nume))
     }
 
-    class RFCalculator<T : Any> internal constructor(mc: RingCalculator<T>,
-                                                     internal val sim: Simplifier<T>?,
-                                                     private val nonZero: T)
+    class RFCalculator<T> internal constructor(mc: RingCalculator<T>,
+                                               internal val sim: Simplifier<T>?,
+                                               private val nonZero: T)
         : MathCalculatorAdapter<RingFraction<T>>() {
         internal val mc: RingCalculator<T> = Objects.requireNonNull(mc)
         override val zero: RingFraction<T> = RingFraction(mc.zero, nonZero, mc)
@@ -184,17 +183,17 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
          * @return
         </T> */
         @JvmStatic
-        fun <T : Any> getCalculator(ringCalculator: RingCalculator<T>, simplifier: Simplifier<T>?, noneZero: T): RFCalculator<T> {
+        fun <T> getCalculator(ringCalculator: RingCalculator<T>, simplifier: Simplifier<T>?, noneZero: T): RFCalculator<T> {
             return RFCalculator(ringCalculator, simplifier, noneZero)
         }
 
         @JvmStatic
-        fun <T : Any> getCalculator(mc: UnitRingCalculator<T>, simplifier: Simplifier<T>?): RFCalculator<T> {
+        fun <T> getCalculator(mc: UnitRingCalculator<T>, simplifier: Simplifier<T>?): RFCalculator<T> {
             return RFCalculator(mc, simplifier, mc.one)
         }
 
         @JvmStatic
-        fun <T : Any> valueOf(nume: T, deno: T, mc: RingCalculator<T>): RingFraction<T> {
+        fun <T> valueOf(nume: T, deno: T, mc: RingCalculator<T>): RingFraction<T> {
             if (mc.isEqual(deno, mc.zero)) {
                 ExceptionUtil.dividedByZero()
             }
@@ -202,7 +201,7 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
         }
 
         @JvmStatic
-        fun <T : Any> valueOf(nume: T, mc: UnitRingCalculator<T>): RingFraction<T> {
+        fun <T> valueOf(nume: T, mc: UnitRingCalculator<T>): RingFraction<T> {
             return RingFraction(nume, mc.one, mc)
         }
 
@@ -210,7 +209,7 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
          * Returns a composed of the
          */
         @JvmStatic
-        fun <T : Any> extractGcd(fractions: List<RingFraction<T>>, mc: IntCalculator<T>): Pair<T, T> {
+        fun <T> extractGcd(fractions: List<RingFraction<T>>, mc: IntCalculator<T>): Pair<T, T> {
             val initial = Pair(mc.zero, mc.one)
             return fractions.fold(initial) { p, frac ->
                 val n = mc.gcd(p.first, frac.nume)

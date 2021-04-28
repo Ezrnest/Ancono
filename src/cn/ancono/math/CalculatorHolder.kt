@@ -9,7 +9,7 @@ import cn.ancono.math.algebra.abs.calculator.EqualPredicate
  * @author liyicheng
  * 2018-03-05 20:25
  */
-interface CalculatorHolder<T : Any, S : EqualPredicate<T>> {
+interface CalculatorHolder<T, S : EqualPredicate<T>> {
 
     /**
      * Return the calculator used by this object.

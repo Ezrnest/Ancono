@@ -10,6 +10,7 @@ import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.MulGroupNumberModel
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.property.Composable
+import org.jetbrains.annotations.NotNull
 import java.util.function.Function
 
 
@@ -17,7 +18,7 @@ import java.util.function.Function
  * Describes the linear fractional transformation on field T.
  *
  */
-class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T>)
+class LinearFracTrans<T> internal constructor(private val m: TransMatrix<T>)
     : MathObjectExtend<T>(m.mathCalculator),
         Bijection<T, T>,
         Composable<LinearFracTrans<T>>,
@@ -40,7 +41,7 @@ class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T
         }
     }
 
-    override fun deply(y: T): T {
+    override fun deply(y: @NotNull T): T {
         return reciprocal().apply(y)
     }
 
@@ -61,7 +62,7 @@ class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T
     }
 
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFracTrans<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFracTrans<N> {
         return LinearFracTrans(m.mapTo(newCalculator, mapper))
     }
 
@@ -80,7 +81,7 @@ class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T
     companion object {
 
 
-        fun <T : Any> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): LinearFracTrans<T> {
+        fun <T> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): LinearFracTrans<T> {
             val det = mc.eval { a * c - b * d }
             if (mc.isZero(det)) {
                 throw IllegalArgumentException("ac-bd = 0")

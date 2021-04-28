@@ -15,15 +15,15 @@ import cn.ancono.math.set.MathSet
 /*
  * Created by liyicheng at 2020-03-09 17:36
  */
-interface ZModule<Z : Any, V : Any> : Module<Z, V>
+interface ZModule<Z, V> : Module<Z, V>
 
 object ZModules {
-    fun <Z : Any, V : Any> fromAbelianGroup(cal: IntCalculator<Z>, group: AbelianGroup<V>): ZModule<Z, V> {
+    fun <Z, V> fromAbelianGroup(cal: IntCalculator<Z>, group: AbelianGroup<V>): ZModule<Z, V> {
         return ZModuleFromAGroup(cal, group)
     }
 }
 
-class ZModuleCalFromAGroup<Z : Any, V : Any>(val ic: IntCalculator<Z>, val gc: GroupCalculator<V>) : ModuleCalculator<Z, V> {
+class ZModuleCalFromAGroup<Z, V>(val ic: IntCalculator<Z>, val gc: GroupCalculator<V>) : ModuleCalculator<Z, V> {
     override fun scalarMultiply(k: Z, v: V): V {
         return gc.gpow(v, ic.asLong(k))
     }
@@ -53,8 +53,8 @@ class ZModuleCalFromAGroup<Z : Any, V : Any>(val ic: IntCalculator<Z>, val gc: G
 /**
  * Defines a Z-module from an Abelian group.
  */
-class ZModuleFromAGroup<Z : Any, V : Any>(val cal: IntCalculator<Z>,
-                                          private val group: AbelianGroup<V>)
+class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
+                              private val group: AbelianGroup<V>)
 //Created by lyc at 2020-03-11 18:8
     : FlexibleMathObject<Z, IntCalculator<Z>>,
         ZModule<Z, V> {

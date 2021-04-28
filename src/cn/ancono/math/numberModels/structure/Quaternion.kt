@@ -12,7 +12,7 @@ import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import java.util.function.Function
 
 
-class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
+class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
     val tensor: T by lazy(LazyThreadSafetyMode.NONE) {
         a * a + b * b + c * c + d * d
     }
@@ -134,47 +134,47 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
             j 	j 	−k 	−1 	i
             k 	k 	j 	−i 	−1
      */
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Quaternion<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Quaternion<N> {
         return Quaternion(mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d), newCalculator)
     }
 
     companion object {
 
-        fun <T : Any> real(a: T, mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> real(a: T, mc: MathCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(a, it, it, it, mc) }
         }
 
-        fun <T : Any> valueOf(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> valueOf(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): Quaternion<T> {
             return Quaternion(a, b, c, d, mc)
         }
 
-        fun <T : Any> parse(str: String, mc: MathCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
+        fun <T> parse(str: String, mc: MathCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
             val arr = deliminator.split(str).map(parser)
             return valueOf(arr[0], arr[1], arr[2], arr[3], mc)
         }
 
-        fun <T : Any> zero(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> zero(mc: MathCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(it, it, it, it, mc) }
         }
 
-        fun <T : Any> one(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> one(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(one, zero, zero, zero, mc) }
         }
 
-        fun <T : Any> baseI(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseI(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, one, zero, zero, mc) }
         }
 
-        fun <T : Any> baseJ(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseJ(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, one, zero, mc) }
         }
 
-        fun <T : Any> baseK(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseK(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, zero, one, mc) }
         }
 
 
-        fun <T : Any> getCalculator(mc: MathCalculator<T>): QuaternionCalculator<T> {
+        fun <T> getCalculator(mc: MathCalculator<T>): QuaternionCalculator<T> {
             return QuaternionCalculator(mc)
         }
 
@@ -182,7 +182,7 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
          * Returns the quaternion eight-group, whose elements are `1,-1,i,j,k,-i,-j,-k` and
          * the group operation is multiplication.
          */
-        fun <T : Any> quaternionGroup(mc: MathCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
+        fun <T> quaternionGroup(mc: MathCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
             val qc = getCalculator(mc)
             val gc = qc.asGroupCalculator()
             val e = one(mc)
@@ -200,7 +200,7 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
     }
 }
 
-class QuaternionCalculator<T : Any>(val mc: MathCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
+class QuaternionCalculator<T>(val mc: MathCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
     override val isMultiplyCommutative: Boolean
         get() = false
 

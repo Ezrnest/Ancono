@@ -1,15 +1,12 @@
 package cn.ancono.math.geometry.differential
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.linear.Vector
-import cn.ancono.math.calculus.DifferentialForm
-import cn.ancono.math.function.*
+import cn.ancono.math.function.NDerivableFunction
+import cn.ancono.math.function.invoke
+import cn.ancono.math.function.partial1
+import cn.ancono.math.function.partial2
 import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.geometry.analytic.space.SpaceParametricSurface
-import cn.ancono.math.set.Interval
-import java.lang.IllegalArgumentException
-import java.util.function.BiFunction
-import java.util.function.Function
 
 /**
  * Binary derivative vector function
@@ -19,7 +16,7 @@ typealias BDVFunction<T> = NDerivableFunction<T, SVector<T>>
 /**
  * Describes the normal surface `r(u,v)`.
  */
-abstract class NormalSurface<T : Any> : SpaceParametricSurface<T>, BDVFunction<T> {
+abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
 
     /**
      * The partial derivative of `r` to `u`: `∂r/∂u = r_u`
@@ -118,11 +115,11 @@ abstract class NormalSurface<T : Any> : SpaceParametricSurface<T>, BDVFunction<T
 
 
     companion object {
-        fun <T : Any> fromFunctionXYZ(
-            a: NDerivableFunction<T, T>,
-            b: NDerivableFunction<T, T>,
-            c: NDerivableFunction<T, T>,
-            mc: MathCalculator<T>
+        fun <T> fromFunctionXYZ(
+                a: NDerivableFunction<T, T>,
+                b: NDerivableFunction<T, T>,
+                c: NDerivableFunction<T, T>,
+                mc: MathCalculator<T>
         ): NormalSurface<T> {
             return NormalSurfaceXYZ(a, b, c, mc)
         }
@@ -130,7 +127,7 @@ abstract class NormalSurface<T : Any> : SpaceParametricSurface<T>, BDVFunction<T
     }
 }
 
-internal class NormalSurfaceXYZ<T : Any>(
+internal class NormalSurfaceXYZ<T>(
         val x: NDerivableFunction<T, T>,
         val y: NDerivableFunction<T, T>,
         val z: NDerivableFunction<T, T>,

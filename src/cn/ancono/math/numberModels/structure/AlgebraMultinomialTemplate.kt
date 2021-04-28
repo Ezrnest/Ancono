@@ -8,7 +8,7 @@ import java.util.*
 /**
  * Template class for general algebra multinomial
  */
-open class AlgebraMultinomialTemplate<K : Any, V : Any> internal constructor(
+open class AlgebraMultinomialTemplate<K, V> internal constructor(
         val ac: AlgebraCalculator<K, V>,
         val terms: NavigableSet<V>
 ) {
@@ -151,7 +151,7 @@ open class AlgebraMultinomialTemplate<K : Any, V : Any> internal constructor(
  * Created at 2019/9/12 15:51
  * @author  lyc
  */
-class AlgebraMultinomial<K : Any, V : Any> internal constructor(
+class AlgebraMultinomial<K, V> internal constructor(
         ac: AlgebraCalculator<K, V>,
         terms: NavigableSet<V>
 ) : AlgebraMultinomialTemplate<K, V>(ac, terms), AlgebraModel<K, AlgebraMultinomial<K, V>> {
@@ -189,12 +189,12 @@ class AlgebraMultinomial<K : Any, V : Any> internal constructor(
 
 
     companion object {
-        private fun <V : Any> getTS(comp: Comparator<V>): NavigableSet<V> {
+        private fun <V> getTS(comp: Comparator<V>): NavigableSet<V> {
             return TreeSet(comp)
         }
 
         @JvmStatic
-        fun <K : Any, V : Any> fromTerms(ac: AlgebraCalculator<K, V>, comp: Comparator<V>, vararg terms: V)
+        fun <K, V> fromTerms(ac: AlgebraCalculator<K, V>, comp: Comparator<V>, vararg terms: V)
                 : AlgebraMultinomial<K, V> {
             val s = getTS(comp)
             val am = AlgebraMultinomial(ac, s)
@@ -203,7 +203,7 @@ class AlgebraMultinomial<K : Any, V : Any> internal constructor(
         }
 
         @JvmStatic
-        fun <K : Any, V : Any> fromTerms(ac: AlgebraCalculator<K, V>, comp: Comparator<V>, terms: List<V>)
+        fun <K, V> fromTerms(ac: AlgebraCalculator<K, V>, comp: Comparator<V>, terms: List<V>)
                 : AlgebraMultinomial<K, V> {
             val s = getTS(comp)
             val am = AlgebraMultinomial(ac, s)
@@ -212,7 +212,7 @@ class AlgebraMultinomial<K : Any, V : Any> internal constructor(
         }
 
         @JvmStatic
-        fun <K : Any, V : Any> zero(ac: AlgebraCalculator<K, V>, comp: Comparator<V>)
+        fun <K, V> zero(ac: AlgebraCalculator<K, V>, comp: Comparator<V>)
                 : AlgebraMultinomial<K, V> {
             val s = getTS(comp)
             s.add(ac.zero)

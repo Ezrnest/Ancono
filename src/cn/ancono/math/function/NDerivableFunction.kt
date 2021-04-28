@@ -26,35 +26,35 @@ interface NDerivableFunction<T, R> : NMathFunction<T, R> {
          * Returns a derivable function that applies the three given functions first and then merges the
          * result to type [S]. The merging operation will not be derived.
          */
-        fun <T : Any, R1 : Any, R2 : Any, R3 : Any, S : Any> mergeOf3(f1: NDerivableFunction<T, R1>,
-                                                                      f2: NDerivableFunction<T, R2>,
-                                                                      f3: NDerivableFunction<T, R3>,
-                                                                      merger: (R1, R2, R3) -> S)
+        fun <T, R1, R2, R3, S> mergeOf3(f1: NDerivableFunction<T, R1>,
+                                        f2: NDerivableFunction<T, R2>,
+                                        f3: NDerivableFunction<T, R3>,
+                                        merger: (R1, R2, R3) -> S)
                 : NDerivableFunction<T, S> = NDerivableMergeOf3(f1, f2, f3, merger)
 
         /**
          * Returns a derivable function that applies the two given functions first and then merges the
          * result to type [S]. The merging operation will not be derived.
          */
-        fun <T : Any, R1 : Any, R2 : Any, S : Any> mergeOf2(f1: NDerivableFunction<T, R1>,
-                                                            f2: NDerivableFunction<T, R2>,
-                                                            merger: (R1, R2) -> S)
+        fun <T, R1, R2, S> mergeOf2(f1: NDerivableFunction<T, R1>,
+                                    f2: NDerivableFunction<T, R2>,
+                                    merger: (R1, R2) -> S)
                 : NDerivableFunction<T, S> = NDerivableMergeOf2(f1, f2, merger)
 
         /**
          * Returns a derivable function that is equal to the sum of the two functions.
          */
-        fun <T : Any, R1 : Any, R2 : Any, S : Any> add(f: NDerivableFunction<T, R1>,
-                                                       g: NDerivableFunction<T, R2>,
-                                                       formalAdd: (R1, R2) -> S)
+        fun <T, R1, R2, S> add(f: NDerivableFunction<T, R1>,
+                               g: NDerivableFunction<T, R2>,
+                               formalAdd: (R1, R2) -> S)
                 : NDerivableFunction<T, S> = NDerivableAdd(f, g, formalAdd)
 
         /**
          * Returns a derivable function that is equal to the difference of the two functions.
          */
-        fun <T : Any, R1 : Any, R2 : Any, S : Any> subtract(f: NDerivableFunction<T, R1>,
-                                                            g: NDerivableFunction<T, R2>,
-                                                            formalSubtract: (R1, R2) -> S)
+        fun <T, R1, R2, S> subtract(f: NDerivableFunction<T, R1>,
+                                    g: NDerivableFunction<T, R2>,
+                                    formalSubtract: (R1, R2) -> S)
                 : NDerivableFunction<T, S> = NDerivableAdd(f, g, formalSubtract)
 
 
@@ -63,30 +63,30 @@ interface NDerivableFunction<T, R> : NMathFunction<T, R> {
          * @param formalAdd performs add operation to type [S]
          * @param formalMultiply performs multiplication operation
          */
-        fun <T : Any, R1 : Any, R2 : Any, S : Any> multiply(f: NDerivableFunction<T, R1>,
-                                                            g: NDerivableFunction<T, R2>,
-                                                            formalAdd: (S, S) -> S,
-                                                            formalMultiply: (R1, R2) -> S)
+        fun <T, R1, R2, S> multiply(f: NDerivableFunction<T, R1>,
+                                    g: NDerivableFunction<T, R2>,
+                                    formalAdd: (S, S) -> S,
+                                    formalMultiply: (R1, R2) -> S)
                 : NDerivableFunction<T, S> = NDerivableMultiply(f, g, formalMultiply, formalAdd)
 
 
         /**
          * Returns a derivable function that applies [f] first and then applies [g].
          */
-        fun <T : Any, R : Any, S : Any> compose(f: NDerivableFunction<T, R>,
-                                                g: DerivableFunction<R, S>,
-                                                formalAdd: (S, S) -> S,
-                                                formalMultiply: (R, S) -> S)
+        fun <T, R, S> compose(f: NDerivableFunction<T, R>,
+                              g: DerivableFunction<R, S>,
+                              formalAdd: (S, S) -> S,
+                              formalMultiply: (R, S) -> S)
                 : NDerivableFunction<T, S> = NDerivableCompose(f, g, formalMultiply, formalAdd)
 
         /**
          * Returns a derivable function of `f/g`.
          */
-        fun <T : Any, S : Any> divide(f: NDerivableFunction<T, S>, g: NDerivableFunction<T, T>,
-                                      mc: MathCalculator<T>,
-                                      formalAdd: (S, S) -> S,
-                                      formalSubtract: (S, S) -> S,
-                                      formalMultiply: (T, S) -> S)
+        fun <T, S> divide(f: NDerivableFunction<T, S>, g: NDerivableFunction<T, T>,
+                          mc: MathCalculator<T>,
+                          formalAdd: (S, S) -> S,
+                          formalSubtract: (S, S) -> S,
+                          formalMultiply: (T, S) -> S)
                 : NDerivableFunction<T, S> {
             return NDerivableDivide(f, g, mc, formalMultiply, formalAdd, formalSubtract)
         }
@@ -166,7 +166,7 @@ fun <T, R> BiDerivableFunction<T, R>.asPDerivable(): NDerivableFunction<T, R> {
 }
 
 
-abstract class CachedPartialNDFunction<T : Any, R : Any>(final override val paramLength: Int) : NDerivableFunction<T, R> {
+abstract class CachedPartialNDFunction<T, R>(final override val paramLength: Int) : NDerivableFunction<T, R> {
     private val partials: Array<NDerivableFunction<T, R>?> = arrayOfNulls(paramLength)
 
     /**
@@ -186,7 +186,7 @@ abstract class CachedPartialNDFunction<T : Any, R : Any>(final override val para
 /**
  * The mapper should not be derived.
  */
-internal open class NDerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(
+internal open class NDerivableMergeOf2<T, R1, R2, R>(
         val f: NDerivableFunction<T, out R1>,
         val g: NDerivableFunction<T, out R2>,
         val merger: (R1, R2) -> R
@@ -212,7 +212,7 @@ internal open class NDerivableMergeOf2<T : Any, R1 : Any, R2 : Any, R : Any>(
  * The mapper should not be derived.
  */
 internal class NDerivableMergeOf3
-<T : Any, R1 : Any, R2 : Any, R3 : Any, S : Any>(
+<T, R1, R2, R3, S>(
         val f1: NDerivableFunction<T, out R1>,
         val f2: NDerivableFunction<T, out R2>,
         val f3: NDerivableFunction<T, out R3>,
@@ -236,7 +236,7 @@ internal class NDerivableMergeOf3
 }
 
 
-internal open class NDerivableAdd<T : Any, R1 : Any, R2 : Any, R : Any>(
+internal open class NDerivableAdd<T, R1, R2, R>(
         f: NDerivableFunction<T, R1>,
         g: NDerivableFunction<T, R2>,
         formalAdd: (R1, R2) -> R
@@ -248,7 +248,7 @@ internal open class NDerivableAdd<T : Any, R1 : Any, R2 : Any, R : Any>(
 
 }
 
-internal open class NDerivableMultiply<T : Any, R1 : Any, R2 : Any, R : Any>(
+internal open class NDerivableMultiply<T, R1, R2, R>(
         f: NDerivableFunction<T, out R1>,
         g: NDerivableFunction<T, out R2>,
         formalMultiply: (R1, R2) -> R,
@@ -265,7 +265,7 @@ internal open class NDerivableMultiply<T : Any, R1 : Any, R2 : Any, R : Any>(
 }
 
 
-internal open class NDerivableCompose<T : Any, R : Any, S : Any>(
+internal open class NDerivableCompose<T, R, S>(
         private val f: NDerivableFunction<T, R>,
         private val g: DerivableFunction<R, S>,
         private val formalMultiply: (R, S) -> S,
@@ -287,12 +287,12 @@ internal open class NDerivableCompose<T : Any, R : Any, S : Any>(
 }
 
 
-internal class NDerivableDivide<T : Any, S : Any>(private val f: NDerivableFunction<T, S>,
-                                                  private val g: NDerivableFunction<T, T>,
-                                                  private val mc: MathCalculator<T>,
-                                                  private val formalMultiply: (T, S) -> S,
-                                                  private val formalAdd: (S, S) -> S,
-                                                  private val formalSubtract: (S, S) -> S
+internal class NDerivableDivide<T, S>(private val f: NDerivableFunction<T, S>,
+                                      private val g: NDerivableFunction<T, T>,
+                                      private val mc: MathCalculator<T>,
+                                      private val formalMultiply: (T, S) -> S,
+                                      private val formalAdd: (S, S) -> S,
+                                      private val formalSubtract: (S, S) -> S
 ) : NDerivableFunction<T, S> {
 
     init {

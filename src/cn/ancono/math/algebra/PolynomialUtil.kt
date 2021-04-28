@@ -6,7 +6,6 @@ import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
-import cn.ancono.math.minus
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
@@ -122,7 +121,7 @@ object PolynomialUtil {
      * Returns a list of pair of polynomial
      */
     @JvmStatic
-    fun <T : Any> partialFraction(nume: Polynomial<T>, deno: DecomposedPoly<T>)
+    fun <T> partialFraction(nume: Polynomial<T>, deno: DecomposedPoly<T>)
             : List<Pair<Polynomial<T>, SinglePoly<T>>> {
         //coefficient matrix
         val terms = arrayListOf<Pair<SinglePoly<T>, Boolean>>()
@@ -139,7 +138,7 @@ object PolynomialUtil {
             }
             coeCount += poly.degree * pow
         }
-        val matBuilder = Matrix.getBuilder(all.degree, coeCount + 1, mc)
+        val mat = Matrix.zero(all.degree, coeCount + 1, mc)
         //distribute coefficient
         var index = 0
         for ((t, isBi) in terms) {
@@ -147,23 +146,22 @@ object PolynomialUtil {
             if (isBi) {
                 for (i in 0..poly.degree) {
                     val coe = poly.get(i)
-                    matBuilder.set(i, index, coe)
-                    matBuilder.set(i + 1, index + 1, coe)
+                    mat[i, index] = coe
+                    mat[i + 1, index + 1] = coe
                 }
                 index += 2
             } else {
                 for (i in 0..poly.degree) {
                     val coe = poly.get(i)
-                    matBuilder.set(i, index, coe)
+                    mat[i, index] = coe
                 }
                 index++
             }
         }
 
         for (i in 0 until all.degree) {
-            matBuilder.set(i, coeCount, nume.get(i))
+            mat[i, coeCount] = nume.get(i)
         }
-        val mat = matBuilder.build()
 //        mat.printMatrix()
         val solution = MatrixSup.solveLinearEquation(mat).specialSolution
         index = 0
@@ -218,18 +216,17 @@ object PolynomialUtil {
             putTerms(m)
         }
         putTerms(mConst)
-        val builder = Matrix.getBuilder(terms.size, ms.size + 1, Multinomial.getCalculator())
+        val mat = Matrix.zero(terms.size, ms.size + 1, Multinomial.getCalculator())
         for ((c, m) in ms.withIndex()) {
             for (t in m.terms) {
                 val idx = terms[t.characterPart()]!!
-                builder.set(idx, c, Multinomial.monomial(t.numberPart()))
+                mat[idx, c] = Multinomial.monomial(t.numberPart())
             }
         }
         for (t in mConst.terms) {
             val idx = terms[t.characterPart()]!!
-            builder.set(idx, ms.size, Multinomial.monomial(t.numberPart()))
+            mat.set(idx, ms.size, Multinomial.monomial(t.numberPart()))
         }
-        val mat = builder.build()
         val vec = terms.keys.mapTo(ArrayList(terms.size), Multinomial::monomial)
         return mat to vec
     }
@@ -249,7 +246,7 @@ object PolynomialUtil {
      * @param T the math calculator for [T] should at least be a ring calculator.
      */
     @JvmStatic
-    fun <T : Any> pseudoDivision(A: Polynomial<T>, B: Polynomial<T>): Pair<Polynomial<T>, Polynomial<T>> {
+    fun <T> pseudoDivision(A: Polynomial<T>, B: Polynomial<T>): Pair<Polynomial<T>, Polynomial<T>> {
         /*
         See Algorithm 3.1.2, page 112 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
@@ -286,7 +283,7 @@ object PolynomialUtil {
      * @param T the math calculator for [T] should at least be a ring calculator.
      */
     @JvmStatic
-    fun <T : Any> pseudoDivisionR(A: Polynomial<T>, B: Polynomial<T>): Polynomial<T> {
+    fun <T> pseudoDivisionR(A: Polynomial<T>, B: Polynomial<T>): Polynomial<T> {
         /*
         See Algorithm 3.1.2, page 112 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
@@ -321,7 +318,7 @@ object PolynomialUtil {
      * @see [subResultantGCD]
      */
     @JvmStatic
-    fun <T : Any> primitiveGCD(f: Polynomial<T>, g: Polynomial<T>): Polynomial<T> {
+    fun <T> primitiveGCD(f: Polynomial<T>, g: Polynomial<T>): Polynomial<T> {
         if (f.isZero()) {
             return g
         }
@@ -365,7 +362,7 @@ object PolynomialUtil {
      * @see [primitiveGCD]
      */
     @JvmStatic
-    fun <T : Any> subResultantGCD(f: Polynomial<T>, g: Polynomial<T>): Polynomial<T> {
+    fun <T> subResultantGCD(f: Polynomial<T>, g: Polynomial<T>): Polynomial<T> {
         /*
         See Algorithm 3.3.1, page 118 of
         'A Course in Computational Algebraic Number Theory', Henri Cohen
@@ -418,7 +415,7 @@ object PolynomialUtil {
     /**
      * Maps a polynomial `f(x^p)` to `f(x)`
      */
-    private fun <T : Any> polynomialChDiv(f: Polynomial<T>, p: Int): Polynomial<T> {
+    private fun <T> polynomialChDiv(f: Polynomial<T>, p: Int): Polynomial<T> {
         require(f.degree % p == 0)
         val d = f.degree / p
         return of(f.mathCalculator, d) { i ->
@@ -428,7 +425,7 @@ object PolynomialUtil {
 
 
     @Suppress("LocalVariableName")
-    internal fun <T : Any> squarefreeFactorizeChP(A: Polynomial<T>, p: Int)
+    internal fun <T> squarefreeFactorizeChP(A: Polynomial<T>, p: Int)
             : List<Pair<Polynomial<T>, Int>> {
         //Created by lyc at 2021-04-15 22:19
         /*
@@ -516,7 +513,7 @@ object PolynomialUtil {
         return result
     }
 
-    fun <T : Any> squarefreeFactorizeCh0(p: Polynomial<T>): List<Pair<Polynomial<T>, Int>> {
+    fun <T> squarefreeFactorizeCh0(p: Polynomial<T>): List<Pair<Polynomial<T>, Int>> {
         if (p.degree < 1) {
             return emptyList()
         }
@@ -571,7 +568,7 @@ object PolynomialUtil {
      *
      */
     @JvmStatic
-    fun <T : Any> squarefreeFactorize(f: Polynomial<T>): List<Pair<Polynomial<T>, Int>> {
+    fun <T> squarefreeFactorize(f: Polynomial<T>): List<Pair<Polynomial<T>, Int>> {
         val mc = f.mathCalculator
         val p = Math.toIntExact(mc.characteristic)
         val m = f.monic()
@@ -594,7 +591,7 @@ object PolynomialUtil {
      * irreducible polynomials, and the second is the product of them.
      */
     @Suppress("LocalVariableName")
-    fun <T : Any> distinctDegreeFactorizeModP(A: Polynomial<T>, mc: ZModPCalculator<T>)
+    fun <T> distinctDegreeFactorizeModP(A: Polynomial<T>, mc: ZModPCalculator<T>)
             : List<Pair<Int, Polynomial<T>>> {
         /*
         See Algorithm 3.4.3, page 126 of
@@ -663,7 +660,7 @@ object PolynomialUtil {
      *
      * It is required that the calculator for f is a [ZModPCalculator].
      */
-    fun <T : Any> isIrreducibleModP(f: Polynomial<T>): Boolean {
+    fun <T> isIrreducibleModP(f: Polynomial<T>): Boolean {
         require(f.mathCalculator is ZModPCalculator) {
             "A ZModPCalculator is required!"
         }
@@ -849,7 +846,7 @@ object PolynomialUtil {
     private fun buildPowerMatrix(A: Polynomial<Int>, p: Int): Matrix<Int> {
         val n = A.degree
         val mc = A.mathCalculator
-        val builder = Matrix.getBuilder(n, n, mc)
+        val builder = Matrix.zero(n, n, mc)
         builder[0, 0] = 1
         for (k in 1 until n) {
             val xpk = powerX(p * k, mc)
@@ -858,7 +855,7 @@ object PolynomialUtil {
                 builder[i, k] = m[i]
             }
         }
-        return builder.build()
+        return builder
     }
 
 

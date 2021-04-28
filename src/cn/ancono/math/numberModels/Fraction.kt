@@ -139,17 +139,17 @@ internal constructor(
 
     /**
      * Return the value of `this * num`
-     * @param k multiplier
+     * @param n multiplier
      * @return `this * k`
      */
-    fun multiply(k: Long): Fraction {
-        if (k == 0L) {
+    override fun multiply(n: Long): Fraction {
+        if (n == 0L) {
             return ZERO
         }
 
 
         //to prevent potential overflow,simplify num and den
-        val dAn = gcdReduce(k, denominator)
+        val dAn = gcdReduce(n, denominator)
         val nNum = dAn[0] * numerator
         //new numerator
         return Fraction(nNum, dAn[1])

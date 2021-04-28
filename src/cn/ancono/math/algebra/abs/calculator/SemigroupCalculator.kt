@@ -8,7 +8,7 @@ import cn.ancono.utilities.ModelPatterns
  * @author liyicheng
  * 2018-02-27 17:31
  */
-interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T> {
+interface SemigroupCalculator<T> : EqualPredicate<T>, MathBinaryOperator<T> {
     /**
      * Applies the operation defined in the semigroup.
      */
@@ -23,7 +23,7 @@ interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T
 
     @JvmDefault
     fun gpow(x: T, n: Long): T {
-        return ModelPatterns.binaryProduce(n, x, { a: T, b: T -> this.apply(a, b) })
+        return ModelPatterns.binaryProduce(n, x) { a: T, b: T -> this.apply(a, b) }
     }
 
 
@@ -49,4 +49,4 @@ interface SemigroupCalculator<T : Any> : EqualPredicate<T>, MathBinaryOperator<T
     operator fun T.times(n: Long) = n * this
 }
 
-inline fun <T : Any, C : SemigroupCalculator<T>, R> C.eval(block: C.() -> R): R = this.run(block)
+inline fun <T, C : SemigroupCalculator<T>, R> C.eval(block: C.() -> R): R = this.run(block)

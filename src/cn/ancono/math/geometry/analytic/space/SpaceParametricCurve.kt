@@ -11,7 +11,7 @@ typealias VectorFunction<T> = MathFunction<T, SVector<T>>
  * Describes a parametric curve in three-dimensional Euclidean space.
  * Mathematically, a parametric curve is represented by a vector function: `r(t) : (a,b) -> E^3`.
  */
-interface SpaceParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolder<T> {
+interface SpaceParametricCurve<T> : VectorFunction<T>, MathCalculatorHolder<T> {
 
     override fun apply(x: T): SVector<T> = substitute(x)
 

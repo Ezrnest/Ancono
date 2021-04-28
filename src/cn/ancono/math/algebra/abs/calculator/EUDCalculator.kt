@@ -16,7 +16,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
  *
  * See [EuclideanDomain](https://mathworld.wolfram.com/EuclideanDomain.html) for more information.
  */
-interface EUDCalculator<T : Any> : UFDCalculator<T> {
+interface EUDCalculator<T> : UFDCalculator<T> {
 
     /**
      * Returns a pair of two elements containing `a / b`

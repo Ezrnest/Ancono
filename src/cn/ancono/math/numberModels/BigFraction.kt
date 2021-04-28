@@ -96,8 +96,8 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
         return BigFraction(-signum, numerator, denominator)
     }
 
-    fun multiply(k: Long): BigFraction {
-        return multiply(k.toBigInteger())
+    override fun multiply(n: Long): BigFraction {
+        return multiply(n.toBigInteger())
     }
 
     fun multiply(k: BigInteger): BigFraction {

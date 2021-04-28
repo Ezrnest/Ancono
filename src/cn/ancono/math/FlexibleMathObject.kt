@@ -17,7 +17,7 @@ import cn.ancono.math.numberModels.api.NumberFormatter
  * @author liyicheng
  * @see MathObject
  */
-interface FlexibleMathObject<T : Any, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
+interface FlexibleMathObject<T, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
 
 
     override val mathCalculator: S

@@ -7,7 +7,7 @@ package cn.ancono.math.algebra.abs.calculator
  * @author  liyicheng
  * @see cn.ancono.math.algebra.abs.structure.LinearSpace
  */
-interface LinearSpaceCalculator<K : Any, V : Any> : ModuleCalculator<K, V> {
+interface LinearSpaceCalculator<K, V> : ModuleCalculator<K, V> {
     override val scalarCalculator: FieldCalculator<K>
 
     /**

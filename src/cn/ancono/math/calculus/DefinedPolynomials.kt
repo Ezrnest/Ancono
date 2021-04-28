@@ -33,7 +33,7 @@ import java.util.function.Function
  * @author
  * Created by lyc at 2021-03-31 12:29
  */
-abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
+abstract class OrthPolynomials<T>(val name: String, mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
 
     /**
      * The domain on which the polynomials are defined.
@@ -93,9 +93,9 @@ abstract class OrthPolynomials<T : Any>(val name: String, mc: MathCalculator<T>)
  *     L_2(x) = (3x^2 - 1)/2
  *     L_3(x) = (5x^3 - 3x)/2
  */
-class LegendreOrthPoly<T : Any>(mc: MathCalculator<T>)
+class LegendreOrthPoly<T>(mc: MathCalculator<T>)
     : OrthPolynomials<T>("Legendre", mc) {
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
         return LegendreOrthPoly(newCalculator)
     }
 
@@ -149,10 +149,10 @@ class LegendreOrthPoly<T : Any>(mc: MathCalculator<T>)
  *
  * See: [Tchebychev orthogonal polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials)
  */
-class TchebychevOrthPoly<T : Any>(mc: MathCalculator<T>)
+class TchebychevOrthPoly<T>(mc: MathCalculator<T>)
     : OrthPolynomials<T>("Tchebychev", mc) {
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): TchebychevOrthPoly<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): TchebychevOrthPoly<N> {
         return TchebychevOrthPoly(newCalculator)
     }
 
@@ -180,7 +180,7 @@ class TchebychevOrthPoly<T : Any>(mc: MathCalculator<T>)
         yield(p1)
         var n = 1
         while (true) {
-            val p2 = mc.eval { p1.shift(1).multiplyLong(2L) - p0 }
+            val p2 = mc.eval { p1.shift(1).multiply(2L) - p0 }
             yield(p2)
             p0 = p1
             p1 = p2
@@ -209,14 +209,14 @@ class TchebychevOrthPoly<T : Any>(mc: MathCalculator<T>)
  * Implementation Note:
  * Norm values are extremely large, overflow will happen for big `n`.
  */
-class LaguerreOrthPoly<T : Any>(mc: MathCalculator<T>)
+class LaguerreOrthPoly<T>(mc: MathCalculator<T>)
     : OrthPolynomials<T>("Laguerre", mc) {
 
 
     override val domain: Interval<T> = Interval.toPositiveInf(mc.zero, true, mc)
 
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LaguerreOrthPoly<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LaguerreOrthPoly<N> {
         return LaguerreOrthPoly(newCalculator)
     }
 
@@ -275,12 +275,12 @@ class LaguerreOrthPoly<T : Any>(mc: MathCalculator<T>)
  * Implementation Note: The norm requires constant value pi, calculators must support the constant value.
  * Norm values are extremely large, overflow will happen for big `n`.
  */
-class HermiteOrthPoly<T : Any>(mc: MathCalculator<T>)
+class HermiteOrthPoly<T>(mc: MathCalculator<T>)
     : OrthPolynomials<T>("Hermite", mc) {
 
     override val domain: Interval<T> = Interval.universe(mc)
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): HermiteOrthPoly<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): HermiteOrthPoly<N> {
         return HermiteOrthPoly(newCalculator)
     }
 
@@ -419,7 +419,7 @@ object DefinedPolynomials {
      *     L_1(x) = -x + 1 + α
      *
      */
-    fun <T : Any> generalizedLaguerrePoly(alpha: T, mc: MathCalculator<T>): Sequence<Polynomial<T>> {
+    fun <T> generalizedLaguerrePoly(alpha: T, mc: MathCalculator<T>): Sequence<Polynomial<T>> {
         return sequence {
             var p0 = Polynomial.one(mc)
             val n1 = mc.negate(mc.one)

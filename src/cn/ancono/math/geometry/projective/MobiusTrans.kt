@@ -10,6 +10,7 @@ import cn.ancono.math.numberModels.api.*
 import cn.ancono.math.numberModels.structure.Complex
 import cn.ancono.math.numberModels.structure.ComplexE
 import cn.ancono.math.property.Composable
+import org.jetbrains.annotations.NotNull
 import java.util.function.Function
 
 /*
@@ -18,16 +19,16 @@ import java.util.function.Function
 /**
  * Describes a mobius transformation on complex field: `T(z) = (az+b)/(cz+d)`
  */
-class MobiusTrans<T : Any>(
-    mc: MathCalculator<T>,
-    /**
-     * The complex calculator
-     */
-    val cc: MathCalculator<Complex<T>>,
-    /**
-     * The transformation matrix ((a,b),(c,d))
-     */
-    val m: TransMatrix<Complex<T>>
+class MobiusTrans<T>(
+        mc: MathCalculator<T>,
+        /**
+         * The complex calculator
+         */
+        val cc: MathCalculator<Complex<T>>,
+        /**
+         * The transformation matrix ((a,b),(c,d))
+         */
+        val m: TransMatrix<Complex<T>>
 )
     : MathObjectExtend<T>(mc),
     Bijection<ComplexE<T>, ComplexE<T>>,
@@ -57,7 +58,7 @@ class MobiusTrans<T : Any>(
         return after.compose(this)
     }
 
-    override fun deply(y: ComplexE<T>): ComplexE<T> {
+    override fun deply(y: @NotNull ComplexE<T>): ComplexE<T> {
         return reciprocal().apply(y)
     }
 
@@ -98,7 +99,7 @@ class MobiusTrans<T : Any>(
         return MobiusTrans(mc, cc, m.multiplyNumber(k))
     }
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MobiusTrans<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MobiusTrans<N> {
         val ncc = Complex.calculator(newCalculator)
         val nMat = m.mapTo(ncc) { z -> z.mapTo(newCalculator, mapper) }
         return MobiusTrans(newCalculator, ncc, nMat)
@@ -120,7 +121,7 @@ class MobiusTrans<T : Any>(
     }
 
     companion object {
-        fun <T : Any> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): MobiusTrans<T> {
+        fun <T> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): MobiusTrans<T> {
             val det = mc.eval { a * c - b * d }
             if (mc.isZero(det)) {
                 throw IllegalArgumentException("ac-bd = 0")
@@ -139,7 +140,7 @@ class MobiusTrans<T : Any>(
             return MobiusTrans(mc, cc, mat)
         }
 
-        fun <T : Any> of(a: Complex<T>, b: Complex<T>, c: Complex<T>, d: Complex<T>): MobiusTrans<T> {
+        fun <T> of(a: Complex<T>, b: Complex<T>, c: Complex<T>, d: Complex<T>): MobiusTrans<T> {
             val mc = a.mathCalculator
             val det = a * d - b * c
             if (det.isZero()) {
@@ -154,7 +155,7 @@ class MobiusTrans<T : Any>(
          * Returns a mobius transformation which transforms the three given points to (0,1,Inf), it
          * is required that the given three points are different.
          */
-        fun <T : Any> to01Inf(a: ComplexE<T>, b: ComplexE<T>, c: ComplexE<T>): MobiusTrans<T> {
+        fun <T> to01Inf(a: ComplexE<T>, b: ComplexE<T>, c: ComplexE<T>): MobiusTrans<T> {
             val mc: MathCalculator<T> = if (b !is Complex) {
                 if (a !is Complex) {
                     throw ArithmeticException()
@@ -190,7 +191,7 @@ class MobiusTrans<T : Any>(
             return to01Inf(b, a, c)
         }
 
-        fun <T : Any> to01Inf(a: Complex<T>, b: Complex<T>, c: Complex<T>): MobiusTrans<T> {
+        fun <T> to01Inf(a: Complex<T>, b: Complex<T>, c: Complex<T>): MobiusTrans<T> {
             val b_c = b - c
             val b_a = b - a
             // (b-c)(x-a)
@@ -202,7 +203,7 @@ class MobiusTrans<T : Any>(
         /**
          * Returns a Mobius transformation that transforms `a1,b1,c1` to `a2,b2,c2` respectively.
          */
-        fun <T : Any> threePoints(
+        fun <T> threePoints(
                 a1: ComplexE<T>, b1: ComplexE<T>, c1: ComplexE<T>,
                 a2: ComplexE<T>, b2: ComplexE<T>, c2: ComplexE<T>
         ): MobiusTrans<T> {
@@ -212,9 +213,9 @@ class MobiusTrans<T : Any>(
         /**
          * Returns a Mobius transformation that transforms `a1,b1,c1` to `a2,b2,c2` respectively.
          */
-        fun <T : Any> threePoints(
-            a1: Complex<T>, b1: Complex<T>, c1: Complex<T>,
-            a2: Complex<T>, b2: Complex<T>, c2: Complex<T>
+        fun <T> threePoints(
+                a1: Complex<T>, b1: Complex<T>, c1: Complex<T>,
+                a2: Complex<T>, b2: Complex<T>, c2: Complex<T>
         ): MobiusTrans<T> {
             return to01Inf(a1, b1, c1).andThen(to01Inf(a2, b2, c2).reciprocal())
         }

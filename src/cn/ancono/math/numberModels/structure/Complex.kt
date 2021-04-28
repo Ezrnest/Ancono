@@ -11,6 +11,7 @@ import cn.ancono.math.geometry.analytic.space.SPoint
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
+import org.jetbrains.annotations.NotNull
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
@@ -23,20 +24,20 @@ Created by liyicheng 2020/2/24
 /**
  * Describes the expanded complex including the infinity point.
  */
-sealed class ComplexE<T : Any> constructor(mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
+sealed class ComplexE<T> constructor(mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
 
     abstract fun isInf(): Boolean
 
-    abstract override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ComplexE<N>
+    abstract override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ComplexE<N>
 }
 
-class ComplexInf<T : Any> internal constructor(mc: MathCalculator<T>) : ComplexE<T>(mc) {
+class ComplexInf<T> internal constructor(mc: MathCalculator<T>) : ComplexE<T>(mc) {
 
     override fun isInf(): Boolean {
         return true
     }
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ComplexInf<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ComplexInf<N> {
         return ComplexInf(newCalculator)
     }
 
@@ -80,7 +81,7 @@ class ComplexInf<T : Any> internal constructor(mc: MathCalculator<T>) : ComplexE
  * @author lyc
  *
  */
-class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : ComplexE<T>(mc),
+class Complex<T> internal constructor(mc: MathCalculator<T>, a: T, b: T) : ComplexE<T>(mc),
         FieldNumberModel<Complex<T>> {
 
 
@@ -310,18 +311,17 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     }
 
     /**
-     * Calculates the result of `this^p`,the `p` should be a non-negative
-     * number.
+     * Calculates the result of `this^p`.
      *
      *
-     * @param p the power
+     * @param n the power
      * @return `this^p`
      * @throws ArithmeticException if `p==0 && this==0`
      */
-    fun pow(p: Long): Complex<T> {
-        var p1 = p
+    override fun pow(n: Long): Complex<T> {
+        var p1 = n
         if (p1 < 0) {
-            throw IllegalArgumentException("Cannot calculate:p<0")
+            return reciprocal().pow(-n)
         }
 
         //we use this way to reduce the calculation to log(p)
@@ -388,7 +388,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
     //	public Complex<T> powf()
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Complex<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Complex<N> {
         return Complex(newCalculator, mapper.apply(a), mapper.apply(b))
     }
 
@@ -456,7 +456,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         return false
     }
 
-    override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         if (obj is Complex<*>) {
             val com = obj as Complex<N>
             return mc.isEqual(a, mapper.apply(com.a)) && mc.isEqual(b, mapper.apply(com.b))
@@ -465,7 +465,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     }
 
 
-    class ComplexCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<Complex<T>>() {
+    class ComplexCalculator<T>(val mc: MathCalculator<T>) : MathCalculatorAdapter<Complex<T>>() {
         override val zero: Complex<T> = zero(mc)
         override val one: Complex<T> = real(mc.one, mc)
 
@@ -634,7 +634,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     }
 
 
-    class ComplexECalculator<T : Any>(val mc: ComplexCalculator<T>) : MathCalculatorAdapter<ComplexE<T>>() {
+    class ComplexECalculator<T>(val mc: ComplexCalculator<T>) : MathCalculatorAdapter<ComplexE<T>>() {
         override val one: ComplexE<T> = mc.one
         override val zero: ComplexE<T> = mc.zero
         val i: ComplexE<T> = mc.i
@@ -846,7 +846,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          */
         @Suppress("UNCHECKED_CAST")
         @JvmStatic
-        fun <T : Any> zero(mc: MathCalculator<T>): Complex<T> {
+        fun <T> zero(mc: MathCalculator<T>): Complex<T> {
             var c: Complex<T>? = zeros[mc] as Complex<T>?
             if (c == null) {
                 val z = mc.zero
@@ -867,7 +867,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return a new complex.
          */
         @JvmStatic
-        fun <T : Any> of(a: T, b: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> of(a: T, b: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, a, b)
         }
 
@@ -875,7 +875,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * Gets the value of `1`.
          */
         @JvmStatic
-        fun <T : Any> one(mc: MathCalculator<T>): Complex<T> {
+        fun <T> one(mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.one, mc.zero)
         }
 
@@ -883,7 +883,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * Gets the value of `i`.
          */
         @JvmStatic
-        fun <T : Any> i(mc: MathCalculator<T>): Complex<T> {
+        fun <T> i(mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.zero, mc.one)
         }
 
@@ -896,12 +896,12 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return a new complex.
          */
         @JvmStatic
-        fun <T : Any> real(a: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> real(a: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, a, mc.zero)
         }
 
         @JvmStatic
-        fun <T : Any> inf(mc: MathCalculator<T>): ComplexE<T> {
+        fun <T> inf(mc: MathCalculator<T>): ComplexE<T> {
             return ComplexInf(mc)
         }
 
@@ -915,7 +915,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return a new complex.
          */
         @JvmStatic
-        fun <T : Any> imaginary(b: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> imaginary(b: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.zero, b)
         }
 
@@ -927,7 +927,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return
          */
         @JvmStatic
-        fun <T : Any> modArg(r: T, theta: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> modArg(r: T, theta: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.multiply(r, mc.cos(theta)), mc.multiply(r, mc.sin(theta)))
         }
 
@@ -935,7 +935,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * Gets a calculator for complex using the given MathCalculator.
          */
         @JvmStatic
-        fun <T : Any> calculator(mc: MathCalculator<T>): ComplexCalculator<T> {
+        fun <T> calculator(mc: MathCalculator<T>): ComplexCalculator<T> {
             return ComplexCalculator(mc)
         }
 
@@ -943,7 +943,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * Gets a calculator for the extended complex.
          */
         @JvmStatic
-        fun <T : Any> calculatorE(mc: MathCalculator<T>): ComplexECalculator<T> {
+        fun <T> calculatorE(mc: MathCalculator<T>): ComplexECalculator<T> {
             return ComplexECalculator(calculator(mc))
         }
 
@@ -958,7 +958,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          *
          */
         @JvmStatic
-        fun <T : Any> crossRatio(x1: Complex<T>, x2: Complex<T>, x3: Complex<T>, x4: Complex<T>): Complex<T> {
+        fun <T> crossRatio(x1: Complex<T>, x2: Complex<T>, x3: Complex<T>, x4: Complex<T>): Complex<T> {
             //  (x1-x3)(x2-x4)/(x1-x4)(x2-x3)
             return (x1 - x3) * (x2 - x4) / ((x1 - x4) * (x2 - x3))
         }
@@ -966,7 +966,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         /**
          * Returns the bijection of stereographic projection from north pole (0,0,1).
          */
-        fun <T : Any> stereographicProjection(mc: MathCalculator<T>): Bijection<SPoint<T>, ComplexE<T>> {
+        fun <T> stereographicProjection(mc: MathCalculator<T>): Bijection<SPoint<T>, ComplexE<T>> {
             return object : Bijection<SPoint<T>, ComplexE<T>> {
                 override fun apply(x: SPoint<T>): ComplexE<T> {
                     //x/(1-z),y/(1-z)
@@ -980,7 +980,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
                     }
                 }
 
-                override fun deply(y: ComplexE<T>): SPoint<T> {
+                override fun deply(y: @NotNull ComplexE<T>): SPoint<T> {
                     return if (y !is Complex) {
                         SPoint(mc, mc.zero, mc.zero, mc.one)
                     } else {
@@ -996,7 +996,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         }
 
 
-        private fun <T : Any> minusFrac(
+        private fun <T> minusFrac(
                 x: ComplexE<T>, y1: ComplexE<T>, y2: ComplexE<T>,
                 mc: MathCalculator<T>
         ): ComplexE<T> {
@@ -1039,7 +1039,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          *
          */
         @JvmStatic
-        fun <T : Any> crossRatio(
+        fun <T> crossRatio(
                 x1: ComplexE<T>, x2: ComplexE<T>,
                 x3: ComplexE<T>, x4: ComplexE<T>,
                 mc: MathCalculator<T>
@@ -1080,7 +1080,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 }
 
 
-//class ComplexE<T : Any> {
+//class ComplexE<T> {
 //    
 //
 //    private val v: Complex<T>?

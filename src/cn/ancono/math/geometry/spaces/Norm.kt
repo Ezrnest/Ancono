@@ -23,7 +23,7 @@ import cn.ancono.math.algebra.linear.Matrix
  * @param R the type representing real numbers
  */
 @FunctionalInterface
-fun interface Norm<in T : Any, out R : Any> {
+fun interface Norm<in T, out R> {
     //Created by lyc at 2020-09-26 12:15
     /**
      * Computes the norm of `x`.
@@ -37,17 +37,17 @@ fun interface Norm<in T : Any, out R : Any> {
         /**
          * Returns the canonical norm defined by the absolute value of
          */
-        fun <T : Any> fromAbs(mc: MathCalculator<T>): Norm<T, T> {
+        fun <T> fromAbs(mc: MathCalculator<T>): Norm<T, T> {
             return Norm { x ->
                 mc.abs(x)
             }
         }
 
-        fun <T : Any> matrixPNorm(p: T): Norm<Matrix<T>, T> {
-            return Norm { m -> m.normP(p) }
+        fun <T> matrixPNorm(p: T): Norm<Matrix<T>, T> {
+            return Norm { m -> m.norm(p) }
         }
 
-        fun <T : Any> matrixInfNorm(): Norm<Matrix<T>, T> {
+        fun <T> matrixInfNorm(): Norm<Matrix<T>, T> {
             return Norm { m -> m.normInf() }
         }
 

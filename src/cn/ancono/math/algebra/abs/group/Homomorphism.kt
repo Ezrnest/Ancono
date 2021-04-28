@@ -7,14 +7,14 @@ import cn.ancono.math.algebra.abs.structure.Group
 import cn.ancono.math.algebra.abs.structure.finite.FiniteGroup
 
 
-interface Homomorphism<T : Any, S : Any, G : Group<T>, H : Group<S>, K : Group<T>> {
+interface Homomorphism<T, S, G : Group<T>, H : Group<S>, K : Group<T>> {
     val mapping: HomomorphismMapping<T, S>
     val origin: G
     val dest: H
     val kernel: K
 }
 
-interface Isomorphism<T : Any, S : Any, G : Group<T>, H : Group<S>, K : Group<T>> : Homomorphism<T, S, G, H, K> {
+interface Isomorphism<T, S, G : Group<T>, H : Group<S>, K : Group<T>> : Homomorphism<T, S, G, H, K> {
     override val mapping: IsomorphismMapping<T, S>
 }
 
@@ -27,7 +27,7 @@ typealias SelfIsomorphism<T, G> = Isomorphism<T, T, G, G, FiniteGroup<T>>
  * Created at 2018/10/10 18:31
  * @author  liyicheng
  */
-open class HomomorphismImpl<T : Any, S : Any, G : Group<T>, H : Group<S>, K : Group<T>>(
+open class HomomorphismImpl<T, S, G : Group<T>, H : Group<S>, K : Group<T>>(
         override val mapping: HomomorphismMapping<T, S>,
         override val origin: G,
         override val dest: H,
@@ -37,7 +37,7 @@ open class HomomorphismImpl<T : Any, S : Any, G : Group<T>, H : Group<S>, K : Gr
 //            : this(mapping, origin, dest, computeKernel(mapping, origin, dest))
 
 //    companion object {
-//        private fun <T : Any, S : Any, G : Group<T>, H : Group<S>> computeKernel(mapping: HomomorphismMapping<T, S>, origin: G, dest: H){
+//        private fun <T, S, G : Group<T>, H : Group<S>> computeKernel(mapping: HomomorphismMapping<T, S>, origin: G, dest: H){
 //
 //        }
 //                MathSet { x: T -> dest.calculator.run { isEqual(mapping(x), identity) } }
@@ -50,7 +50,7 @@ open class HomomorphismImpl<T : Any, S : Any, G : Group<T>, H : Group<S>, K : Gr
  * Created at 2018/10/10 18:40
  * @author  liyicheng
  */
-class IsomorphismImpl<T : Any, S : Any, G : Group<T>, H : Group<S>>
+class IsomorphismImpl<T, S, G : Group<T>, H : Group<S>>
 (override val mapping: IsomorphismMapping<T, S>, origin: G, dest: H)
     : HomomorphismImpl<T, S, G, H, FiniteGroup<T>>(mapping, origin, dest, FiniteGroups.identityGroup(origin.calculator)),
         Isomorphism<T, S, G, H, FiniteGroup<T>> {

@@ -5,7 +5,7 @@ import cn.ancono.math.algebra.abs.structure.Ring
 import cn.ancono.math.set.MathSet
 
 
-class RingFromCal<T : Any>(private val rc: RingCalculator<T>, private val mathSet: MathSet<T>) : Ring<T> {
+class RingFromCal<T>(private val rc: RingCalculator<T>, private val mathSet: MathSet<T>) : Ring<T> {
     override fun getCalculator(): RingCalculator<T> {
         return rc
     }

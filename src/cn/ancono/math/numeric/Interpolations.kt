@@ -18,7 +18,7 @@ object Interpolations {
      *     L[0,j] = fs[j]
      *     L[i,j] = (L[i-1,j+1] - L[i-1,j])/(xs[j+r] - xs[j])
      */
-    fun <T : Any> differences(xs: List<T>, fs: List<T>, k: Int, mc: MathCalculator<T>): List<List<T>> {
+    fun <T> differences(xs: List<T>, fs: List<T>, k: Int, mc: MathCalculator<T>): List<List<T>> {
         val n = xs.size
         require(fs.size == n)
         val results = ArrayList<List<T>>(k + 1)

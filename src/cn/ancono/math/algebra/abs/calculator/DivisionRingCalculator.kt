@@ -13,7 +13,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
  * @author liyicheng
  * 2018-02-28 19:01
  */
-interface DivisionRingCalculator<T : Any> : UnitRingCalculator<T> {
+interface DivisionRingCalculator<T> : UnitRingCalculator<T> {
 
     /**
      * Returns the multiplicative inverse of element `x`.
@@ -85,4 +85,4 @@ interface DivisionRingCalculator<T : Any> : UnitRingCalculator<T> {
 }
 
 
-fun <T : Any> DivisionRingCalculator<T>.asGroupCalculator() = GroupCalculators.asGroupCalculator(this)
+fun <T> DivisionRingCalculator<T>.asGroupCalculator() = GroupCalculators.asGroupCalculator(this)

@@ -18,7 +18,7 @@ import cn.ancono.math.set.MathSet
 object Groups {
 
 
-    fun <T : Any, S : Any> isomorphism(g: Group<T>, f: Bijection<T, S>): Group<S> {
+    fun <T, S> isomorphism(g: Group<T>, f: Bijection<T, S>): Group<S> {
         return IsomorphismedGroup(g, f)
     }
 
@@ -28,14 +28,14 @@ object Groups {
      * checking whether the operation defined by [gc] is closed upon [set].
      */
     @JvmStatic
-    fun <T : Any> createGroupWithoutCheck(gc: GroupCalculator<T>, set: MathSet<T>): Group<T> {
+    fun <T> createGroupWithoutCheck(gc: GroupCalculator<T>, set: MathSet<T>): Group<T> {
         return GroupFromCal(gc, set)
     }
 
 }
 
-class IsomorphismedCoset<T : Any, S : Any>(val coset: Coset<T, *>, val f: Bijection<T, S>,
-                                           val group: IsomorphismedGroup<T, S>, val subGroup: IsomorphismedGroup<T, S>) :
+class IsomorphismedCoset<T, S>(val coset: Coset<T, *>, val f: Bijection<T, S>,
+                               val group: IsomorphismedGroup<T, S>, val subGroup: IsomorphismedGroup<T, S>) :
         AbstractCoset<S, IsomorphismedGroup<T, S>>(group, subGroup) {
 
     override fun contains(t: S): Boolean {
@@ -51,7 +51,7 @@ class IsomorphismedCoset<T : Any, S : Any>(val coset: Coset<T, *>, val f: Biject
     }
 }
 
-class IsomorphismedGroup<T : Any, S : Any>(val group: Group<T>, val f: Bijection<T, S>) : Group<S> {
+class IsomorphismedGroup<T, S>(val group: Group<T>, val f: Bijection<T, S>) : Group<S> {
 
 
     private val isomSet: MathSet<S> = group.set.mapTo(f)
@@ -183,7 +183,7 @@ class IsomorphismedGroup<T : Any, S : Any>(val group: Group<T>, val f: Bijection
     }
 }
 
-//internal class GroupImpl<T : Any>(gc: GroupCalculator<T>, set: MathSet<T>) : AbstractGroup<T>(gc, set) {
+//internal class GroupImpl<T>(gc: GroupCalculator<T>, set: MathSet<T>) : AbstractGroup<T>(gc, set) {
 //    override fun getCalculator(): GroupCalculator<T> {
 //        return cal
 //    }

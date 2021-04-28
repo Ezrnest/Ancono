@@ -17,59 +17,48 @@ import cn.ancono.utilities.structure.Pair
  * Provides extension methods for convenience.
  */
 
-operator fun <T> Matrix<T>.get(row: Int) = getRow(row)!!
-
-operator fun <T> Matrix<T>.times(mat: Matrix<T>) = Matrix.multiply(this, mat)!!
-operator fun <T> Matrix<T>.minus(mat: Matrix<T>) = Matrix.subtract(this, mat)!!
-operator fun <T> Matrix<T>.plus(mat: Matrix<T>) = Matrix.add(this, mat)!!
-operator fun <T> Matrix<T>.unaryMinus() = this.negate()!!
-
 /**
  * Returns the transpose of this matrix.
  */
 val <T> Matrix<T>.T: Matrix<T>
     get() = this.transpose()
 
-operator fun <T : Any> Vector<T>.unaryMinus() = this.negate()!!
 
-operator fun <T : Any> PVector<T>.unaryMinus() = this.negate()!!
-operator fun <T : Any> SVector<T>.unaryMinus() = this.negate()!!
-operator fun <T : Any> Vector<T>.plus(v: Vector<T>) = Vector.addV(this, v)!!
+operator fun <T> PVector<T>.unaryMinus() = this.negate()!!
+operator fun <T> SVector<T>.unaryMinus() = this.negate()!!
 
-operator fun <T : Any> PVector<T>.plus(v: PVector<T>) = this.add(v)!!
-operator fun <T : Any> SVector<T>.plus(v: SVector<T>) = this.add(v)!!
-operator fun <T : Any> Vector<T>.minus(v: Vector<T>) = Vector.subtractV(this, v)!!
+operator fun <T> PVector<T>.plus(v: PVector<T>) = this.add(v)!!
+operator fun <T> SVector<T>.plus(v: SVector<T>) = this.add(v)!!
 
-operator fun <T : Any> PVector<T>.minus(v: PVector<T>) = this.add(v)!!
-operator fun <T : Any> SVector<T>.minus(v: SVector<T>) = this.subtract(v)!!
-operator fun <T : Any> SVector<T>.times(k: T) = this.multiplyNumber(k)!!
+operator fun <T> PVector<T>.minus(v: PVector<T>) = this.add(v)!!
+operator fun <T> SVector<T>.minus(v: SVector<T>) = this.subtract(v)!!
+operator fun <T> SVector<T>.times(k: T) = this.multiply(k)!!
 
-operator fun <T : Any> PVector<T>.times(k: T) = this.multiplyNumber(k)!!
-operator fun <T : Any> Vector<T>.times(k: T) = this.multiplyNumber(k)!!
-operator fun <T : Any> PVector<T>.component1() = this.x!!
+operator fun <T> PVector<T>.times(k: T) = this.multiply(k)!!
+operator fun <T> PVector<T>.component1() = this.x!!
 
 
-operator fun <T : Any> PVector<T>.component2() = this.y!!
-operator fun <T : Any> SVector<T>.component1() = this.x!!
+operator fun <T> PVector<T>.component2() = this.y!!
+operator fun <T> SVector<T>.component1() = this.x!!
 
-operator fun <T : Any> SVector<T>.component2() = this.y!!
-operator fun <T : Any> SVector<T>.component3() = this.z!!
-operator fun <T : Any> Point<T>.component1() = this.x!!
+operator fun <T> SVector<T>.component2() = this.y!!
+operator fun <T> SVector<T>.component3() = this.z!!
+operator fun <T> Point<T>.component1() = this.x!!
 
-operator fun <T : Any> Point<T>.component2() = this.y!!
-operator fun <T : Any> SPoint<T>.component1() = this.x!!
+operator fun <T> Point<T>.component2() = this.y!!
+operator fun <T> SPoint<T>.component1() = this.x!!
 
-operator fun <T : Any> SPoint<T>.component2() = this.y!!
-operator fun <T : Any> SPoint<T>.component3() = this.z!!
+operator fun <T> SPoint<T>.component2() = this.y!!
+operator fun <T> SPoint<T>.component3() = this.z!!
 
 
-operator fun <T> Matrix<T>.times(v: Vector<T>) = Vector.multiplyToVector(this, v)!!
-operator fun <T> Vector<T>.times(mat: Matrix<T>) = Vector.multiplyByVector(this, mat)!!
+operator fun <T> Matrix<T>.times(v: Vector<T>) = Vector.multiplyToVector(this, v)
+operator fun <T> Vector<T>.times(mat: Matrix<T>) = Vector.multiplyByVector(this, mat)
 
-operator fun <T : Any> Complex<T>.component1() = this.re()
-operator fun <T : Any> Complex<T>.component2() = this.im()
+operator fun <T> Complex<T>.component1() = this.re()
+operator fun <T> Complex<T>.component2() = this.im()
 
-//operator fun <T : Any> IPolynomial<T>.get(n: Int) = this.get(n)!!
+//operator fun <T> IPolynomial<T>.get(n: Int) = this.get(n)!!
 operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)
 operator fun Multinomial.times(y: Multinomial) = this.multiply(y)
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!
@@ -78,13 +67,13 @@ operator fun Multinomial.div(y: Term) = this.divide(y)!!
 operator fun <T, S> Pair<T, S>.component1(): T = this.first
 operator fun <T, S> Pair<T, S>.component2(): S = this.second
 
-operator fun <T : Any> MathSet<T>.minus(another: MathSet<T>): MathSet<T> =
+operator fun <T> MathSet<T>.minus(another: MathSet<T>): MathSet<T> =
         MathSet { this.contains(it) && !another.contains(it) }
 
-infix fun <T : Any> MathSet<T>.intersect(another: MathSet<T>): MathSet<T> = MathSets.intersectOf(this, another)
-infix fun <T : Any> MathSet<T>.and(another: MathSet<T>): MathSet<T> = this intersect another
-infix fun <T : Any> MathSet<T>.union(another: MathSet<T>): MathSet<T> = MathSets.unionOf(this, another)
-infix fun <T : Any> MathSet<T>.or(another: MathSet<T>): MathSet<T> = this union another
+infix fun <T> MathSet<T>.intersect(another: MathSet<T>): MathSet<T> = MathSets.intersectOf(this, another)
+infix fun <T> MathSet<T>.and(another: MathSet<T>): MathSet<T> = this intersect another
+infix fun <T> MathSet<T>.union(another: MathSet<T>): MathSet<T> = MathSets.unionOf(this, another)
+infix fun <T> MathSet<T>.or(another: MathSet<T>): MathSet<T> = this union another
 
 fun <T> List<T>.exclude(idx: Int): List<T> {
     val result = ArrayList<T>(this.size - 1)
@@ -115,7 +104,7 @@ fun <T : Comparable<T>> List<T>.isSorted(invertedNaturalOrder: Boolean = false):
     return true
 }
 
-//class CalWrapper<T : Any>(val mc: MathCalculator<T>) {
+//class CalWrapper<T>(val mc: MathCalculator<T>) {
 //    operator fun T.plus(y: T) = mc.add(this, y)
 //    operator fun T.minus(y: T) = mc.subtract(this, y)
 //    operator fun T.times(y: T) = mc.multiply(this, y)
@@ -127,7 +116,7 @@ fun <T : Comparable<T>> List<T>.isSorted(invertedNaturalOrder: Boolean = false):
 //    operator fun T.rangeTo(y: T) = Interval.closedInterval(this, y, mc)!!
 //}
 //
-//fun <T : Any, R> with(mc: MathCalculator<T>, block: CalWrapper<T>.() -> R): R =
+//fun <T, R> with(mc: MathCalculator<T>, block: CalWrapper<T>.() -> R): R =
 //        block.invoke(CalWrapper(mc))
 //
 //fun main(args: Array<String>) {

@@ -63,7 +63,7 @@ data class RefDForm(val name: String, override val n: Int) : AtomicDForm() {
  * Created at 2019/9/14 14:59
  * @author  lyc
  */
-data class DFBase<T : Any> internal constructor(
+data class DFBase<T> internal constructor(
         val coefficient: T,
         val bases: Array<AtomicDForm>
 ) {
@@ -97,7 +97,7 @@ data class DFBase<T : Any> internal constructor(
             return count
         }
 
-        private fun <T : Any> valueOf0(coe: T, bases: Array<AtomicDForm>, mc: FieldCalculator<T>): DFBase<T> {
+        private fun <T> valueOf0(coe: T, bases: Array<AtomicDForm>, mc: FieldCalculator<T>): DFBase<T> {
             val invCount = inverseOrderCountAndCheckDuplicate(bases)
             if (invCount < 0) {
                 return zero(mc)
@@ -108,29 +108,29 @@ data class DFBase<T : Any> internal constructor(
         }
 
 
-        fun <T : Any> of(coe: T, mc: FieldCalculator<T>, bases: List<String>): DFBase<T> {
+        fun <T> of(coe: T, mc: FieldCalculator<T>, bases: List<String>): DFBase<T> {
             val arr = Array<AtomicDForm>(bases.size) { CharDForm(bases[it]) }
             return valueOf0(coe, arr, mc)
         }
 
-        fun <T : Any> of(coe: T, mc: FieldCalculator<T>, vararg bases: String): DFBase<T> {
+        fun <T> of(coe: T, mc: FieldCalculator<T>, vararg bases: String): DFBase<T> {
             return of(coe, mc, bases.asList())
         }
 
 
-        fun <T : Any> valueOf(coe: T, mc: FieldCalculator<T>, bases: List<AtomicDForm>): DFBase<T> {
+        fun <T> valueOf(coe: T, mc: FieldCalculator<T>, bases: List<AtomicDForm>): DFBase<T> {
             return valueOf0(coe, bases.toTypedArray(), mc)
         }
 
-        fun <T : Any> valueOf(coe: T, mc: FieldCalculator<T>, vararg bases: AtomicDForm): DFBase<T> {
+        fun <T> valueOf(coe: T, mc: FieldCalculator<T>, vararg bases: AtomicDForm): DFBase<T> {
             return valueOf(coe, mc, bases.asList())
         }
 
-        fun <T : Any> zero(mc: FieldCalculator<T>): DFBase<T> {
+        fun <T> zero(mc: FieldCalculator<T>): DFBase<T> {
             return valueOf(mc.zero, mc, emptyList())
         }
 
-        fun <T : Any> constant(coe: T): DFBase<T> {
+        fun <T> constant(coe: T): DFBase<T> {
             return DFBase(coe, emptyArray())
         }
     }
@@ -160,7 +160,7 @@ object DFBaseComparator : Comparator<DFBase<*>> {
     }
 }
 
-class DFBaseCalculator<T : Any>(val mc: FunctionCalculator<T>) : AlgebraCalculator<T, DFBase<T>> {
+class DFBaseCalculator<T>(val mc: FunctionCalculator<T>) : AlgebraCalculator<T, DFBase<T>> {
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
 
@@ -247,7 +247,7 @@ class DFBaseCalculator<T : Any>(val mc: FunctionCalculator<T>) : AlgebraCalculat
  * Defines a differential form on number model type `T`,
  * it is required that the calculator of `T` is a FunctionCalculator, that is, it supports differential.
  */
-class DifferentialForm<T : Any> internal constructor(terms: NavigableSet<DFBase<T>>, val dc: DFBaseCalculator<T>) :
+class DifferentialForm<T> internal constructor(terms: NavigableSet<DFBase<T>>, val dc: DFBaseCalculator<T>) :
         AlgebraMultinomialTemplate<T, DFBase<T>>(dc, terms),
         AlgebraModel<T, DifferentialForm<T>> {
 
@@ -359,36 +359,36 @@ class DifferentialForm<T : Any> internal constructor(terms: NavigableSet<DFBase<
 
     companion object {
         val DefaultVariables = listOf("x", "y", "z")
-        internal fun <T : Any> getSet(): NavigableSet<DFBase<T>> {
+        internal fun <T> getSet(): NavigableSet<DFBase<T>> {
             return TreeSet(DFBaseComparator)
         }
 
         /**
          * Returns a differential form according to the given coefficient and base.
          */
-        fun <T : Any> monomial(base: DFBase<T>, dc: DFBaseCalculator<T>): DifferentialForm<T> {
+        fun <T> monomial(base: DFBase<T>, dc: DFBaseCalculator<T>): DifferentialForm<T> {
             val terms = getSet<T>()
             terms.add(base)
             return DifferentialForm(terms, dc)
         }
 
-        fun <T : Any> monomial(c: T, bases: List<String>, dc: DFBaseCalculator<T>): DifferentialForm<T> {
+        fun <T> monomial(c: T, bases: List<String>, dc: DFBaseCalculator<T>): DifferentialForm<T> {
             return monomial(DFBase.of(c, dc.mc, bases), dc)
         }
 
-        fun <T : Any> zeroForm(c: T, dc: DFBaseCalculator<T>): DifferentialForm<T> = monomial(DFBase.constant(c), dc)
+        fun <T> zeroForm(c: T, dc: DFBaseCalculator<T>): DifferentialForm<T> = monomial(DFBase.constant(c), dc)
 
         /**
          * The differential form zero.
          */
-        fun <T : Any> zero(dc: DFBaseCalculator<T>): DifferentialForm<T> = zeroForm(dc.rZero, dc)
+        fun <T> zero(dc: DFBaseCalculator<T>): DifferentialForm<T> = zeroForm(dc.rZero, dc)
 
 
-        fun <T : Any> monomial(coe: T, dc: DFBaseCalculator<T>, bases: List<AtomicDForm>): DifferentialForm<T> {
+        fun <T> monomial(coe: T, dc: DFBaseCalculator<T>, bases: List<AtomicDForm>): DifferentialForm<T> {
             return monomial(DFBase.valueOf(coe, dc.mc, *bases.toTypedArray()), dc)
         }
 
-        fun <T : Any> of(dc: DFBaseCalculator<T>, terms: List<DFBase<T>>): DifferentialForm<T> {
+        fun <T> of(dc: DFBaseCalculator<T>, terms: List<DFBase<T>>): DifferentialForm<T> {
             val set = getSet<T>()
             val re = DifferentialForm(set, dc)
             re.mergingAddAll(set, terms)
@@ -401,7 +401,7 @@ class DifferentialForm<T : Any> internal constructor(terms: NavigableSet<DFBase<
         /**
          * Returns a differential form according to the given coefficient and bases.
          */
-        fun <T : Any> of(coe: T, mc: FunctionCalculator<T>, vararg bases: String): DifferentialForm<T> {
+        fun <T> of(coe: T, mc: FunctionCalculator<T>, vararg bases: String): DifferentialForm<T> {
             val t = DFBase.of(coe, mc, bases.asList())
             val terms = getSet<T>()
             terms.add(t)
@@ -415,7 +415,7 @@ class DifferentialForm<T : Any> internal constructor(terms: NavigableSet<DFBase<
 }
 
 
-class DiffFormCalculator<T : Any>(val mc: FunctionCalculator<T>)
+class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
     : MathCalculatorAdapter<DifferentialForm<T>>(), AlgebraCalculator<T, DifferentialForm<T>> {
     val dc = DFBaseCalculator(mc)
 

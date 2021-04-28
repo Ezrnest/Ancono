@@ -47,7 +47,7 @@ object EquationSup {
      * @param mc a MathCalculator
      * @return the list of solution,regardless of order.
      */
-    fun <T : Any> solveEquation(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+    fun <T> solveEquation(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
         //Calculate the delta
         var delta: T
         run {
@@ -102,7 +102,7 @@ object EquationSup {
      * @param mc a MathCalculator
      * @return a list of the solutions
      */
-    fun <T : Any> solveEquationIma(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+    fun <T> solveEquationIma(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
         var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
         // x1 = (-b + sqr(delta)) / 2a
         // x2 = (-b - sqr(delta)) / 2a
@@ -127,7 +127,7 @@ object EquationSup {
      * @param <T>
      * @return
     </T> */
-    fun <T : Any> solveInequation(a: T, b: T, c: T, op: Type?, mc: MathCalculator<T>?): IntervalUnion<T> {
+    fun <T> solveInequation(a: T, b: T, c: T, op: Type?, mc: MathCalculator<T>?): IntervalUnion<T> {
         return SVPInequation.quadratic(a, b, c, op, mc).solution
     }
 
@@ -186,7 +186,7 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T : Any> solveQInequation(a: T, b: T, c: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveQInequation(a: T, b: T, c: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveLInequation(b, c, op, mc)
         } else {
@@ -239,7 +239,7 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T : Any> solveLInequation(a: T, b: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveLInequation(a: T, b: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveCInequation(b, op, mc)
         }
@@ -267,7 +267,7 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T : Any> solveCInequation(a: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveCInequation(a: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         val universe = op.matches(mc.compare(a, mc.zero))
         return if (universe) IntervalUnion.universe(mc) else IntervalUnion.empty(mc)
     }

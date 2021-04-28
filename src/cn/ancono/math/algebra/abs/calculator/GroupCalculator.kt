@@ -6,7 +6,7 @@ package cn.ancono.math.algebra.abs.calculator
  * @author liyicheng
  * 2018-02-27 17:41
  */
-interface GroupCalculator<T : Any> : MonoidCalculator<T> {
+interface GroupCalculator<T> : MonoidCalculator<T> {
     /**
      * Returns the inverse of the element x.
      * @param x an element
@@ -56,9 +56,9 @@ interface GroupCalculator<T : Any> : MonoidCalculator<T> {
 /**
  * Returns -x+a+x.
  */
-fun <T : Any> GroupCalculator<T>.conjugateBy(a: T, x: T) = eval { (-x) + a + x }
+fun <T> GroupCalculator<T>.conjugateBy(a: T, x: T) = eval { (-x) + a + x }
 
 /**
  * Returns the commutator of [a] and [b]: `[a,b]` = `a^-1*b^-1*a*b`
  */
-fun <T : Any> GroupCalculator<T>.commutator(a: T, b: T) = eval { -a - b + a + b }
+fun <T> GroupCalculator<T>.commutator(a: T, b: T) = eval { -a - b + a + b }

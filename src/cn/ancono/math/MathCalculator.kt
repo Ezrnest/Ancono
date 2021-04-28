@@ -40,7 +40,7 @@ import cn.ancono.math.numberModels.Fraction
  * @author lyc
  * @see MathObject
  */
-interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
+interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
 
     /**
      * Determines whether this calculator supports `compare()` method.
@@ -74,7 +74,7 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      */
     @JvmDefault
     override val numberClass: Class<T>
-        get() = zero.javaClass
+        get() = super.numberClass
 
 
     override val characteristic: Long
@@ -522,12 +522,11 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
          * returns the identity value of all methods as [mc].
          */
         @Suppress("unused")
-        fun <T : Any, S : Any> mappedCalculator(mc: MathCalculator<T>, f: Bijection<T, S>): MathCalculator<S> {
+        fun <T, S> mappedCalculator(mc: MathCalculator<T>, f: Bijection<T, S>): MathCalculator<S> {
             return object : MathCalculator<S> {
                 override val isComparable: Boolean = mc.isComparable
                 override val zero: S = f(mc.zero)
                 override val one: S = f(mc.one)
-                override val numberClass: Class<S> = zero.javaClass
 
                 override fun isEqual(x: S, y: S): Boolean = mc.isEqual(f.deply(x), f.deply(y))
 

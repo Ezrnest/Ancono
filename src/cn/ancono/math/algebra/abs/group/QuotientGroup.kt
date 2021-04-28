@@ -1,5 +1,5 @@
 package cn.ancono.math.algebra.abs.group
 
-//class QuotientGroup<T:Any> : AbstractGroup<T>() {
+//class QuotientGroup<T> : AbstractGroup<T>() {
 //
 //}

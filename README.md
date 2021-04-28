@@ -14,7 +14,8 @@ This library contains the following modules:
 
 1. Math functions:
 
-   gcd, lcm, mod, power and mod, Chinese remainder, factoring, Miller-Rabin prime test, gamma function and more...
+   GCD, LCM, mod, power and mod, mod inverse, Chinese remainder, factoring, Miller-Rabin prime test, gamma function and
+   more...
 
 2. Numbers:
 
@@ -41,8 +42,7 @@ This library contains the following modules:
    included.
 
    Matrix class and vector class are provided with full functionality. There are all kinds of methods related to matrix,
-   such as `det`, `rank`, computing solution space, characteristic polynomial, QR decomposition, lambda-matrix and so
-   on.
+   such as determination, rank, solution space, characteristic polynomial, QR decomposition, lambda-matrix and so on.
 
    See examples <a href="#linearAlg">here</a>.
 

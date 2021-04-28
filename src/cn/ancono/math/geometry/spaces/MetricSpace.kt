@@ -1,9 +1,5 @@
 package cn.ancono.math.geometry.spaces
 
-import java.util.function.Function
-
-
-
 
 /**
  * A metric space is composed of a set **M** and a function d: **M** × **M** -> **R**,
@@ -22,7 +18,7 @@ import java.util.function.Function
  * Created at 2018/11/29 16:17
  * @author  liyicheng
  */
-interface MetricSpace<in T : Any, out R : Any> {
+interface MetricSpace<in T, out R> {
     /**
      * Returns the distance defined in this metric space.
      */

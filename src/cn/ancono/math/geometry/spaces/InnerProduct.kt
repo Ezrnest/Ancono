@@ -15,7 +15,7 @@ import cn.ancono.math.algebra.linear.Vector
  * 4. `(x,y) = (y,x)` or `(x,y) = conj(y,x)`, the latter is for Hermite inner product, `conj` is the complex conjugate.
  */
 @FunctionalInterface
-fun interface InnerProduct<in T : Any, out F : Any> {
+fun interface InnerProduct<in T, out F> {
     fun apply(x: T, y: T): F
 
     companion object {
@@ -23,7 +23,7 @@ fun interface InnerProduct<in T : Any, out F : Any> {
         /**
          * Returns the canonical inner product of vectors.
          */
-        fun <T : Any> canonical(): InnerProduct<Vector<T>, T> {
+        fun <T> canonical(): InnerProduct<Vector<T>, T> {
             return InnerProduct { x, y ->
                 x.inner(y)
             }

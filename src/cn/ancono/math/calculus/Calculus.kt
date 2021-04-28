@@ -134,7 +134,7 @@ object Calculus {
      * @return
      */
     @JvmStatic
-    fun <T : Any> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
+    fun <T> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
         @Suppress("UNCHECKED_CAST")
         val cns = arrayOfNulls<Any>(f.degree) as Array<T>
         val mc = f.mathCalculator
@@ -149,7 +149,7 @@ object Calculus {
      * Returns the derivation of a polynomial.
      */
     @JvmStatic
-    fun <T : Any> derivation(f: IPolynomial<T>, mc: MathCalculator<T>): IPolynomial<T> {
+    fun <T> derivation(f: IPolynomial<T>, mc: MathCalculator<T>): IPolynomial<T> {
         if (f is Polynomial) {
             return f.derivative()
         }
@@ -163,7 +163,7 @@ object Calculus {
      * @return
      */
     @JvmStatic
-    fun <T : Any> integrate(f: SVPFunction<T>): AbstractSVPFunction<T> {
+    fun <T> integrate(f: SVPFunction<T>): AbstractSVPFunction<T> {
         @Suppress("UNCHECKED_CAST")
         val cns = arrayOfNulls<Any>(f.degree + 2) as Array<T>
         val mc = f.mathCalculator
@@ -340,7 +340,7 @@ object Calculus {
         return re
     }
 
-    fun <T : Any> integrate(p: Polynomial<T>): Polynomial<T> {
+    fun <T> integrate(p: Polynomial<T>): Polynomial<T> {
         return p.integration()
     }
 

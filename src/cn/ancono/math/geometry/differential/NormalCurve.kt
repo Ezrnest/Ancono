@@ -12,7 +12,7 @@ typealias DVFunction<T> = DerivableFunction<T, SVector<T>>
  *  Describe a normal parametric curve. It is required that the vector function `r(t)` is differentiable of sufficient
  *  order and the derivative `r'(t) != 0`.
  */
-abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<T>) : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
+abstract class NormalCurve<T>(override val mathCalculator: MathCalculator<T>) : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
 
 
     override fun asPointFunction() = this.andThenMap { SPoint.valueOf(it) }
@@ -115,11 +115,11 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
 //        }
 
     companion object {
-        fun <T : Any> fromFunctionXYZ(a: DerivableSVFunction<T>,
-                                      b: DerivableSVFunction<T>,
-                                      c: DerivableSVFunction<T>,
-                                      domain: Interval<T>,
-                                      mc: MathCalculator<T>): NormalCurve<T> {
+        fun <T> fromFunctionXYZ(a: DerivableSVFunction<T>,
+                                b: DerivableSVFunction<T>,
+                                c: DerivableSVFunction<T>,
+                                domain: Interval<T>,
+                                mc: MathCalculator<T>): NormalCurve<T> {
             return NormalCurveComposed(a, b, c, domain, mc)
         }
     }
@@ -129,7 +129,7 @@ abstract class NormalCurve<T : Any>(override val mathCalculator: MathCalculator<
  * Returns the tangent line of this curve on the point of parametric value [t].
  * The direct vector is `alpha(t)`.
  */
-fun <T : Any> NormalCurve<T>.tangentLine(t: T): Line<T> {
+fun <T> NormalCurve<T>.tangentLine(t: T): Line<T> {
     val thisD = this.derive()
     val p = this(t).asPoint()
     val v = thisD(t)
@@ -140,7 +140,7 @@ fun <T : Any> NormalCurve<T>.tangentLine(t: T): Line<T> {
  * Returns the main normal line of this curve on the point of parametric value [t].
  * The direct vector is `beta(t)`.
  */
-fun <T : Any> NormalCurve<T>.mainNormalLine(t: T): Line<T> {
+fun <T> NormalCurve<T>.mainNormalLine(t: T): Line<T> {
     val p = this(t).asPoint()
     val v = beta(t)
     return Line.pointDirect(p, v)
@@ -150,7 +150,7 @@ fun <T : Any> NormalCurve<T>.mainNormalLine(t: T): Line<T> {
  * Returns the minor normal line of this curve on the point of parametric value [t].
  * The direct vector is `gamma(t)`.
  */
-fun <T : Any> NormalCurve<T>.minorNormalLine(t: T): Line<T> {
+fun <T> NormalCurve<T>.minorNormalLine(t: T): Line<T> {
     val p = this(t).asPoint()
     val v = gamma(t)
     return Line.pointDirect(p, v)
@@ -160,7 +160,7 @@ fun <T : Any> NormalCurve<T>.minorNormalLine(t: T): Line<T> {
  * Returns the normal plane of this curve on the point of parametric value [t].
  * The normal vector of the plane is `alpha(t)`
  */
-fun <T : Any> NormalCurve<T>.normalPlane(t: T): Plane<T> {
+fun <T> NormalCurve<T>.normalPlane(t: T): Plane<T> {
     val p = this(t).asPoint()
     val v = alpha(t)
     return Plane.pointNormalVector(p, v)
@@ -170,7 +170,7 @@ fun <T : Any> NormalCurve<T>.normalPlane(t: T): Plane<T> {
  * Returns the rectifying plane of this curve on the point of parametric value [t].
  * The normal vector of the plane is `beta(t)`
  */
-fun <T : Any> NormalCurve<T>.rectifyingPlane(t: T): Plane<T> {
+fun <T> NormalCurve<T>.rectifyingPlane(t: T): Plane<T> {
     val p = this(t).asPoint()
     val v = beta(t)
     return Plane.pointNormalVector(p, v)
@@ -180,13 +180,13 @@ fun <T : Any> NormalCurve<T>.rectifyingPlane(t: T): Plane<T> {
  * Returns the osculating plane of this curve on the point of parametric value [t].
  * The normal vector of the plane is `gamma(t)`
  */
-fun <T : Any> NormalCurve<T>.osculatingPlane(t: T): Plane<T> {
+fun <T> NormalCurve<T>.osculatingPlane(t: T): Plane<T> {
     val p = this(t).asPoint()
     val v = gamma(t)
     return Plane.pointNormalVector(p, v)
 }
 
-fun <T : Any> NormalCurve<T>.arcLength(integralHelper: (SVFunction<T>, T, T) -> T): T {
+fun <T> NormalCurve<T>.arcLength(integralHelper: (SVFunction<T>, T, T) -> T): T {
     val domain = domain()
     return integralHelper(this.ds, domain.downerBound(), domain.upperBound())
 }
@@ -195,7 +195,7 @@ fun <T : Any> NormalCurve<T>.arcLength(integralHelper: (SVFunction<T>, T, T) -> 
  * Performs a parametric transformation to this normal curve. It is required that the [tu] is a derivable
  * function and the derivative of [tu] must be all non-zero.
  */
-fun <T : Any> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDomain: Interval<T>): NormalCurve<T> {
+fun <T> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDomain: Interval<T>): NormalCurve<T> {
     val mc = mathCalculator
     val origin = this
     return object : NormalCurve<T>(mc) {
@@ -208,13 +208,13 @@ fun <T : Any> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDoma
         }
 
         override val derivative: DerivableFunction<T, SVector<T>> by lazy {
-            DerivableFunction.compose(tu, origin, { a, b -> a.add(b) }, { k, v -> v.multiplyNumber(k) })
+            DerivableFunction.compose(tu, origin, { a, b -> a.add(b) }, { k, v -> v.multiply(k) })
         }
 
     }
 }
 
-fun <T : Any> NormalCurve<T>.frenetCoordSystem(t: T): SpaceAffineCoordinateSystem<T> {
+fun <T> NormalCurve<T>.frenetCoordSystem(t: T): SpaceAffineCoordinateSystem<T> {
     val o = this.substituteAsPoint(t)
     val e1 = alpha(t)
     val e2 = beta(t)

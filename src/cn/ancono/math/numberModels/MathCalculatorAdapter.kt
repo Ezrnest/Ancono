@@ -12,7 +12,7 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException
  * @param T the type of number to deal with
  *
  */
-abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
+abstract class MathCalculatorAdapter<T> : MathCalculator<T> {
 
     override val one: T
         get() {
@@ -169,10 +169,6 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
     override fun gpow(x: T, n: Long): T {
         return super.gpow(x, n)
     }
-
-    override val numberClass: Class<T>
-        get() = zero.javaClass
-
 
     override fun T.div(y: T): T {
         return divide(this, y)

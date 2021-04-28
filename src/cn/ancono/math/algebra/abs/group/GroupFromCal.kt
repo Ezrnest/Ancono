@@ -12,7 +12,7 @@ import cn.ancono.math.set.MathSet
 /**
  * @author liyicheng
  */
-class GroupFromCal<T : Any>(private val gc: GroupCalculator<T>, private val elements: MathSet<T>) : Group<T> {
+class GroupFromCal<T>(private val gc: GroupCalculator<T>, private val elements: MathSet<T>) : Group<T> {
     override fun getCalculator(): GroupCalculator<T> {
         return gc
     }
@@ -23,7 +23,7 @@ class GroupFromCal<T : Any>(private val gc: GroupCalculator<T>, private val elem
 
 }
 
-class AbelGroupFromCal<T : Any>(private val gc: GroupCalculator<T>, private val elements: MathSet<T>) : AbelianGroup<T> {
+class AbelGroupFromCal<T>(private val gc: GroupCalculator<T>, private val elements: MathSet<T>) : AbelianGroup<T> {
     override fun getCalculator(): GroupCalculator<T> {
         return gc
     }

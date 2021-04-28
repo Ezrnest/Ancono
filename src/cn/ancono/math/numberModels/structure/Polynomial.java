@@ -348,9 +348,9 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     @NotNull
-    public Polynomial<T> multiplyLong(long k) {
+    public Polynomial<T> multiply(long n) {
         var mc = getMc();
-        if (k == 0) {
+        if (n == 0) {
             return zero(mc);
         }
         if (isZero()) {
@@ -358,7 +358,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
         T[] result = getArr(coes.length);
         for (int i = 0; i < result.length; i++) {
-            result[i] = mc.multiplyLong(coes[i], k);
+            result[i] = mc.multiplyLong(coes[i], n);
         }
         return new Polynomial<>(mc, result);
     }
@@ -367,7 +367,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns <code>1/k*this</code>
      */
-    public Polynomial<T> divide(T k) {
+    public @NotNull Polynomial<T> divide(T k) {
         var mc = getMc();
         if (isZero()) {
             return this;
@@ -405,6 +405,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
         return -1;
     }
+
 
     /**
      * remains -= k*x^pow * toSubtract
@@ -520,6 +521,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /*
      * @see cn.ancono.math.MathCalculator#pow(java.lang.Object, long)
      */
+    @Override
     @NotNull
     public Polynomial<T> pow(long exp) {
         if (exp == 1) {
@@ -1622,7 +1624,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> multiplyLong(@NotNull Polynomial<T> p, long n) {
-            return p.multiplyLong(n);
+            return p.multiply(n);
         }
 
         /*
@@ -1864,7 +1866,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> multiplyLong(@NotNull Polynomial<T> p, long n) {
-            return p.multiplyLong(n);
+            return p.multiply(n);
         }
 
         /*

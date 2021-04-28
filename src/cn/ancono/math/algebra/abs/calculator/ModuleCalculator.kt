@@ -9,7 +9,7 @@ package cn.ancono.math.algebra.abs.calculator
  * @author  liyicheng
  * @see cn.ancono.math.algebra.abs.structure.Module
  */
-interface ModuleCalculator<R : Any, V : Any> : GroupCalculator<V> {
+interface ModuleCalculator<R, V> : GroupCalculator<V> {
     /**
      * Performs the multiplication operation( [R]*[V] -> [V])
      */

@@ -11,7 +11,7 @@ import cn.ancono.math.set.FiniteSet
  * Created at 2018/11/10 13:57
  * @author  liyicheng
  */
-abstract class AbstractFiniteField<T : Any> : AbstractFiniteGroup<T>(), FiniteField<T> {
+abstract class AbstractFiniteField<T> : AbstractFiniteGroup<T>(), FiniteField<T> {
 
 
     override fun getNormalSubgroups(): FiniteSet<out AbstractFiniteGroup<T>> {

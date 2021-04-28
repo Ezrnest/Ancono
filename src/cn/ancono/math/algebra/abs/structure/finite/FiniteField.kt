@@ -10,7 +10,7 @@ import cn.ancono.math.set.FiniteSet
  * Created at 2018/11/10 13:58
  * @author  liyicheng
  */
-interface FiniteField<T : Any> : Field<T>, FiniteGroup<T> {
+interface FiniteField<T> : Field<T>, FiniteGroup<T> {
 
     override fun getSet(): FiniteSet<T>
 

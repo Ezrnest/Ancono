@@ -14,7 +14,7 @@ import cn.ancono.math.numberModels.structure.Polynomial
  * Created at 2018/12/13 18:51
  * @author  liyicheng
  */
-open class DecomposedPoly<T : Any>(val decomposed: List<Pair<Polynomial<T>, Int>>) {
+open class DecomposedPoly<T>(val decomposed: List<Pair<Polynomial<T>, Int>>) {
     private var expandedBackingField: Polynomial<T>? = null
 
     constructor(expanded: Polynomial<T>?, decomposed: List<Pair<Polynomial<T>, Int>>) : this(decomposed) {
@@ -48,7 +48,7 @@ open class DecomposedPoly<T : Any>(val decomposed: List<Pair<Polynomial<T>, Int>
     }
 
 
-    fun <N : Any> map(newCalculator: MathCalculator<N>, mapper: (T) -> N): DecomposedPoly<N> {
+    fun <N> map(newCalculator: MathCalculator<N>, mapper: (T) -> N): DecomposedPoly<N> {
         val mp = java.util.function.Function(mapper)
         val re = DecomposedPoly(decomposed.map { (poly, n) -> poly.mapTo(newCalculator, mp) to n })
         re.expandedBackingField = expandedBackingField?.mapTo(newCalculator, mp)
@@ -70,7 +70,7 @@ open class DecomposedPoly<T : Any>(val decomposed: List<Pair<Polynomial<T>, Int>
  * > (p)^n
  * where expanded is a polynomial.
  */
-class SinglePoly<T : Any>(expanded: Polynomial<T>?, base: Polynomial<T>, pow: Int) : DecomposedPoly<T>(expanded, listOf(base to pow)) {
+class SinglePoly<T>(expanded: Polynomial<T>?, base: Polynomial<T>, pow: Int) : DecomposedPoly<T>(expanded, listOf(base to pow)) {
 
     constructor(base: Polynomial<T>) : this(base, base, 1)
 

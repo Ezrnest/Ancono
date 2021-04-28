@@ -15,7 +15,7 @@ typealias VectorFunction<T> = MathFunction<T, PVector<T>>
  * Created at 2018/11/13 11:29
  * @author  liyicheng
  */
-interface PlaneParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolder<T> {
+interface PlaneParametricCurve<T> : VectorFunction<T>, MathCalculatorHolder<T> {
     override fun apply(x: T): PVector<T> = substitute(x)
 
 
@@ -38,7 +38,7 @@ interface PlaneParametricCurve<T : Any> : VectorFunction<T>, MathCalculatorHolde
 
 }
 
-internal class PPCImpl<T : Any>(override val mathCalculator: MathCalculator<T>, val f: SVFunction<T>, val g: SVFunction<T>) : PlaneParametricCurve<T> {
+internal class PPCImpl<T>(override val mathCalculator: MathCalculator<T>, val f: SVFunction<T>, val g: SVFunction<T>) : PlaneParametricCurve<T> {
     override fun substitute(t: T): PVector<T> {
         return PVector.valueOf(f(t), g(t), mathCalculator)
     }

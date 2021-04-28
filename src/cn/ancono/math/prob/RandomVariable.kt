@@ -42,18 +42,18 @@ sealed class RandomVariable<out T> {
          *
          * Note that the calculator can not support methods `isEqual` and `compare`.
          */
-        fun <T : Any> getCalculator(mc: MathCalculator<T>): RVCalculator<T> {
+        fun <T> getCalculator(mc: MathCalculator<T>): RVCalculator<T> {
             return RVCalculator(mc)
         }
     }
 }
 
-fun <T : Any> RandomVariable<T>.getAsSequence(): Sequence<T> = generateSequence { this.get() }
+fun <T> RandomVariable<T>.getAsSequence(): Sequence<T> = generateSequence { this.get() }
 
 /**
  * A simple random variable is only involved with single probability space.
  */
-abstract class SimpleRV<E : Any, out T> : RandomVariable<T>() {
+abstract class SimpleRV<E, out T> : RandomVariable<T>() {
     abstract val space: ProbSpace<E>
 
     override val spaces: Set<ProbSpace<*>>
@@ -79,7 +79,7 @@ abstract class ComposedRV<out T> : RandomVariable<T>() {
 
 
     override fun get(): T {
-        val result = HashMap<ProbSpace<*>, Any>(spaces.size)
+        val result = HashMap<ProbSpace<*>, Any?>(spaces.size)
         for (space in spaces) {
             result[space] = space.randomPoint()
         }
@@ -139,7 +139,7 @@ class ConstantRV<out T>(val c: T) : SimpleRV<Unit, T>() {
 /**
  * A random variable that simply returns the event.
  */
-class IdentityRV<E : Any, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E>() {
+class IdentityRV<E, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E>() {
     override fun fromPoint(e: E): E {
         return e
     }
@@ -213,7 +213,7 @@ class ExpRV(val k: Double, override val space: StandardExpSpace) : SimpleRV<Doub
  *
  * Note that the calculator can not support methods `isEqual` and `compare`.
  */
-class RVCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<RandomVariable<T>>() {
+class RVCalculator<T>(val mc: MathCalculator<T>) : MathCalculatorAdapter<RandomVariable<T>>() {
     override val one: RandomVariable<T> = ConstantRV(mc.one)
     override val zero: RandomVariable<T> = ConstantRV(mc.zero)
 

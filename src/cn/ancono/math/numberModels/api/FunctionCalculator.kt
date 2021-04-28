@@ -8,7 +8,7 @@ import cn.ancono.math.MathCalculator
 /**
  * A function calculator is a calculator for functions with named variables.
  */
-interface FunctionCalculator<F : Any> : MathCalculator<F> {
+interface FunctionCalculator<F> : MathCalculator<F> {
 
 
     /**

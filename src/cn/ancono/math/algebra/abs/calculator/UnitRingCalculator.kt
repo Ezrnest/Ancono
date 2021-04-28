@@ -4,7 +4,6 @@
 package cn.ancono.math.algebra.abs.calculator
 
 import cn.ancono.math.algebra.abs.GroupCalculators
-import cn.ancono.math.exceptions.ExceptionUtil
 
 /**
  * Describes the calculator for a unit ring, where multiplicative identity exists.
@@ -13,7 +12,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
  * @author liyicheng
  * 2018-02-28 19:05
  */
-interface UnitRingCalculator<T : Any> : RingCalculator<T> {
+interface UnitRingCalculator<T> : RingCalculator<T> {
 
     /**
      * The multiplicative identity element
@@ -45,4 +44,4 @@ interface UnitRingCalculator<T : Any> : RingCalculator<T> {
 
 }
 
-fun <T : Any> UnitRingCalculator<T>.asMonoidCalculator() = GroupCalculators.asMonoidCalculator(this)
+fun <T> UnitRingCalculator<T>.asMonoidCalculator() = GroupCalculators.asMonoidCalculator(this)

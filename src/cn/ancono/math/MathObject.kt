@@ -19,7 +19,7 @@ import java.util.function.Function
  * @param T the type of the number model used
  * @see MathCalculator
  */
-interface MathObject<T : Any>
+interface MathObject<T>
     : FlexibleMathObject<T, MathCalculator<T>>, MathCalculatorHolder<T> {
     /**
      * Gets the `MathCalculator` kept by this math object.
@@ -35,7 +35,7 @@ interface MathObject<T : Any>
      * @param <N> the new number type.
      * @return a new MathObject of type N
     </N> */
-    fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N>
+    fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N>
 
     /**
      * The equals method describes the equivalence in program of two math objects instead of the equality in math.
@@ -74,7 +74,7 @@ interface MathObject<T : Any>
      * @return `true` if this is equal to obj , else `false`.
      * @throws ClassCastException if `obj` is not using number type `N`
      */
-    fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean
+    fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean
 
     /**
      * Returns a String representing this object, the [NumberFormatter] should
@@ -91,8 +91,8 @@ interface MathObject<T : Any>
     override fun toString(): String
 }
 
-abstract class AbstractMathObject<T : Any>(protected val mc: MathCalculator<T>) : MathObject<T> {
-    override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+abstract class AbstractMathObject<T>(protected val mc: MathCalculator<T>) : MathObject<T> {
+    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         return valueEquals(obj.mapTo(mathCalculator, mapper))
     }
 

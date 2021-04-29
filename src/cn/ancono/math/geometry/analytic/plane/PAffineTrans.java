@@ -123,9 +123,11 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
     }
 
     /**
-     * Returns a composed transformation that apply this first and then apply the {@code after} transformation. The new transformation will be
+     * Returns a composed transformation that apply this first and then apply the {@code after} transformation. The new
+     * transformation will be
      * a PAffineTrans.
-     * @param pat a PAffineTrans
+     *
+     * @param after a PAffineTrans
      * @return a composed transformation
      */
     public PAffineTrans<T> andThen(PAffineTrans<T> after) {
@@ -169,7 +171,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
         if (inversed != null) {
             return true;
         }
-        return !getMc().isZero(mat.calDet());
+        return !getMc().isZero(mat.det());
     }
 
     /* (non-Javadoc)

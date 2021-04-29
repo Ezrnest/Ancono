@@ -5,22 +5,20 @@ import cn.ancono.math.algebra.PolynomialUtil
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
-import cn.ancono.math.component1
-import cn.ancono.math.component2
-import cn.ancono.math.minus
 import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.structure.Polynomial
 import java.util.*
 import kotlin.math.min
 
 
-sealed class LambdaPrimaryOperation<T : Any>(val isRow: Boolean)
+sealed class LambdaPrimaryOperation<T>(val isRow: Boolean)
 
-class Swap<T : Any>(isRow: Boolean, val idx1: Int, val idx2: Int) : LambdaPrimaryOperation<T>(isRow)
+class Swap<T>(isRow: Boolean, val idx1: Int, val idx2: Int) : LambdaPrimaryOperation<T>(isRow)
 
-class Multiply<T : Any>(isRow: Boolean, val idx: Int, val k: T) : LambdaPrimaryOperation<T>(isRow)
+class Multiply<T>(isRow: Boolean, val idx: Int, val k: T) : LambdaPrimaryOperation<T>(isRow)
 
-class MultiplyAdd<T : Any>(isRow: Boolean, val idx1: Int, val idx2: Int, val k: Polynomial<T>) : LambdaPrimaryOperation<T>(isRow) {
+class MultiplyAdd<T>(isRow: Boolean, val idx1: Int, val idx2: Int, val k: Polynomial<T>) : LambdaPrimaryOperation<T>(isRow) {
     init {
         require(idx1 != idx2) {
             "idx=$idx1 must be different!"
@@ -34,19 +32,19 @@ private typealias PMC<T> = MathCalculator<Polynomial<T>>
 /**
  * Transform this lambda matrix to its normal form.
  */
-fun <T : Any> LambdaMatrix<T>.toNormalForm(): LambdaMatrix<T> {
+fun <T> LambdaMatrix<T>.toNormalForm(): LambdaMatrix<T> {
     require(row == column)
     @Suppress("UNCHECKED_CAST")
-    val data = Array<Array<Polynomial<T>>>(row) { i ->
+    val data = Array(row) { i ->
         Array(column) { j ->
             get(i, j)
         }
     }
     toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
-    return DMatrix(data, row, column, mathCalculator)
+    return Matrix.of(data, mathCalculator)
 }
 
-private fun <T : Any> normalFormInvFac(mat: LambdaMatrix<T>): List<Polynomial<T>> {
+private fun <T> normalFormInvFac(mat: LambdaMatrix<T>): List<Polynomial<T>> {
     val list = arrayListOf<Polynomial<T>>()
     for (i in 0 until mat.column) {
         val t = mat[i, i]
@@ -58,7 +56,7 @@ private fun <T : Any> normalFormInvFac(mat: LambdaMatrix<T>): List<Polynomial<T>
     return list
 }
 
-fun <T : Any> LambdaMatrix<T>.invariantFactor(): List<Polynomial<T>> {
+fun <T> LambdaMatrix<T>.invariantFactor(): List<Polynomial<T>> {
     return normalFormInvFac(toNormalForm())
 }
 
@@ -98,63 +96,59 @@ object LambdaMatrixSup {
                 trans += alpha
                 var prev = alpha
                 repeat(n - 1) {
-                    val solu = MatrixSup.solveLinearEquation(mat, prev.toColumnVector())
-                    prev = solu.specialSolution
+                    val solu = Matrix.solveLinear(mat, prev)
+                    prev = solu.special
                     trans += prev
                 }
             }
         }
-        val transMat = Matrix.fromVectors(false, trans)
+        val transMat = Matrix.fromVectors(trans)
         return jordan to transMat
     }
 
     @JvmStatic
-    fun <T : Any> toSmithForm(matrix: Matrix<T>): Matrix<T> {
-        require(matrix.isSquare)
+    fun <T> toSmithForm(matrix: Matrix<T>): Matrix<T> {
+        require(matrix.isSquare())
         @Suppress("UNCHECKED_CAST")
-        val data = Array(matrix.row) { i ->
-            Array<Any>(matrix.column) { j ->
-                matrix.get(i, j)
-            }
-        } as Array<Array<T>>
+        val data = matrix.getValues() as Array<Array<T>>
 
         toNormalForm(data, matrix.mathCalculator as EUDCalculator<T>, 0)
-        return DMatrix(data, matrix.row, matrix.column, matrix.mathCalculator)
+        return Matrix.of(data, matrix.mathCalculator)
     }
 }
 
 
 private fun buildJordanForm(primaryFactor: Map<Fraction, List<Int>>, origin: Matrix<Fraction>): Matrix<Fraction> {
-    val builder = Matrix.getBuilder(origin.row, origin.column, origin.mathCalculator)
+    val builder = Matrix.zero(origin.row, origin.column, origin.mathCalculator)
     var idx = 0
     for (pr in primaryFactor) {
         val lambda = pr.key
         for (n in pr.value) {
             for (i in 0 until n) {
-                builder.set(idx + i, idx + i, lambda)
+                builder[idx + i, idx + i] = lambda
             }
             for (i in 0 until n - 1) {
-                builder.set(idx + i, idx + i + 1, Fraction.ONE)
+                builder[idx + i, idx + i + 1] = Fraction.ONE
             }
             idx += n
         }
     }
-    return builder.build()
+    return builder
 }
 
 /**
  * Transform this lambda matrix to its normal form.
  */
-fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> {
+fun <T> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> {
     @Suppress("UNCHECKED_CAST")
-    val data = Array<Array<Polynomial<T>>>(row) { i ->
+    val data = Array(row) { i ->
         Array(column) { j ->
             get(i, j)
         }
     }
 //    toNormalForm(data,mathCalculator,)
     toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
-    val builder = Matrix.getBuilder(row, column, mc)
+    val builder = Matrix.zero(row, column, mc)
     var pos = 0
     val one = mc.one
     for (i in 0 until min(row, column)) {
@@ -164,18 +158,18 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
         }
         val deg = t.degree
         for (j in 0 until deg) {
-            builder.set(pos + j, pos + deg - 1, mc.negate(t[j]))
+            builder[pos + j, pos + deg - 1] = mc.negate(t[j])
         }
         for (j in 0 until (deg - 1)) {
-            builder.set(pos + 1 + j, pos + j, one)
+            builder[pos + 1 + j, pos + j] = one
         }
         pos += deg
     }
-    return builder.build()
+    return builder
 }
 
 
-//internal fun <T : Any> toNormalForm(data: PData<T>, mc: Polynomial.PolynomialCalculator<T>, fromIdx: Int) {
+//internal fun <T> toNormalForm(data: PData<T>, mc: Polynomial.PolynomialCalculator<T>, fromIdx: Int) {
 //    if (fromIdx >= data.size) {
 //        return
 //    }
@@ -196,7 +190,7 @@ fun <T : Any> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> 
 
 //}
 
-internal fun <T : Any> toNormalForm(data: Array<Array<T>>, mc: EUDCalculator<T>, fromIdx: Int) {
+internal fun <T> toNormalForm(data: Array<Array<T>>, mc: EUDCalculator<T>, fromIdx: Int) {
     if (fromIdx >= data.size) {
         return
     }
@@ -213,7 +207,7 @@ internal fun <T : Any> toNormalForm(data: Array<Array<T>>, mc: EUDCalculator<T>,
 }
 
 
-private fun <T : Any> processFirst(data: Array<Array<T>>, fromIdx: Int, mc: EUDCalculator<T>) {
+private fun <T> processFirst(data: Array<Array<T>>, fromIdx: Int, mc: EUDCalculator<T>) {
     var i = fromIdx + 1
     while (i < data.size) {
         if (!doDivideCol(data, fromIdx, i, mc)) {
@@ -228,7 +222,7 @@ private fun <T : Any> processFirst(data: Array<Array<T>>, fromIdx: Int, mc: EUDC
     }
 }
 
-private fun <T : Any> doDivideCol(data: Array<Array<T>>, rs: Int, col: Int, mc: EUDCalculator<T>): Boolean {
+private fun <T> doDivideCol(data: Array<Array<T>>, rs: Int, col: Int, mc: EUDCalculator<T>): Boolean {
     val p = data[rs][rs]
     if (mc.isZero(data[rs][col])) {
         return true
@@ -247,7 +241,7 @@ private fun <T : Any> doDivideCol(data: Array<Array<T>>, rs: Int, col: Int, mc: 
     }
 }
 
-private fun <T : Any> doDivideRow(data: Array<Array<T>>, rs: Int, row: Int, mc: EUDCalculator<T>): Boolean {
+private fun <T> doDivideRow(data: Array<Array<T>>, rs: Int, row: Int, mc: EUDCalculator<T>): Boolean {
     val p = data[rs][rs]
     if (mc.isZero(data[row][rs])) {
         return true
@@ -266,7 +260,7 @@ private fun <T : Any> doDivideRow(data: Array<Array<T>>, rs: Int, row: Int, mc: 
     }
 }
 
-private fun <T : Any> doDivide(data: Array<Array<T>>, rs: Int, row: Int, col: Int, mc: EUDCalculator<T>): Boolean {
+private fun <T> doDivide(data: Array<Array<T>>, rs: Int, row: Int, col: Int, mc: EUDCalculator<T>): Boolean {
     val p = data[rs][rs]
     val (q, r) = mc.divideAndRemainder(data[row][col], p)
     return if (mc.isZero(r)) {
@@ -280,13 +274,13 @@ private fun <T : Any> doDivide(data: Array<Array<T>>, rs: Int, row: Int, col: In
 
 }
 
-internal fun <T : Any> swapRow(data: Array<Array<T>>, row1: Int, row2: Int) {
+internal fun <T> swapRow(data: Array<Array<T>>, row1: Int, row2: Int) {
     val t = data[row1]
     data[row1] = data[row2]
     data[row2] = t
 }
 
-internal fun <T : Any> swapCol(data: Array<Array<T>>, col1: Int, col2: Int, rowStart: Int = 0) {
+internal fun <T> swapCol(data: Array<Array<T>>, col1: Int, col2: Int, rowStart: Int = 0) {
     for (i in rowStart until data.size) {
         val t = data[i][col1]
         data[i][col1] = data[i][col2]
@@ -294,65 +288,65 @@ internal fun <T : Any> swapCol(data: Array<Array<T>>, col1: Int, col2: Int, rowS
     }
 }
 
-internal fun <T : Any> multiplyRow(data: PData<T>, row: Int, k: T, colStart: Int = 0) {
+internal fun <T> multiplyRow(data: PData<T>, row: Int, k: T, colStart: Int = 0) {
     val r = data[row]
     for (i in colStart until r.size) {
         r[i] = r[i].multiply(k)
     }
 }
 
-internal fun <T : Any> multiplyCol(data: PData<T>, col: Int, k: T, rowStart: Int = 0) {
+internal fun <T> multiplyCol(data: PData<T>, col: Int, k: T, rowStart: Int = 0) {
     for (i in rowStart until data.size) {
         data[i][col] = data[i][col].multiply(k)
     }
 }
 
 
-internal fun <T : Any> multiplyAndAddRow(data: Array<Array<T>>, mc: RingCalculator<T>, row1: Int, row2: Int, k: T, colStart: Int = 0) {
+internal fun <T> multiplyAndAddRow(data: Array<Array<T>>, mc: RingCalculator<T>, row1: Int, row2: Int, k: T, colStart: Int = 0) {
     for (i in colStart until data[row1].size) {
         data[row2][i] = mc.eval { data[row2][i] + k * data[row1][i] }
     }
 }
 
-internal fun <T : Any> multiplyAndAddCol(data: Array<Array<T>>, mc: RingCalculator<T>, col1: Int, col2: Int, k: T, rowStart: Int = 0) {
+internal fun <T> multiplyAndAddCol(data: Array<Array<T>>, mc: RingCalculator<T>, col1: Int, col2: Int, k: T, rowStart: Int = 0) {
     for (i in rowStart until data.size) {
         data[i][col2] = mc.eval { data[i][col2] + k * data[i][col1] }
     }
 }
 
 
-//fun <T : Any> LambdaMatrix<T>.toNormalFormAndOperation(): Pair<LambdaMatrix<T>, List<LambdaPrimaryOperation<T>>> {
+//fun <T> LambdaMatrix<T>.toNormalFormAndOperation(): Pair<LambdaMatrix<T>, List<LambdaPrimaryOperation<T>>> {
 //
 //}
 //
-fun <T : Any> LambdaMatrix<T>.doLambdaOperation(op: LambdaPrimaryOperation<T>): LambdaMatrix<T> {
+fun <T> MutableMatrix<Polynomial<T>>.doLambdaOperation(op: LambdaPrimaryOperation<T>) {
     when (op) {
         is Swap -> {
-            return if (op.isRow) {
-                exchangeRow(op.idx1, op.idx2)
+            if (op.isRow) {
+                swapRow(op.idx1, op.idx2)
             } else {
-                exchangeColumn(op.idx1, op.idx2)
+                swapCol(op.idx1, op.idx2)
             }
         }
         is Multiply -> {
             val pk = Polynomial.constant(mathCalculator.zero.mathCalculator, op.k)
-            return if (op.isRow) {
-                multiplyNumberRow(pk, op.idx)
+            if (op.isRow) {
+                multiplyRow(op.idx, pk)
             } else {
-                multiplyNumberColumn(pk, op.idx)
+                multiplyCol(op.idx, pk)
             }
         }
         is MultiplyAdd -> {
-            return if (op.isRow) {
-                multiplyAndAddRow(op.k, op.idx1, op.idx2)
+            if (op.isRow) {
+                multiplyAddRow(op.idx1, op.idx2, op.k)
             } else {
-                multiplyAndAddColumn(op.k, op.idx1, op.idx2)
+                multiplyAddCol(op.idx1, op.idx2, op.k)
             }
         }
     }
 }
 
-private fun <T : Any> doLambdaOp1(data: PData<T>, op: LambdaPrimaryOperation<T>, mc: PMC<T>) {
+private fun <T> doLambdaOp1(data: PData<T>, op: LambdaPrimaryOperation<T>, mc: PMC<T>) {
     when (op) {
         is Swap -> {
             return if (op.isRow) {
@@ -378,9 +372,8 @@ private fun <T : Any> doLambdaOp1(data: PData<T>, op: LambdaPrimaryOperation<T>,
     }
 }
 
-fun <T : Any> LambdaMatrix<T>.doLambdaOperations(ops: List<LambdaPrimaryOperation<T>>): LambdaMatrix<T> {
-    @Suppress("UNCHECKED_CAST")
-    val data = Array<Array<Polynomial<T>>>(row) { i ->
+fun <T> LambdaMatrix<T>.doLambdaOperations(ops: List<LambdaPrimaryOperation<T>>): LambdaMatrix<T> {
+    val data = Array(row) { i ->
         Array(column) { j ->
             get(i, j)
         }
@@ -389,7 +382,7 @@ fun <T : Any> LambdaMatrix<T>.doLambdaOperations(ops: List<LambdaPrimaryOperatio
     for (op in ops) {
         doLambdaOp1(data, op, mc)
     }
-    return DMatrix(data, row, column, mathCalculator)
+    return Matrix.of(data, mathCalculator)
 }
 
 //fun main(args: Array<String>) {

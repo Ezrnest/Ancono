@@ -3,12 +3,12 @@
  */
 package test.math.abstractAlgebra;
 
+import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.FiniteGroups;
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
 import cn.ancono.math.algebra.abs.group.finite.AbstractFiniteGroup;
-import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.geometry.analytic.plane.TransMatrix;
+import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -81,8 +81,8 @@ public class TestLimitedGroup {
 		String[][] str = ArraySup.mapTo2(table, namer,String.class);
 		printMatrix(str);
 		for(int i=0;i<str.length-1;i++) {
-			print(names.charAt(i)+":");
-			table[0][i+1].printMatrix();
-		}
+            print(names.charAt(i) + ":");
+            print(table[0][i + 1]);
+        }
 	}
 }

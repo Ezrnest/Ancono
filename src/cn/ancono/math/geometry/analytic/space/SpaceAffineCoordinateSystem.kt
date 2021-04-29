@@ -1,7 +1,12 @@
 package cn.ancono.math.geometry.analytic.space
 
-import cn.ancono.math.*
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.MathObject
+import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.plus
+import cn.ancono.math.numberModels.api.times
 import java.util.function.Function
 
 class SpaceAffineCoordinateSystem<T> internal constructor(val o: SPoint<T>,
@@ -44,8 +49,8 @@ class SpaceAffineCoordinateSystem<T> internal constructor(val o: SPoint<T>,
     fun fromAbsoluteCoord(p: SPoint<T>): SPoint<T> {
         //reduce
         val t = o.directVector(p)
-        val vec = vectorBase.reduce(t)
-        return vec.asPoint()
+        val vec = vectorBase.reduce(Vector.copyOf(t))
+        return SPoint(mc, vec[0], vec[1], vec[2])
     }
 
 

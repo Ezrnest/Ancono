@@ -5,20 +5,21 @@ import cn.ancono.math.algebra.linear.FullVectorBasis
 import cn.ancono.math.algebra.linear.IFullVectorBasis
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.algebra.linear.VectorBasis
-import cn.ancono.math.plus
+import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.property.Composable
 import java.util.function.Function
 
 /**
  * Describes an affine coordinate system in n-dimension Euclid space.
  */
-interface IAffineCoordinateSystem<T : Any> : ILinearSpace<T> {
+interface IAffineCoordinateSystem<T> : ILinearSpace<T> {
     /**
      * The [standardDimension] is equal to [dimension].
      */
     override val standardDimension: Int
         get() = dimension
     override val vectorBasis: IFullVectorBasis<T>
+
     /**
      * Any vector whose size is equal to [dimension] is contained.
      */
@@ -26,9 +27,9 @@ interface IAffineCoordinateSystem<T : Any> : ILinearSpace<T> {
 
 }
 
-abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final override val dimension: Int,
-                                               originVector: Vector<T>,
-                                               vectorBase: FullVectorBasis<T>)
+abstract class AffineCoordinateSystem<T>(mc: MathCalculator<T>, final override val dimension: Int,
+                                         originVector: Vector<T>,
+                                         vectorBase: FullVectorBasis<T>)
     : AffineSpace<T>(mc, originVector, vectorBase), IAffineCoordinateSystem<T>, Composable<AffineCoordinateSystem<T>> {
 
     init {
@@ -81,7 +82,7 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
         /**
          * Creates a new linear space from the given origin vector and vector base.
          */
-        fun <T : Any> valueOf(originVector: Vector<T>, vectorBase: FullVectorBasis<T>): AffineCoordinateSystem<T> {
+        fun <T> valueOf(originVector: Vector<T>, vectorBase: FullVectorBasis<T>): AffineCoordinateSystem<T> {
             require(originVector.size == vectorBase.vectorLength)
             val dimension = vectorBase.vectorLength
             val mc = originVector.mathCalculator
@@ -91,7 +92,7 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
         /**
          * Creates a new linear space from the given origin vector and base vectors.
          */
-        fun <T : Any> valueOf(originVector: Vector<T>, vararg baseVectors: Vector<T>): AffineCoordinateSystem<T> = valueOf(originVector, VectorBasis.createFullBase(*baseVectors))
+        fun <T> valueOf(originVector: Vector<T>, vararg baseVectors: Vector<T>): AffineCoordinateSystem<T> = valueOf(originVector, VectorBasis.createFullBase(*baseVectors))
     }
 }
 
@@ -99,7 +100,7 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
 // * Returns the linear transformation that transforms the standard coordinate system to
 // * this affine coordinate system.
 // */
-//fun <T:Any> IAffineCoordinateSystem<T>.toLinearTrans(mathCalculator: MathCalculator<T>): LinearTrans<T> {
+//fun <T> IAffineCoordinateSystem<T>.toLinearTrans(mathCalculator: MathCalculator<T>): LinearTrans<T> {
 //    return DLinearTrans(mathCalculator, dimension, vectorBase.getVectorsAsMatrix(), originVector)
 //}
 
@@ -107,18 +108,18 @@ abstract class AffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, final over
 // * Returns the linear transformation that transforms the standard coordinate system to
 // * this affine coordinate system.
 // */
-//fun <T:Any> AffineCoordinateSystem<T>.toLinearTrans(): LinearTrans<T> {
+//fun <T> AffineCoordinateSystem<T>.toLinearTrans(): LinearTrans<T> {
 //    return DLinearTrans(mathCalculator, dimension, vectorBase.getVectorsAsMatrix(), originVector)
 //}
 
-internal class DAffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension: Int, originVector: Vector<T>, vectorBase: FullVectorBasis<T>) :
+internal class DAffineCoordinateSystem<T>(mc: MathCalculator<T>, dimension: Int, originVector: Vector<T>, vectorBase: FullVectorBasis<T>) :
         AffineCoordinateSystem<T>(mc, dimension, originVector, vectorBase) {
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AffineSpace<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AffineSpace<N> {
         return DAffineCoordinateSystem(
-            newCalculator, dimension, originVector.mapTo(newCalculator, mapper), vectorBasis.mapTo(
+                newCalculator, dimension, originVector.mapTo(newCalculator, mapper), vectorBasis.mapTo(
                 newCalculator,
                 mapper
-            )
+        )
         )
     }
 
@@ -127,15 +128,15 @@ internal class DAffineCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension
 /**
  * Describes the standard coordinate system.
  */
-class StandardCoordinateSystem<T : Any>(mc: MathCalculator<T>, dimension: Int) : AffineCoordinateSystem<T>(mc, dimension,
-        Vector.zeroVector(dimension, mc), VectorBasis.standardBase(dimension, mc)) {
+class StandardCoordinateSystem<T>(mc: MathCalculator<T>, dimension: Int) : AffineCoordinateSystem<T>(mc, dimension,
+        Vector.zero(dimension, mc), VectorBasis.standardBase(dimension, mc)) {
     init {
         require(dimension > 0)
     }
 
-    override fun <N : Any> mapTo(
-        newCalculator: MathCalculator<N>,
-        mapper: Function<T, N>
+    override fun <N> mapTo(
+            newCalculator: MathCalculator<N>,
+            mapper: Function<T, N>
     ): StandardCoordinateSystem<N> {
         return StandardCoordinateSystem(newCalculator, dimension)
     }

@@ -4,11 +4,13 @@ import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.*;
-import cn.ancono.math.algebra.linear.LinearEquationSolution.Situation;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.numberModels.api.AlgebraModel;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
-import cn.ancono.utilities.ArraySup;
+import kotlin.jvm.functions.Function1;
+import kotlin.sequences.Sequence;
+import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
@@ -31,7 +33,8 @@ import java.util.function.Function;
  * @param <T>
  * @author liyicheng
  */
-public final class SVector<T> extends Vector<T> {
+@SuppressWarnings("SuspiciousNameCombination")
+public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<T, SVector<T>> {
 
     final T x, y, z;
 
@@ -40,72 +43,37 @@ public final class SVector<T> extends Vector<T> {
     private T lenSq;
 
     SVector(T[] vec, MathCalculator<T> mc) {
-        super(3, false, mc);
-        this.x = vec[0];
-        this.y = vec[1];
-        this.z = vec[2];
+        this(vec[0], vec[1], vec[2], mc);
     }
 
     SVector(T x, T y, T z, MathCalculator<T> mc) {
-        super(3, false, mc);
+        super(mc, 3);
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
     @Override
-    public T[][] getValues() {
-        @SuppressWarnings("unchecked")
-        T[][] res = (T[][]) Array.newInstance(x.getClass(), 1, 3);
-        res[0][0] = x;
-        res[1][0] = y;
-        res[2][0] = z;
-        return res;
-    }
-
-
-    @Override
-    public SVector<T> negate() {
+    public @NotNull SVector<T> negate() {
         return new SVector<>(getMc().negate(x), getMc().negate(y), getMc().negate(z), getMc());
     }
 
 
     @Override
-    public Vector<T> transpose() {
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) Array.newInstance(x.getClass(), 3);
-        arr[0] = x;
-        arr[1] = y;
-        arr[2] = z;
-        return Vector.vOf(getMc(), true, arr);
-    }
-
-
-    @Override
-    public SVector<T> multiplyNumber(long n) {
+    public @NotNull SVector<T> multiply(long n) {
         return new SVector<>(getMc().multiplyLong(x, n), getMc().multiplyLong(y, n), getMc().multiplyLong(z, n), getMc());
     }
 
 
     @Override
-    public SVector<T> multiplyNumber(T n) {
+    public @NotNull SVector<T> multiply(T n) {
         return new SVector<>(getMc().multiply(x, n), getMc().multiply(y, n), getMc().multiply(z, n), getMc());
     }
 
-
     @Override
-    public Matrix<T> cofactor(int r, int c) {
-        throw new ArithmeticException("Too small for cofactor");
-    }
-
-    @Override
-    public int getRowCount() {
-        return 3;
-    }
-
-    @Override
-    public int getColumnCount() {
-        return 1;
+    public boolean isLinearRelevant(@NotNull SVector<T> v) {
+        var mc = getMathCalculator();
+        return mc.isZero(mc.subtract(mc.multiply(x, v.y), mc.multiply(v.x, y)));
     }
 
     /**
@@ -140,7 +108,6 @@ public final class SVector<T> extends Vector<T> {
      *
      * @return a new array of type T
      */
-    @Override
     public T[] toArray() {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) Array.newInstance(x.getClass(), 3);
@@ -153,7 +120,6 @@ public final class SVector<T> extends Vector<T> {
     /* (non-Javadoc)
      * @see cn.ancono.math.AbstractVector#toArray(java.lang.Object[])
      */
-    @Override
     public T[] toArray(T[] arr) {
         if (arr.length < 3) {
             arr = Arrays.copyOf(arr, 3);
@@ -165,7 +131,7 @@ public final class SVector<T> extends Vector<T> {
     }
 
     @Override
-    public List<T> toList() {
+    public @NotNull List<T> toList() {
         return Arrays.asList(x, y, z);
     }
 
@@ -175,7 +141,7 @@ public final class SVector<T> extends Vector<T> {
      * @param s another SVector
      * @return this + s
      */
-    public SVector<T> add(SVector<T> s) {
+    public @NotNull SVector<T> add(SVector<T> s) {
         return new SVector<>(getMc().add(x, s.x), getMc().add(y, s.y), getMc().add(z, s.z), getMc());
     }
 
@@ -185,7 +151,7 @@ public final class SVector<T> extends Vector<T> {
      * @param s another SVector
      * @return this - s
      */
-    public SVector<T> subtract(SVector<T> s) {
+    public @NotNull SVector<T> subtract(SVector<T> s) {
         return new SVector<>(getMc().subtract(x, s.x), getMc().subtract(y, s.y), getMc().subtract(z, s.z), getMc());
     }
 
@@ -241,31 +207,45 @@ public final class SVector<T> extends Vector<T> {
         return lenSq;
     }
 
-    /**
-     * This method will ignore j.
-     */
-    @Override
-    public T get(int i, int j) {
-        return get(i);
-    }
-
-    @Override
-    public int getSize() {
-        return 3;
-    }
 
     @Override
     public T get(int i) {
-        switch (i) {
-            case 0:
-                return x;
-            case 1:
-                return y;
-            case 2:
-                return z;
-            default:
-                throw new IndexOutOfBoundsException("for index:" + i);
-        }
+        return switch (i) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> throw new IndexOutOfBoundsException("for index:" + i);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Override
+    public Sequence<T> elementSequence() {
+        return SequencesKt.sequenceOf(x, y, z);
+    }
+
+    @NotNull
+    @Override
+    public SVector<T> applyAll(@NotNull Function1<? super T, ? extends T> f) {
+        return new SVector<>(f.invoke(x), f.invoke(y), f.invoke(z), getMc());
+    }
+
+    @NotNull
+    @Override
+    public SVector<T> divide(T t) {
+        var mc = getMathCalculator();
+        return new SVector<>(
+                mc.divide(x, t),
+                mc.divide(y, t),
+                mc.divide(z, t),
+                mc);
+    }
+
+    @NotNull
+    @Override
+    public SVector<T> multiply(@NotNull SVector<T> y) {
+        return outerProduct(y);
     }
 
     /**
@@ -318,7 +298,6 @@ public final class SVector<T> extends Vector<T> {
      * Determines whether the given vector is in the identity direction of this vector, which means
      * the vector the result of {@code this.angleCos(s)} will be 1. If {@code s} is a zero vector,
      * an exception will be thrown.
-     *
      */
     public boolean isOfSameDirection(SVector<T> s) {
         if (s.isZero()) {
@@ -355,7 +334,6 @@ public final class SVector<T> extends Vector<T> {
      *
      * @return an unit vector
      */
-    @Override
     public SVector<T> unitVector() {
         T length = norm();
         SVector<T> s = new SVector<>(getMc().divide(x, length),
@@ -495,31 +473,15 @@ public final class SVector<T> extends Vector<T> {
      * @see
      */
     public SVector<T> reduce(SVector<T> x, SVector<T> y, SVector<T> z) {
-        if (x.isParallel(y) || y.isParallel(z) || x.isParallel(z)) {
-            throw new IllegalArgumentException("Parallel");
+
+        LinearEquationSolution<T> sol = Matrix.solveLinear(Matrix.fromVectors(true, x, y, z), this);
+        if (sol.isInfinite()) {
+            throw new ArithmeticException("The given vectors are parallel!");
         }
-        @SuppressWarnings("unchecked")
-        T[][] mat = (T[][]) new Object[3][4];
-        mat[0][0] = x.x;
-        mat[0][1] = y.x;
-        mat[0][2] = z.x;
-        mat[0][3] = this.x;
-
-        mat[1][0] = x.y;
-        mat[1][1] = y.y;
-        mat[1][2] = z.y;
-        mat[1][3] = this.y;
-
-        mat[2][0] = x.z;
-        mat[2][1] = y.z;
-        mat[2][2] = z.z;
-        mat[2][3] = this.z;
-
-        LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, getMc());
-        if (sol.getSolutionSituation() != Situation.UNIQUE) {
-            throw new ArithmeticException("Not single?");
+        if (sol.isEmpty()) {
+            throw new ArithmeticException("Cannot reduce.");
         }
-        return fromVector(sol.getSpecialSolution());
+        return fromVector(sol.getSpecial());
     }
 //	/**
 //	 * Reduce this vector, but in two vectors, which means the three vectors must be on the 
@@ -531,11 +493,6 @@ public final class SVector<T> extends Vector<T> {
 //	public SVector<T> reduce(SVector<T> x,SVector<T> y){
 //		
 //	}
-
-    @Override
-    public SVector<T> applyFunction(MathFunction<T, T> f) {
-        return new SVector<>(f.apply(x), f.apply(y), f.apply(z), getMc());
-    }
 
     /**
      * Create a vector with the given x y z arguments.
@@ -684,8 +641,8 @@ public final class SVector<T> extends Vector<T> {
     public static <T> SVector<T> angledVector(SVector<T> v, SVector<T> n, T tan) {
         MathCalculator<T> mc = v.getMathCalculator();
         SVector<T> perp = n.outerProduct(v);
-        SVector<T> res = perp.multiplyNumber(v.norm());
-        res = res.add(v.multiplyNumber(mc.divide(perp.norm(), tan)));
+        SVector<T> res = perp.multiply(v.norm());
+        res = res.add(v.multiply(mc.divide(perp.norm(), tan)));
         return res;
     }
 
@@ -703,8 +660,8 @@ public final class SVector<T> extends Vector<T> {
         List<SVector<T>> list = new ArrayList<>(2);
         MathCalculator<T> mc = v.getMathCalculator();
         SVector<T> perp = n.outerProduct(v);
-        SVector<T> res = perp.multiplyNumber(mc.multiply(tan, v.norm()));
-        SVector<T> t = v.multiplyNumber(perp.norm());
+        SVector<T> res = perp.multiply(mc.multiply(tan, v.norm()));
+        SVector<T> t = v.multiply(perp.norm());
         list.add(res.add(t));
         list.add(res.negate().add(t));
         return list;
@@ -756,132 +713,134 @@ public final class SVector<T> extends Vector<T> {
      * @param z
      * @return a new vector base
      */
-    public static <T> SVectorBasis<T> createBase(SVector<T> x, SVector<T> y, SVector<T> z) {
+    public static <T> VectorBasis<T> createBase(SVector<T> x, SVector<T> y, SVector<T> z) {
         MathCalculator<T> mc = x.getMc();
         T[][] mat = toMatrix(x, y, z);
         T d = MatrixSup.det3(mat, mc);
         if (mc.isZero(d)) {
             throw new IllegalArgumentException("They are on the identity plane");
         }
-        return new SVectorBasis<>(x, y, z, mat, d, mc);
+        return VectorBasis.createBase(Vector.of(x.toList(), mc),
+                Vector.of(y.toList(), mc), Vector.of(z.toList(), mc));
     }
 
-    /**
-     * Describe a vector base in space
-     *
-     * @param <T>
-     * @author liyicheng
-     */
-    public static final class SVectorBasis<T> extends VectorBasis<T> {
-        private final SVector<T> x, y, z;
 
-        public SVectorBasis(SVector<T> x, SVector<T> y, SVector<T> z, T[][] mat, T D,
-                            MathCalculator<T> mc) {
-            super(mc);
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.mat = mat;
-            this.D = D;
-        }
-
-        private final T D;
-        private T[][] mat;
-
-        @Override
-        public int getVectorLength() {
-            return 3;
-        }
-
-        @NotNull
-        @Override
-        public List<Vector<T>> getVectors() {
-            return Arrays.asList(x, y, z);
-        }
-
-        @NotNull
-        @Override
-        public Vector<T> reduce(@NotNull Vector<T> v) {
-            if (v.getSize() != 3) {
-                throw new IllegalArgumentException("v.size != 3");
-            }
-            return reduce(SVector.fromVector(v));
-        }
-
-        public SVector<T> reduce(SVector<T> s) {
-            var mc = getMc();
-            @SuppressWarnings("unchecked")
-            T[] v = (T[]) new Object[]{s.x, s.y, s.z};
-            T[][] mt2 = mat.clone();
-            T[] t = mt2[0];
-            mt2[0] = v;
-            T D1 = MatrixSup.det3(mt2, mc);
-            mt2[0] = t;
-            t = mt2[1];
-            mt2[1] = v;
-            T D2 = MatrixSup.det3(mt2, mc);
-            mt2[1] = t;
-            mt2[2] = v;
-            T D3 = MatrixSup.det3(mt2, mc);
-            return new SVector<>(mc.divide(D1, D), mc.divide(D2, D), mc.divide(D3, D), mc);
-        }
-
-
-        @Override
-        public <N> SVectorBasis<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            N[][] ret = ArraySup.mapTo(mat, (T[] arr) ->
-                    ArraySup.mapTo(arr, mapper)
-            );
-            N d = MatrixSup.det3(ret, newCalculator);
-            return new SVectorBasis<>(x.mapTo(newCalculator, mapper),
-                    y.mapTo(newCalculator, mapper),
-                    z.mapTo(newCalculator, mapper), ret, d,
-                    newCalculator);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof SVector.SVectorBasis) {
-                SVectorBasis<?> svb = (SVectorBasis<?>) obj;
-                return x.equals(svb.x) && y.equals(svb.y) && z.equals(svb.z);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = x.hashCode();
-            hash = hash * 37 + y.hashCode();
-            return hash * 37 + z.hashCode();
-        }
-
-        @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
-            if (obj instanceof SVector.SVectorBasis) {
-                SVectorBasis<T> svb = (SVectorBasis<T>) obj;
-                return x.valueEquals(svb.x) && y.valueEquals(svb.y) && z.valueEquals(svb.z);
-            }
-            return super.valueEquals(obj);
-        }
-
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof SVector.SVectorBasis) {
-                SVectorBasis<N> svb = (SVectorBasis<N>) obj;
-                return x.valueEquals(svb.x, mapper) && y.valueEquals(svb.y, mapper) && z.valueEquals(svb.z, mapper);
-            }
-            return super.valueEquals(obj, mapper);
-        }
-
-        /* (non-Javadoc)
-         * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
-         */
-        @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-            return "SVectorBase";
-        }
-
-    }
+//    /**
+//     * Describe a vector base in space
+//     *
+//     * @param <T>
+//     * @author liyicheng
+//     */
+//    public static final class SVectorBasis<T> extends VectorBasis<T> {
+//        private final SVector<T> x, y, z;
+//
+//        public SVectorBasis(SVector<T> x, SVector<T> y, SVector<T> z, T[][] mat, T D,
+//                            MathCalculator<T> mc) {
+//            super(mc);
+//            this.x = x;
+//            this.y = y;
+//            this.z = z;
+//            this.mat = mat;
+//            this.D = D;
+//        }
+//
+//        private final T D;
+//        private T[][] mat;
+//
+//        @Override
+//        public int getVectorLength() {
+//            return 3;
+//        }
+//
+//        @NotNull
+//        @Override
+//        public List<Vector<T>> getVectors() {
+//            return Arrays.asList(x, y, z);
+//        }
+//
+//        @NotNull
+//        @Override
+//        public Vector<T> reduce(@NotNull Vector<T> v) {
+//            if (v.getSize() != 3) {
+//                throw new IllegalArgumentException("v.size != 3");
+//            }
+//            return reduce(SVector.fromVector(v));
+//        }
+//
+//        public SVector<T> reduce(SVector<T> s) {
+//            var mc = getMc();
+//            @SuppressWarnings("unchecked")
+//            T[] v = (T[]) new Object[]{s.x, s.y, s.z};
+//            T[][] mt2 = mat.clone();
+//            T[] t = mt2[0];
+//            mt2[0] = v;
+//            T D1 = MatrixSup.det3(mt2, mc);
+//            mt2[0] = t;
+//            t = mt2[1];
+//            mt2[1] = v;
+//            T D2 = MatrixSup.det3(mt2, mc);
+//            mt2[1] = t;
+//            mt2[2] = v;
+//            T D3 = MatrixSup.det3(mt2, mc);
+//            return new SVector<>(mc.divide(D1, D), mc.divide(D2, D), mc.divide(D3, D), mc);
+//        }
+//
+//
+//        @Override
+//        public <N> @NotNull SVectorBasis<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+//            N[][] ret = ArraySup.mapTo(mat, (T[] arr) ->
+//                    ArraySup.mapTo(arr, mapper)
+//            );
+//            N d = MatrixSup.det3(ret, newCalculator);
+//            return new SVectorBasis<>(x.mapTo(newCalculator, mapper),
+//                    y.mapTo(newCalculator, mapper),
+//                    z.mapTo(newCalculator, mapper), ret, d,
+//                    newCalculator);
+//        }
+//
+//        @Override
+//        public boolean equals(Object obj) {
+//            if (obj instanceof SVector.SVectorBasis) {
+//                SVectorBasis<?> svb = (SVectorBasis<?>) obj;
+//                return x.equals(svb.x) && y.equals(svb.y) && z.equals(svb.z);
+//            }
+//            return false;
+//        }
+//
+//        @Override
+//        public int hashCode() {
+//            int hash = x.hashCode();
+//            hash = hash * 37 + y.hashCode();
+//            return hash * 37 + z.hashCode();
+//        }
+//
+//        @Override
+//        public boolean valueEquals(@NotNull MathObject<T> obj) {
+//            if (obj instanceof SVector.SVectorBasis) {
+//                SVectorBasis<T> svb = (SVectorBasis<T>) obj;
+//                return x.valueEquals(svb.x) && y.valueEquals(svb.y) && z.valueEquals(svb.z);
+//            }
+//            return super.valueEquals(obj);
+//        }
+//
+//        @Override
+//        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+//            if (obj instanceof SVector.SVectorBasis) {
+//                SVectorBasis<N> svb = (SVectorBasis<N>) obj;
+//                return x.valueEquals(svb.x, mapper) && y.valueEquals(svb.y, mapper) && z.valueEquals(svb.z, mapper);
+//            }
+//            return super.valueEquals(obj, mapper);
+//        }
+//
+//        /* (non-Javadoc)
+//         * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
+//         */
+//        @Override
+//        public @NotNull String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+//            return "SVectorBase";
+//        }
+//
+//    }
 
     public static class SVectorGenerator<T> extends AbstractMathObject<T> {
 
@@ -952,7 +911,7 @@ public final class SVector<T> extends Vector<T> {
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public @NotNull String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
             return "SVectorGenerator";
         }
     }

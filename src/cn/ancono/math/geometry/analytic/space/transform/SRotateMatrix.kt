@@ -1,25 +1,26 @@
 package cn.ancono.math.geometry.analytic.space.transform
 
 import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.linear.AbstractMatrix
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.MathFunction
-import cn.ancono.math.function.invoke
 import cn.ancono.math.geometry.analytic.space.SPoint
 import cn.ancono.math.geometry.analytic.space.SVector
-import cn.ancono.math.numberModels.api.RingNumberModel
+import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.property.Composable
 import cn.ancono.utilities.ArraySup
+import org.jetbrains.annotations.NotNull
 import java.util.function.Function
 
 typealias SPointTrans<T> = MathFunction<SPoint<T>, SPoint<T>>
 
 
 @Suppress("UNCHECKED_CAST")
-class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat: Array<Array<Any>>) :
-        Matrix<T>(3, 3, mc),
+class SRotateMatrix<T> internal constructor(mc: MathCalculator<T>, val mat: Array<Array<Any?>>) :
+        AbstractMatrix<T>(mc, 3, 3),
         Composable<SRotateMatrix<T>>,
-        RingNumberModel<SRotateMatrix<T>> {
+        AlgebraModel<T, SRotateMatrix<T>> {
 
 
 
@@ -32,9 +33,13 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         return mat.all { row -> row.all { mc.isZero(it as T) } }
     }
 
+    override fun getChecked(i: Int, j: Int): T {
+        return mat[i][j] as T
+    }
+
     private inline fun mapTo0(f: (T) -> T): SRotateMatrix<T> {
         val nmat = Array(3) { i ->
-            Array<Any>(3) { j ->
+            Array<Any?>(3) { j ->
                 f(mat[i][j] as T)
             }
         }
@@ -43,7 +48,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
 
     private inline fun mapTo1(another: SRotateMatrix<T>, f: (T, T) -> T): SRotateMatrix<T> {
         val nmat = Array(3) { i ->
-            Array<Any>(3) { j ->
+            Array<Any?>(3) { j ->
                 f(mat[i][j] as T, another.mat[i][j] as T)
             }
         }
@@ -54,16 +59,20 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         return mat[i][j] as T
     }
 
-    override fun getValues(): Array<Array<Any>> {
+    override fun getValues(): Array<Array<Any?>> {
         return ArraySup.deepCopy(mat)
     }
 
-    override fun multiplyNumber(n: Long): SRotateMatrix<T> = mapTo0 { x ->
+    override fun multiply(n: Long): SRotateMatrix<T> = mapTo0 { x ->
         mc.multiplyLong(x, n)
     }
 
-    override fun multiplyNumber(n: T): SRotateMatrix<T> = mapTo0 { x ->
-        mc.multiply(x, n)
+    override fun multiply(k: T): SRotateMatrix<T> = mapTo0 { x ->
+        mc.multiply(x, k)
+    }
+
+    override fun divide(k: T): SRotateMatrix<T> = mapTo0 { x ->
+        mc.divide(x, k)
     }
 
     override fun add(y: SRotateMatrix<T>): SRotateMatrix<T> = mapTo1(y) { a, b ->
@@ -76,7 +85,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         val mat1 = this.mat
         val mat2 = y.mat
         val nmat = Array(3) { row ->
-            Array<Any>(3) { column ->
+            Array<Any?>(3) { column ->
                 //x * y
 
                 var result: T = mc.zero
@@ -91,7 +100,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
 
     override fun transpose(): SRotateMatrix<T> {
         val nmat = Array(3) { i ->
-            Array<Any>(3) { j ->
+            Array<Any?>(3) { j ->
                 mat[j][i]
             }
         }
@@ -99,16 +108,16 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
     }
 
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): SRotateMatrix<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): SRotateMatrix<N> {
         val nmat = Array(3) { i ->
-            Array<Any>(3) { j ->
+            Array<Any?>(3) { j ->
                 mapper.apply(mat[i][j] as T)
             }
         }
         return SRotateMatrix(newCalculator, nmat)
     }
 
-    override fun applyFunction(f: MathFunction<T, T>): SRotateMatrix<T> = mapTo0 { f(it) }
+    override fun applyAll(f: (T) -> T): SRotateMatrix<T> = mapTo0 { f(it) }
 
     fun transform(p: SPoint<T>): SPoint<T> {
         val mat: Array<Array<T>> = this.mat as Array<Array<T>>
@@ -119,7 +128,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
     }
 
     fun transform(v: SVector<T>): SVector<T> {
-        val arr = Array<Any>(3) { i ->
+        val arr = Array<Any?>(3) { i ->
             var re = mc.zero
             for (j in 0..2) {
                 re += (mat[i][j] as T) * v[j]
@@ -141,7 +150,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
 
     override fun inverse(): SRotateMatrix<T> {
         if (inversed == null) {
-            inversed = SRotateMatrix(mc, super.inverse().values)
+            inversed = SRotateMatrix(mc, super.inverse().getValues())
             inversed?.inversed = this
         }
         return inversed!!
@@ -156,7 +165,7 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
                 return this@SRotateMatrix.transform(x)
             }
 
-            override fun deply(y: SPoint<T>): SPoint<T> {
+            override fun deply(y: @NotNull SPoint<T>): SPoint<T> {
                 return inversed.transform(y)
             }
 
@@ -166,32 +175,32 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
 
     companion object {
 
-        fun <T : Any> valueOf(mat: Matrix<T>): SRotateMatrix<T> {
-            require(mat.rowCount == 3)
-            require(mat.columnCount == 3)
-            return SRotateMatrix(mat.mathCalculator, mat.values)
+        fun <T> valueOf(mat: Matrix<T>): SRotateMatrix<T> {
+            require(mat.row == 3)
+            require(mat.column == 3)
+            return SRotateMatrix(mat.mathCalculator, mat.getValues())
         }
 
-        fun <T : Any> multiplyBy(kx: T, ky: T, kz: T, mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> multiplyBy(kx: T, ky: T, kz: T, mc: MathCalculator<T>): SRotateMatrix<T> {
             val zero = mc.zero
             val mat = arrayOf(
-                    arrayOf<Any>(kx, zero, zero),
-                    arrayOf<Any>(zero, ky, zero),
-                    arrayOf<Any>(zero, zero, kz))
+                    arrayOf<Any?>(kx, zero, zero),
+                    arrayOf<Any?>(zero, ky, zero),
+                    arrayOf<Any?>(zero, zero, kz))
             return SRotateMatrix(mc, mat)
         }
 
-        fun <T : Any> multiplyBy(k: T, mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> multiplyBy(k: T, mc: MathCalculator<T>): SRotateMatrix<T> {
             return multiplyBy(k, k, k, mc)
         }
 
-        fun <T : Any> identity(mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> identity(mc: MathCalculator<T>): SRotateMatrix<T> {
             return multiplyBy(mc.one, mc)
         }
 
-        fun <T : Any> valueOf(mat: List<List<T>>, mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> valueOf(mat: List<List<T>>, mc: MathCalculator<T>): SRotateMatrix<T> {
             val nMat = Array(3) { i ->
-                Array<Any>(3) { j ->
+                Array<Any?>(3) { j ->
                     mat[i][j]
                 }
             }
@@ -199,5 +208,6 @@ class SRotateMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val mat
         }
 
     }
+
 
 }

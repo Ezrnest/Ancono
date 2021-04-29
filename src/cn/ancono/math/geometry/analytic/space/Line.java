@@ -4,7 +4,6 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
-import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.api.Simplifiable;
@@ -133,8 +132,8 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      */
     public boolean hasIntersectPoint(Line<T> l) {
         Matrix<T> m = createEquation(l);
-        LinearEquationSolution<T> sov = MatrixSup.solveLinearEquation(m);
-        return sov.getSolutionSituation() != LinearEquationSolution.Situation.EMPTY;
+        LinearEquationSolution<T> sov = Matrix.solveLinearExpanded(m);
+        return sov.notEmpty();
     }
 
     /**
@@ -148,16 +147,16 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      */
     public SPoint<T> intersectPoint(Line<T> l) {
         Matrix<T> m = createEquation(l);
-        LinearEquationSolution<T> sov = MatrixSup.solveLinearEquation(m);
-        if (sov.getSolutionSituation() == LinearEquationSolution.Situation.INFINITE) {
+        LinearEquationSolution<T> sov = Matrix.solveLinearExpanded(m);
+        if (sov.isInfinite()) {
             throw new ArithmeticException("Coincide!");
         }
-        if (sov.getSolutionSituation() == LinearEquationSolution.Situation.EMPTY) {
+        if (sov.isEmpty()) {
             return null;
         }
 
         //here shows the advantage of naming the vector in space as SVector
-        Vector<T> base = sov.getSpecialSolution();
+        Vector<T> base = sov.getSpecial();
         T k = base.get(0);
 
         return new SPoint<T>(getMc(), getMc().add(p0.x, getMc().multiply(k, vec.x)),

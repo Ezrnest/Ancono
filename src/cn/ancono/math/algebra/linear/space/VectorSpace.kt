@@ -18,7 +18,7 @@ import java.util.function.Function
  * Describes a vector space on of vectors of type [T].
  * @author liyicheng
  */
-class VectorSpace<T : Any>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(basis.mathCalculator),
+class VectorSpace<T>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(basis.mathCalculator),
         IVectorSpace<T> {
 
     override val vectorLength: Int
@@ -75,7 +75,7 @@ class VectorSpace<T : Any>(override val basis: VectorBasis<T>) : MathObjectExten
     }
 
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
         return VectorSpace(basis.mapTo(newCalculator, mapper))
     }
 
@@ -96,7 +96,7 @@ class VectorSpace<T : Any>(override val basis: VectorBasis<T>) : MathObjectExten
          * Gets a calculator for a vector space.
          */
         @JvmStatic
-        fun <T : Any> getCalculator(vectorLength: Int, mc: MathCalculator<T>): VectorSpaceCalculator<T> {
+        fun <T> getCalculator(vectorLength: Int, mc: MathCalculator<T>): VectorSpaceCalculator<T> {
             return VectorSpaceCalculatorImpl(vectorLength, mc)
         }
     }

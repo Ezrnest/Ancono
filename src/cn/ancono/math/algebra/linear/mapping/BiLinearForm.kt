@@ -20,10 +20,10 @@ package cn.ancono.math.algebra.linear.mapping
  * Created at 2019/5/29 18:44
  * @author  liyicheng
  */
-interface IBiLinearForm<K : Any, U : Any, V : Any> {
+interface IBiLinearForm<K, U, V> {
     fun apply(u: U, v: V)
 }
 
-open class BiLinearForm<K : Any, U : Any, V : Any> {
+open class BiLinearForm<K, U, V> {
 
 }

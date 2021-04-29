@@ -20,7 +20,7 @@ import java.util.function.Function
  * </pre>
  * (x',y',z', _ ) = mat * (x,y,z,1)T
  */
-class STransMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val matrix: Matrix<T>) : MathObjectExtend<T>(mc) {
+class STransMatrix<T> internal constructor(mc: MathCalculator<T>, val matrix: Matrix<T>) : MathObjectExtend<T>(mc) {
 
     val rotateMatrix: SRotateMatrix<T> = SRotateMatrix.valueOf(matrix.subMatrix(0, 0, 2, 2))
 
@@ -32,7 +32,7 @@ class STransMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val matr
     }
 
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): STransMatrix<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): STransMatrix<N> {
         return STransMatrix(newCalculator, matrix.mapTo(newCalculator, mapper))
     }
 
@@ -43,7 +43,7 @@ class STransMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val matr
         return matrix.valueEquals(obj.matrix)
     }
 
-    override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         if (obj !is STransMatrix) {
             return false
         }
@@ -63,6 +63,6 @@ class STransMatrix<T : Any> internal constructor(mc: MathCalculator<T>, val matr
 /**
  * Returns a vector of (x,y,z,1)T, which is a column vector.
  */
-fun <T : Any> SPoint<T>.extendVector(): Vector<T> {
-    return Vector.vOf(mathCalculator, x, y, z, mathCalculator.one)
+fun <T> SPoint<T>.extendVector(): Vector<T> {
+    return Vector.of(mathCalculator, x, y, z, mathCalculator.one)
 }

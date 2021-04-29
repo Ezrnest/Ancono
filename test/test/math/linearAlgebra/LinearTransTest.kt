@@ -6,8 +6,7 @@ import cn.ancono.math.algebra.linear.VectorBasis
 import cn.ancono.math.algebra.linear.mapping.LinearMapping
 import cn.ancono.math.algebra.linear.mapping.LinearTrans
 import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.api.NumberFormatter
-import cn.ancono.math.plus
+import cn.ancono.math.numberModels.api.plus
 import org.junit.Test
 
 class LinearTransTest{
@@ -28,8 +27,8 @@ class LinearTransTest{
         val base2 = VectorBasis.createFullBase(e4, e3, e2, e1)
         val base3 = VectorBasis.createFullBase(e1, e1 + e2, e1 + e2 + e3, e1 + e2 + e3 + e4)
         val trans = LinearTrans.underBase(mat, base1)
-        println(trans.transMatrixUnder(base2).contentToString(NumberFormatter.defaultFormatter()))
-        println(trans.transMatrixUnder(base3).contentToString(NumberFormatter.defaultFormatter()))
+        println(trans.transMatrixUnder(base2))
+        println(trans.transMatrixUnder(base3))
     }
 
     @Test

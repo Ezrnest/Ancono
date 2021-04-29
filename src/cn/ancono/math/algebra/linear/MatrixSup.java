@@ -1,19 +1,18 @@
 package cn.ancono.math.algebra.linear;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.linear.LinearEquationSolution.Situation;
-import cn.ancono.math.algebra.linear.LinearEquationSolution.SolutionBuilder;
 import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
-import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.structure.Polynomial;
-import cn.ancono.math.numberTheory.IntCalculator;
 import cn.ancono.utilities.ArraySup;
 import kotlin.Pair;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -158,32 +157,32 @@ public class MatrixSup {
         }
     }
 
-    /**
-     * Return a upper triangle matrix filled with one.For example,the following matrix is
-     * the result when n = 3 :
-     * <pre>
-     * 1 1 1
-     * 0 1 1
-     * 0 0 1
-     * </pre>
-     *
-     * @param n the size
-     * @return a matrix as description
-     */
-    public static <T> Matrix<T> upperTriWithOne(int n, MathCalculator<T> mc) {
-        @SuppressWarnings("unchecked")
-        T[][] mat = (T[][]) new Object[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < i; j++) {
-                mat[i][j] = mc.getZero();
-            }
-            for (int j = i; j < n; j++) {
-                mat[i][j] = mc.getOne();
-            }
-        }
-        return new DMatrix<>(mat, n, n, mc);
-
-    }
+//    /**
+//     * Return a upper triangle matrix filled with one.For example,the following matrix is
+//     * the result when n = 3 :
+//     * <pre>
+//     * 1 1 1
+//     * 0 1 1
+//     * 0 0 1
+//     * </pre>
+//     *
+//     * @param n the size
+//     * @return a matrix as description
+//     */
+//    public static <T> Matrix<T> upperTriWithOne(int n, MathCalculator<T> mc) {
+//        @SuppressWarnings("unchecked")
+//        T[][] mat = (T[][]) new Object[n][n];
+//        for (int i = 0; i < n; i++) {
+//            for (int j = 0; j < i; j++) {
+//                mat[i][j] = mc.getZero();
+//            }
+//            for (int j = i; j < n; j++) {
+//                mat[i][j] = mc.getOne();
+//            }
+//        }
+//        return new DMatrix<>(mat, n, n, mc);
+//
+//    }
 
     /**
      * Identify the given expression
@@ -218,6 +217,7 @@ public class MatrixSup {
     /**
      * Parse a two-dimension string array to a matrix.
      */
+    @SuppressWarnings("unchecked")
     public static <T> Matrix<T> parseMatrix(String[][] mat, MathCalculator<T> mc, Function<String, ? extends T> parser) {
         Objects.requireNonNull(mc);
         int rowCount = mat.length;
@@ -232,7 +232,7 @@ public class MatrixSup {
                 data[i][j] = Objects.requireNonNull(parser.apply(row[j]));
             }
         }
-        return new DMatrix<>(data, rowCount, columnCount, mc);
+        return Matrix.of((T[][]) data, mc);
     }
 
     private static final Pattern ROW_PATTERN = Pattern.compile("\\[(.+?)]");
@@ -249,6 +249,7 @@ public class MatrixSup {
      * <p>
      * For example, <pre>[[1 2 3][4 5 6][7 8 9]]</pre> is a valid matrix.
      */
+    @SuppressWarnings("unchecked")
     public static <T> Matrix<T> parseMatrix(String str, MathCalculator<T> mc, Function<String, ? extends T> parser) {
         if (str.startsWith("[")) {
             str = str.substring(1, str.length() - 1);
@@ -272,7 +273,7 @@ public class MatrixSup {
             throw new IllegalArgumentException("Empty!");
         }
         Object[][] data = mat.toArray(new Object[0][]);
-        return new DMatrix<>(data, data.length, column, mc);
+        return Matrix.of((T[][]) data, mc);
     }
 
     public static <T> Matrix<T> parseMatrix(String str, String rowDeliminator, String columnDeliminator,
@@ -325,7 +326,7 @@ public class MatrixSup {
         @SuppressWarnings("unchecked")
         T[] data = (T[]) ArraySup.mapTo(elements, parser, Object.class);
 
-        return new DVector<>(data, false, mc);
+        return Vector.Companion.of(mc, data);
     }
 
     /**
@@ -338,226 +339,224 @@ public class MatrixSup {
         return parseVector0(str, Pattern.compile(deliminator), mc, parser);
     }
 
-    /**
-     * According to the given matrix representing the coefficient of the linear equation,this method will
-     * calculate the result with almost full precision (overflowing and underflowing are not considered.
-     *
-     * @param expandedMatrix all the coefficient should be contained in this matrix as well as
-     *                       the constant part.
-     * @return the solution of the equation.
-     */
-    public static <T> LinearEquationSolution<T> solveLinearEquation(T[][] expandedMatrix, MathCalculator<T> mc) {
-        return solveLinearEquation(Matrix.valueOfNoCopy(expandedMatrix, mc));
-    }
+//    /**
+//     * According to the given matrix representing the coefficient of the linear equation,this method will
+//     * calculate the result with almost full precision (overflowing and underflowing are not considered.
+//     *
+//     * @param expandedMatrix all the coefficient should be contained in this matrix as well as
+//     *                       the constant part.
+//     * @return the solution of the equation.
+//     */
+//    public static <T> LinearEquationSolution<T> solveLinearEquation(T[][] expandedMatrix, MathCalculator<T> mc) {
+//        return solveLinearEquation(Matrix.of(expandedMatrix, mc));
+//    }
 
 
-    /**
-     * According to the given matrix representing the coefficient of the linear equation,this method will
-     * calculate the result with almost full precision (overflowing and underflowing are not considered.
-     *
-     * @param expandedMatrix all the coefficient should be contained in this matrix as well as
-     *                       the constant part.
-     * @return the solution of the equation.
-     */
-    @SuppressWarnings({"unchecked"})
-    public static <T> LinearEquationSolution<T> solveLinearEquation(Matrix<T> expandedMatrix) {
-        MathCalculator<T> mc = expandedMatrix.getMathCalculator();
-        Matrix.MatResult<T> matRe = expandedMatrix.toStepMatrix();
-        DMatrix<T> step = (DMatrix<T>) matRe.result;
-//		step.printMatrix();
-        Object[][] data = step.data;
-        T[][] mat = (T[][]) new Object[data.length][];
-        for (int i = 0; i < data.length; i++) {
-            mat[i] = (T[]) Arrays.copyOf(data[i], data[i].length);
-        }
-        //seek rows to get rank
-        int rank = 0;
-        final int len = step.column - 1;
-        int[] baseColumns = new int[len];
-//		printMatrix(mat);
-        for (int i = 0; i < step.row; i++) {
-            //column-1 avoid the constant
-            for (int j = 0; j < len; j++) {
-                if (!mc.isZero(mat[i][j])) {
-                    baseColumns[rank++] = j;
-                    break;
-                }
-            }
-        }
-        //test whether the equation has solution
-        if (rank < step.row && !mc.isZero(mat[rank][len])) {
-            //the rank of the expanded matrix is bigger.
-            //NO SOLUTION
-            return LinearEquationSolution.noSolution(expandedMatrix);
-        }
-        //calculate the result by using vector.
-        T[] baseF = (T[]) new Object[len];
-        for (int i = 0; i < rank; i++) {
-            baseF[i] = mat[i][len];
-        }
-        for (int i = rank; i < len; i++) {
-            baseF[i] = mc.getZero();
-        }
-        DVector<T> base = new DVector<>(baseF, false, mc);
-        SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
-        sb.setEquation(expandedMatrix);
-        sb.setBase(base);
-        //extract the k solution
-        final int numberOfKSolution = len - rank;
-        if (numberOfKSolution == 0) {
-            sb.setSituation(Situation.UNIQUE);
-            return sb.build();
-        } else {
-            sb.setSituation(Situation.INFINITE);
-            DVector<T>[] vs = new DVector[numberOfKSolution];
-            int searchPos = 0;
-            int curCol = 0;
-            for (int s = 0; s < numberOfKSolution; s++) {
-                //find the next column
-                while (baseColumns[searchPos] == curCol) {
-                    searchPos++;
-                    curCol++;
-                }
-                //x for current column is one.
-                T[] solution = (T[]) new Object[len];
-                int sPos = 0;
-                for (int i = 0; i < len; i++) {
-                    if (i == baseColumns[sPos]) {
-                        solution[i] = mc.negate(mat[sPos][curCol]);
-                        sPos++;
-                    } else {
-                        solution[i] = mc.getZero();
-                    }
-                }
-                solution[curCol] = mc.getOne();
-                vs[s] = new DVector<>(solution, false, mc);
-                curCol++;
-            }
-            sb.setVariableSolution(vs);
-            return sb.build();
-        }
-    }
-
-    public static <T> LinearEquationSolution<T> solveLinearEquation(Matrix<T> coeMatrix, Vector<T> constance) {
-        return solveLinearEquation(Matrix.concatColumn(coeMatrix, constance));
-    }
-
-    /**
-     * Solves the linear equation
-     * <pre><b>A</b><b>X</b> = 0</pre>
-     * where <b>A</b> is the given {@code coefficientMatrix}.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> LinearEquationSolution<T> solveHomo(Matrix<T> coefficientMatrix) {
-        Matrix<T> cm = coefficientMatrix;
-        MathCalculator<T> mc = coefficientMatrix.getMathCalculator();
-        final int n = cm.column;
-        //shorten the name
-        DMatrix<T> step = (DMatrix<T>) cm.toStepMatrix().result;
-        T[][] mat = (T[][]) step.data;
-        cm = null;
-        int rank = 0;
-        int[] baseColumns = new int[n];
-//		printMatrix(mat);
-        for (int i = 0; i < step.row; i++) {
-            //column-1 avoid the constant
-            for (int j = 0; j < n; j++) {
-                if (!mc.isZero(mat[i][j])) {
-                    baseColumns[rank++] = j;
-                    break;
-                }
-            }
-        }
-
-        if (rank == n) {
-            return LinearEquationSolution.zeroSolution(n, null, coefficientMatrix.getMathCalculator());
-        }
-        SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
-        Vector<T> base = Vector.zeroVector(n, mc);
-        sb.setBase(base);
-        sb.setSituation(Situation.INFINITE);
-        if (rank == 0) {
-            sb.setVariableSolution(Vector.unitVectors(n, mc).toArray(new Vector[0]));
-            return sb.build();
-        }
-        final int numberOfKSolution = n - rank;
-        DVector<T>[] vs = new DVector[numberOfKSolution];
-        int searchPos = 0;
-        int curCol = 0;
-        T negativeOne = mc.negate(mc.getOne());
-        T zero = mc.getZero();
-        for (int s = 0; s < numberOfKSolution; s++) {
-            // find the next column
-            while (baseColumns[searchPos] == curCol) {
-                searchPos++;
-                curCol++;
-            }
-            // x for current column is one.
-            T[] solution = (T[]) new Object[n];
-            int sPos = 0;
-            for (int i = 0; i < n; i++) {
-                if (i == baseColumns[sPos]) {
-                    solution[i] = mat[sPos][curCol];
-                    sPos++;
-                } else {
-                    solution[i] = zero;
-                }
-            }
-            solution[curCol] = negativeOne;
-            vs[s] = new DVector<>(solution, false, mc);
-            curCol++;
-        }
-        sb.setVariableSolution(vs);
-        return sb.build();
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> LinearEquationSolution.Situation determineSolutionType(Matrix<T> expandedMatrix) {
-        //TODO NEED simplification
-        MathCalculator<T> mc = expandedMatrix.getMathCalculator();
-        Matrix.MatResult<T> matRe = expandedMatrix.toStepMatrix();
-        DMatrix<T> step = (DMatrix<T>) matRe.result;
-//		step.printMatrix();
-        T[][] data = (T[][]) step.data;
-        //seek rows to get rank
-        int rank = 0;
-        final int len = step.column - 1;
-        //column-1 to avoid the constant part
-        OUTER:
-        for (int i = step.row - 1; i > -1; i--) {
-
-            for (int j = len - 1; j > -1; j--) {
-                if (!mc.isZero(data[i][j])) {
-                    rank = Math.min(i + 1, len);
-                    break OUTER;
-                }
-            }
-        }
-        //test whether the equation has solution
-        if (rank < step.row && !mc.isZero(data[rank][len])) {
-            //the rank of the expanded matrix is bigger.
-            //NO SOLUTION
-            return Situation.EMPTY;
-        }
-        final int numberOfKSolution = len - rank;
-        if (numberOfKSolution == 0) {
-            return Situation.UNIQUE;
-        } else {
-            return Situation.INFINITE;
-        }
-    }
-
-    /**
-     * Returns the solution of ax = b, where <code>a, x, b</code> are all matrices. It
-     * is required that the row count of <code>a</code> and <code>b</code> is the same.
-     */
-    public static <T> Matrix<T> solveMatrixEquation(Matrix<T> a, Matrix<T> b) {
-        if (a.row != b.row) {
-            throw new IllegalArgumentException("The row count of a and b isn't the same!");
-        }
-        var steps = a.toIdentityWay();
-        return b.doOperation(steps);
-    }
+//    /**
+//     * According to the given matrix representing the coefficient of the linear equation,this method will
+//     * calculate the result with almost full precision (overflowing and underflowing are not considered.
+//     *
+//     * @param expandedMatrix all the coefficient should be contained in this matrix as well as
+//     *                       the constant part.
+//     * @return the solution of the equation.
+//     */
+//    @SuppressWarnings({"unchecked"})
+//    public static <T> LinearEquationSolution<T> solveLinearEquation(Matrix<T> expandedMatrix) {
+//        MathCalculator<T> mc = expandedMatrix.getMathCalculator();
+//        var matRe = expandedMatrix.toEchelonWay();
+//        var step = matRe.getFirst();
+////		step.printMatrix();
+//        //seek rows to get rank
+//        int rank = 0;
+//        var row = step.getRow();
+//        var column = step.getColumn();
+//
+//        final int len = column - 1;
+//        int[] baseColumns = new int[len];
+////		printMatrix(mat);
+//        for (int i = 0; i < row; i++) {
+//            //column-1 avoid the constant
+//            for (int j = 0; j < len; j++) {
+//                if (!mc.isZero(mat[i][j])) {
+//                    baseColumns[rank++] = j;
+//                    break;
+//                }
+//            }
+//        }
+//        //test whether the equation has solution
+//        if (rank < step.row && !mc.isZero(mat[rank][len])) {
+//            //the rank of the expanded matrix is bigger.
+//            //NO SOLUTION
+//            return LinearEquationSolution.noSolution(expandedMatrix);
+//        }
+//        //calculate the result by using vector.
+//        T[] baseF = (T[]) new Object[len];
+//        for (int i = 0; i < rank; i++) {
+//            baseF[i] = mat[i][len];
+//        }
+//        for (int i = rank; i < len; i++) {
+//            baseF[i] = mc.getZero();
+//        }
+//        DVector<T> base = new DVector<>(baseF, false, mc);
+//        SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
+//        sb.setEquation(expandedMatrix);
+//        sb.setBase(base);
+//        //extract the k solution
+//        final int numberOfKSolution = len - rank;
+//        if (numberOfKSolution == 0) {
+//            sb.setSituation(Situation.UNIQUE);
+//            return sb.build();
+//        } else {
+//            sb.setSituation(Situation.INFINITE);
+//            DVector<T>[] vs = new DVector[numberOfKSolution];
+//            int searchPos = 0;
+//            int curCol = 0;
+//            for (int s = 0; s < numberOfKSolution; s++) {
+//                //find the next column
+//                while (baseColumns[searchPos] == curCol) {
+//                    searchPos++;
+//                    curCol++;
+//                }
+//                //x for current column is one.
+//                T[] solution = (T[]) new Object[len];
+//                int sPos = 0;
+//                for (int i = 0; i < len; i++) {
+//                    if (i == baseColumns[sPos]) {
+//                        solution[i] = mc.negate(mat[sPos][curCol]);
+//                        sPos++;
+//                    } else {
+//                        solution[i] = mc.getZero();
+//                    }
+//                }
+//                solution[curCol] = mc.getOne();
+//                vs[s] = new DVector<>(solution, false, mc);
+//                curCol++;
+//            }
+//            sb.setVariableSolution(vs);
+//            return sb.build();
+//        }
+//    }
+//
+//    public static <T> LinearEquationSolution<T> solveLinearEquation(Matrix<T> coeMatrix, Vector<T> constance) {
+//        return solveLinearEquation(Matrix.concatColumn(coeMatrix, constance));
+//    }
+//
+//    /**
+//     * Solves the linear equation
+//     * <pre><b>A</b><b>X</b> = 0</pre>
+//     * where <b>A</b> is the given {@code coefficientMatrix}.
+//     */
+//    @SuppressWarnings("unchecked")
+//    public static <T> LinearEquationSolution<T> solveHomo(Matrix<T> coefficientMatrix) {
+//        Matrix<T> cm = coefficientMatrix;
+//        MathCalculator<T> mc = coefficientMatrix.getMathCalculator();
+//        final int n = cm.column;
+//        //shorten the name
+//        DMatrix<T> step = (DMatrix<T>) cm.toStepMatrix().result;
+//        T[][] mat = (T[][]) step.data;
+//        cm = null;
+//        int rank = 0;
+//        int[] baseColumns = new int[n];
+////		printMatrix(mat);
+//        for (int i = 0; i < step.row; i++) {
+//            //column-1 avoid the constant
+//            for (int j = 0; j < n; j++) {
+//                if (!mc.isZero(mat[i][j])) {
+//                    baseColumns[rank++] = j;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        if (rank == n) {
+//            return LinearEquationSolution.zeroSolution(n, null, coefficientMatrix.getMathCalculator());
+//        }
+//        SolutionBuilder<T> sb = LinearEquationSolution.getBuilder();
+//        Vector<T> base = Vector.zeroVector(n, mc);
+//        sb.setBase(base);
+//        sb.setSituation(Situation.INFINITE);
+//        if (rank == 0) {
+//            sb.setVariableSolution(Vector.unitVectors(n, mc).toArray(new Vector[0]));
+//            return sb.build();
+//        }
+//        final int numberOfKSolution = n - rank;
+//        DVector<T>[] vs = new DVector[numberOfKSolution];
+//        int searchPos = 0;
+//        int curCol = 0;
+//        T negativeOne = mc.negate(mc.getOne());
+//        T zero = mc.getZero();
+//        for (int s = 0; s < numberOfKSolution; s++) {
+//            // find the next column
+//            while (baseColumns[searchPos] == curCol) {
+//                searchPos++;
+//                curCol++;
+//            }
+//            // x for current column is one.
+//            T[] solution = (T[]) new Object[n];
+//            int sPos = 0;
+//            for (int i = 0; i < n; i++) {
+//                if (i == baseColumns[sPos]) {
+//                    solution[i] = mat[sPos][curCol];
+//                    sPos++;
+//                } else {
+//                    solution[i] = zero;
+//                }
+//            }
+//            solution[curCol] = negativeOne;
+//            vs[s] = new DVector<>(solution, false, mc);
+//            curCol++;
+//        }
+//        sb.setVariableSolution(vs);
+//        return sb.build();
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    public static <T> LinearEquationSolution.Situation determineSolutionType(Matrix<T> expandedMatrix) {
+//        //TODO NEED simplification
+//        MathCalculator<T> mc = expandedMatrix.getMathCalculator();
+//        Matrix.MatResult<T> matRe = expandedMatrix.toStepMatrix();
+//        DMatrix<T> step = (DMatrix<T>) matRe.result;
+////		step.printMatrix();
+//        T[][] data = (T[][]) step.data;
+//        //seek rows to get rank
+//        int rank = 0;
+//        final int len = step.column - 1;
+//        //column-1 to avoid the constant part
+//        OUTER:
+//        for (int i = step.row - 1; i > -1; i--) {
+//
+//            for (int j = len - 1; j > -1; j--) {
+//                if (!mc.isZero(data[i][j])) {
+//                    rank = Math.min(i + 1, len);
+//                    break OUTER;
+//                }
+//            }
+//        }
+//        //test whether the equation has solution
+//        if (rank < step.row && !mc.isZero(data[rank][len])) {
+//            //the rank of the expanded matrix is bigger.
+//            //NO SOLUTION
+//            return Situation.EMPTY;
+//        }
+//        final int numberOfKSolution = len - rank;
+//        if (numberOfKSolution == 0) {
+//            return Situation.UNIQUE;
+//        } else {
+//            return Situation.INFINITE;
+//        }
+//    }
+//
+//    /**
+//     * Returns the solution of ax = b, where <code>a, x, b</code> are all matrices. It
+//     * is required that the row count of <code>a</code> and <code>b</code> is the same.
+//     */
+//    public static <T> Matrix<T> solveMatrixEquation(Matrix<T> a, Matrix<T> b) {
+//        if (a.row != b.row) {
+//            throw new IllegalArgumentException("The row count of a and b isn't the same!");
+//        }
+//        var steps = a.toIdentityWay();
+//        return b.doOperation(steps);
+//    }
 
     /**
      * Computes the determinant of a 3*3 matrix given as an array, make sure the
@@ -585,26 +584,23 @@ public class MatrixSup {
      * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to
      *                       the degree of the equation.
      */
-    @SuppressWarnings("unchecked")
     public static <T> Matrix<T> similarDiag(Matrix<T> mat, EquationSolver<T, SVPEquation<T>> equationSolver) {
-        SVPEquation<T> equation = mat.charEquation();
+        SVPEquation<T> equation = SVPEquation.fromPolynomial(mat.charPoly());
         List<T> eigenvalues = equationSolver.solve(equation);
-        return Matrix.diag((T[]) eigenvalues.toArray(), mat.getMathCalculator());
+        return Matrix.diag(eigenvalues, mat.getMathCalculator());
     }
 
-    /**
-     * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
-     *
-     * @param mat            a matrix
-     * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to
-     *                       the degree of the equation.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> Matrix<T> similarDiag(Matrix<T> mat, MathFunction<SVPEquation<T>, List<T>> equationSolver) {
-        SVPEquation<T> equation = mat.charEquation();
-        List<T> eigenvalues = equationSolver.apply(equation);
-        return Matrix.diag((T[]) eigenvalues.toArray(), mat.getMathCalculator());
-    }
+//    /**
+//     * Returns a matrix which is similar to the matrix given and is a diagonal matrix.
+//     *
+//     * @param mat            a matrix
+//     * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to
+//     *                       the degree of the equation.
+//     */
+//    @SuppressWarnings("unchecked")
+//    public static <T> Matrix<T> similarDiag(Matrix<T> mat, MathFunction<SVPEquation<T>, List<T>> equationSolver) {
+//        return
+//    }
 
 
     /**
@@ -620,82 +616,82 @@ public class MatrixSup {
         return p.mapTo(cm, e -> Matrix.diag(e, n, cal));
     }
 
-    /**
-     * Transform this matrix to Hermit Form. It is required that the calculator is a
-     * {@linkplain cn.ancono.math.algebra.abs.calculator.EUDCalculator}.
-     */
-    public static <T> Matrix<T> toHermitForm(Matrix<T> m) {
-        var mc = (IntCalculator<T>) m.getMathCalculator();
-        @SuppressWarnings("unchecked")
-        T[][] mat = (T[][]) m.getValues();
+//    /**
+//     * Transform this matrix to Hermit Form. It is required that the calculator is a
+//     * {@linkplain cn.ancono.math.algebra.abs.calculator.EUDCalculator}.
+//     */
+//    public static <T> Matrix<T> toHermitForm(Matrix<T> m) {
+//        var mc = (IntCalculator<T>) m.getMathCalculator();
 //        @SuppressWarnings("unchecked")
-//        T[] temp = (T[]) new Object[m.row];
-        int i = m.row - 1;
-        int j = m.column - 1;
-        int k = m.column - 1;
-        int l;
-        if (m.row <= m.column) {
-            l = 0;
-        } else {
-            l = m.row - m.column + 1;
-        }
-        while (true) {
-            while (j > 0) {
-                j--;
-                if (!mc.isZero(mat[i][j])) {
-                    break;
-                }
-
-            }
-            if (j > 0) {
-                var triple = mc.gcdUV(mat[i][k], mat[i][j]);
-                var d = triple.getFirst();
-                var u = triple.getSecond();
-                var v = triple.getThird();
-                var k1 = mc.divideToInteger(mat[i][k], d);
-                var k2 = mc.divideToInteger(mat[i][j], d);
-                for (int p = 0; p < m.row; p++) {
-                    var t = mc.add(mc.multiply(u, mat[k][p]), mc.multiply(v, mat[j][p]));
-                    mat[j][p] = mc.subtract(mc.multiply(k1, mat[j][p]), mc.multiply(k2, mat[k][p]));
-                    mat[k][p] = t;
-                }
-            } else {
-                var b = mat[i][k];
-                if (mc.isNegative(b)) {
-                    for (int p = 0; p < m.row; p++) {
-                        mat[k][p] = mc.negate(mat[k][p]);
-                    }
-                    b = mc.negate(b);
-                }
-                if (mc.isZero(b)) {
-                    k++;
-                } else {
-                    for (int t = k + 1; t < m.column; t++) {
-                        var q = mc.divideToInteger(mat[i][t], b);
-                        for (int p = 0; p < m.row; p++) {
-                            mat[j][p] = mc.subtract(mat[j][p], mc.multiply(q, mat[k][p]));
-                        }
-                    }
-                }
-                if (i <= l) {
-                    break;
-                } else {
-                    i--;
-                    k--;
-                    j = k;
-                }
-            }
-
-        }
-        var zero = mc.getZero();
-        for (int r = 0; r < m.row; r++) {
-            for (int c = 0; c < k; c++) {
-                mat[r][c] = zero;
-            }
-        }
-
-        return new DMatrix<>(mat, m.row, m.column, mc);
-    }
+//        T[][] mat = (T[][]) m.getValues();
+////        @SuppressWarnings("unchecked")
+////        T[] temp = (T[]) new Object[m.row];
+//        int i = m.row - 1;
+//        int j = m.column - 1;
+//        int k = m.column - 1;
+//        int l;
+//        if (m.row <= m.column) {
+//            l = 0;
+//        } else {
+//            l = m.row - m.column + 1;
+//        }
+//        while (true) {
+//            while (j > 0) {
+//                j--;
+//                if (!mc.isZero(mat[i][j])) {
+//                    break;
+//                }
+//
+//            }
+//            if (j > 0) {
+//                var triple = mc.gcdUV(mat[i][k], mat[i][j]);
+//                var d = triple.getFirst();
+//                var u = triple.getSecond();
+//                var v = triple.getThird();
+//                var k1 = mc.divideToInteger(mat[i][k], d);
+//                var k2 = mc.divideToInteger(mat[i][j], d);
+//                for (int p = 0; p < m.row; p++) {
+//                    var t = mc.add(mc.multiply(u, mat[k][p]), mc.multiply(v, mat[j][p]));
+//                    mat[j][p] = mc.subtract(mc.multiply(k1, mat[j][p]), mc.multiply(k2, mat[k][p]));
+//                    mat[k][p] = t;
+//                }
+//            } else {
+//                var b = mat[i][k];
+//                if (mc.isNegative(b)) {
+//                    for (int p = 0; p < m.row; p++) {
+//                        mat[k][p] = mc.negate(mat[k][p]);
+//                    }
+//                    b = mc.negate(b);
+//                }
+//                if (mc.isZero(b)) {
+//                    k++;
+//                } else {
+//                    for (int t = k + 1; t < m.column; t++) {
+//                        var q = mc.divideToInteger(mat[i][t], b);
+//                        for (int p = 0; p < m.row; p++) {
+//                            mat[j][p] = mc.subtract(mat[j][p], mc.multiply(q, mat[k][p]));
+//                        }
+//                    }
+//                }
+//                if (i <= l) {
+//                    break;
+//                } else {
+//                    i--;
+//                    k--;
+//                    j = k;
+//                }
+//            }
+//
+//        }
+//        var zero = mc.getZero();
+//        for (int r = 0; r < m.row; r++) {
+//            for (int c = 0; c < k; c++) {
+//                mat[r][c] = zero;
+//            }
+//        }
+//
+//        return new DMatrix<>(mat, m.row, m.column, mc);
+//    }
 
     /**
      * Computes the 'inverse' of the given matrix on a unit ring. This method simply compute the adjugate matrix and

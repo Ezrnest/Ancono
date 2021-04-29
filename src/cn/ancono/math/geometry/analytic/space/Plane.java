@@ -4,9 +4,7 @@ import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
-import cn.ancono.math.algebra.linear.LinearEquationSolution.Situation;
 import cn.ancono.math.algebra.linear.Matrix;
-import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.Circle;
@@ -203,20 +201,19 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public Line<T> intersectLine(Plane<T> p) {
         Matrix<T> mat = createEquation(p);
 //		mat.printMatrix();
-        LinearEquationSolution<T> so = MatrixSup
-                .solveLinearEquation(mat);
-        if (so.getSolutionSituation() != Situation.INFINITE) {
+        LinearEquationSolution<T> so = Matrix.solveLinearExpanded(mat);
+        if (!so.isInfinite()) {
             return null;
         }
 //		so.printSolution();
-        Vector<T>[] ks = so.getBaseSolutions();
-        if (ks.length == 2) {
+        var basis = so.getSolutionSpace();
+        if (basis.getRank() == 2) {
             throw new ArithmeticException("Coincide");
         }
-        Vector<T> base = so.getSpecialSolution();
+        Vector<T> base = so.getSpecial();
         return new Line<>(getMc(),
                 new SPoint<>(getMc(), base.get(0), base.get(1), base.get(2)),
-                SVector.fromVector(ks[0]));
+                SVector.fromVector(basis.getVectors().get(0)));
     }
 
     /**

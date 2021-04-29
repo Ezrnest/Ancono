@@ -5,8 +5,6 @@ import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
-import cn.ancono.math.component1
-import cn.ancono.math.component2
 import java.util.*
 
 object LinearEquations {
@@ -15,23 +13,24 @@ object LinearEquations {
      * Solves linear equation `Ux = b`, where `U` is an upper triangular matrix with **non-zero** diagonal elements.
      * @param U an upper triangular matrix with **non-zero** diagonal elements.
      */
-    fun <T : Any> solveUpper(U: Matrix<T>, b: Vector<T>) : Vector<T> {
-        require(U.isSquare)
-        require(U.rowCount == b.size)
+    fun <T> solveUpper(U: Matrix<T>, b: Vector<T>): Vector<T> {
+        require(U.isSquare())
+        require(U.row == b.size)
         val mc = U.mathCalculator
-        val n = U.rowCount
+        val n = U.row
+
         @Suppress("UNCHECKED_CAST")
-        val x = Array<Any>(n){
+        val x = Array<Any?>(n) {
             mc.zero
         } as Array<T>
-        for (i in (n-1) downTo 0) {
+        for (i in (n - 1) downTo 0) {
             var t = mc.zero
             for (k in (i + 1) until n) {
-                t = mc.eval { t + U[i,k] * x[k] }
+                t = mc.eval { t + U[i, k] * x[k] }
             }
-            x[i] = mc.eval { (b[i]- t) / U[i,i] }
+            x[i] = mc.eval { (b[i] - t) / U[i, i] }
         }
-        return Vector.vOf(mc, *x)
+        return Vector.of(mc, *x)
     }
 
     /**
@@ -40,20 +39,20 @@ object LinearEquations {
      * @param L  an lower triangular matrix with **non-zero**
      * diagonal elements
      */
-    fun <T : Any> solveLower(L: Matrix<T>, b: Vector<T>) : Vector<T> {
-        require(L.isSquare)
-        require(L.rowCount == b.size)
+    fun <T> solveLower(L: Matrix<T>, b: Vector<T>): Vector<T> {
+        require(L.isSquare())
+        require(L.row == b.size)
         val mc = L.mathCalculator
-        val n = L.rowCount
+        val n = L.row
         val x = ArrayList<T>(n)
         for (i in 0 until n) {
             var t = mc.zero
             for (k in 0 until i) {
-                t = mc.eval { t + L[i,k] * x[k] }
+                t = mc.eval { t + L[i, k] * x[k] }
             }
-            x += mc.eval { (b[i]- t) / L[i,i] }
+            x += mc.eval { (b[i] - t) / L[i, i] }
         }
-        return Vector.vOf(mc, x)
+        return Vector.of(x, mc)
     }
 
 
@@ -67,14 +66,14 @@ object LinearEquations {
      * @param M augmented matrix `M = (A,B)`
      * @see Matrices.inverseGaussJordanSteps
      */
-    fun <T:Any> solveGauss(M : Matrix<T>) : Matrix<T>{
+    fun <T> solveGauss(M: Matrix<T>): Matrix<T> {
 //        require(m.isSquare)
-        require(M.columnCount > M.rowCount)
-        val n = M.rowCount
+        require(M.column > M.row)
+        val n = M.row
         val mc = M.mathCalculator
 
         @Suppress("UNCHECKED_CAST")
-        val matrix = M.values as Array<Array<T>>
+        val matrix = M.getValues() as Array<Array<T>>
         for (k in 0 until n) {
             var maxIdx = k
             var maxVal = mc.abs(matrix[k][k])
@@ -90,7 +89,7 @@ object LinearEquations {
             }
             val c = mc.reciprocal(matrix[k][k])
 //            matrix[k][k] = mc.one
-            for (j in (k + 1) until M.columnCount) {
+            for (j in (k + 1) until M.column) {
                 matrix[k][j] = mc.eval {
                     c * matrix[k][j]
                 }
@@ -101,7 +100,7 @@ object LinearEquations {
                 }
                 val p = mc.negate(matrix[i][k])
 //                matrix[i][k] = mc.zero
-                for (j in (k + 1) until M.columnCount) {
+                for (j in (k + 1) until M.column) {
                     matrix[i][j] = mc.eval {
                         matrix[i][j] + p * matrix[k][j]
                     }
@@ -110,28 +109,28 @@ object LinearEquations {
 //            Printer.printMatrix(matrix)
         }
 //        var re = Array
-        val builder = Matrix.getBuilder(n, M.columnCount - n, mc)
+//        val builder = Matrix.getBuilder(n, M.column - n, mc)
 //        for (i in 0 until n) {
-//            for (j in n until M.columnCount) {
+//            for (j in n until M.column) {
 //                builder.set(matrix[i][j],i,j-n)
 //            }
 //        }
-        builder.fillArea(0, 0, matrix, 0, n, n, M.columnCount - n)
-        return builder.build()
+//        builder.fillArea(0, 0, matrix, 0, n, n, M.column - n)
+        return M.subMatrix(0, n, n, M.column)
     }
 
-    private fun <T : Any> solveDiagonal(D: Matrix<T>, b: Vector<T>): Vector<T> {
+    private fun <T> solveDiagonal(D: Matrix<T>, b: Vector<T>): Vector<T> {
         val n = b.size
         val mc = b.mathCalculator
-        return Vector.vOf(b.mathCalculator, (0 until n).map { i ->
+        return Vector.of((0 until n).map { i ->
             mc.divide(b[i], D[i, i])
-        })
+        }, b.mathCalculator)
     }
 
     /**
      * Applies Cholesky's method to solve the linear equation `Ax=b`.
      */
-    fun <T : Any> solveCholesky(A: Matrix<T>, b: Vector<T>): Vector<T> {
+    fun <T> solveCholesky(A: Matrix<T>, b: Vector<T>): Vector<T> {
         val (L, D) = A.decompCholeskyD()
         val y = solveLower(L, b)
         val z = solveDiagonal(D, y)
@@ -141,7 +140,7 @@ object LinearEquations {
     /**
      * Solves a tri-diagonal linear equation.
      */
-    fun <T : Any> solveTriDiag(diag: Vector<T>, upper: Vector<T>, lower: Vector<T>, b: Vector<T>): Vector<T> {
+    fun <T> solveTriDiag(diag: Vector<T>, upper: Vector<T>, lower: Vector<T>, b: Vector<T>): Vector<T> {
         val n = diag.size
         require(upper.size == n - 1 && lower.size == n - 1)
         require(b.size == n)
@@ -170,7 +169,7 @@ object LinearEquations {
                 (y[i] - c[i] * x[i + 1]) / u[i]
             }
         }
-        return Vector.vOf(mc, x)
+        return Vector.of(x, mc)
     }
 
 //    fun solveJacobi(A : Matrix<Double>)

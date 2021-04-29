@@ -6,8 +6,7 @@ package cn.ancono.math.geometry.analytic.space.shape;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
-import cn.ancono.math.algebra.linear.LinearEquationSolution.Situation;
-import cn.ancono.math.algebra.linear.MatrixSup;
+import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.space.Line;
@@ -443,11 +442,11 @@ public final class Sphere<T> extends SpaceObject<T> {
         }
 
         Printer.printMatrix(mat);
-        LinearEquationSolution<T> sov = MatrixSup.solveLinearEquation(mat, mc);
-        if (sov.getSolutionSituation() == Situation.INFINITE) {
+        LinearEquationSolution<T> sov = Matrix.solveLinearExpanded(Matrix.of(mat, mc));
+        if (sov.isInfinite()) {
             throw new IllegalArgumentException("Four points identity plane");
         }
-        Vector<T> vec = sov.getSpecialSolution();
+        Vector<T> vec = sov.getSpecial();
         SPoint<T> o = SPoint.valueOf(vec.get(0), vec.get(1), vec.get(2), mc);
         T r2 = a.distanceSq(o);
         return new Sphere<T>(mc, null, r2, o);

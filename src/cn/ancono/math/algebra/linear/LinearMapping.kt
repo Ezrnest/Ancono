@@ -26,7 +26,7 @@ import cn.ancono.math.numberModels.api.VectorModel
  * The mathematical rules for the linear mapping cannot be verified simply through this interface and
  * [K] is actually a marker type parameter for the mapping.
  */
-interface ILinearMapping<K : Any, V : Any, U : Any> : MathFunction<V, U> {
+interface ILinearMapping<K, V, U> : MathFunction<V, U> {
     /**
      * Applies the linear mapping to [x], a vector in the vector space **V**, and returns a vector
      * in the vector space **U**.
@@ -34,14 +34,14 @@ interface ILinearMapping<K : Any, V : Any, U : Any> : MathFunction<V, U> {
     override fun apply(x: V): U
 }
 
-//fun <K : Any,W:Any, V : Any, U : Any> ILinearMapping<K,V,U>.compose(mapping: ILinearMapping<K,W,V>):ILinearMapping<K,W,U>{
+//fun <K,W:Any, V, U> ILinearMapping<K,V,U>.compose(mapping: ILinearMapping<K,W,V>):ILinearMapping<K,W,U>{
 //
 //}
 
 /**
  * Describes the linear transformation on the linear space **V** over field **K**.
  */
-interface ILinearTrans<K : Any, V : Any> : ILinearMapping<K, V, V>, SVFunction<V>
+interface ILinearTrans<K, V> : ILinearMapping<K, V, V>, SVFunction<V>
 
 
 /**
@@ -57,7 +57,7 @@ interface ILinearTrans<K : Any, V : Any> : ILinearMapping<K, V, V>, SVFunction<V
  * Created at 2018/10/8 17:41
  * @author  liyicheng
  */
-abstract class ALinearMapping<K : Any, V : Any, U : Any>
+abstract class ALinearMapping<K, V, U>
     : ILinearMapping<K, V, U>, CalculatorHolder<K, FieldCalculator<K>>,
         VectorModel<K, ALinearMapping<K, V, U>> {
     /**
@@ -114,7 +114,7 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
         return multiply(linearCalculator.scalarCalculator.reciprocal(k))
     }
 
-    open fun <W : Any> composeLinear(g: ALinearMapping<K, U, W>): ALinearMapping<K, V, W> {
+    open fun <W> composeLinear(g: ALinearMapping<K, U, W>): ALinearMapping<K, V, W> {
         val f = this
         return DALinearMapping(g.vectorSpace) { x ->
             g(f(x))
@@ -124,12 +124,12 @@ abstract class ALinearMapping<K : Any, V : Any, U : Any>
 
 }
 
-abstract class KALinearTrans<K : Any, V : Any>(override val vectorSpace: LinearSpace<K, V>) : ALinearMapping<K, V, V>(), SVFunction<V> {
+abstract class KALinearTrans<K, V>(override val vectorSpace: LinearSpace<K, V>) : ALinearMapping<K, V, V>(), SVFunction<V> {
 
 }
 
 //
-//class IdentityLinearMapping<K:Any,V:Any,U:Any>(override val vectorSpace: VectorSpace<K, U>) : LinearMapping<K,,V,U>(){
+//class IdentityLinearMapping<K,V:Any,U>(override val vectorSpace: VectorSpace<K, U>) : LinearMapping<K,,V,U>(){
 //    override fun apply(x: V): U = x
 //
 //    override fun composeLinear(g: LinearMapping<K, V,U>): LinearMapping<K, V,U> {
@@ -137,11 +137,11 @@ abstract class KALinearTrans<K : Any, V : Any>(override val vectorSpace: LinearS
 //    }
 //}
 
-class ZeroALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: LinearSpace<K, U>) : ALinearMapping<K, V, U>() {
+class ZeroALinearMapping<K, V, U>(override val vectorSpace: LinearSpace<K, U>) : ALinearMapping<K, V, U>() {
     override fun apply(x: V): U = vectorSpace.identity()
 }
 
-class DALinearMapping<K : Any, V : Any, U : Any>(override val vectorSpace: LinearSpace<K, U>, private val f: (V) -> U)
+class DALinearMapping<K, V, U>(override val vectorSpace: LinearSpace<K, U>, private val f: (V) -> U)
     : ALinearMapping<K, V, U>() {
     override fun apply(x: V): U {
         return f(x)

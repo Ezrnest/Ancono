@@ -4,7 +4,6 @@ import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.algebra.linear.VectorBasis
 import cn.ancono.math.algebra.linear.space.AffineSpace
-import cn.ancono.math.get
 import cn.ancono.math.numberModels.Fraction
 import org.junit.Test
 
@@ -35,9 +34,9 @@ class VectorBaseTest{
 //        val b1 = mat2.getRow(0)
 //        val b2 = mat2.getRow(1)
 //        val b3 = mat2.getRow(2)
-        val vb1 = Vector.maximumLinearIrrelevant(mat1.rowVectors())
+        val vb1 = Vector.maxIndependent(mat1.rowVectors())
 //        println(vb1)
-        val vb2 = Vector.maximumLinearIrrelevant(mat2.rowVectors())
+        val vb2 = Vector.maxIndependent(mat2.rowVectors())
 //        println(vb2)
         val desired = MatrixSup.parseVector("1 -1 -3 -1",mc,par)
         val re = vb1.intersect(vb2)
@@ -69,11 +68,11 @@ class VectorBaseTest{
         """.trimIndent()
         val mat = MatrixSup.parseFMatrix(str)
         val (s1, a1, a2, s2, b1) = mat.rowVectors()
-        val b2 = mat[5] // no component6()
+        val b2 = mat.getColumn(5)// no component6()
         val sp1 = AffineSpace.valueOf(s1, a1, a2)
         val sp2 = AffineSpace.valueOf(s2, b1, b2)
         val re = sp1.intersect(sp2)!!
-        val desired = AffineSpace.valueOf(mat[6])
+        val desired = AffineSpace.valueOf(mat.getColumn(6))
 //        val s1 = MatrixSup.parseFMatrix()
 //        println(re)
 //        println(desired)

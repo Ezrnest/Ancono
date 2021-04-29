@@ -5,8 +5,8 @@ import cn.ancono.math.calculus.LimitProcess
 import cn.ancono.math.calculus.expression.FunctionHelper
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
-import cn.ancono.math.numberModels.expression.simplification.*
-import org.junit.Assert.*
+import cn.ancono.math.numberModels.expression.simplification.buildNode
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import test.math.TestUtils.assertMathEquals
 
@@ -33,7 +33,7 @@ class FunctionHelperTestA{
 
     @Test
     fun testLimit2(){
-        var expr = Expression("x^2".p * (exp("x^3+x".p / "1+x^3".p,"1/7".p) - cos("1/x".p)))
+        var expr = buildNode { Expression("x^2".p * (exp("x^3+x".p / "1+x^3".p, "1/7".p) - cos("1/x".p))) }
         expr = mc.simplify(expr)
         println(expr)
         val process = LimitProcess.toPositiveInf<Expression>()
@@ -44,7 +44,7 @@ class FunctionHelperTestA{
 
     @Test
     fun test(){
-        val expr = Expression("x^2".p * (exp("x^3+x".p / "1+x^3".p,"1/7".p) - cos("1/x".p)))
+        val expr = buildNode { Expression("x^2".p * (exp("x^3+x".p / "1+x^3".p, "1/7".p) - cos("1/x".p))) }
 //        val expr = mc.parseExpr("(14x^3+28+14x^-3)*exp((-x^-2)*sin(x^-1)*exp((x^3+x)/(x^3+1),1/7)+(x^-2)*cos(x^-1)*sin(x^-1),-2)*exp((x^3+x)/(x^3+1),2/7)*exp(sin(x^-1),1)")
 //        println(expr)
         println(mc.differential(expr,"x",5))

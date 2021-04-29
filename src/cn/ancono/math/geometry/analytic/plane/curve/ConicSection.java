@@ -11,7 +11,7 @@ import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -504,7 +504,7 @@ ConicSection<T>
      * @return
      */
     public ConicSection<T> transform(TransMatrix<T> tmat) {
-        if (tmat.getRowCount() != 2 || tmat.getColumnCount() != 2) {
+        if (tmat.getRow() != 2 || tmat.getColumn() != 2) {
             throw new IllegalArgumentException("Invalid matrix size!");
         }
         //compute inverse

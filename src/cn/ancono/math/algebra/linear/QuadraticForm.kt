@@ -22,23 +22,23 @@ class QuadraticForm {
                 chMap[ch] = i
             }
             val size = chars.size
-            val builder = Matrix.getBuilder(size, size, Fraction.calculator)
+            val builder = Matrix.zero(size, size, Fraction.calculator)
             for (term in q.terms) {
                 if (!term.isRational) {
                     throw IllegalArgumentException("Not rational")
                 }
                 val f = term.numberPart().toFraction()
                 val tch = term.character
-                when {
-                    tch.size == 1 -> {
+                when (tch.size) {
+                    1 -> {
                         val en = tch.firstEntry()
                         if (en.value != Fraction.TWO) {
                             throw IllegalArgumentException("Not quadratic form!")
                         }
                         val idx = chMap[en.key]!!
-                        builder.set(idx, idx, f)
+                        builder[idx, idx] = f
                     }
-                    tch.size == 2 -> {
+                    2 -> {
                         val en1 = tch.firstEntry()
                         val en2 = tch.lastEntry()
                         if (en1.value != Fraction.ONE || en2.value != Fraction.ONE) {
@@ -47,13 +47,13 @@ class QuadraticForm {
                         val i = chMap[en1.key]!!
                         val j = chMap[en2.key]!!
                         val half = f / 2
-                        builder.set(i, j, half)
-                        builder.set(j, i, half)
+                        builder[i, j] = half
+                        builder[j, i] = half
                     }
                     else -> throw IllegalArgumentException("Not quadratic form!")
                 }
             }
-            return builder.build()
+            return builder
         }
 
 //        fun

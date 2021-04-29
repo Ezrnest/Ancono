@@ -8,7 +8,7 @@ import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.curve.ClosedCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.ConicSection;
 import cn.ancono.math.geometry.analytic.plane.curve.RectifiableCurve;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

@@ -1,17 +1,20 @@
-/**
+/*
  *
  */
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.linear.AbstractVector;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
-import cn.ancono.math.algebra.linear.LinearEquationSolution.Situation;
 import cn.ancono.math.algebra.linear.Matrix;
-import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.VectorModel;
+import kotlin.jvm.functions.Function1;
+import kotlin.sequences.Sequence;
+import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
@@ -23,65 +26,44 @@ import java.util.function.Function;
 
 /**
  * The vector with two argument (x,y) in plane. Always serves as a column vector.
- * @author liyicheng
  *
+ * @author liyicheng
  */
 @SuppressWarnings("SuspiciousNameCombination")
-public final class PVector<T> extends Vector<T> {
+public final class PVector<T> extends AbstractVector<T> implements VectorModel<T, PVector<T>> {
     public final T x, y;
     private T length, lengthSq;
 
     /**
+     *
      */
     protected PVector(T x, T y, MathCalculator<T> mc) {
-        super(2, false, mc);
+        super(mc, 2);
         this.x = x;
         this.y = y;
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.math.AbstractVector#getSize()
-     */
-    @Override
-    public int getSize() {
-        return 2;
-    }
-
-    /* (non-Javadoc)
-     * @see cn.ancono.math.AbstractVector#isRow()
-     */
-    @Override
-    public boolean isRow() {
-        return false;
-    }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.AbstractVector#getNumber(int)
      */
     @Override
     public T get(int index) {
-        switch (index) {
-            case 0:
-                return x;
-            case 1:
-                return y;
-            default:
-                throw new IndexOutOfBoundsException("Index=" + index + " is out of bounds");
-        }
+        return switch (index) {
+            case 0 -> x;
+            case 1 -> y;
+            default -> throw new IndexOutOfBoundsException("Index=" + index + " is out of bounds");
+        };
     }
+
 
     /* (non-Javadoc)
      * @see cn.ancono.math.AbstractVector#toArray()
      */
-    @Override
-    public Object[] toArray() {
-        return new Object[]{x, y};
-    }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.AbstractVector#toArray(java.lang.Object[])
      */
-    @Override
     public T[] toArray(T[] arr) {
         if (arr.length < 2) {
             arr = Arrays.copyOf(arr, 2);
@@ -92,14 +74,20 @@ public final class PVector<T> extends Vector<T> {
     }
 
     @Override
-    public List<T> toList() {
+    public @NotNull List<T> toList() {
         return Arrays.asList(x, y);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Override
+    public Sequence<T> elementSequence() {
+        return SequencesKt.sequenceOf(x, y);
     }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.AbstractVector#calLength()
      */
-    @Override
     public T norm() {
         if (length == null) {
             length = getMc().squareRoot(normSq());
@@ -111,7 +99,6 @@ public final class PVector<T> extends Vector<T> {
     /* (non-Javadoc)
      * @see cn.ancono.math.AbstractVector#calLengthSq()
      */
-    @Override
     public T normSq() {
         if (lengthSq == null) {
             lengthSq = getMc().add(getMc().multiply(x, x), getMc().multiply(y, y));
@@ -124,79 +111,36 @@ public final class PVector<T> extends Vector<T> {
      * @see cn.ancono.math.AbstractVector#applyFunction(cn.ancono.math.MathFunction)
      */
     @Override
-    public PVector<T> applyFunction(MathFunction<T, T> f) {
-        return new PVector<T>(f.apply(x), f.apply(y), getMc());
+    public @NotNull PVector<T> applyAll(@NotNull Function1<? super T, ? extends T> f) {
+        return new PVector<T>(f.invoke(x), f.invoke(y), getMc());
     }
 
-    /** Ignores the parameter {@code i}.
-     * @see Matrix#get(int, int)
-     */
-    @Override
-    public T get(int i, int j) {
-        return get(j);
-    }
-
-    /* (non-Javadoc)
-     * @see cn.ancono.math.Matrix#getValues()
-     */
-    @Override
-    public T[][] getValues() {
-        @SuppressWarnings("unchecked")
-        T[][] res = (T[][]) Array.newInstance(x.getClass(), 1, 2);
-        res[0][0] = x;
-        res[1][0] = y;
-        return res;
-    }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.Matrix#negative()
      */
     @Override
-    public PVector<T> negate() {
+    public @NotNull PVector<T> negate() {
         return new PVector<T>(getMc().negate(x), getMc().negate(y), getMc());
     }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.Matrix#transportMatrix()
      */
-    @Override
-    public Vector<T> transpose() {
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) Array.newInstance(x.getClass(), 2);
-        arr[0] = x;
-        arr[1] = y;
-        return Vector.vOf(getMc(), true, arr);
-    }
 
     @Override
-    public PVector<T> multiplyNumber(long n) {
+    public @NotNull PVector<T> multiply(long n) {
         return new PVector<>(getMc().multiplyLong(x, n), getMc().multiplyLong(y, n), getMc());
     }
 
-
     @Override
-    public PVector<T> multiplyNumber(T n) {
+    public @NotNull PVector<T> multiply(T n) {
         return new PVector<>(getMc().multiply(x, n), getMc().multiply(y, n), getMc());
-    }
-
-
-    @Override
-    public Matrix<T> cofactor(int r, int c) {
-        throw new ArithmeticException("Too small for cofactor");
-    }
-
-    @Override
-    public int getRowCount() {
-        return 2;
-    }
-
-    @Override
-    public int getColumnCount() {
-        return 1;
     }
 
     /**
      * Returns the value of x in the vector.
+     *
      * @return x
      */
     public T getX() {
@@ -205,6 +149,7 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Returns the value of y in the vector.
+     *
      * @return y
      */
     public T getY() {
@@ -213,20 +158,29 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Returns {@code this + s}.
+     *
      * @param s another SVector
      * @return this + s
      */
-    public PVector<T> add(PVector<T> s) {
+    public @NotNull PVector<T> add(PVector<T> s) {
         return new PVector<>(getMc().add(x, s.x), getMc().add(y, s.y), getMc());
     }
 
     /**
      * Returns {@code this - s}.
+     *
      * @param s another SVector
      * @return this - s
      */
-    public PVector<T> subtract(PVector<T> s) {
+    public @NotNull PVector<T> subtract(PVector<T> s) {
         return new PVector<>(getMc().subtract(x, s.x), getMc().subtract(y, s.y), getMc());
+    }
+
+    @NotNull
+    @Override
+    public PVector<T> divide(T k) {
+        var mc = getMathCalculator();
+        return new PVector<>(mc.divide(x, k), mc.divide(y, k), mc);
     }
 
     /**
@@ -234,6 +188,7 @@ public final class PVector<T> extends Vector<T> {
      * is equal to <pre>
      * this · s
      * </pre>
+     *
      * @param s
      * @return this · s
      */
@@ -244,6 +199,7 @@ public final class PVector<T> extends Vector<T> {
     /**
      * Returns the angle of {@code this} and {@code s}.
      * <pre> arccos(this · s / (|this| |s|))</pre>
+     *
      * @param s
      * @return <pre> arccos(this · s / (|this| |s|))</pre>
      */
@@ -256,12 +212,18 @@ public final class PVector<T> extends Vector<T> {
     /**
      * Returns the cos value of the angle of {@code this} and {@code s}.
      * <pre>this · s / (|this| |s|)</pre>
+     *
      * @param s
      * @return <pre>this · s / (|this| |s|)</pre>
      */
     public T angleCos(PVector<T> s) {
         T pro = innerProduct(s);
         return getMc().divide(pro, getMc().multiply(norm(), s.norm()));
+    }
+
+    @Override
+    public boolean isLinearRelevant(@NotNull PVector<T> v) {
+        return isParallel(v);
     }
 
     /**
@@ -273,6 +235,7 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Determines whether the two vectors are perpendicular.
+     *
      * @param s
      * @return
      */
@@ -282,9 +245,9 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Returns a unit vector which is parallel to this vector.
+     *
      * @return an unit vector
      */
-    @Override
     public PVector<T> unitVector() {
         T length = norm();
         PVector<T> s = new PVector<>(getMc().divide(x, length),
@@ -324,6 +287,7 @@ public final class PVector<T> extends Vector<T> {
      * (cos x -sinx)( x )
      * (sin x cos x)( y )
      * </pre>
+     *
      * @param angle the rotation angle, in the anti-clockwise direction.
      * @return a new vector after rotation.
      */
@@ -381,16 +345,6 @@ public final class PVector<T> extends Vector<T> {
         return super.equals(obj);
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-
-        if (obj instanceof PVector) {
-            PVector<N> s = (PVector<N>) obj;
-            return getMc().isEqual(x, mapper.apply(s.x)) &&
-                    getMc().isEqual(y, mapper.apply(s.y));
-        }
-        return false;
-    }
 
     @Override
     public boolean valueEquals(@NotNull MathObject<T> obj) {
@@ -402,13 +356,14 @@ public final class PVector<T> extends Vector<T> {
             return getMc().isEqual(x, s.x) &&
                     getMc().isEqual(y, s.y);
         }
-        return false;
+        return super.valueEquals(obj);
     }
 
     /**
      * Returns the reduce of the vector, try to reduce {@code this}
      * into <pre>ax + by </pre>
      * This three vector must not be parallel.
+     *
      * @param x
      * @param y
      * @return a PVector of (a,b)
@@ -418,26 +373,18 @@ public final class PVector<T> extends Vector<T> {
         if (x.isParallel(y)) {
             throw new IllegalArgumentException("Parallel");
         }
-        @SuppressWarnings("unchecked")
-        T[][] mat = (T[][]) new Object[2][3];
-        mat[0][0] = x.x;
-        mat[0][1] = y.x;
-        mat[0][2] = this.x;
-
-        mat[1][0] = x.y;
-        mat[1][1] = y.y;
-        mat[1][2] = this.y;
-
-        LinearEquationSolution<T> sol = MatrixSup.solveLinearEquation(mat, getMc());
-        if (sol.getSolutionSituation() != Situation.UNIQUE) {
+//Matrix.so
+        LinearEquationSolution<T> sol = Matrix.solveLinear(Matrix.fromVectors(true, x, y), this);
+        if (sol.isSingle()) {
             throw new ArithmeticException("Not single?");
         }
-        return fromVector(sol.getSpecialSolution());
+        return fromVector(sol.getSpecial());
     }
 
 
     /**
      * Create a vector with the given x y  arguments.
+     *
      * @param x
      * @param y
      * @param mc a {@link MathCalculator}
@@ -456,8 +403,9 @@ public final class PVector<T> extends Vector<T> {
      * __
      * AB
      * </pre>
-     * @param A point A
-     * @param B point B
+     *
+     * @param A  point A
+     * @param B  point B
      * @param mc a {@link MathCalculator}
      * @return a new vector
      */
@@ -472,6 +420,7 @@ public final class PVector<T> extends Vector<T> {
      * AB
      * </pre>
      * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     *
      * @param A point A
      * @param B point B
      * @return a new vector
@@ -483,6 +432,7 @@ public final class PVector<T> extends Vector<T> {
     /**
      * Create a vector with the array,if the
      * array's length is not equal to 2, only the first three element will be considered.
+     *
      * @param xy
      * @param mc a {@link MathCalculator}
      * @return a new SVector
@@ -502,6 +452,7 @@ public final class PVector<T> extends Vector<T> {
     /**
      * Returns the sum of the vectors, this method is generally faster than add the
      * vectors one by one because it reduce the cost to create new objects.
+     *
      * @param vectors
      * @return
      */
@@ -525,6 +476,7 @@ public final class PVector<T> extends Vector<T> {
      * Create the SVector through another vector, the method only considers
      * the first two dimensions of the given vector.
      * <p>Notice: The MathCalculator of the new vector will be the identity as the vector's.
+     *
      * @param v a vector whose size is bigger than or equal to 2.
      * @return a new SVector
      */
@@ -537,8 +489,9 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Returns a vector according to the list first three elements.
+     *
      * @param list a list
-     * @param mc a {@link MathCalculator}
+     * @param mc   a {@link MathCalculator}
      * @return a new vector
      */
     public static <T> PVector<T> fromList(List<T> list, MathCalculator<T> mc) {
@@ -547,6 +500,7 @@ public final class PVector<T> extends Vector<T> {
 
     /**
      * Gets a zero vector:{@literal (0,0)}
+     *
      * @param mc
      * @return a new vector
      */

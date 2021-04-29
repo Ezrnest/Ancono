@@ -1,9 +1,13 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.*
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.MathObject
+import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.abs.structure.FiniteLinearBasis
 import cn.ancono.math.exceptions.OutOfDomainException
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.plus
+import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.property.Composable
 import cn.ancono.math.property.Intersectable
 import cn.ancono.utilities.CollectionSup
@@ -17,7 +21,7 @@ import java.util.function.Function
  * Created at 2018/9/10
  * @author liyicheng
  */
-interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
+interface IVectorBasis<T> : FiniteLinearBasis<T, Vector<T>> {
 
     /**
      * The dimension(size) of the base vectors.
@@ -45,7 +49,7 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
      * vectors are all column vectors.
      */
     fun getVectorsAsMatrix(): Matrix<T> {
-        return Matrix.fromVectors(false, vectors)
+        return Matrix.fromVectors(vectors)
     }
 
     /**
@@ -57,9 +61,12 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
     override fun reduce(v: Vector<T>): Vector<T> {
         requireVectorSize(v)
         val vectors = vectors
-        val mat = Matrix.fromVectors(false, *vectors.toTypedArray(), v)
-        val result = MatrixSup.solveLinearEquation(mat)
-        return result.specialSolution ?: throw OutOfDomainException("The Vector cannot be reduced.")
+        val mat = Matrix.fromVectors(vectors)
+        val result = Matrix.solveLinear(mat, v)
+        if (result.notEmpty()) {
+            return result.special
+        }
+        throw OutOfDomainException("The Vector cannot be reduced.")
     }
 
     /**
@@ -67,9 +74,8 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
      */
     fun canReduce(v: Vector<T>): Boolean {
         requireVectorSize(v)
-        val mat = Matrix.fromVectors(false, *vectors.toTypedArray(), v);
-        return MatrixSup.determineSolutionType(mat) !=
-                LinearEquationSolution.Situation.EMPTY
+        val mat = Matrix.fromVectors(vectors);
+        return Matrix.solveLinear(mat, v).notEmpty()
     }
 
     /**
@@ -96,10 +102,10 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
     override fun produce(cordInThisBase: Vector<T>): Vector<T> {
         requireVectorSize(rank, cordInThisBase)
         @Suppress("UNCHECKED_CAST")
-        val result = Array<Any>(rank) { i ->
+        val result = Array<Any?>(rank) { i ->
             vectors[i].inner(cordInThisBase)
         } as Array<T>
-        return Vector.vOf(cordInThisBase.mathCalculator, *result)
+        return Vector.of(cordInThisBase.mathCalculator, *result)
     }
 
     fun canReduce(vb: IVectorBasis<T>): Boolean {
@@ -120,7 +126,7 @@ interface IVectorBasis<T : Any> : FiniteLinearBasis<T, Vector<T>> {
 
 }
 
-internal fun <T : Any> IVectorBasis<T>.requireVectorSize(v: Vector<T>) {
+internal fun <T> IVectorBasis<T>.requireVectorSize(v: Vector<T>) {
     requireVectorSize(this.vectorLength, v)
 }
 
@@ -134,13 +140,13 @@ internal fun requireVectorSize(size: Int, v: Vector<*>) {
  * Determines whether this vector base is unit, which is true if all the vectors
  * in this base is unit vector.
  */
-fun <T : Any> IVectorBasis<T>.isUnit() = vectors.all { it.isUnitVector }
+fun <T> IVectorBasis<T>.isUnit() = vectors.all { it.isUnitVector() }
 
 /**
  * Determines whether this vector base is orthogonal, which is true if each vector
  * in this vector base is perpendicular to all other vectors.
  */
-fun <T : Any> IVectorBasis<T>.isOrthogonal(): Boolean {
+fun <T> IVectorBasis<T>.isOrthogonal(): Boolean {
     for (i in vectors.indices) {
         val v = vectors[i]
         for (j in (i + 1) until vectors.size) {
@@ -156,19 +162,19 @@ fun <T : Any> IVectorBasis<T>.isOrthogonal(): Boolean {
  * Determines whether this vector base is full, that is, whether the dimension of this
  * vector base is equal to the number of base vectors.
  */
-fun <T : Any> IVectorBasis<T>.isFull(): Boolean = vectorLength == rank
+fun <T> IVectorBasis<T>.isFull(): Boolean = vectorLength == rank
 
 /**
  * Determines whether this vector base can be transformed to a standard vector base by
  * a linear transformation whose determinant is one.
  */
-fun <T : Any> IVectorBasis<T>.isSimilarStandard(): Boolean = isFull() && isOrthogonal() && isUnit()
+fun <T> IVectorBasis<T>.isSimilarStandard(): Boolean = isFull() && isOrthogonal() && isUnit()
 
 /**
  * Converts this vector base to a full vector base. Throws an exception if
  * this vector base is not full.
  */
-fun <T : Any> IVectorBasis<T>.asFullVectorBase(): FullVectorBasis<T> {
+fun <T> IVectorBasis<T>.asFullVectorBase(): FullVectorBasis<T> {
     if (!isFull()) {
         throw IllegalArgumentException("Not full!")
     }
@@ -178,7 +184,7 @@ fun <T : Any> IVectorBasis<T>.asFullVectorBase(): FullVectorBasis<T> {
     return FullVectorBasis(vectorLength, vectors)
 }
 
-fun <T : Any> IVectorBasis<T>.asVectorBase(): VectorBasis<T> {
+fun <T> IVectorBasis<T>.asVectorBase(): VectorBasis<T> {
     if (this is VectorBasis) {
         return this
     }
@@ -186,7 +192,7 @@ fun <T : Any> IVectorBasis<T>.asVectorBase(): VectorBasis<T> {
 }
 
 @Suppress("RedundantOverride")//Provided for Java extension
-abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
+abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         IVectorBasis<T>, Composable<VectorBasis<T>>, Intersectable<VectorBasis<T>> {
 
 
@@ -207,9 +213,9 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
     }
 
     override fun transform(mat: Matrix<T>): VectorBasis<T> {
-        require(mat.columnCount == vectorLength)
+        require(mat.column == vectorLength)
         { "The transformation matrix must have the same size of $vectorLength" }
-        require(mat.isInvertible) { "The transformation matrix must be invertible" }
+        require(mat.isInvertible()) { "The transformation matrix must be invertible" }
         return DVectorBasis(vectorLength, vectors.map { Vector.multiplyToVector(mat, it) })
     }
 
@@ -245,7 +251,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         requireSameVectorDimension(vb)
         val a = getVectorsAsMatrix()
         val b = vb.getVectorsAsMatrix()
-        return MatrixSup.solveMatrixEquation(a, b)
+        return Matrix.solveLinear(a, b).first
     }
 
 
@@ -296,10 +302,10 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         val nVectorDimension = vectorLength + vb.vectorLength
         val nVectors = ArrayList<Vector<T>>(rank + vb.rank)
         for (v in vectors) {
-            nVectors += Vector.resizeOf(v, 0, vb.vectorLength)
+            nVectors += v.expand(0, vb.vectorLength)
         }
         for (v in vb.vectors) {
-            nVectors += Vector.resizeOf(v, vectorLength, 0)
+            nVectors += v.expand(vectorLength, 0)
         }
         return DVectorBasis(mc, nVectorDimension, nVectors)
     }
@@ -343,7 +349,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         val nVectors = ArrayList<Vector<T>>(rank + vb.rank)
         nVectors.addAll(vectors)
         for (v in vb.vectors) {
-            if (!Vector.isLinearRelevant(nVectors + v)) {
+            if (!Vector.isLinearDependent(nVectors + v)) {
                 nVectors.add(v)
             }
         }
@@ -360,7 +366,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
     open fun directSum(vb: VectorBasis<T>): VectorBasis<T> {
         requireSameVectorDimension(vb)
         val nVectors = vectors + vb.vectors
-        if (Vector.isLinearRelevant(nVectors)) {
+        if (Vector.isLinearDependent(nVectors)) {
             throw java.lang.IllegalArgumentException("Not direct sum!")
         }
         return DVectorBasis(vectorLength, vectors)
@@ -378,8 +384,8 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         if (this.isFull() || vb.rank == 0) {
             return vb
         }
-        val m = Matrix.fromVectors(false, this.vectors + vb.vectors)
-        val solution = m.solutionSpace()!! // at least zero solution
+        val m = Matrix.fromVectors(this.vectors + vb.vectors)
+        val solution = m.solutionSpace() // at least zero solution
         if (solution.rank == 0) {
             return VectorBasis.zeroBase(vectorLength, mc)
         }
@@ -394,7 +400,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         return DVectorBasis(mc, vectorLength, nBases)
     }
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
         val nVectors = vectors.map { it.mapTo(newCalculator, mapper) }
         return DVectorBasis(newCalculator, vectorLength, nVectors)
     }
@@ -411,7 +417,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
                 CollectionSup.listEqual(vectors, vb.vectors) { v1, v2 -> v1.valueEquals(v2) }
     }
 
-    override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         if (this == obj) {
             return true
         }
@@ -437,7 +443,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
          * operations.
          */
         @JvmStatic
-        fun <T : Any> zeroBase(dimension: Int, mc: MathCalculator<T>): VectorBasis<T> {
+        fun <T> zeroBase(dimension: Int, mc: MathCalculator<T>): VectorBasis<T> {
             return ZeroVectorBasis(mc, dimension)
         }
 
@@ -445,7 +451,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
          * Returns the standard base, which is both unit and orthogonal.
          */
         @JvmStatic
-        fun <T : Any> standardBase(dimension: Int, mc: MathCalculator<T>): StandardVectorBasis<T> {
+        fun <T> standardBase(dimension: Int, mc: MathCalculator<T>): StandardVectorBasis<T> {
             require(dimension > 0) { "Dimension must be positive." }
             return StandardVectorBasis(mc, dimension)
         }
@@ -455,22 +461,22 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
          * @param dimension the dimension(length) of all the vectors
          * @param baseSize the number of vectors that this base will have, must not exceed [dimension]
          */
-        fun <T : Any> identityBase(dimension: Int, baseSize: Int, mc: MathCalculator<T>): VectorBasis<T> {
+        fun <T> identityBase(dimension: Int, baseSize: Int, mc: MathCalculator<T>): VectorBasis<T> {
             require(baseSize > 0)
             require(dimension >= baseSize)
             val list = (0 until baseSize).map { Vector.unitVector(dimension, it, mc) }
             return DVectorBasis(dimension, list)
         }
 
-        private fun <T : Any> checkIrrelevant(vectors: List<Vector<T>>): List<Vector<T>> {
+        private fun <T> checkIrrelevant(vectors: List<Vector<T>>): List<Vector<T>> {
             val dimension = vectors[0].size
-            require(!Vector.isLinearRelevant(vectors)) { "Vectors must be linear irrelevant!" }
+            require(!Vector.isLinearDependent(vectors)) { "Vectors must be linear irrelevant!" }
 
             val copy = vectors.map { v ->
                 if (v.size != dimension) {
                     throw IllegalArgumentException("Vector's size ${v.size} is not equal to dimension=$dimension")
                 }
-                v.toColumnVector()
+                v
             }
             return copy
         }
@@ -479,7 +485,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
          * Creates a vector base with given vectors, the vectors must be linear irrelevant.
          */
         @JvmStatic
-        fun <T : Any> createBase(vectors: List<Vector<T>>): VectorBasis<T> {
+        fun <T> createBase(vectors: List<Vector<T>>): VectorBasis<T> {
             require(vectors.isNotEmpty())
             val dimension = vectors[0].size
             val copy = checkIrrelevant(vectors)
@@ -493,16 +499,17 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         /**
          * Creates a vector base with given vararg vectors.
          */
+        @SafeVarargs
         @JvmStatic
-        fun <T : Any> createBase(vararg vectors: Vector<T>): VectorBasis<T> {
-            return createBase(listOf(*vectors))
+        fun <T> createBase(vararg vectors: Vector<T>): VectorBasis<T> {
+            return createBase(vectors.asList())
         }
 
         /**
          * Creates a full base from the given vectors.
          */
         @JvmStatic
-        fun <T : Any> createFullBase(vectors: List<Vector<T>>): FullVectorBasis<T> {
+        fun <T> createFullBase(vectors: List<Vector<T>>): FullVectorBasis<T> {
             require(vectors.isNotEmpty())
             require(vectors.size == vectors[0].size)
             val dimension = vectors.size
@@ -514,17 +521,17 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
          * Creates a full base from the given vararg vectors.
          */
         @JvmStatic
-        fun <T : Any> createFullBase(vararg vectors: Vector<T>): FullVectorBasis<T> {
+        fun <T> createFullBase(vararg vectors: Vector<T>): FullVectorBasis<T> {
             return createFullBase(listOf(*vectors))
         }
 
         @JvmStatic
-        fun <T : Any> createBaseWithoutCheck(vectors: List<Vector<T>>): VectorBasis<T> {
+        fun <T> createBaseWithoutCheck(vectors: List<Vector<T>>): VectorBasis<T> {
             require(vectors.isNotEmpty())
             val dimension = vectors[0].size
             val copy = vectors.map { v ->
                 requireVectorSize(dimension, v)
-                v.toColumnVector()
+                v
             }
             return if (dimension == vectors.size) {
                 FullVectorBasis(dimension, copy)
@@ -535,23 +542,23 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
 
         @JvmStatic
         @SafeVarargs
-        fun <T : Any> createBaseWithoutCheck(vararg vectors: Vector<T>): VectorBasis<T> {
+        fun <T> createBaseWithoutCheck(vararg vectors: Vector<T>): VectorBasis<T> {
             return createBaseWithoutCheck(vectors.asList())
         }
 
         @JvmStatic
         @SafeVarargs
-        fun <T : Any> generate(vararg vectors: Vector<T>): VectorBasis<T> {
-            return Vector.maximumLinearIrrelevant(*vectors)
+        fun <T> generate(vararg vectors: Vector<T>): VectorBasis<T> {
+            return Vector.maxIndependent(vectors.asList())
         }
 
         @JvmStatic
-        fun <T : Any> generate(vectors: List<Vector<T>>): VectorBasis<T> {
-            return Vector.maximumLinearIrrelevant(vectors)
+        fun <T> generate(vectors: List<Vector<T>>): VectorBasis<T> {
+            return Vector.maxIndependent(vectors)
         }
 
         @JvmStatic
-        fun <T : Any> directSumAll(vectors: List<VectorBasis<T>>): VectorBasis<T> {
+        fun <T> directSumAll(vectors: List<VectorBasis<T>>): VectorBasis<T> {
             val rankSum = vectors.sumBy { it.rank }
             val ves = vectors.flatMapTo(ArrayList(rankSum)) { it.vectors }
             val sum = generate(ves)
@@ -562,7 +569,7 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
         }
 
         @JvmStatic
-        fun <T : Any> directSumAll(vararg vectors: VectorBasis<T>): VectorBasis<T> {
+        fun <T> directSumAll(vararg vectors: VectorBasis<T>): VectorBasis<T> {
             return directSumAll(vectors.asList())
         }
 
@@ -570,22 +577,22 @@ abstract class VectorBasis<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>
     }
 }
 
-internal class DVectorBasis<T : Any>(mc: MathCalculator<T>, override val vectorLength: Int, override val vectors: List<Vector<T>>) :
+internal class DVectorBasis<T>(mc: MathCalculator<T>, override val vectorLength: Int, override val vectors: List<Vector<T>>) :
         VectorBasis<T>(mc) {
     constructor(vectorDimension: Int, vectors: List<Vector<T>>) : this(vectors[0].mathCalculator, vectorDimension, vectors)
 
     override val rank: Int = vectors.size
 }
 
-interface IFullVectorBasis<T : Any> : IVectorBasis<T>
+interface IFullVectorBasis<T> : IVectorBasis<T>
 
 
 /**
  * Describes a vector base whose [vectorLength] is equal to [rank].
  */
-open class FullVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>,
-                                                         final override val vectorLength: Int,
-                                                         final override val vectors: List<Vector<T>>) :
+open class FullVectorBasis<T> internal constructor(mc: MathCalculator<T>,
+                                                   final override val vectorLength: Int,
+                                                   final override val vectors: List<Vector<T>>) :
         VectorBasis<T>(mc), IFullVectorBasis<T> {
     internal constructor(dimension: Int, vectors: List<Vector<T>>) : this(vectors[0].mathCalculator, dimension, vectors)
 
@@ -603,8 +610,8 @@ open class FullVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>,
         get() = vectorLength
 
     override fun transform(mat: Matrix<T>): FullVectorBasis<T> {
-        require(mat.columnCount == vectorLength) { "The transformation matrix must have the same size of $vectorLength" }
-        require(mat.isInvertible) { "The transformation matrix must be invertible" }
+        require(mat.column == vectorLength) { "The transformation matrix must have the same size of $vectorLength" }
+        require(mat.isInvertible()) { "The transformation matrix must be invertible" }
 
         return FullVectorBasis(mc, vectorLength, vectors.map { Vector.multiplyToVector(mat, it) })
     }
@@ -664,13 +671,13 @@ open class FullVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>,
     fun transMatrixToStandard(): Matrix<T> = vectorMatrixInverse
 
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
         return FullVectorBasis(newCalculator, vectorLength, vectors.map { it.mapTo(newCalculator, mapper) })
     }
 
 }
 
-private fun <T : Any> initUnitVectors(mc: MathCalculator<T>, dimension: Int): List<Vector<T>> {
+private fun <T> initUnitVectors(mc: MathCalculator<T>, dimension: Int): List<Vector<T>> {
     val list = ArrayList<Vector<T>>(dimension)
     for (i in 0 until dimension) {
         list.add(Vector.unitVector(dimension, i, mc))
@@ -682,7 +689,7 @@ private fun <T : Any> initUnitVectors(mc: MathCalculator<T>, dimension: Int): Li
  * Describes the standard vector base, in which the base vectors are orthogonal and unit, the [vectorLength]
  * and [rank] are the same.
  */
-class StandardVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, dimension: Int) :
+class StandardVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimension: Int) :
         FullVectorBasis<T>(mc, dimension, initUnitVectors(mc, dimension)) {
 
     override fun reduce(v: Vector<T>): Vector<T> {
@@ -706,7 +713,7 @@ class StandardVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, d
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String =
             "StandardVectorBase: dimension=$vectorLength"
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
         return StandardVectorBasis(newCalculator, vectorLength)
     }
 
@@ -725,7 +732,7 @@ class StandardVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, d
 
 }
 
-class ZeroVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, dimension: Int) : VectorBasis<T>(mc) {
+class ZeroVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimension: Int) : VectorBasis<T>(mc) {
     override val rank: Int
         get() = 0
     override val vectorLength: Int = dimension
@@ -741,10 +748,10 @@ class ZeroVectorBasis<T : Any> internal constructor(mc: MathCalculator<T>, dimen
     }
 
     override fun canReduce(v: Vector<T>): Boolean {
-        return v.isZero
+        return v.isZero()
     }
 
-    override fun <N : Any> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
         return ZeroVectorBasis(newCalculator, vectorLength)
     }
 }

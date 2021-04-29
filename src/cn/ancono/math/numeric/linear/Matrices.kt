@@ -75,17 +75,17 @@ object Matrices {
      *     0 0 1
      * @param m an invertible matrix
      */
-    fun <T : Any> inverseGaussJordanSteps(m: Matrix<T>): List<MatrixOperation<T>> {
-        require(m.isSquare)
+    fun <T> inverseGaussJordanSteps(m: Matrix<T>): List<MatrixOperation<T>> {
+        require(m.isSquare())
         val mc = m.mathCalculator
 
         @Suppress("UNCHECKED_CAST")
-        val matrix = m.values as Array<Array<T>>
+        val matrix = m.getValues() as Array<Array<T>>
         val operations = mutableListOf<MatrixOperation<T>>()
-        for (k in 0 until m.rowCount) {
+        for (k in 0 until m.row) {
             var maxIdx = k
             var maxVal = mc.abs(matrix[k][k])
-            for (i in (k + 1) until m.rowCount) {
+            for (i in (k + 1) until m.row) {
                 val v = mc.abs(matrix[i][k])
                 if (mc.compare(v, maxVal) > 0) {
                     maxIdx = i
@@ -98,19 +98,19 @@ object Matrices {
             }
             val c = mc.reciprocal(matrix[k][k])
 //            matrix[k][k] = mc.one
-            for (j in (k + 1) until m.columnCount) {
+            for (j in (k + 1) until m.column) {
                 matrix[k][j] = mc.eval {
                     c * matrix[k][j]
                 }
             }
             operations += MatrixOperation.multiplyRow(k, c)
-            for (i in 0 until m.rowCount) {
+            for (i in 0 until m.row) {
                 if (i == k) {
                     continue
                 }
                 val p = mc.negate(matrix[i][k])
 //                matrix[i][k] = mc.zero
-                for (j in (k + 1) until m.columnCount) {
+                for (j in (k + 1) until m.column) {
                     matrix[i][j] = mc.eval {
                         matrix[i][j] + p * matrix[k][j]
                     }
@@ -137,12 +137,14 @@ object Matrices {
      * @param m an invertible matrix
      * @param p a number `>=1`, or `null`.
      */
-    fun <T : Any> cond(m : Matrix<T>, p : T?) : T{
+    fun <T> cond(m: Matrix<T>, p: T?): T {
         val mc = m.mathCalculator
         val n = m.inverse()
-
-        return mc.eval{
-            m.normP(p) * n.normP(p)
+        if (p == null) {
+            return mc.eval { m.normInf() * n.normInf() }
+        }
+        return mc.eval {
+            m.norm(p) * n.norm(p)
         }
     }
 
@@ -159,7 +161,7 @@ object Matrices {
 //    )
 //    val steps = LinearEquations.inverseGaussJordanSteps(m)
 //    var A = m
-//    var B = Matrix.identity(m.rowCount,m.mathCalculator)
+//    var B = Matrix.identity(m.row,m.mathCalculator)
 //    for (s in steps) {
 //        A = A.doOperation(s)
 //        A.printMatrix()

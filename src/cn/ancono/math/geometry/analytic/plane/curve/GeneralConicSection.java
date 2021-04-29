@@ -10,7 +10,7 @@ import cn.ancono.math.geometry.analytic.plane.PVector;
 import cn.ancono.math.geometry.analytic.plane.TransMatrix;
 import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.Simplifier;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -195,7 +195,7 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
                 EquationSup::solveUsingFormula);
         Vector<T> v1 = eigenvaluesAndVectors.get(0).getSecond(),
                 v2 = eigenvaluesAndVectors.get(1).getSecond();
-        List<Vector<T>> list = Vector.orthogonalizeAndUnit(v1, v2);
+        List<Vector<T>> list = Vector.orthogonalizeAndUnit(Arrays.asList(v1, v2));
         v1 = list.get(0);
         v2 = list.get(1);
         TransMatrix<T> matrix =

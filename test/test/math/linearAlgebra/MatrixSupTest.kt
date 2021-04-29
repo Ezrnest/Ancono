@@ -1,8 +1,8 @@
 package test.math.linearAlgebra
 
-import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
+import cn.ancono.math.numberModels.Calculators
 import org.junit.Test
 import test.math.TestUtils
 import kotlin.test.assertTrue
@@ -16,8 +16,8 @@ class MatrixSupTest {
         val cal = Calculators.integerExact()
         val m = MatrixSup.parseMatrix("[[1 2 3][4 5 6][7 8 9]]", cal) { s: String -> s.toInt() }
         var w = m.toSmithForm()
-        w = w.applyFunction { para: Int? -> cal.abs(para!!) }
-        TestUtils.assertValueEquals(Matrix.diag(arrayOf(1, 3, 0), cal), w)
+        w = w.applyAll { para: Int? -> cal.abs(para!!) }
+        TestUtils.assertValueEquals(Matrix.diag(listOf(1, 3, 0), cal), w)
     }
 
     @Test

@@ -46,22 +46,14 @@ public class MatrixOperation<T> {
      * @return a String
      */
     public String toDetail() {
-        switch (ope) {
-            case EXCHANGE_COLUMN:
-                return "Exchange Column:" + arg0 + "<->" + arg1;
-            case EXCHANGE_ROW:
-                return "Exchange Row:" + arg0 + "<->" + arg1;
-            case MULTIPLY_ADD_COLUMN:
-                return "Mul Column " + arg0 + " by " + num.toString() + " add to Column " + arg1;
-            case MULTIPLY_ADD_ROW:
-                return "Mul Row " + arg0 + " by " + num.toString() + " add to Row " + arg1;
-            case MULTIPLY_COLUMN:
-                return "Multiply Column: " + arg0 + " by " + num.toString();
-            case MULTIPLY_ROW:
-                return "Multiply Row: " + arg0 + " by " + num.toString();
-            default:
-                return "No such operation";
-        }
+        return switch (ope) {
+            case EXCHANGE_COLUMN -> "Exchange Column:" + arg0 + "<->" + arg1;
+            case EXCHANGE_ROW -> "Exchange Row:" + arg0 + "<->" + arg1;
+            case MULTIPLY_ADD_COLUMN -> "Mul Column " + arg0 + " by " + num.toString() + " add to Column " + arg1;
+            case MULTIPLY_ADD_ROW -> "Mul Row " + arg0 + " by " + num.toString() + " add to Row " + arg1;
+            case MULTIPLY_COLUMN -> "Multiply Column: " + arg0 + " by " + num.toString();
+            case MULTIPLY_ROW -> "Multiply Row: " + arg0 + " by " + num.toString();
+        };
     }
 
     @Override

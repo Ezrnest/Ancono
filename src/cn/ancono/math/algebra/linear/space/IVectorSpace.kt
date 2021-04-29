@@ -15,7 +15,7 @@ import cn.ancono.math.algebra.linear.Vector
  *
  * @author liyicheng
  */
-interface IVectorSpace<T : Any> : FiniteLinearSpace<T, Vector<T>> {
+interface IVectorSpace<T> : FiniteLinearSpace<T, Vector<T>> {
 
 //    override fun getSet(): MathSet<Vector<T>> {
 //        return basis
@@ -30,8 +30,7 @@ interface IVectorSpace<T : Any> : FiniteLinearSpace<T, Vector<T>> {
 }
 
 
-
-interface VectorSpaceCalculator<T : Any> : LinearSpaceCalculator<T, Vector<T>> {
+interface VectorSpaceCalculator<T> : LinearSpaceCalculator<T, Vector<T>> {
 
     /**
      * Returns the length of the vector in this vector space.
@@ -45,12 +44,12 @@ interface VectorSpaceCalculator<T : Any> : LinearSpaceCalculator<T, Vector<T>> {
 
     @JvmDefault
     override fun isLinearDependent(vs: List<Vector<T>>): Boolean {
-        return Vector.isLinearRelevant(vs)
+        return Vector.isLinearDependent(vs)
     }
 
     @JvmDefault
     override fun scalarMultiply(k: T, v: Vector<T>): Vector<T> {
-        return v.multiplyNumber(k)
+        return v.multiply(k)
     }
 
     @JvmDefault
@@ -71,9 +70,9 @@ interface VectorSpaceCalculator<T : Any> : LinearSpaceCalculator<T, Vector<T>> {
 
 }
 
-class VectorSpaceCalculatorImpl<T : Any>(override val vectorLength: Int, private val mc: MathCalculator<T>) : VectorSpaceCalculator<T> {
+class VectorSpaceCalculatorImpl<T>(override val vectorLength: Int, private val mc: MathCalculator<T>) : VectorSpaceCalculator<T> {
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
     override val identity: Vector<T>
-        get() = Vector.zeroVector(vectorLength, mc)
+        get() = Vector.zero(vectorLength, mc)
 }

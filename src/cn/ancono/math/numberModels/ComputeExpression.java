@@ -5,7 +5,7 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.utilities.ArraySup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -837,11 +837,9 @@ public class ComputeExpression {
 
                 }
 
-                Pair<Node, Boolean> p = new Pair<>();
-                p.setSecond(down);
+                var pd = down;
                 if (next == length) {
-                    p.setFirst(n);
-                    list.add(p);
+                    list.add(new Pair<>(n, down));
                     break;
                 }
                 down = false;
@@ -874,7 +872,7 @@ public class ComputeExpression {
                     } else {
                         long pow;
                         try {
-                            pow = Long.valueOf(str.substring(next, index));
+                            pow = Long.parseLong(str.substring(next, index));
                         } catch (NumberFormatException e) {
                             throwFor("Value Exceeds: ", offset + next);
                             throw new RuntimeException();
@@ -885,8 +883,7 @@ public class ComputeExpression {
 
                 }
                 start = next;
-                p.setFirst(n);
-                list.add(p);
+                list.add(new Pair<>(n, pd));
 
             }
             return list;

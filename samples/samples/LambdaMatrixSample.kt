@@ -1,8 +1,6 @@
 package samples
 
 import cn.ancono.math.algebra.linear.QuadraticForm
-import cn.ancono.math.component1
-import cn.ancono.math.component2
 import cn.ancono.math.numberModels.Multinomial
 
 fun main() {
@@ -17,10 +15,10 @@ fun main() {
 
     val expr = "10x^2+8xy+24xz+2y^2-28yz+z^2"
     val B = QuadraticForm.representationMatrix(Multinomial.parse(expr))
-    B.printMatrix()
+    println(B)
     val (J, P) = B.toCongDiagForm()
-    J.printMatrix()
-    P.printMatrix()
+    println(J)
+    println(P)
 //    (P.transportMatrix() * A * P).printMatrix()
 //    val (J,P) = MatrixSup.jordanFormAndTrans(A)!!
 //    J.printMatrix()

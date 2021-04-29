@@ -26,7 +26,7 @@ import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.ModelPatterns;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
@@ -854,7 +854,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @return the determinant of the sylvester matrix
      */
     public T sylvesterDet(Polynomial<T> g) {
-        return sylvesterMatrix(g).calDet();
+        return sylvesterMatrix(g).det();
     }
 
     /**
@@ -870,7 +870,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public T determinant() {
         var det = sylvesterMatrix(derivative());
-        var re = det.calDet();
+        var re = det.det();
         re = getMc().divide(re, first());
         int n = getDegree();
         if (n % 4 == 2 || n % 4 == 3) {

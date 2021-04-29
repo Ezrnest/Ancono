@@ -1,8 +1,8 @@
 package cn.ancono.math.numberModels.expression.simplification
 
-import cn.ancono.math.minus
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
+import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.expression.*
 import cn.ancono.math.numberModels.expression.anno.DisallowModify
 import java.util.function.Predicate
@@ -45,163 +45,171 @@ interface NodeMatcher {
     val refNames: Set<String>
 }
 
-val String.m: PolyMatcher
-    get() = PolyMatcher(Multinomial.parse(this))
+object NodeMatcherScope {
 
-val String.ref: SingleRefMatcher
-    get() = SingleRefMatcher(this)
+    val String.m: PolyMatcher
+        get() = PolyMatcher(Multinomial.parse(this))
 
-/**
- * Returns a matcher that matches `m + this.ref`, where `m` is a multinomial.
- */
-fun String.mAdd(m: Multinomial): PolyAMNameGroupMatcher {
-    return PolyAMNameGroupMatcher(m, this, true)
-}
+    val String.ref: SingleRefMatcher
+        get() = SingleRefMatcher(this)
 
-/**
- * Returns a matcher that matches `m * this.ref`, where `m` is a multinomial.
- */
-fun String.mMul(m: Multinomial): PolyAMNameGroupMatcher {
-    return PolyAMNameGroupMatcher(m, this, false)
-}
-
-
-val poly: TypedMatcher = TypedMatcher(Node.Type.POLYNOMIAL)
-val x = "x".ref
-val integer = polyOf(Predicate { m ->
-    m.isMonomial && m.first.isInteger
-})
-
-val rational = polyOf { m ->
-    m.isMonomial && m.first.let { it.isRational && it.hasNoChar() }
-}
-
-/**
- * A real number without any character except `e` and `pi`
- */
-private val epiSet = setOf(Term.E_STR, Term.PI_STR)
-val real = polyOf { m ->
-    m.terms.all { t -> t.hasNoChar() || epiSet.containsAll(t.characterName) }
-}
-
-val monomial = polyOf { it.isMonomial }
-
-/**
- * Gets a matcher that matches the Int.
- */
-val Int.m: PolyMatcher
-    get() = PolyMatcher(Multinomial.of(this.toLong()))
-
-val Multinomial.m: PolyMatcher
-    get() = PolyMatcher(this)
-
-fun polyOf(matcher: Predicate<Multinomial>) = NoneRefMatcherWrapper { n ->
-    if (!Node.isPolynomial(n)) {
-        false
-    } else {
-        matcher.test((n as Node.Poly).polynomial)
+    /**
+     * Returns a matcher that matches `m + this.ref`, where `m` is a multinomial.
+     */
+    fun String.mAdd(m: Multinomial): PolyAMNameGroupMatcher {
+        return PolyAMNameGroupMatcher(m, this, true)
     }
-}
 
-fun polyOf(matcher: (Multinomial) -> Boolean) = NoneRefMatcherWrapper { n ->
-    if (!Node.isPolynomial(n)) {
-        false
-    } else {
-        matcher.invoke((n as Node.Poly).polynomial)
+    /**
+     * Returns a matcher that matches `m * this.ref`, where `m` is a multinomial.
+     */
+    fun String.mMul(m: Multinomial): PolyAMNameGroupMatcher {
+        return PolyAMNameGroupMatcher(m, this, false)
     }
-}
-
-fun NodeMatcher.named(name: String): NamedGroupMatcher {
-    return NamedGroupMatcher(name, this)
-}
 
 
-operator fun NodeMatcher.plus(y: NodeMatcher): SimpleAMMatcher {
-    val x = this
-    if (x is SimpleAMMatcher) {
-        if (x.isAdd) {
-            return mergeToAM(x, y, true)
+    val poly: TypedMatcher = TypedMatcher(Node.Type.POLYNOMIAL)
+    val x = "x".ref
+    val integer = polyOf(Predicate { m ->
+        m.isMonomial && m.first.isInteger
+    })
+
+    val rational = polyOf { m ->
+        m.isMonomial && m.first.let { it.isRational && it.hasNoChar() }
+    }
+
+    /**
+     * A real number without any character except `e` and `pi`
+     */
+    private val epiSet = setOf(Term.E_STR, Term.PI_STR)
+    val real = polyOf { m ->
+        m.terms.all { t -> t.hasNoChar() || epiSet.containsAll(t.characterName) }
+    }
+
+    val monomial = polyOf { it.isMonomial }
+
+    /**
+     * Gets a matcher that matches the Int.
+     */
+    val Int.m: PolyMatcher
+        get() = PolyMatcher(Multinomial.of(this.toLong()))
+
+    val Multinomial.m: PolyMatcher
+        get() = PolyMatcher(this)
+
+    fun polyOf(matcher: Predicate<Multinomial>) = NoneRefMatcherWrapper { n ->
+        if (!Node.isPolynomial(n)) {
+            false
+        } else {
+            matcher.test((n as Node.Poly).polynomial)
         }
     }
-    if (y is SimpleAMMatcher) {
-        if (y.isAdd) {
-            return mergeToAM(y, x, true)
+
+    fun polyOf(matcher: (Multinomial) -> Boolean) = NoneRefMatcherWrapper { n ->
+        if (!Node.isPolynomial(n)) {
+            false
+        } else {
+            matcher.invoke((n as Node.Poly).polynomial)
         }
     }
-    return SimpleAMMatcher(true, null, listOf(x, y), NoneMatcher)
-}
 
-operator fun NodeMatcher.unaryMinus(): SimpleAMMatcher {
-    val negativeOne = Multinomial.NEGATIVE_ONE.m
-    return negativeOne * this
-}
-
-
-operator fun NodeMatcher.times(y: NodeMatcher): SimpleAMMatcher {
-    val x = this
-    if (x is SimpleAMMatcher) {
-        if (!x.isAdd) {
-            return mergeToAM(x, y, false)
-        }
+    fun NodeMatcher.named(name: String): NamedGroupMatcher {
+        return NamedGroupMatcher(name, this)
     }
-    if (y is SimpleAMMatcher) {
-        if (!y.isAdd) {
-            return mergeToAM(y, x, false)
+
+
+    operator fun NodeMatcher.plus(y: NodeMatcher): SimpleAMMatcher {
+        val x = this
+        if (x is SimpleAMMatcher) {
+            if (x.isAdd) {
+                return mergeToAM(x, y, true)
+            }
         }
+        if (y is SimpleAMMatcher) {
+            if (y.isAdd) {
+                return mergeToAM(y, x, true)
+            }
+        }
+        return SimpleAMMatcher(true, null, listOf(x, y), NoneMatcher)
     }
-    return SimpleAMMatcher(false, null, listOf(x, y), NoneMatcher)
+
+    operator fun NodeMatcher.unaryMinus(): SimpleAMMatcher {
+        val negativeOne = Multinomial.NEGATIVE_ONE.m
+        return negativeOne * this
+    }
+
+
+    operator fun NodeMatcher.times(y: NodeMatcher): SimpleAMMatcher {
+        val x = this
+        if (x is SimpleAMMatcher) {
+            if (!x.isAdd) {
+                return mergeToAM(x, y, false)
+            }
+        }
+        if (y is SimpleAMMatcher) {
+            if (!y.isAdd) {
+                return mergeToAM(y, x, false)
+            }
+        }
+        return SimpleAMMatcher(false, null, listOf(x, y), NoneMatcher)
+    }
+
+    operator fun NodeMatcher.div(y: NodeMatcher): FractionMatcher {
+        return FractionMatcher(this, y)
+    }
+
+    fun addPartly(remainingMatcher: NodeMatcher, vararg matchers: NodeMatcher): SimpleAMMatcher {
+        return SimpleAMMatcher(true, null, matchers.toList(), remainingMatcher)
+    }
+
+    fun mulPartly(remainingMatcher: NodeMatcher, vararg matchers: NodeMatcher): SimpleAMMatcher {
+        return SimpleAMMatcher(false, null, matchers.toList(), remainingMatcher)
+    }
+
+    /**
+     * Returns a matcher of addition that takes the [matcher] as fixed matchers and a reference matcher
+     * named as `this`. This method is the same as `addPartly(this.ref,*matcher)`.
+     */
+    fun String.addR(vararg matcher: NodeMatcher): SimpleAMMatcher {
+        return addPartly(this.ref, *matcher)
+    }
+
+    /**
+     * Returns a matcher of multiplication that takes the [matcher] as fixed matchers and a reference matcher
+     * named as `this`. This method is the same as `mulPartly(this.ref,*matcher)`.
+     */
+    fun String.mulR(vararg matcher: NodeMatcher): SimpleAMMatcher {
+        return mulPartly(this.ref, *matcher)
+    }
+
+    private fun mergeToAM(simpleAMMatcher: SimpleAMMatcher, y: NodeMatcher, isAdd: Boolean): SimpleAMMatcher {
+        return SimpleAMMatcher(isAdd, simpleAMMatcher.polyMatcher, simpleAMMatcher.matchers + y, simpleAMMatcher.remainingMatcher)
+    }
+
+    fun abs(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ABS, x)
+    fun arccos(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ARCCOS, x)
+    fun arcsin(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ARCSIN, x)
+    fun arctan(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ARCTAN, x)
+    fun cos(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_COS, x)
+    fun cot(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_COT, x)
+
+    //fun negate(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_NEGATE, x)
+    //fun reciprocal(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_RECIPROCAL, x)
+    fun sin(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_SIN, x)
+
+    fun sqr(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_SQR, x)
+    fun tan(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_TAN, x)
+    fun exp(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_EXP, x)
+    fun ln(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_LN, x)
+    fun exp(a: NodeMatcher, b: NodeMatcher): DFunctionMatcher = DFunctionMatcher(ExprFunction.FUNCTION_NAME_EXP, a, b)
+    fun log(a: NodeMatcher, b: NodeMatcher): DFunctionMatcher = DFunctionMatcher(ExprFunction.FUNCTION_NAME_LOG, a, b)
+
+    fun square(x: NodeMatcher): DFunctionMatcher = exp(x, 2.m)
 }
 
-operator fun NodeMatcher.div(y: NodeMatcher): FractionMatcher {
-    return FractionMatcher(this, y)
+inline fun <R> buildMatcher(builder: NodeMatcherScope.() -> R): R {
+    return builder(NodeMatcherScope)
 }
-
-fun addPartly(remainingMatcher: NodeMatcher, vararg matchers: NodeMatcher): SimpleAMMatcher {
-    return SimpleAMMatcher(true, null, matchers.toList(), remainingMatcher)
-}
-
-fun mulPartly(remainingMatcher: NodeMatcher, vararg matchers: NodeMatcher): SimpleAMMatcher {
-    return SimpleAMMatcher(false, null, matchers.toList(), remainingMatcher)
-}
-
-/**
- * Returns a matcher of addition that takes the [matcher] as fixed matchers and a reference matcher
- * named as `this`. This method is the same as `addPartly(this.ref,*matcher)`.
- */
-fun String.addR(vararg matcher: NodeMatcher): SimpleAMMatcher {
-    return addPartly(this.ref, *matcher)
-}
-
-/**
- * Returns a matcher of multiplication that takes the [matcher] as fixed matchers and a reference matcher
- * named as `this`. This method is the same as `mulPartly(this.ref,*matcher)`.
- */
-fun String.mulR(vararg matcher: NodeMatcher): SimpleAMMatcher {
-    return mulPartly(this.ref, *matcher)
-}
-
-private fun mergeToAM(simpleAMMatcher: SimpleAMMatcher, y: NodeMatcher, isAdd: Boolean): SimpleAMMatcher {
-    return SimpleAMMatcher(isAdd, simpleAMMatcher.polyMatcher, simpleAMMatcher.matchers + y, simpleAMMatcher.remainingMatcher)
-}
-
-fun abs(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ABS, x)
-fun arccos(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ARCCOS, x)
-fun arcsin(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ARCSIN, x)
-fun arctan(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_ARCTAN, x)
-fun cos(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_COS, x)
-fun cot(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_COT, x)
-//fun negate(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_NEGATE, x)
-//fun reciprocal(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_RECIPROCAL, x)
-fun sin(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_SIN, x)
-
-fun sqr(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_SQR, x)
-fun tan(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_TAN, x)
-fun exp(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_EXP, x)
-fun ln(x: NodeMatcher): SFunctionMatcher = SFunctionMatcher(ExprFunction.FUNCTION_NAME_LN, x)
-fun exp(a: NodeMatcher, b: NodeMatcher): DFunctionMatcher = DFunctionMatcher(ExprFunction.FUNCTION_NAME_EXP, a, b)
-fun log(a: NodeMatcher, b: NodeMatcher): DFunctionMatcher = DFunctionMatcher(ExprFunction.FUNCTION_NAME_LOG, a, b)
-
-fun square(x: NodeMatcher): DFunctionMatcher = exp(x, 2.m)
 
 object NoneMatcher : NodeMatcher {
     override fun matches(n: Node, refMapping: Map<String, Node>, ec: ExprCalculator): NodeMatchResult? = null
@@ -304,7 +312,7 @@ class PolyMatcher(val m: Multinomial) : NodeMatcher {
     }
 
     override fun requiredNode(refMapping: Map<String, Node>, ec: ExprCalculator): Node? {
-        return m.p
+        return buildNode { m.p }
     }
 }
 
@@ -338,11 +346,14 @@ class PolyAMNameGroupMatcher(val m: Multinomial, val name: String, val isAdd: Bo
             }
             return NodeMatchResultImpl(refMapping, n, this)
         } else {
-            val ref = if (isAdd) {
-                ec.simplify((poly - m).p)
-            } else {
-                ec.simplify(poly.p / m.p)
+            val ref = buildNode {
+                if (isAdd) {
+                    ec.simplify((poly - m).p)
+                } else {
+                    ec.simplify(poly.p / m.p)
+                }
             }
+
             val nMapping = refMapping + (name to ref)
             return NodeMatchResultImpl(nMapping, n, this)
         }
@@ -441,7 +452,7 @@ class SFunctionMatcher(val fname: String, val xMatcher: NodeMatcher) : NodeMatch
 
     override fun requiredNode(refMapping: Map<String, Node>, ec: ExprCalculator): Node? {
         val x = xMatcher.requiredNode(refMapping, ec) ?: return null
-        return sfun(fname, x)
+        return buildNode { sfun(fname, x) }
     }
 
     override fun requireSpecific(refMapping: Map<String, Node>, ec: ExprCalculator): Boolean {
@@ -466,7 +477,7 @@ class DFunctionMatcher(val fname: String, val aMatcher: NodeMatcher, val bMatche
     override fun requiredNode(refMapping: Map<String, Node>, ec: ExprCalculator): Node? {
         val a = aMatcher.requiredNode(refMapping, ec) ?: return null
         val b = bMatcher.requiredNode(refMapping, ec) ?: return null
-        return dfun(fname, a, b)
+        return buildNode { dfun(fname, a, b) }
     }
 
     override fun requireSpecific(refMapping: Map<String, Node>, ec: ExprCalculator): Boolean {
@@ -508,7 +519,7 @@ class MFunctionMatcher(val fname: String, val matchers: List<NodeMatcher>) : Nod
         for (m in matchers) {
             list.add(m.requiredNode(refMapping, ec) ?: return null)
         }
-        return func(fname, false, *list.toTypedArray())
+        return buildNode { func(fname, false, *list.toTypedArray()) }
     }
 }
 
@@ -568,12 +579,12 @@ class SimpleAMMatcher(val isAdd: Boolean,
         nMapping = re.first
         val remaining = re.second
 
-        nMapping = if (!remaining.isEmpty()) {
+        nMapping = if (remaining.isNotEmpty()) {
             val reAsAM = Node.wrapNodeAM(isAdd, remaining)
             val result = remainingMatcher.matches(reAsAM, nMapping, ec) ?: return null
             result.refMapping
         } else {
-            val rem = identityOfAM(isAdd)
+            val rem = buildNode { identityOfAM(isAdd) }
             remainingMatcher.matches(rem, nMapping, ec)?.refMapping ?: return null
         }
 
@@ -587,7 +598,7 @@ class SimpleAMMatcher(val isAdd: Boolean,
         val matcher = matchers[0]
         val re1 = matcher.matches(n, refMapping, ec) ?: return null
         val nMap = re1.refMapping
-        val re2 = remainingMatcher.matches(identityOfAM(isAdd), nMap, ec) ?: return null
+        val re2 = remainingMatcher.matches(NodeBuilderScope.identityOfAM(isAdd), nMap, ec) ?: return null
         return NodeMatchResultImpl(re2.refMapping, n, this)
     }
 
@@ -654,19 +665,21 @@ class FractionMatcher(val numeMatcher: NodeMatcher, val denoMatcher: NodeMatcher
     override fun requiredNode(refMapping: Map<String, Node>, ec: ExprCalculator): Node? {
         val nume = numeMatcher.requiredNode(refMapping, ec) ?: return null
         val deno = denoMatcher.requiredNode(refMapping, ec) ?: return null
-        return nume / deno
+        return buildNode { nume / deno }
     }
 }
 
 
 fun main() {
-    val exp = exp("a".ref, "b".ref)
+    buildMatcher {
+        val exp = exp("a".ref, "b".ref)
 //    val sin = addPartly(SingleRefMatcher("$123"),exp(sin("x".ref),"2".m),exp(cos("x".ref),"2".m))
-    val sin = exp(sin("refX".ref), 2.m) + exp(cos("refX".ref), 2.m)
-    val expr = Expression.valueOf("exp(m,n)")
-    val expr2 = Expression.valueOf("exp(sin(x),2)+exp(cos(x),2)")
-    val ec = ExprCalculator.instance
-    ec.tagRemove(SimplificationStrategies.TRIGONOMETRIC_FUNCTION)
-    println(exp.matches(ec.simplify(expr).root, emptyMap(), ec)?.refMapping?.mapValues { n -> Expression(n.value) })
-    println(sin.matches(ec.simplify(expr2).root, emptyMap(), ec)?.refMapping?.mapValues { n -> Expression(n.value) })
+        val sin = exp(sin("refX".ref), 2.m) + exp(cos("refX".ref), 2.m)
+        val expr = Expression.valueOf("exp(m,n)")
+        val expr2 = Expression.valueOf("exp(sin(x),2)+exp(cos(x),2)")
+        val ec = ExprCalculator.instance
+        ec.tagRemove(SimplificationStrategies.TRIGONOMETRIC_FUNCTION)
+        println(exp.matches(ec.simplify(expr).root, emptyMap(), ec)?.refMapping?.mapValues { n -> Expression(n.value) })
+        println(sin.matches(ec.simplify(expr2).root, emptyMap(), ec)?.refMapping?.mapValues { n -> Expression(n.value) })
+    }
 }

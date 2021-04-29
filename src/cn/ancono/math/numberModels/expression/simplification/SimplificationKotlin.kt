@@ -41,8 +41,8 @@ internal object SimplificationTri {
 
     internal fun simTri1(): SimpleStrategy {
         //sin(x)^2+cos(x)^2 = 1
-        val matcher = exp(sin(x), 2.m) + exp(cos(x), 2.m)
-        val builder: ReplacementBuilder = { _, _ -> "1".p }
+        val matcher = buildMatcher { exp(sin(x), 2.m) + exp(cos(x), 2.m) }
+        val builder: ReplacementBuilder = { _, _ -> buildNode { "1".p } }
         val replacer = wrapAMReplacer(matcher, builder)
         return replacer.asStrategy(TAG_TRIGONOMETRIC_SET, description = "sin(x)^2+cos(x)^2 = 1")
     }
@@ -51,7 +51,7 @@ internal object SimplificationTri {
      * sin(x)cos(x) = sin(2x)/2
      */
     internal fun simTri2(): SimpleStrategy {
-        val matcher = sin(x) * cos(x)
+        val matcher = buildMatcher { sin(x) * cos(x) }
         val builder: ReplacementBuilder = { map, _ ->
             sin(2.p * map["x"]!!.invoke()) / 2.p
         }
@@ -64,7 +64,7 @@ internal object SimplificationTri {
      * tan2(x) + 1 = 1/cos(x)^2
      */
     internal fun simTri3(): SimpleStrategy {
-        val matcher = square(tan(x)) + 1.m
+        val matcher = buildMatcher { square(tan(x)) + 1.m }
         val builder: ReplacementBuilder = { map, _ -> 1.p / square(cos(map["x"]!!.invoke())) }
         val replacer = wrapAMReplacer(matcher, builder)
         return replacer.asStrategy(TAG_TRIGONOMETRIC_SET, description = "tan2(x) + 1 = 1/cos(x)^2")
@@ -75,7 +75,7 @@ internal object SimplificationTri {
      */
     internal fun simTri4(): SimpleStrategy {
 
-        val matcher = square(tan(x)) * "k".ref + "k".ref
+        val matcher = buildMatcher { square(tan(x)) * "k".ref + "k".ref }
         val builder: ReplacementBuilder = { map, _ -> map["k"]!!.invoke() / square(cos(map["x"]!!.invoke())) }
         val replacer = wrapAMReplacer(matcher, builder)
         return replacer.asStrategy(TAG_TRIGONOMETRIC_SET, description = "k*tan2(x) + k = k/cos(x)^2")
@@ -85,7 +85,7 @@ internal object SimplificationTri {
      * cot2(x) + 1 = 1/sin(x)^2
      */
     internal fun simTri5(): SimpleStrategy {
-        val matcher = square(cot(x)) + 1.m
+        val matcher = buildMatcher { square(cot(x)) + 1.m }
         val builder: ReplacementBuilder = { map, _ -> 1.p / square(sin(map["x"]!!.invoke())) }
         val replacer = wrapAMReplacer(matcher, builder)
         return replacer.asStrategy(TAG_TRIGONOMETRIC_SET, description = "cot2(x) + 1 = 1/sin(x)^2")
@@ -95,7 +95,7 @@ internal object SimplificationTri {
      * k(cot2(x) + 1) = k/sin(x)^2
      */
     internal fun simTri6(): SimpleStrategy {
-        val matcher = square(cot(x)) * "k".ref + "k".ref
+        val matcher = buildMatcher { square(cot(x)) * "k".ref + "k".ref }
         val builder: ReplacementBuilder = { map, _ -> map["k"]!!.invoke() / square(sin(map["x"]!!.invoke())) }
         val replacer = wrapAMReplacer(matcher, builder)
         return replacer.asStrategy(TAG_TRIGONOMETRIC_SET)
@@ -106,7 +106,7 @@ internal object SimplificationTri {
      * 1 - 2*sin(x)^2 =  cos(2x)
      */
     internal fun simTri7(): SimpleStrategy {
-        val matcher = (-2).m * square(sin(x)) + 1.m
+        val matcher = buildMatcher { (-2).m * square(sin(x)) + 1.m }
         val builder: ReplacementBuilder = { map, _ -> cos(2.p * map["x"]!!.invoke()) }
         val replacer = wrapAMReplacer(matcher, builder)
         return replacer.asStrategy(TAG_TRIGONOMETRIC_SET)
@@ -117,7 +117,7 @@ internal object SimplificationTri {
      * k - 2k*sin(x)^2 =  kcos(2x)
      */
     internal fun simTri8(): SimpleStrategy {
-        val matcher = "k".mMul(Multinomial.TWO.negate()) * square(sin(x)) + "k".ref
+        val matcher = buildMatcher { "k".mMul(Multinomial.TWO.negate()) * square(sin(x)) + "k".ref }
         val builder: ReplacementBuilder = { map, _ -> map["k"]!!.invoke() * cos(2.p * map["x"]!!.invoke()) }
         val replacer = wrapAMReplacer(matcher, builder)
         return replacer.asStrategy(TAG_TRIGONOMETRIC_SET)
@@ -127,7 +127,7 @@ internal object SimplificationTri {
      * tan(x) * cos(x) = sin(x)
      */
     internal fun simTri9(): SimpleStrategy {
-        val mat = tan(x) * cos(x)
+        val mat = buildMatcher { tan(x) * cos(x) }
         val bud: ReplacementBuilder = { map, _ -> sin(map["x"]!!.invoke()) }
         val rep = wrapAMReplacer(mat, bud)
         return rep.asStrategy(TAG_TRIGONOMETRIC_SET, description = "tan(x) * cos(x) = sin(x)")
@@ -137,7 +137,7 @@ internal object SimplificationTri {
      * cot(x) * sin(x) = cos(x)
      */
     internal fun simTri10(): SimpleStrategy {
-        val mat = cot(x) * sin(x)
+        val mat = buildMatcher { cot(x) * sin(x) }
         val bud: ReplacementBuilder = { map, _ -> cos(map["x"]!!.invoke()) }
         val rep = wrapAMReplacer(mat, bud)
         return rep.asStrategy(TAG_TRIGONOMETRIC_SET, description = "cot(x) * sin(x) = cos(x)")
@@ -162,7 +162,7 @@ internal object SimplificationExp {
      * > exp(a*(node),2) -> a^2 * exp(node,2)
      */
     internal fun simExp0(): SimpleStrategy {
-        val mat = exp(poly.named("m"), rational.named("exp"))
+        val mat = buildMatcher { exp(poly.named("m"), rational.named("exp")) }
         val bud: ReplacementBuilder = { map, ec ->
             val poly = Node.getPolynomialPart(map["m"]!!.invoke(), ec)
             val exp = Node.getPolynomialPart(map["exp"]!!.invoke(), ec)
@@ -184,19 +184,21 @@ internal object SimplificationExp {
                 Multinomial.monomial(outerTerm).p * exp(nPoly.p, map["exp"]!!.invoke())
             }
         }
-        return MatcherReplacer(mat, bud).asStrategy(TAG_PRIMARY_SET, description = "exp(a*(node),2) -> a^2 * exp(node,2)")
+        return MatcherReplacer(mat, bud).asStrategy(TAG_PRIMARY_SET,
+                description = "exp(a*(node),2) -> a^2 * exp(node,2)")
     }
 
     /**
      * > k1 * exp(x,p1) / (k2 * exp(x,p2)) -> k1 * exp(x,p1-p2) / k2
      */
     internal fun simExp1(): SimpleStrategy {
-        val mat = "k1".mulR(exp(x, "exp1".ref)) / "k2".mulR(exp(x, "exp2".ref))
+        val mat = buildMatcher { "k1".mulR(exp(x, "exp1".ref)) / "k2".mulR(exp(x, "exp2".ref)) }
         val bud: ReplacementBuilder = { map, _ ->
 
             (map["k1"]!!.invoke() * exp(map["x"]!!.invoke(), map["exp1"]!!.invoke() - map["exp2"]!!.invoke())) / map["k2"]!!.invoke()
         }
-        return MatcherReplacer(mat, bud).asStrategy(TAG_PRIMARY_SET, description = "k1 * exp(x,p1) / (k2 * exp(x,p2)) -> k1 * exp(x,p1-p2) / k2")
+        return MatcherReplacer(mat, bud).asStrategy(TAG_PRIMARY_SET,
+                description = "k1 * exp(x,p1) / (k2 * exp(x,p2)) -> k1 * exp(x,p1-p2) / k2")
     }
 }
 

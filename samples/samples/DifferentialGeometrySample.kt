@@ -8,11 +8,10 @@ import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.geometry.differential.NormalCurve
 import cn.ancono.math.geometry.differential.NormalCurveComposed
 import cn.ancono.math.geometry.differential.NormalSurface
-import cn.ancono.math.minus
+import cn.ancono.math.numberModels.api.minus
+import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
-import cn.ancono.math.numberModels.expression.SimplificationStrategies
-import cn.ancono.math.plus
 import cn.ancono.math.set.Interval
 
 object DifferentialGeometrySample {
@@ -72,7 +71,7 @@ object DifferentialGeometrySample {
     fun getVector(mc: ExprCalculator, num: Int = 0): SVector<Expression> = SVector.valueOf(Expression.valueOf("f${num}_(x)"),
             Expression.valueOf("g${num}_(x)"), Expression.valueOf("h${num}_(x)"), mc)
 
-    fun SVector<Expression>.derivation(): SVector<Expression> = this.applyFunction { it.derivation() }
+    fun SVector<Expression>.derivation(): SVector<Expression> = this.applyAll { it.derivation() }
 
 
     fun makeSurface(expr: String): NormalSurface<Expression> {

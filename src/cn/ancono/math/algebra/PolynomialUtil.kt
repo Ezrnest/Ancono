@@ -4,7 +4,6 @@ import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
-import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
@@ -138,7 +137,7 @@ object PolynomialUtil {
             }
             coeCount += poly.degree * pow
         }
-        val mat = Matrix.zero(all.degree, coeCount + 1, mc)
+        val mat = Matrix.zero(all.degree, coeCount, mc)
         //distribute coefficient
         var index = 0
         for ((t, isBi) in terms) {
@@ -158,12 +157,9 @@ object PolynomialUtil {
                 index++
             }
         }
-
-        for (i in 0 until all.degree) {
-            mat[i, coeCount] = nume.get(i)
-        }
 //        mat.printMatrix()
-        val solution = MatrixSup.solveLinearEquation(mat).specialSolution
+        val equationSolution = Matrix.solveLinear(mat, nume.coefficientVector())
+        val solution = equationSolution.special
         index = 0
         val re = arrayListOf<Pair<Polynomial<T>, SinglePoly<T>>>()
         for ((t, isBi) in terms) {
@@ -197,7 +193,7 @@ object PolynomialUtil {
      * > a0 * `ms[0]` + ... + an * `ms[n ]` = mConst
      *
      * Terms with different characters are considered as linear irrelevant.
-     * The second part of the return value is a vector of terms contained in the multinomials and
+     * The second part of the return value is a list of terms contained in the multinomials and
      * the first part is the expanded matrix.
      */
     @JvmStatic
@@ -234,7 +230,7 @@ object PolynomialUtil {
     @JvmStatic
     fun solveMultinomialEquation(ms: List<Multinomial>, mConst: Multinomial = Multinomial.ZERO)
             : Vector<Multinomial> {
-        return MatrixSup.solveLinearEquation(buildMultinomialEquation(ms, mConst).first).oneSolution
+        return Matrix.solveLinearExpanded(buildMultinomialEquation(ms, mConst).first).special
     }
 
 
@@ -871,7 +867,7 @@ object PolynomialUtil {
         val Q = buildPowerMatrix(A, p)
         val mc = A.mathCalculator
         val n = A.degree
-        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace()!!.vectors
+        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace().vectors
         val r = vectors.size
         var E = listOf(A)
         val constants = (0 until p).map { s -> constant(mc, s) }
@@ -923,7 +919,7 @@ object PolynomialUtil {
         val Q = buildPowerMatrix(A, p)
         val mc = A.mathCalculator
         val n = A.degree
-        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace()!!.vectors
+        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace().vectors
         val ts = vectors.map { v -> of(mc, v.toList()) }
         val r = vectors.size
         var E = listOf(A)

@@ -9,7 +9,6 @@ import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.Simplifier
 import cn.ancono.math.numberTheory.IntCalculator
-import cn.ancono.utilities.structure.Pair
 import java.util.*
 import java.util.function.Function
 

@@ -67,7 +67,7 @@ class MobiusTrans<T>(
     }
 
     override fun reciprocal(): MobiusTrans<T> {
-        return MobiusTrans(mc, cc, m.reciprocal())
+        return MobiusTrans(mc, cc, m.inverse())
     }
 
     override fun inverse(): MobiusTrans<T> {
@@ -78,9 +78,9 @@ class MobiusTrans<T>(
      * Returns an equivalent Mobius transformation whose determinant of the transformation matrix is one.
      */
     fun unitize(): MobiusTrans<T> {
-        val det = m.calDet()
+        val det = m.det()
         val d = cc.squareRoot(det)
-        return MobiusTrans(mc, cc, m.multiplyNumber(d.reciprocal()))
+        return MobiusTrans(mc, cc, m.multiply(d.reciprocal()))
     }
 
     /**
@@ -96,7 +96,7 @@ class MobiusTrans<T>(
      * return an equivalent Mobius transformation.
      */
     fun idMultiply(k: Complex<T>): MobiusTrans<T> {
-        return MobiusTrans(mc, cc, m.multiplyNumber(k))
+        return MobiusTrans(mc, cc, m.multiply(k))
     }
 
     override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MobiusTrans<N> {
@@ -110,9 +110,9 @@ class MobiusTrans<T>(
             return false
         }
         val m2 = obj.m
-        val det1 = m.calDet()
-        val det2 = m2.calDet()
-        return m.multiplyNumber(det2).valueEquals(m2.multiplyNumber(det1))
+        val det1 = m.det()
+        val det2 = m2.det()
+        return m.multiply(det2).valueEquals(m2.multiply(det1))
     }
 
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {

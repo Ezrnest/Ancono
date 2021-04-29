@@ -7,11 +7,7 @@ import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.api.Computable
 import cn.ancono.math.numberModels.expression.*
 import cn.ancono.math.numberModels.expression.anno.DisallowModify
-import cn.ancono.math.numberModels.expression.simplification.div
-import cn.ancono.math.numberModels.expression.simplification.exp
-import cn.ancono.math.numberModels.expression.simplification.ln
-import cn.ancono.math.numberModels.expression.simplification.times
-import java.util.*
+import cn.ancono.math.numberModels.expression.simplification.buildNode
 
 typealias LimitProcessE = LimitProcess<Expression>
 typealias LimitResultE = LimitResult<Expression>
@@ -356,7 +352,7 @@ internal constructor(val process: LimitProcessE, val mc: ExprCalculator, hopital
 //        }catch (e : Exception){
 //            print("?")
 //        }
-        val frac = mc.simplify(n / d)
+        val frac = mc.simplify(buildNode { n / d })
         val re = limitNode(frac)
         hopital++
         return re
@@ -499,9 +495,11 @@ private object ExpProcessor2 : CFPAdapter(ExprFunction.FUNCTION_NAME_EXP, 2) {
         // exp(base,exponent)
         // = exp(exponent * ln(base))
         val mc = handler.mc
-        val multiply = exponent.cloneNode() * ln(base.cloneNode())
-        val exp = exp(mc.simplify(multiply))
-        return ExpProcessor1.limit(exp, handler)
+        return buildNode {
+            val multiply = exponent.cloneNode() * ln(base.cloneNode())
+            val exp = exp(mc.simplify(multiply))
+            ExpProcessor1.limit(exp, handler)
+        }
     }
 
 }
@@ -602,9 +600,11 @@ private object LogProcessor : CFPAdapter(ExprFunction.FUNCTION_NAME_LOG, 2) {
     override fun limit(node: Node, handler: LimitHandler): LimitResultE? {
         val c1 = (node as Node.DFunction).c1
         val c2 = node.c2
-        val nume = ln(c1)
-        val deno = ln(c2)
-        return handler.limitNode(nume / deno)
+        return buildNode {
+            val nume = ln(c1)
+            val deno = ln(c2)
+            handler.limitNode(nume / deno)
+        }
     }
 }
 

@@ -9,7 +9,7 @@ import java.util.*
 /**
  * The node provided in the map must not be modified.
  */
-typealias ReplacementBuilder = (Map<String, () -> Node>, ExprCalculator) -> Node?
+typealias ReplacementBuilder = NodeBuilderScope.(Map<String, () -> Node>, ExprCalculator) -> Node?
 
 interface NodeReplacer {
     /**
@@ -22,7 +22,7 @@ class MatcherReplacer(val matcher: NodeMatcher, val replacementBuilder: Replacem
     override fun replace(n: Node, ec: ExprCalculator): Node? {
         try {
             val matchResult = matcher.matches(n, emptyMap(), ec) ?: return null
-            return replacementBuilder(matchResult.refMapping.mapValues { en -> { en.value.cloneNode() } }, ec)
+            return replacementBuilder(NodeBuilderScope, matchResult.refMapping.mapValues { en -> { en.value.cloneNode() } }, ec)
         } catch (e: Exception) {
             e.printStackTrace()
             return null
@@ -47,11 +47,14 @@ fun wrapAM(matcher: SimpleAMMatcher, replacementBuilder: ReplacementBuilder)
         if (t == null || base == null) {
             base
         } else {
-            if (matcher.isAdd) {
-                base + t
-            } else {
-                base * t
+            buildNode {
+                if (matcher.isAdd) {
+                    base + t
+                } else {
+                    base * t
+                }
             }
+
         }
     }
     return nMatcher to nBuilder

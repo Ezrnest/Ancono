@@ -11,7 +11,6 @@ import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.structure.Complex
 import cn.ancono.math.set.MathSet
 import cn.ancono.math.set.MathSets
-import cn.ancono.utilities.structure.Pair
 
 /*
  * Provides extension methods for convenience.
@@ -24,32 +23,19 @@ val <T> Matrix<T>.T: Matrix<T>
     get() = this.transpose()
 
 
-operator fun <T> PVector<T>.unaryMinus() = this.negate()!!
-operator fun <T> SVector<T>.unaryMinus() = this.negate()!!
+operator fun <T> PVector<T>.component1(): T = this.x
+operator fun <T> PVector<T>.component2(): T = this.y
 
-operator fun <T> PVector<T>.plus(v: PVector<T>) = this.add(v)!!
-operator fun <T> SVector<T>.plus(v: SVector<T>) = this.add(v)!!
+operator fun <T> SVector<T>.component1(): T = this.x
+operator fun <T> SVector<T>.component2(): T = this.y
+operator fun <T> SVector<T>.component3(): T = this.z
 
-operator fun <T> PVector<T>.minus(v: PVector<T>) = this.add(v)!!
-operator fun <T> SVector<T>.minus(v: SVector<T>) = this.subtract(v)!!
-operator fun <T> SVector<T>.times(k: T) = this.multiply(k)!!
+operator fun <T> Point<T>.component1(): T = this.x
+operator fun <T> Point<T>.component2(): T = this.y
 
-operator fun <T> PVector<T>.times(k: T) = this.multiply(k)!!
-operator fun <T> PVector<T>.component1() = this.x!!
-
-
-operator fun <T> PVector<T>.component2() = this.y!!
-operator fun <T> SVector<T>.component1() = this.x!!
-
-operator fun <T> SVector<T>.component2() = this.y!!
-operator fun <T> SVector<T>.component3() = this.z!!
-operator fun <T> Point<T>.component1() = this.x!!
-
-operator fun <T> Point<T>.component2() = this.y!!
-operator fun <T> SPoint<T>.component1() = this.x!!
-
-operator fun <T> SPoint<T>.component2() = this.y!!
-operator fun <T> SPoint<T>.component3() = this.z!!
+operator fun <T> SPoint<T>.component1(): T = this.x
+operator fun <T> SPoint<T>.component2(): T = this.y
+operator fun <T> SPoint<T>.component3(): T = this.z
 
 
 operator fun <T> Matrix<T>.times(v: Vector<T>) = Vector.multiplyToVector(this, v)
@@ -59,13 +45,13 @@ operator fun <T> Complex<T>.component1() = this.re()
 operator fun <T> Complex<T>.component2() = this.im()
 
 //operator fun <T> IPolynomial<T>.get(n: Int) = this.get(n)!!
-operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)
-operator fun Multinomial.times(y: Multinomial) = this.multiply(y)
+//operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)
+//operator fun Multinomial.times(y: Multinomial) = this.multiply(y)
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!
 operator fun Multinomial.div(y: Term) = this.divide(y)!!
 
-operator fun <T, S> Pair<T, S>.component1(): T = this.first
-operator fun <T, S> Pair<T, S>.component2(): S = this.second
+//operator fun <T, S> Pair<T, S>.component1(): T = this.first
+//operator fun <T, S> Pair<T, S>.component2(): S = this.second
 
 operator fun <T> MathSet<T>.minus(another: MathSet<T>): MathSet<T> =
         MathSet { this.contains(it) && !another.contains(it) }

@@ -14,8 +14,8 @@ import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.utilities.Printer;
 import cn.ancono.utilities.StringSup;
-import cn.ancono.utilities.structure.Pair;
 import cn.ancono.utilities.structure.WithInt;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;

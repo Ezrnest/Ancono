@@ -206,3 +206,8 @@ abstract class MathCalculatorAdapter<T> : MathCalculator<T> {
         return compare(this, y)
     }
 }
+
+
+//abstract class MathCalculatorAdapterRing<T : RingNumberModel<T>> : MathCalculatorAdapter<T>(){
+//
+//}

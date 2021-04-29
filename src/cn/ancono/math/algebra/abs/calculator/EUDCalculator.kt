@@ -1,7 +1,5 @@
 package cn.ancono.math.algebra.abs.calculator
 
-import cn.ancono.math.component1
-import cn.ancono.math.component2
 import cn.ancono.math.exceptions.ExceptionUtil
 
 
@@ -24,7 +22,7 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      *
      * @param
      */
-    fun divideAndRemainder(a: T, b: T): cn.ancono.utilities.structure.Pair<T, T>
+    fun divideAndRemainder(a: T, b: T): Pair<T, T>
 
     /**
      * Returns the quotient part of [divideAndRemainder].

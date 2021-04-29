@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels.api;
 
 import cn.ancono.math.MathObject;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 
 import java.util.Arrays;
 import java.util.List;

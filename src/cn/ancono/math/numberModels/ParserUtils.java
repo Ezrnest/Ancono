@@ -2,7 +2,7 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.utilities.ArraySup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 
 import java.util.LinkedList;
 import java.util.List;

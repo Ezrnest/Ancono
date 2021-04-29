@@ -1,4 +1,4 @@
-/**
+/*
  * 2018-02-27
  */
 package cn.ancono.math.algebra.abs.structure;
@@ -9,7 +9,6 @@ import cn.ancono.math.algebra.abs.group.Homomorphism;
 import cn.ancono.math.set.FiniteSet;
 import cn.ancono.math.set.InfiniteSet;
 import cn.ancono.math.set.MathSet;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A group is a algebraic structure consisting of a set of elements and an operation.<p>
@@ -64,7 +63,7 @@ public interface Group<T> extends Monoid<T> {
      *
      * @param g a group
      */
-    default boolean isSubgroup(@NotNull Group<T> g) {
+    default boolean isSubgroup(Group<T> g) {
         throw new UnsupportedOperationException();
     }
 
@@ -78,7 +77,7 @@ public interface Group<T> extends Monoid<T> {
     /**
      * Determines whether the group is a normal subgroup of this group.
      */
-    default boolean isNormalSubgroup(@NotNull Group<T> g) {
+    default boolean isNormalSubgroup(Group<T> g) {
         throw new UnsupportedOperationException();
     }
 
@@ -88,7 +87,7 @@ public interface Group<T> extends Monoid<T> {
      * @param x      an element in this group
      * @param isLeft determines whether it is a left coset.
      */
-    default Coset<T, ? extends Group<T>> getCoset(@NotNull T x, boolean isLeft) {
+    default Coset<T, ? extends Group<T>> getCoset(T x, boolean isLeft) {
         return getCoset(x, this, isLeft);
     }
 
@@ -98,7 +97,7 @@ public interface Group<T> extends Monoid<T> {
      * @param x      an element in this group
      * @param isLeft determines whether it is a left coset.
      */
-    default Coset<T, ? extends Group<T>> getCoset(@NotNull T x, @NotNull Group<T> subGroup, boolean isLeft) {
+    default Coset<T, ? extends Group<T>> getCoset(T x, Group<T> subGroup, boolean isLeft) {
         throw new UnsupportedOperationException();
     }
 
@@ -108,7 +107,7 @@ public interface Group<T> extends Monoid<T> {
      * @param h      a subgroup
      * @param isLeft whether to return left coset
      */
-    default MathSet<? extends Coset<T, ? extends Group<T>>> getCosets(@NotNull Group<T> h, boolean isLeft) {
+    default MathSet<? extends Coset<T, ? extends Group<T>>> getCosets(Group<T> h, boolean isLeft) {
         throw new UnsupportedOperationException();
     }
 
@@ -118,7 +117,7 @@ public interface Group<T> extends Monoid<T> {
      *
      * @param sub a subgroup
      */
-    default long indexOf(@NotNull Group<T> sub) {
+    default long indexOf(Group<T> sub) {
         throw new UnsupportedOperationException();
     }
 
@@ -130,7 +129,7 @@ public interface Group<T> extends Monoid<T> {
      * @param h1 a subgroup
      * @param h2 another subgroup
      */
-    default boolean isConjugate(@NotNull Group<T> h1, @NotNull Group<T> h2) {
+    default boolean isConjugate(Group<T> h1, Group<T> h2) {
         throw new UnsupportedOperationException();
     }
 
@@ -138,7 +137,7 @@ public interface Group<T> extends Monoid<T> {
      * Returns the conjugate subgroup of a subgroup of this:
      * <text>x<sup>-1</sup>Hx</text>.
      */
-    default Group<T> conjugateSubgroup(@NotNull Group<T> h, T x) {
+    default Group<T> conjugateSubgroup(Group<T> h, T x) {
         throw new UnsupportedOperationException();
     }
 

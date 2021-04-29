@@ -56,16 +56,14 @@ public class NumberModelSample {
     public static void zModP() {
         var mc = Calculators.intModP(29);
         System.out.println();
-        var matrix = Matrix.of(mc, 2, 2,
+        var matrix = Matrix.of(2, 2, mc,
                 1, 2,
                 3, 4);
-        System.out.println("M = ");
-        matrix.printMatrix();
-        System.out.println("Inverse of M in Z mod 29 is");
+        System.out.println("M = \n" + matrix);
         var inv = matrix.inverse();
-        inv.printMatrix();
+        System.out.println("Inverse of M in Z mod 29 is \n" + inv);
         System.out.println("Check their product:");
-        Matrix.multiply(matrix, inv).printMatrix();
+        System.out.println(matrix.multiply(inv));
     }
 
 

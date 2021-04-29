@@ -15,7 +15,7 @@ import cn.ancono.math.numberModels.expression.anno.AllowModify;
 import cn.ancono.math.numberModels.expression.anno.DisallowModify;
 import cn.ancono.math.numberModels.expression.simplification.SimplificationStrategy;
 import cn.ancono.utilities.CollectionSup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;

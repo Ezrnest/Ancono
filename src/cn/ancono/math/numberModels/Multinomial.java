@@ -14,7 +14,7 @@ import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.utilities.CollectionSup;
 import cn.ancono.utilities.ModelPatterns;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;

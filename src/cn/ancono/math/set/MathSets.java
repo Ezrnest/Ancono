@@ -9,8 +9,8 @@ import cn.ancono.math.algebra.abs.EqualRelation;
 import cn.ancono.math.algebra.abs.GroupCalculators;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.utilities.CollectionSup;
-import cn.ancono.utilities.structure.Pair;
-import cn.ancono.utilities.structure.Triple;
+import kotlin.Pair;
+import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;

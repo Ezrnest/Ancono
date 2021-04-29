@@ -9,15 +9,13 @@ import cn.ancono.math.numberModels.expression.Node.*;
 import cn.ancono.math.numberModels.expression.simplification.NodeHelper;
 import cn.ancono.math.numberModels.expression.spi.SimplificationService;
 import cn.ancono.utilities.CollectionSup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.*;
 import java.util.Map.Entry;
-
-import static cn.ancono.utilities.Printer.print;
 
 
 /**
@@ -515,7 +513,7 @@ public final class SimplificationStrategies {
                 Pair<Node, BigInteger> pair = Node.peelExpStructure(n, mc);
                 if (pair != null) {
                     if (deno) {
-                        pair.setSecond(pair.getSecond().negate());
+                        pair = new Pair<>(pair.getFirst(), pair.getSecond().negate());
                     }
                     if (accept(pair.getFirst(), pair.getSecond(), mc)) {
                         collect.add(pair);
@@ -624,12 +622,9 @@ public final class SimplificationStrategies {
                     continue;
                 }
                 var pair0 = Node.unwrapMultiply(n, mc);
-                if (pair0 != null) {
-                    var pair = pair0.swapped();
-                    if (accept(pair.getFirst(), coe, mc)) {
-                        collect.add(pair);
-                        it.remove();
-                    }
+                if (pair0 != null && accept(pair0.getSecond(), coe, mc)) {
+                    collect.add(new Pair<>(pair0.getSecond(), pair0.getFirst()));
+                    it.remove();
                 }
             }
         }

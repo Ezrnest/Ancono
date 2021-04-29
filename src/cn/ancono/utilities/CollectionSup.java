@@ -5,7 +5,7 @@ package cn.ancono.utilities;
 
 import cn.ancono.math.algebra.abs.EqualRelation;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 
 import java.util.*;
 import java.util.Map.Entry;

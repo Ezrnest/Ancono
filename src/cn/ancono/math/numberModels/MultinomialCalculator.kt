@@ -562,10 +562,10 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         }
 
         override fun simplify(
-            a: Multinomial,
-            b: Multinomial
-        ): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
-            return Multinomial.simplifyFraction(a, b)
+                a: Multinomial,
+                b: Multinomial
+        ): kotlin.Pair<Multinomial, Multinomial> {
+            return simplifyFraction(a, b)
         }
     }
 

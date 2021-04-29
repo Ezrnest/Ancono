@@ -18,7 +18,7 @@ import cn.ancono.math.set.Interval;
 import cn.ancono.math.set.MathSets;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.CollectionSup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;

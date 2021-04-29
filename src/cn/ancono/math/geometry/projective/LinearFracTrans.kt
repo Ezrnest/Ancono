@@ -58,7 +58,7 @@ class LinearFracTrans<T> internal constructor(private val m: TransMatrix<T>)
     }
 
     override fun reciprocal(): LinearFracTrans<T> {
-        return LinearFracTrans(m.reciprocal())
+        return LinearFracTrans(m.inverse())
     }
 
 

@@ -14,7 +14,7 @@ import cn.ancono.math.numberModels.api.Simplifier
 import cn.ancono.math.numberModels.expression.Node.*
 import cn.ancono.math.numberModels.expression.anno.AllowModify
 import cn.ancono.math.numberModels.expression.simplification.SimStraHolder
-import cn.ancono.math.numberModels.expression.simplification.p
+import cn.ancono.math.numberModels.expression.simplification.buildNode
 import cn.ancono.utilities.Printer.print
 import java.util.*
 import java.util.function.ToDoubleFunction
@@ -572,7 +572,7 @@ class ExprCalculator
      * values between [start] and [end] (inclusive).
      */
     fun sigma(expr: Expression, start: Expression, end: Expression, ch: String = "x"): Expression {
-        return mFunction(ExprFunction.FUNCTION_NAME_SIGMA, expr, Expression(ch.p), start, end)
+        return mFunction(ExprFunction.FUNCTION_NAME_SIGMA, expr, Expression(buildNode { ch.p }), start, end)
     }
 
     fun simplify(x: Expression): Expression {

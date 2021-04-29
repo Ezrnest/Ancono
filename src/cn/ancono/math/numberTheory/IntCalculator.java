@@ -7,7 +7,7 @@ package cn.ancono.math.numberTheory;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
 import cn.ancono.math.exceptions.ExceptionUtil;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -29,7 +29,7 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
     /**
      * Returns the integer <code>1</code> of type T.
      */
-    @NotNull
+
     @Override
     T getOne();
 
@@ -164,8 +164,7 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @return {@code a mod b}
      */
     @Override
-    @NotNull
-    T mod(@NotNull T a, @NotNull T b);
+    T mod(T a, T b);
 
     /**
      * Returns the remainder:{@code a % b}. If {@code a>0}, then the result will
@@ -180,8 +179,8 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @param b the divisor
      * @return {@code a % b}
      */
-    @NotNull
-    default T remainder(@NotNull T a, @NotNull T b) {
+
+    default T remainder(T a, T b) {
         if (isZero(b)) {
             throw new ArithmeticException();
         }
@@ -209,7 +208,7 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @param b the divisor
      * @return {@code a \ b}
      */
-    @NotNull T divideToInteger(@NotNull T a, @NotNull T b);
+    T divideToInteger(T a, T b);
 
     /**
      * Returns a pair of two numbers containing {@code (this / val)} followed by
@@ -220,8 +219,8 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @return a pair of two numbers: the quotient {@code (a / b)} is the first
      * element, and the remainder {@code (a % b)} is the second element.
      */
-    @NotNull
-    default Pair<T, T> divideAndRemainder(@NotNull T a, @NotNull T b) {
+
+    default @NotNull Pair<T, T> divideAndRemainder(T a, T b) {
         T quotient = divideToInteger(a, b);
         T reminder = remainder(a, b);
         return new Pair<>(quotient, reminder);
@@ -240,13 +239,13 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @param b another number
      * @return {@code mod(a,b)==0}
      */
-    default boolean isExactDivide(@NotNull T a, @NotNull T b) {
+    default boolean isExactDivide(T a, T b) {
         return isEqual(mod(a, b), getZero());
     }
 
-    @NotNull
+
     @Override
-    default T exactDivide(@NotNull T x, @NotNull T y) {
+    default T exactDivide(T x, T y) {
         if (!isExactDivide(x, y)) {
             ExceptionUtil.notExactDivision(x, y);
         }
@@ -314,9 +313,8 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @param b another number
      * @return {@code gcd(|a|,|b|)}
      */
-    @NotNull
     @Override
-    default T gcd(@NotNull T a, @NotNull T b) {
+    default T gcd(T a, T b) {
         a = abs(a);
         b = abs(b);
         T t;
@@ -338,8 +336,8 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
 //     *
 //     * @return a tuple of <code>{gcd(a,b), u, v}</code>.
 //     */
-//    @NotNull
-//    default Triple<T, T, T> gcdUV(@NotNull T a, T b) {
+//    
+//    default Triple<T, T, T> gcdUV( T a, T b) {
 //        if (isZero(a)) {
 //            return new Triple<>(b, getZero(), getOne());
 //        }
@@ -523,9 +521,9 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
      * @param n a non-negative number.
      * @param m the modular.
      */
-    @NotNull
+
     @Override
-    default T powerAndMod(@NotNull T x, long n, @NotNull T m) {
+    default T powerAndMod(T x, long n, T m) {
         return EUDCalculator.super.powerAndMod(x, n, m);
     }
 

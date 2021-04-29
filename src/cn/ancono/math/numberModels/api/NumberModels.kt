@@ -165,6 +165,11 @@ interface VectorModel<K, V : VectorModel<K, V>> : ModuleModel<K, V> {
      */
     fun divide(k: K): V
 
+    /**
+     * Determines whether this is linear relevant to [v].
+     *
+     * This method is optional.
+     */
     fun isLinearRelevant(v: V): Boolean {
         throw UnsupportedOperationException()
     }

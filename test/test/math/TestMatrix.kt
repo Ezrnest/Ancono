@@ -48,10 +48,10 @@ class TestMatrix
 
     @Test
     fun testMultiply() {
-        val A = of(2, 3, mcd) { i, j ->
+        val A = Matrix(2, 3, mcd) { i, j ->
             i + j + 0.0
         }
-        val B = of(3, 3, mcd) { i, j ->
+        val B = Matrix(3, 3, mcd) { i, j ->
             i * j + 1.0
         }
 //        println(A)
@@ -64,13 +64,13 @@ class TestMatrix
 
     @Test
     fun testAdd() {
-        val A = of(2, 3, mcd) { i, j ->
+        val A = Matrix(2, 3, mcd) { i, j ->
             i + j + 0.0
         }
-        val B = of(2, 3, mcd) { i, j ->
+        val B = Matrix(2, 3, mcd) { i, j ->
             i - j + 0.0
         }
-        val C = of(2, 3, mcd) { i, j ->
+        val C = Matrix(2, 3, mcd) { i, _ ->
             2.0 * i
         }
         TestUtils.assertValueEquals(C, A + B)
@@ -79,10 +79,10 @@ class TestMatrix
 
     @Test
     fun testToTriangle() {
-        val A = of(2, 3, mcd) { i, j ->
+        val A = Matrix(2, 3, mcd) { i, j ->
             i + j + 0.0
         }
-        val (r, ops) = A.toUpperTriangleWay()
+        val (r, _) = A.toUpperTriangleWay()
         println(r)
         println(A.toEchelonWay().first)
 //        println(A.toUpperTriangle())
@@ -91,7 +91,7 @@ class TestMatrix
 
     @Test
     fun testSolve1() {
-        val A = of(2, 3, mcd) { i, j ->
+        val A = Matrix(2, 3, mcd) { i, j ->
             i + j + 1.0
         }
         val solution = Matrix.solveLinearExpanded(A)
@@ -167,7 +167,7 @@ class TestMatrix
         for (i in 0..99) {
             val row = rd.nextInt(10) + 1
             val column = rd.nextInt(10) + 1
-            val expanded = of(row, column + 1, mcd) { _, _ ->
+            val expanded = Matrix(row, column + 1, mcd) { _, _ ->
                 rd.nextDouble()
             }
             val m = expanded.subMatrix(0, 0, row, column)
@@ -187,7 +187,7 @@ class TestMatrix
         for (i in 0..99) {
             val row = rd.nextInt(10) + 1
             val column = rd.nextInt(10) + 1
-            val matrix: Matrix<Double> = of(row, column, mcd) { _, _ ->
+            val matrix: Matrix<Double> = Matrix(row, column, mcd) { _, _ ->
                 rd.nextDouble()
             }
             val solution = Matrix.solveHomo(matrix)
@@ -269,7 +269,7 @@ class TestMatrix
     @Test
     fun testDecompCholesky() {
         val rd = Random()
-        val B: Matrix<Double> = of(5, 5, Calculators.doubleDev()) { _: Int?, _: Int? -> rd.nextDouble() }
+        val B: Matrix<Double> = Matrix(5, 5, Calculators.doubleDev()) { _: Int?, _: Int? -> rd.nextDouble() }
         val A = B.multiply(B.transpose())
         val L = A.decompCholesky()
         //        A.congruenceDiagForm().getFirst().printMatrix();
@@ -291,7 +291,7 @@ class TestMatrix
     @Test
     fun testDecompCholeskyD() {
         val rd = Random()
-        val B: Matrix<Double> = of(5, 5, Calculators.doubleDev()) { _: Int?, _: Int? -> rd.nextDouble() }
+        val B: Matrix<Double> = Matrix(5, 5, Calculators.doubleDev()) { _: Int?, _: Int? -> rd.nextDouble() }
         val A = B * B.transpose()
         val (L, D) = A.decompCholeskyD()
 
@@ -310,5 +310,32 @@ class TestMatrix
 //        L.printMatrix();
 //        var R = Matrix.multiply(L,L.transpose());
         Assert.assertTrue("A = LDL^T", A.valueEquals(R))
+    }
+
+    @Test
+    fun testAdjoint() {
+        val rd = Random()
+        repeat(100) {
+            val n = rd.nextInt(10) + 1
+            val m = Matrix(n, n, Calculators.doubleDev()) { _: Int?, _: Int? -> rd.nextDouble() }
+            val adj = m.adjoint()
+            val detI = Matrix.diag(m.det(), n, mcd)
+            TestUtils.assertValueEquals(detI, m * adj)
+            TestUtils.assertValueEquals(detI, adj * m)
+        }
+    }
+
+    @Test
+    fun testCharPoly() {
+        val rd = Random()
+        repeat(100) {
+            val n = rd.nextInt(10) + 1
+            val m = Matrix(n, n, Calculators.doubleDev()) { _: Int?, _: Int? -> rd.nextDouble() }
+            val f = m.charPoly().mapTo(Matrix.calculator(n, mcd)) {
+                Matrix.diag(it, n, mcd)
+            }
+            assertEquals(n, f.degree)
+            assert(f.compute(m).isZero())
+        }
     }
 }

@@ -346,14 +346,15 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         if (vb.isFull()) {
             return vb
         }
-        val nVectors = ArrayList<Vector<T>>(rank + vb.rank)
-        nVectors.addAll(vectors)
-        for (v in vb.vectors) {
-            if (!Vector.isLinearDependent(nVectors + v)) {
-                nVectors.add(v)
-            }
-        }
-        return DVectorBasis(vectorLength, vectors)
+//        val nVectors = ArrayList<Vector<T>>(rank + vb.rank)
+//        nVectors.addAll(vectors)
+//        for (v in vb.vectors) {
+//            if (!Vector.isLinearDependent(nVectors + v)) {
+//                nVectors.add(v)
+//            }
+//        }
+//        return DVectorBasis(vectorLength, vectors)
+        return generate(vectors + vb.vectors)
     }
 
     /**

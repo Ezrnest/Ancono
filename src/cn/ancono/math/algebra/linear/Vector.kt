@@ -691,7 +691,7 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
          */
         fun <T> unitVector(length: Int, unitIndex: Int, mc: MathCalculator<T>): AVector<T> {
             val result = zero(length, mc)
-            result[unitIndex] = mc.zero
+            result[unitIndex] = mc.one
             return result
         }
 

@@ -5,7 +5,6 @@ import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.numberModels.Calculators
 import org.junit.Test
 import test.math.TestUtils
-import kotlin.test.assertTrue
 
 /*
  * Created by liyicheng at 2020-03-10 13:36
@@ -38,9 +37,6 @@ class MatrixSupTest {
         """.trimIndent(), mc, Integer::parseInt
         )
         val B = MatrixSup.inverseInRing(A)
-        assertTrue {
-            B.valueEquals(result)
-        }
-
+        TestUtils.assertValueEquals(result, B)
     }
 }

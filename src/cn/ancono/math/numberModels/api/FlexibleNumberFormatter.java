@@ -1,6 +1,7 @@
 package cn.ancono.math.numberModels.api;
 
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.SNFSupport;
 
 /**
@@ -18,9 +19,11 @@ public interface FlexibleNumberFormatter<T, S extends EqualPredicate<T>> {
     FlexibleNumberFormatter<?, ?> toString = (FlexibleNumberFormatter<Object, EqualPredicate<Object>>) (number, mc) -> number.toString();
 
     FlexibleNumberFormatter<?, ?> defaultFormatter = (FlexibleNumberFormatter<Object, EqualPredicate<Object>>) (number, mc) -> {
-        try {
-            return SNFSupport.format((Number) number);
-        } catch (IllegalArgumentException ignore) {
+        if (number instanceof Number && (!(number instanceof Fraction))) {
+            try {
+                return SNFSupport.format((Number) number);
+            } catch (IllegalArgumentException ignore) {
+            }
         }
         return number.toString();
     };

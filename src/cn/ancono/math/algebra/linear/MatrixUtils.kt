@@ -12,9 +12,113 @@ import java.util.*
 
 
 /**
- * A kotlin-based implementation of some matrix-related methods.
+ *
  */
-internal object MatrixSupKt {
+@Suppress("LocalVariableName") // we often use upper letter to name a matrix
+object MatrixUtils {
+    /**
+     * Returns the QR-decomposition of a square matrix `A = QR`, where `Q` is an orthogonal matrix and `R` is an
+     * upper-triangle matrix. If this matrix is invertible, there is only one decomposition.
+     *
+     * @return `(Q, R)` as a pair
+     */
+    fun <T> decompQR(A: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
+        //Re-written by lyc at 2021-04-30 13:00
+        A.requireSquare()
+        val vs = A.columnVectors()
+        val mc = A.mathCalculator
+        val R = Matrix.zero(A.row, A.column, mc)
+        val ws = ArrayList<MutableVector<T>>(A.row)
+        for (i in 0 until A.row) {
+            val u = Vector.copyOf(vs[i])
+            for (j in 0 until i) {
+                val k = u.inner(ws[j])
+                u.addMultiplyAssign(mc.negate(k), ws[j])
+                R[j, i] = k
+            }
+            if (!u.isZero()) {
+                val length = u.norm()
+                R[i, i] = length
+                u.divAssign(length)
+            }
+            ws += u
+        }
+        val Q = Matrix.fromVectors(ws)
+        return Q to R
+    }
+
+    private fun <T> checkSymmetric(A: AbstractMatrix<T>) {
+        A.requireSquare()
+        val mc = A.mathCalculator
+        for (i in 0 until A.row) {
+            for (j in 0 until i) {
+                require(mc.isEqual(A[i, j], A[j, i])) {
+                    "Not symmetric!"
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the congruence diagonal normal form `J` of matrix `A` and the corresponding transformation `P`,
+     * which satisfies
+     *
+     *     P.T * A * P = J
+     *
+     * @return `(J, P)`.
+     */
+    fun <T> toCongDiagonalForm(A: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
+        checkSymmetric(A)
+        //Re-written by lyc at 2021-04-30 13:00
+        val n = A.row
+        val mc = A.mathCalculator
+        val x = AMatrix.zero(2 * n, n, A.mathCalculator)
+        x.setAll(0, 0, A)
+        val one = mc.one
+        for (i in 0 until n) {
+            x[i + n, i] = one
+        }
+        var pos = 0
+        while (pos < n) {
+//            println(x)
+            if (mc.isZero(x[pos, pos])) {
+                var pi = -1
+                var pj = -1
+                SEARCH@ for (i in pos until n) {
+                    for (j in pos..i) {
+                        if (!mc.isZero(x[j, j])) {
+                            pi = i
+                            pj = j
+                            break@SEARCH
+                        }
+                    }
+                }
+                if (pj < 0) {
+                    break
+                }
+                if (pj != pos) {
+                    x.multiplyAddRow(pj, pos, one)
+                    x.multiplyAddCol(pj, pos, one)
+                }
+                x.multiplyAddRow(pi, pos, one)
+                x.multiplyAddCol(pi, pos, one)
+
+            }
+            for (i in pos + 1 until n) {
+                if (mc.isZero(x[pos, i])) {
+                    continue
+                }
+                val k = mc.negate(mc.divide(x[pos, i], x[pos, pos]))
+                x.multiplyAddRow(pos, i, k)
+                x.multiplyAddCol(pos, i, k)
+            }
+            pos++
+        }
+        val m1 = x.subMatrix(0, 0, n, n)
+        val m2 = x.subMatrix(n, 0, 2 * n, n)
+        return m1 to m2
+    }
+
     /**
      * Computes the (general) LU decomposition of the given matrix `A` , returns a tuple of matrices `(P,L,U)` such that
      * `PA = LU`, `P` is a permutation matrix, `L` is a lower triangular matrix with 1 as diagonal elements, and
@@ -26,7 +130,7 @@ internal object MatrixSupKt {
      *
      * @return
      */
-    fun <T> decompositionLU(m: Matrix<T>): Triple<Matrix<T>, Matrix<T>, Matrix<T>> {
+    fun <T> decompositionLU(m: AbstractMatrix<T>): Triple<Matrix<T>, Matrix<T>, Matrix<T>> {
         require(m.isSquare()) {
             "The matrix must be square!"
         }
@@ -74,8 +178,12 @@ internal object MatrixSupKt {
     }
 
     /**
+     * Decomposes a symmetric semi-positive definite matrix `A = L L^T`, where
+     * `L` is a lower triangular matrix.
+     *
+     * @return a lower triangular matrix `L`.
      */
-    fun <T> decompositionCholesky(A: Matrix<T>): Matrix<T> {
+    fun <T> decompositionCholesky(A: AbstractMatrix<T>): Matrix<T> {
         require(A.isSquare()) {
             "The matrix must be square!"
         }
@@ -108,9 +216,13 @@ internal object MatrixSupKt {
     }
 
     /**
-     * @see Matrix.decompCholesky
+     * Decomposes a symmetric matrix `A = L D L^T`, where
+     * `L` is a lower triangular matrix and `D` is a diagonal matrix.
+     *
+     * @return `(L, diag(D))`, where `L` is a lower triangular matrix, `diag(D)` is a vector of diagonal elements
+     * of `D`.
      */
-    fun <T> decompositionCholeskyD(A: Matrix<T>): Pair<Matrix<T>, Vector<T>> {
+    fun <T> decompositionCholeskyD(A: AbstractMatrix<T>): Pair<Matrix<T>, Vector<T>> {
         require(A.isSquare()) {
             "The matrix must be square!"
         }
@@ -143,11 +255,10 @@ internal object MatrixSupKt {
         return L to Vector.of(d, mc)
     }
 
-
     /**
      * Computes the inverse of the matrix on an Euclidean domain.
      */
-    fun <T> inverseInEUD(M: Matrix<T>): Matrix<T> {
+    fun <T> inverseInEUD(M: AbstractMatrix<T>): Matrix<T> {
         //TODO check correctness
         M.requireSquare()
         val n = M.column
@@ -158,7 +269,7 @@ internal object MatrixSupKt {
 
 
         @Suppress("UNCHECKED_CAST")
-        val A = Matrix.of(n, 2 * n, mc) { i, j ->
+        val A = Matrix(n, 2 * n, mc) { i, j ->
             when {
                 j < n -> {
                     M[i, j]
@@ -213,34 +324,12 @@ internal object MatrixSupKt {
             for (j2 in 0 until j1) {
                 val k = mc.negate(A[j2, j1])
                 A.multiplyAddRow(j1, j2, k, j1)
-//                MatrixSup.multiplyAndAddRow(A, j1, j2, j1, k, mc)
             }
         }
 
-//        val builder = Matrix.getBuilder(n, M.columnCount - n, mc)
-//        builder.fillArea(0, 0, A, 0, n, n, n)
-
-        return M.subMatrix(0, n, M.row, M.column)
+        return A.subMatrix(0, n, M.row, M.column)
 
 
-    }
-
-    /**
-     * Computes the 'inverse' of the given matrix on a unit ring. This method simply compute the adjugate matrix and
-     * divide it with the determinant (so it is time-consuming).
-     *
-     * This method can be used to compute the modular inverse of a matrix on `Z/Zn`, where n is not necessarily a prime.
-     */
-    fun <T> inverseInRing(M: Matrix<T>): Matrix<T> {
-        val mc = M.mathCalculator
-
-        @Suppress("UNCHECKED_CAST")
-        val rc = M.mathCalculator as UnitRingCalculator<T>
-        val det = M.det()
-        if (!rc.isUnit(det)) {
-            ExceptionUtil.notInvertible()
-        }
-        return M.adjugate().applyAll { x -> mc.divide(x, det) }
     }
 
     /**
@@ -313,7 +402,26 @@ internal object MatrixSupKt {
         return mat
     }
 
-    fun <T> toLatexString(M: Matrix<T>, formatter: NumberFormatter<T> = NumberFormatter.defaultFormatter(), displayType: String = "pmatrix"): String = buildString {
+    /**
+     * Computes the 'inverse' of the given matrix on a unit ring. This method simply compute the adjugate matrix and
+     * divide it with the determinant (so it is time-consuming).
+     *
+     * This method can be used to compute the modular inverse of a matrix on `Z/Zn`, where n is not necessarily a prime.
+     */
+    fun <T> inverseInRing(M: AbstractMatrix<T>): Matrix<T> {
+        val rc = M.mathCalculator as UnitRingCalculator<T>
+        val det = M.det()
+        if (!rc.isUnit(det)) {
+            ExceptionUtil.notInvertible()
+        }
+        val adj = M.adjoint().toMutable()
+        adj.divAssign(det)
+        return adj
+    }
+
+
+    fun <T> toLatexString(M: Matrix<T>, formatter: NumberFormatter<T> = NumberFormatter.defaultFormatter(),
+                          displayType: String = "pmatrix"): String = buildString {
         val mc = M.mathCalculator
         append("\\begin{$displayType}")
         appendLine()

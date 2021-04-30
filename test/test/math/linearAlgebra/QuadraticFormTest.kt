@@ -4,6 +4,7 @@ import cn.ancono.math.T
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.numberModels.api.times
 import org.junit.Test
+import test.math.TestUtils
 
 class QuadraticFormTest {
     @Test
@@ -16,9 +17,7 @@ class QuadraticFormTest {
     """.trimIndent()
         val A = MatrixSup.parseFMatrix(str1)
         val (J, P) = A.toCongDiagForm()
-        kotlin.test.assertTrue {
-            (P.T * A * P).valueEquals(J)
-        }
+        TestUtils.assertValueEquals(P.T * A * P, J)
     }
 
 

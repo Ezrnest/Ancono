@@ -10,7 +10,7 @@ import cn.ancono.math.equation.EquationSolver
 import cn.ancono.math.equation.SVPEquation
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.exceptions.UnsupportedCalculationException
-import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.math.numberModels.structure.Polynomial
@@ -26,6 +26,9 @@ typealias TransformResult<T> = Pair<MutableMatrix<T>, List<MatrixOperation<T>>>
 //Created by lyc at 2021-04-27 15:33
 
 
+/**
+ * Defines the collection of basic methods for a matrix that is
+ */
 abstract class AbstractMatrix<T>(
         mc: MathCalculator<T>,
         final override val row: Int,
@@ -66,16 +69,18 @@ abstract class AbstractMatrix<T>(
 
 
     /**
-     * Returns the adjugate matrix of this matrix as an immutable view.
+     * Returns the adjoint matrix of this matrix.
      *
      * The `(i,j)`-th element in the
-     * adjugate matrix `A*` of matrix `A` is equal to `(-1)^{i+j}`
+     * adjoint matrix `A*` of matrix `A` is equal to `(-1)^{i+j}`
      * times the cofactor of `(i,j)`-th element in `A`.
+     *
+     * This method only require that the number model is a ring, no division is required.
      *
      * @see cofactor
      */
-    open fun adjugate(): AbstractMatrix<T> {
-        TODO()
+    open fun adjoint(): AbstractMatrix<T> {
+        return MatrixImpl.adjointOf(this)
     }
 
     /**
@@ -136,7 +141,7 @@ abstract class AbstractMatrix<T>(
      * Returns the cofactor of this matrix as an immutable view.
      */
     open fun cofactor(row: Int, col: Int): AbstractMatrix<T> {
-        return cofactor(intArrayOf(row), intArrayOf(column))
+        return cofactor(intArrayOf(row), intArrayOf(col))
     }
 
     /**
@@ -387,15 +392,15 @@ abstract class Matrix<T>(
     }
 
     override fun cofactor(row: Int, col: Int): Matrix<T> {
-        return cofactor(intArrayOf(row), intArrayOf(column))
+        return cofactor(intArrayOf(row), intArrayOf(col))
     }
 
     override fun cofactor(rows: IntArray, columns: IntArray): Matrix<T> {
         return FactorMatrixView.cofactorOf(this, rows, columns)
     }
 
-    override fun adjugate(): Matrix<T> {
-        TODO()
+    override fun adjoint(): Matrix<T> {
+        return MatrixImpl.adjointOf(this)
     }
 
     /*
@@ -447,7 +452,7 @@ abstract class Matrix<T>(
      * @return a tuple a matrices `(P,L,U)`
      */
     open fun decompLU(): Triple<Matrix<T>, Matrix<T>, Matrix<T>> {
-        return MatrixSupKt.decompositionLU(this)
+        return MatrixUtils.decompositionLU(this)
     }
 
     /**
@@ -457,7 +462,7 @@ abstract class Matrix<T>(
      * @return `(Q, R)` as a pair
      */
     open fun decompQR(): Pair<Matrix<T>, Matrix<T>> {
-        return MatrixImpl.decompQR(this)
+        return MatrixUtils.decompQR(this)
     }
 
     /**
@@ -468,7 +473,7 @@ abstract class Matrix<T>(
      */
     open fun decompCholesky(): Matrix<T> {
         //Created by lyc at 2020-09-26 10:47
-        return MatrixSupKt.decompositionCholesky(this);
+        return MatrixUtils.decompositionCholesky(this);
     }
 
     /**
@@ -480,7 +485,7 @@ abstract class Matrix<T>(
      */
     open fun decompCholeskyD(): Pair<Matrix<T>, Vector<T>> {
         //Created by lyc at 2020-09-26 10:47
-        return MatrixSupKt.decompositionCholeskyD(this);
+        return MatrixUtils.decompositionCholeskyD(this);
     }
 
     /**
@@ -499,7 +504,7 @@ abstract class Matrix<T>(
      * @return `(J, P)`.
      */
     open fun toCongDiagForm(): Pair<Matrix<T>, Matrix<T>> {
-        return MatrixImpl.toCongDiagonalForm(this)
+        return MatrixUtils.toCongDiagonalForm(this)
     }
 
     /**
@@ -509,7 +514,7 @@ abstract class Matrix<T>(
      * [cn.ancono.math.algebra.abs.calculator.EUDCalculator].
      */
     open fun toHermitForm(): Matrix<T> {
-        return MatrixSupKt.toHermitForm(this)
+        return MatrixUtils.toHermitForm(this)
     }
 
     /**
@@ -526,15 +531,15 @@ abstract class Matrix<T>(
      */
     open fun toSmithForm(): Matrix<T> {
         //Created by lyc at 2020-03-10 14:54
-        TODO()
-//        return LambdaMatrixSup.toSmithForm(this)
+//        TODO()
+        return LambdaMatrixSup.toSmithForm(this)
     }
 
     /**
      * Transforms this matrix to (upper) Hessenberg form.
      */
     open fun toHessenbergForm(): Matrix<T> {
-        TODO()
+        return MatrixImpl.toHessenberg(this)
     }
 
     /**
@@ -550,8 +555,7 @@ abstract class Matrix<T>(
      * this matrix is a square matrix.
      */
     open fun charPoly(): Polynomial<T> {
-        requireSquare()
-        return charMatrix().det()
+        return MatrixImpl.adjointAndCharPoly(this).second
     }
 
     open fun charEquation(): SVPEquation<T> {
@@ -627,6 +631,10 @@ abstract class Matrix<T>(
             return AMatrix.of(row, column, mc, supplier)
         }
 
+        operator fun <T> invoke(row: Int, column: Int, mc: MathCalculator<T>, supplier: (Int, Int) -> T)
+                : MutableMatrix<T> {
+            return AMatrix.of(row, column, mc, supplier)
+        }
 
         /**
          * Create a matrix according to the given array.The row count of the matrix
@@ -863,7 +871,6 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
         return MatrixImpl.multiply(this, y)
     }
 
-
     open operator fun plusAssign(y: Matrix<T>) {
         val mc = mathCalculator
         for (i in rowIndices) {
@@ -921,9 +928,14 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
     Primary operations
      */
 
-
+    /**
+     * Multiplies row [r1] with [k] and add it to row [r2].
+     */
     abstract fun multiplyAddRow(r1: Int, r2: Int, k: T, colStart: Int = 0, colEnd: Int = column)
 
+    /**
+     * Multiplies column [c1] with [k] and add it to column [c2].
+     */
     abstract fun multiplyAddCol(c1: Int, c2: Int, k: T, rowStart: Int = 0, rowEnd: Int = row)
 
     abstract fun swapRow(r1: Int, r2: Int, colStart: Int = 0, colEnd: Int = column)
@@ -1036,8 +1048,8 @@ class AMatrix<T> internal constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun multiplyAddCol(c1: Int, c2: Int, k: T, rowStart: Int, rowEnd: Int) {
-        val l = toPos(rowStart, 0)
         for (r in rowStart until rowEnd) {
+            val l = toPos(r, 0)
             data[l + c2] = mc.eval { (data[l + c2] as T) + k * (data[l + c1] as T) }
         }
     }
@@ -1266,10 +1278,11 @@ internal object MatrixImpl {
     }
 
     internal fun <T> det(m: AbstractMatrix<T>): T {
-        val mc = m.mathCalculator
+        m.requireSquare()
         if (m.row == 1) {
             return m[0, 0]
         }
+        val mc = m.mathCalculator
         if (m.row == 2) {
             return mc.eval {
                 m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0]
@@ -1447,6 +1460,7 @@ internal object MatrixImpl {
     internal fun <T> toUpperTriangle(M: MutableMatrix<T>,
                                      operations: MutableList<MatrixOperation<T>>? = null,
                                      column: Int = M.column): List<Int> {
+        //Created by lyc at 2021-04-29
         val mc = M.mathCalculator
         val row = M.row
         var i = 0
@@ -1499,6 +1513,7 @@ internal object MatrixImpl {
     internal fun <T> toEchelon(M: MutableMatrix<T>,
                                column: Int = M.column,
                                operations: MutableList<MatrixOperation<T>>? = null): List<Int> {
+        //Created by lyc at 2021-04-29
         val pivots = toUpperTriangle(M, operations, column)
         val mc = M.mathCalculator
         for (i in pivots.lastIndex downTo 0) {
@@ -1509,6 +1524,9 @@ internal object MatrixImpl {
                 operations?.add(MatrixOperation.multiplyRow(i, mc.reciprocal(M[i, j])))
             }
             for (k in (i - 1) downTo 0) {
+                if (mc.isZero(M[k, j])) {
+                    continue
+                }
                 val q = mc.eval { -M[k, j] }
                 M.multiplyAddRow(i, k, q, j + 1)
                 M[k, j] = mc.zero
@@ -1633,98 +1651,103 @@ internal object MatrixImpl {
         return result
     }
 
-    fun <T> decompQR(m: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
-        m.requireSquare()
-        val vs = m.columnVectors()
-        val mc = m.mathCalculator
-        val R = Matrix.zero(m.row, m.column, mc)
-        val ws = ArrayList<MutableVector<T>>(m.row)
-//        ws += Vector.copyOf(vs[0])
-        for (i in 0 until m.row) {
-            val u = Vector.copyOf(vs[i])
-            for (j in 0 until i) {
-                val k = u.inner(ws[j])
-                u.addMultiplyAssign(mc.negate(k), ws[j])
-                R[j, i] = k
-            }
-            if (!u.isZero()) {
-                val length = u.norm()
-                R[i, i] = length
-                u.divAssign(length)
-            }
-            ws[i] = u
-        }
-        val Q = Matrix.fromVectors(ws)
-        return Q to R
-    }
-
-    private fun <T> checkSymmetric(A: AbstractMatrix<T>) {
-        A.requireSquare()
-        val mc = A.mathCalculator
-        for (i in 0 until A.row) {
-            for (j in 0 until i) {
-                require(mc.isEqual(A[i, j], A[j, i])) {
-                    "Not symmetric!"
-                }
-            }
-        }
-    }
-
-    fun <T> toCongDiagonalForm(A: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
-        checkSymmetric(A)
-        val n = A.row
-        val mc = A.mathCalculator
-        val x = AMatrix.zero(2 * n, n, A.mathCalculator)
-        x.setAll(0, 0, A)
-        val one = mc.one
-        for (i in 0 until n) {
-            x[i + n, i] = one
-        }
-        var pos = 0
-        while (pos < n) {
-            if (mc.isZero(x[pos, pos])) {
-                var pi = -1
-                var pj = -1
-                SEARCH@ for (i in pos until n) {
-                    for (j in pos..i) {
-                        if (!mc.isZero(x[j, j])) {
-                            pi = i
-                            pj = j
-                            break@SEARCH
-                        }
-                    }
-                }
-                if (pj < 0) {
-                    break
-                } else {
-                    if (pj != pos) {
-                        x.multiplyAddRow(pj, pos, one)
-                        x.multiplyAddCol(pj, pos, one)
-                    }
-                    x.multiplyAddRow(pi, pos, one)
-                    x.multiplyAddCol(pi, pos, one)
-                }
-            }
-            for (i in pos + 1 until n) {
-                if (mc.isZero(x[pos, i])) {
-                    continue
-                }
-                val k = mc.negate(mc.divide(x[pos, i], x[pos, pos]))
-                x.multiplyAddRow(pos, i, k)
-                x.multiplyAddCol(pos, i, k)
-            }
-            pos++
-        }
-        val m1 = x.subMatrix(0, 0, n, n)
-        val m2 = x.subMatrix(n, 0, 2 * n, n)
-        return m1 to m2
-    }
-
-
     fun <T> columnSpace(A: AbstractMatrix<T>): VectorBasis<T> {
         val matrix = A.toMutable()
         val pivots = toUpperTriangle(matrix)
         return VectorBasis.createBaseWithoutCheck(pivots.map { A.getColumn(it) })
+    }
+
+    fun <T> adjointOf(matrix: AbstractMatrix<T>): Matrix<T> {
+        matrix.requireSquare()
+        if (matrix.size == 1) {
+            return Matrix.identity(1, matrix.mathCalculator)
+        }
+        try {
+            return adjointAndCharPoly(matrix).first
+        } catch (e: ArithmeticException) {
+
+        }
+        val n = matrix.row
+        val mc = matrix.mathCalculator
+        return Matrix(n, n, mc) { i, j ->
+            val cof = matrix.cofactor(j, i)
+            val d = cof.det()
+            if ((i + j) % 2 == 0) {
+                d
+            } else {
+                mc.negate(d)
+            }
+        }
+    }
+
+    fun <T> adjointAndCharPoly(matrix: AbstractMatrix<T>): Pair<Matrix<T>, Polynomial<T>> {
+        /*
+        Reference: A course in computational algebraic number theory, Algorithm 2.2.7
+
+         */
+        val M = matrix.asMatrix()
+        M.requireSquare()
+        val mc = M.mathCalculator
+        val n = M.row
+        var C = Matrix.identity(n, mc)
+        val a = ArrayList<T>(n + 1)
+        a += mc.one
+        for (i in 1 until n) {
+            C = multiply(M, C)
+            val ai = mc.eval { -C.trace() / i.toLong() }
+            for (j in 0 until n) {
+                mc.eval { C[j, j] += ai }
+            }
+            a += ai
+        }
+        a += mc.eval { -(M * C).trace() / (n.toLong()) }
+        val p = Polynomial.of(mc, a.asReversed())
+        if (n % 2 == 0) {
+            C.negateInplace()
+        }
+        return C to p
+    }
+
+    fun <T> toHessenberg(matrix: AbstractMatrix<T>): Matrix<T> {
+        require(matrix.isSquare())
+        val H = matrix.toMutable()
+        val n = matrix.row
+        val mc = matrix.mathCalculator
+
+        for (m in 0 until (n - 1)) {
+            println(H)
+            var i = m + 2
+            while (i < n) {
+                if (!mc.isZero(H[i, m])) {
+                    break
+                }
+                i++
+            }
+            if (i >= n) {
+                continue
+            }
+            if (!mc.isZero(H[m + 1, m])) {
+                i = m + 1
+            }
+//            val t = H[i, m]
+            if (i > m + 1) {
+                H.swapRow(i, m + 1, m)
+                H.swapCol(i, m + 1)
+            }
+            val t = H[m + 1, m]
+            println(H)
+            for (i in (m + 2) until n) {
+                if (mc.isZero(H[i, m])) {
+                    continue
+                }
+                val u = mc.eval { H[i, m] / t }
+                H.multiplyAddRow(m + 1, i, mc.negate(u), m)
+                H[i, m] = mc.zero
+                H.multiplyAddCol(i, m + 1, mc.reciprocal(u))
+            }
+        }
+        return H
+
     }
 }
 
@@ -1732,6 +1755,11 @@ internal object MatrixImpl {
  * Returns a mutable copy of this matrix.
  */
 fun <T> AbstractMatrix<T>.toMutable(): MutableMatrix<T> = MatrixImpl.copyOf(this, mathCalculator)
+
+/**
+ * Converts this abstract matrix to a matrix.
+ */
+fun <T> AbstractMatrix<T>.asMatrix(): Matrix<T> = Matrix.asMatrix(this, mathCalculator)
 
 open class MatrixCal<T>(val mc: MathCalculator<T>, val r: Int, val c: Int) : MathCalculatorAdapter<Matrix<T>>() {
     override val numberClass: Class<Matrix<T>>
@@ -1790,17 +1818,24 @@ class SquareMatrixCal<T>(mc: MathCalculator<T>, n: Int) : MatrixCal<T>(mc, n, n)
 
 
 fun main() {
-    val m = AMatrix.of(3, 3, Fraction.calculator) { i, j ->
-//        Fraction.of(i+j+0L)
-        if (i == j && (i == 0 || i == 2)) {
-            Fraction.ONE
-        } else {
-            Fraction.ZERO
-        }
-
+    val m = Matrix(4, 4, Calculators.doubleDev()) { i, j ->
+        i + (j + 2) * 2.0 + 1 + j * j
     }
-    println(m)
-    val (u, ops) = m.toUpperTriangleWay()
-    println(u)
-    println(ops)
+//    println(MatrixImpl.toHessenberg(m))
+    val H = MatrixImpl.toHessenberg(m)
+    println(m.det())
+    println(H.det())
+//    val m = AMatrix.of(3, 3, Fraction.calculator) { i, j ->
+////        Fraction.of(i+j+0L)
+//        if (i == j && (i == 0 || i == 2)) {
+//            Fraction.ONE
+//        } else {
+//            Fraction.ZERO
+//        }
+//
+//    }
+//    println(m)
+//    val (u, ops) = m.toUpperTriangleWay()
+//    println(u)
+//    println(ops)
 }

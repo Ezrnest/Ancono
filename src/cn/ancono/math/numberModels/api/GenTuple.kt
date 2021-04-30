@@ -8,11 +8,15 @@ import cn.ancono.utilities.IterUtils
  * Created by liyicheng at 2021-04-28 18:38
  */
 
+/**
+ * A generic (multidimensional) tuple-like container with finite elements in order.
+ */
 interface GenTuple<T> {
     val size: Int
 
     /**
-     * Gets the elements in this generic tuple as a sequence. The order is the same as [indices].
+     * Gets the elements in this generic tuple as a sequence. The order of elements should
+     * remain the same.
      *
      * @see flattenToList
      */
@@ -42,6 +46,9 @@ interface GenTuple<T> {
 
 typealias Index = IntArray
 
+/**
+ * Generic tensor-like container.
+ */
 interface GenTensor<T> : GenTuple<T> {
 
     val shape: IntArray
@@ -51,6 +58,9 @@ interface GenTensor<T> : GenTuple<T> {
     override fun applyAll(f: (T) -> T): GenTensor<T>
 }
 
+/**
+ * Generic matrix-like container.
+ */
 interface GenMatrix<T> : GenTuple<T> {
 
     /**

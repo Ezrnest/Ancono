@@ -17,7 +17,7 @@ class LinearEquationsTest {
     @Test
     fun solveUpper() {
         val n = 4
-        val U = Matrix.of(n, n, mc) { i, j ->
+        val U = Matrix(n, n, mc) { i, j ->
             if (i > j) {
                 Fraction.ZERO
             } else {
@@ -33,7 +33,7 @@ class LinearEquationsTest {
     @Test
     fun solveLower() {
         val n = 4
-        val L = Matrix.of(n, n, mc) { i, j ->
+        val L = Matrix(n, n, mc) { i, j ->
             if (i > j) {
                 Fraction.ZERO
             } else {
@@ -50,10 +50,10 @@ class LinearEquationsTest {
     fun solveGauss() {
         val n = 4
         val mc = Calculators.doubleDev()
-        val A = Matrix.of(n, n, mc) { _, _ ->
+        val A = Matrix(n, n, mc) { _, _ ->
             Random.nextDouble()
         }
-        val X = Matrix.of(n,n,mc){ _, _ ->
+        val X = Matrix(n, n, mc) { _, _ ->
             Random.nextDouble()
         }
         val B = A * X

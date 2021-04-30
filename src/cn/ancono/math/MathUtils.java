@@ -706,9 +706,7 @@ public class MathUtils {
      * the result will always be in <code>[0, mod)</code>
      * <p></p>
      * For example, {@code powMod(2,2,3) = 1}.
-     *
      * <p></p>
-     * This method will not check for overflow.
      *
      * @param a   an integer
      * @param n   the power
@@ -720,7 +718,7 @@ public class MathUtils {
         if (a == 0 || a == 1) {
             return a;
         }
-        int ans = 1;
+        long ans = 1; // prevent overflow
         a = a % mod;
         //noinspection Duplicates
         while (n > 0) {
@@ -731,7 +729,7 @@ public class MathUtils {
             a = (a * a) % mod;
             n >>= 1;
         }
-        return ans;
+        return (int) ans;
     }
 
     /**

@@ -17,7 +17,7 @@ object LinearEquationSample {
     fun solveHilbertMatrixEquation(){
         val n = 12
         val mc = BigFraction.calculator
-        val H = Matrix.of(n, n, mc) { i, j ->
+        val H = Matrix(n, n, mc) { i, j ->
             BigFraction.valueOf(BigInteger.ONE, BigInteger.valueOf(i + j + 1L))
         }
         val x = Vector.of(n, mc) {

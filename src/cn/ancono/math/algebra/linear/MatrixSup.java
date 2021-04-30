@@ -4,10 +4,7 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.numberModels.Fraction;
-import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.utilities.ArraySup;
-import kotlin.Pair;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -603,18 +600,18 @@ public class MatrixSup {
 //    }
 
 
-    /**
-     * Returns the Jordan normal form of the given matrix and the transformation matrix.
-     */
-    public static @Nullable Pair<Matrix<Fraction>, Matrix<Fraction>> jordanFormAndTrans(Matrix<Fraction> mat) {
-        return LambdaMatrixSup.jordanFormAndTrans(mat);
-    }
+//    /**
+//     * Returns the Jordan normal form of the given matrix and the transformation matrix.
+//     */
+//    public static @Nullable Pair<Matrix<Fraction>, Matrix<Fraction>> jordanFormAndTrans(Matrix<Fraction> mat) {
+//        return LambdaMatrixSup.jordanFormAndTrans(mat);
+//    }
 
-    public static <T> Polynomial<Matrix<T>> matrixPolynomial(int n, Polynomial<T> p) {
-        var cal = p.getMathCalculator();
-        var cm = Matrix.calculator(n, cal);
-        return p.mapTo(cm, e -> Matrix.diag(e, n, cal));
-    }
+//    public static <T> Polynomial<Matrix<T>> matrixPolynomial(int n, Polynomial<T> p) {
+//        var cal = p.getMathCalculator();
+//        var cm = Matrix.calculator(n, cal);
+//        return p.mapTo(cm, e -> Matrix.diag(e, n, cal));
+//    }
 
 //    /**
 //     * Transform this matrix to Hermit Form. It is required that the calculator is a
@@ -705,7 +702,7 @@ public class MatrixSup {
      * This method can be used to compute the modular inverse of a matrix on Z/Zn, where n is not necessarily a prime.
      */
     public static <T> Matrix<T> inverseInRing(Matrix<T> m) {
-        return MatrixSupKt.INSTANCE.inverseInRing(m);
+        return MatrixUtils.INSTANCE.inverseInRing(m);
     }
 
     /**
@@ -714,7 +711,7 @@ public class MatrixSup {
      * It is required that the calculator of m is an instance of EUDCalculator.
      */
     public static <T> Matrix<T> inverseInEUD(Matrix<T> m) {
-        return MatrixSupKt.INSTANCE.inverseInEUD(m);
+        return MatrixUtils.INSTANCE.inverseInEUD(m);
     }
 
 

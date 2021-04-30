@@ -1,5 +1,6 @@
 package test
 
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.api.times
@@ -10,7 +11,9 @@ import cn.ancono.math.numberModels.expression.ExprCalculator
  * @author  liyicheng
  */
 fun main() {
-    p2()
+    val mc = Calculators.intModN(26)
+    mc.eval { subtract(multiply(5, 15), multiply(23, 14)) }.also { println(it) }
+//    p2()
 }
 
 fun p2() {
@@ -37,7 +40,7 @@ fun p3() {
     val mat = MatrixSup.parseMatrixD(str, mc, mc::parse)
     println(mat)
     println(mat.det())
-    println(mat.adjugate())
+    println(mat.adjoint())
 
 //    mat.inverse().printMatrix()
 }

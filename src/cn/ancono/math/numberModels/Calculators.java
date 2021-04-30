@@ -2043,7 +2043,7 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer subtract(@NotNull Integer x, @NotNull Integer y) {
-            return modN((long) x + y);
+            return modN((long) x - y);
         }
 
         @NotNull

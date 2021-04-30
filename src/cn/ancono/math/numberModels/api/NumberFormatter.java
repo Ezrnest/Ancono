@@ -5,6 +5,7 @@ package cn.ancono.math.numberModels.api;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.SNFSupport;
 
 import java.text.NumberFormat;
@@ -38,9 +39,11 @@ public interface NumberFormatter<T> extends FlexibleNumberFormatter<T, MathCalcu
     }
 
     NumberFormatter<Object> defaultFormatter = (number, mc) -> {
-        try {
-            return SNFSupport.format((Number) number);
-        } catch (IllegalArgumentException ignore) {
+        if (number instanceof Number && (!(number instanceof Fraction))) {
+            try {
+                return SNFSupport.format((Number) number);
+            } catch (IllegalArgumentException ignore) {
+            }
         }
         return number.toString();
     };

@@ -53,8 +53,14 @@ interface GenTensor<T> : GenTuple<T> {
 
 interface GenMatrix<T> : GenTuple<T> {
 
+    /**
+     * The count of rows in this matrix.
+     */
     val row: Int
 
+    /**
+     * The count of columns in this matrix.
+     */
     val column: Int
 
     @JvmDefault

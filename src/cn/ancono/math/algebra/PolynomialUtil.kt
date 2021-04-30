@@ -867,7 +867,7 @@ object PolynomialUtil {
         val Q = buildPowerMatrix(A, p)
         val mc = A.mathCalculator
         val n = A.degree
-        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace().vectors
+        val vectors = (Q - Matrix.identity(n, mc)).nullSpace().vectors
         val r = vectors.size
         var E = listOf(A)
         val constants = (0 until p).map { s -> constant(mc, s) }
@@ -919,7 +919,7 @@ object PolynomialUtil {
         val Q = buildPowerMatrix(A, p)
         val mc = A.mathCalculator
         val n = A.degree
-        val vectors = (Q - Matrix.identity(n, mc)).solutionSpace().vectors
+        val vectors = (Q - Matrix.identity(n, mc)).nullSpace().vectors
         val ts = vectors.map { v -> of(mc, v.toList()) }
         val r = vectors.size
         var E = listOf(A)

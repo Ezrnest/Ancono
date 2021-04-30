@@ -88,7 +88,7 @@ abstract class AbstractVector<T>(
     }
 
     override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
-        return indices.joinToString(",", "(", ")") { nf.format(get(it), mc) }
+        return indices.joinToString(", ", "(", ")") { nf.format(get(it), mc) }
     }
 }
 
@@ -317,11 +317,12 @@ abstract class Vector<T>(
         fun <T> multiplyToVector(mat: Matrix<T>, v: Vector<T>): Vector<T> {
             require(mat.column == v.size) { "mat.column != v.size" }
             val mc = mat.mathCalculator
-            val result = Array<Any?>(v.size) { k ->
+            val result = Array<Any?>(mat.row) { k ->
                 var t = mc.zero
                 for (j in mat.colIndices) {
                     t = mc.eval { t + mat[k, j] * v[j] }
                 }
+                t
             }
             return AVector(mc, result)
         }
@@ -339,11 +340,12 @@ abstract class Vector<T>(
         fun <T> multiplyByVector(v: Vector<T>, mat: Matrix<T>): Vector<T> {
             require(mat.row == v.size) { "mat.row != v.size" }
             val mc = mat.mathCalculator
-            val result = Array<Any?>(v.size) { k ->
+            val result = Array<Any?>(mat.column) { k ->
                 var t = mc.zero
                 for (i in mat.rowIndices) {
                     t = mc.eval { t + v[i] * mat[i, k] }
                 }
+                t
             }
             return AVector(mc, result)
         }
@@ -373,8 +375,7 @@ abstract class Vector<T>(
 
             val list: MutableList<Vector<T>> = ArrayList(n)
             val us = ArrayList<Vector<T>>(n - 1)
-//            val temp1: Array<Vector<T>> = arrayOfNulls<Vector<*>>(n - 1) //temp1: b/b^2
-//            val temp2: Array<Vector<T>> = arrayOfNulls<Vector<*>>(n)
+            //us: b/b^2
             list.add(vs[0])
             //b1 = a1
             for (i in 1 until n) {
@@ -383,7 +384,7 @@ abstract class Vector<T>(
 
                 val v = copyOf(vs[i])
                 for (j in 0 until i) {
-                    v += list[j] * (us[j].inner(v))
+                    v.addMultiplyAssign(us[j].inner(v), list[j])
                 }
                 list.add(v)
             }
@@ -527,6 +528,15 @@ abstract class MutableVector<T>(mc: MathCalculator<T>, size: Int) : Vector<T>(mc
         val mc = mathCalculator
         for (idx in indices) {
             this[idx] = mc.divide(this[idx], k)
+        }
+    }
+
+    /**
+     *
+     */
+    open fun addMultiplyAssign(k: T, y: Vector<T>) {
+        for (i in 0 until size) {
+            this[i] += k * y[i]
         }
     }
 

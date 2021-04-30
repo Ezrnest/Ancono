@@ -22,7 +22,7 @@ import java.util.function.Function
  */
 class STransMatrix<T> internal constructor(mc: MathCalculator<T>, val matrix: Matrix<T>) : MathObjectExtend<T>(mc) {
 
-    val rotateMatrix: SRotateMatrix<T> = SRotateMatrix.valueOf(matrix.subMatrix(0, 0, 2, 2))
+    val rotateMatrix: SRotateMatrix<T> = SRotateMatrix.valueOf(matrix.subMatrix(0, 0, 3, 3))
 
     fun transform(p: SPoint<T>): SPoint<T> {
         val v = p.extendVector()

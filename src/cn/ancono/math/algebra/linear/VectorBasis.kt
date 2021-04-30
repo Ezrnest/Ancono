@@ -48,7 +48,7 @@ interface IVectorBasis<T> : FiniteLinearBasis<T, Vector<T>> {
      * Returns the matrix containing the base vectors in this vector base. The base
      * vectors are all column vectors.
      */
-    fun getVectorsAsMatrix(): Matrix<T> {
+    fun asMatrix(): Matrix<T> {
         return Matrix.fromVectors(vectors)
     }
 
@@ -200,8 +200,8 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         require(this.vectorLength == vb.vectorLength) { "Dimension of vectors of the two vector bases must be the same!" }
     }
 
-    override fun getVectorsAsMatrix(): Matrix<T> {
-        return super.getVectorsAsMatrix()
+    override fun asMatrix(): Matrix<T> {
+        return super.asMatrix()
     }
 
     override fun reduce(v: Vector<T>): Vector<T> {
@@ -249,8 +249,8 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
      */
     open fun transMatrix(vb: VectorBasis<T>): Matrix<T> {
         requireSameVectorDimension(vb)
-        val a = getVectorsAsMatrix()
-        val b = vb.getVectorsAsMatrix()
+        val a = asMatrix()
+        val b = vb.asMatrix()
         return Matrix.solveLinear(a, b).first
     }
 
@@ -385,7 +385,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
             return vb
         }
         val m = Matrix.fromVectors(this.vectors + vb.vectors)
-        val solution = m.solutionSpace() // at least zero solution
+        val solution = m.nullSpace() // at least zero solution
         if (solution.rank == 0) {
             return VectorBasis.zeroBase(vectorLength, mc)
         }
@@ -601,7 +601,7 @@ open class FullVectorBasis<T> internal constructor(mc: MathCalculator<T>,
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    protected val vectorMatrix: Matrix<T> by lazy { super<VectorBasis>.getVectorsAsMatrix() }
+    protected val vectorMatrix: Matrix<T> by lazy { super<VectorBasis>.asMatrix() }
 
     @Suppress("MemberVisibilityCanBePrivate")
     protected val vectorMatrixInverse: Matrix<T> by lazy { vectorMatrix.inverse() }
@@ -616,7 +616,7 @@ open class FullVectorBasis<T> internal constructor(mc: MathCalculator<T>,
         return FullVectorBasis(mc, vectorLength, vectors.map { Vector.multiplyToVector(mat, it) })
     }
 
-    override fun getVectorsAsMatrix(): Matrix<T> {
+    override fun asMatrix(): Matrix<T> {
         return vectorMatrix
     }
 
@@ -649,7 +649,7 @@ open class FullVectorBasis<T> internal constructor(mc: MathCalculator<T>,
 //    }
 
     override fun transMatrix(vb: VectorBasis<T>): Matrix<T> {
-        return vectorMatrixInverse * vb.getVectorsAsMatrix()
+        return vectorMatrixInverse * vb.asMatrix()
     }
 
     /**
@@ -726,7 +726,7 @@ class StandardVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimensi
     }
 
     override fun transMatrix(vb: VectorBasis<T>): Matrix<T> {
-        return vb.getVectorsAsMatrix()
+        return vb.asMatrix()
     }
 
 
@@ -739,7 +739,7 @@ class ZeroVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimension: 
     override val vectors: List<Vector<T>>
         get() = emptyList()
 
-    override fun getVectorsAsMatrix(): Matrix<T> {
+    override fun asMatrix(): Matrix<T> {
         throw UnsupportedOperationException("Zero base has no vector!")
     }
 

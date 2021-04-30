@@ -133,7 +133,7 @@ object LinearEquations {
     fun <T> solveCholesky(A: Matrix<T>, b: Vector<T>): Vector<T> {
         val (L, D) = A.decompCholeskyD()
         val y = solveLower(L, b)
-        val z = solveDiagonal(D, y)
+        val z = solveDiagonal(Matrix.diag(D), y)
         return solveUpper(L.T, z)
     }
 

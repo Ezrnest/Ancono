@@ -7,17 +7,20 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.linear.LinearEquationSolution
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Matrix.Companion.of
-import cn.ancono.math.algebra.linear.asColumnMatrix
+import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.equation.SVPEquation
 import cn.ancono.math.geometry.analytic.plane.curve.ConicSection
 import cn.ancono.math.geometry.analytic.plane.curve.GeneralConicSection
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Fraction.Companion.calculator
+import cn.ancono.math.numberModels.api.minus
+import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.api.times
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
+import kotlin.test.assertEquals
 
 /**
  * @author liyicheng 2018-01-25 17:38
@@ -43,7 +46,105 @@ class TestMatrix
         return true
     }
 
-    //	@Test
+    @Test
+    fun testMultiply() {
+        val A = of(2, 3, mcd) { i, j ->
+            i + j + 0.0
+        }
+        val B = of(3, 3, mcd) { i, j ->
+            i * j + 1.0
+        }
+//        println(A)
+//        println(B)
+        val C = of(2, 3, mcd,
+                3.0, 8.0, 13.0,
+                6.0, 14.0, 22.0)
+        TestUtils.assertValueEquals(A * B, C)
+    }
+
+    @Test
+    fun testAdd() {
+        val A = of(2, 3, mcd) { i, j ->
+            i + j + 0.0
+        }
+        val B = of(2, 3, mcd) { i, j ->
+            i - j + 0.0
+        }
+        val C = of(2, 3, mcd) { i, j ->
+            2.0 * i
+        }
+        TestUtils.assertValueEquals(C, A + B)
+        assert((A - A).isZero())
+    }
+
+    @Test
+    fun testToTriangle() {
+        val A = of(2, 3, mcd) { i, j ->
+            i + j + 0.0
+        }
+        val (r, ops) = A.toUpperTriangleWay()
+        println(r)
+        println(A.toEchelonWay().first)
+//        println(A.toUpperTriangle())
+
+    }
+
+    @Test
+    fun testSolve1() {
+        val A = of(2, 3, mcd) { i, j ->
+            i + j + 1.0
+        }
+        val solution = Matrix.solveLinearExpanded(A)
+        assertEquals(LinearEquationSolution.SolutionType.SINGLE, solution.type)
+        val special = Vector.of(mcd, -1.0, 2.0)
+        TestUtils.assertValueEquals(special, solution.special)
+
+    }
+
+    @Test
+    fun testSolve2() {
+        val A = of(2, 3, mcd,
+                1.0, 1.0, 2.0,
+                2.0, 2.0, 3.0)
+        val solution = Matrix.solveLinearExpanded(A)
+        assertEquals(1, solution.solutionSpace.rank)
+        assertEquals(LinearEquationSolution.SolutionType.EMPTY, solution.type)
+    }
+
+    @Test
+    fun testSolve3() {
+        var A = of(3, 2, mcd,
+                1.0, 1.0,
+                2.0, 2.0,
+                1.0, 2.0
+        )
+        var basis = Matrix.solveHomo(A)
+        assertEquals(0, basis.rank)
+
+        A = of(
+                2, 2, mcd,
+                1.0, 1.0,
+                2.0, 2.0,
+        )
+        basis = Matrix.solveHomo(A)
+        assertEquals(1, basis.rank)
+
+
+    }
+
+    @Test
+    fun testSolve4() {
+        val A = of(3, 4, mcd,
+                1.0, 2.0, 3.0, 1.0,
+                1.0, 2.0, 1.0, -2.0,
+                0.0, 0.0, 2.0, 4.0
+        )
+        val nullSpace = A.nullSpace()
+        val N = Matrix.fromVectors(nullSpace.vectors)
+        assert((A * N).isZero())
+    }
+
+
     @Test
     fun testEigenEquation() {
         var mat = of(arrayOf(arrayOf(1L, 0L), arrayOf(0L, 4L)), Calculators.longCal())
@@ -62,47 +163,48 @@ class TestMatrix
 
     @Test
     fun testSolveEquation() {
-        val row = 8
-        val column = 10
+        val rd = Random()
         for (i in 0..99) {
-            var rd = Random()
-            val matrix: Matrix<Double> = of(row, column, mcd) { _, _ ->
+            val row = rd.nextInt(10) + 1
+            val column = rd.nextInt(10) + 1
+            val expanded = of(row, column + 1, mcd) { _, _ ->
                 rd.nextDouble()
             }
-            val solution: LinearEquationSolution<Double> = Matrix.solveLinearExpanded(matrix)
+            val m = expanded.subMatrix(0, 0, row, column)
+            val b = expanded.getColumn(column)
+            val solution: LinearEquationSolution<Double> = Matrix.solveLinearExpanded(expanded)
             if (solution.notEmpty()) {
-                var base = solution.special
-//                val ks  = solution.solutionSpace
-//                if (ks != null) {
-//                    base = Vector.addAll(base, ks)
-//                }
-                val re1: Matrix<Double> = matrix.subMatrix(0, 0, row - 1, column - 2) * base.asColumnMatrix()
-                val re2 = matrix.subMatrix(0, column - 1, row - 1, column - 1)
-                Assert.assertTrue(re1.valueEquals(re2))
+                val base = solution.special
+                val t = Vector.multiplyToVector(m, base)
+                TestUtils.assertValueEquals(b, t)
             }
         }
     }
 
-    //	@Test
+    @Test
     fun testSolveHomoEquation() {
-        val row = 8
-        val column = 11
+        val rd = Random()
         for (i in 0..99) {
-            var rd = Random()
+            val row = rd.nextInt(10) + 1
+            val column = rd.nextInt(10) + 1
             val matrix: Matrix<Double> = of(row, column, mcd) { _, _ ->
                 rd.nextDouble()
             }
             val solution = Matrix.solveHomo(matrix)
-            val n = Matrix.fromVectors(solution.vectors)
-            val re = matrix * n
-            Assert.assertTrue(re.isZero())
-//                var base: Vector<Double?>? = solution.getSpecialSolution()
-//                val ks: Array<Vector<Double>> = solution.getBaseSolutions()
-//                if (ks != null) {
-//                    base = Vector.addAll(base, ks)
-//                }
-//                val re: Matrix<Double> = Matrix.multiply(matrix, base)
-//                Assert.assertTrue(re.valueEquals(zero))
+            if (solution.rank > 0) {
+                val n = Matrix.fromVectors(solution.vectors)
+                val re = matrix * n
+                Assert.assertTrue(re.isZero())
+            }
+
+//            if (!re.isZero()) {
+//                println(re)
+//                println(matrix)
+//                println(matrix.toEchelonWay().first)
+//                println(solution)
+//            }
+
+
         }
     }
 
@@ -110,7 +212,9 @@ class TestMatrix
     fun testEigenVector() {
         val mat: Matrix<Double> = of(arrayOf(arrayOf(0.0, 1.0, 1.0), arrayOf(1.0, 0.0, 1.0), arrayOf(1.0, 1.0, 0.0)), mcd)
         val list = mat.eigenvaluesAndVectors { listOf(-1.0, -1.0, 2.0) }
-        Assert.assertEquals("", list.toString(), "[[-1.0,[1.0,-1.0,0.0]], [-1.0,[1.0,0.0,-1.0]], [2.0,[-1.0,-1.0,-1.0]]]")
+//        println(list.toString())
+        assertEquals(3, list.size)
+//        Assert.assertEquals("", list.toString(), "[[-1.0,[1.0,-1.0,0.0]], [-1.0,[1.0,0.0,-1.0]], [2.0,[-1.0,-1.0,-1.0]]]")
     }
 
     @Test
@@ -157,6 +261,8 @@ class TestMatrix
         //        U.printMatrix();
         val m1 = P * A
         val m2 = L * U
+//        println(P * A)
+//        println(L * U)
         Assert.assertTrue("PA = LU", m1.valueEquals(m2))
     }
 
@@ -192,7 +298,7 @@ class TestMatrix
 //        A.congruenceDiagForm().getFirst().printMatrix();
 //        L.printMatrix();
 //        A.printMatrix();
-        val R = Matrix.product(L, D, L.transpose())
+        val R = Matrix.product(L, Matrix.diag(D), L.transpose())
 
 //        R.printMatrix();
 //        var A = Matrix.of(new double[][]{

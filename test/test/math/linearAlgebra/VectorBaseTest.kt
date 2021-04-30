@@ -27,7 +27,9 @@ class VectorBaseTest{
             1 -1 -3 -1
             -1 1 -1 1
         """.trimIndent()
-        val mat2 = MatrixSup.parseMatrixD(str,mc, par)
+        val mat2 = MatrixSup.parseMatrixD(str, mc, par)
+//        println(mat1)
+//        println(mat2)
 //        val a1 = mat1.getRow(0)
 //        val a2 = mat1.getRow(1)
 //        val a3 = mat1.getRow(2)
@@ -38,8 +40,10 @@ class VectorBaseTest{
 //        println(vb1)
         val vb2 = Vector.maxIndependent(mat2.rowVectors())
 //        println(vb2)
+
         val desired = MatrixSup.parseVector("1 -1 -3 -1",mc,par)
         val re = vb1.intersect(vb2)
+//        println(re)
         assert(re.vectors.first().isParallel(desired))
     }
 
@@ -68,11 +72,11 @@ class VectorBaseTest{
         """.trimIndent()
         val mat = MatrixSup.parseFMatrix(str)
         val (s1, a1, a2, s2, b1) = mat.rowVectors()
-        val b2 = mat.getColumn(5)// no component6()
+        val b2 = mat.getRow(5)// no component6()
         val sp1 = AffineSpace.valueOf(s1, a1, a2)
         val sp2 = AffineSpace.valueOf(s2, b1, b2)
         val re = sp1.intersect(sp2)!!
-        val desired = AffineSpace.valueOf(mat.getColumn(6))
+        val desired = AffineSpace.valueOf(mat.getRow(6))
 //        val s1 = MatrixSup.parseFMatrix()
 //        println(re)
 //        println(desired)

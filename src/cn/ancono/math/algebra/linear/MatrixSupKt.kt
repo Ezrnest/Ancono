@@ -54,11 +54,11 @@ internal object MatrixSupKt {
             l[k, k] = mc.one
             for (i in (k + 1) until m.row) {
                 val lambda = mc.eval {
-                    -(matrix[i, k] / matrix[k, k])
+                    matrix[i, k] / matrix[k, k]
                 }
                 l[i, k] = lambda
                 matrix[i, k] = mc.zero
-                matrix.multiplyAddRow(k, i, lambda, k + 1)
+                matrix.multiplyAddRow(k, i, mc.negate(lambda), k + 1)
 //                for (j in (k + 1) until m.column) {
 //                    matrix[i,j] = mc.eval {
 //                        matrix[i,j] - lambda * matrix[k][j]
@@ -67,14 +67,13 @@ internal object MatrixSupKt {
             }
         }
         return Triple(
-                Matrix.fromVectors(p),
+                Matrix.fromVectors(p, false),
                 l,
                 matrix
         )
     }
 
     /**
-     * @see Matrix.decompCholesky
      */
     fun <T> decompositionCholesky(A: Matrix<T>): Matrix<T> {
         require(A.isSquare()) {
@@ -221,7 +220,7 @@ internal object MatrixSupKt {
 //        val builder = Matrix.getBuilder(n, M.columnCount - n, mc)
 //        builder.fillArea(0, 0, A, 0, n, n, n)
 
-        return M.subMatrix(0, M.row, n, M.column)
+        return M.subMatrix(0, n, M.row, M.column)
 
 
     }
@@ -230,7 +229,7 @@ internal object MatrixSupKt {
      * Computes the 'inverse' of the given matrix on a unit ring. This method simply compute the adjugate matrix and
      * divide it with the determinant (so it is time-consuming).
      *
-     * This method can be used to compute the modular inverse of a matrix on Z/Zn, where n is not necessarily a prime.
+     * This method can be used to compute the modular inverse of a matrix on `Z/Zn`, where n is not necessarily a prime.
      */
     fun <T> inverseInRing(M: Matrix<T>): Matrix<T> {
         val mc = M.mathCalculator

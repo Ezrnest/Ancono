@@ -50,7 +50,7 @@ interface VLinearMapping<K> : ILinearMapping<K, Vector<K>, Vector<K>> {
      * The kernel of this linear mapping, which is equal to the solution space of the transformation matrix.
      */
     val kernel: VectorBasis<K>
-        get() = transMatrix.solutionSpace()
+        get() = transMatrix.nullSpace()
 
     /**
      * The image of this linear mapping, which is equal to the column space of the transformation matrix.
@@ -334,7 +334,7 @@ internal constructor(
      * returned matrix is similar to the original transformation matrix.
      */
     fun transMatrixUnder(base: FullVectorBasis<T>): Matrix<T> {
-        val p = base.getVectorsAsMatrix()
+        val p = base.asMatrix()
         val pInv = p.inverse()
         return pInv * transMatrix * p
 
@@ -366,7 +366,7 @@ internal constructor(
          */
         @JvmStatic
         fun <T> underBase(transMatrix: Matrix<T>, base: FullVectorBasis<T>): LinearTrans<T> {
-            val pInv = base.getVectorsAsMatrix()
+            val pInv = base.asMatrix()
             val p = pInv.inverse()
             val transMatUnderStandard = pInv * transMatrix * p
             return DLinearTrans(transMatUnderStandard)

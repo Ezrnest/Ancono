@@ -46,7 +46,7 @@ internal constructor(mc: MathCalculator<T>, row: Int, column: Int,
             val r = rowEnd - rowStart
             val c = colEnd - colStart
             require(0 <= rowStart && rowEnd <= m.row && r > 0)
-            require(0 <= colStart && colEnd <= m.row && c > 0)
+            require(0 <= colStart && colEnd <= m.column && c > 0)
             return SubMatrixView(m.mathCalculator, r, c, rowStart, colStart, m)
         }
     }

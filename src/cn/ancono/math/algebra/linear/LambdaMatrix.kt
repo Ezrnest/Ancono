@@ -90,7 +90,7 @@ object LambdaMatrixSup {
         for (pr in primaryFactor) {
             val lambda = pr.key
             val mat = matrix - Matrix.diag(lambda, matrix.column, matrix.mathCalculator)
-            val solutions = mat.solutionSpace()
+            val solutions = mat.nullSpace()
             assert(solutions.vectorLength == pr.value.size)
             for ((alpha, n) in solutions.vectors.asSequence().zip(pr.value.asSequence())) {
                 trans += alpha

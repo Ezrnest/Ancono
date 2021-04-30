@@ -33,7 +33,7 @@ object LinearEquationSample {
             0 1 2
             0 0 1
         """.trimIndent())
-        val space = matrix.solutionSpace()
+        val space = matrix.nullSpace()
         println(space)
     }
 }

@@ -1,4 +1,4 @@
-package test.math.linearAlgebra
+package test.math.linear
 
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
@@ -9,7 +9,7 @@ import test.math.TestUtils
 /*
  * Created by liyicheng at 2020-03-10 13:36
  */
-class MatrixSupTest {
+class MatrixTest {
     @Test
     fun toHermitFrom() {
         val cal = Calculators.integerExact()

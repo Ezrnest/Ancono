@@ -4,11 +4,11 @@ import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numeric.linear.LinearEquations
 import cn.ancono.math.times
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import test.math.TestUtils
 import kotlin.random.Random
 
 class LinearEquationsTest {
@@ -57,8 +57,10 @@ class LinearEquationsTest {
             Random.nextDouble()
         }
         val B = A * X
-        val M = Matrix.concatColumn(A,B)
+//        println(A)
+//        println(B)
+        val M = Matrix.concatColumn(A, B)
         val X1 = LinearEquations.solveGauss(M)
-        assertTrue(X.valueEquals(X1))
+        TestUtils.assertValueEquals(X, X1)
     }
 }

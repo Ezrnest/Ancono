@@ -1,7 +1,7 @@
 package test.logic.propLogic
 
 import cn.ancono.logic.prop.*
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class FormulaTest{
@@ -12,7 +12,7 @@ class FormulaTest{
 
         val f2 = (!(p implies q))and q
         assertEquals(f2.simplify(), F)
-        val f3 = ((p implies q)and p) implies q
+        val f3 = ((p implies q) and p) implies q
         assertEquals(f3.toMainDisjunctiveNorm(), T)
     }
 }

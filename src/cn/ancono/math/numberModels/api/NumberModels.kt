@@ -160,10 +160,17 @@ interface VectorModel<K, V : VectorModel<K, V>> : ModuleModel<K, V> {
      */
     override fun multiply(k: K): V
 
+
     /**
      * Performs the scalar division.
      */
     fun divide(k: K): V
+
+    @JvmDefault
+    operator fun times(k: K): V = multiply(k)
+
+    @JvmDefault
+    operator fun div(k: K): V = divide(k)
 
     /**
      * Determines whether this is linear relevant to [v].
@@ -175,19 +182,19 @@ interface VectorModel<K, V : VectorModel<K, V>> : ModuleModel<K, V> {
     }
 }
 
-inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.times(k: K) = multiply(k)
-inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.div(k: K) = divide(k)
+//inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.times(k: K) = multiply(k)
+//inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.div(k: K) = divide(k)
 inline operator fun <K, V : ModuleModel<K, V>> K.times(v: ModuleModel<K, V>) = v.multiply(this)
 
 
 interface AlgebraModel<K, V : AlgebraModel<K, V>> : VectorModel<K, V>, RingNumberModel<V> {
     override fun multiply(y: V): V
 
-//    @JvmDefault
-//    operator fun times(y: V):V = multiply(y)
+    @JvmDefault
+    operator fun times(y: V): V = multiply(y) //
 }
 
-inline operator fun <K, V : AlgebraModel<K, V>> AlgebraModel<K, V>.times(y: V) = multiply(y)
+//inline operator fun <K, V : AlgebraModel<K, V>> AlgebraModel<K, V>.times(y: V) = multiply(y)
 
 object NumberModels {
     /**

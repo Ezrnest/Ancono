@@ -7,7 +7,6 @@ import cn.ancono.math.algebra.abs.structure.FiniteLinearBasis
 import cn.ancono.math.exceptions.OutOfDomainException
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.plus
-import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.property.Composable
 import cn.ancono.math.property.Intersectable
 import cn.ancono.utilities.CollectionSup
@@ -386,7 +385,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
             return vb
         }
         val m = Matrix.fromVectors(this.vectors + vb.vectors)
-        val solution = m.nullSpace() // at least zero solution
+        val solution = m.kernel() // at least zero solution
         if (solution.rank == 0) {
             return VectorBasis.zeroBase(vectorLength, mc)
         }

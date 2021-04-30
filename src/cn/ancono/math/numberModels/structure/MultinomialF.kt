@@ -165,9 +165,9 @@ internal constructor(
         IMultinomial<F>,
         AlgebraModel<F, MultinomialF<F>> {
 
-    init {
-        require(ts.isNotEmpty())
-    }
+//    init {
+//        require(ts.isNotEmpty())
+//    }
 
     override val terms: NavigableSet<TermF<F>>
         get() = Collections.unmodifiableNavigableSet(ts)

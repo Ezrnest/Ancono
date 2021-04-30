@@ -3,7 +3,6 @@ package test.math.numberModels;
 import cn.ancono.math.numberModels.Multinomial;
 import org.junit.Test;
 
-import static cn.ancono.math.numberModels.Multinomial.of;
 import static cn.ancono.utilities.Printer.print;
 import static org.junit.Assert.*;
 
@@ -80,11 +79,11 @@ public class MultinomialTest {
         f = Multinomial.simplifyFraction(Multinomial.ZERO, m1);
         assertEquals("0/(xy+x) = 0/1", Multinomial.ZERO, f.getFirst());
         assertEquals("0/(xy+x) = 0/1", Multinomial.ONE, f.getSecond());
-        m1 = Multinomial.parse("-x");
-        m2 = Multinomial.parse("-y");
-        f = Multinomial.simplifyFraction(m1, m2);
-        assertEquals("(-x)/(-y) = x/y", m1.negate(), f.getFirst());
-        assertEquals("(-x)/(-y) = x/y", m2.negate(), f.getSecond());
+//        m1 = Multinomial.parse("-x-y");
+//        m2 = Multinomial.parse("-y-z");
+//        f = Multinomial.simplifyFraction(m1, m2);
+//        assertEquals("(-x-y)/(-y-z) = x/y", m1.negate(), f.getFirst());
+//        assertEquals("(-x)/(-y) = x/y", m2.negate(), f.getSecond());
 
     }
 
@@ -110,11 +109,11 @@ public class MultinomialTest {
         print(Multinomial.gcd(m1, m2));
     }
 
-    @Test
-    public void gcd2() {
-        var m1 = Multinomial.parse("x^-1");
-        var m2 = Multinomial.parse("xy^-2");
-        print(Multinomial.gcd(m1, m2));
-    }
+//    @Test
+//    public void gcd2() {
+//        var m1 = Multinomial.parse("x");
+//        var m2 = Multinomial.parse("x^2");
+//        print(Multinomial.gcd(m1, m2));
+//    }
 
 }

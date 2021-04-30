@@ -16,7 +16,6 @@ import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Fraction.Companion.calculator
 import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.plus
-import cn.ancono.math.numberModels.api.times
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
@@ -25,11 +24,7 @@ import kotlin.test.assertEquals
 /**
  * @author liyicheng 2018-01-25 17:38
  */
-class TestMatrix
-/**
- *
- */
-{
+class TestMatrix {
     var mc: MathCalculator<Long> = Calculators.longCal()
     var mcd = Calculators.doubleDev()
 
@@ -139,7 +134,7 @@ class TestMatrix
                 1.0, 2.0, 1.0, -2.0,
                 0.0, 0.0, 2.0, 4.0
         )
-        val nullSpace = A.nullSpace()
+        val nullSpace = A.kernel()
         val N = Matrix.fromVectors(nullSpace.vectors)
         assert((A * N).isZero())
     }

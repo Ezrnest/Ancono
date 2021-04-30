@@ -3,8 +3,8 @@ package cn.ancono.math.numeric.linear
 import cn.ancono.math.T
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
-import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector
+import cn.ancono.math.algebra.linear.toMutable
 import java.util.*
 
 object LinearEquations {
@@ -72,41 +72,35 @@ object LinearEquations {
         val n = M.row
         val mc = M.mathCalculator
 
-        @Suppress("UNCHECKED_CAST")
-        val matrix = M.getValues() as Array<Array<T>>
+        val matrix = M.toMutable()
         for (k in 0 until n) {
             var maxIdx = k
-            var maxVal = mc.abs(matrix[k][k])
+            var maxVal = mc.abs(matrix[k, k])
             for (i in (k + 1) until n) {
-                val v = mc.abs(matrix[i][k])
+                val v = mc.abs(matrix[i, k])
                 if (mc.compare(v, maxVal) > 0) {
                     maxIdx = i
                     maxVal = v
                 }
             }
             if (maxIdx != k) {
-                MatrixSup.exchangeRow(matrix, k, maxIdx)
+                matrix.swapRow(k, maxIdx)
             }
-            val c = mc.reciprocal(matrix[k][k])
 //            matrix[k][k] = mc.one
-            for (j in (k + 1) until M.column) {
-                matrix[k][j] = mc.eval {
-                    c * matrix[k][j]
-                }
-            }
+            matrix.divideRow(k, matrix[k, k], k + 1)
             for (i in 0 until n) {
                 if (i == k) {
                     continue
                 }
-                val p = mc.negate(matrix[i][k])
+                val p = mc.negate(matrix[i, k])
 //                matrix[i][k] = mc.zero
-                for (j in (k + 1) until M.column) {
-                    matrix[i][j] = mc.eval {
-                        matrix[i][j] + p * matrix[k][j]
-                    }
-                }
+                matrix.multiplyAddRow(k, i, p, k + 1)
+//                for (j in (k + 1) until M.column) {
+//                    matrix[i,j] = mc.eval {
+//                        matrix[i,j] + p * matrix[k,j]
+//                    }
+//                }
             }
-//            Printer.printMatrix(matrix)
         }
 //        var re = Array
 //        val builder = Matrix.getBuilder(n, M.column - n, mc)
@@ -116,7 +110,7 @@ object LinearEquations {
 //            }
 //        }
 //        builder.fillArea(0, 0, matrix, 0, n, n, M.column - n)
-        return M.subMatrix(0, n, n, M.column)
+        return matrix.subMatrix(0, n, n, M.column)
     }
 
     private fun <T> solveDiagonal(D: Matrix<T>, b: Vector<T>): Vector<T> {

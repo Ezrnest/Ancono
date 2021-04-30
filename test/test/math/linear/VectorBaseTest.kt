@@ -1,4 +1,4 @@
-package test.math.linearAlgebra
+package test.math.linear
 
 import cn.ancono.math.algebra.linear.MatrixSup
 import cn.ancono.math.algebra.linear.Vector

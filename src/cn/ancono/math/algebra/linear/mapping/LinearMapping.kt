@@ -50,7 +50,7 @@ interface VLinearMapping<K> : ILinearMapping<K, Vector<K>, Vector<K>> {
      * The kernel of this linear mapping, which is equal to the solution space of the transformation matrix.
      */
     val kernel: VectorBasis<K>
-        get() = transMatrix.nullSpace()
+        get() = transMatrix.kernel()
 
     /**
      * The image of this linear mapping, which is equal to the column space of the transformation matrix.

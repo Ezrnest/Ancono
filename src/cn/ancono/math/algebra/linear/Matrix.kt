@@ -204,14 +204,14 @@ abstract class AbstractMatrix<T>(
 
 
     /**
-     * Returns the null space of this matrix.
+     * Returns the kernel (null space) of this matrix.
      *
-     * The null space of a `(n,m)` matrix `A` is composed of vectors of size `m`
+     * The kernel of a `(n,m)` matrix `A` is composed of vectors of size `m`
      * that is the solution to the homogeneous linear equation `Ax=0`.
      *
      *     null space = { x | Ax = 0 }
      */
-    open fun nullSpace(): VectorBasis<T> {
+    open fun kernel(): VectorBasis<T> {
         return MatrixImpl.solveHomo(this)
     }
 
@@ -221,6 +221,13 @@ abstract class AbstractMatrix<T>(
      */
     open fun columnSpace(): VectorBasis<T> {
         return MatrixImpl.columnSpace(this)
+    }
+
+    /**
+     * Returns the image of this matrix, which is the column space of this matrix.
+     */
+    fun image(): VectorBasis<T> {
+        return columnSpace()
     }
 
     /**

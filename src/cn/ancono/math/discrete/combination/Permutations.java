@@ -177,7 +177,7 @@ public final class Permutations {
          */
         @Override
         public String toString() {
-            return "(" + i + "," + j + ")";
+            return "Swap(" + i + "," + j + ")";
         }
     }
 
@@ -585,12 +585,12 @@ public final class Permutations {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append('(');
+            sb.append("Rotate(");
             for (int i : elements) {
                 sb.append(i).append(',');
             }
             sb.deleteCharAt(sb.length() - 1);
-            sb.append(')');
+            sb.append(")");
             return sb.toString();
         }
 

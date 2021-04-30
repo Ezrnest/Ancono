@@ -82,7 +82,7 @@ public class LinearAlgebraExamples {
         var matrixCal = Matrix.calculatorFor(m);
         var fm = f.mapTo(matrixCal, x -> Matrix.diag(x, 3, mc));
         var result = fm.compute(m);
-        System.out.println("f(M) = \n" + result);
+        System.out.println("f(M) = \n" + result); // Caley-Hamilton theorem
     }
 
 

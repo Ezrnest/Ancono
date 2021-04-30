@@ -4,7 +4,6 @@ import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Tensor
 import cn.ancono.math.numberModels.TensorImpl
 import cn.ancono.math.numberModels.api.minus
-import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numberModels.get
 import org.junit.Assert.*
 import org.junit.Test
@@ -210,9 +209,10 @@ class TensorTest {
         assertValueEquals(t, tr)
 
         val b = Tensor.of((0..7).toList(), mc).reshape(2, 2, 2)
-        assertValueEquals(Tensor.of(listOf(6, 8), mc),
-                b.trace(0, 1))
-
+        assertValueEquals(Tensor.of(listOf(5, 9), mc),
+                b.trace(0, 0))
+        assertValueEquals(b.diagonal(0, 0, -1).sum(-1),
+                b.trace(0, 0, -1))
     }
 
 }

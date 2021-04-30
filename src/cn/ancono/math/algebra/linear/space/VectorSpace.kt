@@ -65,7 +65,7 @@ class VectorSpace<T>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(b
      * Returns the complement space of the vector space.
      */
     fun complement(): VectorSpace<T> {
-        val nBasis = basis.asMatrix().nullSpace()
+        val nBasis = basis.asMatrix().kernel()
         return VectorSpace(nBasis)
     }
 

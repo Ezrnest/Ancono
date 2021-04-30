@@ -23,7 +23,7 @@ class IterUtilsTest {
 
     @Test
     fun testStep() {
-        assertEquals(4 * 2, IterUtils.prodIdx(1..10 step 2, 2..3).count())
+        assertEquals(5 * 2, IterUtils.prodIdx(1..10 step 2, 2..3).count())
     }
 
     @Test

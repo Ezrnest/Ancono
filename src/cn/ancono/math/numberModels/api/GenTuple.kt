@@ -12,6 +12,9 @@ import cn.ancono.utilities.IterUtils
  * A generic (multidimensional) tuple-like container with finite elements in order.
  */
 interface GenTuple<T> {
+    /**
+     * The count of elements contained in this tuple.
+     */
     val size: Int
 
     /**

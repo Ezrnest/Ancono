@@ -62,9 +62,11 @@ object DifferentialGeometrySample {
         val ct = getVector(mc, 2)
 
         val left = SVector.mixedProduct(at, bt, ct).derivation()
-        val right = mc.addX(SVector.mixedProduct(at.derivation(), bt, ct),
+        val right = mc.sum(listOf(
+                SVector.mixedProduct(at.derivation(), bt, ct),
                 SVector.mixedProduct(at, bt.derivation(), ct),
-                SVector.mixedProduct(at, bt, ct.derivation()))
+                SVector.mixedProduct(at, bt, ct.derivation())
+        ))
         println("left - right is ${mc.subtract(left, right)}")
     }
 

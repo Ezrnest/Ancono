@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.List;
 
 /**
  * Provides some utility methods for {@link MathCalculator}
@@ -813,6 +814,15 @@ public final class Calculators {
         @Override
         public Long add(@NotNull Long x, @NotNull Long y) {
             return x + y;
+        }
+
+        @Override
+        public Long sum(@NotNull List<? extends Long> ps) {
+            long re = 0;
+            for (var l : ps) {
+                re += l;
+            }
+            return re;
         }
 
         @NotNull
@@ -1654,25 +1664,25 @@ public final class Calculators {
             return Math.pow(p, exp);
         }
 
-        @NotNull
+
         @Override
-        public Double addX(@NotNull Object @NotNull ... ps) {
+        public Double sum(@NotNull List<? extends Double> ps) {
             double sum = 0;
-            for (Object d : ps) {
-                sum += (Double) d;
+            for (Double d : ps) {
+                sum += d;
             }
             return sum;
         }
 
-        @NotNull
         @Override
-        public Double multiplyX(@NotNull Object @NotNull ... ps) {
-            double sum = 1;
-            for (Object d : ps) {
-                sum *= (Double) d;
+        public Double product(@NotNull List<? extends Double> ps) {
+            double result = 1;
+            for (var d : ps) {
+                result *= d;
             }
-            return sum;
+            return result;
         }
+
 
         private static final Double pi = Math.PI;
         private static final Double e = Math.E;

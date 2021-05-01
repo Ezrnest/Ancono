@@ -11,6 +11,7 @@ import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -197,9 +198,13 @@ public class GTriangle<T> extends AbstractMathObject<T> {
     public T area() {
         if (area == null) {
             if (A == null && B == null && C == null) {
-                T p = getMc().divideLong(circumference(), 2);
-                T square = getMc().multiplyX(p, getMc().subtract(p, a), getMc().subtract(p, b), getMc().subtract(p, c));
-                area = getMc().squareRoot(square);
+                var mc = getMc();
+                T p = mc.divideLong(circumference(), 2);
+                T square = mc.product(Arrays.asList(
+                        p, mc.subtract(p, a),
+                        mc.subtract(p, b),
+                        mc.subtract(p, c)));
+                area = mc.squareRoot(square);
             } else {
                 T r1, r2, angle;
                 if (A != null) {

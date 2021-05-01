@@ -97,7 +97,9 @@ abstract class AbstractMatrix<T>(
     }
 
     /**
-     * Returns the trace if this matrix.
+     * Returns the trace if this matrix, that is, the sum of diagonal elements.
+     *
+     * It is required that this matrix is square.
      *
      * @return `tr(this)`
      */
@@ -107,6 +109,19 @@ abstract class AbstractMatrix<T>(
         val mc = mathCalculator
         for (i in 1 until row) {
             z = mc.add(z, this[i, i])
+        }
+        return z
+    }
+
+    /**
+     * Returns the sum of all elements in this matrix.
+     */
+    open fun sum(): T {
+        var z = mc.zero
+        for (i in 0 until row) {
+            for (j in 0 until column) {
+                mc.eval { z += get(i, j) }
+            }
         }
         return z
     }
@@ -141,7 +156,7 @@ abstract class AbstractMatrix<T>(
      * Returns the cofactor of this matrix as an immutable view.
      */
     open fun cofactor(row: Int, col: Int): AbstractMatrix<T> {
-        return cofactor(intArrayOf(row), intArrayOf(col))
+        return FactorMatrixView.cofactorOf(this, row, col)
     }
 
     /**
@@ -955,6 +970,8 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
 
     abstract fun multiplyCol(c: Int, k: T, rowStart: Int = 0, rowEnd: Int = row)
 
+    abstract fun divideCol(c: Int, k: T, rowStart: Int = 0, rowEnd: Int = row)
+
 }
 
 
@@ -1103,8 +1120,14 @@ class AMatrix<T> internal constructor(
             @Suppress("UNCHECKED_CAST")
             data[pos] = mc.multiply(k, data[pos] as T)
         }
+    }
 
-
+    override fun divideCol(c: Int, k: T, rowStart: Int, rowEnd: Int) {
+        for (r in rowStart until rowEnd) {
+            val pos = toPos(r, c)
+            @Suppress("UNCHECKED_CAST")
+            data[pos] = mc.divide(k, data[pos] as T)
+        }
     }
 
     companion object {
@@ -1723,23 +1746,23 @@ internal object MatrixImpl {
 
         for (m in 0 until (n - 1)) {
             println(H)
-            var i = m + 2
-            while (i < n) {
-                if (!mc.isZero(H[i, m])) {
+            var i0 = m + 2
+            while (i0 < n) {
+                if (!mc.isZero(H[i0, m])) {
                     break
                 }
-                i++
+                i0++
             }
-            if (i >= n) {
+            if (i0 >= n) {
                 continue
             }
             if (!mc.isZero(H[m + 1, m])) {
-                i = m + 1
+                i0 = m + 1
             }
 //            val t = H[i, m]
-            if (i > m + 1) {
-                H.swapRow(i, m + 1, m)
-                H.swapCol(i, m + 1)
+            if (i0 > m + 1) {
+                H.swapRow(i0, m + 1, m)
+                H.swapCol(i0, m + 1)
             }
             val t = H[m + 1, m]
             println(H)

@@ -67,7 +67,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * <br>
      * <code>degree >= -1</code>
      */
-    private final int degree;
+    final int degree;
 
 
     /**
@@ -996,7 +996,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      *
      * @param ps a non-empty array
      */
-    public static <T> Polynomial<T> sum(List<Polynomial<T>> ps) {
+    public static <T> Polynomial<T> sum(List<? extends Polynomial<T>> ps) {
         var deg = -1;
         for (var p : ps) {
             if (p.degree > deg) {
@@ -1521,6 +1521,10 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             return x.add(y);
         }
 
+        @Override
+        public Polynomial<T> sum(@NotNull List<? extends Polynomial<T>> ps) {
+            return Polynomial.sum(ps);
+        }
 
         /*
          * @see cn.ancono.math.MathCalculator#negate(java.lang.Object)

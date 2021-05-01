@@ -7,6 +7,7 @@ import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -183,9 +184,9 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      */
     public SPoint<T> centerG() {
         var mc = getMc();
-        T x = mc.divideLong(mc.addX(A.x, B.x, C.x), 3);
-        T y = mc.divideLong(mc.addX(A.y, B.y, C.y), 3);
-        T z = mc.divideLong(mc.addX(A.z, B.z, C.z), 3);
+        T x = mc.divideLong(mc.sum(Arrays.asList(A.x, B.x, C.x)), 3);
+        T y = mc.divideLong(mc.sum(Arrays.asList(A.y, B.y, C.y)), 3);
+        T z = mc.divideLong(mc.sum(Arrays.asList(A.z, B.z, C.z)), 3);
         return new SPoint<>(mc, x, y, z);
     }
 

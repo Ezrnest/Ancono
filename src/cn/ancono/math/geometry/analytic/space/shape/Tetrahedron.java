@@ -200,7 +200,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     public T surfaceArea() {
         if (surfaceArea == null) {
 
-            surfaceArea = getMc().addX(bot.area(), f1.area(), f2.area(), f3.area());
+            surfaceArea = getMc().sum(Arrays.asList(bot.area(), f1.area(), f2.area(), f3.area()));
         }
         return surfaceArea;
     }
@@ -218,7 +218,6 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     /**
      * Returns the volume computed by the determination, may be negative.
      *
-     * @return
      */
     public T volumePN() {
         if (volume == null) {

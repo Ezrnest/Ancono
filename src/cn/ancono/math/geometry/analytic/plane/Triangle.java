@@ -7,6 +7,7 @@ import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -218,8 +219,8 @@ public final class Triangle<T> implements MathObject<T> {
      * @return the center of gravity of this triangle.
      */
     public Point<T> centerG() {
-        T x = mc.divideLong(mc.addX(A.x, B.x, C.x), 3);
-        T y = mc.divideLong(mc.addX(A.y, B.y, C.y), 3);
+        T x = mc.divideLong(mc.sum(Arrays.asList(A.x, B.x, C.x)), 3);
+        T y = mc.divideLong(mc.sum(Arrays.asList(A.y, B.y, C.y)), 3);
         return new Point<>(mc, x, y);
 
     }

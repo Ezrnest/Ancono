@@ -572,21 +572,21 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
     @SafeVarargs
     public static <T> SVector<T> sum(SVector<T>... vectors) {
         MathCalculator<T> mc = vectors[0].getMc();
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) Array.newInstance(vectors[0].x.getClass(), vectors.length);
-        for (int i = 0; i < vectors.length; i++) {
-            arr[i] = vectors[i].x;
+        final int num = vectors.length;
+        var arr = new ArrayList<T>(vectors.length);
+        for (SVector<T> point : vectors) {
+            arr.add(point.x);
         }
-        T xm = mc.addX(arr);
-        for (int i = 0; i < vectors.length; i++) {
-            arr[i] = vectors[i].y;
+        T xm = mc.sum(arr);
+        for (int i = 0; i < num; i++) {
+            arr.set(i, vectors[i].y);
         }
-        T ym = mc.addX(arr);
-        for (int i = 0; i < vectors.length; i++) {
-            arr[i] = vectors[i].z;
+        T ym = mc.sum(arr);
+        for (int i = 0; i < num; i++) {
+            arr.set(i, vectors[i].z);
         }
-        T zm = mc.addX(arr);
-        return new SVector<T>(xm, ym, zm, mc);
+        T zm = mc.sum(arr);
+        return new SVector<>(xm, ym, zm, mc);
     }
 
     /**
@@ -916,33 +916,33 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
         }
     }
 
-    /**
-     * Adds the several given vectors.<br>
-     * THis method will use the {@link MathCalculator} from the first vector.
-     *
-     * @param vs
-     * @return
-     */
-    @SafeVarargs
-    public static <T> SVector<T> add(SVector<T>... vs) {
-        SVector<T> v1 = vs[0];
-        MathCalculator<T> mc = v1.getMathCalculator();
-        T x, y, z;
-        Object[] arr = new Object[vs.length];
-        for (int i = 0; i < vs.length; i++) {
-            arr[i] = vs[i].getX();
-        }
-        x = mc.addX(arr);
-        for (int i = 0; i < vs.length; i++) {
-            arr[i] = vs[i].getY();
-        }
-        y = mc.addX(arr);
-        for (int i = 0; i < vs.length; i++) {
-            arr[i] = vs[i].getZ();
-        }
-        z = mc.addX(arr);
-        return new SVector<T>(x, y, z, mc);
-    }
+//    /**
+//     * Adds the several given vectors.<br>
+//     * THis method will use the {@link MathCalculator} from the first vector.
+//     *
+//     * @param vs
+//     * @return
+//     */
+//    @SafeVarargs
+//    public static <T> SVector<T> add(SVector<T>... vs) {
+//        SVector<T> v1 = vs[0];
+//        MathCalculator<T> mc = v1.getMathCalculator();
+//        T x, y, z;
+//        Object[] arr = new Object[vs.length];
+//        for (int i = 0; i < vs.length; i++) {
+//            arr[i] = vs[i].getX();
+//        }
+//        x = mc.sum(arr);
+//        for (int i = 0; i < vs.length; i++) {
+//            arr[i] = vs[i].getY();
+//        }
+//        y = mc.sum(arr);
+//        for (int i = 0; i < vs.length; i++) {
+//            arr[i] = vs[i].getZ();
+//        }
+//        z = mc.sum(arr);
+//        return new SVector<T>(x, y, z, mc);
+//    }
 
 //	public static void main(String[] args) {
 //		MathCalculator<Double> mc = MathCalculatorAdapter.getCalculatorDouble();

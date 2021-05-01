@@ -71,6 +71,7 @@ object SpecialFunctions {
      * Cumulative density function for standard normal distribution, usually denoted as `Φ(x)`.
      */
     fun normalCDF(x: Double): Double {
+        x.dec()
         TODO()
     }
 
@@ -78,6 +79,7 @@ object SpecialFunctions {
      * The inverse of cdf of standard normal distribution.
      */
     fun normalPPF(x: Double): Double {
+        x.dec()
         TODO()
     }
 

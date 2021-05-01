@@ -6,7 +6,7 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.function.Function;
 
 /**
@@ -278,22 +278,21 @@ public final class SPoint<T> extends SpacePointSet<T> {
     public static <T> SPoint<T> average(SPoint<T>... points) {
         MathCalculator<T> mc = points[0].getMc();
         final int num = points.length;
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) Array.newInstance(points[0].x.getClass(), points.length);
-        for (int i = 0; i < num; i++) {
-            arr[i] = points[i].x;
+        var arr = new ArrayList<T>(points.length);
+        for (SPoint<T> point : points) {
+            arr.add(point.x);
         }
-        T xm = mc.addX(arr);
-        for (int i = 0; i < num; i++) {
-            arr[i] = points[i].y;
-        }
-        T ym = mc.addX(arr);
-        for (int i = 0; i < num; i++) {
-            arr[i] = points[i].z;
-        }
-        T zm = mc.addX(arr);
+        T xm = mc.sum(arr);
         xm = mc.divideLong(xm, num);
+        for (int i = 0; i < num; i++) {
+            arr.set(i, points[i].y);
+        }
+        T ym = mc.sum(arr);
         ym = mc.divideLong(ym, num);
+        for (int i = 0; i < num; i++) {
+            arr.set(i, points[i].z);
+        }
+        T zm = mc.sum(arr);
         zm = mc.divideLong(zm, num);
         return new SPoint<T>(mc, xm, ym, zm);
     }

@@ -120,28 +120,28 @@ interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
     override fun add(x: T, y: T): T
 
     /**
-     * Add the parameters,this method is equal to:
+     * Add the parameters, this method is equal to:
      *
      *
      *    T sum = getZero();
-     *    for (Object t : ps) {
-     *    sum = add(sum, (T) t);
+     *    for (T t : ps) {
+     *      sum = add(sum, t);
      *    }
      *    return sum;
      *
      *
      * The Object-type input array is to fit genetic types.
      *
-     * @param ps an array of numbers to add
+     * @param ps a list of numbers
      * @return the sum of `ps`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    fun addX(vararg ps: Any): T {
+    @JvmDefault
+    fun sum(ps: List<T>): T {
         var sum = zero
         for (t in ps) {
-            @Suppress("UNCHECKED_CAST")
-            sum = add(sum, t as T)
+            sum = add(sum, t)
         }
         return sum
     }
@@ -196,20 +196,20 @@ interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
      *
      *    T re = getOne();
      *    for (T t : ps) {
-     *    re = multiply(re, t);
+     *      re = multiply(re, t);
      *    }
      *    return re;
      *
-     * @param ps an array of numbers to multiply
+     * @param ps a list of numbers
      * @return the result
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    fun multiplyX(vararg ps: Any): T {
+    @JvmDefault
+    fun product(ps: List<T>): T {
         var re = one
         for (t in ps) {
-            @Suppress("UNCHECKED_CAST")
-            re = multiply(re, t as T)
+            re = multiply(re, t)
         }
         return re
     }

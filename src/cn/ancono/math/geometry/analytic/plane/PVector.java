@@ -17,7 +17,7 @@ import kotlin.sequences.Sequence;
 import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -453,22 +453,19 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * Returns the sum of the vectors, this method is generally faster than add the
      * vectors one by one because it reduce the cost to create new objects.
      *
-     * @param vectors
-     * @return
      */
     @SafeVarargs
     public static <T> PVector<T> sum(PVector<T>... vectors) {
         MathCalculator<T> mc = vectors[0].getMc();
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) Array.newInstance(vectors[0].x.getClass(), vectors.length);
-        for (int i = 0; i < vectors.length; i++) {
-            arr[i] = vectors[i].x;
+        var arr = new ArrayList<T>(vectors.length);
+        for (PVector<T> vector : vectors) {
+            arr.add(vector.x);
         }
-        T xm = mc.addX(arr);
+        T xm = mc.sum(arr);
         for (int i = 0; i < vectors.length; i++) {
-            arr[i] = vectors[i].y;
+            arr.set(i, vectors[i].y);
         }
-        T ym = mc.addX(arr);
+        T ym = mc.sum(arr);
         return new PVector<T>(xm, ym, mc);
     }
 

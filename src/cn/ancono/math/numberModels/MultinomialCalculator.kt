@@ -84,13 +84,13 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.add(y)
     }
 
-    override fun addX(vararg ps: Any): Multinomial {
+    override fun sum(ps: List<Multinomial>): Multinomial {
         if (ps.isEmpty()) {
             return ZERO
         }
         val result = getSet()
         for (m in ps) {
-            mergingAddAll(result, (m as Multinomial).terms)
+            mergingAddAll(result, m.terms)
         }
         return Multinomial(result)
     }
@@ -115,13 +115,13 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.multiply(y)
     }
 
-    override fun multiplyX(vararg ps: Any): Multinomial {
+    override fun product(ps: List<Multinomial>): Multinomial {
         if (ps.isEmpty()) {
             return ONE
         }
         var result = singleTerm(Term.ONE)
         for (m in ps) {
-            result = mergingMultiply(result, (m as Multinomial).terms)
+            result = mergingMultiply(result, m.terms)
         }
         return Multinomial(result)
     }

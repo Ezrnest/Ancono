@@ -64,7 +64,21 @@ internal constructor(
 
     companion object {
         internal fun <T> cofactorOf(m: AbstractMatrix<T>, r: Int, c: Int): FactorMatrixView<T> {
-            TODO()
+            fun makeMap(r: Int, row: Int): IntArray {
+                require(r in 0 until row && row > 1)
+                val arr = IntArray(row - 1)
+                for (i in 0 until r) {
+                    arr[i] = i
+                }
+                for (i in r until row - 1) {
+                    arr[i] = i + 1
+                }
+                return arr
+            }
+
+            val rowMap = makeMap(r, m.row)
+            val colMap = makeMap(c, m.column)
+            return FactorMatrixView(rowMap, colMap, m)
         }
 
         fun <T> factorOf(m: AbstractMatrix<T>, rows: IntArray, columns: IntArray): FactorMatrixView<T> {

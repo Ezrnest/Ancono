@@ -33,7 +33,7 @@ object MatrixUtils {
             val u = Vector.copyOf(vs[i])
             for (j in 0 until i) {
                 val k = u.inner(ws[j])
-                u.addMultiplyAssign(mc.negate(k), ws[j])
+                u.addMulAssign(mc.negate(k), ws[j])
                 R[j, i] = k
             }
             if (!u.isZero()) {

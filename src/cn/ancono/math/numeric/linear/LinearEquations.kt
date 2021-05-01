@@ -1,8 +1,8 @@
 package cn.ancono.math.numeric.linear
 
-import cn.ancono.math.T
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.algebra.linear.T
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.algebra.linear.toMutable
 import java.util.*

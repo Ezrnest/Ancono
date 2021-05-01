@@ -135,6 +135,7 @@ abstract class AbstractMatrix<T>(
         return TransposeMatrixView(this)
     }
 
+
     /**
      * Returns the factor of this matrix as an immutable view.
      */
@@ -322,6 +323,13 @@ abstract class AbstractMatrix<T>(
     }
 }
 
+/**
+ * Returns the transpose of this matrix.
+ * @see Matrix.transpose
+ */
+val <T> Matrix<T>.T: Matrix<T>
+    get() = this.transpose()
+
 abstract class Matrix<T>(
         mc: MathCalculator<T>,
         row: Int,
@@ -331,8 +339,8 @@ abstract class Matrix<T>(
 
     /*
     Conventions:
-    i: always the index of row
-    j: always the index of row
+    i: the index of row
+    j: the index of column
 
      */
 
@@ -389,6 +397,23 @@ abstract class Matrix<T>(
         return MatrixImpl.multiply(this, y)
     }
 
+    /**
+     * Multiplies this matrix with [v], viewing `v` as a column vector.
+     *
+     * @return 'this * v'
+     * @see Vector.multiplyToVector
+     */
+    open fun multiply(v: Vector<T>): Vector<T> {
+        return Vector.multiplyToVector(this, v)
+    }
+
+    operator fun times(v: Vector<T>) = multiply(v)
+
+    /**
+     * Returns the power of this.
+     *
+     * A square matrix is required.
+     */
     override fun pow(n: Long): Matrix<T> {
         require(isSquare())
         if (n == 0L) {
@@ -643,36 +668,63 @@ abstract class Matrix<T>(
 
     companion object {
 
+        /**
+         * Creates a new matrix with all zeros.
+         */
         @JvmStatic
         fun <T> zero(row: Int, column: Int, mc: MathCalculator<T>): MutableMatrix<T> {
             return AMatrix.zero(row, column, mc)
         }
 
+        /**
+         * Creates a new matrix with the [supplier].
+         */
         @JvmStatic
         fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, supplier: (Int, Int) -> T): MutableMatrix<T> {
             return AMatrix.of(row, column, mc, supplier)
         }
 
+        /**
+         * Creates a new matrix with the [supplier].
+         */
         operator fun <T> invoke(row: Int, column: Int, mc: MathCalculator<T>, supplier: (Int, Int) -> T)
                 : MutableMatrix<T> {
             return AMatrix.of(row, column, mc, supplier)
         }
 
         /**
-         * Create a matrix according to the given array.The row count of the matrix
-         * will be the first dimension's length of the array,and the column count of
-         * the matrix will be the second dimension's maximum length of the array.
+         * Creates a new matrix according to the given array.
+         *
+         * The row count of the matrix
+         * will be the first dimension's length of the array, and the column count of
+         * the matrix will be the second dimension's length of the array. It is
+         * required that all the nested arrays have the same length.
+         *
+         *
+         *
          */
         @JvmStatic
         fun <T> of(mat: Array<Array<T>>, mc: MathCalculator<T>): MutableMatrix<T> {
             return AMatrix.of(mat, mc)
         }
 
+        /**
+         * Creates a new matrix of [row] and [column] with given flattened [elements] ordered from left to right and
+         * from up to down.
+         *
+         * For example, `of(2, 2, mc, 1, 2, 3, 4)` will result in a matrix `[[1, 2], [3, 4]]`
+         */
         @JvmStatic
         fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, elements: List<T>): MutableMatrix<T> {
             return AMatrix.of(row, column, mc, elements)
         }
 
+        /**
+         * Creates a new matrix of [row] and [column] with given flattened [elements] ordered from left to right and
+         * from up to down.
+         *
+         * For example, `of(2, 2, mc, 1, 2, 3, 4)` will result in a matrix `[[1, 2], [3, 4]]`
+         */
         @SafeVarargs
         @JvmStatic
         fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, vararg elements: T): MutableMatrix<T> {
@@ -706,11 +758,17 @@ abstract class Matrix<T>(
             return AMatrix.diag(elements.toList(), elements.mathCalculator)
         }
 
+        /**
+         * Creates a diagonal matrix of shape [n].
+         */
         @JvmStatic
         fun <T> diag(d: T, n: Int, mc: MathCalculator<T>): MutableMatrix<T> {
             return AMatrix.diag(d, n, mc)
         }
 
+        /**
+         * Creates an identity matrix of rank [n].
+         */
         @JvmStatic
         fun <T> identity(n: Int, mc: MathCalculator<T>): MutableMatrix<T> {
             return AMatrix.identity(n, mc)
@@ -803,15 +861,31 @@ abstract class Matrix<T>(
             return calculator(m.row, m.column, m.mathCalculator)
         }
 
-
+        /**
+         * Solves the linear matrix equation
+         *
+         *     AX = B
+         *
+         * Returns a triple `(X0, kernel, solvable)`. `X0` is a special solution if the equation is solvable,
+         * `kernel` is the kernel of `A`.
+         *
+         * @return `(X0, kernel, solvable)`
+         */
         @JvmStatic
-        fun <T> solveLinear(m: AbstractMatrix<T>, b: AbstractMatrix<T>): Triple<Matrix<T>, VectorBasis<T>, Boolean> {
-            return MatrixImpl.solveLinear(m, b)
+        fun <T> solveLinear(A: AbstractMatrix<T>, B: AbstractMatrix<T>): Triple<Matrix<T>, VectorBasis<T>, Boolean> {
+            return MatrixImpl.solveLinear(A, B)
         }
 
+        /**
+         * Solves the linear matrix equation
+         *
+         *     Ax = b
+         *
+         *
+         */
         @JvmStatic
-        fun <T> solveLinear(m: AbstractMatrix<T>, b: AbstractVector<T>): LinearEquationSolution<T> {
-            return LinearEquationSolution.of(MatrixImpl.solveLinear(m, b))
+        fun <T> solveLinear(A: AbstractMatrix<T>, b: AbstractVector<T>): LinearEquationSolution<T> {
+            return LinearEquationSolution.of(MatrixImpl.solveLinear(A, b))
         }
 
         @JvmStatic
@@ -824,10 +898,20 @@ abstract class Matrix<T>(
 //        fun <T> solveLinearExpanded(expanded: AbstractMatrix<T>, column: Int = expanded.column-1): Triple<Matrix<T>, VectorBasis<T>, Boolean> {
 //            return MatrixImpl.solveLinear(expanded.toMutable(),column)
 //        }
-
+        /**
+         * Solves the homogeneous linear matrix equation
+         *
+         *     AX = 0
+         *
+         * Returns the kernel of `A`.
+         *
+         * This method is equivalent to `A.kernel()`.
+         *
+         * @return the kernel of `A`
+         */
         @JvmStatic
-        fun <T> solveHomo(m: AbstractMatrix<T>): VectorBasis<T> {
-            return MatrixImpl.solveHomo(m)
+        fun <T> solveHomo(A: AbstractMatrix<T>): VectorBasis<T> {
+            return MatrixImpl.solveHomo(A)
         }
 
         /**
@@ -1207,20 +1291,15 @@ class AMatrix<T> internal constructor(
             return AMatrix(mc, row, column, data)
         }
 
-        /**
-         * Create a matrix according to the given array.The row count of the matrix
-         * will be the first dimension's length of the array,and the column count of
-         * the matrix will be the second dimension's maximum length of the array.
-         */
         fun <T> of(mat: Array<Array<T>>, mc: MathCalculator<T>): AMatrix<T> {
-            Objects.requireNonNull(mat)
-            val row = mat.size
-            var column = -1
-            for (arr in mat) {
-                column = column.coerceAtLeast(arr.size)
+            require(mat.isNotEmpty() && mat[0].isNotEmpty()) {
+                "The given array is empty!"
             }
+            val row = mat.size
+            val column = mat[0].size
             val result = zero(row, column, mc)
             for (i in 0 until row) {
+                require(mat[i].size == column)
                 mat[i].copyInto(result.data, i * column)
             }
             return result
@@ -1571,7 +1650,7 @@ internal object MatrixImpl {
         val dim = column
         val k = dim - r
         if (k == 0) {
-            return VectorBasis.zeroBase(dim, expanded.mathCalculator)
+            return VectorBasis.zero(dim, expanded.mathCalculator)
         }
         val mc = expanded.mathCalculator
         val vectors = ArrayList<Vector<T>>(k)

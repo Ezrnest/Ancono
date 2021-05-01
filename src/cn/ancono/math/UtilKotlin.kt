@@ -1,7 +1,5 @@
 package cn.ancono.math
 
-import cn.ancono.math.algebra.linear.Matrix
-import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.geometry.analytic.plane.PVector
 import cn.ancono.math.geometry.analytic.plane.Point
 import cn.ancono.math.geometry.analytic.space.SPoint
@@ -16,11 +14,7 @@ import cn.ancono.math.set.MathSets
  * Provides extension methods for convenience.
  */
 
-/**
- * Returns the transpose of this matrix.
- */
-val <T> Matrix<T>.T: Matrix<T>
-    get() = this.transpose()
+
 
 
 operator fun <T> PVector<T>.component1(): T = this.x
@@ -37,10 +31,6 @@ operator fun <T> SPoint<T>.component1(): T = this.x
 operator fun <T> SPoint<T>.component2(): T = this.y
 operator fun <T> SPoint<T>.component3(): T = this.z
 
-
-operator fun <T> Matrix<T>.times(v: Vector<T>) = Vector.multiplyToVector(this, v)
-operator fun <T> Vector<T>.times(mat: Matrix<T>) = Vector.multiplyByVector(this, mat)
-
 operator fun <T> Complex<T>.component1() = this.re()
 operator fun <T> Complex<T>.component2() = this.im()
 
@@ -50,8 +40,6 @@ operator fun <T> Complex<T>.component2() = this.im()
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!
 operator fun Multinomial.div(y: Term) = this.divide(y)!!
 
-//operator fun <T, S> Pair<T, S>.component1(): T = this.first
-//operator fun <T, S> Pair<T, S>.component2(): S = this.second
 
 operator fun <T> MathSet<T>.minus(another: MathSet<T>): MathSet<T> =
         MathSet { this.contains(it) && !another.contains(it) }

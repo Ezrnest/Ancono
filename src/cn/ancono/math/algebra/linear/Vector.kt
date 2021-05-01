@@ -19,6 +19,9 @@ import kotlin.math.roundToLong
 
 abstract class AbstractVector<T>(
         mc: MathCalculator<T>,
+        /**
+         * The size of this vector, the number of element that this vector contains.
+         */
         final override val size: Int)
     : MathObjectExtend<T>(mc), GenVector<T> {
     protected fun checkSameSize(v: AbstractVector<*>) {
@@ -244,14 +247,33 @@ abstract class Vector<T>(
         return VectorImpl.divide(this, k)
     }
 
+    /**
+     * Multiplies this vector with the matrix [m], viewing this as a row vector.
+     *
+     * It is required that the [size] of this is equal to the [Matrix.row] of [m].
+     *
+     * @return `this * m`
+     * @see Vector.multiplyByVector
+     */
+    open fun multiply(m: Matrix<T>): Vector<T> {
+        return multiplyByVector(this, m)
+    }
+
+    operator fun times(m: Matrix<T>): Vector<T> = multiply(m)
+
 
     companion object {
-
+        /**
+         * Returns a vector whose elements are all [x].
+         */
         @JvmStatic
         fun <T> constant(x: T, size: Int, mc: MathCalculator<T>): MutableVector<T> {
             return AVector.constant(x, size, mc)
         }
 
+        /**
+         * Returns a vector with all ones.
+         */
         @JvmStatic
         fun <T> ones(size: Int, mc: MathCalculator<T>): MutableVector<T> {
             return constant(mc.one, size, mc)
@@ -266,18 +288,18 @@ abstract class Vector<T>(
         }
 
         /**
-         * Returns a unit column vector of the given length.
+         * Returns a unit column vector of the given [size].
          */
-        fun <T> unitVector(length: Int, unitIndex: Int, mc: MathCalculator<T>): Vector<T> {
-            return AVector.unitVector(length, unitIndex, mc)
+        fun <T> unitVector(size: Int, unitIndex: Int, mc: MathCalculator<T>): Vector<T> {
+            return AVector.unitVector(size, unitIndex, mc)
         }
 
 
         /**
-         * Returns a list of all unit vectors of the given length.
+         * Returns a list of all unit vectors of the given [size].
          */
-        fun <T> unitVectors(length: Int, mc: MathCalculator<T>): List<Vector<T>> {
-            return AVector.unitVectors(length, mc)
+        fun <T> unitVectors(size: Int, mc: MathCalculator<T>): List<Vector<T>> {
+            return AVector.unitVectors(size, mc)
         }
 
         /**
@@ -314,7 +336,7 @@ abstract class Vector<T>(
          * @return `mat * v` as a column vector, which has the length of `mat.getRowCount()`.
          */
         @JvmStatic
-        fun <T> multiplyToVector(mat: Matrix<T>, v: Vector<T>): Vector<T> {
+        fun <T> multiplyToVector(mat: AbstractMatrix<T>, v: AbstractVector<T>): Vector<T> {
             require(mat.column == v.size) { "mat.column != v.size" }
             val mc = mat.mathCalculator
             val result = Array<Any?>(mat.row) { k ->
@@ -337,7 +359,7 @@ abstract class Vector<T>(
          * @return `v * mat` as a row vector, which has the length of `mat.getColumnCount()`.
          */
         @JvmStatic
-        fun <T> multiplyByVector(v: Vector<T>, mat: Matrix<T>): Vector<T> {
+        fun <T> multiplyByVector(v: AbstractVector<T>, mat: AbstractMatrix<T>): Vector<T> {
             require(mat.row == v.size) { "mat.row != v.size" }
             val mc = mat.mathCalculator
             val result = Array<Any?>(mat.column) { k ->
@@ -384,7 +406,7 @@ abstract class Vector<T>(
 
                 val v = copyOf(vs[i])
                 for (j in 0 until i) {
-                    v.addMultiplyAssign(us[j].inner(v), list[j])
+                    v.addMulAssign(us[j].inner(v), list[j])
                 }
                 list.add(v)
             }
@@ -444,6 +466,10 @@ abstract class Vector<T>(
             return matrix.rank() < vs.size
         }
 
+        /**
+         * Finds a maximal linear independent subset from the given vectors and
+         * return them as a vector basis.
+         */
         fun <T> maxIndependent(vs: List<AbstractVector<T>>): VectorBasis<T> {
             val matrix = Matrix.fromVectors(vs).toMutable()
             val pivots = MatrixImpl.toUpperTriangle(matrix)
@@ -533,13 +559,17 @@ abstract class MutableVector<T>(mc: MathCalculator<T>, size: Int) : Vector<T>(mc
 
     /**
      *
+     *     this = this + k * y
      */
-    open fun addMultiplyAssign(k: T, y: Vector<T>) {
+    open fun addMulAssign(k: T, y: Vector<T>) {
         for (i in 0 until size) {
             this[i] += k * y[i]
         }
     }
 
+    /**
+     * Transforms all the elements in-place with the function [f].
+     */
     open fun transform(f: (T) -> T) {
         for (i in indices) {
             this[i] = f(this[i])
@@ -705,10 +735,17 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
     }
 }
 
+
+/**
+ * Converts this vector as a column matrix whose shape is `(size, 1)`.
+ */
 fun <T> Vector<T>.asColumnMatrix(): Matrix<T> {
-    return Matrix.of(1, size, mathCalculator, toList())
+    return Matrix.of(size, 1, mathCalculator, toList())
 }
 
+/**
+ * Converts this vector as a row matrix whose shape is `(1, size)`.
+ */
 fun <T> Vector<T>.asRowMatrix(): Matrix<T> {
-    return Matrix.of(size, 1, mathCalculator, toList())
+    return Matrix.of(1, size, mathCalculator, toList())
 }

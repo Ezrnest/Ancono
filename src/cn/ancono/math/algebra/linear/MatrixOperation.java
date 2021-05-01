@@ -1,5 +1,6 @@
 package cn.ancono.math.algebra.linear;
 
+
 /**
  * A simple class defines the elementary operations to a Matrix.
  *

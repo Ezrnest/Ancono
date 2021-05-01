@@ -4,7 +4,6 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.numberModels.Fraction;
-import cn.ancono.utilities.ArraySup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -246,31 +245,33 @@ public class MatrixSup {
      * <p>
      * For example, <pre>[[1 2 3][4 5 6][7 8 9]]</pre> is a valid matrix.
      */
-    @SuppressWarnings("unchecked")
     public static <T> Matrix<T> parseMatrix(String str, MathCalculator<T> mc, Function<String, ? extends T> parser) {
         if (str.startsWith("[")) {
             str = str.substring(1, str.length() - 1);
         }
         int column = -1;
-        List<Object[]> mat = new ArrayList<>();
+        List<T> elements = new ArrayList<>();
         var matcher = ROW_PATTERN.matcher(str);
+        var row = 0;
         while (matcher.find()) {
-            String row = matcher.group(1);
-            String[] rowElements = SPACE.split(row);
+            row++;
+            String line = matcher.group(1);
+            String[] data = SPACE.split(line);
             if (column == -1) {
-                column = rowElements.length;
+                column = data.length;
             } else {
-                if (column != rowElements.length) {
+                if (column != data.length) {
                     throw new IllegalArgumentException("Column counts aren't the same!");
                 }
             }
-            mat.add(ArraySup.mapTo(rowElements, parser));
+            for (var e : data) {
+                elements.add(parser.apply(e));
+            }
         }
-        if (mat.isEmpty() || column == 0) {
+        if (row == 0 || column == 0) {
             throw new IllegalArgumentException("Empty!");
         }
-        Object[][] data = mat.toArray(new Object[0][]);
-        return Matrix.of((T[][]) data, mc);
+        return Matrix.of(row, column, mc, elements);
     }
 
     public static <T> Matrix<T> parseMatrix(String str, String rowDeliminator, String columnDeliminator,
@@ -320,10 +321,13 @@ public class MatrixSup {
             str = str.substring(1, str.length() - 1);
         }
         String[] elements = deliminator.split(str);
-        @SuppressWarnings("unchecked")
-        T[] data = (T[]) ArraySup.mapTo(elements, parser, Object.class);
-
-        return Vector.Companion.of(mc, data);
+//        @SuppressWarnings("unchecked")
+//        T[] data = (T[]) ArraySup.mapTo(elements, parser, Object.class);
+        var data = new ArrayList<T>(elements.length);
+        for (var e : elements) {
+            data.add(parser.apply(e));
+        }
+        return Vector.of(data, mc);
     }
 
     /**

@@ -129,7 +129,7 @@ internal class DAffineCoordinateSystem<T>(mc: MathCalculator<T>, dimension: Int,
  * Describes the standard coordinate system.
  */
 class StandardCoordinateSystem<T>(mc: MathCalculator<T>, dimension: Int) : AffineCoordinateSystem<T>(mc, dimension,
-        Vector.zero(dimension, mc), VectorBasis.standardBase(dimension, mc)) {
+        Vector.zero(dimension, mc), VectorBasis.standard(dimension, mc)) {
     init {
         require(dimension > 0)
     }

@@ -15,7 +15,6 @@ import java.util.function.Function
 
 /**
  * Describes a vector base, which is a set of vectors that are linear irrelevant.
- * All vectors in the base are column vector.
  *
  * Created at 2018/9/10
  * @author liyicheng
@@ -83,7 +82,7 @@ interface IVectorBasis<T> : FiniteLinearBasis<T, Vector<T>> {
      */
     fun transform(mat: Matrix<T>): IVectorBasis<T>
 
-    fun transfrom(f: (Vector<T>) -> Vector<T>): IVectorBasis<T>
+    fun transform(f: (Vector<T>) -> Vector<T>): IVectorBasis<T>
 
 //    /**
 //     * Returns the transformation matrix `mat` that `this.transform(mat) == vb`
@@ -218,7 +217,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         return DVectorBasis(vectorLength, vectors.map { Vector.multiplyToVector(mat, it) })
     }
 
-    override fun transfrom(f: (Vector<T>) -> Vector<T>): VectorBasis<T> {
+    override fun transform(f: (Vector<T>) -> Vector<T>): VectorBasis<T> {
         return VectorBasis.createBase(vectors.map(f))
     }
 
@@ -387,7 +386,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         val m = Matrix.fromVectors(this.vectors + vb.vectors)
         val solution = m.kernel() // at least zero solution
         if (solution.rank == 0) {
-            return VectorBasis.zeroBase(vectorLength, mc)
+            return VectorBasis.zero(vectorLength, mc)
         }
         val nBases = ArrayList<Vector<T>>(solution.rank)
         for (v in solution.vectors) {
@@ -443,7 +442,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
          * operations.
          */
         @JvmStatic
-        fun <T> zeroBase(dimension: Int, mc: MathCalculator<T>): VectorBasis<T> {
+        fun <T> zero(dimension: Int, mc: MathCalculator<T>): VectorBasis<T> {
             return ZeroVectorBasis(mc, dimension)
         }
 
@@ -451,7 +450,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
          * Returns the standard base, which is both unit and orthogonal.
          */
         @JvmStatic
-        fun <T> standardBase(dimension: Int, mc: MathCalculator<T>): StandardVectorBasis<T> {
+        fun <T> standard(dimension: Int, mc: MathCalculator<T>): StandardVectorBasis<T> {
             require(dimension > 0) { "Dimension must be positive." }
             return StandardVectorBasis(mc, dimension)
         }
@@ -461,7 +460,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
          * @param dimension the dimension(length) of all the vectors
          * @param baseSize the number of vectors that this base will have, must not exceed [dimension]
          */
-        fun <T> identityBase(dimension: Int, baseSize: Int, mc: MathCalculator<T>): VectorBasis<T> {
+        fun <T> identity(dimension: Int, baseSize: Int, mc: MathCalculator<T>): VectorBasis<T> {
             require(baseSize > 0)
             require(dimension >= baseSize)
             val list = (0 until baseSize).map { Vector.unitVector(dimension, it, mc) }

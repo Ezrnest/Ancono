@@ -1,12 +1,11 @@
 package samples
 
-import cn.ancono.math.T
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixSup
+import cn.ancono.math.algebra.linear.T
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.BigFraction
 import cn.ancono.math.numberModels.Calculators
-import cn.ancono.math.times
 import java.math.BigInteger
 import kotlin.random.Random
 

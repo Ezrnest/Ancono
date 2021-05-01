@@ -698,7 +698,7 @@ public final class CombUtils {
             BigInteger sum = BigInteger.ZERO;
             var comb = binomialsBigOf(Math.toIntExact(idx * 2));
             for (int i = 0; i < idx; i++) {
-                sum = sum.add(comb.get(i * 2).multiply(p.get(i)));
+                sum = sum.add(comb.get(i * 2L).multiply(p.get(i)));
             }
             return sum.negate();
         }, n, Calculators.bigInteger(), initials);

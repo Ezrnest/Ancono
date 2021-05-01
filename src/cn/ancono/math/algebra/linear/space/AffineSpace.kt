@@ -11,7 +11,6 @@ import cn.ancono.math.geometry.analytic.CoordinateSystem
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.plus
-import cn.ancono.math.numberModels.api.times
 import java.util.function.Function
 
 
@@ -197,7 +196,7 @@ abstract class AffineSpace<T>(mc: MathCalculator<T>,
          */
         @JvmStatic
         fun <T> singlePoint(originVector: Vector<T>): AffineSpace<T> {
-            return valueOf(originVector, VectorBasis.zeroBase(originVector.size, originVector.mathCalculator))
+            return valueOf(originVector, VectorBasis.zero(originVector.size, originVector.mathCalculator))
         }
 
     }

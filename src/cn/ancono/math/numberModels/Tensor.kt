@@ -4,6 +4,7 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.MathUtils
+import cn.ancono.math.algebra.linear.AbstractMatrix
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.discrete.combination.Permutations
@@ -576,7 +577,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
          * Creates a 2-dimensional tensor from a matrix. The `(i,j)`-th element in the returned tensor
          * is equal to `(i,j)`-th element in `m`.
          */
-        fun <T> fromMatrix(m: Matrix<T>): MutableTensor<T> {
+        fun <T> fromMatrix(m: AbstractMatrix<T>): MutableTensor<T> {
             return ATensor.fromMatrix(m)
         }
 
@@ -733,6 +734,14 @@ operator fun <T> Tensor<T>.get(vararg idx: Int): T {
 infix fun <T> Tensor<T>.matmul(y: Tensor<T>): Tensor<T> = this.matmul(y, r = 1)
 infix fun <T> MutableTensor<T>.matmul(y: Tensor<T>): MutableTensor<T> = this.matmul(y, r = 1)
 
+/**
+ * Converts this tensor to a matrix. It is required that `dim == 2`.
+ */
+fun <T> Tensor<T>.toMatrix(): Matrix<T> {
+    require(dim == 2)
+    val (row, column) = shape
+    return Matrix.of(row, column, mathCalculator, flattenToList())
+}
 
 interface MutableTensor<T> : Tensor<T> {
     /**
@@ -902,7 +911,9 @@ interface MutableTensor<T> : Tensor<T> {
     }
 
     override fun transpose(axis1: Int, axis2: Int): MutableTensor<T> {
-        return permute(Permutations.swap(dim, axis1, axis2))
+        return permute(Permutations.swap(dim,
+                TensorImpl.addIfNegative(axis1, dim),
+                TensorImpl.addIfNegative(axis2, dim)))
     }
 
 
@@ -1380,7 +1391,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
             return constant(mc.zero, shape, mc)
         }
 
-        fun <T> fromMatrix(m: Matrix<T>): ATensor<T> {
+        fun <T> fromMatrix(m: AbstractMatrix<T>): ATensor<T> {
             var pos = 0
             val r = m.row
             val c = m.column

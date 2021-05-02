@@ -1,13 +1,11 @@
 package test.math.numberModels
 
-import cn.ancono.math.numberModels.Calculators
-import cn.ancono.math.numberModels.Tensor
-import cn.ancono.math.numberModels.TensorImpl
+import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.api.minus
-import cn.ancono.math.numberModels.get
 import org.junit.Assert.*
 import org.junit.Test
 import test.math.TestUtils.assertValueEquals
+import kotlin.random.Random
 
 class TensorTest {
     @Test
@@ -214,5 +212,28 @@ class TensorTest {
         assertValueEquals(b.diagonal(0, 0, -1).sum(-1),
                 b.trace(0, 0, -1))
     }
+
+    @Test
+    fun testToMatrix() {
+        val mc = Calculators.doubleDev()
+        val a = Tensor(intArrayOf(3, 3), mc) {
+            Random.nextDouble()
+        }
+        val m = a.toMatrix()
+        val a1 = Tensor.fromMatrix(m)
+        assertValueEquals(a, a1)
+        assert(mc.isEqual(a.sumAll(), m.sum()))
+        assert(mc.isEqual(a.trace().sumAll(), m.trace()))
+        assertValueEquals(a.transpose().toMatrix(), m.transpose())
+
+        val b = Tensor(a.shape, mc) {
+            Random.nextDouble()
+        }
+        val c = a matmul b
+        val m1 = m * b.toMatrix()
+        assertValueEquals(c.toMatrix(), m1)
+        
+    }
+
 
 }

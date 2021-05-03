@@ -312,49 +312,65 @@ System.out.println(f3);
 
 ```java
 var cal=Calculators.integer();
-var calFrac=Fraction.getCalculator();
-var m1=Matrix.of(cal,2,2,
-                 1,2,
-                 4,5).mapTo(Fraction::of,calFrac);
-var m2=Matrix.of(cal,2,2,
-                 3,-6,
-                 -4,8).mapTo(Fraction::of,calFrac);
-var m3=Matrix.multiply(m1,m2);
-m3.printMatrix();
-var det=m3.calDet();
-var rank=m3.calRank();
-System.out.println("Det of the matrix: "+det);
-System.out.println("Rank of the matrix: "+rank);
+        var calFrac=Fraction.getCalculator();
+        var m1=Matrix.of(2,2,cal,
+        1,2,
+        4,5)
+        .mapTo(calFrac,Fraction::of);
+        var m2=Matrix.of(2,2,cal,
+        3,-6,
+        -4,8)
+        .mapTo(calFrac,Fraction::of);
+        var m3=m1.multiply(m2);
+        System.out.println(m3);
+        var det=m3.det();
+        var rank=m3.rank();
+        System.out.println("Det of the matrix: "+det);
+        System.out.println("Rank of the matrix: "+rank);
+```
+
+Kernel and image: (in Kotlin)
+
+```kotlin
+val p = 3
+val n = 5
+val matrix = Matrix(n, n, Calculators.intModP(p)) { _, _ ->
+    Random.nextInt(0, p)
+} // create a random n * n matrix 
+val kernel = matrix.kernel()
+val image = matrix.image()
+println(matrix)
+println(kernel)
+println(image)
+println(kernel.rank + image.rank) // = n
 ```
 
 Matrix polynomial:
 
 ```java
-var mc = Fraction.getCalculator();
-var m = MatrixSup.parseFMatrix("1 1 0\n0 1 0\n0 0 2");
-System.out.println("M = ");
-m.printMatrix();
-var f = m.charPoly();
-System.out.println("Characteristic polynomial f(x) = "+f);
-var matrixCal = Matrix.calculatorFor(m);
+var mc=Fraction.getCalculator();
+        var m=MatrixSup.parseFMatrix("1 1 0\n0 1 0\n0 0 2");
+        System.out.println("M = \n"+m);
+        var f=m.charPoly();
+        System.out.println("Characteristic polynomial f(x) = "+f);
+        var matrixCal=Matrix.calculatorFor(m);
 var fm = f.mapTo(matrixCal, x -> Matrix.diag(x, 3, mc));
-var result = fm.compute(m);
-System.out.println("f(M) = ");
-result.printMatrix();
+        var result=fm.compute(m);
+        System.out.println("f(M) = \n"+result); // 
 ```
 
 **Vector:**
 
 ```
 var mc = Calculators.doubleDev();
-var u = SVector.valueOf(1.,2.,3.,mc).unitVector(); 
-var v = SVector.valueOf(2.,3.,4.,mc);
+var u = SVector.valueOf(1., 2., 3., mc).unitVector();
+var v = SVector.valueOf(2., 3., 4., mc);
 // SVector: vector in space (R^3), outer product is supported
-System.out.println("u = "+u);
-System.out.println("v = "+v);
-System.out.println("u+v = "+SVector.addV(u,v));
-System.out.println("<u,v> = "+u.innerProduct(v));
-System.out.println("u × v = " +u.outerProduct(v)); 
+System.out.println("u = " + u);
+System.out.println("v = " + v);
+System.out.println("u+v = " + u.add(v));
+System.out.println("<u,v> = " + u.innerProduct(v));
+System.out.println("u × v = " + u.outerProduct(v));
 ```
 
 **Vector basis:**

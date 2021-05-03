@@ -1,9 +1,7 @@
 package cn.ancono.math.numberModels
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.MathUtils
+import cn.ancono.math.*
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.linear.AbstractMatrix
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.discrete.combination.Permutation
@@ -48,7 +46,7 @@ import java.util.function.Function
  *
  *
  */
-interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
+interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
     //Created by lyc at 2021-04-06 22:12
 
     /**
@@ -222,7 +220,8 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
      * Returns the sum of all the elements in this tensor.
      */
     fun sumAll(): T {
-        return elementSequence().reduce(mathCalculator::add)
+        val mc = mathCalculator as AbelSemiGroupCal<T>
+        return elementSequence().reduce(mc::add)
     }
 
     /**
@@ -450,15 +449,13 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
         return TensorImpl.isLinearDependent(this, v)
     }
 
-    /*
-    General methods for MathObject:
-     */
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Tensor<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Tensor<N> {
         return ATensor.buildFromSequence(newCalculator, shape, elementSequence().map { mapper.apply(it) })
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+
+    override fun valueEquals(obj: FMathObject<T, EqualPredicate<T>>): Boolean {
         if (obj !is Tensor) {
             return false
         }
@@ -469,7 +466,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
         return elementSequence().zip(obj.elementSequence()).all { (a, b) -> mc.isEqual(a, b) }
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T, EqualPredicate<T>>): String {
         val mc = mathCalculator
         return joinTo(StringBuilder()) {
             nf.format(it, mc)
@@ -505,7 +502,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
          *
          * @param shape a non-empty array of positive integers
          */
-        fun <T> zeros(mc: MathCalculator<T>, vararg shape: Int): MutableTensor<T> {
+        fun <T> zeros(mc: RingCalculator<T>, vararg shape: Int): MutableTensor<T> {
             return constants(mc.zero, mc, *shape)
         }
 
@@ -514,7 +511,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
          *
          * @param shape a non-empty array of positive integers
          */
-        fun <T> ones(mc: MathCalculator<T>, vararg shape: Int): MutableTensor<T> {
+        fun <T> ones(mc: UnitRingCalculator<T>, vararg shape: Int): MutableTensor<T> {
             return constants(mc.one, mc, *shape)
         }
 
@@ -523,7 +520,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
          *
          * @param shape a non-empty array of positive integers
          */
-        fun <T> constants(c: T, mc: MathCalculator<T>, vararg shape: Int): MutableTensor<T> {
+        fun <T> constants(c: T, mc: EqualPredicate<T>, vararg shape: Int): MutableTensor<T> {
             checkValidShape(shape)
             return ATensor.constant(c, shape.clone(), mc)
         }
@@ -533,7 +530,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
          *
          * @param shape a non-empty array of positive integers
          */
-        fun <T> of(shape: IntArray, mc: MathCalculator<T>, supplier: (Index) -> T): MutableTensor<T> {
+        fun <T> of(shape: IntArray, mc: EqualPredicate<T>, supplier: (Index) -> T): MutableTensor<T> {
             checkValidShape(shape)
             return ATensor.buildFromSequence(mc, shape.clone(), IterUtils.prodIdxN(shape).map(supplier))
         }
@@ -543,7 +540,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
          *
          * @see of
          */
-        operator fun <T> invoke(shape: IntArray, mc: MathCalculator<T>, supplier: (Index) -> T): MutableTensor<T> {
+        operator fun <T> invoke(shape: IntArray, mc: EqualPredicate<T>, supplier: (Index) -> T): MutableTensor<T> {
             return of(shape, mc, supplier)
         }
 
@@ -554,15 +551,15 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
          *
          *
          */
-        fun <T> of(elements: List<Any>, mc: MathCalculator<T>): MutableTensor<T> {
-            return ATensor.fromNestingList(elements, mc)
+        inline fun <reified T> of(elements: List<Any>, mc: EqualPredicate<T>): MutableTensor<T> {
+            return ATensor.fromNestingList(elements, mc, T::class.java)
         }
 
         /**
          * Creates a tensor of the given [shape] with its [elements], it is required that the length of
          * [elements] is equal to the product of [shape].
          */
-        fun <T> of(shape: IntArray, mc: MathCalculator<T>, vararg elements: T): MutableTensor<T> {
+        fun <T> of(shape: IntArray, mc: EqualPredicate<T>, vararg elements: T): MutableTensor<T> {
             checkValidShape(shape)
             val size = MathUtils.product(shape)
             require(elements.size == size) {
@@ -619,7 +616,7 @@ interface Tensor<T> : MathObject<T>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
         /**
          * Returns a tensor of shape `(1)` that represents the given scalar.
          */
-        fun <T> scalar(x: T, mc: MathCalculator<T>): MutableTensor<T> {
+        fun <T> scalar(x: T, mc: EqualPredicate<T>): MutableTensor<T> {
             return constants(x, mc, 1)
         }
 
@@ -740,7 +737,7 @@ infix fun <T> MutableTensor<T>.matmul(y: Tensor<T>): MutableTensor<T> = this.mat
 fun <T> Tensor<T>.toMatrix(): Matrix<T> {
     require(dim == 2)
     val (row, column) = shape
-    return Matrix.of(row, column, mathCalculator, flattenToList())
+    return Matrix.of(row, column, mathCalculator as MathCalculator<T>, flattenToList())
 }
 
 interface MutableTensor<T> : Tensor<T> {
@@ -770,7 +767,7 @@ interface MutableTensor<T> : Tensor<T> {
 
 
     operator fun plusAssign(y: Tensor<T>) {
-        val mc = mathCalculator
+        val mc = mathCalculator as AbelSemiGroupCal<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.add(this[idx], y1[idx])
@@ -778,7 +775,7 @@ interface MutableTensor<T> : Tensor<T> {
     }
 
     operator fun minusAssign(y: Tensor<T>) {
-        val mc = mathCalculator
+        val mc = mathCalculator as AbelGroupCal<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.subtract(this[idx], y1[idx])
@@ -786,7 +783,7 @@ interface MutableTensor<T> : Tensor<T> {
     }
 
     operator fun timesAssign(y: Tensor<T>) {
-        val mc = mathCalculator
+        val mc = mathCalculator as RingCalculator<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.multiply(this[idx], y1[idx])
@@ -794,7 +791,7 @@ interface MutableTensor<T> : Tensor<T> {
     }
 
     operator fun divAssign(y: Tensor<T>) {
-        val mc = mathCalculator
+        val mc = mathCalculator as DivisionRingCalculator<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.divide(this[idx], y1[idx])
@@ -931,7 +928,7 @@ interface MutableTensor<T> : Tensor<T> {
         return ATensor.copyOf(this)
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MutableTensor<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): MutableTensor<N> {
         return ATensor.buildFromSequence(newCalculator, shape, elementSequence().map { mapper.apply(it) })
     }
 
@@ -1033,11 +1030,11 @@ fun <T> Tensor<T>.joinToString(separator: CharSequence = " ",
 }
 
 abstract class AbstractTensor<T>(
-        mc: MathCalculator<T>,
+        mc: EqualPredicate<T>,
         /**
          * The shape of the tensor, it should not be modified
          */
-        protected val sh: IntArray) : MathObjectExtend<T>(mc), Tensor<T> {
+        protected val sh: IntArray) : AbstractFlexibleMathObject<T, EqualPredicate<T>>(mc), Tensor<T> {
 
     //Created by lyc at 2021-03-31 20:39
 
@@ -1108,6 +1105,7 @@ abstract class AbstractTensor<T>(
      * Determines whether this tensor is all-zero.
      */
     override fun isZero(): Boolean {
+        val mc = mathCalculator as RingCalculator<T>
         return elementSequence().all { mc.isZero(it) }
     }
 
@@ -1124,15 +1122,15 @@ abstract class AbstractTensor<T>(
     General methods for MathObject
      */
 
-//    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Tensor<N> {
+//    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Tensor<N> {
 //        return ATensor.buildFromSequence(newCalculator, sh, elementSequence().map { mapper.apply(it) })
 //    }
 }
 
-abstract class AbstractMutableTensor<T>(mc: MathCalculator<T>, shape: IntArray)
+abstract class AbstractMutableTensor<T>(mc: EqualPredicate<T>, shape: IntArray)
     : AbstractTensor<T>(mc, shape), MutableTensor<T> {
     override fun applyAll(f: (T) -> T): MutableTensor<T> {
-        return mapTo(mc, f)
+        return mapTo(mathCalculator, f)
     }
 
     override fun add(y: Tensor<T>): MutableTensor<T> {
@@ -1166,7 +1164,7 @@ abstract class AbstractMutableTensor<T>(mc: MathCalculator<T>, shape: IntArray)
  * An array-implementation of tensor.
  */
 class ATensor<T>
-internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
+internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
     : AbstractMutableTensor<T>(mc, shape) {
     private val shifts: IntArray = IntArray(dim)
 
@@ -1203,7 +1201,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
     }
 
     override fun copy(): ATensor<T> {
-        return ATensor(mc, sh, data.clone())
+        return ATensor(mathCalculator, sh, data.clone())
     }
 
     override fun set(idx: Index, v: T) {
@@ -1229,7 +1227,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
             ndata[i] = f(data[i])
         }
         @Suppress("UNCHECKED_CAST")
-        return ATensor(mc, sh, ndata as Array<T>)
+        return ATensor(mathCalculator, sh, ndata as Array<T>)
     }
 
     override fun transform(f: (T) -> T) {
@@ -1239,12 +1237,14 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
     }
 
     override fun isZero(): Boolean {
+        val mc = mathCalculator as RingCalculator
         return data.all { mc.isZero(it) }
     }
 
 
     override fun add(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
+            val mc = mathCalculator as AbelSemiGroupCal<T>
             return apply2(this, y, mc::add)
         }
         return super.add(y)
@@ -1252,26 +1252,31 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
     }
 
     override fun negate(): MutableTensor<T> {
+        val mc = mathCalculator as AbelGroupCal<T>
         return copy().inlineApplyAll(mc::negate)
     }
 
     override fun subtract(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
+            val mc = mathCalculator as AbelGroupCal<T>
             return apply2(this, y, mc::subtract)
         }
         return super.add(y)
     }
 
     override fun multiply(k: T): MutableTensor<T> {
+        val mc = mathCalculator as RingCalculator<T>
         return applyAll { t -> mc.multiply(k, t) }
     }
 
     override fun divide(k: T): MutableTensor<T> {
+        val mc = mathCalculator as FieldCalculator<T>
         return applyAll { t -> mc.divide(k, t) }
     }
 
     override fun multiply(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
+            val mc = mathCalculator as RingCalculator<T>
             return apply2(this, y, mc::multiply)
         }
         return super.multiply(y)
@@ -1279,6 +1284,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
 
     override fun divide(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
+            val mc = mathCalculator as FieldCalculator
             return apply2(this, y, mc::divide)
         }
         return super.divide(y)
@@ -1296,7 +1302,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
             var pos = 0
             val data = this.data
             for (s in y.elementSequence()) {
-                data[pos] = mc.add(data[pos], s)
+                data[pos] = f(data[pos], s)
                 pos++
             }
         }
@@ -1304,33 +1310,33 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
 
     override fun plusAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, mc::add)
+        return apply2InPlace(y1, (mathCalculator as AbelSemiGroupCal<T>)::add)
     }
 
     override fun minusAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, mc::subtract)
+        return apply2InPlace(y1, (mathCalculator as AbelGroupCal<T>)::subtract)
     }
 
     override fun timesAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, mc::multiply)
+        return apply2InPlace(y1, (mathCalculator as RingCalculator<T>)::multiply)
     }
 
     override fun divAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, mc::divide)
+        return apply2InPlace(y1, (mathCalculator as FieldCalculator<T>)::divide)
     }
 
 
     override fun reshape(vararg newShape: Int): MutableTensor<T> {
         val sh = newShape.clone()
         TensorImpl.prepareNewShape(this, sh)
-        return ATensor(mc, sh, data)
+        return ATensor(mathCalculator, sh, data)
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ATensor<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): ATensor<N> {
         val ndata = arrayOfNulls<Any>(size)
         for (i in 0 until size) {
             ndata[i] = mapper.apply(data[i])
@@ -1341,7 +1347,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
 
     companion object {
         @Suppress("UNCHECKED_CAST")
-        fun <T> buildFromSequence(mc: MathCalculator<T>, shape: IntArray, sequence: Sequence<T>): ATensor<T> {
+        fun <T> buildFromSequence(mc: EqualPredicate<T>, shape: IntArray, sequence: Sequence<T>): ATensor<T> {
             val size = MathUtils.product(shape)
             val data = arrayOfNulls<Any>(size)
             var pos = 0
@@ -1361,7 +1367,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
             for (i in 0 until x.size) {
                 ndata[i] = f(d1[i], d2[i])
             }
-            return ATensor(x.mc, x.sh, ndata as Array<T>)
+            return ATensor(x.mathCalculator, x.sh, ndata as Array<T>)
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -1379,7 +1385,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
             return ATensor(tensor.mathCalculator, shape, data as Array<T>)
         }
 
-        fun <T> constant(c: T, shape: IntArray, mc: MathCalculator<T>): ATensor<T> {
+        fun <T> constant(c: T, shape: IntArray, mc: EqualPredicate<T>): ATensor<T> {
             val size = MathUtils.product(shape)
             val data = arrayOfNulls<Any>(size)
             Arrays.fill(data, c)
@@ -1387,7 +1393,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
             return ATensor(mc, shape, data as Array<T>)
         }
 
-        fun <T> zeros(shape: IntArray, mc: MathCalculator<T>): ATensor<T> {
+        fun <T> zeros(shape: IntArray, mc: RingCalculator<T>): ATensor<T> {
             return constant(mc.zero, shape, mc)
         }
 
@@ -1407,7 +1413,7 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
 
         @Suppress("UNCHECKED_CAST")
         fun <T> wedge(x: ATensor<T>, y: ATensor<T>): ATensor<T> {
-            val mc = x.mc
+            val mc = x.mathCalculator as RingCalculator
             val shape = x.shape + y.shape
             val size = x.size * y.size
             val data = arrayOfNulls<Any>(size)
@@ -1446,9 +1452,9 @@ internal constructor(mc: MathCalculator<T>, shape: IntArray, val data: Array<T>)
             return p
         }
 
-        fun <T> fromNestingList(list: List<Any>, mc: MathCalculator<T>): ATensor<T> {
+        fun <T> fromNestingList(list: List<Any>, mc: EqualPredicate<T>, clz: Class<T>): ATensor<T> {
             val sh = arrayListOf<Int>()
-            val clz = mc.numberClass
+//            val clz = mc.numberClass
             var l = list
             while (true) {
                 require(l.isNotEmpty())

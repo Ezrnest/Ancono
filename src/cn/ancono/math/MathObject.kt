@@ -1,5 +1,6 @@
 package cn.ancono.math
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.NumberFormatter
 
@@ -110,6 +111,23 @@ abstract class AbstractMathObject<T>(protected val mc: MathCalculator<T>) : Math
     override fun hashCode(): Int {
         return System.identityHashCode(this)
     }
+}
+
+abstract class AbstractFlexibleMathObject<T, S : EqualPredicate<T>>(override val mathCalculator: S) : FMathObject<T, S> {
+
+    override fun toString(): String {
+        return toString(FlexibleNumberFormatter.defaultFormatter())
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other
+    }
+
+    override fun hashCode(): Int {
+        return System.identityHashCode(this)
+    }
+
+
 }
 
 //object MathObjects{

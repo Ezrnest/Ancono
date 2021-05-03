@@ -3,8 +3,10 @@
  */
 package test.math;
 
+import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
@@ -80,4 +82,9 @@ public final class TestUtils {
         }
     }
 
+    public static <T, S extends EqualPredicate<T>> void assertValueEquals(FMathObject<T, S> expected, FMathObject<T, S> actual) {
+        if (!expected.valueEquals(actual)) {
+            throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
+        }
+    }
 }

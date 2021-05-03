@@ -30,7 +30,7 @@ public interface Bijection<P, R> extends MathFunction<P, R>, Invertible<Bijectio
      * @param y the parameter
      * @return <pre>f<sup>-1</sup>(y)</pre>
      */
-    P deply(@NotNull R y);
+    P deply(R y);
 
 
     /**
@@ -48,7 +48,7 @@ public interface Bijection<P, R> extends MathFunction<P, R>, Invertible<Bijectio
             @NotNull
             @SuppressWarnings("SuspiciousNameCombination")//inverse
             @Override
-            public P apply(R x) {
+            public P apply(@NotNull R x) {
                 return f.deply(x);
             }
 
@@ -77,7 +77,7 @@ public interface Bijection<P, R> extends MathFunction<P, R>, Invertible<Bijectio
 
         @NotNull
         @Override
-        public Object apply(Object x) {
+        public Object apply(@NotNull Object x) {
             return x;
         }
 
@@ -107,7 +107,7 @@ public interface Bijection<P, R> extends MathFunction<P, R>, Invertible<Bijectio
 
             @NotNull
             @Override
-            public R apply(V x) {
+            public R apply(@NotNull V x) {
                 return after.apply(before.apply(x));
             }
         };
@@ -142,7 +142,7 @@ public interface Bijection<P, R> extends MathFunction<P, R>, Invertible<Bijectio
         return new Bijection<>() {
             @NotNull
             @Override
-            public R apply(P x) {
+            public R apply(@NotNull P x) {
                 return f.apply(x);
             }
 

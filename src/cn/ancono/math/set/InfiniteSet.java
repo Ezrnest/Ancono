@@ -13,16 +13,16 @@ public interface InfiniteSet<T> extends MathSet<T> {
     /**
      * Describes the cardinal of the set of all integers, which is zero.
      */
-    final int CARDINAL_INTEGER = 0;
+    int CARDINAL_INTEGER = 0;
     /**
      * Describes the cardinal of the set of all quotients, which is zero.
      */
-    final int CARDINAL_QUOTIENT = CARDINAL_INTEGER;
+    int CARDINAL_QUOTIENT = CARDINAL_INTEGER;
 
     /**
      * Describes the cardinal of real number, which is one.
      */
-    final int CARDINAL_REAL = 1;
+    int CARDINAL_REAL = 1;
 
 
     /**
@@ -31,6 +31,6 @@ public interface InfiniteSet<T> extends MathSet<T> {
      *
      * @return a non-negative integer
      */
-    int cardinalNumber();
+    int cardinality();
 
 }

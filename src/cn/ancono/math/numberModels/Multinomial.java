@@ -4,17 +4,17 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.IPolynomial;
+import cn.ancono.math.algebra.PolynomialUtil;
+import cn.ancono.math.discrete.combination.Permutation;
+import cn.ancono.math.discrete.combination.Permutations;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.api.Computable;
+import cn.ancono.math.numberModels.api.RingNumberModel;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberModels.structure.Polynomial;
-import cn.ancono.math.numberModels.structure.PolynomialSup;
-import cn.ancono.math.numberModels.structure.RingFraction;
-import cn.ancono.math.numberTheory.combination.Permutation;
-import cn.ancono.math.numberTheory.combination.Permutations;
 import cn.ancono.utilities.CollectionSup;
 import cn.ancono.utilities.ModelPatterns;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -22,22 +22,19 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.*;
 
-import static cn.ancono.utilities.Printer.print;
-
 /**
  * An improved class for multinomial.
  * A multinomial is composed of several terms.
  *
  * @see Term
  */
-public class Multinomial implements Comparable<Multinomial>, Computable, Serializable {
+public class Multinomial implements Comparable<Multinomial>, Computable, Serializable, RingNumberModel<Multinomial> {
     final NavigableSet<Term> terms;
 
     static boolean mergingAdd(NavigableSet<Term> base, Term e) {
         Term low = base.floor(e);
         if (low != null && low.canMerge(e)) {
             base.remove(low);
-
             return mergingAdd(base, low.merge(e));
         }
         Term high = base.higher(e);
@@ -73,9 +70,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      * The result set must not be modified.
      *
-     * @param s1
-     * @param s2
-     * @return
      */
     static NavigableSet<Term> mergingMultiply(NavigableSet<Term> s1, NavigableSet<Term> s2) {
         if (ZERO.terms.equals(s1) || ZERO.terms.equals(s2)) {
@@ -98,6 +92,16 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         }
         return nset;
     }
+
+    static NavigableSet<Term> applyAllSet(NavigableSet<Term> set, UnaryOperator<Term> f) {
+        NavigableSet<Term> nset = getSet();
+        for (Term x : set) {
+            Term re = f.apply(x);
+            nset.add(re);
+        }
+        return nset;
+    }
+
 
     Multinomial(NavigableSet<Term> set) {
         this.terms = set;
@@ -164,6 +168,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     /**
      * Determines whether this multinomial is zero
      */
+    @Override
     public boolean isZero() {
         return isMonomial() && getFirst().isZero();
     }
@@ -360,7 +365,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      *
      * @return {@code -this}
      */
-    public Multinomial negate() {
+    @Override
+    public @NotNull Multinomial negate() {
         if (ZERO.equals(this)) {
             return ZERO;
         }
@@ -371,13 +377,15 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return new Multinomial(nset);
     }
 
-    public Multinomial add(Multinomial m) {
+    @Override
+    public @NotNull Multinomial add(Multinomial m) {
         NavigableSet<Term> set = getSet(terms);
         mergingAddAll(set, m.terms);
         return new Multinomial(set);
     }
 
-    public Multinomial subtract(Multinomial m) {
+    @Override
+    public @NotNull Multinomial subtract(Multinomial m) {
         NavigableSet<Term> set = getSet(terms);
         for (Term x : m.terms) {
             mergingAdd(set, x.negate());
@@ -396,7 +404,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-    public Multinomial multiply(Multinomial m) {
+    @Override
+    public @NotNull Multinomial multiply(@NotNull Multinomial m) {
         if (ZERO.equals(this) || ZERO.equals(m)) {
             return ZERO;
         }
@@ -430,9 +439,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Determines whether this multinomial is invertible and the inverse is also a multinomial.
-     *
-     * @return
+     * Determines whether this multinomial is invertible and the inverse is a multinomial with
+     * non-negative powers of characters.
      */
     public boolean isPolyInvertible() {
         if (isZero()) {
@@ -454,7 +462,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         var pair = extractGCD();
         var m0 = pair.getSecond();
         if (!m0.containsOnlyAlgebraicChar()) {
-            throw new UnsupportedCalculationException("Not invertible: 1/(" + this.toString() + ")");
+            throw new UnsupportedCalculationException("Not invertible: 1/(" + this + ")");
         }
         return inverseSqr(m0).divide(pair.getFirst());
     }
@@ -583,8 +591,6 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * For example, coprimeBaseReduction(1,2,3) = (2,3); coprimeBaseReduction(2,3,6) = (2,3);
      * coprimeBaseReduction(30,42) = (5,6,7)
      *
-     * @param numbers
-     * @return
      */
     private static List<BigInteger> coprimeBaseReduction(List<BigInteger> numbers) {
         List<BigInteger> result = new ArrayList<>(numbers.size());
@@ -821,9 +827,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Determines whether this multinomial cont
-     *
-     * @return
+     * Determines whether this multinomial contains no character.
      */
     public boolean containsNoChar() {
         for (Term x : terms) {
@@ -834,7 +838,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         return true;
     }
 
-    private static Set<String> AlgebraicChars = new HashSet<>();
+    private static final Set<String> AlgebraicChars = new HashSet<>();
 
     static {
         AlgebraicChars.add(Term.I_STR);
@@ -850,7 +854,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Returns the count of the terms that have the character of {@code targer}.
+     * Returns the count of the terms that have the character of {@code target}.
      */
     public int containsCharCount(String target) {
         int count = 0;
@@ -1001,7 +1005,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * @param expr a string representing the multinomial
      * @return a new multinomial.
      */
-    public static Multinomial valueOf(String expr) {
+    public static Multinomial parse(String expr) {
         expr = expr.trim();
         if (expr.isEmpty()) {
             throw new NumberFormatException("Empty!");
@@ -1036,7 +1040,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      * @param val a BigInteger
      * @return a Multinomial
      */
-    public static Multinomial valueOf(BigInteger val) {
+    public static Multinomial of(BigInteger val) {
         return monomial(Term.valueOf(val));
     }
 
@@ -1065,7 +1069,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     public static Multinomial fromPolynomialT(IPolynomial<Term> p, String variableName) {
         NavigableSet<Term> set = getSet();
         for (int i = 0; i <= p.getLeadingPower(); i++) {
-            Term t = p.getCoefficient(i);
+            Term t = p.get(i);
             if (t.isZero()) {
                 continue;
             }
@@ -1081,12 +1085,12 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     public static Multinomial fromPolynomialM(IPolynomial<Multinomial> p, String variableName) {
         NavigableSet<Term> set = getSet();
         for (int i = 0; i <= p.getLeadingPower(); i++) {
-            Multinomial t = p.getCoefficient(i);
+            Multinomial t = p.get(i);
             if (t.isZero()) {
                 continue;
             }
-            var x = Term.characterPower(variableName, Fraction.of(i));
-            var re = multiplyToSet(t.terms, x);
+            var pow = Fraction.of(i);
+            var re = applyAllSet(t.terms, x -> x.multiplyChar(variableName, pow));
             mergingAddAll(set, re);
         }
         if (set.isEmpty()) {
@@ -1108,12 +1112,12 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-    private static MathCalculator<RingFraction<Multinomial>> CAL_RF_M =
-            RingFraction.getCalculator(getCalculator(), Multinomial.getSimplifier());
+//    private static final MathCalculator<RingFraction<Multinomial>> CAL_RF_M =
+//            RingFraction.getCalculator(getCalculator(), Multinomial.getSimplifier());
 
-    private static Polynomial<RingFraction<Multinomial>> injectiveMap(Polynomial<Multinomial> p) {
-        return p.mapTo(m -> RingFraction.valueOf(m, cal), CAL_RF_M);
-    }
+//    private static Polynomial<RingFraction<Multinomial>> injectiveMap(Polynomial<Multinomial> p) {
+//        return p.mapTo(CAL_RF_M, m -> RingFraction.valueOf(m, cal));
+//    }
 
     private static void computeCharPowMap(Multinomial m, Map<String, Long> charMap) {
         for (var t : m.terms) {
@@ -1187,11 +1191,8 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Returns the greatest common divisor for two multinomials.
-     *
-     * @param m1
-     * @param m2
-     * @return
+     * Returns the greatest common divisor for two multinomials. It is required that
+     * the powers of all characters should be positive integers.
      */
     public static Multinomial gcd(Multinomial m1, Multinomial m2) {
         //first deal with special cases
@@ -1222,7 +1223,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         var p1 = Polynomial.fromMultinomial(m1, ch); // Polynomial<Multinomial>
         var p2 = Polynomial.fromMultinomial(m2, ch);
 
-        var gcd = PolynomialSup.subResultantGCD(p1, p2);
+        var gcd = PolynomialUtil.subResultantGCD(p1, p2);
         return fromPolynomialM(gcd, ch);
 //        //extract the gcd of coefficient first
 //        var c1 = p1.getNonZeroCoefficients();
@@ -1423,8 +1424,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         if (f == null) {
             return null;
         }
-        BigInteger x = Term.asInteger(f);
-        return x;
+        return Term.asInteger(f);
     }
 
     /**
@@ -1432,7 +1432,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      *
      * @param n a long
      */
-    public static Multinomial valueOf(long n) {
+    public static Multinomial of(long n) {
         if (n == 0) {
             return ZERO;
         } else if (n == -1) {
@@ -1500,7 +1500,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
      */
     public Multinomial primarySymmetryReduce() {
         return primarySymmetryReduce(x ->
-                MathSymbol.GREEK_SIGMA + Integer.toString(x + 1));
+                MathSymbol.GREEK_SIGMA + (x + 1));
     }
 
     /**
@@ -1555,7 +1555,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //        var nums = Arrays.asList(
 //                BigInteger.valueOf(2),
 //                BigInteger.valueOf(3),
@@ -1573,10 +1573,10 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 //        var m2 = Multinomial.valueOf("Sqr2+i");
 //        print(m2.conjugations());
 //        print(Multinomial.simplifyFraction(m1, m2));
-        var m1 = Multinomial.valueOf("a^2dk");
-        var m2 = Multinomial.valueOf("a^2*k^2+b^2");
-        print(gcd(m1, m2));
-    }
+//        var m1 = Multinomial.valueOf("a^2dk");
+//        var m2 = Multinomial.valueOf("a^2*k^2+b^2");
+//        print(gcd(m1, m2));
+//    }
 //        var m1 = Multinomial.valueOf("xy+x");
 //        var m2 = Multinomial.valueOf("y+1");
 //        print(m1.compareTo(m2));
@@ -1596,7 +1596,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 //        print(m2);
 //        print(m1.divideAndRemainder(m2));
 //        Multinomial m = valueOf("x+y+z");
-//        cn.ancono.utilities.Timer t = new cn.ancono.utilities.Timer(TimeUnit.MILLISECONDS);
+//        cn.ancono.cn.ancono.utilities.Timer t = new cn.ancono.cn.ancono.utilities.Timer(TimeUnit.MILLISECONDS);
 //        t.start();
 //        m.pow(100);
 //        print(t.end());

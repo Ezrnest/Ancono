@@ -1,8 +1,7 @@
 package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator
+import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Multinomial.*
 import cn.ancono.math.numberModels.api.Simplifier
@@ -24,7 +23,16 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
     override val numberClass: Class<Multinomial>
         get() = Multinomial::class.java
 
-//    override fun asBigInteger(x: Multinomial): BigInteger {
+    override fun of(x: Long): Multinomial {
+        return of(x)
+    }
+
+    override fun of(x: Fraction): Multinomial {
+        return monomial(Term.valueOf(x))
+    }
+
+
+    //    override fun asBigInteger(x: Multinomial): BigInteger {
 //        if (x.isMonomial && x.first.isInteger) {
 //            return x.first.let { t ->
 //                val n = x.first.numerator
@@ -76,13 +84,13 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.add(y)
     }
 
-    override fun addX(vararg ps: Any): Multinomial {
+    override fun sum(ps: List<Multinomial>): Multinomial {
         if (ps.isEmpty()) {
             return ZERO
         }
         val result = getSet()
         for (m in ps) {
-            mergingAddAll(result, (m as Multinomial).terms)
+            mergingAddAll(result, m.terms)
         }
         return Multinomial(result)
     }
@@ -91,8 +99,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.negate()
     }
 
-    override fun abs(para: Multinomial): Multinomial {
-        return para
+    override fun abs(x: Multinomial): Multinomial {
+        return x
     }
 
     override fun subtract(x: Multinomial, y: Multinomial): Multinomial {
@@ -107,15 +115,21 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.multiply(y)
     }
 
-    override fun multiplyX(vararg ps: Any): Multinomial {
+    override fun product(ps: List<Multinomial>): Multinomial {
         if (ps.isEmpty()) {
             return ONE
         }
         var result = singleTerm(Term.ONE)
         for (m in ps) {
-            result = mergingMultiply(result, (m as Multinomial).terms)
+            result = mergingMultiply(result, m.terms)
         }
         return Multinomial(result)
+    }
+
+    override fun isUnit(x: Multinomial): Boolean {
+        return x.isPolyInvertible
+        // here we can only perform the inversion on the multinomial ring,
+        // no negative powers are allowed
     }
 
     override fun divide(x: Multinomial, y: Multinomial): Multinomial {
@@ -174,6 +188,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
     }
 
     override fun exp(a: Multinomial, b: Multinomial): Multinomial {
+        // a^b
         if (a == ZERO) {
             if (b == ZERO) {
                 throw ArithmeticException("0^0")
@@ -184,14 +199,30 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             return ONE
         }
         if (b.isMonomial) {
-            val t = b.first
-            if (t.isInteger) {
-                val l = t.numerator.toLong()
-                return pow(a, if (t.isNegative) {
-                    -l
-                } else {
-                    l
-                })
+            val p = b.first
+            if (p.isInteger) {
+                val l = p.numerator.toLong()
+                return pow(
+                    a, if (p.isNegative) {
+                        -l
+                    } else {
+                        l
+                    }
+                )
+            }
+            if (a.isMonomial) {
+                val x = a.first
+                if (p.isFraction) {
+                    if (p.denominator == BigInteger.TWO) {
+                        val l = p.numerator.toInt() * p.signum
+                        return monomial(x.squareRoot().pow(l))
+                    }
+                    if (x.isCoefficientOne) {
+                        val f = p.toFraction()
+                        val ch = x.characterNoCopy.mapValues { v -> v.value * f }
+                        return monomial(Term.characters(ch))
+                    }
+                }
             }
         }
         throw UnsupportedCalculationException()
@@ -347,7 +378,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             return ZERO
         }
         if (f.haveSameChar(Term.PI)) {
-            if (f.radical == BigInteger.ONE == false) {
+            if (f.radical != BigInteger.ONE) {
                 return null
             }
             var nega = !f.isPositive
@@ -421,8 +452,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             val f = x.first
             //f should be a constant value = [-1,1]
             if (f.hasNoChar()) {
-                if (f.compareTo(Term.ONE) > 0 || f.compareTo(Term.NEGATIVE_ONE) < 0)
-                    throw ArithmeticException("Arcsin undifined  :  $f")
+                if (f > Term.ONE || f < Term.NEGATIVE_ONE)
+                    throw ArithmeticException("Arcsin undefined  :  $f")
             }
         }
         throw UnsupportedCalculationException()
@@ -503,11 +534,11 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
 
     override fun isExactDivide(a: Multinomial, b: Multinomial): Boolean {
         val (_, r) = a.divideAndRemainder(b)
-        return r.isZero
+        return r.isZero()
     }
-    //    override fun divideAndRemainder(a: Multinomial, b: Multinomial): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
+    //    override fun divideAndRemainder(a: Multinomial, b: Multinomial): cn.ancono.cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
 //        val arr = a.divideAndRemainder(b)
-//        return cn.ancono.utilities.structure.Pair(arr[0], arr[1])
+//        return cn.ancono.cn.ancono.utilities.structure.Pair(arr[0], arr[1])
 //    }
 //
 //    override fun remainder(a: Multinomial, b: Multinomial): Multinomial {
@@ -518,7 +549,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
 
         override fun simplify(numbers: List<Multinomial>): List<Multinomial> {
             var numbers = numbers
-            numbers = Multinomial.reduceGcd(numbers)
+            numbers = reduceGcd(numbers)
             if (numbers.size == 2) {
                 val pair = simplify(numbers[0], numbers[1])
                 return listOf(pair.first, pair.second)
@@ -530,8 +561,11 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             return x
         }
 
-        override fun simplify(a: Multinomial, b: Multinomial): cn.ancono.utilities.structure.Pair<Multinomial, Multinomial> {
-            return Multinomial.simplifyFraction(a, b)
+        override fun simplify(
+                a: Multinomial,
+                b: Multinomial
+        ): kotlin.Pair<Multinomial, Multinomial> {
+            return simplifyFraction(a, b)
         }
     }
 
@@ -554,6 +588,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
          * @see .SIN_VALUE
          */
         val ARCSIN_VALUE: MutableMap<Multinomial, Multinomial> = TreeMap()
+
         /**
          * this Map contains arctan values
          * @see .TAN_VALUE
@@ -574,37 +609,42 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             SIN_VALUE[ofVal(0L, 1L)] = ZERO
             // sin(0) = 0
             SIN_VALUE[ofVal(1L, 6L)] = monomial(
-                    Term.asFraction(1, 2, 1))
+                Term.asFraction(1, 2, 1)
+            )
             //sin(Pi/6) = 1 / 2
             SIN_VALUE[ofVal(1L, 4L)] = monomial(
-                    Term.asFraction(1, 2, 2))
+                Term.asFraction(1, 2, 2)
+            )
             //sin(Pi/4) =sqr(2)/2
             SIN_VALUE[ofVal(1L, 3L)] = monomial(
-                    Term.asFraction(1, 2, 3))
+                Term.asFraction(1, 2, 3)
+            )
             //sin(Pi/3) = sqr(3) / 2
             SIN_VALUE[ofVal(1L, 2L)] = ONE
             //sin(Pi/2) = 1
 
-            SIN_VALUE[ofVal(1L, 12L)] = valueOf("Sqr6/4-Sqr2/4")
+            SIN_VALUE[ofVal(1L, 12L)] = parse("Sqr6/4-Sqr2/4")
             //sin(Pi/12) = sqr6/4-sqr2/4
 
-            SIN_VALUE[ofVal(5L, 12L)] = valueOf("Sqr6/4+Sqr2/4")
+            SIN_VALUE[ofVal(5L, 12L)] = parse("Sqr6/4+Sqr2/4")
             //sin(Pi/12) = sqr6/4-sqr2/4
 
             TAN_VALUE[ofVal(0L, 1L)] = ZERO
             // tan(0) = 0
             TAN_VALUE[ofVal(1L, 6L)] = monomial(
-                    Term.asFraction(1, 3, 3))
+                Term.asFraction(1, 3, 3)
+            )
             //tan(Pi/6) = Sqr(3)/3
             TAN_VALUE[ofVal(1L, 4L)] = monomial(Term.ONE)
             //tan(Pi/4) = 1
             TAN_VALUE[ofVal(1L, 3L)] = monomial(
-                    Term.asFraction(1, 1, 3))
+                Term.asFraction(1, 1, 3)
+            )
             //tan(Pi/3) = Sqr(3)
 
-            TAN_VALUE[ofVal(1L, 12L)] = valueOf("2-Sqr3")
+            TAN_VALUE[ofVal(1L, 12L)] = parse("2-Sqr3")
             //tan(Pi/12) = 2-Sqr3
-            TAN_VALUE[ofVal(5L, 12L)] = valueOf("2+Sqr3")
+            TAN_VALUE[ofVal(5L, 12L)] = parse("2+Sqr3")
             //tan(Pi/12) = 2+Sqr3
 
             for ((p, value) in SIN_VALUE) {
@@ -637,7 +677,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
 
         private fun reduceIntoPi(nd: Array<BigInteger>, nega: Boolean): Boolean {
             var nega = nega
-            if (nd[0].compareTo(nd[1]) > 0) {
+            if (nd[0] > nd[1]) {
                 nega = !nega
                 nd[0] = nd[0].subtract(nd[1])
             }
@@ -647,7 +687,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         private fun subtractToHalf(nd: Array<BigInteger>, nega: Boolean): Boolean {
             var nega = nega
             val half = nd[1].divide(BigInteger.valueOf(2))
-            if (nd[0].compareTo(half) > 0) {
+            if (nd[0] > half) {
                 nd[0] = nd[1].subtract(nd[0])
                 nega = !nega
             }

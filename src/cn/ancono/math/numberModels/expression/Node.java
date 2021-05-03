@@ -15,7 +15,7 @@ import cn.ancono.math.numberModels.expression.anno.AllowModify;
 import cn.ancono.math.numberModels.expression.anno.DisallowModify;
 import cn.ancono.math.numberModels.expression.simplification.SimplificationStrategy;
 import cn.ancono.utilities.CollectionSup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
@@ -158,7 +158,7 @@ public abstract class Node implements Computable, Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        toString(sb, NumberFormatter.getToStringFormatter(), false);
+        toString(sb, NumberFormatter.defaultFormatter(), false);
         return sb.toString();
     }
 
@@ -1324,7 +1324,7 @@ public abstract class Node implements Computable, Serializable {
         @Override
         public double computeDouble(ToDoubleFunction<String> valueMap) {
             double x = child.computeDouble(valueMap);
-            return ExprFunction.findFunctionAndApply(Calculators.getCalDoubleDev(), functionName, x);
+            return ExprFunction.findFunctionAndApply(Calculators.doubleDev(), functionName, x);
         }
     }
 
@@ -1453,7 +1453,7 @@ public abstract class Node implements Computable, Serializable {
         public double computeDouble(ToDoubleFunction<String> valueMap) {
             double p1 = c1.computeDouble(valueMap);
             double p2 = c2.computeDouble(valueMap);
-            return ExprFunction.findFunctionAndApply(Calculators.getCalDoubleDev(), functionName, p1, p2);
+            return ExprFunction.findFunctionAndApply(Calculators.doubleDev(), functionName, p1, p2);
         }
 
     }

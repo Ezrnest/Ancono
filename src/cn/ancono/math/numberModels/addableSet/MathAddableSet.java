@@ -4,15 +4,8 @@ import java.util.Set;
 
 
 /**
- * �˽ӿ�����������ͨ����ѧ������ӵĶ���
- * �������Ϊĳ�ּ��ϣ��������{@code <E>}�Ķ���
- * <p>
- * <p>
- * ���ڿɼӶ��󣬻���Ҫ�����ض���ʽ��MathAdder
- * <p>�ɵ�����:
  *
  * @author lyc
- * @see
  */
 public abstract class MathAddableSet<E> implements Set<E> {
     /**

@@ -4,11 +4,12 @@ import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.exceptions.ExceptionUtil
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.function.Function
 
-class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Polynomial<T>)
+class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Polynomial<T>)
     : MathObjectExtend<T>(mc),
         FieldNumberModel<PFraction<T>>,
         AlgebraModel<T, PFraction<T>>,
@@ -46,11 +47,21 @@ class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val den
         return PFraction(mc, nume.multiply(k), deno)
     }
 
-    fun multiplyLong(k: Long): PFraction<T> {
-        if (k == 0L) {
+    override fun divide(k: T): PFraction<T> {
+        if (isZero()) {
+            return this
+        }
+        if (mc.isZero(k)) {
+            ExceptionUtil.dividedByZero()
+        }
+        return PFraction(mc, nume, deno.multiply(k))
+    }
+
+    override fun multiply(n: Long): PFraction<T> {
+        if (n == 0L) {
             return zero(mc)
         }
-        return PFraction(mc, nume.multiplyLong(k), deno)
+        return PFraction(mc, nume.multiply(n), deno)
     }
 
     override fun isZero(): Boolean {
@@ -83,7 +94,7 @@ class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val den
         if (k == 0L) {
             ExceptionUtil.dividedByZero()
         }
-        val d = deno.multiplyLong(k)
+        val d = deno.multiply(k)
         return of(nume, d)
     }
 
@@ -99,7 +110,7 @@ class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val den
     }
 
     fun substitute(x: PFraction<T>): PFraction<T> {
-        return homoMap(x, Function { ofT(it) })
+        return homoMap(x) { ofT(it) }
     }
 
     override fun simplify(): PFraction<T> {
@@ -112,9 +123,9 @@ class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val den
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): PFraction<N> {
-        val n2 = nume.mapTo(mapper, newCalculator)
-        val d2 = nume.mapTo(mapper, newCalculator)
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): PFraction<N> {
+        val n2 = nume.mapTo(newCalculator, mapper)
+        val d2 = nume.mapTo(newCalculator, mapper)
         return PFraction(newCalculator, n2, d2)
     }
 
@@ -140,35 +151,35 @@ class PFraction<T : Any>(mc: MathCalculator<T>, val nume: Polynomial<T>, val den
 
     companion object {
         @JvmStatic
-        fun <T : Any> of(p: Polynomial<T>): PFraction<T> {
+        fun <T> of(p: Polynomial<T>): PFraction<T> {
             val mc = p.mathCalculator
             return PFraction(mc, p, Polynomial.one(mc))
         }
 
         @JvmStatic
-        fun <T : Any> one(mc: MathCalculator<T>): PFraction<T> {
+        fun <T> one(mc: MathCalculator<T>): PFraction<T> {
             val polyOne = Polynomial.one(mc)
             return PFraction(mc, polyOne, polyOne)
         }
 
         @JvmStatic
-        fun <T : Any> zero(mc: MathCalculator<T>): PFraction<T> {
+        fun <T> zero(mc: MathCalculator<T>): PFraction<T> {
             return of(Polynomial.zero(mc))
         }
 
         @JvmStatic
-        fun <T : Any> getCalculator(mc: MathCalculator<T>, sim: Simplifier<T>? = null): PFractionCalculator<T> {
+        fun <T> getCalculator(mc: MathCalculator<T>, sim: Simplifier<T>? = null): PFractionCalculator<T> {
             return PFractionCalculator(mc, sim)
         }
     }
 }
 
-class PFractionCalculator<T : Any>(val mc: MathCalculator<T>, val sim: Simplifier<T>?) : MathCalculatorAdapter<PFraction<T>>() {
+class PFractionCalculator<T>(val mc: MathCalculator<T>, val sim: Simplifier<T>?) : MathCalculatorAdapter<PFraction<T>>() {
     override val one: PFraction<T> = PFraction.one(mc)
     override val zero: PFraction<T> = PFraction.zero(mc)
 
-    override fun isZero(para: PFraction<T>): Boolean {
-        return para.isZero()
+    override fun isZero(x: PFraction<T>): Boolean {
+        return x.isZero()
     }
 
     override fun isEqual(x: PFraction<T>, y: PFraction<T>): Boolean {
@@ -206,7 +217,7 @@ class PFractionCalculator<T : Any>(val mc: MathCalculator<T>, val sim: Simplifie
     }
 
     override fun multiplyLong(x: PFraction<T>, n: Long): PFraction<T> {
-        return simplify(x.multiplyLong(n))
+        return simplify(x.multiply(n))
     }
 
     override fun divideLong(x: PFraction<T>, n: Long): PFraction<T> {
@@ -217,6 +228,14 @@ class PFractionCalculator<T : Any>(val mc: MathCalculator<T>, val sim: Simplifie
         return x.reciprocal()
     }
 
-    override val numberClass: Class<*>
+    override fun of(x: Long): PFraction<T> {
+        return PFraction.of(Polynomial.constant(mc, mc.of(x)))
+    }
+
+    override fun of(x: Fraction): PFraction<T> {
+        return PFraction.of(Polynomial.constant(mc, mc.of(x)))
+    }
+
+    override val numberClass: Class<PFraction<T>>
         get() = super.numberClass
 }

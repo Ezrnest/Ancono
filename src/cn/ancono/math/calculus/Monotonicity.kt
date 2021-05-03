@@ -20,7 +20,7 @@ object Monotonicity {
      * represented by the limit result. Return `1` for increasing, `0` for stable and
      * `-1` for decreasing.
      */
-    fun <T : Any> power(x: LimitResult<T>, pow: Fraction, mc: MathCalculator<T>): Int {
+    fun <T> power(x: LimitResult<T>, pow: Fraction, mc: MathCalculator<T>): Int {
         if (pow.isZero()) {
             return 0
         }
@@ -71,7 +71,7 @@ object Monotonicity {
      * limit result is finite.
      */
     fun cos(x: LimitResult<Double>): Int {
-        return sin(Limit.addConst(x, Calculators.getCalDouble()) { Math.PI / 2 })
+        return sin(Limit.addConst(x, Calculators.doubleCal()) { Math.PI / 2 })
     }
 
 

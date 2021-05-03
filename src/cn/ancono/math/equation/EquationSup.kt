@@ -18,6 +18,7 @@ import cn.ancono.math.set.IntervalUnion
 import cn.ancono.math.set.MathSets
 import java.util.*
 import java.util.function.Function
+import kotlin.math.absoluteValue
 
 /**
  * This class provides useful static methods to do transformation between equation,
@@ -46,7 +47,7 @@ object EquationSup {
      * @param mc a MathCalculator
      * @return the list of solution,regardless of order.
      */
-    fun <T : Any> solveEquation(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+    fun <T> solveEquation(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
         //Calculate the delta
         var delta: T
         run {
@@ -101,7 +102,7 @@ object EquationSup {
      * @param mc a MathCalculator
      * @return a list of the solutions
      */
-    fun <T : Any> solveEquationIma(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+    fun <T> solveEquationIma(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
         var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
         // x1 = (-b + sqr(delta)) / 2a
         // x2 = (-b - sqr(delta)) / 2a
@@ -126,7 +127,7 @@ object EquationSup {
      * @param <T>
      * @return
     </T> */
-    fun <T : Any> solveInequation(a: T, b: T, c: T, op: Type?, mc: MathCalculator<T>?): IntervalUnion<T> {
+    fun <T> solveInequation(a: T, b: T, c: T, op: Type?, mc: MathCalculator<T>?): IntervalUnion<T> {
         return SVPInequation.quadratic(a, b, c, op, mc).solution
     }
 
@@ -145,13 +146,13 @@ object EquationSup {
         val mc = sv.mathCalculator
         when (sv.mp) {
             1 -> {
-                return Arrays.asList(mc.negate(mc.divide(sv.getCoefficient(0),
-                        sv.getCoefficient(1))))
+                return Arrays.asList(mc.negate(mc.divide(sv.get(0),
+                        sv.get(1))))
             }
             2 -> {
-                val a = sv.getCoefficient(2)
-                val b = sv.getCoefficient(1)
-                val c = sv.getCoefficient(0)
+                val a = sv.get(2)
+                val b = sv.get(1)
+                val c = sv.get(0)
                 var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
                 // x1 = (-b + sqr(delta)) / 2a
                 // x2 = (-b - sqr(delta)) / 2a
@@ -185,7 +186,7 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T : Any> solveQInequation(a: T, b: T, c: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveQInequation(a: T, b: T, c: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveLInequation(b, c, op, mc)
         } else {
@@ -238,7 +239,7 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T : Any> solveLInequation(a: T, b: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveLInequation(a: T, b: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveCInequation(b, op, mc)
         }
@@ -266,7 +267,7 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T : Any> solveCInequation(a: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveCInequation(a: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
         val universe = op.matches(mc.compare(a, mc.zero))
         return if (universe) IntervalUnion.universe(mc) else IntervalUnion.empty(mc)
     }
@@ -280,22 +281,22 @@ object EquationSup {
         var equa = equation.simplify(Fraction.fractionSimplifier)
 
         var multiplier = 1L
-        for (f in equa) {
+        for (f in equa.coefficients()) {
             if (!f.isInteger) {
                 multiplier = MathUtils.lcm(multiplier, f.denominator)
             }
         }
         if (multiplier != 1L) {
-            equa = equa.mapTo(Function { it.multiply(multiplier) }, equa.mathCalculator)
+            equa = equa.mapTo(equa.mathCalculator, Function { it.multiply(multiplier) })
         }
 
-        val first = equa.first()!!.numerator
-        var const = equa.constant()!!.numerator
+        val first = equa.first()!!.numerator.absoluteValue
+        var const = equa.constant()!!.numerator.absoluteValue
         val result = TreeSet<Fraction>()
         var lastIndex = 0
         while (const == 0L) {
             lastIndex++
-            const = equa.getCoefficient(lastIndex).numerator
+            const = equa.get(lastIndex).numerator.absoluteValue
             result.add(Fraction.ZERO)
         }
         //solution = const.factor / first.factor

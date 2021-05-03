@@ -13,15 +13,17 @@ import java.util.function.IntFunction
 typealias Coefficient<T> = IntFunction<T>
 
 operator fun <T> IntFunction<T>.invoke(i: Int): T = this.apply(i)
+
 /**
- * The
+ * Describes power series.
+ *
  * Created at 2019/11/25 19:54
  * @author  lyc
  */
-class PowerSeries<T : Any>(mc: MathCalculator<T>, val coefficient: Coefficient<T>)
+class PowerSeries<T>(mc: MathCalculator<T>, val coefficient: Coefficient<T>)
     : MathObjectExtend<T>(mc), RingNumberModel<PowerSeries<T>> {
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): MathObject<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
         return PowerSeries(newCalculator, IntFunction { mapper.apply(coefficient.apply(it)) })
     }
 
@@ -68,7 +70,7 @@ class PowerSeries<T : Any>(mc: MathCalculator<T>, val coefficient: Coefficient<T
     }
 
     fun toPolynomial(n: Int): Polynomial<T> {
-        return Polynomial.valueOf(mc, (0..n).map { coefficient(it) })
+        return Polynomial.of(mc, (0..n).map { coefficient(it) })
     }
 
 //    /**
@@ -81,7 +83,7 @@ class PowerSeries<T : Any>(mc: MathCalculator<T>, val coefficient: Coefficient<T
 
 
     override fun isZero(): Boolean {
-        TODO("not implemented")
+        throw UnsupportedOperationException() // it seems there is no deterministic way
     }
 
     companion object {
@@ -90,7 +92,7 @@ class PowerSeries<T : Any>(mc: MathCalculator<T>, val coefficient: Coefficient<T
          * Returns the power series of `1/(1+x) = 1 - x + x^2 - x^3 ... `
          *
          */
-        fun <T : Any> series1P(mc: MathCalculator<T>): PowerSeries<T> {
+        fun <T> series1P(mc: MathCalculator<T>): PowerSeries<T> {
             val negateOne = mc.negate(mc.one)
             return PowerSeries(mc, IntFunction { i ->
                 if (i % 2 == 0) {

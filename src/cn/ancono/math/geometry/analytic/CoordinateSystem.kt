@@ -2,7 +2,7 @@ package cn.ancono.math.geometry.analytic
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.linearAlgebra.Vector
+import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.set.MathSet
 
 /**
@@ -13,7 +13,7 @@ import cn.ancono.math.set.MathSet
  * which is a linear orthogonal unit coordinate system. The coordinate system also serves as
  * a [MathSet] containing vectors.
  */
-interface CoordinateSystem<T : Any> : MathSet<Vector<T>> {
+interface CoordinateSystem<T> : MathSet<Vector<T>> {
     /**
      * The dimension of this coordinate system, which is the size of coordinate vector required.
      */
@@ -62,7 +62,7 @@ interface CoordinateSystem<T : Any> : MathSet<Vector<T>> {
 }
 
 @Suppress("RedundantOverride")
-abstract class AbstractCoordinateSystem<T : Any>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc), CoordinateSystem<T> {
+abstract class AbstractCoordinateSystem<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc), CoordinateSystem<T> {
     override fun toAnotherCord(v: Vector<T>, another: CoordinateSystem<T>): Vector<T> {
         return super.toAnotherCord(v, another)
     }

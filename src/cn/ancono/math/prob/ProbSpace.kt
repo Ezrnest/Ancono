@@ -1,12 +1,11 @@
 package cn.ancono.math.prob
 
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.exp
 import kotlin.math.ln
 
 
-typealias Event = Map<ProbSpace<*>, Any>
+typealias Event = Map<ProbSpace<*>, Any?>
 
 /**
  * Describes the probability space in math, but it only provides method of generating
@@ -30,7 +29,8 @@ typealias Event = Map<ProbSpace<*>, Any>
  * @see RandomVariable
  * @param E the type of point in this space.
  */
-interface ProbSpace<out E : Any> {
+interface ProbSpace<out E> {
+
 
     /**
      * Randomly returns a point in this probability space.
@@ -46,7 +46,7 @@ interface ProbSpace<out E : Any> {
 }
 
 
-class ProductSpace<E : Any, S : ProbSpace<E>>(val spaces: List<S>) : ProbSpace<List<E>> {
+class ProductSpace<E, S : ProbSpace<E>>(val spaces: List<S>) : ProbSpace<List<E>> {
     override fun randomPoint(): List<E> {
         return spaces.map { it.randomPoint() }
     }
@@ -79,7 +79,7 @@ class ProductSpace<E : Any, S : ProbSpace<E>>(val spaces: List<S>) : ProbSpace<L
  */
 class BundledSpace(val spaces: Set<ProbSpace<*>>) : ProbSpace<Event> {
     override fun randomPoint(): Event {
-        val result = HashMap<ProbSpace<*>, Any>(spaces.size)
+        val result = HashMap<ProbSpace<*>, Any?>(spaces.size)
         for (space in spaces) {
             result[space] = space.randomPoint()
         }
@@ -87,7 +87,7 @@ class BundledSpace(val spaces: Set<ProbSpace<*>>) : ProbSpace<Event> {
     }
 }
 
-abstract class AbstractProbSpace<out E : Any> : ProbSpace<E> {
+abstract class AbstractProbSpace<out E> : ProbSpace<E> {
     val rd = Random()
 }
 
@@ -220,7 +220,7 @@ class PoissonSpace(val k: Double) : AbstractProbSpace<Int>() {
  *
  *     p(x) = e^(-x)
  */
-class StandardExpSpace() : AbstractProbSpace<Double>() {
+class StandardExpSpace : AbstractProbSpace<Double>() {
 
     override fun randomPoint(): Double {
         val d = rd.nextDouble()
@@ -228,7 +228,7 @@ class StandardExpSpace() : AbstractProbSpace<Double>() {
     }
 }
 
-//interface AtomicProbSpace<E : Any> : ProbSpace<E> {
+//interface AtomicProbSpace<E> : ProbSpace<E> {
 //
 //}
 //

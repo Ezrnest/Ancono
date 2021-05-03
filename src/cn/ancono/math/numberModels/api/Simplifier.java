@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels.api;
 
 import cn.ancono.math.MathObject;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +56,7 @@ public interface Simplifier<T> {
 
     @SuppressWarnings("unchecked")
     public static <T, S extends MathObject<T>> S singleSimplify(Simplifier<T> s, S x) {
-        return (S) x.mapTo(s::simplify, x.getMathCalculator());
+        return (S) x.mapTo(x.getMathCalculator(), s::simplify);
     }
 
 

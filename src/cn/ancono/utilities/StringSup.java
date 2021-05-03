@@ -1,12 +1,13 @@
-/**
+/*
  * 2017-09-28
  */
 package cn.ancono.utilities;
 
+import cn.ancono.math.MathUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static cn.ancono.utilities.ArraySup.getSum;
 
 /**
  * @author liyicheng
@@ -114,7 +115,7 @@ public final class StringSup {
             }
         }
 
-        int len = getSum(setWidth) + column + 1 << 3;// add up to it: both side of the line should have bracket and space
+        int len = MathUtils.sum(setWidth) + column + 1 << 3;// add up to it: both side of the line should have bracket and space
 
         StringBuilder sb = new StringBuilder(len * mat.length);
         int t0;
@@ -133,7 +134,7 @@ public final class StringSup {
                 sb.append(mat[i][j]);
             }
 
-            t0 = getSum(setWidth, j, setWidth.length) + setWidth.length - j + 1;
+            t0 = MathUtils.sum(setWidth, j, setWidth.length) + setWidth.length - j + 1;
             if (t0 != 0) {
                 fillBlank(sb, t0);
             }

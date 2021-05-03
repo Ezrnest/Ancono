@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels.api;
 
-import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.SNFSupport;
 
 /**
@@ -18,12 +18,23 @@ public interface FlexibleNumberFormatter<T, S extends EqualPredicate<T>> {
 
     FlexibleNumberFormatter<?, ?> toString = (FlexibleNumberFormatter<Object, EqualPredicate<Object>>) (number, mc) -> number.toString();
 
+    FlexibleNumberFormatter<?, ?> defaultFormatter = (FlexibleNumberFormatter<Object, EqualPredicate<Object>>) (number, mc) -> {
+        if (number instanceof Number && (!(number instanceof Fraction))) {
+            try {
+                return SNFSupport.format((Number) number);
+            } catch (IllegalArgumentException ignore) {
+            }
+        }
+        return number.toString();
+    };
+
     /**
-     * Returns a number formatter that simply calls <code>toString()</code>.
+     * Returns a number formatter that tries to format the number using a default decimal formatter first and
+     * <code>toString()</code> for fallback.
      */
     @SuppressWarnings("unchecked")
-    static <T, S extends EqualPredicate<T>> FlexibleNumberFormatter<T, S> getToStringFormatter() {
-        return (FlexibleNumberFormatter<T, S>) toString;
+    static <T, S extends EqualPredicate<T>> FlexibleNumberFormatter<T, S> defaultFormatter() {
+        return (FlexibleNumberFormatter<T, S>) defaultFormatter;
     }
 
     /**

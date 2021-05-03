@@ -176,9 +176,10 @@ public final class ProgressionSup {
         }
 
 
+        @NotNull
         @Override
         public <N> Progression<N> mapTo(
-                @NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+                @NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new ArithmeticProgression<>(mapper.apply(k), mapper.apply(b), length, newCalculator);
         }
 
@@ -381,8 +382,9 @@ public final class ProgressionSup {
         }
 
 
+        @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             N a0N = mapper.apply(a0);
             N qN = mapper.apply(q);
             return new GeometricProgression<>(newCalculator, length, a0N, qN);

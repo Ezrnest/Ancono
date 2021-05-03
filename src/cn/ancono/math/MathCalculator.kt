@@ -1,32 +1,31 @@
 package cn.ancono.math
 
-import cn.ancono.math.algebra.abstractAlgebra.calculator.FieldCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
-import java.util.*
+import cn.ancono.math.numberModels.Fraction
 
 /**
- * Describe a calculator that can calculator the basic operations for
- * number, this interface is create to give some math-based objects full
- * flexibility to all kind of numbers.
+ * Describes a general calculator that can perform basic operations for
+ * number models. This interface is created to give some math objects full
+ * flexibility to operate with all kind of number models.
  *
- *
- * All methods in a math calculator should be consistent.No change should be
- * done to the number when any method is called.
+ * All methods in a math calculator should be consistent. No (explicit) change should be
+ * done to the number model when any method is called.
  *
  *
  * All methods in this calculator may not be operational because of the limit of
- * number's format and so other reasons,so if necessary, an
- * [UnsupportedCalculationException] can be thrown.For some special
+ * number's format and other reasons, so if necessary, an
+ * [UnsupportedCalculationException] can be thrown. For some special
  * operations, exceptional arithmetic condition may occur, so an
  * [ArithmeticException] may be thrown.
  *
  *
  * It is highly recommended that you should only create one instance of the math
- * calculator and pass it all through the calculation. This can keep the
- * calculation result from being different and in some FlexibleMathObject,such
- * as Triangle,may contain other FlexibleMathObject,and some calculation is not
+ * calculator(for one type) and pass it all through the calculation. This can keep the
+ * calculation result from being different and in some FlexibleMathObject, such
+ * as Triangle, may contain other FlexibleMathObject, and some calculation is not
  * strongly made sure that only the calculator from the Triangle itself is
  * used(which means the calculator in Point may be used), so there may be
  * potential safety problems. Therefore, in a multiple-number-type task, you
@@ -35,12 +34,13 @@ import java.util.*
  *
  * A MathCalculator naturally deals with numbers, so it is a subclass of [FieldCalculator].
  * However, it is not strictly required all the operations(addition, multiplication..)
- * must return a number and throwing exceptions is acceptable.
+ * must return a number and, throwing exceptions is acceptable.
  *
- * @param <T> the type of number to deal with
+ * @param <T> the type of number model to deal with
  * @author lyc
+ * @see MathObject
  */
-interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
+interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
 
     /**
      * Determines whether this calculator supports `compare()` method.
@@ -73,8 +73,12 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @return the class
      */
     @JvmDefault
-    override val numberClass: Class<*>
-        get() = zero.javaClass
+    override val numberClass: Class<T>
+        get() = super.numberClass
+
+
+    override val characteristic: Long
+        get() = 0
 
     /**
      * Compare the two numbers and determines whether these two numbers are the
@@ -116,28 +120,28 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     override fun add(x: T, y: T): T
 
     /**
-     * Add the parameters,this method is equal to:
+     * Add the parameters, this method is equal to:
      *
      *
      *    T sum = getZero();
-     *    for (Object t : ps) {
-     *    sum = add(sum, (T) t);
+     *    for (T t : ps) {
+     *      sum = add(sum, t);
      *    }
      *    return sum;
      *
      *
      * The Object-type input array is to fit genetic types.
      *
-     * @param ps an array of numbers to add
+     * @param ps a list of numbers
      * @return the sum of `ps`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    fun addX(vararg ps: Any): T {
+    @JvmDefault
+    fun sum(ps: List<T>): T {
         var sum = zero
         for (t in ps) {
-            @Suppress("UNCHECKED_CAST")
-            sum = add(sum, t as T)
+            sum = add(sum, t)
         }
         return sum
     }
@@ -155,12 +159,12 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
     /**
      * Returns the absolute value of this number.
      *
-     * @param para a number
-     * @return `|para|`
+     * @param x a number
+     * @return `|x|`
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    fun abs(para: T): T
+    fun abs(x: T): T
 
     /**
      * Returns the result of `para1-para2`,this method should return the identity
@@ -192,20 +196,20 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      *
      *    T re = getOne();
      *    for (T t : ps) {
-     *    re = multiply(re, t);
+     *      re = multiply(re, t);
      *    }
      *    return re;
      *
-     * @param ps an array of numbers to multiply
+     * @param ps a list of numbers
      * @return the result
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    fun multiplyX(vararg ps: Any): T {
+    @JvmDefault
+    fun product(ps: List<T>): T {
         var re = one
         for (t in ps) {
-            @Suppress("UNCHECKED_CAST")
-            re = multiply(re, t as T)
+            re = multiply(re, t)
         }
         return re
     }
@@ -298,24 +302,26 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
-    override fun pow(x: T, n: Long): T
+    override fun pow(x: T, n: Long): T {
+        return super.pow(x, n)
+    }
 
     /**
      * Gets a constant value from the calculator, the constant value is got by its
-     * name as a String. It is recommended that the string should be case
-     * insensitive in case of spelling mistakes. The name of the constant value should be
-     * specified wherever the value is needed. <br></br>
+     * name as a String. The name of the constant value should be
+     * specified wherever the value is needed.
+     *
      * Some common constants are list below:
      *
-     *  * <tt>Pi</tt> :the ratio of the circumference of a circle to its
-     * diameter. See: [Math.PI]
-     *  * <tt>e</tt> :the base of the natural logarithms. See: [Math.E]
-     *  * <tt>i</tt> :the square root of `-1`.
+     *  * <tt>Pi, [STR_PI]</tt> :the ratio of the circumference of a circle to its
+     * diameter.  See: [Math.PI]
+     *  * <tt>e, [STR_E]</tt> :the base of the natural logarithms. See: [Math.E]
+     *  * <tt>i, [STR_I]</tt> :the square root of `-1`.
      *
      *
      * @param name the name of the constant value,case insensitive
      * @return a number that represents the constant value.
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedCalculationException if this operation can not be done. (optional)
      */
     fun constantValue(name: String): T?
 
@@ -460,6 +466,38 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
     operator fun T.compareTo(y: T) = compare(this, y)
 
+    /**
+     * Returns a value that represents the given integer.
+     */
+    fun of(x: Long): T {
+        return one * x
+    }
+
+    /**
+     * Returns a value that represents the given fraction.
+     */
+    fun of(x: Fraction): T {
+        if (x.isZero()) {
+            return zero
+        }
+        var re: T = of(x.numerator)
+        if (x.denominator != 1L) {
+            re = divideLong(re, x.denominator)
+        }
+        return re
+    }
+
+    /**
+     * Returns the number value corresponding to the integer.
+     */
+    val Int.v
+        get() = of(this.toLong())
+
+    /**
+     * Returns the number value corresponding to the integer.
+     */
+    val Long.v
+        get() = of(this)
 
     companion object {
 
@@ -467,10 +505,12 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
          * The string representation of pi.
          */
         const val STR_PI = "Pi"
+
         /**
          * The string representation of e.
          */
         const val STR_E = "e"
+
         /**
          * The string representation of i, the square root of -1.
          * This constant value may not be available.
@@ -482,12 +522,11 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
          * returns the identity value of all methods as [mc].
          */
         @Suppress("unused")
-        fun <T : Any, S : Any> mappedCalculator(mc: MathCalculator<T>, f: Bijection<T, S>): MathCalculator<S> {
+        fun <T, S> mappedCalculator(mc: MathCalculator<T>, f: Bijection<T, S>): MathCalculator<S> {
             return object : MathCalculator<S> {
                 override val isComparable: Boolean = mc.isComparable
                 override val zero: S = f(mc.zero)
                 override val one: S = f(mc.one)
-                override val numberClass: Class<*> = zero::class.java
 
                 override fun isEqual(x: S, y: S): Boolean = mc.isEqual(f.deply(x), f.deply(y))
 
@@ -503,8 +542,8 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
                     return f(mc.negate(f.deply(x)))
                 }
 
-                override fun abs(para: S): S {
-                    return f(mc.abs(f.deply(para)))
+                override fun abs(x: S): S {
+                    return f(mc.abs(f.deply(x)))
                 }
 
                 override fun subtract(x: S, y: S): S = f(mc.subtract(f.deply(x), f.deply(y)))
@@ -592,6 +631,14 @@ interface MathCalculator<T : Any> : FieldCalculator<T>, Comparator<T> {
 
                 override fun arctan(x: S): S {
                     return f(mc.arctan(f.deply(x)))
+                }
+
+                override fun of(x: Long): S {
+                    return f(mc.of(x))
+                }
+
+                override fun of(x: Fraction): S {
+                    return f(mc.of(x))
                 }
             }
         }

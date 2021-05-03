@@ -5,14 +5,16 @@ package cn.ancono.math.numberModels.expression
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.MultinomialCalculator
 import cn.ancono.math.numberModels.Term
+import cn.ancono.math.numberModels.api.FunctionCalculator
 import cn.ancono.math.numberModels.api.Simplifier
 import cn.ancono.math.numberModels.expression.Node.*
 import cn.ancono.math.numberModels.expression.anno.AllowModify
 import cn.ancono.math.numberModels.expression.simplification.SimStraHolder
-import cn.ancono.math.numberModels.expression.simplification.p
+import cn.ancono.math.numberModels.expression.simplification.buildNode
 import cn.ancono.utilities.Printer.print
 import java.util.*
 import java.util.function.ToDoubleFunction
@@ -31,25 +33,27 @@ import java.util.function.ToDoubleFunction
  * calculator. Then the expression calculator can handle the functions and
  * compute them. A more detailed instruction of expression function can be found
  * in [ExprFunction].
- * <h3>Simplification</h3> Expressions can be mathematically equal but are of
+ *
+ * **Simplification** Expressions can be mathematically equal but are of
  * different Expression, and one of the possible forms can be simpler than
  * others and is more efficient. Therefore, proper simplification is essential
  * for expression calculator. Generally, there are two types of simplification.
- * <P>
+ *
+ *
  * One of them is polynomial simplification, which is already defined in the
  * calculator. The calculator doing polynomial simplification will try to add,
  * subtract, multiply, divide and calculate the functions available as long as
  * the result can be expressed with polynomials. It is normally the basic and
  * default simplification strategy.
-</P> *
- *
- * The other type is
  *
  *
+ * (To be written...)
  *
  *
  *
- * <h3></h3> Each ExprCalculator has a level of simplification, which determines
+ *
+ *
+ * Each ExprCalculator has a level of simplification, which determines
  * how far the calculator should perform the simplification. Generally, a higher
  * level of simplification means that the calculator will try to simplify the
  * expression by using more high-leveled [SimplificationStrategy], thus
@@ -57,16 +61,10 @@ import java.util.function.ToDoubleFunction
  * better to set the level of simplification as high as possible, because a
  * higher level of simplification can also consume lots of time when the
  * expression cannot be simplified. Therefore, a suitable level should be set
- * according to the task. The following is some basic levels:
- *
- *  * level = 0 : Multinomial
+ * according to the task.
  *
  *
- * In this level the calculator will try to
- *  * level = 100 : Merge
  *
- *
- * In this level the calculator will try
  *
  *
  *
@@ -109,14 +107,17 @@ class ExprCalculator
          *
          * @return the ss
          */
-        val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : MathCalculator<Expression> {
+        val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : FunctionCalculator<Expression> {
     internal val enabledTags: MutableSet<String> = SimplificationStrategies.getDefaultTags()
     internal val properties: MutableMap<String, String>
+
     // some constants here
     @get:JvmName("getPOne")
     internal val pOne: Multinomial
+
     @get:JvmName("getPZero")
     internal val pZero: Multinomial
+
     @get:JvmName("getPMinusOne")
     internal val pMinusOne: Multinomial
 
@@ -125,6 +126,7 @@ class ExprCalculator
 	 */
     override val zero: Expression
         get() = Expression.ZERO
+
     /*
 	 * @see cn.ancono.math.MathCalculator#getOne()
 	 */
@@ -140,7 +142,7 @@ class ExprCalculator
     /*
      * @see cn.ancono.math.MathCalculator#getNumberClass()
      */
-    override val numberClass: Class<*>
+    override val numberClass: Class<Expression>
         get() = Expression::class.java
 
 
@@ -250,11 +252,19 @@ class ExprCalculator
         updateSimplificationIdentifier()
     }
 
+    override fun of(x: Long): Expression {
+        return Expression.valueOf(x)
+    }
+
+    override fun of(x: Fraction): Expression {
+        return Expression.valueOf(x)
+    }
+
     /*
-	 * @see
-	 * cn.ancono.math.MathCalculator#isEqual(java.lang.Object,
-	 * java.lang.Object)
-	 */
+             * @see
+             * cn.ancono.math.MathCalculator#isEqual(java.lang.Object,
+             * java.lang.Object)
+             */
     override fun isEqual(x: Expression, y: Expression): Boolean {
         return x.root.equalNode(y.root, multinomialCalculator)
     }
@@ -319,8 +329,8 @@ class ExprCalculator
     /*
 	 * @see cn.ancono.math.MathCalculator#abs(java.lang.Object)
 	 */
-    override fun abs(para: Expression): Expression {
-        var rt: Node = wrapCloneNodeSF("abs", para.root)
+    override fun abs(x: Expression): Expression {
+        var rt: Node = wrapCloneNodeSF("abs", x.root)
         rt = simplify(rt)
         return Expression(rt)
     }
@@ -347,8 +357,8 @@ class ExprCalculator
     /*
 	 * @see cn.ancono.math.MathCalculator#isZero(java.lang.Object)
 	 */
-    override fun isZero(para: Expression): Boolean {
-        return isEqual(zero, para)
+    override fun isZero(x: Expression): Boolean {
+        return isEqual(zero, x)
     }
 
     /*
@@ -400,7 +410,7 @@ class ExprCalculator
             val p1 = toPolynomial(x.root).p
             return Expression(newPolyNode(multinomialCalculator.multiplyLong(p1, n), null))
         }
-        var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.valueOf(n))
+        var root: Node = wrapCloneNodeMultiply(x.root, Multinomial.of(n))
         root = simplify(root)
         return Expression(root)
     }
@@ -443,7 +453,7 @@ class ExprCalculator
 	 * long)
 	 */
     override fun pow(x: Expression, n: Long): Expression {
-        var root: Node = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(Multinomial.valueOf(n), null))
+        var root: Node = wrapNodeDF("exp", x.root.cloneNode(null), newPolyNode(Multinomial.of(n), null))
         root = simplify(root)
         return Expression(root)
     }
@@ -562,7 +572,7 @@ class ExprCalculator
      * values between [start] and [end] (inclusive).
      */
     fun sigma(expr: Expression, start: Expression, end: Expression, ch: String = "x"): Expression {
-        return mFunction(ExprFunction.FUNCTION_NAME_SIGMA, expr, Expression(ch.p), start, end)
+        return mFunction(ExprFunction.FUNCTION_NAME_SIGMA, expr, Expression(buildNode { ch.p }), start, end)
     }
 
     fun simplify(x: Expression): Expression {
@@ -945,12 +955,41 @@ class ExprCalculator
      * @param sub
      * @return
      */
+    @Suppress("DuplicatedCode")
     fun substitute(expr: Expression, ch: String, sub: Expression): Expression {
         var root = expr.root.cloneNode(null)
         root = root.recurApply({ x ->
             x.resetSimIdentifier()
             val p = getPolynomialPart(x, this) ?: return@recurApply x
             val afterSub = replaceMultinomial(p, ch, sub)
+                    ?: //not changed
+                    return@recurApply x
+            if (x.type == Type.POLYNOMIAL) {
+                //replace the whole
+                afterSub.parent = x.parent
+                return@recurApply afterSub
+            }
+            val comb = x as CombinedNode
+            comb.addChild(afterSub)
+            comb.polynomial = pOne
+            comb
+        }, Integer.MAX_VALUE)
+        //	    root.listNode(0);
+        root = simplify(root)
+        return Expression(root)
+    }
+
+    /**
+     * Substitutes the give expression `sub` for the character to the expression.
+     * @return
+     */
+    @Suppress("DuplicatedCode")
+    fun substituteAll(expr: Expression, subMap: Map<String, Expression>): Expression {
+        var root = expr.root.cloneNode(null)
+        root = root.recurApply({ x ->
+            x.resetSimIdentifier()
+            val p = getPolynomialPart(x, this) ?: return@recurApply x
+            val afterSub = replaceMultinomialAll(p, subMap)
                     ?: //not changed
                     return@recurApply x
             if (x.type == Type.POLYNOMIAL) {
@@ -983,18 +1022,21 @@ class ExprCalculator
         return Expression(simplify(nroot))
     }
 
+
     /**
-     * Returns the differential of an expression.
+     * Returns the differential of an expression as a function of the given variable.
      */
-    @JvmOverloads
-    fun differential(expr: Expression, variableName: String = "x", times: Int = 1): Expression {
-        var re = expr
-        repeat(times) {
-            re = differential0(re, variableName)
+    override fun differential(f: Expression, variable: String, order: Int): Expression {
+        var re = f
+        repeat(order) {
+            re = differential0(re, variable)
         }
         return re
     }
 
+    fun differential(f: Expression, variable: String = "x"): Expression {
+        return differential0(f, variable)
+    }
 
     companion object {
 
@@ -1021,6 +1063,48 @@ class ExprCalculator
                         sub.root.cloneNode(null),
                         newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null))
                 val nodeMul = wrapNodeMultiply(nodeExp, Multinomial.monomial(re))
+                nodes.add(nodeMul)
+            }
+            return wrapNodeAM(true, nodes, remains)
+        }
+
+        internal fun replaceMultinomialAll(mul: Multinomial, replaceMap: Map<String, Expression>): Node? {
+            val chs = replaceMap.keys
+            val charCount = mul.terms.count { t ->
+                t.character.keys.any {
+                    it in chs
+                }
+            }
+            if (charCount == 0) {
+                return null
+            }
+            val nodes = ArrayList<Node>(charCount)
+            val remains = mul.removeAll { t -> t.character.keys.any { it in chs } }
+            for (t in mul.terms) {
+                val c1 = t.character.keys.count {
+                    it in chs
+                }
+                if (c1 == 0) {
+                    continue
+                }
+                val mulNodes = ArrayList<Node>(c1)
+                for ((ch, sub) in replaceMap) {
+                    if (!t.containsChar(ch)) {
+                        continue
+                    }
+                    val pow = t.getCharacterPower(ch)
+                    val nodeExp = wrapNodeDF(ExprFunction.FUNCTION_NAME_EXP,
+                            sub.root.cloneNode(null),
+                            newPolyNode(Multinomial.monomial(Term.valueOf(pow)), null))
+                    mulNodes += nodeExp
+                }
+
+                val num = t.numberPart()
+                val remainChars = t.character.filter { en -> en.key !in chs }
+                val re = num.sameNumber(remainChars)
+
+
+                val nodeMul = wrapNodeAM(false, mulNodes, Multinomial.monomial(re))
                 nodes.add(nodeMul)
             }
             return wrapNodeAM(true, nodes, remains)

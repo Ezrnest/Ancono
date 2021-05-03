@@ -14,8 +14,8 @@ import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.utilities.Printer;
 import cn.ancono.utilities.StringSup;
-import cn.ancono.utilities.structure.Pair;
 import cn.ancono.utilities.structure.WithInt;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
@@ -27,10 +27,13 @@ import java.util.function.ToDoubleFunction;
 import static cn.ancono.math.numberModels.expression.ExprFunction.createBasicCalculatorFunctions;
 
 /**
- * Expression is the most universal number model to show a number or a complex
+ * Expression is the most universal number model to represent a number or a complex
  * algebraic expression.
+ * <p>
+ * To get a calculator of Expression, please use <code>ExprCalculator.getInstance()</code>
  *
  * @author liyicheng 2017-11-23 21:31
+ * @see ExprCalculator
  */
 public final class Expression implements Computable, Serializable {
 
@@ -59,6 +62,9 @@ public final class Expression implements Computable, Serializable {
         return expr;
     }
 
+    /**
+     * Converts the whole expression to a string in latex format.
+     */
     public String toLatexString() {
         return root.toLatexString();
     }
@@ -150,7 +156,7 @@ public final class Expression implements Computable, Serializable {
     public static Expression fromPolynomialE(IPolynomial<Expression> p, String variableName) {
         List<Node> terms = new ArrayList<>();
         for (int i = 0; i <= p.getLeadingPower(); i++) {
-            Expression coeExpr = p.getCoefficient(i);
+            Expression coeExpr = p.get(i);
             Node root = coeExpr.root;
             if (root.getType() == Node.Type.POLYNOMIAL) {
                 if (((Node.Poly) root).p.isZero()) {
@@ -272,7 +278,7 @@ public final class Expression implements Computable, Serializable {
                 Pair<String, Boolean> p = list.get(0);
                 String s = p.getFirst();
                 try {
-                    Multinomial l = Multinomial.valueOf(s);
+                    Multinomial l = Multinomial.parse(s);
                     return new Node.Poly(parent, p.getSecond() ? l : l.negate());
                 } catch (NumberFormatException ignored) {
                 }
@@ -458,7 +464,7 @@ public final class Expression implements Computable, Serializable {
 
         Multinomial parseWithExceptionDetail(String expr, int offset) {
             try {
-                return Multinomial.valueOf(expr);
+                return Multinomial.parse(expr);
             } catch (NumberFormatException ex) {
                 throwFor(ex.getMessage() + ": ", offset);
                 //exception here
@@ -487,7 +493,7 @@ public final class Expression implements Computable, Serializable {
     /**
      * Expression constant ten.
      */
-    public static final Expression TEN = fromMultinomial(Multinomial.valueOf(10L));
+    public static final Expression TEN = fromMultinomial(Multinomial.of(10L));
 
     /**
      * Expression constant negative one

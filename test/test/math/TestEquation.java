@@ -23,7 +23,7 @@ public class TestEquation {
     public TestEquation() {
     }
 
-    MathCalculator<Double> mc = Calculators.getCalDouble();
+    MathCalculator<Double> mc = Calculators.doubleCal();
 
     @Test
     public void testSolve() {

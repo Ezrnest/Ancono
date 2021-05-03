@@ -2,8 +2,8 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
-import cn.ancono.math.geometry.analytic.planeAG.PVector;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
+import cn.ancono.math.geometry.analytic.plane.PVector;
+import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.api.FieldNumberModel;
 import cn.ancono.utilities.SNFSupport;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
     public static final double ANGLE_DOWNER_BOUND = -Math.PI;
     public static final ComplexI ZERO = new ComplexI(0d, 0d),
             ONE = new ComplexI(1d, 0d),
-            I_ONE = new ComplexI(0d, 1d),
+            I = new ComplexI(0d, 1d),
             PI = new ComplexI(Math.PI, 0d),
             E = new ComplexI(Math.E, 0d);
 
@@ -196,24 +196,25 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * Returns {@code this^p}.This method is based on multiply operation.If
      * {@code p==0},ONE will be returned.<p>
      *
-     * @param p
+     * @param n
      * @return {@code this^p}
      * @see #powArg(long)
      */
-    public ComplexI pow(long p) {
-        if (p < 0) {
-            return this.reciprocal().pow(-p);
+    @Override
+    public @NotNull ComplexI pow(long n) {
+        if (n < 0) {
+            return this.reciprocal().pow(-n);
         }
 //		if(p==0){
 //			return ONE;
 //		}
         ComplexI t = ONE, mul = this;
-        while (p != 0) {
-            if ((p & 1) != 0) {
+        while (n != 0) {
+            if ((n & 1) != 0) {
                 t = t.multiply(mul);
             }
             mul = mul.multiply(mul);
-            p >>= 1;
+            n >>= 1;
         }
         return t;
     }
@@ -269,7 +270,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         long p, q;
         if (f.getSignum() == -1) {
             p = f.getDenominator();
-            q = f.getNumerator();
+            q = f.getNumeratorAbs();
         } else {
             p = f.getNumerator();
             q = f.getDenominator();
@@ -444,7 +445,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         return new ComplexI(a, 0d);
     }
 
-    public static ComplexI imaginary(double b) {
+    public static ComplexI imag(double b) {
         return new ComplexI(0d, b);
     }
 
@@ -714,8 +715,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
         @NotNull
         @Override
-        public ComplexI abs(@NotNull ComplexI para) {
-            return para.modAsC();
+        public ComplexI abs(@NotNull ComplexI x) {
+            return x.modAsC();
         }
 
         @NotNull
@@ -814,7 +815,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         @Override
         public ComplexI constantValue(@NotNull String name) {
             if (name.equals("i")) {
-                return ComplexI.I_ONE;
+                return ComplexI.I;
             } else if (name.equalsIgnoreCase("pi")) {
                 return ComplexI.PI;
             } else if (name.equals("e")) {
@@ -847,10 +848,22 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
             //TODO
             return super.arcsin(x);
         }
+
+        @NotNull
+        @Override
+        public ComplexI of(long x) {
+            return real(x);
+        }
+
+        @NotNull
+        @Override
+        public ComplexI of(@NotNull Fraction x) {
+            return real(x.toDouble());
+        }
     }
 
 
-    private static ComplexICalculator cal = new ComplexICalculator();
+    private static final ComplexICalculator cal = new ComplexICalculator();
 
     public static ComplexICalculator getCalculator() {
         return cal;

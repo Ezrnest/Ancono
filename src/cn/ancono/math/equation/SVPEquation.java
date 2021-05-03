@@ -3,6 +3,7 @@ package cn.ancono.math.equation;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.AbstractSVPFunction;
@@ -10,10 +11,11 @@ import cn.ancono.math.numberModels.CalculatorUtils;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
+import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.math.property.Solveable;
 import cn.ancono.math.set.MathSets;
 import cn.ancono.math.set.SingletonSet;
-import cn.ancono.utilities.CollectionSup;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -62,7 +64,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
     public SVPEquation<T> simplify(Simplifier<T> sim) {
         List<T> list = new ArrayList<>(mp + 1);
         for (int i = 0; i <= mp; i++) {
-            list.add(getCoefficient(i));
+            list.add(get(i));
         }
         list = sim.simplify(list);
         return valueOf(list, getMc());
@@ -139,7 +141,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      */
     @NotNull
     @Override
-    public abstract <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> SVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * A default implements for the equation.
@@ -181,7 +183,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
         @NotNull
         @Override
-        public <N> DSVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> DSVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newCoes = (N[]) new Object[coes.length];
             for (int i = 0; i < newCoes.length; i++) {
@@ -227,7 +229,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public T getCoefficient(int n) {
+        public T get(int n) {
             return coes[n];
         }
 
@@ -257,8 +259,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
          * @see cn.ancono.math.SVPEquation#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*
@@ -274,8 +276,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
          */
         @NotNull
         @Override
-        public <N> SVPEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new SVPFEquation<>(newCalculator, (AbstractSVPFunction<N>) f.mapTo(mapper, newCalculator));
+        public <N> SVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new SVPFEquation<>(newCalculator, (AbstractSVPFunction<N>) f.mapTo(newCalculator, mapper));
         }
 
 
@@ -339,7 +341,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         @SuppressWarnings("unchecked")
         T[] list = (T[]) new Object[size];
         for (int i = 0; i < size; i++) {
-            list[i] = m.getCoefficient(i);
+            list[i] = m.get(i);
         }
         return new DSVPEquation<>(mc, list);
     }
@@ -370,10 +372,9 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         if (p <= 0) {
             throw new IllegalArgumentException("p <= 0 ");
         }
-        //
 
-        //TODO
-        return null;
+        var list = Collections.singletonList(new Pair<>(Polynomial.ofRoot(mc, a), p));
+        return new RootEquation<>(mc, new DecomposedPoly<>(list));
     }
 
     /**
@@ -384,30 +385,29 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * 2017-10-06 15:59
      */
     public static final class RootEquation<T> extends SVPEquation<T> {
-        private final List<T> roots;
+        private final DecomposedPoly<T> p;
 
 
-        RootEquation(MathCalculator<T> mc, List<T> roots) {
-            super(mc, roots.size());
-            this.roots = roots;
+        RootEquation(MathCalculator<T> mc, DecomposedPoly<T> p) {
+            super(mc, p.getDegree());
+            this.p = p;
         }
 
 
         @Override
-        public <N> RootEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new RootEquation<>(newCalculator, CollectionSup.mapList(roots, mapper));
+        public <N> RootEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new RootEquation<>(newCalculator, p.map(newCalculator, mapper::apply));
         }
 
         @Override
-        public T getCoefficient(int n) {
-            return null;
+        public T get(int n) {
+            return p.getExpanded().get(n);
         }
+
 
         @Override
         public T compute(T x) {
-            T re = getMc().getOne();
-
-            return null;
+            return p.compute(x);
         }
     }
 
@@ -663,7 +663,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public <N> QEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> QEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new QEquation<>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c)
                     , x1 == null ? null : mapper.apply(x1), x2 == null ? null : mapper.apply(x2), delta == null ? null : mapper.apply(delta), d);
         }
@@ -716,7 +716,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public T getCoefficient(int n) {
+        public T get(int n) {
             switch (n) {
                 case 0:
                     return c;
@@ -771,7 +771,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public T getCoefficient(int n) {
+        public T get(int n) {
             switch (n) {
                 case 0:
                     return b;
@@ -795,7 +795,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public <N> LEquation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+        public <N> LEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new LEquation<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(sol));
         }
 

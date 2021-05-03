@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.set;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ import java.util.function.Function;
  * @author liyicheng
  * 2017-09-09 20:26
  */
-public abstract class AbstractMathSet<T> extends MathObject<T> implements MathSet<T> {
+public abstract class AbstractMathSet<T> extends AbstractMathObject<T> implements MathSet<T> {
 
     /**
      * @param mc
@@ -26,7 +27,7 @@ public abstract class AbstractMathSet<T> extends MathObject<T> implements MathSe
 
     @NotNull
     @Override
-    public abstract <N> AbstractMathSet<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> AbstractMathSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
 }

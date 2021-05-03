@@ -8,13 +8,16 @@ import cn.ancono.math.MathUtils;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberTheory.IntCalculator;
+import cn.ancono.math.numberTheory.NTUtils;
 import cn.ancono.math.numberTheory.Primes;
+import cn.ancono.math.numberTheory.ZModPCalculator;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.List;
 
 /**
  * Provides some utility methods for {@link MathCalculator}
@@ -34,11 +37,6 @@ public final class Calculators {
     /**
      * Determines whether the two numbers are the identity in sign, which means they are both positive, negative or
      * zero.
-     *
-     * @param x
-     * @param y
-     * @param mc
-     * @return
      */
     public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, MathCalculator<T> mc) {
         T z = mc.getZero();
@@ -67,16 +65,16 @@ public final class Calculators {
 
     /**
      * Determines whether a<x<b or b<x<a.
-     *
-     * @param x
-     * @param a
-     * @param b
-     * @param mc
-     * @param <T>
-     * @return
      */
     public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, MathCalculator<T> mc) {
         return mc.compare(a, x) * mc.compare(x, b) > 0;
+    }
+
+    /**
+     * Returns {@code (x-a)(y-a)<=0}
+     */
+    public static <T> boolean oppositeSign(T x, T y, T a, MathCalculator<T> mc) {
+        return mc.compare(x, a) * mc.compare(y, a) <= 0;
     }
 
     public static <T> T square(@NotNull T x, MathCalculator<T> mc) {
@@ -237,16 +235,16 @@ public final class Calculators {
         }
 
         /**
-         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
-        public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
-            return MathUtils.powerAndMod(at, nt, mt);
+        public Integer powMod(Integer at, Integer nt, Integer mt) {
+            return MathUtils.powMod(at, nt, mt);
         }
 
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.MathCalculator#getNumberClass()
+         * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
          */
         @NotNull
         @Override
@@ -265,6 +263,12 @@ public final class Calculators {
         private static final IntegerCalculator cal = new IntegerCalculator();
 
         IntegerCalculator() {
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            int t = x;
+            return t == 1 || t == -1;
         }
 
         @Override
@@ -296,8 +300,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Integer abs(@NotNull Integer para) {
-            return Math.abs(para);
+        public Integer abs(@NotNull Integer x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -315,6 +319,11 @@ public final class Calculators {
         @NotNull
         @Override
         public Integer divide(@NotNull Integer x, @NotNull Integer y) {
+            return MathUtils.divideExact(x, y);
+        }
+
+        @Override
+        public @NotNull Integer exactDivide(@NotNull Integer x, @NotNull Integer y) {
             return MathUtils.divideExact(x, y);
         }
 
@@ -444,7 +453,7 @@ public final class Calculators {
          */
         @NotNull
         @Override
-        public Integer mod(Integer a, Integer b) {
+        public Integer mod(@NotNull Integer a, @NotNull Integer b) {
             int x = a, y = b;
             return Math.abs(x) % Math.abs(y);
         }
@@ -475,7 +484,7 @@ public final class Calculators {
         }
 
         @Override
-        public Triple<Integer, Integer, Integer> gcdUV(Integer a, Integer b) {
+        public @NotNull Triple<Integer, Integer, Integer> gcdUV(@NotNull Integer a, @NotNull Integer b) {
             int[] arr = MathUtils.gcdUV(a, b);
             return new Triple<>(arr[0], arr[1], arr[2]);
         }
@@ -551,16 +560,16 @@ public final class Calculators {
         }
 
         /**
-         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
-        public Integer powerAndMod(Integer a, Integer n, Integer m) {
-            return MathUtils.powerAndMod(a, n, m);
+        public Integer powMod(Integer a, Integer n, Integer m) {
+            return MathUtils.powMod(a, n, m);
         }
 
         @Override
-        public Integer powerAndMod(Integer a, long n, Integer m) {
-            return MathUtils.powerAndMod(a, n, m);
+        public @NotNull Integer powerAndMod(@NotNull Integer x, long n, @NotNull Integer m) {
+            return MathUtils.powMod(x, n, m);
         }
 
         @Override
@@ -571,6 +580,21 @@ public final class Calculators {
         @Override
         public long asLong(Integer x) {
             return x;
+        }
+
+        @NotNull
+        @Override
+        public Integer of(long x) {
+            return Math.toIntExact(x);
+        }
+
+        @NotNull
+        @Override
+        public Integer of(@NotNull Fraction x) {
+            if (x.isInteger()) {
+                return x.toInt();
+            }
+            throw new ArithmeticException();
         }
 
         @NotNull
@@ -613,8 +637,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Long abs(@NotNull Long para) {
-            return Math.abs(para);
+        public Long abs(@NotNull Long x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -748,8 +772,8 @@ public final class Calculators {
          *
          */
         @Override
-        public Long powerAndMod(Long at, Long nt, Long mt) {
-            return MathUtils.powerAndMod(at, nt, mt);
+        public Long powMod(Long at, Long nt, Long mt) {
+            return MathUtils.powMod(at, nt, mt);
         }
 
         @NotNull
@@ -792,6 +816,15 @@ public final class Calculators {
             return x + y;
         }
 
+        @Override
+        public Long sum(@NotNull List<? extends Long> ps) {
+            long re = 0;
+            for (var l : ps) {
+                re += l;
+            }
+            return re;
+        }
+
         @NotNull
         @Override
         public Long negate(@NotNull Long para) {
@@ -800,8 +833,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Long abs(@NotNull Long para) {
-            return Math.abs(para);
+        public Long abs(@NotNull Long x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -852,6 +885,12 @@ public final class Calculators {
         @Override
         public Long getOne() {
             return ONE;
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Long x) {
+            long t = x;
+            return t == 1 || t == -1;
         }
 
         @NotNull
@@ -928,12 +967,22 @@ public final class Calculators {
          */
         @NotNull
         @Override
-        public Long mod(Long a, Long b) {
+        public Long mod(@NotNull Long a, @NotNull Long b) {
             long x = a, y = b;
             return Math.abs(x) % Math.abs(y);
         }
 
-//        /**
+        @Override
+        public Long powMod(Long a, Long n, Long m) {
+            return MathUtils.powMod(a, n, m);
+        }
+
+        @Override
+        public @NotNull Long powerAndMod(@NotNull Long x, long n, @NotNull Long m) {
+            return MathUtils.powMod(x, n, m);
+        }
+
+        //        /**
 //         *
 //         */
 //        @Override
@@ -959,7 +1008,7 @@ public final class Calculators {
         }
 
         @Override
-        public Triple<Long, Long, Long> gcdUV(Long a, Long b) {
+        public @NotNull Triple<Long, Long, Long> gcdUV(@NotNull Long a, @NotNull Long b) {
             long[] arr = MathUtils.gcdUV(a, b);
             return new Triple<>(arr[0], arr[1], arr[2]);
         }
@@ -1045,6 +1094,20 @@ public final class Calculators {
             return x;
         }
 
+        @NotNull
+        @Override
+        public Long of(@NotNull Fraction x) {
+            if (x.isInteger()) {
+                return x.toLong();
+            }
+            throw new ArithmeticException();
+        }
+
+        @NotNull
+        @Override
+        public Long of(long x) {
+            return x;
+        }
 
         @NotNull
         @Override
@@ -1096,8 +1159,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigInteger abs(@NotNull BigInteger para) {
-            return para.abs();
+        public BigInteger abs(@NotNull BigInteger x) {
+            return x.abs();
         }
 
         @NotNull
@@ -1134,6 +1197,11 @@ public final class Calculators {
         @Override
         public BigInteger getOne() {
             return BigInteger.ONE;
+        }
+
+        @Override
+        public boolean isUnit(@NotNull BigInteger x) {
+            return x.abs().equals(BigInteger.ONE);
         }
 
         @NotNull
@@ -1202,7 +1270,7 @@ public final class Calculators {
          * @see IntCalculator#mod(java.lang.Object, java.lang.Object)
          */
         @Override
-        public BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
+        public @NotNull BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.mod(b.abs());
         }
 
@@ -1289,16 +1357,36 @@ public final class Calculators {
         }
 
         /**
-         * @see IntCalculator#powerAndMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
-        public BigInteger powerAndMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
+        public BigInteger powMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
             return a.modPow(n, mod);
+        }
+
+        @Override
+        public @NotNull BigInteger powerAndMod(@NotNull BigInteger x, long n, @NotNull BigInteger m) {
+            return x.modPow(BigInteger.valueOf(n), m);
         }
 
         @Override
         public BigInteger asBigInteger(BigInteger x) {
             return x;
+        }
+
+        @NotNull
+        @Override
+        public BigInteger of(long x) {
+            return BigInteger.valueOf(x);
+        }
+
+        @NotNull
+        @Override
+        public BigInteger of(@NotNull Fraction x) {
+            if (x.isInteger()) {
+                return BigInteger.valueOf(x.toLong());
+            }
+            throw new ArithmeticException();
         }
 
         @NotNull
@@ -1351,8 +1439,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigDecimal abs(@NotNull BigDecimal para) {
-            return para.abs();
+        public BigDecimal abs(@NotNull BigDecimal x) {
+            return x.abs();
         }
 
         @NotNull
@@ -1438,10 +1526,6 @@ public final class Calculators {
 
         /**
          * This method only provides accuracy of double and throws exception if the number is too big.
-         *
-         * @param a
-         * @param b
-         * @return
          */
         @NotNull
         @Override
@@ -1456,6 +1540,18 @@ public final class Calculators {
                 throw new UnsupportedCalculationException("Too big.");
             }
             return BigDecimal.valueOf(Math.pow(ad, ab));
+        }
+
+        @NotNull
+        @Override
+        public BigDecimal of(long x) {
+            return BigDecimal.valueOf(x);
+        }
+
+        @NotNull
+        @Override
+        public BigDecimal of(@NotNull Fraction x) {
+            return BigDecimal.valueOf(x.toDouble());
         }
 
         @NotNull
@@ -1501,8 +1597,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Double abs(@NotNull Double para) {
-            return Math.abs(para);
+        public Double abs(@NotNull Double x) {
+            return Math.abs(x);
         }
 
         @NotNull
@@ -1568,25 +1664,25 @@ public final class Calculators {
             return Math.pow(p, exp);
         }
 
-        @NotNull
+
         @Override
-        public Double addX(@NotNull Object... ps) {
+        public Double sum(@NotNull List<? extends Double> ps) {
             double sum = 0;
-            for (Object d : ps) {
-                sum += (Double) d;
+            for (Double d : ps) {
+                sum += d;
             }
             return sum;
         }
 
-        @NotNull
         @Override
-        public Double multiplyX(@NotNull Object... ps) {
-            double sum = 1;
-            for (Object d : ps) {
-                sum *= (Double) d;
+        public Double product(@NotNull List<? extends Double> ps) {
+            double result = 1;
+            for (var d : ps) {
+                result *= d;
             }
-            return sum;
+            return result;
         }
+
 
         private static final Double pi = Math.PI;
         private static final Double e = Math.E;
@@ -1710,6 +1806,18 @@ public final class Calculators {
 
         @NotNull
         @Override
+        public Double of(long x) {
+            return (double) x;
+        }
+
+        @NotNull
+        @Override
+        public Double of(@NotNull Fraction x) {
+            return x.toDouble();
+        }
+
+        @NotNull
+        @Override
         public Class<Double> getNumberClass() {
             return Double.class;
         }
@@ -1723,7 +1831,7 @@ public final class Calculators {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.MathCalculatorAdapter.DoubleCalculator#isEqual(java.lang.Double, java.lang.Double)
+         * @see cn.ancono.cn.ancono.utilities.math.MathCalculatorAdapter.DoubleCalculator#isEqual(java.lang.Double, java.lang.Double)
          */
         @Override
         public boolean isEqual(@NotNull Double x, @NotNull Double y) {
@@ -1737,7 +1845,7 @@ public final class Calculators {
         }
 
         /* (non-Javadoc)
-         * @see cn.ancono.utilities.math.MathCalculator#isZero(java.lang.Object)
+         * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#isZero(java.lang.Object)
          */
         @Override
         public boolean isZero(@NotNull Double para) {
@@ -1767,7 +1875,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static IntegerCalculator getCalIntegerExact() {
+    public static IntegerCalculator integerExact() {
         return IntegerCalculatorExact.cal;
     }
 
@@ -1782,7 +1890,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static IntegerCalculator getCalInteger() {
+    public static IntegerCalculator integer() {
         return IntegerCalculator.cal;
     }
 
@@ -1794,7 +1902,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static LongCalculator getCalLongExact() {
+    public static LongCalculator longExact() {
         return LongCalculatorExact.cal;
     }
 
@@ -1805,7 +1913,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static LongCalculator getCalLong() {
+    public static LongCalculator longCal() {
         return LongCalculator.cal;
     }
 
@@ -1817,7 +1925,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static BigIntegerCalculator getCalBigInteger() {
+    public static BigIntegerCalculator bigInteger() {
         return BigIntegerCalculator.cal;
     }
 
@@ -1831,7 +1939,7 @@ public final class Calculators {
      * @param mc a math context
      * @return a MathCalculator
      */
-    public static MathCalculator<BigDecimal> getCalBigDecimal(MathContext mc) {
+    public static MathCalculator<BigDecimal> bigDecimal(MathContext mc) {
         return new BigDecimalCalculator(mc);
     }
 
@@ -1845,7 +1953,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> getCalDouble() {
+    public static MathCalculator<Double> doubleCal() {
         return DoubleCalculator.dc;
     }
 
@@ -1859,7 +1967,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> getCalDoubleDev() {
+    public static MathCalculator<Double> doubleDev() {
         return DoubleCalculatorWithDeviation.dc;
     }
 
@@ -1871,21 +1979,235 @@ public final class Calculators {
      *
      * @return a MathCalculator
      */
-    public static MathCalculator<Double> getCalDoubleDev(double dev) {
+    public static MathCalculator<Double> doubleDev(double dev) {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
-    static class IntegerCalModP extends IntegerCalculatorExact {
-        private final int p;
-        private int[] inversed;
+    public static class ZModNCalculator extends MathCalculatorAdapter<Integer> {
+        protected final int n;
+
+        ZModNCalculator(int n) {
+            this.n = n;
+
+        }
+
+        protected int modN(int x) {
+            int re = x % n;
+            if (re < 0) {
+                re += n;
+            }
+            return re;
+        }
+
+        protected int modN(long x) {
+            int re = (int) (x % n);
+            if (re < 0) {
+                re += n;
+            }
+            return re;
+        }
+
+        public int getModular() {
+            return n;
+        }
+
+        @NotNull
+        @Override
+        public Integer getOne() {
+            return 1;
+        }
+
+        @NotNull
+        @Override
+        public Integer getZero() {
+            return 0;
+        }
+
+        @Override
+        public int compare(@NotNull Integer x, @NotNull Integer y) {
+            return x.compareTo(y);
+        }
+
+        @Override
+        public boolean isComparable() {
+            return true;
+        }
+
+
+        @Override
+        public boolean isZero(@NotNull Integer para) {
+            return modN(para) == 0;
+        }
+
+        @Override
+        public boolean isEqual(@NotNull Integer x, @NotNull Integer y) {
+            return modN(x - y) == 0;
+        }
+
+        @NotNull
+        @Override
+        public Integer add(@NotNull Integer x, @NotNull Integer y) {
+            return modN((long) x + y);
+        }
+
+        @NotNull
+        @Override
+        public Integer subtract(@NotNull Integer x, @NotNull Integer y) {
+            return modN((long) x - y);
+        }
+
+        @NotNull
+        @Override
+        public Integer multiply(@NotNull Integer x, @NotNull Integer y) {
+            return multiply(x.intValue(), y.intValue());
+        }
+
+        private int multiply(int x, int y) {
+            return modN((long) x * y);
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            return MathUtils.gcd(x, n) == 1;
+        }
+
+
+        protected int inverseOf(int x) {
+            var p = MathUtils.gcdUV(x, n);
+            var gcd = p[0];
+            var y = p[1];
+            if (gcd != 1) {
+                ExceptionUtil.notInvertible();
+            }
+            return y;
+        }
+
+
+        @NotNull
+        @Override
+        public Integer reciprocal(@NotNull Integer x) {
+            return inverseOf(x);
+        }
+
+        @NotNull
+        @Override
+        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
+            //noinspection SuspiciousNameCombination
+            return multiply(x.intValue(), inverseOf(y));
+        }
+        //        protected int divide(int a, int b) {
+//
+//        }
+//
+//        @NotNull
+//        @Override
+//        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
+//            return divide(x.intValue(), y.intValue());
+//        }
+
+
+        @NotNull
+        @Override
+        public Integer multiplyLong(@NotNull Integer p, long l) {
+            return multiply(p.intValue(), modN(l));
+        }
+
+        @NotNull
+        @Override
+        public Integer divideLong(@NotNull Integer x, long n) {
+            return multiply(x.intValue(), inverseOf(modN(n)));
+        }
+
+        //        @NotNull
+//        @Override
+//        public Integer divideLong(@NotNull Integer p, long n) {
+//            return divide(p.intValue(), modN(n));
+//        }
+
+
+        @NotNull
+        @Override
+        public Integer squareRoot(@NotNull Integer x) {
+            int _x = x;
+            for (int n = 0; n < this.n; n++) {
+                if (multiply(n, n) == _x) {
+                    return n;
+                }
+            }
+            //TODO better implement
+            throw new ArithmeticException("Not square root for x=" + x + " in Z mod " + n);
+        }
+
+        @NotNull
+        @Override
+        public Integer pow(@NotNull Integer p, long exp) {
+            return MathUtils.powMod(p, exp, this.n);
+        }
+
+        @NotNull
+        @Override
+        public Integer exp(@NotNull Integer a, @NotNull Integer b) {
+            return MathUtils.powMod(a, b, n);
+        }
+
+//        @Override
+//        public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
+//            return powerAndMod(at, nt.longValue(), mt);
+//        }
+//
+//        @Override
+//        public Integer powerAndMod(Integer at, long n, Integer m) {
+//            int a = modP(at);
+//            int mod = m;
+//            if (mod == 1) {
+//                return 0;
+//            }
+//            if (a == 0 || a == 1) {
+//                return a;
+//            }
+//            int ans = 1;
+//            a = a % mod;
+//            while (n > 0) {
+//                if ((n & 1) == 1) {
+//                    ans = multiply(a, ans) % mod;
+//                }
+//                a = multiply(a, a) % mod;
+//                n >>= 1;
+//            }
+//            return ans;
+//        }
+
+        @NotNull
+        @Override
+        public Integer negate(@NotNull Integer para) {
+            return modN(-para);
+        }
+
+        @NotNull
+        @Override
+        public Integer abs(@NotNull Integer x) {
+            return modN(x);
+        }
+
+        @NotNull
+        @Override
+        public Integer of(long x) {
+            return modN(x);
+        }
+    }
+
+
+    static class ZModPCalculatorCached extends ZModNCalculator implements ZModPCalculator<Integer> {
+        private final int[] inverse;
 
         private int[] initInv() {
-            int[] inv = new int[p];
-            for (int i = 1; i < p; i++) {
+            int[] inv = new int[n];
+            inv[1] = 1;
+            for (int i = 2; i < n; i++) {
                 if (inv[i] != 0) {
                     continue;
                 }
-                for (int j = 1; j < p; j++) {
+                for (int j = 2; j < n; j++) {
                     if (inv[j] != 0) {
                         continue;
                     }
@@ -1899,161 +2221,339 @@ public final class Calculators {
             return inv;
         }
 
-
-        IntegerCalModP(int p) {
-            this.p = p;
-            inversed = initInv();
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            return inverse[x] != 0;
         }
 
-        private int modP(int x) {
-            int re = x % p;
-            if (re < 0) {
-                re += p;
+        ZModPCalculatorCached(int p) {
+            super(p);
+            inverse = initInv();
+        }
+
+        @Override
+        public long getP() {
+            return getModular();
+        }
+
+        @Override
+        protected int inverseOf(int x) {
+            x = modN(x);
+            if (inverse[x] == 0) {
+                ExceptionUtil.notInvertible();
             }
-            return re;
+            return inverse[x];
         }
 
-        private int modP(long x) {
-            int re = (int) (x % p);
-            if (re < 0) {
-                re += p;
+        @Override
+        public @NotNull Integer squareRoot(@NotNull Integer x) {
+            return (int) NTUtils.INSTANCE.sqrtModP(x, getP());
+        }
+
+    }
+
+    static class ZModPCalculatorGCD extends ZModNCalculator implements ZModPCalculator<Integer> {
+        ZModPCalculatorGCD(int n) {
+            super(n);
+        }
+
+        @Override
+        public long getP() {
+            return getModular();
+        }
+
+        @Override
+        public @NotNull Integer squareRoot(@NotNull Integer x) {
+            return (int) NTUtils.INSTANCE.sqrtModP(x, getP());
+        }
+    }
+
+    static class ZMod2Calculator extends ZModNCalculator implements ZModPCalculator<Integer> {
+        ZMod2Calculator() {
+            super(2);
+        }
+
+        @Override
+        public long getP() {
+            return 2;
+        }
+
+        @Override
+        public boolean isEqual(@NotNull Integer x, @NotNull Integer y) {
+            return (x - y) % 2 == 0;
+        }
+
+        @Override
+        public @NotNull Integer add(@NotNull Integer x, @NotNull Integer y) {
+            return (x + y) % 2;
+        }
+
+        @Override
+        public @NotNull Integer subtract(@NotNull Integer x, @NotNull Integer y) {
+            return (x + y) % 2; // -y = y
+        }
+
+
+        @Override
+        public @NotNull Integer multiply(@NotNull Integer x, @NotNull Integer y) {
+            return (x * y) % 2;
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Integer x) {
+            return x % 2 == 1;
+        }
+
+        @Override
+        protected int inverseOf(int x) {
+            if (x % 2 == 0) {
+                ExceptionUtil.notInvertible();
             }
-            return re;
+            return x;
         }
 
-        @NotNull
         @Override
-        public Integer add(@NotNull Integer x, @NotNull Integer y) {
-            return modP(Math.addExact(x, y));
-        }
-
-        @NotNull
-        @Override
-        public Integer subtract(@NotNull Integer x, @NotNull Integer y) {
-            return modP(Math.subtractExact(x, y));
-        }
-
-        @NotNull
-        @Override
-        public Integer multiply(@NotNull Integer x, @NotNull Integer y) {
-            return modP(Math.multiplyExact(x, y));
-        }
-
-        private int multiply(int x, int y) {
-            return modP(Math.multiplyExact(x, y));
-        }
-
-        @NotNull
-        @Override
-        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
-            //noinspection SuspiciousNameCombination
-            return multiply(x.intValue(), inverseOf(y));
-        }
-
-        private int inverseOf(int x) {
-            if (x == 0) {
+        public @NotNull Integer divide(@NotNull Integer x, @NotNull Integer y) {
+            if (y % 2 == 0) {
                 ExceptionUtil.dividedByZero();
             }
-            return inversed[modP(x)];
+            return x;
         }
 
-        @NotNull
         @Override
-        public Integer multiplyLong(@NotNull Integer p, long l) {
-            return multiply(p.intValue(), modP(l));
+        public @NotNull Integer multiplyLong(@NotNull Integer p, long l) {
+            return (int) ((p * (l % 2)) % 2);
         }
 
-        @NotNull
         @Override
-        public Integer divideLong(@NotNull Integer p, long n) {
-            return multiply(p.intValue(), inverseOf(modP(n)));
-        }
-
-        @NotNull
-        @Override
-        public Integer reciprocal(@NotNull Integer p) {
-            return inverseOf(p);
-        }
-
-        @NotNull
-        @Override
-        public Integer squareRoot(@NotNull Integer x) {
-            int _x = x;
-            for (int n = 0; n < p; n++) {
-                if (multiply(n, n) == _x) {
-                    return n;
-                }
+        public @NotNull Integer divideLong(@NotNull Integer x, long n) {
+            if (n % 2 == 0) {
+                ExceptionUtil.dividedByZero();
             }
-            throw new UnsupportedCalculationException();
-        }
-
-        @NotNull
-        @Override
-        public Integer pow(@NotNull Integer p, long exp) {
-            return MathUtils.powerAndMod(p, exp, p);
-        }
-
-        @NotNull
-        @Override
-        public Integer exp(@NotNull Integer a, @NotNull Integer b) {
-            return MathUtils.powerAndMod(a, b, p);
+            return x;
         }
 
         @Override
-        public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
-            return powerAndMod(at, nt.longValue(), mt);
+        public @NotNull Integer squareRoot(@NotNull Integer x) {
+            return x;
         }
 
         @Override
-        public Integer powerAndMod(Integer at, long n, Integer m) {
-            int a = modP(at);
-            int mod = m;
-            if (mod == 1) {
-                return 0;
+        public @NotNull Integer pow(@NotNull Integer p, long exp) {
+            if (p == 0 && exp == 0) {
+                ExceptionUtil.zeroExponent();
             }
-            if (a == 0 || a == 1) {
-                return a;
+            return p;
+        }
+
+        @Override
+        public @NotNull Integer exp(@NotNull Integer a, @NotNull Integer b) {
+            if (a == 0 && b == 0) {
+                ExceptionUtil.zeroExponent();
             }
-            int ans = 1;
-            a = a % mod;
-            while (n > 0) {
-                if ((n & 1) == 1) {
-                    ans = multiply(a, ans) % mod;
-                }
-                a = multiply(a, a) % mod;
-                n >>= 1;
+            return a;
+        }
+
+        @Override
+        public @NotNull Integer negate(@NotNull Integer para) {
+            return para;
+        }
+
+        @Override
+        public @NotNull Integer abs(@NotNull Integer x) {
+            return x;
+        }
+
+
+        static final ZMod2Calculator INSTANCE = new ZMod2Calculator();
+    }
+
+    private static final int PRIME_CHECK_THRESHOLD = 1024;
+    private static final int USE_CACHE_THRESHOLD = 1024;
+
+    /**
+     * Gets a calculator of `Z_2`, the binary field.
+     */
+    public static ZModPCalculator<Integer> intMod2() {
+        return ZMod2Calculator.INSTANCE;
+    }
+
+    /**
+     * Returns a calculator for prime field <code>Z<sub>p</sub></code>, where <code>p</code> is a prime number.
+     * The implementation guarantees that no overflow will happen in this calculator.
+     * <p></p>
+     * <p>
+     * It is required that the given integer p is a prime number.
+     * <p>
+     */
+    public static ZModPCalculator<Integer> intModP(int p) {
+        if (p == 2) {
+            return intMod2();
+        }
+        if (p <= PRIME_CHECK_THRESHOLD) {
+            if (!Primes.getInstance().isPrime(p)) {
+                throw new IllegalArgumentException("p must be a prime number!");
             }
-            return ans;
+        } else {
+            var x = BigInteger.valueOf(p);
+            if (!x.isProbablePrime(100)) {
+                throw new IllegalArgumentException("p must be a prime number!");
+            }
         }
-
-        @NotNull
-        @Override
-        public Integer negate(@NotNull Integer para) {
-            return modP(-para);
-        }
-
-        @NotNull
-        @Override
-        public Integer abs(@NotNull Integer para) {
-            return modP(para);
-        }
-
-        @NotNull
-        @Override
-        public Integer divideToInteger(@NotNull Integer a, @NotNull Integer b) {
-            return divide(a, b);
+        if (p <= USE_CACHE_THRESHOLD) {
+            return new ZModPCalculatorCached(p);
+        } else {
+            return new ZModPCalculatorGCD(p);
         }
     }
 
-    public static MathCalculator<Integer> getCalIntModP(int p) {
-        if (!Primes.getInstance().isPrime(p)) {
-            throw new IllegalArgumentException("p must be a prime number!");
+    /**
+     * Returns a calculator for ring <code>Z<sub>n</sub></code>, where <code>n >= 2</code>.
+     */
+    public static MathCalculator<Integer> intModN(int n) {
+        if (n < 2) {
+            throw new IllegalArgumentException("It is required that n >= 2");
         }
-        return new IntegerCalModP(p);
+        return new ZModNCalculator(n);
     }
-//
-//    public static RingFraction.RFCalculator<Polynomial<Fraction>> getCalPolyFraction(){
-//        return RingFraction.Companion.getCalculator(Polynomial.getCalculator(Fraction.Companion.getCalculator()),Polynomial.)
-//    }
+
+
+    static class BooleanCalculator extends MathCalculatorAdapter<Boolean> {
+
+        @NotNull
+        @Override
+        public Boolean getOne() {
+            return true;
+        }
+
+        @NotNull
+        @Override
+        public Boolean getZero() {
+            return false;
+        }
+
+        @Override
+        public boolean isZero(@NotNull Boolean x) {
+            return !x;
+        }
+
+        @Override
+        public boolean isEqual(@NotNull Boolean x, @NotNull Boolean y) {
+            return x == y;
+        }
+
+        @Override
+        public int compare(@NotNull Boolean x, @NotNull Boolean y) {
+            return Boolean.compare(x, y);
+        }
+
+        @Override
+        public boolean isComparable() {
+            return true;
+        }
+
+        @NotNull
+        @Override
+        public Boolean add(@NotNull Boolean x, @NotNull Boolean y) {
+            return x ^ y;
+        }
+
+        @NotNull
+        @Override
+        public Boolean negate(@NotNull Boolean x) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean abs(@NotNull Boolean x) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean subtract(@NotNull Boolean x, @NotNull Boolean y) {
+            return add(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Boolean multiply(@NotNull Boolean x, @NotNull Boolean y) {
+            return x && y;
+        }
+
+        @NotNull
+        @Override
+        public Boolean divide(@NotNull Boolean x, @NotNull Boolean y) {
+            if (!y) {
+                ExceptionUtil.dividedByZero();
+            }
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean multiplyLong(@NotNull Boolean x, long n) {
+            return x && n % 2 != 0;
+        }
+
+        @NotNull
+        @Override
+        public Boolean divideLong(@NotNull Boolean x, long n) {
+            if (n % 2 == 0) {
+                ExceptionUtil.dividedByZero();
+            }
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean reciprocal(@NotNull Boolean x) {
+            if (!x) {
+                ExceptionUtil.dividedByZero();
+            }
+            return true;
+        }
+
+        @NotNull
+        @Override
+        public Boolean squareRoot(@NotNull Boolean x) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean nroot(@NotNull Boolean x, long n) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Class<Boolean> getNumberClass() {
+            return Boolean.class;
+        }
+
+        @NotNull
+        @Override
+        public Boolean pow(@NotNull Boolean x, long n) {
+            return x;
+        }
+
+        @NotNull
+        @Override
+        public Boolean of(long x) {
+            return x % 2 != 0;
+        }
+
+        static BooleanCalculator INSTANCE = new BooleanCalculator();
+    }
+
+
+    /**
+     * Returns a calculator for boolean as binary field F2.
+     */
+    public static MathCalculator<Boolean> bool() {
+        return BooleanCalculator.INSTANCE;
+    }
 
 }

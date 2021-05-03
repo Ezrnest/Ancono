@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static cn.ancono.utilities.Printer.print;
 import static cn.ancono.utilities.Printer.printnb;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TermTest {
 
@@ -28,11 +28,11 @@ public class TermTest {
         for(int i=0;i<ts.length;i++){
             for(int j=0;j<ts.length;j++){
                 int comp = ts[i].compareTo(ts[j]);
-                if(!MathUtils.sameSignum(i-j,comp)){
+                if (!MathUtils.isSameSign(i - j, comp)) {
                     printnb("Compare:");
-                    print(ts[i]+" and "+ts[j]);
-                    printnb("Should be "+(i-j));
-                    print(" ,but is "+comp);
+                    print(ts[i] + " and " + ts[j]);
+                    printnb("Should be " + (i - j));
+                    print(" ,but is " + comp);
                     throw new AssertionError();
                 }
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * 2017-12-10
  */
 package test.math;
@@ -9,8 +9,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
 import java.util.function.Predicate;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author liyicheng

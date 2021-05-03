@@ -5,12 +5,9 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.utilities.ArraySup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 import static cn.ancono.math.numberModels.ParserUtils.*;
@@ -206,18 +203,18 @@ public class ComputeExpression {
                 case SUBTRACT:
                     return mc.subtract(subNode[0].compute(mc, args, cons), subNode[1].compute(mc, args, cons));
                 case ADDX: {
-                    Object[] axs = new Object[subNode.length];
-                    for (int i = 0; i < subNode.length; i++) {
-                        axs[i] = subNode[i].compute(mc, args, cons);
+                    var axs = new ArrayList<T>(subNode.length);
+                    for (Node node : subNode) {
+                        axs.add(node.compute(mc, args, cons));
                     }
-                    return mc.addX(axs);
+                    return mc.sum(axs);
                 }
                 case MULTIPLYX: {
-                    Object[] mxs = new Object[subNode.length];
-                    for (int i = 0; i < subNode.length; i++) {
-                        mxs[i] = subNode[i].compute(mc, args, cons);
+                    var axs = new ArrayList<T>(subNode.length);
+                    for (Node node : subNode) {
+                        axs.add(node.compute(mc, args, cons));
                     }
-                    return mc.multiplyX(mxs);
+                    return mc.product(axs);
                 }
 
                 case LOG:
@@ -837,11 +834,9 @@ public class ComputeExpression {
 
                 }
 
-                Pair<Node, Boolean> p = new Pair<>();
-                p.setSecond(down);
+                var pd = down;
                 if (next == length) {
-                    p.setFirst(n);
-                    list.add(p);
+                    list.add(new Pair<>(n, down));
                     break;
                 }
                 down = false;
@@ -874,7 +869,7 @@ public class ComputeExpression {
                     } else {
                         long pow;
                         try {
-                            pow = Long.valueOf(str.substring(next, index));
+                            pow = Long.parseLong(str.substring(next, index));
                         } catch (NumberFormatException e) {
                             throwFor("Value Exceeds: ", offset + next);
                             throw new RuntimeException();
@@ -885,8 +880,7 @@ public class ComputeExpression {
 
                 }
                 start = next;
-                p.setFirst(n);
-                list.add(p);
+                list.add(new Pair<>(n, pd));
 
             }
             return list;
@@ -1008,7 +1002,7 @@ public class ComputeExpression {
      * But there are some exceptions:
      * <p>
      * The "^" operator or {@code exp(x,y)} will be translated as {@link MathCalculator#pow(Object, long)} if the latter number is a plain long
-     * number, or be translated as {@link MathCalculator#exp(Object, Object)}. Multiplication will invoke {@link MathCalculator#multiplyX(Object...)}
+     * number, or be translated as {@link MathCalculator#exp(Object, Object)}. Multiplication will invoke {@link MathCalculator#product(Object...)}
      * if there are more than two terms and the {@code flags} permits, otherwise it will be reduced to several parts invoking
      * {@link MathCalculator#multiply(Object, Object)}, which is the identity to addition.
      * <h3>Parameters:</h3>

@@ -1,12 +1,12 @@
 package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.GroupCalculator;
+import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
+import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.addableSet.MathAdder;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.Simplifier;
-import cn.ancono.math.numberTheory.combination.CombUtils;
 import cn.ancono.math.property.Mergeable;
 import org.jetbrains.annotations.NotNull;
 
@@ -222,6 +222,21 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     }
 
     /**
+     * Converts this terms to be an integer.
+     */
+    public int toInt() {
+        if (!isInteger()) {
+            throw new ArithmeticException();
+        }
+        return numerator.intValueExact();
+    }
+//    public int toInt(){
+//        if (!isInteger()) {
+//            throw new ArithmeticException("No an integer!");
+//        }
+//    }
+
+    /**
      * Determines whether this term is a fraction without any character.
      */
     public boolean isFraction() {
@@ -231,17 +246,30 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         return character.isEmpty() && radical.equals(BigInteger.ONE);
     }
 
+
+    /**
+     * Converts this term to a fraction,
+     * throws an exception if this term cannot be represented as a fraction.
+     */
+    public Fraction toFraction() {
+        if (!isFraction()) {
+            throw new ArithmeticException("Not a fraction:" + this);
+        }
+        return numberPartToFraction();
+    }
+
     /**
      * Converts the numerator and denominator of this term to a Fraction.
      *
      * @return a Fraction
      */
-    public Fraction toFraction() {
+    public Fraction numberPartToFraction() {
         if (signum == 0) {
             return Fraction.ZERO;
         }
         return Fraction.of(signum, numerator.longValueExact(), denominator.longValueExact());
     }
+
 
     /**
      * Determines whether this term have coefficient of one.
@@ -719,19 +747,19 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         return sameNumber0(nc);
     }
 
-    /**
-     * Returns a term that only contains the characters and its coefficient is one.
-     */
-    public Term removeCoefficient() {
-        return new Term(character);
-    }
-
-    /**
-     * Returns a term that only contains the coefficient of the characters.
-     */
-    public Term removeAllChar() {
-        return new Term(signum, numerator, denominator, radical);
-    }
+//    /**
+//     * Returns a term that only contains the characters and its coefficient is one.
+//     */
+//    public Term removeCoefficient() {
+//        return new Term(character);
+//    }
+//
+//    /**
+//     * Returns a term that only contains the coefficient of the characters.
+//     */
+//    public Term removeAllChar() {
+//        return new Term(signum, numerator, denominator, radical);
+//    }
 
 
     /**
@@ -891,8 +919,6 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
      * Determines whether this term and another term can be merged.
      * It is required that the radical and characters are the identity unless
      *
-     * @param t
-     * @return
      */
     public boolean canMerge(Term t) {
         if (t.isZero() || this.isZero()) {
@@ -1101,7 +1127,6 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     /**
      * Returns a term who has the identity number part as this but has no character.
      *
-     * @return
      */
     public Term numberPart() {
         if (hasNoChar()) {
@@ -1131,7 +1156,8 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     }
 
     public Term sameChar(Fraction fraction) {
-        return new Term(fraction.getSignum(), BigInteger.valueOf(fraction.getNumerator()), BigInteger.valueOf(fraction.getDenominator()), BigInteger.ONE, this.character);
+        return new Term(fraction.getSignum(), BigInteger.valueOf(fraction.getNumeratorAbs()),
+                BigInteger.valueOf(fraction.getDenominator()), BigInteger.ONE, this.character);
     }
 
     public Term sameChar(int signum, BigInteger numerator, BigInteger denominator, BigInteger radical) {
@@ -1184,6 +1210,15 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         for (var en : character.entrySet()) {
             addChar(nmap, replacer.apply(en.getKey()), en.getValue());
         }
+        return sameNumber0(nmap);
+    }
+
+    public Term multiplyChar(String ch, Fraction pow) {
+        if (pow.isZero()) {
+            return this;
+        }
+        var nmap = new TreeMap<>(character);
+        addChar(nmap, ch, pow);
         return sameNumber0(nmap);
     }
 
@@ -1369,8 +1404,11 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
 
     }
 
-    private static void addChar(NavigableMap<String, Fraction> character, String cha, Fraction t) {
-        character.merge(cha, t, (ori, toMerge) -> {
+    /**
+     * Adds the character and the corresponding power to the map, removing the character if the resulting power is zero.
+     */
+    private static void addChar(NavigableMap<String, Fraction> cmap, String ch, Fraction t) {
+        cmap.merge(ch, t, (ori, toMerge) -> {
             Fraction re = ori.add(toMerge);
             if (re.isZero()) {
                 return null;
@@ -1584,7 +1622,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         return new Term(map);
     }
 
-    public static Term characters(NavigableMap<String, Fraction> characters) {
+    public static Term characters(Map<String, Fraction> characters) {
         TreeMap<String, Fraction> map = new TreeMap<>(characters);
         return new Term(map);
     }
@@ -1792,7 +1830,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     }
 
     public static Term valueOf(Fraction f) {
-        return new Term(f.getSignum(), BigInteger.valueOf(f.getNumerator())
+        return new Term(f.getSignum(), BigInteger.valueOf(f.getNumeratorAbs())
                 , BigInteger.valueOf(f.getDenominator()), BigInteger.ONE);
     }
 
@@ -1933,9 +1971,9 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
         throw new UnsupportedCalculationException();
     }
 
-    public static void main(String[] args) {
-
-    }
+//    public static void main(String[] args) {
+//
+//    }
 //        var t1 = valueOf("x^2");
 //        var t2 = valueOf("y^2");
 //        var t3 = valueOf("x");

@@ -10,9 +10,9 @@ import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.expression.ExprCalculator;
 import cn.ancono.math.numberModels.expression.Expression;
 import cn.ancono.math.numberModels.expression.SimplificationStrategies;
-import cn.ancono.math.geometry.analytic.planeAG.Line;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
-import cn.ancono.math.geometry.analytic.planeAG.curve.EllipseV;
+import cn.ancono.math.geometry.analytic.plane.Line;
+import cn.ancono.math.geometry.analytic.plane.Point;
+import cn.ancono.math.geometry.analytic.plane.curve.EllipseV;
 import org.junit.Test;
 
 import java.util.List;
@@ -56,16 +56,16 @@ public class ExpressionTest {
 
 	@Test
 	public void testFractionSimplify1() {
-		Expression x = Expression.fromMultinomial(Multinomial.valueOf("a+b")),
-				y = Expression.fromMultinomial(Multinomial.valueOf("a")),
-				z = Expression.fromMultinomial(Multinomial.valueOf("b"));
-		y = mc.multiply(sin, y);
-		z = mc.multiply(sin, z);
-		y = mc.divide(y, x);
-		z = mc.divide(z, x);
-		x = mc.add(y, z);
-		assertEquals("((a)*sin(x))/(a+b)+((b)*sin(x))/(a+b) = sin(x)" , x.toString(), "sin(x)");
-	}
+        Expression x = Expression.fromMultinomial(Multinomial.parse("a+b")),
+                y = Expression.fromMultinomial(Multinomial.parse("a")),
+                z = Expression.fromMultinomial(Multinomial.parse("b"));
+        y = mc.multiply(sin, y);
+        z = mc.multiply(sin, z);
+        y = mc.divide(y, x);
+        z = mc.divide(z, x);
+        x = mc.add(y, z);
+        assertEquals("((a)*sin(x))/(a+b)+((b)*sin(x))/(a+b) = sin(x)", x.toString(), "sin(x)");
+    }
 	@Test
 	public void testFractionSimplify2() {
 		Expression x = mc.divide(sin, cos),
@@ -94,12 +94,12 @@ public class ExpressionTest {
 	}
 
 	@Test
-    public void testMerge(){
+    public void testMerge() {
         SimplificationStrategies.setCalRegularization(mc);
-        Expression x = mc.squareRoot(Expression.fromMultinomial(Multinomial.valueOf("a+b"))),
-                y = Expression.fromMultinomial(Multinomial.valueOf("a")),
-                z = Expression.fromMultinomial(Multinomial.valueOf("b"));
-        printAndList(mc.add(mc.multiply(x,y),mc.multiply(x,z)));
+        Expression x = mc.squareRoot(Expression.fromMultinomial(Multinomial.parse("a+b"))),
+                y = Expression.fromMultinomial(Multinomial.parse("a")),
+                z = Expression.fromMultinomial(Multinomial.parse("b"));
+        printAndList(mc.add(mc.multiply(x, y), mc.multiply(x, z)));
     }
 
     @Test
@@ -172,8 +172,8 @@ public class ExpressionTest {
             return 1d;
         };
         assertMathEquals(expr.compute(f, mc), valueOf("(2x+3y)/(x-y)"), mc);
-        assertMathEquals(expr.computeDouble(f2), 16d / 3, Calculators.getCalDoubleDev());
-        assertMathEquals(mc.parse("sin(x)").computeDouble(f2), 1d, Calculators.getCalDoubleDev());
+        assertMathEquals(expr.computeDouble(f2), 16d / 3, Calculators.doubleDev());
+        assertMathEquals(mc.parse("sin(x)").computeDouble(f2), 1d, Calculators.doubleDev());
     }
 
 	@Test

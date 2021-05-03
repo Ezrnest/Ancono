@@ -8,11 +8,11 @@ import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
-import cn.ancono.math.geometry.analytic.planeAG.Line;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
-import cn.ancono.math.geometry.analytic.planeAG.curve.AbstractPlaneFunction;
-import cn.ancono.math.geometry.analytic.planeAG.curve.ConicSection;
-import cn.ancono.math.geometry.analytic.planeAG.curve.GeneralConicSection;
+import cn.ancono.math.geometry.analytic.plane.Line;
+import cn.ancono.math.geometry.analytic.plane.Point;
+import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneFunction;
+import cn.ancono.math.geometry.analytic.plane.curve.ConicSection;
+import cn.ancono.math.geometry.analytic.plane.curve.GeneralConicSection;
 import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
@@ -128,7 +128,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      */
     @NotNull
     @Override
-    public <N> QuadraticFunction<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> QuadraticFunction<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new QuadraticFunction<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
     }
 
@@ -197,7 +197,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      * @see cn.ancono.math.function.SVPFunction#getCoefficient(int)
      */
     @Override
-    public T getCoefficient(int n) {
+    public T get(int n) {
         switch (n) {
             case 0:
                 return c;
@@ -237,12 +237,12 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
     public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
         StringBuilder sb = new StringBuilder();
         for (int i = 2; i > 0; i--) {
-            if (getMc().isZero(getCoefficient(i)))
+            if (getMc().isZero(get(i)))
                 continue;
-            sb.append(nf.format(getCoefficient(i), getMc())).append("*x^").append(i).append(" + ");
+            sb.append(nf.format(get(i), getMc())).append("*x^").append(i).append(" + ");
         }
-        if (getMc().isZero(getCoefficient(0)) == false) {
-            sb.append(nf.format(getCoefficient(0), getMc()));
+        if (getMc().isZero(get(0)) == false) {
+            sb.append(nf.format(get(0), getMc()));
         } else {
             sb.delete(sb.length() - 3, sb.length());
         }

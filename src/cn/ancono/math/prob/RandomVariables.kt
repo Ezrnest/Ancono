@@ -1,6 +1,6 @@
 package cn.ancono.math.prob
 
-import cn.ancono.numeric.NumericSup
+import cn.ancono.math.numeric.NumericSup
 import java.util.*
 import java.util.function.DoubleUnaryOperator
 import kotlin.math.sqrt
@@ -34,9 +34,12 @@ fun <T, R> RandomVariable<T>.map(f: (T) -> R): RandomVariable<R> {
     return UnaryMappedRV(this, f)
 }
 
+
 operator fun DoubleRV.unaryMinus(): DoubleRV {
-    return this.map(Double::unaryMinus)
+    return this.map(Double::unaryMinus as (Double) -> Double)
+//    return this.map
 }
+
 
 /**
  * Provides methods of constructing random variables.
@@ -44,10 +47,17 @@ operator fun DoubleRV.unaryMinus(): DoubleRV {
 object RandomVariables {
 
     /**
+     * Returns the given constant as a random variable.
+     */
+    fun <T> constant(c: T): RandomVariable<T> {
+        return ConstantRV(c)
+    }
+
+    /**
      * Returns a random variable of uniform distribution.
      */
     fun uniform(lower: Double = 0.0, upper: Double = 1.0): SimpleRV<Double, Double> {
-        return IdentityVariable(IntervalSpace(lower, upper))
+        return IdentityRV(IntervalSpace(lower, upper))
     }
 
     /**
@@ -57,7 +67,7 @@ object RandomVariables {
      *     P{ X = 1 } = 1-p
      */
     fun bernoulli(p: Double = 0.5): SimpleRV<Int, Int> {
-        return IdentityVariable(BernoulliSpace(p))
+        return IdentityRV(BernoulliSpace(p))
     }
 
     /**
@@ -66,7 +76,7 @@ object RandomVariables {
      *     P{ X = n } = q^(n-1) * p    ( n > 0 )
      */
     fun geometry(p: Double = 0.5): SimpleRV<Int, Int> {
-        return IdentityVariable(GeomSpace(p))
+        return IdentityRV(GeomSpace(p))
     }
 
 
@@ -79,7 +89,7 @@ object RandomVariables {
         if (n == 1) {
             return bernoulli(p)
         }
-        return IdentityVariable(BinomialSpace(p, n))
+        return IdentityRV(BinomialSpace(p, n))
     }
 
     /**
@@ -91,7 +101,7 @@ object RandomVariables {
         if (n == 1) {
             return geometry(p)
         }
-        return IdentityVariable(PascalSpace(p, n))
+        return IdentityRV(PascalSpace(p, n))
     }
 
     /**
@@ -101,7 +111,7 @@ object RandomVariables {
      * @param sigma the square root of the variance
      */
     fun normal(a: Double = 0.0, sigma: Double = 1.0): SimpleRV<Double, Double> {
-        return NormalDist(a, sigma, StandardNormalDistSpace())
+        return NormalRV(a, sigma, StandardNormalDistSpace())
     }
 
     /**
@@ -110,7 +120,7 @@ object RandomVariables {
      *     P{ X = n } = k^n / n! * e^(-k)     (n>=0)
      */
     fun poisson(k: Double = 1.0): SimpleRV<Int, Int> {
-        return IdentityVariable(PoissonSpace(k))
+        return IdentityRV(PoissonSpace(k))
     }
 
     /**
@@ -119,7 +129,7 @@ object RandomVariables {
      *     p(x) = ke^(-kx)    ( x > 0 )
      */
     fun exponent(k: Double = 1.0): SimpleRV<Double, Double> {
-        return ExpDist(k, StandardExpSpace())
+        return ExpRV(k, StandardExpSpace())
     }
 
     /**
@@ -192,7 +202,7 @@ object RandomVariables {
     /**
      * Returns a list of independent identically distributed random variables.
      */
-    fun <T, E : Any> iid(x: SimpleRV<E, T>, n: Int): List<SimpleRV<List<E>, T>> {
+    fun <T, E> iid(x: SimpleRV<E, T>, n: Int): List<SimpleRV<List<E>, T>> {
         val space = ProductSpace(Collections.nCopies(n, x.space))
 
         return (0 until n).map { i ->
@@ -261,6 +271,9 @@ object RandomVariables {
         return map(rvs) { it.average() }
     }
 
+    /**
+     * Estimates the expectation of the random variable `x` basing on the law of large number.
+     */
     fun estimateExpectation(x: DoubleRV, times: Int = 1000000): Double {
         return x.getAsSequence().take(times).average()
     }
@@ -300,4 +313,5 @@ object RandomVariables {
         val data = DoubleArray(counting.size) { i -> counting[i].toDouble() / times }
         return data
     }
+
 }

@@ -12,6 +12,15 @@ object ExceptionUtil {
     }
 
     /**
+     * Throws an ArithmeticException indicating the element is not invertible while trying to calculate its inverse.
+     * <pre>x / 0</pre>
+     */
+    @JvmStatic
+    fun notInvertible(): Nothing {
+        throw ArithmeticException("Not invertible.")
+    }
+
+    /**
      * Throws an ArithmeticException of 0^0, an undefined exponent operation
      */
     @JvmStatic
@@ -57,7 +66,7 @@ object ExceptionUtil {
      * For example, `2` is exact not divisible by `3`.
      */
     @JvmStatic
-    fun notExactDivision(x: Any, y: Any): Nothing {
-        throw UnsupportedCalculationException("Not exact division: $x / $y")
+    fun notExactDivision(x: Any?, y: Any?): Nothing {
+        throw ArithmeticException("Not exact division: $x / $y")
     }
 }

@@ -12,7 +12,7 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException
  * @param T the type of number to deal with
  *
  */
-abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
+abstract class MathCalculatorAdapter<T> : MathCalculator<T> {
 
     override val one: T
         get() {
@@ -24,13 +24,16 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
             throwFor()
         }
 
+    override val characteristic: Long
+        get() = 0
+
     @Throws(UnsupportedCalculationException::class)
     private fun throwFor(): Nothing {
         throw UnsupportedCalculationException("Adapter")
     }
 
-    override fun isZero(para: T): Boolean {
-        return isEqual(para, zero)
+    override fun isZero(x: T): Boolean {
+        return isEqual(x, zero)
     }
 
     override fun isEqual(x: T, y: T): Boolean {
@@ -51,7 +54,7 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         throwFor()
     }
 
-    override fun abs(para: T): T {
+    override fun abs(x: T): T {
         throwFor()
     }
 
@@ -80,10 +83,6 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
     }
 
     override fun squareRoot(x: T): T {
-        throwFor()
-    }
-
-    override fun pow(x: T, n: Long): T {
         throwFor()
     }
 
@@ -171,10 +170,6 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         return super.gpow(x, n)
     }
 
-    override val numberClass: Class<*>
-        get() = zero.javaClass
-
-
     override fun T.div(y: T): T {
         return divide(this, y)
     }
@@ -211,3 +206,8 @@ abstract class MathCalculatorAdapter<T : Any> : MathCalculator<T> {
         return compare(this, y)
     }
 }
+
+
+//abstract class MathCalculatorAdapterRing<T : RingNumberModel<T>> : MathCalculatorAdapter<T>(){
+//
+//}

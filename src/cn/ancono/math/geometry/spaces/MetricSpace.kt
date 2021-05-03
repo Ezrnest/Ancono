@@ -18,10 +18,11 @@ package cn.ancono.math.geometry.spaces
  * Created at 2018/11/29 16:17
  * @author  liyicheng
  */
-interface MetricSpace<T : Any, R : Any> {
+interface MetricSpace<in T, out R> {
     /**
      * Returns the distance defined in this metric space.
      */
     fun distance(x: T, y: T): R
-
 }
+
+

@@ -3,22 +3,32 @@ package cn.ancono.math.numberModels.structure
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.abstractAlgebra.FiniteGroups
-import cn.ancono.math.algebra.abstractAlgebra.calculator.DivisionRingCalculator
-import cn.ancono.math.algebra.abstractAlgebra.calculator.asGroupCalculator
-import cn.ancono.math.algebra.abstractAlgebra.group.finite.AbstractFiniteGroup
-import cn.ancono.math.geometry.analytic.spaceAG.SVector
+import cn.ancono.math.algebra.abs.FiniteGroups
+import cn.ancono.math.algebra.abs.calculator.DivisionRingCalculator
+import cn.ancono.math.algebra.abs.calculator.asGroupCalculator
+import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.abs.group.finite.AbstractFiniteGroup
+import cn.ancono.math.geometry.analytic.space.SVector
+import cn.ancono.math.numberModels.api.FieldNumberModel
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import java.util.function.Function
 
 
-class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
+class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T>)
+    : MathObjectExtend<T>(mc), FieldNumberModel<Quaternion<T>> {
     val tensor: T by lazy(LazyThreadSafetyMode.NONE) {
         a * a + b * b + c * c + d * d
     }
 
+    /**
+     * Returns the real part as a quaternion.
+     */
     fun real(): Quaternion<T> {
         return real(a, mc)
+    }
+
+    override fun isZero(): Boolean {
+        return mc.eval { isZero(a) && isZero(b) && isZero(c) && isZero(d) }
     }
 
     operator fun plus(y: Quaternion<T>): Quaternion<T> {
@@ -44,14 +54,27 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
         return Quaternion(na, nb, nc, nd, mc)
     }
 
+    override fun add(y: Quaternion<T>): Quaternion<T> {
+        return plus(y)
+    }
+
+    override fun negate(): Quaternion<T> {
+        return unaryMinus()
+    }
+
+    override fun multiply(y: Quaternion<T>): Quaternion<T> {
+        return times(y)
+    }
+
+
     operator fun unaryMinus(): Quaternion<T> = Quaternion(-a, -b, -c, -d, mc)
 
     /**
      * Returns the reciprocal of this quaternion:
      * (a - bi - cj - dk) / tensor, tensor = a^2 + b^2 + c^2 + d^2
      */
-    fun reciprocal(): Quaternion<T> {
-        return conjugate() / tensor
+    override fun reciprocal(): Quaternion<T> {
+        return conj() / tensor
     }
 
     /**
@@ -63,9 +86,9 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
 
     /**
      * Returns the conjugate of this quaternion:
-     * a - bi - cj - dk
+     * > a - bi - cj - dk
      */
-    fun conjugate(): Quaternion<T> {
+    fun conj(): Quaternion<T> {
         return Quaternion(a, -b, -c, -d, mc)
     }
 
@@ -76,6 +99,25 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
     operator fun div(y: T): Quaternion<T> {
         return Quaternion(a / y, b / y, c / y, d / y, mc)
     }
+
+    override fun multiply(n: Long): Quaternion<T> {
+        return Quaternion(mc.multiplyLong(a, n),
+                mc.multiplyLong(b, n),
+                mc.multiplyLong(c, n),
+                mc.multiplyLong(d, n), mc)
+    }
+
+    operator fun times(k: Long): Quaternion<T> = multiply(k)
+
+
+    fun divide(n: Long): Quaternion<T> {
+        return Quaternion(mc.divideLong(a, n),
+                mc.divideLong(b, n),
+                mc.divideLong(c, n),
+                mc.divideLong(d, n), mc)
+    }
+
+    operator fun div(k: Long): Quaternion<T> = divide(k)
 
     operator fun div(y: Quaternion<T>): Quaternion<T> {
         return this * y.reciprocal()
@@ -134,47 +176,47 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
             j 	j 	−k 	−1 	i
             k 	k 	j 	−i 	−1
      */
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Quaternion<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Quaternion<N> {
         return Quaternion(mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d), newCalculator)
     }
 
     companion object {
 
-        fun <T : Any> real(a: T, mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> real(a: T, mc: MathCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(a, it, it, it, mc) }
         }
 
-        fun <T : Any> valueOf(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> valueOf(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): Quaternion<T> {
             return Quaternion(a, b, c, d, mc)
         }
 
-        fun <T : Any> parse(str: String, mc: MathCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
+        fun <T> parse(str: String, mc: MathCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
             val arr = deliminator.split(str).map(parser)
             return valueOf(arr[0], arr[1], arr[2], arr[3], mc)
         }
 
-        fun <T : Any> zero(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> zero(mc: MathCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(it, it, it, it, mc) }
         }
 
-        fun <T : Any> one(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> one(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(one, zero, zero, zero, mc) }
         }
 
-        fun <T : Any> baseI(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseI(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, one, zero, zero, mc) }
         }
 
-        fun <T : Any> baseJ(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseJ(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, one, zero, mc) }
         }
 
-        fun <T : Any> baseK(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseK(mc: MathCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, zero, one, mc) }
         }
 
 
-        fun <T : Any> getCalculator(mc: MathCalculator<T>): QuaternionCalculator<T> {
+        fun <T> calculator(mc: MathCalculator<T>): QuaternionCalculator<T> {
             return QuaternionCalculator(mc)
         }
 
@@ -182,25 +224,27 @@ class Quaternion<T : Any>(val a: T, val b: T, val c: T, val d: T, mc: MathCalcul
          * Returns the quaternion eight-group, whose elements are `1,-1,i,j,k,-i,-j,-k` and
          * the group operation is multiplication.
          */
-        fun <T : Any> quaternionGroup(mc: MathCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
-            val qc = getCalculator(mc)
+        fun <T> quaternionGroup(mc: MathCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
+            val qc = calculator(mc)
             val gc = qc.asGroupCalculator()
             val e = one(mc)
             val i = baseI(mc)
             val j = baseJ(mc)
             val k = baseK(mc)
-            val _e = -e
-            val _i = -i
-            val _j = -j
-            val _k = -k
-            return FiniteGroups.createGroupWithoutCheck(gc, e, i, j, k, _e, _i, _j, _k)
+            val nE = -e
+            val nI = -i
+            val nJ = -j
+            val nK = -k
+            return FiniteGroups.createGroupWithoutCheck(gc, e, i, j, k, nE, nI, nJ, nK)
         }
 
 
     }
+
+
 }
 
-class QuaternionCalculator<T : Any>(val mc: MathCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
+class QuaternionCalculator<T>(val mc: MathCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
     override val isMultiplyCommutative: Boolean
         get() = false
 
@@ -235,6 +279,13 @@ class QuaternionCalculator<T : Any>(val mc: MathCalculator<T>) : DivisionRingCal
         return x.valueEquals(y)
     }
 
+    override fun multiplyLong(x: Quaternion<T>, n: Long): Quaternion<T> {
+        return x.multiply(n)
+    }
+
+    override fun divideLong(x: Quaternion<T>, n: Long): Quaternion<T> {
+        return x.divide(n)
+    }
 
 }
 

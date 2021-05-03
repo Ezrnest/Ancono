@@ -2,7 +2,7 @@ package cn.ancono.math
 
 import cn.ancono.math.set.Interval
 
-abstract class MathObjectExtend<T : Any>(mc: MathCalculator<T>) : MathObject<T>(mc) {
+abstract class MathObjectExtend<T>(mc: MathCalculator<T>) : AbstractMathObject<T>(mc) {
     protected operator fun T.plus(y: T) = mc.add(this, y)
     protected operator fun T.minus(y: T) = mc.subtract(this, y)
     protected operator fun T.times(y: T) = mc.multiply(this, y)

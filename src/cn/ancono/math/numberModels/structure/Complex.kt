@@ -2,48 +2,97 @@ package cn.ancono.math.numberModels.structure
 
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
+import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
-import cn.ancono.math.geometry.analytic.planeAG.PVector
-import cn.ancono.math.geometry.analytic.planeAG.Point
-import cn.ancono.math.geometry.analytic.spaceAG.SPoint
+import cn.ancono.math.geometry.analytic.plane.PVector
+import cn.ancono.math.geometry.analytic.plane.Point
+import cn.ancono.math.geometry.analytic.space.SPoint
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
+import org.jetbrains.annotations.NotNull
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 import kotlin.math.atan2
 
+/*
+Created by liyicheng 2020/2/24
+*/
+
 /**
- * Complex number ,a type of number that can be written as A+Bi,where A,B are
- * both real number,and "i" is the square root of `-1`.
+ * Describes the expanded complex including the infinity point.
+ */
+sealed class ComplexE<T> constructor(mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
+
+    abstract fun isInf(): Boolean
+
+    abstract override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ComplexE<N>
+}
+
+class ComplexInf<T> internal constructor(mc: MathCalculator<T>) : ComplexE<T>(mc) {
+
+    override fun isInf(): Boolean {
+        return true
+    }
+
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ComplexInf<N> {
+        return ComplexInf(newCalculator)
+    }
+
+    override fun valueEquals(obj: MathObject<T>): Boolean {
+        return obj is ComplexInf
+    }
+
+    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+        return "Inf"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is ComplexInf<*>
+    }
+
+    override fun hashCode(): Int {
+        return 0
+    }
+}
+
+
+/**
+ * Complex number, a type of number that can be written as `A+Bi`, where A,B are
+ * both real number, and "i" is the square root of `-1`.
  *
  *
- * In this type of number,all calculation will consider that both A and B are real number,
+ * In this type of number, all calculation will consider that both A and B are real number,
  * and followings are the basic rules.
  *  * Add:<pre> (A+Bi)+(C+Di) = (A+B)+(C+Di)</pre>
  *  * Negate:<pre> -(A+Bi) = -A + (-B)i</pre>
  *  * Subtract:<pre>Z1 - Z2 = Z1 + (-Z2)</pre>
  *  * Multiple:<pre>(A+Bi)*(C+Di)=(AC-BD)+(AD+BC)i</pre>
- *  * DIvide:<pre>(A+Bi)/(C+Di)=1/(C^2+D^2)*((AC+BD)+(BC-AD)i)</pre>
+ *  * Divide:<pre>(A+Bi)/(C+Di)=1/(C^2+D^2)*((AC+BD)+(BC-AD)i)</pre>
  * Operations such as modulus and conjugate are also provided.
  *
  *
  * The complex itself requires a type of number to implement A and B,such as
  * `Complex<Double>` and `Complex<Long>`,and complex is a kind of number too.
- * This may cause some waste, to use complex number only as a kind of number type, you may use
- * [ComplexI]
+ * This may cause some waste, to use complex number only as a kind of number type, you may use [cn.ancono.math.numberModels.ComplexI]
+ *
  * @author lyc
  *
- * @param <T>
  */
-class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) : MathObject<T>(mc), FieldNumberModel<Complex<T>> {
+class Complex<T> internal constructor(mc: MathCalculator<T>, a: T, b: T) : ComplexE<T>(mc),
+        FieldNumberModel<Complex<T>> {
 
 
     private val a: T = Objects.requireNonNull(a)
     private val b: T = Objects.requireNonNull(b)
     private var m: T? = null
     private var arg: T? = null
+
+    override fun isInf(): Boolean {
+        return false
+    }
 
     override fun isZero(): Boolean {
         return mc.isZero(a) && mc.isZero(b)
@@ -52,6 +101,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     fun isReal(): Boolean {
         return mc.isZero(b)
     }
+
 
     /**
      * Returns the real part of this,which is
@@ -261,22 +311,21 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     }
 
     /**
-     * Calculates the result of `this^p`,the `p` should be a non-negative
-     * number.
+     * Calculates the result of `this^p`.
      *
      *
-     * @param p the power
+     * @param n the power
      * @return `this^p`
      * @throws ArithmeticException if `p==0 && this==0`
      */
-    fun pow(p: Long): Complex<T> {
-        var p1 = p
+    override fun pow(n: Long): Complex<T> {
+        var p1 = n
         if (p1 < 0) {
-            throw IllegalArgumentException("Cannot calculate:p<0")
+            return reciprocal().pow(-n)
         }
 
         //we use this way to reduce the calculation to log(p)
-        var re = Complex.real(mc.one, mc)
+        var re = real(mc.one, mc)
         if (p1 == 0L) {
             if (mc.isZero(a) && mc.isZero(b)) {
                 throw ArithmeticException("0^0")
@@ -339,7 +388,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
 
     //	public Complex<T> powf()
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): Complex<N> {
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Complex<N> {
         return Complex(newCalculator, mapper.apply(a), mapper.apply(b))
     }
 
@@ -368,6 +417,13 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
                     return "i"
                 }
                 else -> {
+                    // possible feature for better formatting
+//                    val s = nf.format(b,mc)
+//                    if (s.length == 1) {
+//                        return s
+//                    }else{
+//                        return "($s)"
+//                    }
                     return "(" + nf.format(b, mc) + ")i"
                 }
             }
@@ -400,7 +456,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         return false
     }
 
-    override fun <N : Any> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         if (obj is Complex<*>) {
             val com = obj as Complex<N>
             return mc.isEqual(a, mapper.apply(com.a)) && mc.isEqual(b, mapper.apply(com.b))
@@ -409,18 +465,29 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     }
 
 
-    class ComplexCalculator<T : Any>(val mc: MathCalculator<T>) : MathCalculatorAdapter<Complex<T>>() {
-        override val zero: Complex<T> = Complex.zero(mc)
-        override val one: Complex<T> = Complex.real(mc.one, mc)
+    class ComplexCalculator<T>(val mc: MathCalculator<T>) : MathCalculatorAdapter<Complex<T>>() {
+        override val zero: Complex<T> = zero(mc)
+        override val one: Complex<T> = real(mc.one, mc)
+
         /**
          * The imaginary unit `i = Sqr(-1)`.
          */
-        val i: Complex<T> = Complex.imaginary(mc.one, mc)
+        val i: Complex<T> = imaginary(mc.one, mc)
+
+        override fun of(x: Long): Complex<T> {
+            return real(mc.of(x))
+        }
+
+        override fun of(x: Fraction): Complex<T> {
+            return real(mc.of(x))
+        }
+
         /* (non-Javadoc)
-		 * @see cn.ancono.utilities.math.MathCalculator#getNumberClass()
-		 */
-        override val numberClass: Class<Complex<*>>
-            get() = Complex::class.java
+                 * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
+                 */
+        override val numberClass: Class<Complex<T>>
+            @Suppress("UNCHECKED_CAST")
+            get() = Complex::class.java as Class<Complex<T>>
 
         override fun isEqual(x: Complex<T>, y: Complex<T>): Boolean {
             return x.valueEquals(y)
@@ -442,8 +509,8 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * This method overrides the normal `abs()` method and it
          * is equal to modulus of the complex.(|z|)
          */
-        override fun abs(para: Complex<T>): Complex<T> {
-            return real(para.modulus())
+        override fun abs(x: Complex<T>): Complex<T> {
+            return real(x.modulus())
         }
 
         override fun subtract(x: Complex<T>, y: Complex<T>): Complex<T> {
@@ -566,6 +633,197 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
         }
     }
 
+
+    class ComplexECalculator<T>(val mc: ComplexCalculator<T>) : MathCalculatorAdapter<ComplexE<T>>() {
+        override val one: ComplexE<T> = mc.one
+        override val zero: ComplexE<T> = mc.zero
+        val i: ComplexE<T> = mc.i
+        val inf: ComplexE<T> = inf(mc.mc)
+
+        override fun of(x: Long): ComplexE<T> {
+            return mc.of(x)
+        }
+
+        override fun of(x: Fraction): ComplexE<T> {
+            return mc.of(x)
+        }
+
+        override fun isZero(x: ComplexE<T>): Boolean {
+            return x is Complex && mc.isZero(x)
+        }
+
+        override fun isEqual(x: ComplexE<T>, y: ComplexE<T>): Boolean {
+            if (x is Complex && y is Complex) {
+                return mc.isEqual(x, y)
+            } else {
+                return x.isInf() && y.isInf()
+            }
+        }
+
+        override fun add(x: ComplexE<T>, y: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex || y !is Complex) {
+                return inf
+            }
+            return mc.add(x, y)
+        }
+
+        override fun negate(x: ComplexE<T>): ComplexE<T> {
+            return if (x !is Complex) {
+                inf
+            } else {
+                mc.negate(x)
+            }
+        }
+
+        override fun abs(x: ComplexE<T>): ComplexE<T> {
+            return if (x !is Complex) {
+                inf
+            } else {
+                mc.abs(x)
+            }
+        }
+
+        override fun subtract(x: ComplexE<T>, y: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex || y !is Complex) {
+                return inf
+            }
+            return mc.subtract(x, y)
+        }
+
+        override fun multiply(x: ComplexE<T>, y: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                if (isZero(y)) {
+                    throw ArithmeticException("Inf * 0")
+                }
+                return inf
+            }
+            if (y !is Complex) {
+                if (isZero(x)) {
+                    throw ArithmeticException("0 * Inf")
+                }
+                return inf
+            }
+
+            return mc.multiply(x, y)
+        }
+
+        override fun divide(x: ComplexE<T>, y: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                if (y !is Complex) {
+                    throw ArithmeticException("Inf / Inf")
+                }
+                return inf
+            }
+            if (y !is Complex) {
+                return zero
+            }
+            return mc.divide(x, y)
+        }
+
+        override fun multiplyLong(x: ComplexE<T>, n: Long): ComplexE<T> {
+            if (x !is Complex) {
+                if (n == 0L) {
+                    throw ArithmeticException("Inf * 0")
+                }
+                return inf
+            }
+            return mc.multiplyLong(x, n)
+        }
+
+        override fun divideLong(x: ComplexE<T>, n: Long): ComplexE<T> {
+            if (x !is Complex) {
+                return inf
+            }
+            return mc.divideLong(x, n)
+        }
+
+        override fun reciprocal(x: ComplexE<T>): ComplexE<T> {
+            return if (x !is Complex) {
+                zero
+            } else {
+                mc.reciprocal(x)
+            }
+        }
+
+        override fun squareRoot(x: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                return inf
+            }
+            return mc.squareRoot(x)
+        }
+
+        override fun pow(x: ComplexE<T>, n: Long): ComplexE<T> {
+            if (x !is Complex) {
+                return when {
+                    n > 0 -> inf
+                    n == 0L -> throw ArithmeticException("Inf^0")
+                    else -> zero
+                }
+            }
+            return mc.pow(x, n)
+        }
+
+        override fun exp(a: ComplexE<T>, b: ComplexE<T>): ComplexE<T> {
+            return exp(multiply(b, ln(a)))
+        }
+
+        override fun cos(x: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                throw ArithmeticException("cos(Inf)")
+            }
+            return mc.cos(x)
+        }
+
+        override fun sin(x: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                throw ArithmeticException("sin(Inf)")
+            }
+            return mc.sin(x)
+        }
+
+
+        override fun tan(x: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                throw ArithmeticException("tan(Inf)")
+            }
+            return mc.tan(x)
+        }
+
+        override fun nroot(x: ComplexE<T>, n: Long): ComplexE<T> {
+            if (x !is Complex) {
+                return inf
+            }
+            return mc.nroot(x, n)
+        }
+
+        override fun exp(x: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                return inf
+            }
+            return mc.exp(x)
+        }
+
+        override fun ln(x: ComplexE<T>): ComplexE<T> {
+            if (x !is Complex) {
+                return inf
+            }
+            return mc.ln(x)
+        }
+
+
+        fun crossRatio(
+                x1: ComplexE<T>, x2: ComplexE<T>,
+                x3: ComplexE<T>, x4: ComplexE<T>
+        ): ComplexE<T> {
+            return crossRatio(x1, x2, x3, x4, mc.mc)
+        }
+
+        override val numberClass: Class<ComplexE<T>>
+            @Suppress("UNCHECKED_CAST")
+            get() = ComplexE::class.java as Class<ComplexE<T>>
+    }
+
+
     companion object {
         //some argument function implements here:
         /**
@@ -587,7 +845,8 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return
          */
         @Suppress("UNCHECKED_CAST")
-        fun <T : Any> zero(mc: MathCalculator<T>): Complex<T> {
+        @JvmStatic
+        fun <T> zero(mc: MathCalculator<T>): Complex<T> {
             var c: Complex<T>? = zeros[mc] as Complex<T>?
             if (c == null) {
                 val z = mc.zero
@@ -608,21 +867,23 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return a new complex.
          */
         @JvmStatic
-        fun <T : Any> of(a: T, b: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> of(a: T, b: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, a, b)
         }
 
         /**
          * Gets the value of `1`.
          */
-        fun <T : Any> one(mc: MathCalculator<T>): Complex<T> {
+        @JvmStatic
+        fun <T> one(mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.one, mc.zero)
         }
 
         /**
          * Gets the value of `i`.
          */
-        fun <T : Any> i(mc: MathCalculator<T>): Complex<T> {
+        @JvmStatic
+        fun <T> i(mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.zero, mc.one)
         }
 
@@ -635,9 +896,15 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return a new complex.
          */
         @JvmStatic
-        fun <T : Any> real(a: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> real(a: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, a, mc.zero)
         }
+
+        @JvmStatic
+        fun <T> inf(mc: MathCalculator<T>): ComplexE<T> {
+            return ComplexInf(mc)
+        }
+
 
         /**
          * Create a real number
@@ -648,7 +915,7 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return a new complex.
          */
         @JvmStatic
-        fun <T : Any> imaginary(b: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> imaginary(b: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.zero, b)
         }
 
@@ -660,18 +927,24 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          * @return
          */
         @JvmStatic
-        fun <T : Any> modArg(r: T, theta: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> modArg(r: T, theta: T, mc: MathCalculator<T>): Complex<T> {
             return Complex(mc, mc.multiply(r, mc.cos(theta)), mc.multiply(r, mc.sin(theta)))
         }
 
         /**
-         * Gets a wrapped calculator for the number type complex.
-         * @param mc
-         * @return
+         * Gets a calculator for complex using the given MathCalculator.
          */
         @JvmStatic
-        fun <T : Any> getCalculator(mc: MathCalculator<T>): ComplexCalculator<T> {
+        fun <T> calculator(mc: MathCalculator<T>): ComplexCalculator<T> {
             return ComplexCalculator(mc)
+        }
+
+        /**
+         * Gets a calculator for the extended complex.
+         */
+        @JvmStatic
+        fun <T> calculatorE(mc: MathCalculator<T>): ComplexECalculator<T> {
+            return ComplexECalculator(calculator(mc))
         }
 
         /**
@@ -685,45 +958,108 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
          *
          */
         @JvmStatic
-        fun <T : Any> crossRatio(x1: Complex<T>, x2: Complex<T>, x3: Complex<T>, x4: Complex<T>): Complex<T> {
+        fun <T> crossRatio(x1: Complex<T>, x2: Complex<T>, x3: Complex<T>, x4: Complex<T>): Complex<T> {
             //  (x1-x3)(x2-x4)/(x1-x4)(x2-x3)
             return (x1 - x3) * (x2 - x4) / ((x1 - x4) * (x2 - x3))
         }
 
         /**
-         * Returns hte bijection of stereographic projection from north pole (0,0,1).
+         * Returns the bijection of stereographic projection from north pole (0,0,1).
          */
-        fun <T : Any> stereographicProjection(mc: MathCalculator<T>): Bijection<SPoint<T>, ComplexH<T>> {
-            return object : Bijection<SPoint<T>, ComplexH<T>> {
-                override fun apply(x: SPoint<T>): ComplexH<T> {
+        fun <T> stereographicProjection(mc: MathCalculator<T>): Bijection<SPoint<T>, ComplexE<T>> {
+            return object : Bijection<SPoint<T>, ComplexE<T>> {
+                override fun apply(x: SPoint<T>): ComplexE<T> {
                     //x/(1-z),y/(1-z)
                     val base = mc.subtract(mc.one, x.z)
                     return if (mc.isZero(base)) {
-                        ComplexH()
+                        inf(mc)
                     } else {
                         val z1 = mc.divide(x.x, base)
                         val z2 = mc.divide(x.y, base)
-                        ComplexH(Complex(mc, z1, z2))
+                        Complex(mc, z1, z2)
                     }
                 }
 
-                override fun deply(y: ComplexH<T>): SPoint<T> {
-                    return if (y.isInf) {
+                override fun deply(y: @NotNull ComplexE<T>): SPoint<T> {
+                    return if (y !is Complex) {
                         SPoint(mc, mc.zero, mc.zero, mc.one)
                     } else {
-                        val v = y.value
-                        val modSq = v.modulusSq()
+                        val modSq = y.modulusSq()
                         val base = mc.add(modSq, mc.one)
-                        val x1 = mc.divide(mc.multiplyLong(v.a, 2), base)
-                        val x2 = mc.divide(mc.multiplyLong(v.b, 2), base)
+                        val x1 = mc.divide(mc.multiplyLong(y.a, 2), base)
+                        val x2 = mc.divide(mc.multiplyLong(y.b, 2), base)
                         val x3 = mc.divide(mc.subtract(modSq, mc.one), base)
                         SPoint(mc, x1, x2, x3)
                     }
                 }
-
             }
         }
 
+
+        private fun <T> minusFrac(
+                x: ComplexE<T>, y1: ComplexE<T>, y2: ComplexE<T>,
+                mc: MathCalculator<T>
+        ): ComplexE<T> {
+            // (x-y1)/(x-y2)
+            if (x !is Complex) {
+                return one(mc)
+            }
+            if (y2 !is Complex) {
+                return if (y1 !is Complex) {
+                    one(mc)
+                } else {
+                    zero(mc)
+                }
+            }
+            if (y1 !is Complex) {
+                return inf(mc)
+            }
+            val nume = x - y1
+            val deno = x - y2
+            return if (deno.isZero()) {
+                if (nume.isZero()) {
+                    one(mc)
+                } else {
+                    inf(mc)
+                }
+            } else {
+                nume / deno
+            }
+        }
+
+        /**
+         * Returns the cross ratio of the four complex.
+         *
+         *     crossRatio(x1,x2,x3,x4) = (x1-x3)(x2-x4)/((x1-x4)(x2-x3))
+         *
+         * Some properties:
+         *
+         * 1. crossRatio(x1,x2,x3,x4) is real iff x1,x2,x3,x4 is on a circle (including line)
+         * 2.
+         *
+         */
+        @JvmStatic
+        fun <T> crossRatio(
+                x1: ComplexE<T>, x2: ComplexE<T>,
+                x3: ComplexE<T>, x4: ComplexE<T>,
+                mc: MathCalculator<T>
+        ): ComplexE<T> {
+
+            //  (x1-x3)(x2-x4)/((x1-x4)(x2-x3))
+            if (x1 !is Complex) {
+                return minusFrac(x2, x4, x3, mc)
+            }
+            if (x2 !is Complex) {
+                return minusFrac(x1, x3, x4, mc)
+            }
+            if (x3 !is Complex) {
+                return minusFrac(x4, x2, x1, mc)
+            }
+            if (x4 !is Complex) {
+                return minusFrac(x3, x1, x2, mc)
+            }
+            return (x1 - x3) * (x2 - x4) / ((x1 - x4) * (x2 - x3))
+        }
 
     }
 
@@ -740,338 +1076,59 @@ class Complex<T : Any> internal constructor(mc: MathCalculator<T>, a: T, b: T) :
     //		list.forEach(f -> Printer.print(f.multiply(mul)));
     //	}
 
-    /**
-     *
-     */
 
 }
 
-/**
- * Describes the expanded complex including the infinity point.
- */
-class ComplexH<T : Any> {
-    /*
-    Created by liyicheng 2020/2/24
-     */
 
-    private val v: Complex<T>?
-
-    val isInf: Boolean
-        @JvmName("isInf")
-        get() = v == null
-
-    val value: Complex<T>
-        get() {
-            if (isInf) {
-                throw ArithmeticException("Inf")
-            }
-            return v!!
-        }
-
-    internal constructor(v: Complex<T>) {
-        this.v = v
-    }
-
-    internal constructor() {
-        v = null
-    }
-
-    fun isLimited(): Boolean = !isInf
-
-    override fun toString(): String {
-        return if (isInf) {
-            "Inf"
-        } else {
-            v.toString()
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ComplexH<*>
-
-        if (v != other.v) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return v?.hashCode() ?: 0
-    }
-
-
-    companion object {
-        fun <T : Any> of(mc: MathCalculator<T>, x: T, y: T): ComplexH<T> {
-            return ComplexH(Complex.of(x, y, mc))
-        }
-
-        fun <T : Any> of(z: Complex<T>): ComplexH<T> {
-            return ComplexH(z)
-        }
-
-        fun <T : Any> zero(mc: MathCalculator<T>): ComplexH<T> {
-            return of(Complex.zero(mc))
-        }
-
-        fun <T : Any> one(mc: MathCalculator<T>): ComplexH<T> {
-            return of(Complex.one(mc))
-        }
-
-        fun <T : Any> i(mc: MathCalculator<T>): ComplexH<T> {
-            return of(Complex.i(mc))
-        }
-
-        fun <T : Any> real(x: T, mc: MathCalculator<T>): ComplexH<T> {
-            return of(Complex.real(x, mc))
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        fun <T : Any> inf(): ComplexH<T> {
-            return INF as ComplexH<T>
-        }
-
-        val INF: ComplexH<Any> = ComplexH()
-
-        fun <T : Any> getCalculator(mc: MathCalculator<T>): ComplexHCalculator<T> {
-            return ComplexHCalculator(Complex.getCalculator(mc))
-        }
-
-        private fun <T : Any> minusFrac(x: ComplexH<T>, y1: ComplexH<T>, y2: ComplexH<T>,
-                                        mc: MathCalculator<T>): ComplexH<T> {
-            // (x-y1)/(x-y2)
-            if (x.isInf) {
-                return one(mc)
-            }
-            if (y2.isInf) {
-                return if (y1.isInf) {
-                    one(mc)
-                } else {
-                    zero(mc)
-                }
-            }
-            if (y1.isInf) {
-                return inf()
-            }
-            val nume = x.value - y1.value
-            val deno = x.value - y2.value
-            return if (deno.isZero()) {
-                if (nume.isZero()) {
-                    one(mc)
-                } else {
-                    inf()
-                }
-            } else {
-                of(nume / deno)
-            }
-        }
-
-        /**
-         * Returns the cross ratio of the four complex.
-         *
-         *     crossRatio(x1,x2,x3,x4) = (x1-x3)(x2-x4)/((x1-x4)(x2-x3))
-         *
-         * Some properties:
-         *
-         * 1. crossRatio(x1,x2,x3,x4) is real iff x1,x2,x3,x4 is on a circle (including line)
-         * 2.
-         *
-         */
-        @JvmStatic
-        fun <T : Any> crossRatio(x1: ComplexH<T>, x2: ComplexH<T>,
-                                 x3: ComplexH<T>, x4: ComplexH<T>,
-                                 mc: MathCalculator<T>): ComplexH<T> {
-
-            //  (x1-x3)(x2-x4)/((x1-x4)(x2-x3))
-            if (x1.isInf) {
-                return minusFrac(x2, x4, x3, mc)
-            }
-            if (x2.isInf) {
-                return minusFrac(x1, x3, x4, mc)
-            }
-            if (x3.isInf) {
-                return minusFrac(x4, x2, x1, mc)
-            }
-            if (x4.isInf) {
-                return minusFrac(x3, x1, x2, mc)
-            }
-            val result = (x1.value - x3.value) * (x2.value - x4.value) / ((x1.value - x4.value) * (x2.value - x3.value))
-            return of(result)
-        }
-
-    }
-
-    class ComplexHCalculator<T : Any>(val mc: Complex.ComplexCalculator<T>) : MathCalculatorAdapter<ComplexH<T>>() {
-        override val one: ComplexH<T> = ComplexH(mc.one)
-        override val zero: ComplexH<T> = ComplexH(mc.zero)
-        val i: ComplexH<T> = ComplexH(mc.i)
-        val inf: ComplexH<T> = inf()
-
-
-        override fun isZero(para: ComplexH<T>): Boolean {
-            return para.isLimited() && mc.isZero(para.value)
-        }
-
-        override fun isEqual(x: ComplexH<T>, y: ComplexH<T>): Boolean {
-            return x.isInf
-        }
-
-        override fun add(x: ComplexH<T>, y: ComplexH<T>): ComplexH<T> {
-            if (x.isInf || y.isInf) {
-                return inf
-            }
-            return of(mc.add(x.value, y.value))
-        }
-
-        override fun negate(x: ComplexH<T>): ComplexH<T> {
-            return if (x.isInf) {
-                inf
-            } else {
-                of(mc.negate(x.value))
-            }
-        }
-
-        override fun abs(para: ComplexH<T>): ComplexH<T> {
-            return if (para.isInf) {
-                inf
-            } else {
-                of(mc.abs(para.value))
-            }
-        }
-
-        override fun subtract(x: ComplexH<T>, y: ComplexH<T>): ComplexH<T> {
-            if (x.isInf || y.isInf) {
-                return inf
-            }
-            return of(mc.subtract(x.value, y.value))
-        }
-
-        override fun multiply(x: ComplexH<T>, y: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                if (isZero(y)) {
-                    throw ArithmeticException("Inf * 0")
-                }
-                return inf
-            }
-            if (y.isInf) {
-                if (isZero(x)) {
-                    throw ArithmeticException("0 * Inf")
-                }
-                return inf
-            }
-
-            return of(mc.multiply(x.value, y.value))
-        }
-
-        override fun divide(x: ComplexH<T>, y: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                if (y.isInf) {
-                    throw ArithmeticException("Inf / Inf")
-                }
-                return inf
-            }
-            if (y.isInf) {
-                return zero
-            }
-            return of(mc.divide(x.value, y.value))
-        }
-
-        override fun multiplyLong(x: ComplexH<T>, n: Long): ComplexH<T> {
-            if (x.isInf) {
-                if (n == 0L) {
-                    throw ArithmeticException("Inf * 0")
-                }
-                return inf
-            }
-            return of(mc.multiplyLong(x.value, n))
-        }
-
-        override fun divideLong(x: ComplexH<T>, n: Long): ComplexH<T> {
-            if (x.isInf) {
-                return inf
-            }
-            return of(mc.divideLong(x.value, n))
-        }
-
-        override fun reciprocal(x: ComplexH<T>): ComplexH<T> {
-            return if (x.isInf) {
-                zero
-            } else {
-                of(mc.reciprocal(x.value))
-            }
-        }
-
-        override fun squareRoot(x: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                return inf
-            }
-            return of(mc.squareRoot(x.value))
-        }
-
-        override fun pow(x: ComplexH<T>, n: Long): ComplexH<T> {
-            if (x.isInf) {
-                return when {
-                    n > 0 -> inf
-                    n == 0L -> throw ArithmeticException("Inf^0")
-                    else -> zero
-                }
-            }
-            return of(mc.pow(x.value, n))
-        }
-
-        override fun exp(a: ComplexH<T>, b: ComplexH<T>): ComplexH<T> {
-            return exp(multiply(b, ln(a)))
-        }
-
-        override fun cos(x: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                throw ArithmeticException("cos(Inf)")
-            }
-            return of(mc.cos(x.value))
-        }
-
-        override fun sin(x: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                throw ArithmeticException("sin(Inf)")
-            }
-            return of(mc.sin(x.value))
-        }
-
-
-        override fun tan(x: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                throw ArithmeticException("tan(Inf)")
-            }
-            return of(mc.tan(x.value))
-        }
-
-        override fun nroot(x: ComplexH<T>, n: Long): ComplexH<T> {
-            if (x.isInf) {
-                return inf
-            }
-            return of(mc.nroot(x.value, n))
-        }
-
-        override fun exp(x: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                return inf
-            }
-            return of(mc.exp(x.value))
-        }
-
-        override fun ln(x: ComplexH<T>): ComplexH<T> {
-            if (x.isInf) {
-                return inf
-            }
-            return of(mc.ln(x.value))
-        }
-
-
-        fun crossRatio(x1: ComplexH<T>, x2: ComplexH<T>,
-                       x3: ComplexH<T>, x4: ComplexH<T>): ComplexH<T> {
-            return Companion.crossRatio(x1, x2, x3, x4, mc.mc)
-        }
-
-    }
-}
+//class ComplexE<T> {
+//    
+//
+//    private val v: Complex<T>?
+//
+//    val isInf: Boolean
+//        @JvmName("isInf")
+//        get() = v == null
+//
+//    val value: Complex<T>
+//        get() {
+//            if (isInf) {
+//                throw ArithmeticException("Inf")
+//            }
+//            return v!!
+//        }
+//
+//    internal constructor(v: Complex<T>) {
+//        this.v = v
+//    }
+//
+//    internal constructor() {
+//        v = null
+//    }
+//
+//    fun isLimited(): Boolean = !isInf
+//
+//    override fun toString(): String {
+//        return if (isInf) {
+//            "Inf"
+//        } else {
+//            v.toString()
+//        }
+//    }
+//
+//    override fun equals(other: Any?): Boolean {
+//        if (this === other) return true
+//        if (javaClass != other?.javaClass) return false
+//
+//        other as ComplexE<*>
+//
+//        if (v != other.v) return false
+//
+//        return true
+//    }
+//
+//    override fun hashCode(): Int {
+//        return v?.hashCode() ?: 0
+//    }
+//
+//
+//}

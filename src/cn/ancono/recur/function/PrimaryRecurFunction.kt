@@ -1,7 +1,6 @@
 package cn.ancono.recur.function
 
 import cn.ancono.recur.function.PrimaryFunctions.Add
-import cn.ancono.recur.function.PrimaryFunctions.Id
 import java.lang.IllegalArgumentException
 
 
@@ -136,6 +135,6 @@ object PrimaryFunctions {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     println(Add(3, 2))
 }

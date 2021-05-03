@@ -9,7 +9,7 @@ import cn.ancono.math.numberModels.expression.Node.*;
 import cn.ancono.math.numberModels.expression.simplification.NodeHelper;
 import cn.ancono.math.numberModels.expression.spi.SimplificationService;
 import cn.ancono.utilities.CollectionSup;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -513,7 +513,7 @@ public final class SimplificationStrategies {
                 Pair<Node, BigInteger> pair = Node.peelExpStructure(n, mc);
                 if (pair != null) {
                     if (deno) {
-                        pair.setSecond(pair.getSecond().negate());
+                        pair = new Pair<>(pair.getFirst(), pair.getSecond().negate());
                     }
                     if (accept(pair.getFirst(), pair.getSecond(), mc)) {
                         collect.add(pair);
@@ -622,12 +622,9 @@ public final class SimplificationStrategies {
                     continue;
                 }
                 var pair0 = Node.unwrapMultiply(n, mc);
-                if (pair0 != null) {
-                    var pair = pair0.swapped();
-                    if (accept(pair.getFirst(), coe, mc)) {
-                        collect.add(pair);
-                        it.remove();
-                    }
+                if (pair0 != null && accept(pair0.getSecond(), coe, mc)) {
+                    collect.add(new Pair<>(pair0.getSecond(), pair0.getFirst()));
+                    it.remove();
                 }
             }
         }
@@ -1157,14 +1154,14 @@ public final class SimplificationStrategies {
                     List<Pair<Node, BigInteger>> powers = en.getValue();
                     if (powers.size() == 1) {
                         Pair<Node, BigInteger> p = powers.get(0);
-                        Node exponent = Node.wrapNodeMultiply(p.getFirst(), Multinomial.valueOf(p.getSecond()));
+                        Node exponent = Node.wrapNodeMultiply(p.getFirst(), Multinomial.of(p.getSecond()));
                         Pair<Node, BigInteger> result = new Pair<>(Node.wrapNodeDF("exp", down, exponent),
                                 BigInteger.ONE);
                         nlist.add(result);
                     } else {
                         List<Node> adds = new ArrayList<>(powers.size());
                         for (Pair<Node, BigInteger> pair : powers) {
-                            Node exponent = Node.wrapNodeMultiply(pair.getFirst(), Multinomial.valueOf(pair.getSecond()));
+                            Node exponent = Node.wrapNodeMultiply(pair.getFirst(), Multinomial.of(pair.getSecond()));
                             adds.add(exponent);
                         }
                         Node expo = Node.wrapNodeAM(true, adds);
@@ -1452,7 +1449,6 @@ public final class SimplificationStrategies {
         }
         loadService();
         for (SimplificationService ss : serviceLoader) {
-//            print(ss.getClass());
             ec.tagAddAll(ss.getTags());
             ss.getProperties().forEach(ec::setProperty);
             ss.getStrategies().forEach(ec.getSimStraHolder()::addStrategy);

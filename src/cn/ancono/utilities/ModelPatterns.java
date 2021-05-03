@@ -116,7 +116,7 @@ public final class ModelPatterns {
         if (ch == 0) {
             return high;
         }
-        if (MathUtils.sameSignum(cl, ch)) {
+        if (MathUtils.isSameSign(cl, ch)) {
             throw new IllegalArgumentException("Sign numbers are the identity!");
         }
 
@@ -160,7 +160,7 @@ public final class ModelPatterns {
         if (ch == 0) {
             return high;
         }
-        if (MathUtils.sameSignum(cl, ch)) {
+        if (MathUtils.isSameSign(cl, ch)) {
             throw new IllegalArgumentException("Sign numbers are the identity!");
         }
 

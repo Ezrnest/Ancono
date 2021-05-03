@@ -11,7 +11,7 @@ import java.util.function.Function;
  * DirectedGraph is a graph where nodes' connections have directions.For each node in this graph,there may be
  * several references to other nodes,while the referenced nodes may not have references to this node.This is what
  * the "connect" here means. <P>
- * The node in the {@linkplain DirectedGraph} is {@link DirectedGraph DirectedGraphNode<E>ode},this kind of node is more
+ * The node in the {@linkplain cn.ancono.utilities.structure.DirectedGraph} is {@link cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode},this kind of node is more
  * specific than general
  * {@linkplain Graph DirectedGraphNode<E>ode} and more methods are available.The node here
  *
@@ -92,7 +92,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 
     /**
      * Return whether the two nodes are connected,return {@code true} if n1 is connected to n2 , otherwise false.
-     * This method is equal to {@link #isConnectTo(DirectedGraph DirectedGraphNode<E>ode, DirectedGraph
+     * This method is equal to {@link #isConnectTo(cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode, cn.ancono.utilities.structure.DirectedGraph
      * DirectedGraphNode<E>ode)}.
      *
      * @return {@code true} if n1 refers to n2 , otherwise {@code false}
@@ -102,14 +102,14 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 
     /**
      * Return whether the two nodes are connected in ,return {@code true} if n1 is connected to n2 , otherwise false.
-     * This method is equal to {@link #isConnected(DirectedGraph DirectedGraphNode<E>ode, DirectedGraph
+     * This method is equal to {@link #isConnected(cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode, cn.ancono.utilities.structure.DirectedGraph
      * DirectedGraphNode<E>ode)}.
      * The method is created just for a clear view of code.
      *
      * @param n1 a node
      * @param n2 another node
      * @return {@code true} if n1 refers to n2 , otherwise {@code false}
-     * @see #connectTo(DirectedGraph DirectedGraphNode<E>ode, DirectedGraph DirectedGraphNode<E>ode)
+     * @see #connectTo(cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode, cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode)
      */
     public boolean isConnectTo(DirectedGraphNode<E> n1, DirectedGraphNode<E> n2) {
         return isConnected(n1, n2);
@@ -117,8 +117,8 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 
     /**
      * Return whether the two nodes are connected,return {@code true} if n1 is connected by n2 , otherwise false.
-     * This method is the parameter position transfered type of method {@link #isConnected(DirectedGraph
-     * DirectedGraphNode<E>ode, DirectedGraph DirectedGraphNode<E>ode)}.
+     * This method is the parameter position transfered type of method {@link #isConnected(cn.ancono.utilities.structure.DirectedGraph
+     * DirectedGraphNode<E>ode, cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode)}.
      * The call of {@code isConnectBy(n1,n2)} is equal to {@code isConnectTo(n2,n1)}.The method is created just for a
      * clear
      * view of code.
@@ -140,7 +140,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
      *
      * @param n1 the node that will hold reference
      * @param n2 the node that will be referred to
-     * @see #isConnectTo(DirectedGraph DirectedGraphNode<E>ode, DirectedGraph DirectedGraphNode<E>ode)
+     * @see #isConnectTo(cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode, cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode)
      */
     public void connectTo(DirectedGraphNode<E> n1, DirectedGraphNode<E> n2) {
         connectNode(n1, n2);
@@ -148,7 +148,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 
     /**
      * Connect node n1 by node n2.This method is the parameter position
-     * transfered type of method {@link #connectTo(DirectedGraph DirectedGraphNode<E>ode, DirectedGraph
+     * transfered type of method {@link #connectTo(cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode, cn.ancono.utilities.structure.DirectedGraph
      * DirectedGraphNode<E>ode)}.
      * The call of {@code connectBy(n1,n2)} is equal to {@code connectTo(n2,n1)}.
      * The method is created just for a clear view of code.
@@ -164,8 +164,8 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
 
     /**
      * Connect node n1 to n2.After this operation , {@code isConnected(n1,n2)} will return true if
-     * no disconnecting method to this two node after that.This method is equal to {@link #connectTo(DirectedGraph
-     * DirectedGraphNode<E>ode, DirectedGraph DirectedGraphNode<E>ode)}.
+     * no disconnecting method to this two node after that.This method is equal to {@link #connectTo(cn.ancono.utilities.structure.DirectedGraph
+     * DirectedGraphNode<E>ode, cn.ancono.utilities.structure.DirectedGraph DirectedGraphNode<E>ode)}.
      */
     @Override
     public abstract void connectNode(DirectedGraphNode<E> n1, DirectedGraphNode<E> n2);
@@ -298,7 +298,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
      * @param mapper a function
      * @return a newly created graph,which is equal to {@code this} in structure while elements are changed.
      */
-    public abstract <T> DirectedGraph<T> mapToGraph(Function<E, T> mapper);
+    public abstract <T> cn.ancono.utilities.structure.DirectedGraph<T> mapToGraph(Function<E, T> mapper);
 
     /**
      * Compute the transposition of this DirectedGraph. A transposition is a graph that all the nodes
@@ -308,7 +308,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
      *
      * @return the transposition of this graph
      */
-    public abstract DirectedGraph<E> transpositionOf();
+    public abstract cn.ancono.utilities.structure.DirectedGraph<E> transpositionOf();
 
     /**
      * Compute a sub graph of this directed graph.The sub graph contains all the nodes in {@code nodes} and all the
@@ -318,7 +318,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
      * @param nodes a set of nodes in this graph
      * @return a sub graph , newly created
      */
-    public abstract DirectedGraph<E> subGraph(Set<? extends DirectedGraphNode<E>> nodes);
+    public abstract cn.ancono.utilities.structure.DirectedGraph<E> subGraph(Set<? extends DirectedGraphNode<E>> nodes);
 
     /**
      * Returns a new sub graph of this directed graph.The sub graph is a graph that only contains the given node and all
@@ -332,7 +332,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
      * @param node a node in this graph
      * @return a sub graph
      */
-    public abstract DirectedGraph<E> subGraphOfTo(DirectedGraphNode<E> node);
+    public abstract cn.ancono.utilities.structure.DirectedGraph<E> subGraphOfTo(DirectedGraphNode<E> node);
 
     /**
      * Returns a new sub graph of this directed graph.The sub graph is a graph that only contains the given node and all
@@ -346,7 +346,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
      * @param node a node in this graph
      * @return a sub graph
      */
-    public abstract DirectedGraph<E> subGraphOfBy(DirectedGraphNode<E> node);
+    public abstract cn.ancono.utilities.structure.DirectedGraph<E> subGraphOfBy(DirectedGraphNode<E> node);
 
     /**
      * Almost the identity as the description in {@linkplain Graph#connectedComponent()}, and the returned
@@ -363,7 +363,7 @@ public abstract class DirectedGraph<E> implements Graph<E, DirectedGraphNode<E>>
      * @return a graph that represents all the strongly connected components in this.
      * @see #connectedComponent()
      */
-    public abstract DirectedGraph<Set<DirectedGraphNode<E>>> stronglyConnectedComponent();
+    public abstract cn.ancono.utilities.structure.DirectedGraph<Set<DirectedGraphNode<E>>> stronglyConnectedComponent();
 
     /**
      * Almost the identity as the description in {@linkplain Graph#connectedComponentOf(DirectedGraphNode)},and the

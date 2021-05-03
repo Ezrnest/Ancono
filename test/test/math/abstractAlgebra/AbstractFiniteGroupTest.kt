@@ -1,10 +1,10 @@
 package test.math.abstractAlgebra
 
-import cn.ancono.math.algebra.abstractAlgebra.group.finite.PermutationGroup
-import cn.ancono.math.numberTheory.combination.Permutations
+import cn.ancono.math.algebra.abs.group.finite.PermutationGroup
+import cn.ancono.math.discrete.combination.Permutations
 import org.junit.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 class AbstractFiniteGroupTest{
     @Test
@@ -22,6 +22,6 @@ class AbstractFiniteGroupTest{
         val G = PermutationGroup.symmetricGroup(4)
         val H = PermutationGroup.generateFrom(
                 Permutations.swap(4,0,1),Permutations.swap(4,2,3))
-        assertTrue(G.isNormalSubgroup(H))
+        assertFalse(G.isNormalSubgroup(H))
     }
 }

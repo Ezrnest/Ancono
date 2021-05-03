@@ -3,10 +3,13 @@ package cn.ancono.math.numberModels
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.BigFraction.Companion.ONE
 import cn.ancono.math.numberModels.BigFraction.Companion.ZERO
+import cn.ancono.math.numberModels.BigFraction.Companion.fromFraction
+import cn.ancono.math.numberModels.BigFraction.Companion.valueOf
 import cn.ancono.math.numberModels.Fraction.Companion.EXPRESSION_PATTERN
 import cn.ancono.math.numberModels.api.FieldNumberModel
 import java.io.Serializable
 import java.math.BigInteger
+import kotlin.math.absoluteValue
 
 
 /**
@@ -14,7 +17,7 @@ import java.math.BigInteger
  * Created at 2018/10/16 12:30
  * @author  liyicheng
  */
-@Suppress("NOTHING_TO_INLINE")
+
 class BigFraction
 internal constructor(val signum: Int, val numerator: BigInteger, val denominator: BigInteger) :
         FieldNumberModel<BigFraction>,
@@ -93,8 +96,8 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
         return BigFraction(-signum, numerator, denominator)
     }
 
-    fun multiply(k: Long): BigFraction {
-        return multiply(k.toBigInteger())
+    override fun multiply(n: Long): BigFraction {
+        return multiply(n.toBigInteger())
     }
 
     fun multiply(k: BigInteger): BigFraction {
@@ -148,19 +151,19 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
         return BigFraction(signum, denominator, numerator)
     }
 
-    inline operator fun plus(y: BigFraction) = add(y)
+    operator fun plus(y: BigFraction) = add(y)
 
-    inline operator fun minus(y: BigFraction) = subtract(y)
+    operator fun minus(y: BigFraction) = subtract(y)
 
-    inline operator fun unaryMinus() = negate()
+    operator fun unaryMinus() = negate()
 
-    inline operator fun times(y: BigInteger) = multiply(y)
-    inline operator fun times(y: Long) = multiply(y)
-    inline operator fun times(y: BigFraction) = multiply(y)
+    operator fun times(y: BigInteger) = multiply(y)
+    operator fun times(y: Long) = multiply(y)
+    operator fun times(y: BigFraction) = multiply(y)
 
-    inline operator fun div(y: Long) = divide(y)
-    inline operator fun div(y: BigInteger) = divide(y)
-    inline operator fun div(y: BigFraction) = divide(y)
+    operator fun div(y: Long) = divide(y)
+    operator fun div(y: BigInteger) = divide(y)
+    operator fun div(y: BigFraction) = divide(y)
 
 
     override operator fun compareTo(other: BigFraction): Int {
@@ -302,7 +305,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
             if (f.isZero()) {
                 return ZERO
             }
-            return BigFraction(f.signum, f.numerator.toBigInteger(), f.denominator.toBigInteger())
+            return BigFraction(f.signum, f.numerator.absoluteValue.toBigInteger(), f.denominator.toBigInteger())
         }
 
         /**
@@ -342,8 +345,8 @@ object BigFractionCalculator : MathCalculatorAdapter<BigFraction>() {
     override val zero: BigFraction
         get() = ZERO
 
-    override fun isZero(para: BigFraction): Boolean {
-        return para.isZero()
+    override fun isZero(x: BigFraction): Boolean {
+        return x.isZero()
     }
 
     override fun isEqual(x: BigFraction, y: BigFraction): Boolean {
@@ -365,8 +368,8 @@ object BigFractionCalculator : MathCalculatorAdapter<BigFraction>() {
         return x.negate()
     }
 
-    override fun abs(para: BigFraction): BigFraction {
-        return para.abs()
+    override fun abs(x: BigFraction): BigFraction {
+        return x.abs()
     }
 
     override fun subtract(x: BigFraction, y: BigFraction): BigFraction {
@@ -393,6 +396,14 @@ object BigFractionCalculator : MathCalculatorAdapter<BigFraction>() {
         return x.reciprocal()
     }
 
-    override val numberClass: Class<*>
+    override fun of(x: Long): BigFraction {
+        return valueOf(x)
+    }
+
+    override fun of(x: Fraction): BigFraction {
+        return fromFraction(x)
+    }
+
+    override val numberClass: Class<BigFraction>
         get() = BigFraction::class.java
 }

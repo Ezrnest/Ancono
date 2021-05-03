@@ -6,9 +6,9 @@ import java.util.Set;
 
 class LinkedNode<E> extends DirectedGraphNode<E> {
 
-    private Set<LinkedNode<E>> connectTo;
+    private Set<cn.ancono.utilities.structure.LinkedNode<E>> connectTo;
 
-    private Set<LinkedNode<E>> connectBy;
+    private Set<cn.ancono.utilities.structure.LinkedNode<E>> connectBy;
 
 
     LinkedNode(DirectedGraph<E> graph) {
@@ -24,54 +24,54 @@ class LinkedNode<E> extends DirectedGraphNode<E> {
         connectBy = new HashSet<>(connectBySize);
     }
 
-    Set<LinkedNode<E>> getConnectedNodes() {
+    Set<cn.ancono.utilities.structure.LinkedNode<E>> getConnectedNodes() {
         if (connectTo != null)
             return new HashSet<>(connectTo);
         return null;
     }
 
-    boolean isConnected(LinkedNode<E> node) {
+    boolean isConnected(cn.ancono.utilities.structure.LinkedNode<E> node) {
         return connectTo.contains(node);
     }
 
-    Set<LinkedNode<E>> getConnectTo() {
+    Set<cn.ancono.utilities.structure.LinkedNode<E>> getConnectTo() {
         return connectTo;
     }
 
-    Set<LinkedNode<E>> getConnectBy() {
+    Set<cn.ancono.utilities.structure.LinkedNode<E>> getConnectBy() {
         return connectBy;
     }
 
 
-    void addConnectTo(LinkedNode<E> anotherNode) {
+    void addConnectTo(cn.ancono.utilities.structure.LinkedNode<E> anotherNode) {
         connectTo.add(anotherNode);
     }
 
-    void addConnectTo(Collection<LinkedNode<E>> nodes) {
+    void addConnectTo(Collection<cn.ancono.utilities.structure.LinkedNode<E>> nodes) {
         connectTo.addAll(nodes);
     }
 
-    void addConnectBy(LinkedNode<E> anotherNode) {
+    void addConnectBy(cn.ancono.utilities.structure.LinkedNode<E> anotherNode) {
         connectBy.add(anotherNode);
     }
 
-    void addConnectBy(Collection<LinkedNode<E>> nodes) {
+    void addConnectBy(Collection<cn.ancono.utilities.structure.LinkedNode<E>> nodes) {
         connectBy.addAll(nodes);
     }
 
-    boolean removeConnectTo(LinkedNode<E> anotherNode) {
+    boolean removeConnectTo(cn.ancono.utilities.structure.LinkedNode<E> anotherNode) {
         return connectTo.remove(anotherNode);
     }
 
-    boolean removeConnectTo(Set<LinkedNode<E>> anotherNode) {
+    boolean removeConnectTo(Set<cn.ancono.utilities.structure.LinkedNode<E>> anotherNode) {
         return connectTo.removeAll(anotherNode);
     }
 
-    boolean removeConnectBy(LinkedNode<E> anotherNode) {
+    boolean removeConnectBy(cn.ancono.utilities.structure.LinkedNode<E> anotherNode) {
         return connectBy.remove(anotherNode);
     }
 
-    boolean removeConnectBy(Set<LinkedNode<E>> anotherNode) {
+    boolean removeConnectBy(Set<cn.ancono.utilities.structure.LinkedNode<E>> anotherNode) {
         return connectBy.removeAll(anotherNode);
     }
 

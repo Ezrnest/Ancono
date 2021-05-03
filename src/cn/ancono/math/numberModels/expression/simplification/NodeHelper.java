@@ -24,7 +24,7 @@ public final class NodeHelper {
     public static boolean isPow(Node n, ExprCalculator ec, int pow) {
         if (Node.isFunctionNode(n, ExprFunction.FUNCTION_NAME_EXP, 2)) {
             var exp = (Node.DFunction) n;
-            return Node.isPolynomial(exp.getC2(), Multinomial.valueOf(pow), ec);
+            return Node.isPolynomial(exp.getC2(), Multinomial.of(pow), ec);
         }
         return false;
     }

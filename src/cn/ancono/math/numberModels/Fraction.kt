@@ -5,13 +5,11 @@ import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.api.FieldNumberModel
 import cn.ancono.math.numberModels.api.Simplifier
-import cn.ancono.math.numberTheory.NaiveNumberTheory
+import cn.ancono.math.numberTheory.NTUtils
 import cn.ancono.utilities.ArraySup
 import java.io.Serializable
-import java.util.*
 import java.util.regex.Pattern
-import kotlin.math.log10
-import kotlin.math.sign
+import kotlin.math.*
 
 
 /**
@@ -19,19 +17,17 @@ import kotlin.math.sign
  * is out of range of long, no precision will be lost. This class provides some math calculation with satisfying
  * results,as well normal time-performance.
  *
- * A fraction is composed of three parts: the sign number, the numerator and the denominator. The sign number is an
- * integer indicating the sign of the fraction. The sign number is zero if and only if this fraction is zero. The
- * numerator amd the denominator of a fraction are always positive integers that are co-prime to each other.
- * The denominator must not be zero.
+ * A fraction is composed of two co-prime integers [numerator] and the [denominator].
+ * The sign of the numerator represents the sign of this fraction and
+ * the denominator is always positive.
  * @author lyc
  */
-class Fraction
+data class Fraction
 //numerator,denominator
 /**
  * A constructor without checking num and den.
  * @param numerator the numerator
  * @param denominator the denominator
- * @param signum the signum
  */
 internal constructor(
         /**
@@ -40,12 +36,12 @@ internal constructor(
          * Also make sure that denominator != 0
          */
         /**
-         * Gets the numerator of this Fraction.
+         * Gets the numerator of this Fraction, the numerator may be positive, zero or negative.
          * @return numerator
          */
         val numerator: Long,
         /**
-         * Gets the denominator of this Fraction.
+         * Gets the denominator of this Fraction, it is a positive integer.
          * @return denominator
          */
         val denominator: Long,
@@ -53,11 +49,7 @@ internal constructor(
          * The sign number of this fraction,1 for positive,
          * 0 for and only for zero,and -1 for negative.
          */
-//        /**
-//         * Gets the sign number of this Fraction.
-//         * @return sign number
-//         */
-        val signum: Int) : Number(), FieldNumberModel<Fraction>, Comparable<Fraction>, Serializable {
+) : Number(), FieldNumberModel<Fraction>, Comparable<Fraction>, Serializable {
 
     /**
      * Determines whether this fraction is an integer.
@@ -67,12 +59,24 @@ internal constructor(
         get() = denominator == 1L
 
     val isNegative: Boolean
-        get() = signum < 0
+        get() = numerator < 0
     val isPositive: Boolean
-        get() = signum > 0
+        get() = numerator > 0
+
+    /**
+     * The sign number of this fraction, `1` if `this > 0`, `0` if `this = 0` and `-1` if `this < 0`.
+     */
+    val signum: Int
+        get() = numerator.compareTo(0)
+
+    /**
+     * Gets the absolute value of the [numerator].
+     */
+    val numeratorAbs: Long
+        get() = numerator.absoluteValue
 
     override fun isZero(): Boolean {
-        return signum == 0
+        return numerator == 0L
     }
 
     init {
@@ -80,42 +84,34 @@ internal constructor(
             throw IllegalArgumentException("Zero for denominator")
     }
 
-
+    /**
+     * Returns the int value corresponding to this fraction if it can be expressed using an int,
+     * otherwise an exception will be thrown.
+     */
     override fun toInt(): Int {
-        return signum * (numerator / denominator).toInt()
+        if (!isInteger) {
+            throw ArithmeticException("Not an integer: $this")
+        }
+        return Math.toIntExact(numerator)
     }
 
+    /**
+     * Returns the long value corresponding to this fraction if it can be expressed using an int,
+     * otherwise an exception will be thrown.
+     */
     override fun toLong(): Long {
-        if (signum == 0) {
-            return 0L
+        if (!isInteger) {
+            throw ArithmeticException("Not an integer: $this")
         }
-        val value = numerator / denominator
-        return if (signum > 0)
-            value
-        else
-            -value
+        return numerator
     }
 
     override fun toFloat(): Float {
-        if (signum == 0) {
-            return 0f
-        }
-        val value = numerator.toFloat() / denominator.toFloat()
-        return if (signum > 0)
-            value
-        else
-            -value
+        return numerator.toFloat() / denominator.toFloat()
     }
 
     override fun toDouble(): Double {
-        if (signum == 0) {
-            return 0.0
-        }
-        val value = numerator.toDouble() / denominator.toDouble()
-        return if (signum > 0)
-            value
-        else
-            -value
+        return numerator.toDouble() / denominator.toDouble()
     }
 
     override fun toByte(): Byte {
@@ -143,52 +139,38 @@ internal constructor(
 
     /**
      * Return the value of `this * num`
-     * @param num multiplier
-     * @return `this * num`
+     * @param n multiplier
+     * @return `this * k`
      */
-    fun multiply(num: Long): Fraction {
-        var num1 = num
-        if (num1 == 0L) {
+    override fun multiply(n: Long): Fraction {
+        if (n == 0L) {
             return ZERO
-        }
-        var signum = this.signum
-        if (num1 < 0) {
-            num1 = -num1
-            signum = -signum
         }
 
 
         //to prevent potential overflow,simplify num and den
-        val dAn = gcdNumAndDen(denominator, num1)
-        val nNum = dAn[1] * numerator
+        val dAn = gcdReduce(n, denominator)
+        val nNum = dAn[0] * numerator
         //new numerator
-        return Fraction(nNum, dAn[0], signum)
+        return Fraction(nNum, dAn[1])
     }
-
 
     /**
      * Return the value of `this / num`
-     * @param num divider,zero is not allowed.
+     * @param k divider,zero is not allowed.
      * @return `this / num`
      * @throws IllegalArgumentException if num == 0.
      */
-    fun divide(num: Long): Fraction {
-        var num1 = num
-        if (num1 == 0L) {
+    fun divide(k: Long): Fraction {
+        if (k == 0L) {
             throw IllegalArgumentException("Divide by zero :  / 0")
         }
-        var signum = this.signum
-        if (num1 < 0) {
-            num1 = -num1
-            signum = -signum
-        }
-
 
         //to prevent potential overflow, simplify num and den
-        val nAn = gcdNumAndDen(numerator, num1)
+        val nAn = gcdReduce(numerator, k)
         val nDen = nAn[1] * denominator
         //new numerator
-        return Fraction(nAn[0], nDen, signum)
+        return Fraction(nAn[0], nDen)
     }
 
     /**
@@ -196,7 +178,11 @@ internal constructor(
      * @return `-this `
      */
     override fun negate(): Fraction {
-        return if (this.signum == 0) ZERO else Fraction(this.numerator, this.denominator, -this.signum)
+        return if (this.isZero()) {
+            ZERO
+        } else {
+            Fraction(-numerator, denominator)
+        }
     }
 
     /**
@@ -205,10 +191,10 @@ internal constructor(
      * @throws IllegalArgumentException if this == 0.
      */
     override fun reciprocal(): Fraction {
-        if (this.signum == 0) {
+        if (this.isZero()) {
             throw ArithmeticException("Zero to reciprocal")
         }
-        return Fraction(this.denominator, this.numerator, this.signum)
+        return adjustSign(denominator, numerator)
     }
 
     /**
@@ -217,16 +203,15 @@ internal constructor(
      * @return `this * y`
      */
     override fun multiply(y: Fraction): Fraction {
-        if (this.signum == 0 || y.signum == 0) {
+        if (isZero() || y.isZero()) {
             return ZERO
         }
 
-        val n1D2 = gcdNumAndDen(this.numerator, y.denominator)
-        val n2D1 = gcdNumAndDen(y.numerator, this.denominator)
+        val n1D2 = gcdReduce(this.numerator, y.denominator)
+        val n2D1 = gcdReduce(y.numerator, this.denominator)
         return Fraction(
                 n1D2[0] * n2D1[0],
-                n1D2[1] * n2D1[1],
-                if (this.signum == y.signum) 1 else -1)
+                n1D2[1] * n2D1[1])
     }
 
     /**
@@ -236,19 +221,18 @@ internal constructor(
      * @throws IllegalArgumentException if y == 0.
      */
     override fun divide(y: Fraction): Fraction {
-        if (y.signum == 0) {
+        if (y.isZero()) {
             ExceptionUtil.dividedByZero()
         }
-        if (this.signum == 0) {
+        if (this.isZero()) {
             return ZERO
         }
         //exchange y's numerator and denominator .
-        val n1D2 = gcdNumAndDen(this.numerator, y.numerator)
-        val n2D1 = gcdNumAndDen(y.denominator, this.denominator)
-        return Fraction(
+        val n1D2 = gcdReduce(this.numerator, y.numerator)
+        val n2D1 = gcdReduce(y.denominator, this.denominator)
+        return adjustSign(
                 n1D2[0] * n2D1[0],
-                n1D2[1] * n2D1[1],
-                if (this.signum == y.signum) 1 else -1)
+                n1D2[1] * n2D1[1])
     }
 
     /**
@@ -257,18 +241,13 @@ internal constructor(
      * @return `this + num`
      */
     fun add(num: Long): Fraction {
-        var num1 = num
-        if (num1 > 0 && signum < 0 || num1 < 0 && signum > 0) {
-            num1 = -num1
+        val nNum = numerator + num * denominator
+        if (nNum == 0L) {
+            return ZERO
         }
-        var nNum = numerator + num1 * denominator
-        var signum = this.signum
-        if (nNum < 0) {
-            signum = -signum
-            nNum = -nNum
-        }
-        return Fraction(nNum, denominator, signum)
+        return Fraction(nNum, denominator)
     }
+
 
     /**
      * Return the value of `this - num`
@@ -276,17 +255,11 @@ internal constructor(
      * @return `this - num`
      */
     operator fun minus(num: Long): Fraction {
-        var num1 = num
-        if (num1 < 0 && signum < 0 || num1 > 0 && signum > 0) {
-            num1 = -num1
+        val nNum = numerator - num * denominator
+        if (nNum == 0L) {
+            return ZERO
         }
-        var nNum = numerator + num1 * denominator
-        var signum = this.signum
-        if (nNum < 0) {
-            signum = -signum
-            nNum = -nNum
-        }
-        return Fraction(nNum, denominator, signum)
+        return Fraction(nNum, denominator)
     }
 
     /**
@@ -295,21 +268,15 @@ internal constructor(
      * @return `this + y`
      */
     override fun add(y: Fraction): Fraction {
-        val den = MathUtils.lcm(denominator, y.denominator)
-        var num = this.signum.toLong() * this.numerator * den / this.denominator +
-                y.signum.toLong() * y.numerator * den / y.denominator
-        if (num == 0L) {
-            return ZERO
-        }
-        val signum: Int
-        if (num < 0) {
-            num = -num
-            signum = -1
-        } else {
-            signum = 1
-        }
-        val nAd = gcdNumAndDen(num, den)
-        return Fraction(nAd[0], nAd[1], signum)
+        // a/b + c/d =
+        // (a * lcm / b) / lcm + (c * lcm / d) / lcm = (a * d / gcd + c * b / gcd) / lcm
+        // (a * d1 + c * b1) / lcm
+        val gcd = MathUtils.gcd(denominator, y.denominator)
+        val b1 = denominator / gcd
+        val d1 = y.denominator / gcd
+        val lcm = b1 * y.denominator
+        val num = this.numerator * d1 + y.numerator * b1
+        return of(num, lcm)
     }
 
 
@@ -319,20 +286,15 @@ internal constructor(
      * @return `this - y`
      */
     operator fun minus(y: Fraction): Fraction {
-        var num = this.signum.toLong() * this.numerator * y.denominator - y.signum.toLong() * y.numerator * this.denominator
-        if (num == 0L) {
-            return ZERO
-        }
-        val den = this.denominator * y.denominator
-        val signum: Int
-        if (num < 0) {
-            num = -num
-            signum = -1
-        } else {
-            signum = 1
-        }
-        val nAd = gcdNumAndDen(num, den)
-        return Fraction(nAd[0], nAd[1], signum)
+        // a/b + c/d =
+        // (a * lcm / b) / lcm - (c * lcm / d) / lcm = (a * d / gcd - c * b / gcd) / lcm
+        // (a * d1 - c * b1) / lcm
+        val gcd = MathUtils.gcd(denominator, y.denominator)
+        val b1 = denominator / gcd
+        val d1 = y.denominator / gcd
+        val lcm = b1 * y.denominator
+        val num = this.numerator * d1 - y.numerator * b1
+        return of(num, lcm)
     }
 
     operator fun unaryMinus() = negate()
@@ -347,6 +309,8 @@ internal constructor(
 
     operator fun plus(y: Long) = add(y)
 
+    operator fun plus(y: Fraction) = add(y)
+
     operator fun rem(y: Fraction) = remainder(y)
 
 
@@ -359,38 +323,29 @@ internal constructor(
      * @return `this^n`
      * @throws ArithmeticException if this == 0 and n <=0
      */
-    fun pow(n: Int): Fraction? {
-        if (signum == 0) {
+    fun pow(n: Int): Fraction {
+        if (isZero()) {
             return if (n == 0) {
                 ExceptionUtil.zeroExponent()
             } else {
                 ZERO
             }
+        }
+        if (n == 0) {
+            return ONE
+        }
+        val p = abs(n)
+        val nume: Long = MathUtils.pow(numerator, p)
+        val deno: Long = MathUtils.pow(denominator, p)
+        return if (n > 0) {
+            Fraction(nume, deno)
         } else {
-            if (n == 0) {
-                return ONE
-            }
-            val sign: Int
-            val deno: Long
-            val nume: Long
-            if (n < 0) {
-                sign = if (n and 1 == 1) -1 else 1
-
-                //exchange two
-                deno = MathUtils.power(numerator, n)
-                nume = MathUtils.power(denominator, n)
-            } else {
-                sign = 1
-                nume = MathUtils.power(numerator, n)
-                deno = MathUtils.power(denominator, n)
-            }
-
-            return Fraction(nume, deno, sign)
+            adjustSign(deno, nume)
         }
     }
 
     /**
-     * Returns `this^exp`.`exp` can have a denominator ,which means
+     * Returns `this^exp`.`exp` can have a denominator, which means
      * the method will calculate the n-th root of `this`,but this method will
      * only return the positive root if there are two roots.
      *
@@ -400,47 +355,43 @@ internal constructor(
      * @param exp an exponent
      * @return the result of `this^exp`
      */
-    fun exp(exp: Fraction): Fraction? {
+    fun exp(exp: Fraction): Fraction {
 
-        if (exp.signum == 0) {
-            if (this.signum == 0) {
+        if (exp.isZero()) {
+            if (this.isZero()) {
                 ExceptionUtil.zeroExponent()
             }
             return ONE
 
         }
-        if (this.signum == 0) {
+        if (this.isZero()) {
             return ZERO
-        } else if (this.numerator == 1L && this.denominator == 1L) {
+        }
+        if (this.denominator == 1L) {
             // +- 1
-            return if (this.signum == 1) {
-                ONE
-            } else {
+            if (numerator == 1L) {
+                return ONE
+            }
+            if (numerator == -1L) {
                 if (exp.denominator % 2 == 0L) {
                     ExceptionUtil.sqrtForNegative()
                 }
-                NEGATIVE_ONE
+                return NEGATIVE_ONE
             }
         }
-        var signum = 1
-        if (this.signum < 0) {
+        if (this.isNegative) {
             if (exp.denominator % 2 == 0L)
                 ExceptionUtil.sqrtForNegative()
-            signum = -1
-        }
-
-        var swap = false
-        if (exp.signum < 0) {
-            swap = true
         }
         //we first check whether the Fraction b has a denominator
         if (exp.numerator > Integer.MAX_VALUE || exp.denominator > Integer.MAX_VALUE) {
             throw ArithmeticException("Too big in exp")
         }
-        val bn = exp.numerator.toInt()
+        val bn = exp.numerator.toInt().absoluteValue
         val bd = exp.denominator.toInt()
+
         //try it
-        var an = this.numerator
+        var an = this.numerator.absoluteValue
         var ad = this.denominator
 
         an = MathUtils.rootN(an, bd)
@@ -448,11 +399,16 @@ internal constructor(
         if (an == -1L || ad == -1L) {
             throw ArithmeticException("Cannot Find Root")
         }
-        an = MathUtils.power(an, bn)
-        ad = MathUtils.power(ad, bn)
-        return if (swap) {
-            Fraction(ad, an, signum)
-        } else Fraction(an, ad, signum)
+        if (this.isNegative) {
+            an = -an
+        }
+        an = MathUtils.pow(an, bn)
+        ad = MathUtils.pow(ad, bn)
+        return if (exp.isNegative) {
+            adjustSign(ad, an)
+        } else {
+            adjustSign(an, ad)
+        }
     }
 
     /**
@@ -461,10 +417,10 @@ internal constructor(
      * @return this^2
      */
     fun squareOf(): Fraction {
-        return if (signum == 0) {
+        return if (isZero()) {
             ZERO
         } else Fraction(numerator * numerator,
-                denominator * denominator, 1)
+                denominator * denominator)
     }
 
     /**
@@ -476,7 +432,7 @@ internal constructor(
      * @throws ArithmeticException if `divisor==0`
      */
     fun divideToIntegralValue(divisor: Fraction): Fraction {
-        if (signum == 0) {
+        if (isZero()) {
             return ZERO
         }
         val re = this.divide(divisor)
@@ -484,23 +440,19 @@ internal constructor(
     }
 
     /**
-     * Returns the largest (closest to positive infinity) value that is
-     * less than or equal to the argument and is equal to a mathematical integer. Special cases:
-     * If the argument value is already equal to a mathematical integer, then the result is the same as the argument.
+     * Returns the largest (closest to positive infinity) integer value that is
+     * less than or equal to the this fraction.
      */
     fun floor(): Long {
-        if (isInteger) {
-            return when {
-                signum == 0 -> 0L
-                signum > 0 -> numerator
-                else -> -numerator
-            }
-        }
-        val value = numerator / denominator
-        return if (signum > 0)
-            value
-        else
-            -value - 1
+        return Math.floorDiv(numerator, denominator)
+//        if (isInteger) {
+//            return numerator
+//        }
+//        val value = numerator.absoluteValue / denominator
+//        return if (isPositive)
+//            value
+//        else
+//            -value - 1
     }
 
     /**
@@ -510,18 +462,15 @@ internal constructor(
      */
     fun ceil(): Long {
         if (isInteger) {
-            return when {
-                signum == 0 -> 0L
-                signum > 0 -> numerator
-                else -> -numerator
-            }
+            return numerator
         }
         val value = numerator / denominator
-        return if (signum > 0)
+        return if (isPositive)
             value + 1
         else
             -value
     }
+
 
     fun divideAndRemainder(divisor: Fraction): Array<Fraction> {
         val result0 = this.divideToIntegralValue(divisor)
@@ -551,18 +500,10 @@ internal constructor(
      * Return the String expression of this fraction.
      */
     override fun toString(): String {
-        if (signum == 0) {
-            return "0"
-        }
         if (denominator == 1L) {
-            return if (signum < 0) {
-                "-$numerator"
-            } else
-                numerator.toString()
+            return numerator.toString()
         }
         val sb = StringBuilder()
-        if (signum < 0)
-            sb.append('-')
         sb.append(numerator).append('/').append(denominator)
         return sb.toString()
     }
@@ -574,79 +515,48 @@ internal constructor(
      * @return a string
      */
     fun toStringWithBracket(): String {
-        if (signum == 0) {
-            return "0"
-        }
-        if (isInteger) {
-            return if (signum < 0)
-                "-$numerator"
-            else
-                numerator.toString()
+        if (denominator == 1L) {
+            return numerator.toString()
         }
         val sb = StringBuilder("(")
-        if (signum < 0)
-            sb.append('-')
         sb.append(numerator).append('/').append(denominator)
         sb.append(')')
         return sb.toString()
     }
 
     fun toLatexString(): String {
-        if (signum == 0) {
-            return "0"
-        }
-        if (isInteger) {
-            return if (signum < 0)
-                "-$numerator"
-            else
-                numerator.toString()
+        if (denominator == 1L) {
+            return numerator.toString()
         }
         val sb = StringBuilder()
-        if (signum < 0) {
+        if (isNegative) {
             sb.append('-');
         }
-        sb.append("\\frac{").append(numerator).append("}{").append(denominator).append('}')
+        sb.append("\\frac{").append(numerator.absoluteValue).append("}{").append(denominator).append('}')
         return sb.toString()
     }
 
-    override fun hashCode(): Int {
-        var hash = signum * denominator
-        hash = hash * 31 + numerator
-        return (hash.ushr(32) xor hash).toInt()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other is Fraction) {
-            val f = other as Fraction?
-            //			if(f.signum == 0 && this.signum == 0) {
-            //				return true;
-            //			}
-            return f!!.signum == this.signum &&
-                    f.numerator == this.numerator &&
-                    f.denominator == this.denominator
-        }
-        return false
-    }
 
     /**
      * Compare two fractions , return -1 if this fraction is smaller than f,0 if equal,or 1
-     * if this fraction is bigger than f.The method is generally equal to return `sgn(this-frac)`
+     * if this fraction is bigger than f. The method is generally equal to return `sgn(this-frac)`
      * @return -1,0 or 1 if this is smaller than,equal to or bigger than f.
      */
     override fun compareTo(other: Fraction): Int {
-        val comp = signum.compareTo(other.signum)
-        if (comp != 0) {
-            return comp
-        }
-
-        val num = this.numerator * other.denominator - other.numerator * this.denominator
-        return num.sign * signum
-
+//        val comp = signum.compareTo(other.signum)
+//        if (comp != 0) {
+//            return comp
+//        }
+//        Math.multiplyExact()
+//
+//        val num = this.numerator * other.denominator - other.numerator * this.denominator
+//        return num.sign * signum
+        return (this - other).signum
     }
 
 
     class FractionCalculator : MathCalculatorAdapter<Fraction>() {
-        override val numberClass: Class<*> = Fraction::class.java
+        override val numberClass: Class<Fraction> = Fraction::class.java
 
         override fun isEqual(x: Fraction, y: Fraction): Boolean {
             return x == y
@@ -666,8 +576,8 @@ internal constructor(
             return x.negate()
         }
 
-        override fun abs(para: Fraction): Fraction {
-            return Fraction(para.numerator, para.denominator, 1)
+        override fun abs(x: Fraction): Fraction {
+            return Fraction(x.numerator.absoluteValue, x.denominator)
         }
 
         override fun subtract(x: Fraction, y: Fraction): Fraction {
@@ -676,8 +586,8 @@ internal constructor(
 
         override val zero: Fraction = ZERO
 
-        override fun isZero(para: Fraction): Boolean {
-            return ZERO == para
+        override fun isZero(x: Fraction): Boolean {
+            return ZERO == x
         }
 
         override fun multiply(x: Fraction, y: Fraction): Fraction {
@@ -703,13 +613,13 @@ internal constructor(
         }
 
         override fun squareRoot(x: Fraction): Fraction {
-            if (x.signum == 0) {
+            if (x.isZero()) {
                 return ZERO
-            } else if (x.signum > 0) {
+            } else if (x.isPositive) {
                 val noe = MathUtils.squareRootExact(x.numerator)
                 val deo = MathUtils.squareRootExact(x.denominator)
                 if (noe != -1L && deo != -1L) {
-                    return Fraction(noe, deo, 1)
+                    return Fraction(noe, deo)
                 }
             }
 
@@ -717,100 +627,23 @@ internal constructor(
         }
 
         override fun pow(x: Fraction, n: Long): Fraction {
-            var exp1 = n
-            if (x.signum == 0) {
-                return if (exp1 == 0L) ONE else ZERO
-            }
-            val signum = if (exp1 % 2 == 0L) 1 else x.signum
-            if (x.denominator == 1L && x.numerator == 1L) {
-                return if (signum == x.signum) x else x.negate()
-            }
-            if (exp1 == 0L) {
-                return ONE
-            }
-            var no: Long
-            var de: Long
-            if (exp1 < 0) {
-                exp1 = -exp1
-                no = x.denominator
-                de = x.numerator
-            } else {
-                no = x.numerator
-                de = x.denominator
-            }
-            var noR = 1L
-            var deR = 1L
-            while (exp1 != 0L) {
-                if (exp1 and 1 != 0L) {
-                    noR *= no
-                    deR *= de
-                }
-                no *= no
-                de *= de
-                exp1 = exp1 shr 1
-            }
-
-
-            return Fraction(noR, deR, signum)
+            return x.pow(Math.toIntExact(n))
         }
 
         override fun constantValue(name: String): Fraction {
-            throw UnsupportedCalculationException("No constant value avaliable")
+            throw UnsupportedCalculationException("No constant value available")
         }
 
         override fun exp(a: Fraction, b: Fraction): Fraction {
+            return a.exp(b)
+        }
 
-            if (b.signum == 0) {
-                if (a.signum == 0) {
-                    throw ArithmeticException("0^0")
-                }
-                return ONE
+        override fun of(x: Long): Fraction {
+            return Fraction.of(x)
+        }
 
-            }
-            if (a.signum == 0) {
-                return ZERO
-            } else if (a.numerator == 1L && a.denominator == 1L) {
-                // +- 1
-                return if (a.signum == 1) {
-                    ONE
-                } else {
-                    if (b.denominator % 2 == 0L) {
-                        throw ArithmeticException("Negative in Square")
-                    }
-                    NEGATIVE_ONE
-                }
-            }
-            var signum = 1
-            if (a.signum < 0) {
-                if (b.denominator % 2 == 0L)
-                    throw ArithmeticException("Negative in Square")
-                signum = -1
-            }
-
-            var swap = false
-            if (b.signum < 0) {
-                swap = true
-            }
-            //we first check whether the Fraction b has a denominator
-            if (b.numerator > Integer.MAX_VALUE || b.denominator > Integer.MAX_VALUE) {
-                ExceptionUtil.valueTooBig("exp")
-            }
-            val bn = b.numerator.toInt()
-            val bd = b.denominator.toInt()
-            //try it
-            var an = a.numerator
-            var ad = a.denominator
-
-            an = MathUtils.rootN(an, bd)
-            ad = MathUtils.rootN(ad, bd)
-            if (an == -1L || ad == -1L) {
-                throw UnsupportedCalculationException("Cannot Find Root")
-            }
-            an = MathUtils.power(an, bn)
-            ad = MathUtils.power(ad, bn)
-            return if (swap) {
-                Fraction(ad, an, signum)
-            } else Fraction(an, ad, signum)
+        override fun of(x: Fraction): Fraction {
+            return x
         }
 
         companion object {
@@ -825,14 +658,12 @@ internal constructor(
             val len = numbers.size
             val numes = LongArray(len)
             val denos = LongArray(len)
-            val signs = IntArray(len)
             var i = 0
             val it = numbers.listIterator()
             while (it.hasNext()) {
                 val f = it.next()
                 numes[i] = f.numerator
                 denos[i] = f.denominator
-                signs[i] = f.signum
                 i++
             }
             val gcd = MathUtils.gcd(*numes)
@@ -844,17 +675,10 @@ internal constructor(
                 i++
             }
             //denos are all set to one.
-            if (signs[0] == -1) {
-                i = 0
-                while (i < len) {
-                    signs[i] = -signs[i]
-                    i++
-                }
-            }
             val list = ArrayList<Fraction>(len)
             i = 0
             while (i < len) {
-                list.add(Fraction(numes[i], 1L, signs[i]))
+                list.add(adjustSign(numes[i], 1L))
                 i++
             }
             return list
@@ -866,32 +690,34 @@ internal constructor(
         /**
          *
          */
-        private const val serialVersionUID = -8236721041547778971L
+        private const val serialVersionUID = -8236721042317778971L
 
         /**
          * A Fraction representing `0` with zero as numerator ,
          * one as denominator and zero for sign number.
          */
         @JvmField
-        val ZERO = Fraction(0, 1, 0)
+        val ZERO = Fraction(0, 1)
+
         /**
          * A Fraction representing `1`.
          */
         @JvmField
-        val ONE = Fraction(1, 1, 1)
+        val ONE = Fraction(1, 1)
+
         /**
          * A Fraction representing `-1`
          */
         @JvmField
-        val NEGATIVE_ONE = Fraction(1, 1, -1)
+        val NEGATIVE_ONE = Fraction(-1, 1)
 
         @JvmField
-        val TWO = Fraction(2, 1, 1)
+        val TWO = Fraction(2, 1)
 
         @JvmField
-        val HALF = Fraction(1, 2, 1)
+        val HALF = Fraction(1, 2)
 
-        private fun gcdNumAndDen(num: Long, den: Long): LongArray {
+        private fun gcdReduce(num: Long, den: Long): LongArray {
             val re = LongArray(2)
             val g = MathUtils.gcd(num, den)
             re[0] = num / g
@@ -899,17 +725,24 @@ internal constructor(
             return re
         }
 
+        private fun adjustSign(num: Long, den: Long): Fraction {
+            return if (den < 0) {
+                Fraction(-num, -den)
+            } else {
+                Fraction(num, den)
+            }
+        }
+
         /**
          * Returns a fraction from a long.
          */
         @JvmStatic
         fun of(number: Long): Fraction {
-            return when {
-                number == 0L -> ZERO
-                number == 1L -> ONE
-                number == -1L -> NEGATIVE_ONE
-                number > 0 -> Fraction(number, 1, 1)
-                else -> Fraction(-number, 1, -1)
+            return when (number) {
+                0L -> ZERO
+                1L -> ONE
+                -1L -> NEGATIVE_ONE
+                else -> Fraction(number, 1)
             }
         }
 
@@ -922,23 +755,12 @@ internal constructor(
          */
         @JvmStatic
         fun of(numerator: Long, denominator: Long): Fraction {
-            var numerator1 = numerator
-            var denominator1 = denominator
-            if (numerator1 == 0L) {
+            require(denominator != 0L)
+            if (numerator == 0L) {
                 return ZERO
             }
-            var signum = 1
-            if (numerator1 < 0) {
-                numerator1 = -numerator1
-                signum = -signum
-            }
-            if (denominator1 < 0) {
-                denominator1 = -denominator1
-                signum = -signum
-            }
-
-            val nAd = gcdNumAndDen(numerator1, denominator1)
-            return Fraction(nAd[0], nAd[1], signum)
+            val nAd = gcdReduce(numerator, denominator)
+            return adjustSign(nAd[0], nAd[1])
         }
 
         private val maxPrecision = log10(java.lang.Long.MAX_VALUE.toDouble()).toInt() - 1
@@ -952,27 +774,21 @@ internal constructor(
          */
         @JvmStatic
         fun ofDouble(d: Double, precision: Int): Fraction {
-            var d1 = d
             if (precision <= 0 || precision > maxPrecision) {
                 throw IllegalArgumentException("Bad precision:$precision")
             }
-            val signum: Int
-            when {
-                d1 > 0 -> signum = 1
-                d1 == 0.0 -> return ZERO
-                else -> {
-                    signum = -1
-                    d1 = -d1
-                }
+            if (d == 0.0) {
+                return ZERO
             }
-            val deno = MathUtils.power(10L, precision - 1)
+            var d1 = d.absoluteValue
+            val deno = MathUtils.pow(10L, precision - 1)
             //		deno*= 10L;
             while (d1 < deno.toDouble()) {
                 d1 *= 10.0
             }
             val nume = d1.toLong()
-            val nAd = gcdNumAndDen(nume, deno)
-            return Fraction(nAd[0], nAd[1], signum)
+            val nAd = gcdReduce(nume, deno)
+            return Fraction(MathUtils.signum(d) * nAd[0], nAd[1])
         }
 
         /**
@@ -984,19 +800,13 @@ internal constructor(
          */
         @JvmStatic
         fun bestApproximate(x: Double, bound: Long = 10000_0000, conFraLenBound: Int = 16): Fraction {
-            var x1 = x
             if (bound < 1) {
                 throw IllegalArgumentException("Bad bound: $bound")
             }
-            val signum: Int
-            when {
-                x1 > 0 -> signum = 1
-                x1 == 0.0 -> return ZERO
-                else -> {
-                    signum = -1
-                    x1 = -x1
-                }
+            if (x == 0.0) {
+                return ZERO
             }
+            var x1 = x.absoluteValue
             var es = LongArray(4)
             var f: LongArray? = null
             var m: Long = 1
@@ -1004,7 +814,7 @@ internal constructor(
             var i = 0
             while (true) {
                 val reminder = x1 % y
-                val l = Math.round((x1 - reminder) / y)
+                val l = ((x1 - reminder) / y).roundToLong()
                 x1 = y
                 y = reminder
 
@@ -1015,7 +825,7 @@ internal constructor(
                 m = t
                 es = ArraySup.ensureCapacityAndAdd(es, l, i)
                 val ft = computeContinuousFraction(es, i)
-                if (Math.max(ft[0], ft[1]) > bound || ft[0] < 0 || ft[1] < 0) {
+                if (max(ft[0], ft[1]) > bound || ft[0] < 0 || ft[1] < 0) {
                     break
                 }
                 i++
@@ -1026,12 +836,12 @@ internal constructor(
             }
             return if (f == null) {
                 ZERO
-            } else Fraction(f[0], f[1], signum)
+            } else Fraction(MathUtils.signum(x) * f[0], f[1])
         }
 
         @JvmStatic
         fun continuousFraction(x: Double, len: Int): LongArray {
-            return NaiveNumberTheory.continuousFractionReduce(x, len)
+            return NTUtils.continuousFractionReduce(x, len)
         }
 
         /**
@@ -1061,6 +871,7 @@ internal constructor(
          */
         @JvmStatic
         val EXPRESSION_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)(/(\\d+))?")
+
         // *([\\+\\-]?\\d+(\\/\\d+)?) * another replacement which
         val DECIMAL_PATTERN: Pattern = Pattern.compile("([+\\-]?\\d+)\\.(\\d+)")
 
@@ -1086,7 +897,7 @@ internal constructor(
                 val n1 = m.group(1).toLong()
                 val n2 = m.group(2)
                 val digits = n2.length
-                val deno = MathUtils.power(10L, digits)
+                val deno = MathUtils.pow(10L, digits)
                 val nume = n1 * deno + n2.toLong()
                 return of(nume, deno)
             }
@@ -1104,7 +915,7 @@ internal constructor(
          */
         @JvmStatic
         fun compareFraction(f: Fraction, n: Long): Int {
-            return java.lang.Long.signum(f.signum * f.numerator - f.denominator * n)
+            return java.lang.Long.signum(f.numerator - f.denominator * n)
         }
 
         /**
@@ -1161,10 +972,7 @@ internal constructor(
          * @return a simplifier
          */
         @JvmStatic
-        val fractionSimplifier: Simplifier<Fraction>
-            get() = fs
-
-        internal val fs = FractionSimplifier()
+        val fractionSimplifier: Simplifier<Fraction> = FractionSimplifier()
     }
 
 
@@ -1173,7 +981,6 @@ internal constructor(
 fun Long.toFrac(): Fraction = Fraction.of(this)
 
 fun Int.toFrac(): Fraction = Fraction.of(this.toLong())
-
 
 //fun main(args: Array<String>) {
 ////    val f1 = Fraction.valueOf(-4, 3)

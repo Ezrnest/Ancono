@@ -3,14 +3,14 @@ package cn.ancono.math.geometry.projective
 import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.abstractAlgebra.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.function.Bijection
-import cn.ancono.math.geometry.analytic.planeAG.TransMatrix
-import cn.ancono.math.get
+import cn.ancono.math.geometry.analytic.plane.TransMatrix
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.MulGroupNumberModel
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.property.Composable
+import org.jetbrains.annotations.NotNull
 import java.util.function.Function
 
 
@@ -18,7 +18,7 @@ import java.util.function.Function
  * Describes the linear fractional transformation on field T.
  *
  */
-class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T>)
+class LinearFracTrans<T> internal constructor(private val m: TransMatrix<T>)
     : MathObjectExtend<T>(m.mathCalculator),
         Bijection<T, T>,
         Composable<LinearFracTrans<T>>,
@@ -41,7 +41,7 @@ class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T
         }
     }
 
-    override fun deply(y: T): T {
+    override fun deply(y: @NotNull T): T {
         return reciprocal().apply(y)
     }
 
@@ -58,12 +58,12 @@ class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T
     }
 
     override fun reciprocal(): LinearFracTrans<T> {
-        return LinearFracTrans(m.reciprocal())
+        return LinearFracTrans(m.inverse())
     }
 
 
-    override fun <N : Any> mapTo(mapper: Function<T, N>, newCalculator: MathCalculator<N>): LinearFracTrans<N> {
-        return LinearFracTrans(m.mapTo(mapper, newCalculator))
+    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFracTrans<N> {
+        return LinearFracTrans(m.mapTo(newCalculator, mapper))
     }
 
     override fun valueEquals(obj: MathObject<T>): Boolean {
@@ -81,7 +81,7 @@ class LinearFracTrans<T : Any> internal constructor(private val m: TransMatrix<T
     companion object {
 
 
-        fun <T : Any> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): LinearFracTrans<T> {
+        fun <T> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): LinearFracTrans<T> {
             val det = mc.eval { a * c - b * d }
             if (mc.isZero(det)) {
                 throw IllegalArgumentException("ac-bd = 0")

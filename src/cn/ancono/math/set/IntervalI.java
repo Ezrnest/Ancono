@@ -305,7 +305,7 @@ public final class IntervalI<T> extends Interval<T> {
     @NotNull
     @Override
     public String toString() {
-        return toString(NumberFormatter.getToStringFormatter());
+        return toString(NumberFormatter.defaultFormatter());
     }
 
     /* (non-Javadoc)
@@ -341,7 +341,7 @@ public final class IntervalI<T> extends Interval<T> {
 
     @NotNull
     @Override
-    public <N> Interval<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> Interval<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new IntervalI<>(newCalculator, mapper.apply(left), mapper.apply(right), type);
     }
 

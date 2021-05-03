@@ -16,7 +16,7 @@ class LimitKtTest{
 
     @Test
     fun testPowLimit(){
-        val m1 = Multinomial.valueOf("x^2 + 2x")
+        val m1 = Multinomial.parse("x^2 + 2x")
         val m2 = Multinomial.monomial(Term.characterPower("x", Fraction.Companion.of("-3/5")))
         val p1: LimitProcessE = LimitProcess.toPositiveInf()
         val p2 = LimitProcess.toPositiveZero(mc)

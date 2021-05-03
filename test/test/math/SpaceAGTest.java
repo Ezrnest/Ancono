@@ -1,24 +1,26 @@
 package test.math;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.algebra.linearAlgebra.LinearEquationSolution;
-import cn.ancono.math.algebra.linearAlgebra.Matrix;
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
-import cn.ancono.math.algebra.linearAlgebra.Vector;
-import cn.ancono.math.geometry.analytic.spaceAG.*;
-import cn.ancono.math.numberModels.*;
-import cn.ancono.math.geometry.analytic.spaceAG.SPoint.SPointGenerator;
-import cn.ancono.math.geometry.analytic.spaceAG.SVector.SVectorGenerator;
-import cn.ancono.math.geometry.analytic.spaceAG.shape.Cube;
-import cn.ancono.math.geometry.analytic.spaceAG.shape.Tetrahedron;
-import cn.ancono.utilities.ArraySup;
+import cn.ancono.math.algebra.linear.LinearEquationSolution;
+import cn.ancono.math.algebra.linear.Matrix;
+import cn.ancono.math.algebra.linear.Vector;
+import cn.ancono.math.geometry.analytic.space.Line;
+import cn.ancono.math.geometry.analytic.space.Plane;
+import cn.ancono.math.geometry.analytic.space.SPoint;
+import cn.ancono.math.geometry.analytic.space.SPoint.SPointGenerator;
+import cn.ancono.math.geometry.analytic.space.SVector;
+import cn.ancono.math.geometry.analytic.space.SVector.SVectorGenerator;
+import cn.ancono.math.geometry.analytic.space.shape.Cube;
+import cn.ancono.math.geometry.analytic.space.shape.Tetrahedron;
+import cn.ancono.math.numberModels.Calculators;
 
 import java.util.Random;
 
 import static cn.ancono.utilities.Printer.print;
+
 @Deprecated
 public class SpaceAGTest {
-    private static final MathCalculator<Double> mc = Calculators.getCalDouble();
+    private static final MathCalculator<Double> mc = Calculators.doubleCal();
 //	private Map<String,Point<Double>> cube = new HashMap<>();
 //	
 //	{
@@ -31,12 +33,12 @@ public class SpaceAGTest {
 //		cube.put("C1", Point.valueOf(1d, 1d, 1d, mc));
 //		cube.put("D1", Point.valueOf(0d, 1d, 1d, mc));
 //	}
-	
-	private Cube<Double> cb = Cube.unitCube(mc);
-	
-	
-	public void test() {
-        MathCalculator<Double> mc = Calculators.getCalDouble();
+
+    private Cube<Double> cb = Cube.unitCube(mc);
+
+
+    public void test() {
+        MathCalculator<Double> mc = Calculators.doubleCal();
         SVector<Double> sv1 = SVector.valueOf(1d, 1d, 0d, mc),
                 sv2 = SVector.valueOf(0d, 1d, 1d, mc);
         print(sv1);
@@ -45,23 +47,23 @@ public class SpaceAGTest {
         print(sv1.innerProduct(sv2));
         print(sv1.angle(sv2, Math::acos) / Math.PI);
     }
-	
-	
-	public void test2(){
-		//xb: 199.5
-		SPoint<Double> B1 = cb.getVertex("B1"),
-				D = cb.getVertex("D"),
-				C = cb.getVertex("C"),
-				D1= cb.getVertex("D1");
-		Line<Double> B1D = Line.twoPoints(B1, D),
-				CD1 = Line.twoPoints(C, D1);
-		print(B1D);
-		print(CD1);
-		print(B1D.angleCos(CD1));
-		Plane<Double> p = Plane.threePoints(cb.getVertex("A"), D1, C);
-		print(p.angleSin(B1D));
-		print(p.distanceSq(D));
-	}
+
+
+    public void test2() {
+        //xb: 199.5
+        SPoint<Double> B1 = cb.getVertex("B1"),
+                D = cb.getVertex("D"),
+                C = cb.getVertex("C"),
+                D1 = cb.getVertex("D1");
+        Line<Double> B1D = Line.twoPoints(B1, D),
+                CD1 = Line.twoPoints(C, D1);
+        print(B1D);
+        print(CD1);
+        print(B1D.angleCos(CD1));
+        Plane<Double> p = Plane.threePoints(cb.getVertex("A"), D1, C);
+        print(p.angleSin(B1D));
+        print(p.distanceSq(D));
+    }
 
 //	public void test3(){
 //		FormulaCalculator fc = FormulaCalculator.getCalculator();
@@ -179,11 +181,11 @@ public class SpaceAGTest {
 //		dealWith((vs[3]=vs[0].outerProduct(vs[1])).toString());
 //		dealWith(vs[3].calLengthSq());
 //	}
-	
-	
-	public void proveCenterI2() {
-        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalDouble());
-        MathCalculator<Double> mc = Calculators.getCalDouble();
+
+
+    public void proveCenterI2() {
+        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.doubleCal());
+        MathCalculator<Double> mc = Calculators.doubleCal();
         Random rd = new Random();
         @SuppressWarnings("unchecked")
         SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
@@ -194,26 +196,26 @@ public class SpaceAGTest {
         print(te);
         double s = te.surfaceArea();
         double left = te.radiusI();
-		double x = te.getBottom().area() * ps[0].getX() + te.getSideF2().area() * ps[1].getX()
-				+ te.getSideF3().area() * ps[2].getX() + te.getSideF1().area() * ps[3].getX();
-		double y = te.getBottom().area() * ps[0].getY() + te.getSideF2().area() * ps[1].getY()
-				+ te.getSideF3().area() * ps[2].getY() + te.getSideF1().area() * ps[3].getY();
-		double z = te.getBottom().area() * ps[0].getZ() + te.getSideF2().area() * ps[1].getZ()
-				+ te.getSideF3().area() * ps[2].getZ() + te.getSideF1().area() * ps[3].getZ();
-		x /= s;
-		y /= s;
-		z /= s;
-		SPoint<Double> center = SPoint.valueOf(x, y, z, mc);
-		double right = te.getBottom().getPlane().distance(center);
-		print(left,7);
-		print(right,7);
+        double x = te.getBottom().area() * ps[0].getX() + te.getSideF2().area() * ps[1].getX()
+                + te.getSideF3().area() * ps[2].getX() + te.getSideF1().area() * ps[3].getX();
+        double y = te.getBottom().area() * ps[0].getY() + te.getSideF2().area() * ps[1].getY()
+                + te.getSideF3().area() * ps[2].getY() + te.getSideF1().area() * ps[3].getY();
+        double z = te.getBottom().area() * ps[0].getZ() + te.getSideF2().area() * ps[1].getZ()
+                + te.getSideF3().area() * ps[2].getZ() + te.getSideF1().area() * ps[3].getZ();
+        x /= s;
+        y /= s;
+        z /= s;
+        SPoint<Double> center = SPoint.valueOf(x, y, z, mc);
+        double right = te.getBottom().getPlane().distance(center);
+        print(left, 7);
+        print(right, 7);
 //		print(te.radiusI(),7);
-	}
-	
-	
-	public void studyHCenter() {
-        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.getCalDouble());
-        MathCalculator<Double> mc = Calculators.getCalDouble();
+    }
+
+
+    public void studyHCenter() {
+        SPointGenerator<Double> g = new SPointGenerator<>(Calculators.doubleCal());
+        MathCalculator<Double> mc = Calculators.doubleCal();
         Random rd = new Random();
         @SuppressWarnings("unchecked")
         SPoint<Double>[] ps = (SPoint<Double>[]) new SPoint<?>[4];
@@ -224,14 +226,14 @@ public class SpaceAGTest {
         Plane<Double> p1, p2, p3;
         print(te);
         p1 = te.getBottom().getPlane().perpendicular(te.getSideF1().getEdgeA().getLine());
-		p2 = te.getBottom().getPlane().perpendicular(te.getSideF2().getEdgeA().getLine());
-		p3 = te.getBottom().getPlane().perpendicular(te.getSideF3().getEdgeA().getLine());
-		print(p1.intersectPoint(p2.intersectLine(p3)));
-	}
-	
-	
-	public void studyVertexAngle(){
-        MathCalculator<Double> mc = Calculators.getCalDoubleDev();
+        p2 = te.getBottom().getPlane().perpendicular(te.getSideF2().getEdgeA().getLine());
+        p3 = te.getBottom().getPlane().perpendicular(te.getSideF3().getEdgeA().getLine());
+        print(p1.intersectPoint(p2.intersectLine(p3)));
+    }
+
+
+    public void studyVertexAngle() {
+        MathCalculator<Double> mc = Calculators.doubleDev();
         SVectorGenerator<Double> g = new SVectorGenerator<>(mc);
         Random rd = new Random();
         @SuppressWarnings("unchecked")
@@ -242,42 +244,39 @@ public class SpaceAGTest {
         double theta = rd.nextDouble() * Math.PI;
         print(theta, 14);
         print(SVector.angledVector(ps[0], ps[1], Math.tan(theta)).angle(ps[0], Math::acos));
-		Plane<Double> p1 = Plane.vectorPoint(ps[0], ps[1], SPoint.pointO(mc));
-		Line<Double> l = Line.pointDirect(SPoint.pointO(mc),ps[0]);
-		Plane<Double> p2 = Plane.anglePlane(p1, l, Math.tan(theta));
-		print(p1.getNormalVector().angle(p2.getNormalVector(), Math::acos));
+        Plane<Double> p1 = Plane.vectorPoint(ps[0], ps[1], SPoint.pointO(mc));
+        Line<Double> l = Line.pointDirect(SPoint.pointO(mc), ps[0]);
+        Plane<Double> p2 = Plane.anglePlane(p1, l, Math.tan(theta));
+        print(p1.getNormalVector().angle(p2.getNormalVector(), Math::acos));
 //		print(theta,14);
 //		print(ps[3].innerProduct(ps[1]));
 //		double angle = ps[3].angle(ps[0], Math::acos);
 //		print(angle,14);
 //		print(mc.isEqual(theta, angle));
 //		print(SVector.mixedProduct(ps[3], ps[1], ps[0]));
-	}
-	
-//	@Test
-	public void testMatrix() {
-        MathCalculator<Double> mc = Calculators.getCalDoubleDev();
+    }
+
+    //	@Test
+    public void testMatrix() {
+        MathCalculator<Double> mc = Calculators.doubleDev();
         final int row = 10;
+        var rd = new Random();
         for (int n = 0; n < 1000; n++) {
-            double[][] mat = new double[row][];
-            for (int i = 0; i < mat.length; i++) {
-                mat[i] = ArraySup.ranDoubleArrNe(row + 1, 100);
-            }
-            Matrix<Double> matrix = Matrix.of(mat);
-            LinearEquationSolution<Double> so = MatrixSup.solveLinearEquation(matrix);
-            Vector<Double> x = so.getSpecialSolution();
+            Matrix<Double> matrix = Matrix.of(row, row + 1, mc, (i, j) -> rd.nextDouble() * 10 - 5);
+            LinearEquationSolution<Double> so = Matrix.solveLinearExpanded(matrix);
+            Vector<Double> x = so.getSpecial();
             Matrix<Double> cofactor = matrix.subMatrix(0, 0, row - 1, row - 1);
-            Vector<Double> v = Vector.column(matrix, row);
-            Vector<Double> v1 = Vector.column(Matrix.multiply(cofactor, x), 0);
-            v = v.mapTo(d -> d, mc);
-            v1 = v1.mapTo(d -> d, mc);
+            Vector<Double> v = matrix.getColumn(row);
+            Vector<Double> v1 = Vector.multiplyToVector(cofactor, x);
+            v = v.mapTo(mc, d -> d);
+            v1 = v1.mapTo(mc, d -> d);
             if (!v1.valueEquals(v)) {
                 print("WRONG?---");
-                matrix.printMatrix();
+                print(matrix);
                 print(v1);
                 print(v);
                 print("======");
             }
         }
-	}
+    }
 }

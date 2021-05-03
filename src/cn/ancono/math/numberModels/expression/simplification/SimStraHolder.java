@@ -8,7 +8,7 @@ import cn.ancono.math.numberModels.expression.Node;
 import cn.ancono.math.numberModels.expression.Node.Type;
 import cn.ancono.math.numberModels.expression.SimplificationStrategies;
 import cn.ancono.math.numberModels.expression.anno.AllowModify;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 
 import java.util.*;
 

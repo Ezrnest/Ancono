@@ -3,8 +3,9 @@
  */
 package cn.ancono.utilities;
 
-import cn.ancono.math.algebra.abstractAlgebra.EqualRelation;
-import cn.ancono.utilities.structure.Pair;
+import cn.ancono.math.algebra.abs.EqualRelation;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import kotlin.Pair;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -242,7 +243,7 @@ public final class CollectionSup {
     /**
      * Returns a comparator for collection.
      *
-     * @see CollectionSup#compareCollection(Collection, Collection, Comparator)
+     * @see cn.ancono.utilities.CollectionSup#compareCollection(Collection, Collection, Comparator)
      */
     public static <T, U extends Collection<T>> Comparator<U> collectionComparator(Comparator<? super T> comp) {
         return (x, y) -> compareCollection(x, y, comp);
@@ -321,6 +322,15 @@ public final class CollectionSup {
     public static <T> boolean contains(Collection<T> coll, Predicate<T> pre) {
         for (T t : coll) {
             if (pre.test(t)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static <T> boolean containsEqual(Collection<T> coll, EqualPredicate<T> pre, T x) {
+        for (T t : coll) {
+            if (pre.isEqual(x, t)) {
                 return true;
             }
         }

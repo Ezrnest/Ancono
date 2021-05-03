@@ -3,8 +3,8 @@
  */
 package test.math;
 
-import cn.ancono.math.numberTheory.combination.Permutation;
-import cn.ancono.math.numberTheory.combination.Permutations;
+import cn.ancono.math.discrete.combination.Permutation;
+import cn.ancono.math.discrete.combination.Permutations;
 import cn.ancono.utilities.ArraySup;
 import org.junit.Test;
 

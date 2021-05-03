@@ -450,8 +450,8 @@ public class IntervalUnion<T> extends AbstractMathSet<T> {
      */
     @NotNull
     @Override
-    public <N> IntervalUnion<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-        return new IntervalUnion<>(newCalculator, CollectionSup.mapList(is, x -> x.mapTo(mapper, newCalculator)));
+    public <N> IntervalUnion<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new IntervalUnion<>(newCalculator, CollectionSup.mapList(is, x -> x.mapTo(newCalculator, mapper)));
     }
 
     /**

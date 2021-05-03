@@ -117,7 +117,7 @@ public class DerivativeHelper {
         var p2 = Node.wrapNodeAM(false, f, g_);
         p2.p = Multinomial.NEGATIVE_ONE;
         Node nume = Node.wrapNodeAM(true, p1, p2);
-        Node deno = Node.wrapNodeDF(FUNCTION_NAME_EXP, g, Node.newPolyNode(Multinomial.valueOf(2), null));
+        Node deno = Node.wrapNodeDF(FUNCTION_NAME_EXP, g, Node.newPolyNode(Multinomial.of(2), null));
         return Node.wrapNodeFraction(nume, deno);
     }
 
@@ -151,7 +151,7 @@ public class DerivativeHelper {
         // 1/f(x) -> f'(x) / (f(x))^2
         Node fx = node.child;
         Node fx_ = derivativeNode(fx, variableName);
-        Node cos = Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, fx, Node.newPolyNode(Multinomial.valueOf(-2L)));
+        Node cos = Node.wrapCloneNodeDF(ExprFunction.FUNCTION_NAME_EXP, fx, Node.newPolyNode(Multinomial.of(-2L)));
         return Node.wrapNodeAM(false, fx_, cos);
     }
 
@@ -200,7 +200,7 @@ public class DerivativeHelper {
         Node fx_ = derivativeNode(fx, variableName);
         Node result = Node.wrapCloneNodeSF(ExprFunction.FUNCTION_NAME_RECIPROCAL, node);
         var r = Node.wrapNodeAM(false, fx_, result);
-        r.p = Multinomial.valueOf("1/2");
+        r.p = Multinomial.parse("1/2");
         return r;
     }
 
@@ -232,7 +232,7 @@ public class DerivativeHelper {
                 Multinomial.NEGATIVE_ONE);
         Node oneMinus = Node.wrapNodeAdd(negativeX2, Multinomial.ONE);
         Node sqr = Node.wrapCloneNodeDF(
-                ExprFunction.FUNCTION_NAME_EXP, oneMinus, Node.newPolyNode(Multinomial.valueOf("-1/2")));
+                ExprFunction.FUNCTION_NAME_EXP, oneMinus, Node.newPolyNode(Multinomial.parse("-1/2")));
         return Node.wrapNodeAM(false, fx_, sqr);
     }
 
@@ -342,6 +342,7 @@ public class DerivativeHelper {
     }
 
     private static Node dFunction(Node.SFunction node, String variableName) {
+        // like f(g(x))
         Node gx = node.child.cloneNode(null);
         Node gx_ = derivativeNode(gx, variableName);
         String functionName_ = node.functionName + "'";

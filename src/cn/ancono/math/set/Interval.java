@@ -222,12 +222,9 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
     public abstract Interval<T> intersect(Interval<T> iv);
 
 
-    /**
-     * @see cn.ancono.math.set.MathSet#mapTo(java.util.function.Function, MathCalculator)
-     */
     @NotNull
     @Override
-    public abstract <N> Interval<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> Interval<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * Returns the mathematical expression of this interval. Like {@literal (0,2)} or {@literal [2,3)}.
@@ -418,7 +415,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      * @param upperBound  exclusive
      */
     public static FiniteInterval<Integer> rangeOf(int downerBound, int upperBound) {
-        return new FiniteInterval<>(Calculators.getCalInteger(), downerBound, upperBound - 1);
+        return new FiniteInterval<>(Calculators.integer(), downerBound, upperBound - 1);
     }
 
 

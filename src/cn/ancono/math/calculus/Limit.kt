@@ -74,7 +74,7 @@ object Limit {
         val (f, constant) = expr.terms.partition { it.containsChar(variable) }
 
         if (!process.value.isFinite) {
-            val top = f.maxBy { t -> t.getCharacterPower(variable) }!! // x^666
+            val top = f.maxByOrNull { t: Term -> t.getCharacterPower(variable) }!! // x^666
             val lim = limitOf(top, process)
             return Limit.addConst(lim, mc) { Expression.fromMultinomial(Multinomial.fromTerms(constant)) }
         }
@@ -86,7 +86,7 @@ object Limit {
                     Expression.fromMultinomial(expr), variable, value)
             return LimitResult.finiteValueOf(re, signum * signum0)
         }
-        val bot = f.minBy { it.getCharacterPower(variable) }!!// x ^ (-666)
+        val bot = f.minByOrNull { it: Term -> it.getCharacterPower(variable) }!!// x ^ (-666)
         val lim = limitOf(bot, process, mc)
         return Limit.addConst(lim, mc) { Expression.fromMultinomial(Multinomial.fromTerms(constant)) }
     }
@@ -97,7 +97,7 @@ object Limit {
     @JvmStatic
     fun fractionPoly(nume: Multinomial, deno: Multinomial, process: LimitProcessE,
                      mc: ExprCalculator = ExprCalculator.instance): LimitResultE {
-        if (deno.isZero) {
+        if (deno.isZero()) {
             ExceptionUtil.dividedByZero()
         }
         val reNume = limitOf(nume, process, mc)
@@ -138,8 +138,8 @@ object Limit {
         val f2 = deno.terms
         if (process.value.isFinite) {
             // x -> 0, find the lowest term
-            val low1 = f1.minBy { it.getCharacterPower(variable) }!!
-            val low2 = f2.minBy { it.getCharacterPower(variable) }!!
+            val low1 = f1.minByOrNull { it: Term -> it.getCharacterPower(variable) }!!
+            val low2 = f2.minByOrNull { it: Term -> it.getCharacterPower(variable) }!!
             val p1 = low1.getCharacterPower(variable)
             val p2 = low2.getCharacterPower(variable)
             val signum = p1.signum * p2.signum * process.direction.signum()
@@ -156,8 +156,8 @@ object Limit {
             }
         } else {
             //x -> Inf, find the highest term
-            val top1 = f1.maxBy { it.getCharacterPower(variable) }!!
-            val top2 = f2.maxBy { it.getCharacterPower(variable) }!!
+            val top1 = f1.maxByOrNull { it: Term -> it.getCharacterPower(variable) }!!
+            val top2 = f2.maxByOrNull { it: Term -> it.getCharacterPower(variable) }!!
             val p1 = top1.getCharacterPower(variable)
             val p2 = top2.getCharacterPower(variable)
             val signum = p1.signum * p2.signum * process.direction.signum()
@@ -180,7 +180,7 @@ object Limit {
      * Returns the sum of two limit result if possible, otherwise returns `null`.
      */
     @JvmStatic
-    fun <T : Any> add(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> add(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
         if (x.isFinite) {
             return if (y.isFinite) {
                 val re = mc.add(x.value.value, y.value.value)
@@ -203,7 +203,7 @@ object Limit {
      * Returns the sum of a limit result and a constant.
      */
     @JvmStatic
-    inline fun <T : Any> addConst(x: LimitResult<T>, mc: MathCalculator<T>, y: () -> T): LimitResult<T> {
+    inline fun <T> addConst(x: LimitResult<T>, mc: MathCalculator<T>, y: () -> T): LimitResult<T> {
         return if (x.isFinite) {
             LimitResult.finiteValueOf(mc.add(x.value.value, y()), x.direction)
         } else {
@@ -212,7 +212,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> negate(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> negate(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
         val direction = -x.direction
         return if (x.isFinite) {
             val re = mc.negate(x.value.value)
@@ -223,12 +223,12 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> subtract(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> subtract(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
         return add(x, negate(y, mc), mc)
     }
 
     @JvmStatic
-    fun <T : Any> multiplySignum(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> multiplySignum(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
         return if (x.isFinite) {
             val re = mc.negate(x.value.value)
             LimitResult.finiteValueOf(re, -x.direction)
@@ -238,7 +238,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> multiplyConst(const: T, x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> multiplyConst(const: T, x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
         if (x.direction == LimitDirection.CONST) {
             return LimitResult.constantOf(mc.multiply(const, x.value.value))
         }
@@ -303,7 +303,7 @@ object Limit {
     /**
      * Returns the signum of a value of limit
      */
-    private fun <T : Any> signumOf(t: T, mc: MathCalculator<T>): Int {
+    private fun <T> signumOf(t: T, mc: MathCalculator<T>): Int {
         return try {
             val s = mc.compare(t, mc.zero)
             if (s >= 0) {
@@ -317,7 +317,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> multiply(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> multiply(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
         fun infResultOf(t: T, dInf: LimitDirection): LimitResult<T>? {
             val comp = mc.compare(t, mc.zero)
             if (comp == 0) {
@@ -366,7 +366,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> reciprocal(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> reciprocal(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
         if (x.direction == LimitDirection.CONST) {
             return LimitResult.constantOf(mc.reciprocal(x.value.value))
         }
@@ -384,16 +384,16 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> divide(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> divide(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
         return multiply(x, reciprocal(y, mc), mc)
     }
 
 
     @JvmStatic
-    fun <T : Any> composeUnidentified(x: LimitResult<T>, f: (T) -> T,
-                                      positiveInfLimit: () -> LimitResult<T>? = LimitResult.Companion::infinity,
-                                      negativeInfLimit: () -> LimitResult<T>? = LimitResult.Companion::infinity,
-                                      infLimit: () -> LimitResult<T>? = LimitResult.Companion::infinity): LimitResult<T>? {
+    fun <T> composeUnidentified(x: LimitResult<T>, f: (T) -> T,
+                                positiveInfLimit: () -> LimitResult<T>? = LimitResult.Companion::infinity,
+                                negativeInfLimit: () -> LimitResult<T>? = LimitResult.Companion::infinity,
+                                infLimit: () -> LimitResult<T>? = LimitResult.Companion::infinity): LimitResult<T>? {
         return if (x.isFinite) {
             LimitResult.finiteValueOf(f(x.value.value))
         } else {
@@ -407,9 +407,9 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> composeMonoIncrease(x: LimitResult<T>, f: (T) -> T,
-                                      positiveInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity,
-                                      negativeInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity): LimitResult<T>? {
+    fun <T> composeMonoIncrease(x: LimitResult<T>, f: (T) -> T,
+                                positiveInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity,
+                                negativeInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity): LimitResult<T>? {
         return if (x.isFinite) {
             LimitResult.finiteValueOf(f(x.value.value), x.direction)
         } else {
@@ -429,9 +429,9 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T : Any> composeMonoDecrease(x: LimitResult<T>, f: (T) -> T,
-                                      positiveInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity,
-                                      negativeInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity): LimitResult<T>? {
+    fun <T> composeMonoDecrease(x: LimitResult<T>, f: (T) -> T,
+                                positiveInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity,
+                                negativeInfLimit: () -> LimitValue<T> = LimitValue.Companion::infinity): LimitResult<T>? {
         return if (x.isFinite) {
             LimitResult.finiteValueOf(f(x.value.value), -x.direction)
         } else {
@@ -639,11 +639,11 @@ class LimitProcess<T>(val variableName: String, value: LimitValue<T>, direction:
 
         fun <T> toPositiveInf(): LimitProcess<T> = POSITIVE_INF as LimitProcess<T>
         fun <T> toNegativeInf(): LimitProcess<T> = NEGATIVE_INF as LimitProcess<T>
-        fun <T : Any> toPositiveZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.RIGHT)
+        fun <T> toPositiveZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.RIGHT)
 
-        fun <T : Any> toNegativeZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.LEFT)
+        fun <T> toNegativeZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.LEFT)
 
-        fun <T : Any> toZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.BOTH)
+        fun <T> toZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.BOTH)
 
     }
 }
@@ -730,12 +730,12 @@ internal constructor(val value: LimitValue<T>, val direction: LimitDirection) {
         }
 
         @JvmStatic
-        fun <T : Any> positiveZero(mc: MathCalculator<T>): LimitResult<T> {
+        fun <T> positiveZero(mc: MathCalculator<T>): LimitResult<T> {
             return finiteValueOf(mc.zero, LimitDirection.RIGHT)
         }
 
         @JvmStatic
-        fun <T : Any> negativeZero(mc: MathCalculator<T>): LimitResult<T> {
+        fun <T> negativeZero(mc: MathCalculator<T>): LimitResult<T> {
             return finiteValueOf(mc.zero, LimitDirection.LEFT)
         }
 
@@ -765,7 +765,7 @@ internal constructor(val value: LimitValue<T>, val direction: LimitDirection) {
     }
 }
 
-fun <T : Any> LimitResult<T>.signum(mc: MathCalculator<T>): Int {
+fun <T> LimitResult<T>.signum(mc: MathCalculator<T>): Int {
     if (this.isFinite) {
         val v = value.value
         if (mc.isZero(v)) {
@@ -792,7 +792,7 @@ fun <T : Any> LimitResult<T>.signum(mc: MathCalculator<T>): Int {
 ///**
 // * Describes equivalent infinitesimal
 // */
-//data class PolyEqualInf<T:Any>(val pow : Fraction, val coe : T){
+//data class PolyEqualInf<T>(val pow : Fraction, val coe : T){
 //    fun add(y : PolyEqualInf<T>, mc : MathCalculator<T>){
 //
 //    }

@@ -12,7 +12,7 @@ package cn.ancono.utilities;
  * @param <S> the object itself that will be returned by {@link #append(Object)}
  * @param <I> the thing to add to build.
  */
-public interface Builder<T, S extends Builder<T, S, I>, I> {
+public interface Builder<T, S extends cn.ancono.utilities.Builder<T, S, I>, I> {
     /**
      * Append an object to the builder.
      * Return the object itself.
@@ -32,7 +32,6 @@ public interface Builder<T, S extends Builder<T, S, I>, I> {
     /**
      * Check the state of this builder whether it finishes building.
      *
-     * @return
      */
     boolean isBuilt();
 }

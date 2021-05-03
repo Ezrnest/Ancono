@@ -5,8 +5,7 @@ import org.junit.Test;
 
 import java.util.Random;
 
-import static cn.ancono.utilities.Printer.print;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /*
  * Created by liyicheng at 2020-03-03 16:43
@@ -29,8 +28,16 @@ public class MathUtilsTest {
     @Test
     public void sqrIntL() {
         for (long i = 100; i < 1000000; i++) {
-            assertEquals("", i, MathUtils.sqrtIntL(i * i));
-            assertEquals("", i, MathUtils.sqrtIntL(i * i + 1));
+            assertEquals("", i, MathUtils.sqrtInt(i * i));
+            assertEquals("", i, MathUtils.sqrtInt(i * i + 1));
         }
+    }
+
+    @Test
+    public void chineseRemainder() {
+        long[] mods = {3, 5, 7};
+        long[] remainders = {2, 3, 2};
+        long res = MathUtils.chineseRemainder(mods, remainders);
+        assertEquals(23, res, MathUtils.product(mods));
     }
 }

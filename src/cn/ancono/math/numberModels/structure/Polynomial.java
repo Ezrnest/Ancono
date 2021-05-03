@@ -1,30 +1,32 @@
-/**
+/*
  * 2017-11-21
  */
 package cn.ancono.math.numberModels.structure;
 
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.EUDCalculator;
-import cn.ancono.math.algebra.abstractAlgebra.calculator.UFDCalculator;
-import cn.ancono.math.algebra.linearAlgebra.Matrix;
-import cn.ancono.math.algebra.linearAlgebra.MatrixSup;
-import cn.ancono.math.algebra.linearAlgebra.Vector;
+import cn.ancono.math.algebra.PolynomialUtil;
+import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
+import cn.ancono.math.algebra.abs.calculator.UFDCalculator;
+import cn.ancono.math.algebra.linear.Matrix;
+import cn.ancono.math.algebra.linear.Vector;
+import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
-import cn.ancono.math.geometry.analytic.planeAG.Point;
+import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.*;
 import cn.ancono.math.numberModels.api.AlgebraModel;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
-import cn.ancono.math.numberTheory.combination.CombUtils;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.ModelPatterns;
-import cn.ancono.utilities.structure.Pair;
+import kotlin.Pair;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,12 +36,17 @@ import java.util.function.IntFunction;
 
 
 /**
- * Represents polynomials of one variable on a field <code>T</code>.
+ * Represents polynomials of one variable with number model type <code>T</code>.
+ * <p></p>
+ * Generally, for methods that only require addition and multiplication of the number model, including
+ * polynomial addition and multiplication, it is sufficient that the number model forms a ring.
+ * However, for methods including <code>gcd, mod</code>, it is required that number model forms a field.
+ * You can find additional methods for polynomials on a ring in {@linkplain PolynomialUtil}.
  *
  * @author liyicheng
  * @see IPolynomial
  *///created by liyicheng at 2017-11-21 17:10
-public final class Polynomial<T> extends MathObject<T> implements
+public final class Polynomial<T> extends AbstractMathObject<T> implements
         IPolynomial<T>,
         Comparable<Polynomial<T>>,
         AlgebraModel<T, Polynomial<T>>,
@@ -60,7 +67,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * <br>
      * <code>degree >= -1</code>
      */
-    private final int degree;
+    final int degree;
 
 
     /**
@@ -88,9 +95,9 @@ public final class Polynomial<T> extends MathObject<T> implements
      * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
      */
     @Override
-    public T getCoefficient(int n) {
+    public T get(int n) {
         if (n < 0) {
-            throw new IndexOutOfBoundsException("For n=" + n);
+            throw new IndexOutOfBoundsException("n = " + n + " < 0 !");
         }
         if (n > degree) {
             return getMc().getZero();
@@ -102,13 +109,21 @@ public final class Polynomial<T> extends MathObject<T> implements
         return IPolynomial.coefficientVector(this, getMathCalculator());
     }
 
+    /**
+     * Gets the coefficients in this polynomial as a immutable list.
+     */
+    @Override
+    public @NotNull List<T> coefficients() {
+        return Arrays.asList(coes);
+    }
+
     public boolean isZero() {
         return degree < 0;
     }
 
     public boolean isOne() {
         var mc = getMc();
-        return degree == 0 && mc.isEqual(mc.getOne(), getCoefficient(0));
+        return degree == 0 && mc.isEqual(mc.getOne(), get(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -194,7 +209,7 @@ public final class Polynomial<T> extends MathObject<T> implements
 
 
     @Override
-    public Polynomial<T> negate() {
+    public @NotNull Polynomial<T> negate() {
         var mc = getMc();
         T[] result = getArr(coes.length);
         for (int i = 0; i < coes.length; i++) {
@@ -245,12 +260,12 @@ public final class Polynomial<T> extends MathObject<T> implements
         if (degree < 0) {
             return getMc().getZero();
         }
-        T re = getCoefficient(degree);
+        T re = get(degree);
         var mc = getMc();
         for (int i = degree - 1; i > -1; i--) {
             //noinspection SuspiciousNameCombination
             re = mc.multiply(re, x); // left-multiply x.
-            re = mc.add(getCoefficient(i), re);
+            re = mc.add(get(i), re);
         }
         return re;
     }
@@ -263,10 +278,10 @@ public final class Polynomial<T> extends MathObject<T> implements
             return zero(getMc());
         }
         var mc = getMc();
-        var re = constant(mc, getCoefficient(degree));
+        var re = constant(mc, get(degree));
         for (int i = degree - 1; i > -1; i--) {
             re = sub.multiply(re);
-            re = constant(mc, getCoefficient(i)).add(re);
+            re = constant(mc, get(i)).add(re);
         }
         return re;
     }
@@ -277,10 +292,10 @@ public final class Polynomial<T> extends MathObject<T> implements
      * maps the coefficient using the <code>injection</code>.
      */
     public <V extends AlgebraModel<T, V>> V homoMap(V x, Function<T, V> injection) {
-        var re = injection.apply(getCoefficient(getLeadingPower()));
+        var re = injection.apply(get(getLeadingPower()));
         for (int i = degree - 1; i > -1; i--) {
             re = x.multiply(re);
-            re = injection.apply(getCoefficient(i)).add(re);
+            re = injection.apply(get(i)).add(re);
         }
         return re;
     }
@@ -296,11 +311,21 @@ public final class Polynomial<T> extends MathObject<T> implements
      */
     public Polynomial<T> monic() {
         var mc = getMc();
-        if (isZero() || mc.isEqual(mc.getOne(), getCoefficient(degree))) {
+        if (isZero() || mc.isEqual(mc.getOne(), get(degree))) {
             return this;
         }
-        T k = getCoefficient(degree);
+        T k = get(degree);
         return divide(k);
+    }
+
+    /**
+     * Determines whether this polynomial is invertible, that is, whether this polynomial is a
+     *
+     * @return
+     */
+    @Override
+    public boolean isUnit() {
+        return isConstant() && getMc().isUnit(get(0));
     }
 
     /**
@@ -323,9 +348,9 @@ public final class Polynomial<T> extends MathObject<T> implements
     }
 
     @NotNull
-    public Polynomial<T> multiplyLong(long k) {
+    public Polynomial<T> multiply(long n) {
         var mc = getMc();
-        if (k == 0) {
+        if (n == 0) {
             return zero(mc);
         }
         if (isZero()) {
@@ -333,7 +358,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         }
         T[] result = getArr(coes.length);
         for (int i = 0; i < result.length; i++) {
-            result[i] = mc.multiplyLong(coes[i], k);
+            result[i] = mc.multiplyLong(coes[i], n);
         }
         return new Polynomial<>(mc, result);
     }
@@ -342,7 +367,7 @@ public final class Polynomial<T> extends MathObject<T> implements
     /**
      * Returns <code>1/k*this</code>
      */
-    public Polynomial<T> divide(T k) {
+    public @NotNull Polynomial<T> divide(T k) {
         var mc = getMc();
         if (isZero()) {
             return this;
@@ -381,6 +406,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         return -1;
     }
 
+
     /**
      * remains -= k*x^pow * toSubtract
      */
@@ -398,7 +424,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      *
      * @param g a non-zero polynomial
      */
-    public kotlin.Pair<Polynomial<T>, Polynomial<T>> divideAndRemainder(Polynomial<T> g) {
+    public kotlin.@NotNull Pair<Polynomial<T>, Polynomial<T>> divideAndRemainder(Polynomial<T> g) {
         var f = this;
         var mc = getMc();
         int deg1 = f.degree, deg2 = g.degree;
@@ -449,6 +475,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         return divideAndRemainder(g).getFirst();
     }
 
+
     /**
      * Returns the remainder of the division of <code>this</code> and <code>g</code>.
      * Assuming
@@ -494,6 +521,7 @@ public final class Polynomial<T> extends MathObject<T> implements
     /*
      * @see cn.ancono.math.MathCalculator#pow(java.lang.Object, long)
      */
+    @Override
     @NotNull
     public Polynomial<T> pow(long exp) {
         if (exp == 1) {
@@ -502,7 +530,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         var mc = getMc();
         if (this.degree <= 0) {
             //single
-            return constant(mc, mc.pow(getCoefficient(0), exp));
+            return constant(mc, mc.pow(get(0), exp));
         }
         long mp = exp * this.degree;
         if (mp > Integer.MAX_VALUE || mp < 0) {
@@ -510,6 +538,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         }
         return ModelPatterns.binaryProduce(exp, one(mc), this, Polynomial::multiply);
     }
+
 
     /**
      * 'Shifts' this polynomial by multiplying <code>x<sup>d</sup></code>. If {@code d} is negative, the terms of
@@ -526,8 +555,12 @@ public final class Polynomial<T> extends MathObject<T> implements
         }
         var mc = getMc();
         T[] arr = getArr(degree + d + 1);
-        System.arraycopy(coes, 0, arr, d, degree + 1);
-        Arrays.fill(arr, 0, d, mc.getZero());
+        if (d < 0) {
+            System.arraycopy(coes, -d, arr, 0, degree + 1 + d);
+        } else {
+            System.arraycopy(coes, 0, arr, d, degree + 1);
+            Arrays.fill(arr, 0, d, mc.getZero());
+        }
         return new Polynomial<>(mc, arr);
     }
 
@@ -650,7 +683,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * returned polynomial is one.
      * <br>
      * This method assumes division can be done on <code>T</code>. If <code>T</code> is actually a ring, please use
-     * {@linkplain PolynomialSup#primitiveGCD(Polynomial, Polynomial)} instead.
+     * {@linkplain PolynomialUtil#primitiveGCD(Polynomial, Polynomial)} instead.
      */
     @NotNull
     @Override
@@ -733,6 +766,14 @@ public final class Polynomial<T> extends MathObject<T> implements
     }
 
     /**
+     * Determines whether this polynomial is square-free, which means it
+     * has no duplicated root.
+     */
+    public boolean isSquarefree() {
+        return !hasDuplicatedRoot();
+    }
+
+    /**
      * Returns a polynomial containing only terms of degree <= n in this polynomial.
      *
      * @param n a non-negative integer
@@ -773,7 +814,7 @@ public final class Polynomial<T> extends MathObject<T> implements
     private static <T> Polynomial<T> sumOfX1(MathCalculator<T> mc) {
         //1+2+...n = (n+1)n / 2 = 1/2 * n^2 + 1/2 * n
         var half = mc.divideLong(mc.getOne(), 2L);
-        return Polynomial.valueOf(mc, mc.getZero(), half, half);
+        return Polynomial.of(mc, mc.getZero(), half, half);
     }
 
     private static <T> Polynomial<T> sumOfX2(MathCalculator<T> mc) {
@@ -781,7 +822,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 3), mc);
         var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
         var c3 = CalculatorUtils.valueOfFraction(Fraction.of(1, 6), mc);
-        return Polynomial.valueOf(mc, mc.getZero(), c3, c2, c1);
+        return Polynomial.of(mc, mc.getZero(), c3, c2, c1);
     }
 
     private static <T> Polynomial<T> sumOfX3(MathCalculator<T> mc) {
@@ -789,7 +830,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 4), mc);
         var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
         var o = mc.getZero();
-        return Polynomial.valueOf(mc, o, o, c1, c2, c1);
+        return Polynomial.of(mc, o, o, c1, c2, c1);
     }
 
     /**
@@ -801,7 +842,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * @return a square matrix whose size is <code>this.degree + g.degree</code>.
      */
     public Matrix<T> sylvesterMatrix(Polynomial<T> g) {
-        return MatrixSup.sylvesterDet(this, g);
+        return Matrix.sylvesterDet(this, g);
     }
 
     /**
@@ -813,7 +854,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * @return the determinant of the sylvester matrix
      */
     public T sylvesterDet(Polynomial<T> g) {
-        return sylvesterMatrix(g).calDet();
+        return sylvesterMatrix(g).det();
     }
 
     /**
@@ -829,7 +870,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      */
     public T determinant() {
         var det = sylvesterMatrix(derivative());
-        var re = det.calDet();
+        var re = det.det();
         re = getMc().divide(re, first());
         int n = getDegree();
         if (n % 4 == 2 || n % 4 == 3) {
@@ -844,7 +885,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
     @Override
-    public <N> Polynomial<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
+    public <N> @NotNull Polynomial<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         var arr = ArraySup.mapTo(coes, mapper);
         return new Polynomial<>(newCalculator, arr);
     }
@@ -894,8 +935,8 @@ public final class Polynomial<T> extends MathObject<T> implements
         }
         var mc = getMc();
         for (int i = mp; i > -1; i--) {
-            T a = getCoefficient(i);
-            T b = o.getCoefficient(i);
+            T a = get(i);
+            T b = o.get(i);
             int t = mc.compare(a, b);
             if (t != 0) {
                 return t;
@@ -946,8 +987,30 @@ public final class Polynomial<T> extends MathObject<T> implements
      * @param ps a non-empty array
      */
     @SafeVarargs
-    public static <T> Polynomial<T> addAll(Polynomial<T>... ps) {
-        return NumberModelUtils.sigma(ps, 0, ps.length);
+    public static <T> Polynomial<T> sum(Polynomial<T>... ps) {
+        return sum(Arrays.asList(ps));
+    }
+
+    /**
+     * Adds all the polynomials.
+     *
+     * @param ps a non-empty array
+     */
+    public static <T> Polynomial<T> sum(List<? extends Polynomial<T>> ps) {
+        var deg = -1;
+        for (var p : ps) {
+            if (p.degree > deg) {
+                deg = p.degree;
+            }
+        }
+        var mc = ps.get(0).getMathCalculator();
+        T[] result = getZeroArr(deg, mc);
+        for (var p : ps) {
+            for (int i = 0; i <= p.degree; i++) {
+                result[i] = mc.add(result[i], p.get(i));
+            }
+        }
+        return new Polynomial<>(mc, trimLeadingZeros(result, mc));
     }
 
     /**
@@ -957,7 +1020,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      */
     @SafeVarargs
     public static <T> Polynomial<T> multiplyAll(Polynomial<T>... ps) {
-        return NumberModelUtils.multiplyAll(ps, 0, ps.length);
+        return NumberModelUtils.productBinary(ps, 0, ps.length);
     }
 
     /**
@@ -998,14 +1061,18 @@ public final class Polynomial<T> extends MathObject<T> implements
      */
     public static <T> Polynomial<T> twoTerms(MathCalculator<T> mc, T a, int n, T b) {
         var arr = getZeroArr(n, mc);
-
+        if (mc.isZero(a)) {
+            return constant(mc, b);
+        }
         arr[n] = a;
         arr[0] = b;
-        arr = trimLeadingZeros(arr, mc);
 
         return new Polynomial<>(mc, arr);
     }
 
+    /**
+     * Returns the constant polynomial <code>c</code>.
+     */
     public static <T> Polynomial<T> constant(MathCalculator<T> mc, T c) {
         if (mc.isZero(c)) {
             return zero(mc);
@@ -1015,12 +1082,19 @@ public final class Polynomial<T> extends MathObject<T> implements
     }
 
     /**
+     * Returns the linear polynomial <code>ax+b</code>.
+     */
+    public static <T> Polynomial<T> linear(MathCalculator<T> mc, T a, T b) {
+        return twoTerms(mc, a, 1, b);
+    }
+
+    /**
      * Returns a polynomial of <code>sigma(coes[i]*x^i)</code>
      *
      * @param coes coefficients of the polynomial, <code>null</code> will be treated as zero.
      */
     @SafeVarargs
-    public static <T> Polynomial<T> valueOf(MathCalculator<T> mc, T... coes) {
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, T... coes) {
         if (coes.length == 0) {
             return zero(mc);
         }
@@ -1033,29 +1107,117 @@ public final class Polynomial<T> extends MathObject<T> implements
         return new Polynomial<>(mc, trimLeadingZerosAndCopy(coes, mc));
     }
 
-    public static <T> Polynomial<T> valueOf(MathCalculator<T> mc, List<T> coes) {
+    /**
+     * Creates a polynomial of <code>sigma(coes[i]*x^i)</code>.
+     *
+     * @param coes coefficients of the polynomial, <code>null</code> will be treated as zero.
+     */
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, List<T> coes) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) coes.toArray();
-        return valueOf(mc, arr);
+        return of(mc, arr);
     }
 
+    /**
+     * Creates a polynomial with the given coefficient map.
+     */
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, Map<Integer, T> coeMap) {
+        int maxPow = Collections.max(coeMap.keySet());
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[maxPow + 1];
+        var zero = mc.getZero();
+        for (int i = 0; i <= maxPow; i++) {
+            arr[i] = coeMap.getOrDefault(i, zero);
+        }
+        return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
+    }
 
     /**
-     * Returns <code>x^p</code>, where p is a non-negative integer.
+     * Creates a polynomial with the given coefficient supplier.
+     */
+    public static <T> Polynomial<T> of(MathCalculator<T> mc, int degree, IntFunction<T> supplier) {
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[degree + 1];
+        for (int i = 0; i <= degree; i++) {
+            arr[i] = supplier.apply(i);
+        }
+        return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
+    }
+
+    /**
+     * Parses the given string to be a polynomial.
+     * <p></p>
+     * The format of a polynomial can be described as follows:
+     * <pre> polynomial ::= term ([+-] term)*
+     * term ::= [+-]* t1 | ch
+     * t1   ::= coefficient ("*"? ch )?
+     * ch   ::= "x" ("^" pow)?
+     * pow  ::= \d+
+     * </pre>
+     */
+    public static <T> Polynomial<T> parse(String expr, MathCalculator<T> mc, Function<String, T> parser) {
+        var terms = new HashMap<Integer, T>();
+        int idx = 0;
+        var length = expr.length();
+        while (idx < length) {
+            int start = idx;
+            while (start < length) {
+                var c = expr.charAt(start);
+                if (c != '+' && c != '-') {
+                    break;
+                }
+                start++;
+            }
+            var end = start;
+            for (; end < length; end++) {
+                var c = expr.charAt(end);
+                if (c == '+' || c == '-') {
+                    break;
+                }
+            }
+            var part = expr.substring(idx, end).trim();
+
+            var idxOfX = part.lastIndexOf('x');
+            if (idxOfX == -1) {
+                terms.merge(0, ParserUtils.parseCoefficient(part, parser, mc), mc::add);
+            } else {
+                T coe;
+                if (idxOfX == 0) {
+                    coe = mc.getOne();
+                } else {
+                    coe = ParserUtils.parseCoefficient(part.substring(0, idxOfX), parser, mc);
+                }
+
+                var strCh = part.substring(idxOfX);
+                var idxPow = strCh.indexOf('^');
+                int pow;
+                if (idxPow == -1) {
+                    pow = 1;
+                } else {
+                    pow = Integer.parseInt(strCh.substring(idxPow + 1));
+                }
+                terms.merge(pow, coe, mc::add);
+            }
+            idx = end;
+
+        }
+        return of(mc, terms);
+    }
+
+    /**
+     * Returns <code>x<sup>p</sup></code>, where p is a non-negative integer.
      */
     public static <T> Polynomial<T> powerX(int p, MathCalculator<T> mc) {
         if (p < 0) {
             throw new IllegalArgumentException("p<0");
         }
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) new Object[p + 1];
+        T[] arr = getZeroArr(p, mc);
         arr[p] = mc.getOne();
-        Arrays.fill(arr, mc.getZero());
         return new Polynomial<>(mc, arr);
     }
 
     /**
-     * Returns <code>k*x^p</code>, where p is a non-negative integer.
+     * Returns <code>k*x<sup>p</sup></code>, where p is a non-negative integer.
      */
     public static <T> Polynomial<T> powerX(int p, T k, MathCalculator<T> mc) {
         if (p < 0) {
@@ -1112,7 +1274,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         }
         T[] arr = getArr(p.getDegree() + 1);
         for (int i = 0; i <= degree; i++) {
-            arr[i] = p.getCoefficient(i);
+            arr[i] = p.get(i);
         }
 
         return new Polynomial<>(mc, trimLeadingZeros(arr, mc));
@@ -1134,7 +1296,7 @@ public final class Polynomial<T> extends MathObject<T> implements
      * Returns a polynomial of <code>x - root</code>
      */
     public static <T> Polynomial<T> ofRoot(MathCalculator<T> mc, T root) {
-        return valueOf(mc, mc.negate(root), mc.getOne());
+        return of(mc, mc.negate(root), mc.getOne());
     }
 
     /**
@@ -1183,8 +1345,8 @@ public final class Polynomial<T> extends MathObject<T> implements
             if (mc.isZero(t)) {
                 continue;
             }
-            var m1 = i == 0 ? one(mc) : NumberModelUtils.multiplyAll(rootPoly, 0, i);
-            var m2 = i == points.length - 1 ? one(mc) : NumberModelUtils.multiplyAll(rootPoly, i + 1, points.length);
+            var m1 = i == 0 ? one(mc) : NumberModelUtils.productBinary(rootPoly, 0, i);
+            var m2 = i == points.length - 1 ? one(mc) : NumberModelUtils.productBinary(rootPoly, i + 1, points.length);
             var single = m1.multiply(m2);
             var curRoot = roots[i];
             IntFunction<T> f = (int j) -> mc.subtract(curRoot, roots[j]);
@@ -1263,13 +1425,34 @@ public final class Polynomial<T> extends MathObject<T> implements
     }
 
     /**
-     * Returns a
+     * Returns a calculator for quotient field `T[x]/(p)`.
      *
      * @param p an irreducible polynomial.
-     * @return a
      */
     public static <T> ModPolyCalculator<T> getModCal(Polynomial<T> p) {
         return new ModPolyCalculator<>(p);
+    }
+
+
+    /**
+     * Returns the result of <code>x^n</code> modulo <code>mod</code>.
+     *
+     * @param x   a polynomial
+     * @param n   a non-negative integer
+     * @param mod the modular
+     */
+    public static <T> Polynomial<T> powMod(Polynomial<T> x, long n, Polynomial<T> mod) {
+        if (n < 0) {
+            throw new IllegalArgumentException("n < 0");
+        }
+        if (n == 0 || mod.isUnit()) {
+            return Polynomial.zero(x.getMathCalculator());
+        }
+        if (n == 1) {
+            return x;
+        }
+        var mc = x.getMathCalculator();
+        return ModelPatterns.binaryProduce(n, one(mc), x, (a, b) -> a.multiply(b).mod(mod));
     }
 
 
@@ -1300,6 +1483,18 @@ public final class Polynomial<T> extends MathObject<T> implements
         }
 
 
+        @NotNull
+        @Override
+        public Polynomial<T> of(long x) {
+            return Polynomial.constant(mc, mc.of(x));
+        }
+
+        @NotNull
+        @Override
+        public Polynomial<T> of(@NotNull Fraction x) {
+            return Polynomial.constant(mc, mc.of(x));
+        }
+
         /*
          * @see cn.ancono.math.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
          */
@@ -1326,6 +1521,10 @@ public final class Polynomial<T> extends MathObject<T> implements
             return x.add(y);
         }
 
+        @Override
+        public Polynomial<T> sum(@NotNull List<? extends Polynomial<T>> ps) {
+            return Polynomial.sum(ps);
+        }
 
         /*
          * @see cn.ancono.math.MathCalculator#negate(java.lang.Object)
@@ -1370,6 +1569,11 @@ public final class Polynomial<T> extends MathObject<T> implements
         @Override
         public Polynomial<T> multiply(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
             return para1.multiply(para2);
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Polynomial<T> x) {
+            return x.degree == 0;
         }
 
         /*
@@ -1424,7 +1628,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> multiplyLong(@NotNull Polynomial<T> p, long n) {
-            return p.multiplyLong(n);
+            return p.multiply(n);
         }
 
         /*
@@ -1477,11 +1681,11 @@ public final class Polynomial<T> extends MathObject<T> implements
          */
         @NotNull
         @Override
-        public Polynomial<T> abs(@NotNull Polynomial<T> para) {
-            if (mc.compare(para.getCoefficient(para.degree), mc.getZero()) < 0) {
-                return negate(para);
+        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
+            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
+                return negate(x);
             }
-            return para;
+            return x;
         }
 
         /**
@@ -1502,10 +1706,12 @@ public final class Polynomial<T> extends MathObject<T> implements
         /*
          * @see cn.ancono.math.MathCalculator#getNumberClass()
          */
+        @SuppressWarnings("unchecked")
         @NotNull
         @Override
-        public Class<?> getNumberClass() {
-            return Polynomial.class;
+        public Class<Polynomial<T>> getNumberClass() {
+            var t = (Class<?>) Polynomial.class;
+            return (Class<Polynomial<T>>) t;
         }
 
         /*
@@ -1608,6 +1814,7 @@ public final class Polynomial<T> extends MathObject<T> implements
             return isEqual(zero, para);
         }
 
+
         /*
          * @see cn.ancono.math.MathCalculator#multiply(java.lang.Object, java.lang.Object)
          */
@@ -1615,6 +1822,11 @@ public final class Polynomial<T> extends MathObject<T> implements
         @Override
         public Polynomial<T> multiply(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
             return para1.multiply(para2);
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Polynomial<T> x) {
+            return x.degree == 0 && mc.isUnit(x.first());
         }
 
         /*
@@ -1629,7 +1841,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> exactDivide(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
-            var pair = PolynomialSup.pseudoDivision(x, y);
+            var pair = PolynomialUtil.pseudoDivision(x, y);
             if (!pair.getSecond().isZero()) {
                 ExceptionUtil.notExactDivision(x, y);
             }
@@ -1638,7 +1850,7 @@ public final class Polynomial<T> extends MathObject<T> implements
 
         @Override
         public boolean isExactDivide(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return PolynomialSup.pseudoDivisionR(a, b).isZero();
+            return PolynomialUtil.pseudoDivisionR(a, b).isZero();
         }
 
 
@@ -1658,7 +1870,7 @@ public final class Polynomial<T> extends MathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> multiplyLong(@NotNull Polynomial<T> p, long n) {
-            return p.multiplyLong(n);
+            return p.multiply(n);
         }
 
         /*
@@ -1711,11 +1923,11 @@ public final class Polynomial<T> extends MathObject<T> implements
          */
         @NotNull
         @Override
-        public Polynomial<T> abs(@NotNull Polynomial<T> para) {
-            if (mc.compare(para.getCoefficient(para.degree), mc.getZero()) < 0) {
-                return negate(para);
+        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
+            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
+                return negate(x);
             }
-            return para;
+            return x;
         }
 
         /**
@@ -1729,17 +1941,19 @@ public final class Polynomial<T> extends MathObject<T> implements
         @NotNull
         @Override
         public Polynomial<T> gcd(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return PolynomialSup.subResultantGCD(a, b);
+            return PolynomialUtil.subResultantGCD(a, b);
         }
 
 
         /*
          * @see cn.ancono.math.MathCalculator#getNumberClass()
          */
+        @SuppressWarnings("unchecked")
         @NotNull
         @Override
-        public Class<?> getNumberClass() {
-            return Polynomial.class;
+        public Class<Polynomial<T>> getNumberClass() {
+            var t = (Class<?>) Polynomial.class;
+            return (Class<Polynomial<T>>) t;
         }
 
     }
@@ -1802,7 +2016,7 @@ public final class Polynomial<T> extends MathObject<T> implements
             }
             if (p.degree == 0) {
                 //single
-                return constant(mc, mc.pow(p.getCoefficient(0), exp));
+                return constant(mc, mc.pow(p.get(0), exp));
             }
             long mp = exp * p.degree;
             if (mp > Integer.MAX_VALUE || mp < 0) {
@@ -1827,6 +2041,14 @@ public final class Polynomial<T> extends MathObject<T> implements
         @Override
         public Polynomial<T> divideToInteger(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
             return super.divideToInteger(a, b);
+        }
+
+        @Override
+        public boolean isUnit(@NotNull Polynomial<T> x) {
+            var t = x.gcdUV(p); //ut + vp = 1
+            var gcd = t.getFirst();
+            return gcd.isOne();
+
         }
 
         @NotNull
@@ -1877,8 +2099,8 @@ public final class Polynomial<T> extends MathObject<T> implements
         list.addAll(Arrays.asList(g.coes));
         int pos = f.coes.length;
         list = sim.simplify(list);
-        f = valueOf(mc, list.subList(0, pos));
-        g = valueOf(mc, list.subList(pos, list.size()));
+        f = of(mc, list.subList(0, pos));
+        g = of(mc, list.subList(pos, list.size()));
         return adjustSign(f, g, mc, sim);
     }
 
@@ -1901,26 +2123,41 @@ public final class Polynomial<T> extends MathObject<T> implements
         return simplifyCoefficient(f, g, mc, sim);
     }
 
-
-    private static class PolySimplifier<T> implements Simplifier<Polynomial<T>> {
-        @Override
-        public List<Polynomial<T>> simplify(List<Polynomial<T>> numbers) {
-            //TODO
-            return null;
-        }
-
-        @Override
-        public Polynomial<T> simplify(Polynomial<T> x) {
-            //TODO
-            return null;
-        }
-
-        @Override
-        public Pair<Polynomial<T>, Polynomial<T>> simplify(Polynomial<T> a, Polynomial<T> b) {
-            //TODO
-            return null;
-        }
+    /**
+     * Calculates the square-free factorization for a polynomial in a field of characteristic zero or <code>p</code>.
+     * <p></p>
+     * The square-free factorization of a polynomial <code>f</code> is
+     *
+     * <pre> f = ∏<sub>r</sub>f<sub>r</sub><sup>r</sup> </pre>
+     * where <code>f<sub>r</sub></code> is square-free and co-prime.
+     * <p></p>
+     * For example, polynomial `x^2 + 2x + 1` is factorized to be `(x+1)^2`, and the
+     * result of this method will be a list containing only one element `(2, x+1)`.
+     *
+     * @return a list containing all the non-constant square-free factors with their degree
+     * in <code>f</code>.
+     */
+    public static <T> DecomposedPoly<T> squarefreeFactorize(Polynomial<T> f) {
+        return new DecomposedPoly<>(f, PolynomialUtil.squarefreeFactorize(f));
     }
+    //    private static class PolySimplifier<T> implements Simplifier<Polynomial<T>> {
+//        @Override
+//        public List<Polynomial<T>> simplify(List<Polynomial<T>> numbers) {
+//            return null;
+//        }
+//
+//        @Override
+//        public Polynomial<T> simplify(Polynomial<T> x) {
+//            //TODO
+//            return null;
+//        }
+//
+//        @Override
+//        public Pair<Polynomial<T>, Polynomial<T>> simplify(Polynomial<T> a, Polynomial<T> b) {
+//            //TODO
+//            return null;
+//        }
+//    }
 
 //    public static void main(String[] args) {
 //		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();

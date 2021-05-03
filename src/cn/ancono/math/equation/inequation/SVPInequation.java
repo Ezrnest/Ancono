@@ -5,7 +5,6 @@ package cn.ancono.math.equation.inequation;
 
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.equation.Type;
@@ -125,8 +124,9 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
     /*
      * @see cn.ancono.math.SingleVInquation#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
      */
+    @NotNull
     @Override
-    public abstract <N> SVPInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator);
+    public abstract <N> SVPInequation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
     static class FromFunction<T> extends SVPInequation<T> {
@@ -145,16 +145,17 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*
          * @see cn.ancono.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
+        @NotNull
         @Override
-        public <N> SVPInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            AbstractSVPFunction<N> t = (AbstractSVPFunction<N>) f.mapTo(mapper, newCalculator);
+        public <N> SVPInequation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            AbstractSVPFunction<N> t = (AbstractSVPFunction<N>) f.mapTo(newCalculator, mapper);
             return new FromFunction<>(newCalculator, op, t);
         }
 
@@ -193,8 +194,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*
@@ -217,8 +218,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
         @Override
-        public <N> LinearInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new LinearInequation<>(newCalculator, op, f.mapTo(mapper, newCalculator));
+        public <N> LinearInequation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new LinearInequation<>(newCalculator, op, f.mapTo(newCalculator, mapper));
         }
 
         private Interval<T> solution;
@@ -230,8 +231,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
         @Override
         public Interval<T> getSolution() {
             if (solution == null) {
-                T a = f.getCoefficient(1);
-                T b = f.getCoefficient(0);
+                T a = f.get(1);
+                T b = f.get(0);
                 //ax+b ? 0
                 // x ? -b/a
                 T x = getMc().negate(getMc().divide(b, a));
@@ -292,8 +293,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.algebra.Polynomial#getCoefficient(int)
          */
         @Override
-        public T getCoefficient(int n) {
-            return f.getCoefficient(n);
+        public T get(int n) {
+            return f.get(n);
         }
 
         /*
@@ -390,8 +391,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
          */
         @Override
-        public <N> QuadraticInequation<N> mapTo(@NotNull Function<T, N> mapper, @NotNull MathCalculator<N> newCalculator) {
-            return new QuadraticInequation<>(newCalculator, op, f.mapTo(mapper, newCalculator));
+        public <N> QuadraticInequation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new QuadraticInequation<>(newCalculator, op, f.mapTo(newCalculator, mapper));
         }
 
     }

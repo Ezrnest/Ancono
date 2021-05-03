@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE")
+
 
 package cn.ancono.math.numberModels.api
 
@@ -101,13 +101,13 @@ interface MulGroupNumberModel<T : MulGroupNumberModel<T>> : MulMonoidNumberModel
     }
 }
 
-inline operator fun <T : MonoidNumberModel<T>> MonoidNumberModel<T>.plus(y: T): T = add(y)
+operator fun <T : MonoidNumberModel<T>> MonoidNumberModel<T>.plus(y: T): T = add(y)
 
-inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.unaryMinus(): T = negate()
-inline operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.minus(y: T): T = subtract(y)
+operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.unaryMinus(): T = negate()
+operator fun <T : GroupNumberModel<T>> GroupNumberModel<T>.minus(y: T): T = subtract(y)
 
-inline operator fun <T : MulMonoidNumberModel<T>> MulMonoidNumberModel<T>.times(y: T): T = multiply(y)
-inline operator fun <T : MulGroupNumberModel<T>> MulGroupNumberModel<T>.div(y: T): T = divide(y)
+operator fun <T : MulMonoidNumberModel<T>> MulMonoidNumberModel<T>.times(y: T): T = multiply(y)
+operator fun <T : MulGroupNumberModel<T>> MulGroupNumberModel<T>.div(y: T): T = divide(y)
 
 
 /**
@@ -184,7 +184,7 @@ interface VectorModel<K, V : VectorModel<K, V>> : ModuleModel<K, V> {
 
 //inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.times(k: K) = multiply(k)
 //inline operator fun <K, V : VectorModel<K, V>> VectorModel<K, V>.div(k: K) = divide(k)
-inline operator fun <K, V : ModuleModel<K, V>> K.times(v: ModuleModel<K, V>) = v.multiply(this)
+operator fun <K, V : ModuleModel<K, V>> K.times(v: ModuleModel<K, V>) = v.multiply(this)
 
 
 interface AlgebraModel<K, V : AlgebraModel<K, V>> : VectorModel<K, V>, RingNumberModel<V> {

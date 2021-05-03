@@ -17,7 +17,7 @@ import kotlin.math.absoluteValue
  * Created at 2018/10/16 12:30
  * @author  liyicheng
  */
-@Suppress("NOTHING_TO_INLINE")
+
 class BigFraction
 internal constructor(val signum: Int, val numerator: BigInteger, val denominator: BigInteger) :
         FieldNumberModel<BigFraction>,
@@ -151,19 +151,19 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
         return BigFraction(signum, denominator, numerator)
     }
 
-    inline operator fun plus(y: BigFraction) = add(y)
+    operator fun plus(y: BigFraction) = add(y)
 
-    inline operator fun minus(y: BigFraction) = subtract(y)
+    operator fun minus(y: BigFraction) = subtract(y)
 
-    inline operator fun unaryMinus() = negate()
+    operator fun unaryMinus() = negate()
 
-    inline operator fun times(y: BigInteger) = multiply(y)
-    inline operator fun times(y: Long) = multiply(y)
-    inline operator fun times(y: BigFraction) = multiply(y)
+    operator fun times(y: BigInteger) = multiply(y)
+    operator fun times(y: Long) = multiply(y)
+    operator fun times(y: BigFraction) = multiply(y)
 
-    inline operator fun div(y: Long) = divide(y)
-    inline operator fun div(y: BigInteger) = divide(y)
-    inline operator fun div(y: BigFraction) = divide(y)
+    operator fun div(y: Long) = divide(y)
+    operator fun div(y: BigInteger) = divide(y)
+    operator fun div(y: BigFraction) = divide(y)
 
 
     override operator fun compareTo(other: BigFraction): Int {

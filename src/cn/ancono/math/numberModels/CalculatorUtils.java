@@ -1,4 +1,4 @@
-/**
+/*
  * 2017-10-07
  */
 package cn.ancono.math.numberModels;

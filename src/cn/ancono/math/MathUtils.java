@@ -24,7 +24,6 @@ import static cn.ancono.utilities.ArraySup.ensureCapacityAndAdd;
  *
  * @author lyc
  */
-@SuppressWarnings("Duplicates")
 public class MathUtils {
 
     /**
@@ -682,6 +681,7 @@ public class MathUtils {
      * @param mod a positive modular
      * @return {@code (a^n) % mod}
      */
+    @SuppressWarnings("DuplicatedCode") // two versions for int and long
     public static long powMod(long a, long n, long mod) {
         a = mod(a, mod);
         if (a == 0 || a == 1) {
@@ -713,6 +713,7 @@ public class MathUtils {
      * @param mod a positive modular
      * @return {@code (a^n) % mod}
      */
+    @SuppressWarnings("DuplicatedCode") // two versions for int and long
     public static int powMod(int a, int n, int mod) {
         a = mod(a, mod);
         if (a == 0 || a == 1) {

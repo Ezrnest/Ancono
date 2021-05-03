@@ -378,7 +378,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             return ZERO
         }
         if (f.haveSameChar(Term.PI)) {
-            if (f.radical == BigInteger.ONE == false) {
+            if (f.radical != BigInteger.ONE) {
                 return null
             }
             var nega = !f.isPositive
@@ -452,8 +452,8 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             val f = x.first
             //f should be a constant value = [-1,1]
             if (f.hasNoChar()) {
-                if (f.compareTo(Term.ONE) > 0 || f.compareTo(Term.NEGATIVE_ONE) < 0)
-                    throw ArithmeticException("Arcsin undifined  :  $f")
+                if (f > Term.ONE || f < Term.NEGATIVE_ONE)
+                    throw ArithmeticException("Arcsin undefined  :  $f")
             }
         }
         throw UnsupportedCalculationException()
@@ -549,7 +549,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
 
         override fun simplify(numbers: List<Multinomial>): List<Multinomial> {
             var numbers = numbers
-            numbers = Multinomial.reduceGcd(numbers)
+            numbers = reduceGcd(numbers)
             if (numbers.size == 2) {
                 val pair = simplify(numbers[0], numbers[1])
                 return listOf(pair.first, pair.second)
@@ -677,7 +677,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
 
         private fun reduceIntoPi(nd: Array<BigInteger>, nega: Boolean): Boolean {
             var nega = nega
-            if (nd[0].compareTo(nd[1]) > 0) {
+            if (nd[0] > nd[1]) {
                 nega = !nega
                 nd[0] = nd[0].subtract(nd[1])
             }
@@ -687,7 +687,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         private fun subtractToHalf(nd: Array<BigInteger>, nega: Boolean): Boolean {
             var nega = nega
             val half = nd[1].divide(BigInteger.valueOf(2))
-            if (nd[0].compareTo(half) > 0) {
+            if (nd[0] > half) {
                 nd[0] = nd[1].subtract(nd[0])
                 nega = !nega
             }

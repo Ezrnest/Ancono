@@ -110,7 +110,7 @@ class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Pol
     }
 
     fun substitute(x: PFraction<T>): PFraction<T> {
-        return homoMap(x, Function { ofT(it) })
+        return homoMap(x) { ofT(it) }
     }
 
     override fun simplify(): PFraction<T> {

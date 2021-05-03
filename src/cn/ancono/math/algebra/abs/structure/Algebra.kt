@@ -8,5 +8,5 @@ import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
  * @author  liyicheng
  */
 interface Algebra<K, V> : LinearSpace<K, V> {
-    override fun getCalculator(): AlgebraCalculator<K, V>
+    override fun getAbelCal(): AlgebraCalculator<K, V>
 }

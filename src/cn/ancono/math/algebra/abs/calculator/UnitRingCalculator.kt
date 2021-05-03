@@ -3,8 +3,6 @@
  */
 package cn.ancono.math.algebra.abs.calculator
 
-import cn.ancono.math.algebra.abs.GroupCalculators
-
 /**
  * Describes the calculator for a unit ring, where multiplicative identity exists.
  *
@@ -12,12 +10,12 @@ import cn.ancono.math.algebra.abs.GroupCalculators
  * @author liyicheng
  * 2018-02-28 19:05
  */
-interface UnitRingCalculator<T> : RingCalculator<T> {
+interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
 
     /**
      * The multiplicative identity element
      */
-    val one: T
+    override val one: T
 
     /**
      * Return `x ^ n` as defined in the multiplicative monoid.
@@ -26,7 +24,7 @@ interface UnitRingCalculator<T> : RingCalculator<T> {
     override fun pow(x: T, n: Long): T {
         return if (n == 0L) {
             one
-        } else super.pow(x, n)
+        } else super<MulMonoidCal>.pow(x, n)
     }
 
     /**
@@ -41,7 +39,11 @@ interface UnitRingCalculator<T> : RingCalculator<T> {
         throw UnsupportedOperationException("Not supported")
     }
 
+    @JvmDefault
+    override val numberClass: Class<T>
+        get() = super<RingCalculator>.numberClass
+
 
 }
 
-fun <T> UnitRingCalculator<T>.asMonoidCalculator() = GroupCalculators.asMonoidCalculator(this)
+//fun <T> UnitRingCalculator<T>.asMonoidCalculator() = GroupCalculators.asMonoidCalculator(this)

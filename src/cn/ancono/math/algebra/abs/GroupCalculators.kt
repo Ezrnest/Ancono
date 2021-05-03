@@ -73,7 +73,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T : Composable<T>> createComposingSemi(): SemigroupCalculator<T> {
+    fun <T : Composable<T>> createComposingSemi(clz: Class<T>): SemigroupCalculator<T> {
         return object : SemigroupCalculator<T> {
 
             override fun apply(x: T, y: T): T {
@@ -83,6 +83,8 @@ object GroupCalculators {
             override fun isEqual(x: T, y: T): Boolean {
                 return x == y
             }
+
+            override val numberClass: Class<T> = clz
         }
     }
 
@@ -91,7 +93,7 @@ object GroupCalculators {
      * @return
      */
     @JvmStatic
-    fun <T : Composable<T>> createComposingSemi(equalPredicate: EqualPredicate<T>): SemigroupCalculator<T> {
+    fun <T : Composable<T>> createComposingSemi(equalPredicate: EqualPredicate<T>, clz: Class<T>): SemigroupCalculator<T> {
         return object : SemigroupCalculator<T> {
 
             override fun apply(x: T, y: T): T {
@@ -101,6 +103,8 @@ object GroupCalculators {
             override fun isEqual(x: T, y: T): Boolean {
                 return equalPredicate.isEqual(x, y)
             }
+
+            override val numberClass: Class<T> = clz
         }
     }
 
@@ -267,34 +271,34 @@ object GroupCalculators {
         }
     }
 
-    @JvmStatic
-    fun <T> asSemigroupCalculator(rc: RingCalculator<T>): SemigroupCalculator<T> {
-        return object : SemigroupCalculator<T> {
-            override fun apply(x: T, y: T): T {
-                return rc.multiply(x, y)
-            }
-
-            override fun isEqual(x: T, y: T): Boolean {
-                return rc.isEqual(x, y)
-            }
-        }
-    }
-
-    @JvmStatic
-    fun <T> asMonoidCalculator(uc: UnitRingCalculator<T>): MonoidCalculator<T> {
-        return object : MonoidCalculator<T> {
-            override val identity: T
-                get() = uc.one
-
-            override fun apply(x: T, y: T): T {
-                return uc.multiply(x, y)
-            }
-
-            override fun isEqual(x: T, y: T): Boolean {
-                return uc.isEqual(x, y)
-            }
-        }
-    }
+//    @JvmStatic
+//    fun <T> asSemigroupCalculator(rc: RingCalculator<T>): MulSemiGroupCal<T> {
+//        return object : MulSemiGroupCal<T> {
+//            override fun apply(x: T, y: T): T {
+//                return rc.multiply(x, y)
+//            }
+//
+//            override fun isEqual(x: T, y: T): Boolean {
+//                return rc.isEqual(x, y)
+//            }
+//        }
+//    }
+//
+//    @JvmStatic
+//    fun <T> asMonoidCalculator(uc: UnitRingCalculator<T>): MonoidCalculator<T> {
+//        return object : MonoidCalculator<T> {
+//            override val identity: T
+//                get() = uc.one
+//
+//            override fun apply(x: T, y: T): T {
+//                return uc.multiply(x, y)
+//            }
+//
+//            override fun isEqual(x: T, y: T): Boolean {
+//                return uc.isEqual(x, y)
+//            }
+//        }
+//    }
 
     @JvmStatic
     fun <T> asGroupCalculator(dc: DivisionRingCalculator<T>): GroupCalculator<T> {
@@ -315,6 +319,7 @@ object GroupCalculators {
             }
         }
     }
+
 
     /**
      * Returns a isomorphism calculator of the original calculator through bijection `f`.

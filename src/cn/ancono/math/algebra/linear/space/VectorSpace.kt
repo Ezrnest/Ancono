@@ -30,7 +30,7 @@ class VectorSpace<T>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(b
         return basis.canReduce(v)
     }
 
-    override fun getCalculator(): VectorSpaceCalculator<T> {
+    override fun getAbelCal(): VectorSpaceCalculator<T> {
         return vc
     }
 

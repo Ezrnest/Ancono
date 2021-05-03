@@ -28,7 +28,7 @@ class PField(val p: Int) : AbstractFiniteField<Int>() {
 
     private val elements: FiniteSet<Int> = MathSets.asSet(mc, *Array(p) { it })
 
-    override fun getCalculator(): FieldCalculator<Int> {
+    override fun getAbelCal(): FieldCalculator<Int> {
         return mc
     }
 

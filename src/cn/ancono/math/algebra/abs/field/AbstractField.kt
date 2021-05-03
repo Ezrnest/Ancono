@@ -13,7 +13,7 @@ import cn.ancono.math.set.MathSet
 //}
 
 class FieldFromCal<T>(private val fc: FieldCalculator<T>, private val mathSet: MathSet<T>) : Field<T> {
-    override fun getCalculator(): FieldCalculator<T> {
+    override fun getAbelCal(): FieldCalculator<T> {
         return fc
     }
 
@@ -22,7 +22,7 @@ class FieldFromCal<T>(private val fc: FieldCalculator<T>, private val mathSet: M
     }
 
     override fun unit(): T {
-        return calculator.one
+        return abelCal.one
     }
 
 }

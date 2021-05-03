@@ -9,7 +9,7 @@ package cn.ancono.math.algebra.abs.calculator
  * @author  liyicheng
  * @see cn.ancono.math.algebra.abs.structure.Module
  */
-interface ModuleCalculator<R, V> : GroupCalculator<V> {
+interface ModuleCalculator<R, V> : AbelGroupCal<V> {
     /**
      * Performs the multiplication operation( [R]*[V] -> [V])
      */
@@ -20,11 +20,16 @@ interface ModuleCalculator<R, V> : GroupCalculator<V> {
      */
     val scalarCalculator: RingCalculator<R>
 
+//    /**
+//     * Performs the addiction operation on [V]
+//     */
+//    @JvmDefault
+//    override fun apply(x: V, y: V): V
+
     /**
-     * Performs the addiction operation on [V]
+     * Performs the addition operation on [V]
      */
-    @JvmDefault
-    override fun apply(x: V, y: V): V
+    override fun add(x: V, y: V): V
 
     @JvmDefault
     fun rAdd(r1: R, r2: R): R {

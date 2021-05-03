@@ -152,24 +152,6 @@ abstract class MathCalculatorAdapter<T> : MathCalculator<T> {
         throwFor()
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("use {@link #add(Object, Object)} instead for more clarity.", ReplaceWith("add(x, y)"))
-    override fun apply(x: T, y: T): T {
-        return super.apply(x, y)
-    }
-
-    @Suppress("DEPRECATION")
-    @Deprecated("use {@link #negate(Object)} instead for more clarity.", ReplaceWith("negate(x)"))
-    override fun inverse(x: T): T {
-        return super.inverse(x)
-    }
-
-    @Suppress("DEPRECATION")
-    @Deprecated("use {@link #multiplyLong(Object, long)} instead for more clarity.", ReplaceWith("super@GroupCalculator.gpow(x, n)"))
-    override fun gpow(x: T, n: Long): T {
-        return super.gpow(x, n)
-    }
-
     override fun T.div(y: T): T {
         return divide(this, y)
     }

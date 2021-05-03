@@ -17,5 +17,5 @@ public interface Field<T> extends IntegralDomain<T>, DivisionRing<T> {
      * Returns the field's calculator.
      */
     @Override
-    FieldCalculator<T> getCalculator();
+    FieldCalculator<T> getAbelCal();
 }

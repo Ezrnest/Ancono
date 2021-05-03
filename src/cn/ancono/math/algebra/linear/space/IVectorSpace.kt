@@ -26,7 +26,7 @@ interface IVectorSpace<T> : FiniteLinearSpace<T, Vector<T>> {
      */
     val vectorLength: Int
 
-    override fun getCalculator(): VectorSpaceCalculator<T>
+    override fun getAbelCal(): VectorSpaceCalculator<T>
 }
 
 
@@ -53,12 +53,12 @@ interface VectorSpaceCalculator<T> : LinearSpaceCalculator<T, Vector<T>> {
     }
 
     @JvmDefault
-    override fun apply(x: Vector<T>, y: Vector<T>): Vector<T> {
+    override fun add(x: Vector<T>, y: Vector<T>): Vector<T> {
         return x + y
     }
 
     @JvmDefault
-    override fun inverse(x: Vector<T>): Vector<T> {
+    override fun negate(x: Vector<T>): Vector<T> {
         return -x
     }
 
@@ -73,6 +73,6 @@ interface VectorSpaceCalculator<T> : LinearSpaceCalculator<T, Vector<T>> {
 class VectorSpaceCalculatorImpl<T>(override val vectorLength: Int, private val mc: MathCalculator<T>) : VectorSpaceCalculator<T> {
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
-    override val identity: Vector<T>
+    override val zero: Vector<T>
         get() = Vector.zero(vectorLength, mc)
 }

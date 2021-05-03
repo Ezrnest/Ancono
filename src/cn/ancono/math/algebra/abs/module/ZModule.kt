@@ -31,16 +31,17 @@ class ZModuleCalFromAGroup<Z, V>(val ic: IntCalculator<Z>, val gc: GroupCalculat
     override val scalarCalculator: RingCalculator<Z>
         get() = ic
 
-    override fun apply(x: V, y: V): V {
+    override fun add(x: V, y: V): V {
         return gc.apply(x, y)
     }
 
-    override fun inverse(x: V): V {
+    override fun negate(x: V): V {
         return gc.inverse(x)
     }
 
-    override val identity: V
+    override val zero: V
         get() = gc.identity
+
 
     override fun isEqual(x: V, y: V): Boolean {
         return gc.isEqual(x, y)
@@ -63,7 +64,7 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
 
     private val moduleCal: ModuleCalculator<Z, V> = ZModuleCalFromAGroup(cal, group.calculator)
 
-    override fun getCalculator(): ModuleCalculator<Z, V> {
+    override fun getAbelCal(): ModuleCalculator<Z, V> {
         return moduleCal
     }
 

@@ -55,7 +55,7 @@ public interface Ring<T> extends AbelianGroup<T> {
      * Returns the calculator of this ring.
      */
     @Override
-    RingCalculator<T> getCalculator();
+    RingCalculator<T> getAbelCal();
 
 
 }

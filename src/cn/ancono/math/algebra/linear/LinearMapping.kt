@@ -64,10 +64,10 @@ abstract class ALinearMapping<K, V, U>
      * Returns the math calculator for field `K`
      */
     override val mathCalculator: FieldCalculator<K>
-        get() = vectorSpace.scalars.calculator
+        get() = vectorSpace.scalars.abelCal
 
     val linearCalculator: LinearSpaceCalculator<K, U>
-        get() = vectorSpace.calculator
+        get() = vectorSpace.abelCal
 
     /**
      * The vector space of [U].

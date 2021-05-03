@@ -3,6 +3,9 @@
  */
 package cn.ancono.math.algebra.abs.structure;
 
+import cn.ancono.math.algebra.abs.calculator.AbelGroupCal;
+import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
+import cn.ancono.math.algebra.abs.calculator.GroupCalculatorKt;
 import cn.ancono.math.set.MathSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +16,14 @@ import org.jetbrains.annotations.NotNull;
  * 2018-02-28 17:47
  */
 public interface AbelianGroup<T> extends AbelianSemigroup<T>, Group<T> {
+
+    AbelGroupCal<T> getAbelCal();
+
+    @Override
+    default GroupCalculator<T> getCalculator() {
+        return GroupCalculatorKt.asGroupCal(getAbelCal());
+    }
+
     @Override
     default boolean isConjugate(T g1, T g2) {
         return getCalculator().isEqual(g1, g2);

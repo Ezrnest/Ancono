@@ -21,5 +21,5 @@ public interface DivisionRing<T> extends UnitRing<T> {
      * Returns the division ring's calculator.
      */
     @Override
-    DivisionRingCalculator<T> getCalculator();
+    DivisionRingCalculator<T> getAbelCal();
 }

@@ -13,10 +13,9 @@ import cn.ancono.math.set.MathSets
 interface LinearSpace<K, V> : Module<K, V> {
 
     override val scalars: Field<K>
-        get() = FieldFromCal(calculator.scalarCalculator, MathSets.universe())
+        get() = FieldFromCal(abelCal.scalarCalculator, MathSets.universe())
 
-    override fun getCalculator(): LinearSpaceCalculator<K, V>
-
+    override fun getAbelCal(): LinearSpaceCalculator<K, V>
 }
 
 /**

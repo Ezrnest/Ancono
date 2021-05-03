@@ -177,7 +177,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
             index = startFrom > -1 ? startFrom : 0;
             bound = endWith < 0 ? 0 :
                     proLength == UNLIMITED ? endWith :
-                            endWith <= proLength ? endWith : proLength;
+                            Math.min(endWith, proLength);
         }
 
         @Override

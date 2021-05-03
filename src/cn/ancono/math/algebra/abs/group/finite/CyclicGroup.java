@@ -1,8 +1,8 @@
 package cn.ancono.math.algebra.abs.group.finite;
 
 import cn.ancono.math.MathUtils;
+import cn.ancono.math.algebra.abs.calculator.AbelGroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
-import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
 import cn.ancono.math.algebra.abs.structure.AbelianGroup;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.set.FiniteSet;
@@ -44,8 +44,9 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
         this(size, 1, size);
     }
 
+
     @Override
-    public GroupCalculator<Integer> getCalculator() {
+    public AbelGroupCal<Integer> getAbelCal() {
         return mc;
     }
 
@@ -121,7 +122,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
         return size % cg.size == 0;
     }
 
-    static class CyclicCalInt implements GroupCalculator<Integer> {
+    static class CyclicCalInt implements AbelGroupCal<Integer> {
         final int mod;
 
         //int range: 0<=x < mod
@@ -131,7 +132,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
 
         @NotNull
         @Override
-        public Integer inverse(@NotNull Integer x) {
+        public Integer negate(@NotNull Integer x) {
             int _x = x;
             if (_x == 0) {
                 return x;
@@ -142,13 +143,13 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
 
         @NotNull
         @Override
-        public Integer getIdentity() {
+        public Integer getZero() {
             return 0;
         }
 
         @NotNull
         @Override
-        public Integer apply(@NotNull Integer x, @NotNull Integer y) {
+        public Integer add(@NotNull Integer x, @NotNull Integer y) {
             return (x + y) % mod;
         }
 
@@ -159,7 +160,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
 
         @NotNull
         @Override
-        public Integer gpow(@NotNull Integer x, long n) {
+        public Integer multiplyLong(@NotNull Integer x, long n) {
             long t = x * n;
             if (t >= 0) {
                 return (int) (t % mod);
@@ -168,10 +169,6 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
             }
         }
 
-        @Override
-        public boolean isCommutative() {
-            return true;
-        }
     }
 
     private static final CyclicGroup IDENTITY = new CyclicGroup(1);

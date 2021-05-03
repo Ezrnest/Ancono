@@ -23,6 +23,6 @@ public interface UnitRing<T> extends Ring<T> {
      * Returns the unit ring's calculator.
      */
     @Override
-    UnitRingCalculator<T> getCalculator();
+    UnitRingCalculator<T> getAbelCal();
 
 }

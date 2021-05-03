@@ -21,7 +21,7 @@ interface FieldCalculator<T> : DivisionRingCalculator<T> {
     override fun multiply(x: T, y: T): T
 
     @JvmDefault
-    override val isMultiplyCommutative: Boolean
+    override val isCommutative: Boolean
         get() = true
 
     /**

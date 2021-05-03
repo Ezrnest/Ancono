@@ -1,6 +1,8 @@
 package cn.ancono.math.algebra.abs.group
 
+import cn.ancono.math.algebra.abs.calculator.AbelGroupCal
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator
+import cn.ancono.math.algebra.abs.calculator.asAbelGroupCal
 import cn.ancono.math.algebra.abs.structure.AbelianGroup
 import cn.ancono.math.algebra.abs.structure.Group
 import cn.ancono.math.set.MathSet
@@ -26,6 +28,10 @@ class GroupFromCal<T>(private val gc: GroupCalculator<T>, private val elements: 
 class AbelGroupFromCal<T>(private val gc: GroupCalculator<T>, private val elements: MathSet<T>) : AbelianGroup<T> {
     override fun getCalculator(): GroupCalculator<T> {
         return gc
+    }
+
+    override fun getAbelCal(): AbelGroupCal<T> {
+        return gc.asAbelGroupCal()
     }
 
     override fun getSet(): MathSet<T> {

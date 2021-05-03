@@ -490,20 +490,6 @@ class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
     override val numberClass: Class<DifferentialForm<T>>
         get() = super<MathCalculatorAdapter>.numberClass
 
-    @Suppress("OverridingDeprecatedMember")
-    override fun apply(x: DifferentialForm<T>, y: DifferentialForm<T>): DifferentialForm<T> {
-        return add(x, y)
-    }
-
-    @Suppress("OverridingDeprecatedMember")
-    override fun inverse(x: DifferentialForm<T>): DifferentialForm<T> {
-        return negate(x)
-    }
-
-    @Suppress("OverridingDeprecatedMember")
-    override fun gpow(x: DifferentialForm<T>, n: Long): DifferentialForm<T> {
-        return multiplyLong(x, n)
-    }
 
     override fun isUnit(x: DifferentialForm<T>): Boolean {
         throw UnsupportedCalculationException()

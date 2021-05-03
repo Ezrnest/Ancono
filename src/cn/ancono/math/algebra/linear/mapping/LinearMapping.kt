@@ -13,7 +13,6 @@ import cn.ancono.math.function.SVFunction
 import cn.ancono.math.function.invoke
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.math.property.Composable
-import cn.ancono.math.times
 import org.jetbrains.annotations.NotNull
 import java.util.function.Function
 
@@ -418,11 +417,11 @@ class LinearMapCal<T>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: I
         return v.multiply(k)
     }
 
-    override fun apply(x: LinearMapping<T>, y: LinearMapping<T>): LinearMapping<T> {
+    override fun add(x: LinearMapping<T>, y: LinearMapping<T>): LinearMapping<T> {
         return x.add(y)
     }
 
-    override fun inverse(x: LinearMapping<T>): LinearMapping<T> {
+    override fun negate(x: LinearMapping<T>): LinearMapping<T> {
         return x.negate()
     }
 
@@ -430,7 +429,7 @@ class LinearMapCal<T>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: I
         return LinearMapping.isLinearRelevant(u, v)
     }
 
-    override val identity: LinearMapping<T>
+    override val zero: LinearMapping<T>
         get() = LinearMapping.zeroMapping(dimSrc, dimDest, mc)
 
     override fun isEqual(x: LinearMapping<T>, y: LinearMapping<T>): Boolean {

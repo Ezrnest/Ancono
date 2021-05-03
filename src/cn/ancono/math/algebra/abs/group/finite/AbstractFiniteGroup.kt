@@ -232,6 +232,7 @@ abstract class AbstractFiniteGroup<T>
 	 */
     override fun getSubgroups(): FiniteSet<out AbstractFiniteGroup<T>> {
         //TODO: find methods to find all the subgroups of this finit group
+        mc
         return MathSets.asSet(EqualPredicate.naturalEqual(), this, FiniteGroups.identityGroup(calculator))
     }
 
@@ -255,7 +256,7 @@ abstract class AbstractFiniteGroup<T>
         for (g in set) {
             var equals = true
             for (h in sub1.set) {
-                val t = calculator.eval { (-g) + h + g }
+                val t = calculator.conjugateBy(h, g)
                 if (!calculator.isEqual(t, h)) {
                     equals = false
                     break
@@ -317,7 +318,7 @@ abstract class AbstractFiniteGroup<T>
         val list = set.filter { x ->
             sub.set.all { h ->
                 calculator.eval {
-                    calculator.isEqual(x + h, h + x)
+                    isEqual(apply(x, h), apply(h, x))
                 }
             }
         }

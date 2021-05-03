@@ -21,8 +21,9 @@ import cn.ancono.math.set.MathSets
 interface Module<R, V> : AbelianGroup<V> {
 
     val scalars: Ring<R>
-        get() = RingFromCal(calculator.scalarCalculator, MathSets.universe())
+        get() = RingFromCal(abelCal.scalarCalculator, MathSets.universe())
 
-    override fun getCalculator(): ModuleCalculator<R, V>
+//    override fun getA(): ModuleCalculator<R, V>
 
+    override fun getAbelCal(): ModuleCalculator<R, V>
 }

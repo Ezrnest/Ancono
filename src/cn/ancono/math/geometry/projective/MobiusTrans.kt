@@ -1,8 +1,10 @@
 package cn.ancono.math.geometry.projective
 
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.FMathObject
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.geometry.analytic.plane.TransMatrix
@@ -20,7 +22,7 @@ import java.util.function.Function
  * Describes a mobius transformation on complex field: `T(z) = (az+b)/(cz+d)`
  */
 class MobiusTrans<T>(
-        mc: MathCalculator<T>,
+        mc: FieldCalculator<T>,
         /**
          * The complex calculator
          */
@@ -29,11 +31,10 @@ class MobiusTrans<T>(
          * The transformation matrix ((a,b),(c,d))
          */
         val m: TransMatrix<Complex<T>>
-)
-    : MathObjectExtend<T>(mc),
-    Bijection<ComplexE<T>, ComplexE<T>>,
-    Composable<MobiusTrans<T>>,
-    MulGroupNumberModel<MobiusTrans<T>> {
+) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc),
+        Bijection<ComplexE<T>, ComplexE<T>>,
+        Composable<MobiusTrans<T>>,
+        MulGroupNumberModel<MobiusTrans<T>> {
 
 
     override fun apply(x: ComplexE<T>): ComplexE<T> {
@@ -41,7 +42,7 @@ class MobiusTrans<T>(
         return cc.eval {
             val deno = m[1, 0] * x + m[1, 1]
             if (isZero(deno)) {
-                Complex.inf(mc)
+                Complex.inf(calculator)
             } else {
                 val nume = m[0, 0] * x + m[0, 1]
                 nume / deno
@@ -51,7 +52,7 @@ class MobiusTrans<T>(
 
 
     override fun compose(before: MobiusTrans<T>): MobiusTrans<T> {
-        return MobiusTrans(mc, cc, m.compose(before.m))
+        return MobiusTrans(calculator, cc, m.compose(before.m))
     }
 
     override fun andThen(after: MobiusTrans<T>): MobiusTrans<T> {
@@ -63,11 +64,11 @@ class MobiusTrans<T>(
     }
 
     override fun multiply(y: MobiusTrans<T>): MobiusTrans<T> {
-        return MobiusTrans(mc, cc, m * y.m)
+        return MobiusTrans(calculator, cc, m * y.m)
     }
 
     override fun reciprocal(): MobiusTrans<T> {
-        return MobiusTrans(mc, cc, m.inverse())
+        return MobiusTrans(calculator, cc, m.inverse())
     }
 
     override fun inverse(): MobiusTrans<T> {
@@ -80,7 +81,7 @@ class MobiusTrans<T>(
     fun unitize(): MobiusTrans<T> {
         val det = m.det()
         val d = cc.squareRoot(det)
-        return MobiusTrans(mc, cc, m.multiply(d.reciprocal()))
+        return MobiusTrans(calculator, cc, m.multiply(d.reciprocal()))
     }
 
     /**
@@ -88,7 +89,7 @@ class MobiusTrans<T>(
      * return an equivalent Mobius transformation.
      */
     fun idMultiply(k: T): MobiusTrans<T> {
-        return idMultiply(Complex.real(k, mc))
+        return idMultiply(Complex.real(k, calculator))
     }
 
     /**
@@ -96,16 +97,17 @@ class MobiusTrans<T>(
      * return an equivalent Mobius transformation.
      */
     fun idMultiply(k: Complex<T>): MobiusTrans<T> {
-        return MobiusTrans(mc, cc, m.multiply(k))
+        return MobiusTrans(calculator, cc, m.multiply(k))
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MobiusTrans<N> {
-        val ncc = Complex.calculator(newCalculator)
+
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): MobiusTrans<N> {
+        val ncc = Complex.calculator(newCalculator as FieldCalculator<N>)
         val nMat = m.mapTo(ncc) { z -> z.mapTo(newCalculator, mapper) }
         return MobiusTrans(newCalculator, ncc, nMat)
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is MobiusTrans) {
             return false
         }
@@ -121,7 +123,7 @@ class MobiusTrans<T>(
     }
 
     companion object {
-        fun <T> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): MobiusTrans<T> {
+        fun <T> of(a: T, b: T, c: T, d: T, mc: FieldCalculator<T>): MobiusTrans<T> {
             val det = mc.eval { a * c - b * d }
             if (mc.isZero(det)) {
                 throw IllegalArgumentException("ac-bd = 0")
@@ -156,7 +158,7 @@ class MobiusTrans<T>(
          * is required that the given three points are different.
          */
         fun <T> to01Inf(a: ComplexE<T>, b: ComplexE<T>, c: ComplexE<T>): MobiusTrans<T> {
-            val mc: MathCalculator<T> = if (b !is Complex) {
+            val mc: FieldCalculator<T> = if (b !is Complex) {
                 if (a !is Complex) {
                     throw ArithmeticException()
                 }

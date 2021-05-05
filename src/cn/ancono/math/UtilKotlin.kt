@@ -15,8 +15,6 @@ import cn.ancono.math.set.MathSets
  */
 
 
-
-
 operator fun <T> PVector<T>.component1(): T = this.x
 operator fun <T> PVector<T>.component2(): T = this.y
 

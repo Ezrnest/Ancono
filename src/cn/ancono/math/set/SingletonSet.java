@@ -3,9 +3,9 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -24,7 +24,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
     /**
      * @param mc
      */
-    protected SingletonSet(MathCalculator<T> mc, T ele) {
+    protected SingletonSet(RealCalculator<T> mc, T ele) {
         super(mc);
         this.element = ele;
     }
@@ -64,7 +64,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
      */
     @NotNull
     @Override
-    public <N> SingletonSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> SingletonSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new SingletonSet<>(newCalculator, mapper.apply(element));
     }
 

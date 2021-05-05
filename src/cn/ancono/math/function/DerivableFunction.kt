@@ -1,9 +1,9 @@
 package cn.ancono.math.function
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.calculus.Derivable
 import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.MathSet
 import cn.ancono.math.set.MathSets
 
@@ -108,7 +108,7 @@ interface DerivableFunction<T, R> : MathFunction<T, R>, Derivable<T, R, Derivabl
          */
         fun <T> multiplySV(f: DerivableFunction<T, T>,
                            g: DerivableFunction<T, T>,
-                           mc: MathCalculator<T>)
+                           mc: RealCalculator<T>)
                 : DerivableSVFunction<T> = multiplySV(f, g, mc::add, mc::multiply)
 
         /**
@@ -126,14 +126,14 @@ interface DerivableFunction<T, R> : MathFunction<T, R>, Derivable<T, R, Derivabl
          */
         fun <T> composeSV(f: DerivableSVFunction<T>,
                           g: DerivableSVFunction<T>,
-                          mc: MathCalculator<T>)
+                          mc: RealCalculator<T>)
                 : DerivableSVFunction<T> = DerivableComposeSV(f, g, mc::multiply, mc::add)
 
 
         /**
          * Returns a derivable function of `f/g`.
          */
-        fun <T> divideSV(f: DerivableSVFunction<T>, g: DerivableSVFunction<T>, mc: MathCalculator<T>)
+        fun <T> divideSV(f: DerivableSVFunction<T>, g: DerivableSVFunction<T>, mc: RealCalculator<T>)
                 : DerivableSVFunction<T> {
             return DerivableDivideSV(f, g, mc)
         }
@@ -143,7 +143,7 @@ interface DerivableFunction<T, R> : MathFunction<T, R>, Derivable<T, R, Derivabl
          * Returns a derivable function of `f/g`.
          */
         fun <T, S> divide(f: DerivableFunction<T, S>, g: DerivableFunction<T, T>,
-                          mc: MathCalculator<T>,
+                          mc: RealCalculator<T>,
                           formalAdd: (S, S) -> S,
                           formalSubtract: (S, S) -> S,
                           formalMultiply: (T, S) -> S)
@@ -421,7 +421,7 @@ internal open class DerivableComposeSV<T>(private val f: DerivableSVFunction<T>,
 
 internal class DerivableDivide<T, S>(private val f: DerivableFunction<T, S>,
                                      private val g: DerivableFunction<T, T>,
-                                     private val mc: MathCalculator<T>,
+                                     private val mc: RealCalculator<T>,
                                      private val formalMultiply: (T, S) -> S,
                                      private val formalAdd: (S, S) -> S,
                                      private val formalSubtract: (S, S) -> S
@@ -445,7 +445,7 @@ internal class DerivableDivide<T, S>(private val f: DerivableFunction<T, S>,
 
 internal class DerivableDivideSV<T>(private val f: DerivableSVFunction<T>,
                                     private val g: DerivableSVFunction<T>,
-                                    private val mc: MathCalculator<T>) : DerivableSVFunction<T> {
+                                    private val mc: RealCalculator<T>) : DerivableSVFunction<T> {
     override val derivative: DerivableSVFunction<T> by lazy {
         val f_ = f.derivative
         val g_ = g.derivative

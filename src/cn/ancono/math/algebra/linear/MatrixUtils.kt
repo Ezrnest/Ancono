@@ -1,15 +1,11 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberModels.api.colIndices
-import cn.ancono.math.numberModels.api.requireSquare
-import cn.ancono.math.numberTheory.IntCalculator
+import cn.ancono.math.numberModels.api.*
 import java.util.*
 
 
@@ -136,7 +132,7 @@ object MatrixUtils {
         require(m.isSquare()) {
             "The matrix must be square!"
         }
-        val mc = m.calculator as MathCalculator
+        val mc = m.calculator as RealCalculator
         val n = m.row
         val matrix = m.toMutable()
 //        val operations = mutableListOf<MatrixOperation<T>>()
@@ -189,7 +185,7 @@ object MatrixUtils {
         require(A.isSquare()) {
             "The matrix must be square!"
         }
-        val mc = A.calculator as MathCalculator
+        val mc = A.calculator as RealCalculator
         val n = A.row
 
         @Suppress("LocalVariableName")

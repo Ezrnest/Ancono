@@ -3,10 +3,10 @@
  */
 package cn.ancono.math.equation;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.equation.inequation.Inequation;
 import cn.ancono.math.function.MathFunction;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.property.SolutionPredicate;
 
 /**
@@ -14,7 +14,7 @@ import cn.ancono.math.property.SolutionPredicate;
  * is composed of a function and an operator : <pre>f(x) <i>op</i> 0</pre> where
  * the operation is one of the {@link Type}
  *
- * @param <T> the {@link MathCalculator} type
+ * @param <T> the {@link RealCalculator} type
  * @param <S> the input of the compare structure\
  * @author liyicheng
  * 2017-10-08 11:27

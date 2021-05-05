@@ -4,7 +4,6 @@
 package cn.ancono.math.function;
 
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
@@ -15,6 +14,7 @@ import cn.ancono.math.geometry.analytic.plane.curve.ConicSection;
 import cn.ancono.math.geometry.analytic.plane.curve.GeneralConicSection;
 import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -30,7 +30,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
     /**
      * @param mc
      */
-    QuadraticFunction(MathCalculator<T> mc, T a, T b, T c) {
+    QuadraticFunction(RealCalculator<T> mc, T a, T b, T c) {
         super(mc);
         if (mc.isZero(a)) {
             throw new IllegalArgumentException("a==0");
@@ -128,7 +128,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      */
     @NotNull
     @Override
-    public <N> QuadraticFunction<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> QuadraticFunction<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new QuadraticFunction<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
     }
 
@@ -219,13 +219,14 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
 
     /**
      * Returns a new quadratic function.
+     *
      * @param a
      * @param b
      * @param c
      * @param mc
      * @return
      */
-    public static <T> QuadraticFunction<T> generalFormula(T a, T b, T c, MathCalculator<T> mc) {
+    public static <T> QuadraticFunction<T> generalFormula(T a, T b, T c, RealCalculator<T> mc) {
         return new QuadraticFunction<T>(mc, a, b, c);
     }
 

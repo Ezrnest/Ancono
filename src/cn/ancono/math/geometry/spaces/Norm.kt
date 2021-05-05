@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.spaces
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.linear.Matrix
+import cn.ancono.math.numberModels.api.RealCalculator
 
 
 /*
@@ -37,7 +37,7 @@ fun interface Norm<in T, out R> {
         /**
          * Returns the canonical norm defined by the absolute value of
          */
-        fun <T> fromAbs(mc: MathCalculator<T>): Norm<T, T> {
+        fun <T> fromAbs(mc: RealCalculator<T>): Norm<T, T> {
             return Norm { x ->
                 mc.abs(x)
             }

@@ -1,6 +1,6 @@
 package cn.ancono.math.numberTheory;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 
 /**
  * Describes a calculator for field <code>Z<sub>p</sub></code>, where <code>p</code> is a
@@ -8,7 +8,7 @@ import cn.ancono.math.MathCalculator;
  *
  * @param <T>
  */
-public interface ZModPCalculator<T> extends MathCalculator<T> {
+public interface ZModPCalculator<T> extends FieldCalculator<T> {
 
 
     long getP();

@@ -1,12 +1,12 @@
 package cn.ancono.math.geometry.analytic.plane.curve
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathCalculatorHolder
 import cn.ancono.math.function.MathFunction
 import cn.ancono.math.function.SVFunction
 import cn.ancono.math.function.invoke
 import cn.ancono.math.geometry.analytic.plane.PVector
 import cn.ancono.math.geometry.analytic.plane.Point
+import cn.ancono.math.numberModels.api.RealCalculator
 import java.util.function.UnaryOperator
 
 typealias VectorFunction<T> = MathFunction<T, PVector<T>>
@@ -38,7 +38,7 @@ interface PlaneParametricCurve<T> : VectorFunction<T>, MathCalculatorHolder<T> {
 
 }
 
-internal class PPCImpl<T>(override val calculator: MathCalculator<T>, val f: SVFunction<T>, val g: SVFunction<T>) : PlaneParametricCurve<T> {
+internal class PPCImpl<T>(override val calculator: RealCalculator<T>, val f: SVFunction<T>, val g: SVFunction<T>) : PlaneParametricCurve<T> {
     override fun substitute(t: T): PVector<T> {
         return PVector.valueOf(f(t), g(t), calculator)
     }

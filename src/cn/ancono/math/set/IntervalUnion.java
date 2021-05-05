@@ -1,9 +1,13 @@
 package cn.ancono.math.set;
 
-import cn.ancono.math.*;
+import cn.ancono.math.AbstractFlexibleMathObject;
+import cn.ancono.math.FMathObject;
+import cn.ancono.math.MathObject;
+import cn.ancono.math.MathSymbol;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.CollectionSup;
 import cn.ancono.utilities.ModelPatterns;
 import org.jetbrains.annotations.NotNull;
@@ -661,7 +665,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
     }
 
     /**
-     * Creates an IntervalUnion with a list of intervals. The {@link MathCalculator} will
+     * Creates an IntervalUnion with a list of intervals. The {@link RealCalculator} will
      * be taken from the first Interval.
      *
      * @param intervals
@@ -677,7 +681,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
     }
 
     /**
-     * Creates an IntervalUnion with an array of intervals. The {@link MathCalculator} will
+     * Creates an IntervalUnion with an array of intervals. The {@link RealCalculator} will
      * be taken from the first Interval.
      *
      * @param interval  an interval
@@ -705,7 +709,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
         return new IntervalUnion<>(interval.getCalculator(), interval);
     }
 
-    private static final Map<MathCalculator<?>, IntervalUnion<?>> universemap = new HashMap<>(),
+    private static final Map<RealCalculator<?>, IntervalUnion<?>> universemap = new HashMap<>(),
             emptymap = new HashMap<>();
 
     /**
@@ -744,7 +748,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
         for (T t : set) {
             list[n++] = t;
         }
-        MathCalculator<T> mc = set.getCalculator();
+        RealCalculator<T> mc = set.getCalculator();
         Arrays.sort(list, mc);
         List<Interval<T>> ins = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
@@ -758,10 +762,10 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
      * and upper bound are both {@code x}
      *
      * @param x  a number
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return {@literal [x,x]}
      */
-    public static <T> IntervalUnion<T> single(T x, MathCalculator<T> mc) {
+    public static <T> IntervalUnion<T> single(T x, RealCalculator<T> mc) {
         return new IntervalUnion<T>(mc, Interval.single(x, mc));
     }
 
@@ -769,10 +773,10 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
      * Returns the interval representing the real numbers except {@code x}.
      *
      * @param x  a number
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return {@literal (-∞,x) ∪ (x,+∞)}
      */
-    public static <T> IntervalUnion<T> except(T x, MathCalculator<T> mc) {
+    public static <T> IntervalUnion<T> except(T x, RealCalculator<T> mc) {
         List<Interval<T>> list = new ArrayList<>(2);
         list.add(Interval.fromNegativeInf(x, false, mc));
         list.add(Interval.toPositiveInf(x, false, mc));
@@ -788,7 +792,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
      * @param mc
      * @return {@literal (x1,x2)} (or maybe {@literal (x2,x1)})
      */
-    public static <T> IntervalUnion<T> between(T x1, T x2, MathCalculator<T> mc) {
+    public static <T> IntervalUnion<T> between(T x1, T x2, RealCalculator<T> mc) {
         if (mc.isEqual(x1, x2)) {
             return empty(mc);
         }

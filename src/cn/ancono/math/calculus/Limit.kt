@@ -1,6 +1,5 @@
 package cn.ancono.math.calculus
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathUtils
 import cn.ancono.math.calculus.expression.FunctionHelper
 import cn.ancono.math.calculus.expression.LimitProcessE
@@ -10,6 +9,7 @@ import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.api.Computable
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.expression.ExprCalculator
 import cn.ancono.math.numberModels.expression.Expression
 
@@ -180,7 +180,7 @@ object Limit {
      * Returns the sum of two limit result if possible, otherwise returns `null`.
      */
     @JvmStatic
-    fun <T> add(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> add(x: LimitResult<T>, y: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T>? {
         if (x.isFinite) {
             return if (y.isFinite) {
                 val re = mc.add(x.value.value, y.value.value)
@@ -203,7 +203,7 @@ object Limit {
      * Returns the sum of a limit result and a constant.
      */
     @JvmStatic
-    inline fun <T> addConst(x: LimitResult<T>, mc: MathCalculator<T>, y: () -> T): LimitResult<T> {
+    inline fun <T> addConst(x: LimitResult<T>, mc: RealCalculator<T>, y: () -> T): LimitResult<T> {
         return if (x.isFinite) {
             LimitResult.finiteValueOf(mc.add(x.value.value, y()), x.direction)
         } else {
@@ -212,7 +212,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T> negate(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> negate(x: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T> {
         val direction = -x.direction
         return if (x.isFinite) {
             val re = mc.negate(x.value.value)
@@ -223,12 +223,12 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T> subtract(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> subtract(x: LimitResult<T>, y: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T>? {
         return add(x, negate(y, mc), mc)
     }
 
     @JvmStatic
-    fun <T> multiplySignum(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> multiplySignum(x: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T> {
         return if (x.isFinite) {
             val re = mc.negate(x.value.value)
             LimitResult.finiteValueOf(re, -x.direction)
@@ -238,7 +238,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T> multiplyConst(const: T, x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> multiplyConst(const: T, x: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T> {
         if (x.direction == LimitDirection.CONST) {
             return LimitResult.constantOf(mc.multiply(const, x.value.value))
         }
@@ -303,7 +303,7 @@ object Limit {
     /**
      * Returns the signum of a value of limit
      */
-    private fun <T> signumOf(t: T, mc: MathCalculator<T>): Int {
+    private fun <T> signumOf(t: T, mc: RealCalculator<T>): Int {
         return try {
             val s = mc.compare(t, mc.zero)
             if (s >= 0) {
@@ -317,7 +317,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T> multiply(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> multiply(x: LimitResult<T>, y: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T>? {
         fun infResultOf(t: T, dInf: LimitDirection): LimitResult<T>? {
             val comp = mc.compare(t, mc.zero)
             if (comp == 0) {
@@ -366,7 +366,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T> reciprocal(x: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T> {
+    fun <T> reciprocal(x: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T> {
         if (x.direction == LimitDirection.CONST) {
             return LimitResult.constantOf(mc.reciprocal(x.value.value))
         }
@@ -384,7 +384,7 @@ object Limit {
     }
 
     @JvmStatic
-    fun <T> divide(x: LimitResult<T>, y: LimitResult<T>, mc: MathCalculator<T>): LimitResult<T>? {
+    fun <T> divide(x: LimitResult<T>, y: LimitResult<T>, mc: RealCalculator<T>): LimitResult<T>? {
         return multiply(x, reciprocal(y, mc), mc)
     }
 
@@ -639,11 +639,11 @@ class LimitProcess<T>(val variableName: String, value: LimitValue<T>, direction:
 
         fun <T> toPositiveInf(): LimitProcess<T> = POSITIVE_INF as LimitProcess<T>
         fun <T> toNegativeInf(): LimitProcess<T> = NEGATIVE_INF as LimitProcess<T>
-        fun <T> toPositiveZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.RIGHT)
+        fun <T> toPositiveZero(mc: RealCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.RIGHT)
 
-        fun <T> toNegativeZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.LEFT)
+        fun <T> toNegativeZero(mc: RealCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.LEFT)
 
-        fun <T> toZero(mc: MathCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.BOTH)
+        fun <T> toZero(mc: RealCalculator<T>) = LimitProcess("x", LimitValue.valueOf(mc.zero), LimitDirection.BOTH)
 
     }
 }
@@ -730,12 +730,12 @@ internal constructor(val value: LimitValue<T>, val direction: LimitDirection) {
         }
 
         @JvmStatic
-        fun <T> positiveZero(mc: MathCalculator<T>): LimitResult<T> {
+        fun <T> positiveZero(mc: RealCalculator<T>): LimitResult<T> {
             return finiteValueOf(mc.zero, LimitDirection.RIGHT)
         }
 
         @JvmStatic
-        fun <T> negativeZero(mc: MathCalculator<T>): LimitResult<T> {
+        fun <T> negativeZero(mc: RealCalculator<T>): LimitResult<T> {
             return finiteValueOf(mc.zero, LimitDirection.LEFT)
         }
 
@@ -765,7 +765,7 @@ internal constructor(val value: LimitValue<T>, val direction: LimitDirection) {
     }
 }
 
-fun <T> LimitResult<T>.signum(mc: MathCalculator<T>): Int {
+fun <T> LimitResult<T>.signum(mc: RealCalculator<T>): Int {
     if (this.isFinite) {
         val v = value.value
         if (mc.isZero(v)) {

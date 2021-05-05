@@ -3,9 +3,9 @@
  */
 package cn.ancono.math.equation.inequation;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.equation.AbstractCompareStructure;
 import cn.ancono.math.equation.Type;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -28,7 +28,7 @@ public abstract class Inequation<T, S> extends AbstractCompareStructure<T, S> {
      * @param mc
      * @param op must be one of the
      */
-    protected Inequation(MathCalculator<T> mc, Type op) {
+    protected Inequation(RealCalculator<T> mc, Type op) {
         super(mc, check(op));
     }
 

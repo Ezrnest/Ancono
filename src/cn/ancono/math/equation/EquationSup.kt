@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.equation
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathUtils
 import cn.ancono.math.calculus.Calculus
 import cn.ancono.math.calculus.Calculus.DEFAULT_DELTA
@@ -13,6 +12,7 @@ import cn.ancono.math.equation.inequation.SVPInequation
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.SVFunction
 import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.Interval
 import cn.ancono.math.set.IntervalUnion
 import cn.ancono.math.set.MathSets
@@ -39,7 +39,7 @@ object EquationSup {
      * one if there is only one solution(or two solutions of the identity value)(`delta==0`)
      * or two elements if there are two solutions((`delta>0`).
      *
-     * This method normally requires `squareRoot()` method of the [MathCalculator].
+     * This method normally requires `squareRoot()` method of the [RealCalculator].
      *
      * @param a  the coefficient of x^2.
      * @param b  the coefficient of x.
@@ -47,7 +47,7 @@ object EquationSup {
      * @param mc a MathCalculator
      * @return the list of solution,regardless of order.
      */
-    fun <T> solveEquation(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+    fun <T> solveEquation(a: T, b: T, c: T, mc: RealCalculator<T>): List<T> {
         //Calculate the delta
         var delta: T
         run {
@@ -102,7 +102,7 @@ object EquationSup {
      * @param mc a MathCalculator
      * @return a list of the solutions
      */
-    fun <T> solveEquationIma(a: T, b: T, c: T, mc: MathCalculator<T>): List<T> {
+    fun <T> solveEquationIma(a: T, b: T, c: T, mc: RealCalculator<T>): List<T> {
         var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
         // x1 = (-b + sqr(delta)) / 2a
         // x2 = (-b - sqr(delta)) / 2a
@@ -127,7 +127,7 @@ object EquationSup {
      * @param <T>
      * @return
     </T> */
-    fun <T> solveInequation(a: T, b: T, c: T, op: Type?, mc: MathCalculator<T>?): IntervalUnion<T> {
+    fun <T> solveInequation(a: T, b: T, c: T, op: Type?, mc: RealCalculator<T>?): IntervalUnion<T> {
         return SVPInequation.quadratic(a, b, c, op, mc).solution
     }
 
@@ -182,11 +182,11 @@ object EquationSup {
      * @param b the coefficient of `x`
      * @param c the constant
      * @param op the operation
-     * @param mc a [MathCalculator]
+     * @param mc a [RealCalculator]
      * @return the solution
      */
     @JvmStatic
-    fun <T> solveQInequation(a: T, b: T, c: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveQInequation(a: T, b: T, c: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveLInequation(b, c, op, mc)
         } else {
@@ -235,11 +235,11 @@ object EquationSup {
      * @param a the coefficient of `x`
      * @param b the constant
      * @param op the operation
-     * @param mc a [MathCalculator]
+     * @param mc a [RealCalculator]
      * @return the solution
      */
     @JvmStatic
-    fun <T> solveLInequation(a: T, b: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveLInequation(a: T, b: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
             return solveCInequation(b, op, mc)
         }
@@ -263,11 +263,11 @@ object EquationSup {
      * The operation can be any.
      * @param a the constant
      * @param op the operation
-     * @param mc a [MathCalculator]
+     * @param mc a [RealCalculator]
      * @return the solution
      */
     @JvmStatic
-    fun <T> solveCInequation(a: T, op: Type, mc: MathCalculator<T>): IntervalUnion<T> {
+    fun <T> solveCInequation(a: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
         val universe = op.matches(mc.compare(a, mc.zero))
         return if (universe) IntervalUnion.universe(mc) else IntervalUnion.empty(mc)
     }

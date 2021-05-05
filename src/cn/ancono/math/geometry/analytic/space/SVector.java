@@ -2,7 +2,6 @@ package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.FMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
@@ -12,6 +11,7 @@ import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.AlgebraModel;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import kotlin.jvm.functions.Function1;
 import kotlin.sequences.Sequence;
 import kotlin.sequences.SequencesKt;
@@ -204,7 +204,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
     @Override
     public T norm() {
         if (length == null) {
-            var mc = (MathCalculator<T>) getCalculator();
+            var mc = (RealCalculator<T>) getCalculator();
             length = mc.squareRoot(normSq());
         }
         return length;
@@ -322,7 +322,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
             return false;
         }
         T t1 = x, t2 = s.x;
-        var mc = (MathCalculator<T>) getCalculator();
+        var mc = (RealCalculator<T>) getCalculator();
         if (mc.isZero(t1)) {
             if (mc.isZero(y)) {
                 t1 = z;
@@ -521,10 +521,10 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @param x
      * @param y
      * @param z
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new SVector
      */
-    public static <T> SVector<T> valueOf(T x, T y, T z, MathCalculator<T> mc) {
+    public static <T> SVector<T> valueOf(T x, T y, T z, RealCalculator<T> mc) {
         if (x == null || y == null || z == null) {
             throw new NullPointerException("");
         }
@@ -540,10 +540,10 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      *
      * @param A  point A
      * @param B  point B
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new vector
      */
-    public static <T> SVector<T> vector(SPoint<T> A, SPoint<T> B, MathCalculator<T> mc) {
+    public static <T> SVector<T> vector(SPoint<T> A, SPoint<T> B, RealCalculator<T> mc) {
         return new SVector<>(mc.subtract(B.x, A.x), mc.subtract(B.y, A.y), mc.subtract(B.z, A.z), mc);
     }
 
@@ -553,7 +553,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * __
      * AB
      * </pre>
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param A point A
      * @param B point B
@@ -568,10 +568,10 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * array's length is not equal to 3, only the first three element will be considered.
      *
      * @param xyz
-     * @param mc  a {@link MathCalculator}
+     * @param mc  a {@link RealCalculator}
      * @return a new SVector
      */
-    public static <T> SVector<T> vector(T[] xyz, MathCalculator<T> mc) {
+    public static <T> SVector<T> vector(T[] xyz, RealCalculator<T> mc) {
         if (xyz.length < 3) {
             throw new IllegalArgumentException("Not enough length");
         }
@@ -629,10 +629,10 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * Returns a vector according to the list first three elements.
      *
      * @param list a list
-     * @param mc   a {@link MathCalculator}
+     * @param mc   a {@link RealCalculator}
      * @return a new vector
      */
-    public static <T> SVector<T> fromList(List<T> list, MathCalculator<T> mc) {
+    public static <T> SVector<T> fromList(List<T> list, RealCalculator<T> mc) {
         return new SVector<T>(list.get(0), list.get(1), list.get(2), mc);
     }
 
@@ -727,7 +727,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
     /**
      * Create a new vector base, the three SVector must not be parallel.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param x
      * @param y
@@ -868,7 +868,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
         /**
          * @param mc
          */
-        public SVectorGenerator(MathCalculator<T> mc) {
+        public SVectorGenerator(RealCalculator<T> mc) {
             super(mc);
         }
 
@@ -889,7 +889,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
          */
         @NotNull
         @Override
-        public <N> SVectorGenerator<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> SVectorGenerator<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new SVectorGenerator<>(newCalculator);
         }
 

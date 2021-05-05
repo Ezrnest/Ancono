@@ -3,8 +3,8 @@
  */
 package cn.ancono.math.function
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.function.AbstractSVPFunction.ConstantFunction
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.MathSet
 import cn.ancono.math.set.MathSets
 
@@ -20,7 +20,7 @@ object MathFunctionSup {
      * @param mc
      * @return
      */
-    fun <T> getConstant(c: T, mc: MathCalculator<T>): ConstantFunction<T> {
+    fun <T> getConstant(c: T, mc: RealCalculator<T>): ConstantFunction<T> {
         return ConstantFunction(mc, c)
     }
 

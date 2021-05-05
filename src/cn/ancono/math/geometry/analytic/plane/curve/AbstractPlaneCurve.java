@@ -6,11 +6,10 @@ package cn.ancono.math.geometry.analytic.plane.curve;
  */
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.PlanePointSet;
 import cn.ancono.math.geometry.analytic.plane.Point;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -23,7 +22,7 @@ import java.util.function.Function;
  */
 public abstract class AbstractPlaneCurve<T> extends AbstractMathObject<T> implements PlanePointSet<T> {
 
-    protected AbstractPlaneCurve(MathCalculator<T> mc) {
+    protected AbstractPlaneCurve(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -67,7 +66,7 @@ public abstract class AbstractPlaneCurve<T> extends AbstractMathObject<T> implem
      */
     @NotNull
     @Override
-    public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
 }

@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
  * Describes an object that is on a plane in the space.
@@ -16,7 +16,7 @@ public abstract class SpacePlaneObject<T> extends SpacePointSet<T> {
     /**
      * @param mc
      */
-    protected SpacePlaneObject(MathCalculator<T> mc, Plane<T> pl) {
+    protected SpacePlaneObject(RealCalculator<T> mc, Plane<T> pl) {
         super(mc);
         this.pl = pl;
     }

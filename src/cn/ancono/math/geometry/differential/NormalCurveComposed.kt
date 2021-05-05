@@ -1,19 +1,19 @@
 package cn.ancono.math.geometry.differential
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.function.DerivableFunction
 import cn.ancono.math.function.DerivableSVFunction
 import cn.ancono.math.function.andThenMap
 import cn.ancono.math.function.invoke
 import cn.ancono.math.geometry.analytic.space.SPoint
 import cn.ancono.math.geometry.analytic.space.SVector
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.Interval
 
 class NormalCurveComposed<T>(val a: DerivableSVFunction<T>,
                              val b: DerivableSVFunction<T>,
                              val c: DerivableSVFunction<T>,
                              private val domain: Interval<T>,
-                             mc: MathCalculator<T>) : NormalCurve<T>(mc) {
+                             mc: RealCalculator<T>) : NormalCurve<T>(mc) {
 
 
     override val derivative: DerivableFunction<T, SVector<T>> by lazy {

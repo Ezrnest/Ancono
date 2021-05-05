@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
@@ -9,6 +8,7 @@ import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.Line;
 import cn.ancono.math.geometry.analytic.plane.LineSup;
 import cn.ancono.math.geometry.analytic.plane.Point;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import java.util.function.Function;
  */
 public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
 
-    protected EllipseV(MathCalculator<T> mc, T A, T C, T a, T b, T c, T a2, T b2, T c2, boolean onX) {
+    protected EllipseV(RealCalculator<T> mc, T A, T C, T a, T b, T c, T a2, T b2, T c2, boolean onX) {
         super(mc, A, C, a, b, c, a2, b2, c2, onX);
     }
 
@@ -57,7 +57,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
         return list;
     }
 
-    private void addVertices(MathCalculator<T> mc, List<Point<T>> list, T zero, T a, T b) {
+    private void addVertices(RealCalculator<T> mc, List<Point<T>> list, T zero, T a, T b) {
         list.add(new Point<>(mc, a, zero));
         list.add(new Point<>(mc, mc.negate(a), zero));
         list.add(new Point<>(mc, zero, b));
@@ -128,7 +128,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      * @return the area of this ellipse
      */
     public T getArea() {
-        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        T pi = getMc().constantValue(RealCalculator.STR_PI);
         return getMc().multiply(pi, getMc().multiply(a, b));
     }
 
@@ -560,7 +560,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
 
     @NotNull
     @Override
-    public <N> EllipseV<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> EllipseV<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         EllipseV<N> nell = new EllipseV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
                 , mapper.apply(a), mapper.apply(b), mapper.apply(c)
                 , mapper.apply(a2), mapper.apply(b2), mapper.apply(c2)
@@ -579,11 +579,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      *
      * @param a  half of the length of major axis
      * @param c  half of the distance between the two foci
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new EllipseV
      * @throws IllegalArgumentException if {@code a<c} or {@code c<=0}
      */
-    public static <T> EllipseV<T> createEllipse(T a, T c, MathCalculator<T> mc) {
+    public static <T> EllipseV<T> createEllipse(T a, T c, RealCalculator<T> mc) {
         return createEllipse(a, c, true, mc);
     }
 
@@ -594,11 +594,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      * @param a   half of the length of major axis
      * @param c   half of the distance between the two foci
      * @param onX decides whether this ellipse's foci are on X axis.
-     * @param mc  a {@link MathCalculator}
+     * @param mc  a {@link RealCalculator}
      * @return a new EllipseV
      * @throws IllegalArgumentException if {@code a<c} or {@code c<=0}
      */
-    public static <T> EllipseV<T> createEllipse(T a, T c, boolean onX, MathCalculator<T> mc) {
+    public static <T> EllipseV<T> createEllipse(T a, T c, boolean onX, RealCalculator<T> mc) {
         try {
             if (mc.compare(a, c) <= 0) {
                 throw new IllegalArgumentException("a<c");
@@ -617,7 +617,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
         return create0(a, b, c, a2, b2, c2, onX, mc);
     }
 
-    static <T> EllipseV<T> create0(T a, T b, T c, T a2, T b2, T c2, boolean onX, MathCalculator<T> mc) {
+    static <T> EllipseV<T> create0(T a, T b, T c, T a2, T b2, T c2, boolean onX, RealCalculator<T> mc) {
         T A, C;
         if (onX) {
             A = mc.reciprocal(a2);
@@ -640,11 +640,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      *
      * @param a  coefficient a
      * @param b  coefficient b
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return new EllipseV
      * @throws IllegalArgumentException if {@code a==b} or {@code a <= 0 || b <= 0}
      */
-    public static <T> EllipseV<T> standardEquation(T a, T b, MathCalculator<T> mc) {
+    public static <T> EllipseV<T> standardEquation(T a, T b, RealCalculator<T> mc) {
 
         int comp = mc.compare(a, b);
         if (comp > 0) {
@@ -656,7 +656,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
         }
     }
 
-    private static <T> EllipseV<T> standardEquation0(T a, T b, boolean onX, MathCalculator<T> mc) {
+    private static <T> EllipseV<T> standardEquation0(T a, T b, boolean onX, RealCalculator<T> mc) {
         T a2 = mc.multiply(a, a);
         T b2 = mc.multiply(b, b);
         T c2 = mc.subtract(a2, b2);
@@ -673,11 +673,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      * @param a   coefficient a
      * @param b   coefficient b
      * @param onX decides the order of x y.
-     * @param mc  a {@link MathCalculator}
+     * @param mc  a {@link RealCalculator}
      * @return new EllipseV
      * @throws IllegalArgumentException if {@code a==b} or {@code a <= 0 || b <= 0}
      */
-    public static <T> EllipseV<T> standardEquation(T a, T b, boolean onX, MathCalculator<T> mc) {
+    public static <T> EllipseV<T> standardEquation(T a, T b, boolean onX, RealCalculator<T> mc) {
         try {
             T zero = mc.getZero();
             if (mc.compare(a, zero) <= 0 || mc.compare(b, zero) <= 0) {
@@ -704,11 +704,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      * @param a2  coefficient a2
      * @param b2  coefficient b2
      * @param onX decides the order of x y.
-     * @param mc  a {@link MathCalculator}
+     * @param mc  a {@link RealCalculator}
      * @return new EllipseV
      * @throws IllegalArgumentException if {@code a2==b2}
      */
-    public static <T> EllipseV<T> standardEquationSqrt(T a2, T b2, boolean onX, MathCalculator<T> mc) {
+    public static <T> EllipseV<T> standardEquationSqrt(T a2, T b2, boolean onX, RealCalculator<T> mc) {
         try {
             int t = mc.compare(a2, b2);
             if (t == 0) {
@@ -738,11 +738,11 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      *
      * @param a2 coefficient a2
      * @param b2 coefficient b2
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return new EllipseV
      * @throws IllegalArgumentException if {@code a2==b2}
      */
-    public static <T> EllipseV<T> standardEquationSqrt(T a2, T b2, MathCalculator<T> mc) {
+    public static <T> EllipseV<T> standardEquationSqrt(T a2, T b2, RealCalculator<T> mc) {
         boolean onX;
         int t = mc.compare(a2, b2);
         if (t == 0) {
@@ -772,7 +772,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
      * @param d
      * @return
      */
-    public static <T> EllipseV<T> generalFormula(T a, T b, T d, MathCalculator<T> mc) {
+    public static <T> EllipseV<T> generalFormula(T a, T b, T d, RealCalculator<T> mc) {
         //compare the number
         if (mc.compare(a, mc.getZero()) <= 0
                 || mc.compare(b, mc.getZero()) <= 0
@@ -789,7 +789,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
         }
     }
 
-    private static <T> EllipseV<T> general0(T a2, T b2, boolean onX, MathCalculator<T> mc) {
+    private static <T> EllipseV<T> general0(T a2, T b2, boolean onX, RealCalculator<T> mc) {
         T a = mc.squareRoot(a2);
         T b = mc.squareRoot(b2);
         T c2 = mc.subtract(a2, b2);

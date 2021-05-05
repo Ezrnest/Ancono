@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.function
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathCalculatorHolder
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.IPolynomial
@@ -12,6 +11,7 @@ import cn.ancono.math.calculus.Calculus.derivation
 import cn.ancono.math.calculus.Integrable
 import cn.ancono.math.numberModels.CalculatorUtils
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.utilities.ArraySup
 import java.util.*
 import java.util.function.Function
@@ -27,7 +27,7 @@ abstract class AbstractSVPFunction<T>
 /**
  * @param mc
  */
-protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVFunction<T>(mc), SVPFunction<T>, DerivableSVFunction<T>, Integrable<T> {
+protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVFunction<T>(mc), SVPFunction<T>, DerivableSVFunction<T>, Integrable<T> {
 
     override fun getDegree(): Int {
         if (mp > 0) {
@@ -75,7 +75,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 	 */
     abstract override fun <N> mapTo(
-            newCalculator: MathCalculator<N>,
+            newCalculator: RealCalculator<N>,
             mapper: Function<T, N>
     ): AbstractSVPFunction<N>
 
@@ -122,7 +122,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
      * @param mc
      * @param maxp
      */
-    (mc: MathCalculator<T>, maxp: Int, val coes: Array<T>) : AbstractSVPFunction<T>(mc, maxp) {
+    (mc: RealCalculator<T>, maxp: Int, val coes: Array<T>) : AbstractSVPFunction<T>(mc, maxp) {
         /* (non-Javadoc)
 		 * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
 		 */
@@ -146,7 +146,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
         override fun <N> mapTo(
-                newCalculator: MathCalculator<N>,
+                newCalculator: RealCalculator<N>,
                 mapper: Function<T, N>
         ): SVPFunctionImpl1<N> {
             return SVPFunctionImpl1(newCalculator, mp, ArraySup.mapTo(coes, mapper))
@@ -184,7 +184,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     /**
      *
      */
-    (mc: MathCalculator<T>, mp: Int, val map: Map<Int, T>) : AbstractSVPFunction<T>(mc, mp) {
+    (mc: RealCalculator<T>, mp: Int, val map: Map<Int, T>) : AbstractSVPFunction<T>(mc, mp) {
 
         /* (non-Javadoc)
 		 * @see cn.ancono.math.function.AbstractSVPFunction#getCoefficient(int)
@@ -197,7 +197,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
         override fun <N> mapTo(
-                newCalculator: MathCalculator<N>,
+                newCalculator: RealCalculator<N>,
                 mapper: Function<T, N>
         ): SVPFunctionImpl2<N> {
             val nmap = HashMap<Int, N>(map.size)
@@ -236,7 +236,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     /**
      * @param mc
      */
-    internal constructor(mc: MathCalculator<T>, a: T, b: T) : AbstractSVPFunction<T>(mc, 1) {
+    internal constructor(mc: RealCalculator<T>, a: T, b: T) : AbstractSVPFunction<T>(mc, 1) {
         private val a: T = Objects.requireNonNull(a)
         private val b: T = Objects.requireNonNull(b)
 
@@ -262,9 +262,9 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         }
 
         /*
-		 * @see cn.ancono.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+		 * @see cn.ancono.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
 		 */
-        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFunction<N> {
+        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): LinearFunction<N> {
             return LinearFunction(newCalculator, mapper.apply(a), mapper.apply(b))
         }
 
@@ -275,7 +275,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
      * always returns the identity result.
      * @author
      */
-    class ConstantFunction<T> internal constructor(mc: MathCalculator<T>,
+    class ConstantFunction<T> internal constructor(mc: RealCalculator<T>,
                                                    /**
                                                     * Returns the result.
                                                     * @return
@@ -292,9 +292,9 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 
 
         /*
-		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
 		 */
-        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): ConstantFunction<N> {
+        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): ConstantFunction<N> {
             return ConstantFunction(newCalculator, mapper.apply(result))
         }
 
@@ -335,13 +335,13 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
 
         /**
          * Creates a function with it coefficients.
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @param coes an array of coefficients, if an element is `null`,
          * then it will be considered as zero.
          * @return a new single variable polynomial function
          */
         @SafeVarargs
-        fun <T> valueOf(mc: MathCalculator<T>, vararg coes: T?): AbstractSVPFunction<T> {
+        fun <T> valueOf(mc: RealCalculator<T>, vararg coes: T?): AbstractSVPFunction<T> {
             var ncoes: Array<T> = Array<Any?>(coes.size) {
                 if (coes[it] == null) {
                     mc.zero
@@ -361,10 +361,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /**
          * Creates a function with it coefficients as a list.
          * @param coes an list of coefficients, `null` values are unacceptable.
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new single variable polynomial function
          */
-        fun <T> valueOf(coes: List<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
+        fun <T> valueOf(coes: List<T>, mc: RealCalculator<T>): AbstractSVPFunction<T> {
             val arr = coes.toTypedArray<Any?>() as Array<T>
             return SVPFunctionImpl1(mc, arr.size - 1, arr)
         }
@@ -372,10 +372,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /**
          * Creates a function with it coefficients as a map.
          * @param coes an map of coefficients, `null` values are unacceptable.
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new single variable polynomial function
          */
-        fun <T> valueOf(coes: Map<Int, T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
+        fun <T> valueOf(coes: Map<Int, T>, mc: RealCalculator<T>): AbstractSVPFunction<T> {
             val map = HashMap<Int, T>()
             var mp = 0
             for ((key, value) in coes) {
@@ -390,10 +390,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * Returns a constant function:
          * <pre>c</pre>
          * @param c the constant
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new ConstantFunction
          */
-        fun <T> constant(c: T, mc: MathCalculator<T>): ConstantFunction<T> {
+        fun <T> constant(c: T, mc: RealCalculator<T>): ConstantFunction<T> {
             return ConstantFunction(mc, c)
         }
 
@@ -403,10 +403,10 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * It is required that `a!=0`.
          * @param a the coefficient of `x`
          * @param b the constant
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new LinearFunction
          */
-        fun <T> linear(a: T, b: T, mc: MathCalculator<T>): LinearFunction<T> {
+        fun <T> linear(a: T, b: T, mc: RealCalculator<T>): LinearFunction<T> {
             return LinearFunction(mc, a, b)
         }
 
@@ -417,20 +417,20 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @param a the coefficient of `x^2`
          * @param b the coefficient of `x`
          * @param c the constant
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new QuadraticFunction
          */
-        fun <T> quadratic(a: T, b: T, c: T, mc: MathCalculator<T>): QuadraticFunction<T> {
+        fun <T> quadratic(a: T, b: T, c: T, mc: RealCalculator<T>): QuadraticFunction<T> {
             return QuadraticFunction(mc, a, b, c)
         }
 
         /**
          * Returns a function from a Polynomial.
          * @param m a [IPolynomial]
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return an [AbstractSVPFunction]
          */
-        fun <T> fromPolynomial(m: IPolynomial<T>, mc: MathCalculator<T>): AbstractSVPFunction<T> {
+        fun <T> fromPolynomial(m: IPolynomial<T>, mc: RealCalculator<T>): AbstractSVPFunction<T> {
             if (m is AbstractSVPFunction<*>) {
                 return m as AbstractSVPFunction<T>
             }
@@ -445,7 +445,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /**
          * Returns a function from a Polynomial which is also a [MathCalculatorHolder].
          * @param m a [IPolynomial]
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return an [AbstractSVPFunction]
          * @throws ClassCastException if `!(m instanceof MathCalculatorHolder)`;
          */

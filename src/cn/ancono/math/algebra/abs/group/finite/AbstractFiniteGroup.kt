@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.algebra.abs.group.finite
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.FiniteGroups
 import cn.ancono.math.algebra.abs.HomomorphismMapping
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
@@ -16,6 +15,7 @@ import cn.ancono.math.algebra.abs.structure.Group
 import cn.ancono.math.algebra.abs.structure.finite.FiniteGroup
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.discrete.combination.Permutations
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.FiniteSet
 import cn.ancono.math.set.MathSets
 import cn.ancono.utilities.ArraySup
@@ -31,7 +31,7 @@ import java.util.function.ToIntFunction
  */
 abstract class AbstractFiniteGroup<T>
     : FiniteGroup<T> {
-    private var mc: MathCalculator<T>? = null
+    private var mc: RealCalculator<T>? = null
 
 //    protected val wrappedCalculator: MathCalculator<T>
 //        get() {

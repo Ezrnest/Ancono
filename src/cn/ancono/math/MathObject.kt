@@ -2,6 +2,7 @@ package cn.ancono.math
 
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 
 import java.util.function.Function
 
@@ -17,14 +18,14 @@ import java.util.function.Function
  *
  * @author lyc
  * @param T the type of the number model used
- * @see MathCalculator
+ * @see RealCalculator
  */
 interface MathObject<T>
-    : FlexibleMathObject<T, MathCalculator<T>>, MathCalculatorHolder<T> {
+    : FlexibleMathObject<T, RealCalculator<T>>, MathCalculatorHolder<T> {
     /**
      * Gets the `MathCalculator` kept by this math object.
      */
-    override val calculator: MathCalculator<T>
+    override val calculator: RealCalculator<T>
 
     /**
      * Map this object using the number type `T` to a new object using the number type `N`. This
@@ -34,8 +35,8 @@ interface MathObject<T>
      * @param mapper the function used in mapping.
      * @param <N> the new number type.
      * @return a new MathObject of type N
-    </N> */
-    fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N>
+     */
+    fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): MathObject<N>
 
     /**
      * The equals method describes the equivalence in program of two math objects instead of the equality in math.
@@ -53,7 +54,7 @@ interface MathObject<T>
 
     /**
      * Determines whether the two objects using the identity number type is the identity. In this method,
-     * [MathCalculator.isEqual] is used instead of `Object.equals()` method.
+     * [RealCalculator.isEqual] is used instead of `Object.equals()` method.
      *
      * @param obj another FlexibleMathObject
      * @return `true` if this is equal to obj , else `false`.
@@ -65,7 +66,7 @@ interface MathObject<T>
     /**
      * Determines whether the two objects are the identity according to the given mapper and the calculator.This
      * method is based on math definition so this method should not simply use `equal()` method , instead,
-     * [MathCalculator.isEqual] should be used when comparing two numbers. This method
+     * [RealCalculator.isEqual] should be used when comparing two numbers. This method
      * provides the equality in math.
      *
      * @param obj another object, type is the identity as this
@@ -91,12 +92,12 @@ interface MathObject<T>
     override fun toString(): String
 }
 
-abstract class AbstractMathObject<T>(protected val mc: MathCalculator<T>) : MathObject<T> {
+abstract class AbstractMathObject<T>(protected val mc: RealCalculator<T>) : MathObject<T> {
     override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
         return valueEquals(obj.mapTo(calculator, mapper))
     }
 
-    override val calculator: MathCalculator<T>
+    override val calculator: RealCalculator<T>
         get() = mc
 
     override fun toString(): String {

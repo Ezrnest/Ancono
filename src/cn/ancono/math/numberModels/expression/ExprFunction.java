@@ -3,9 +3,9 @@
  */
 package cn.ancono.math.numberModels.expression;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.MultinomialCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.expression.simplification.SimplificationStrategy;
 
 import java.lang.reflect.Method;
@@ -35,7 +35,7 @@ import java.util.Objects;
  * the calculation.
  * <p>
  * There is a basic bundle of expression functions which is already defined in a
- * {@link MathCalculator}.
+ * {@link RealCalculator}.
  *
  * @author liyicheng 2017-11-24 20:04
  */
@@ -183,7 +183,7 @@ public class ExprFunction {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T findFunctionAndApply(MathCalculator<T> mc, String name, T... args) {
+    public static <T> T findFunctionAndApply(RealCalculator<T> mc, String name, T... args) {
         Class<?>[] argClass;
         if (args.length < TEMP.length) {
             argClass = TEMP[args.length];

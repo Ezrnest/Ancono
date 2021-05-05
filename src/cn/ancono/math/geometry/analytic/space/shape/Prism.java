@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.geometry.analytic.space.Plane;
 import cn.ancono.math.geometry.analytic.space.Segment;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -18,7 +18,7 @@ public abstract class Prism<T> extends Polyhedron<T> {
      * @param mc
      * @param p  the number of its Parallelogram.
      */
-    protected Prism(MathCalculator<T> mc, long p) {
+    protected Prism(RealCalculator<T> mc, long p) {
         super(mc);
         this.p = p;
     }
@@ -89,5 +89,5 @@ public abstract class Prism<T> extends Polyhedron<T> {
 
     @NotNull
     @Override
-    public abstract <N> Prism<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> Prism<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

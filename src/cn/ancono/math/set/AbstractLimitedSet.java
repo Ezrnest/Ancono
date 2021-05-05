@@ -3,8 +3,8 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -28,7 +28,7 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
     /**
      * @param mc
      */
-    protected AbstractLimitedSet(MathCalculator<T> mc) {
+    protected AbstractLimitedSet(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -91,7 +91,7 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 
     @NotNull
     @Override
-    public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
     /**

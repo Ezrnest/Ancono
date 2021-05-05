@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.space.Line.Relation;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -23,7 +23,7 @@ public final class Segment<T> extends SpacePointSet<T> {
     //0,1,2 for x,y,z
     private final int comp;
 
-    Segment(MathCalculator<T> mc, Line<T> l, SPoint<T> p1, SPoint<T> p2) {
+    Segment(RealCalculator<T> mc, Line<T> l, SPoint<T> p1, SPoint<T> p2) {
         super(mc);
         this.l = l;
         this.p1 = p1;
@@ -38,7 +38,7 @@ public final class Segment<T> extends SpacePointSet<T> {
         v = SVector.vector(p1, p2);
     }
 
-    Segment(MathCalculator<T> mc, Line<T> l, SPoint<T> p1, SPoint<T> p2, SVector<T> v, int comp) {
+    Segment(RealCalculator<T> mc, Line<T> l, SPoint<T> p1, SPoint<T> p2, SVector<T> v, int comp) {
         super(mc);
         this.l = l;
         this.p1 = p1;
@@ -47,7 +47,7 @@ public final class Segment<T> extends SpacePointSet<T> {
         this.v = v;
     }
 
-    Segment(MathCalculator<T> mc, Line<T> l, SPoint<T> p1, SPoint<T> p2, int comp) {
+    Segment(RealCalculator<T> mc, Line<T> l, SPoint<T> p1, SPoint<T> p2, int comp) {
         super(mc);
         this.l = l;
         this.p1 = p1;
@@ -289,7 +289,7 @@ public final class Segment<T> extends SpacePointSet<T> {
 
     @NotNull
     @Override
-    public <N> Segment<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Segment<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Segment<>(newCalculator, l.mapTo(newCalculator, mapper)
                 , p1.mapTo(newCalculator, mapper)
                 , p2.mapTo(newCalculator, mapper), comp);
@@ -356,7 +356,7 @@ public final class Segment<T> extends SpacePointSet<T> {
     /**
      * Create a Segment passing through the two points, throws an exception if the two
      * points are the identity.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param p1
      * @param p2
@@ -366,7 +366,7 @@ public final class Segment<T> extends SpacePointSet<T> {
         if (p1.valueEquals(p2)) {
             throw new IllegalArgumentException("p1=p2");
         }
-        MathCalculator<T> mc = p1.getCalculator();
+        RealCalculator<T> mc = p1.getCalculator();
         Line<T> l = new Line<>(mc, p1, SVector.vector(p1, p2));
         return new Segment<>(mc, l, p1, p2);
     }
@@ -382,14 +382,14 @@ public final class Segment<T> extends SpacePointSet<T> {
         if (p1.valueEquals(p2)) {
             return p1;
         }
-        MathCalculator<T> mc = p1.getCalculator();
+        RealCalculator<T> mc = p1.getCalculator();
         Line<T> l = new Line<>(mc, p1, SVector.vector(p1, p2));
         return new Segment<>(mc, l, p1, p2);
     }
 
     /**
      * Create a Segment with a point and a vector,the vector's length will be the line's.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param p
      * @param v

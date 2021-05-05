@@ -1,10 +1,10 @@
 package cn.ancono.math.geometry.analytic.space
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.api.plus
 import java.util.function.Function
 
@@ -12,12 +12,12 @@ class SpaceAffineCoordinateSystem<T> internal constructor(val o: SPoint<T>,
                                                           val i: SVector<T>,
                                                           val j: SVector<T>,
                                                           val k: SVector<T>,
-                                                          mc: MathCalculator<T>) : MathObjectExtend<T>(mc) {
+                                                          mc: RealCalculator<T>) : MathObjectExtend<T>(mc) {
 
     private val vectorBase = SVector.createBase(i, j, k)
 
     override fun <N> mapTo(
-            newCalculator: MathCalculator<N>,
+            newCalculator: RealCalculator<N>,
             mapper: Function<T, N>
     ): SpaceAffineCoordinateSystem<N> {
         return SpaceAffineCoordinateSystem(

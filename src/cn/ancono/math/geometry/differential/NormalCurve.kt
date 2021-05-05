@@ -1,9 +1,9 @@
 package cn.ancono.math.geometry.differential
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.function.*
 import cn.ancono.math.geometry.analytic.space.*
 import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.Interval
 
 typealias DVFunction<T> = DerivableFunction<T, SVector<T>>
@@ -12,7 +12,7 @@ typealias DVFunction<T> = DerivableFunction<T, SVector<T>>
  *  Describe a normal parametric curve. It is required that the vector function `r(t)` is differentiable of sufficient
  *  order and the derivative `r'(t) != 0`.
  */
-abstract class NormalCurve<T>(override val calculator: MathCalculator<T>) : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
+abstract class NormalCurve<T>(override val calculator: RealCalculator<T>) : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
 
 
     override fun asPointFunction() = this.andThenMap { SPoint.valueOf(it) }
@@ -119,7 +119,7 @@ abstract class NormalCurve<T>(override val calculator: MathCalculator<T>) : Spac
                                 b: DerivableSVFunction<T>,
                                 c: DerivableSVFunction<T>,
                                 domain: Interval<T>,
-                                mc: MathCalculator<T>): NormalCurve<T> {
+                                mc: RealCalculator<T>): NormalCurve<T> {
             return NormalCurveComposed(a, b, c, domain, mc)
         }
     }

@@ -3,10 +3,10 @@
  */
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.space.Plane.PlaneCoordinateConverter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -24,7 +24,7 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
      * @param mc
      * @param pl
      */
-    protected SPlaneCurve(MathCalculator<T> mc, PlaneCoordinateConverter<T> pcc, AbstractPlaneCurve<T> pc) {
+    protected SPlaneCurve(RealCalculator<T> mc, PlaneCoordinateConverter<T> pcc, AbstractPlaneCurve<T> pc) {
         super(mc, pcc.getPlane());
         this.pc = pc;
         this.pcc = pcc;
@@ -39,11 +39,11 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
     @NotNull
     @Override
-    public <N> SPlaneCurve<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> SPlaneCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new SPlaneCurve<N>(newCalculator, pcc.mapTo(newCalculator, mapper),
                 pc.mapTo(newCalculator, mapper));
     }

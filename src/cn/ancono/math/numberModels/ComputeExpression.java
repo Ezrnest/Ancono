@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import kotlin.Pair;
 
@@ -98,12 +98,13 @@ public class ComputeExpression {
      * The argument array's length must not be smaller to the number of
      * arguments required.<br>
      * In this method, the calculator is assigned.
+     *
      * @param args
-     * @param mc a {@link MathCalculator}
+     * @param mc   a {@link RealCalculator}
      * @return
      */
     @SafeVarargs
-    public final <T> T compute(MathCalculator<T> mc, T... paras) {
+    public final <T> T compute(RealCalculator<T> mc, T... paras) {
         paraLengthCheck(paras.length);
         return root.compute(mc, paras, null);
     }
@@ -128,7 +129,7 @@ public class ComputeExpression {
             return false;
         }
 
-        public abstract <T> T compute(MathCalculator<T> mc, T[] args, T[] cons);
+        public abstract <T> T compute(RealCalculator<T> mc, T[] args, T[] cons);
 
         public abstract void generateCode(String mc, StringBuilder sb);
 
@@ -149,7 +150,7 @@ public class ComputeExpression {
          * @see cn.ancono.math.number_models.ComputeExpression.Node#compute(cn.ancono.math.number_models.MathCalculator, java.lang.Object[])
          */
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             return mc.multiplyLong(mc.getOne(), l);
         }
 
@@ -190,7 +191,7 @@ public class ComputeExpression {
          * @see cn.ancono.math.number_models.ComputeExpression.Node#compute(cn.ancono.math.number_models.MathCalculator)
          */
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             switch (op) {
                 case ADD:
                     return mc.add(subNode[0].compute(mc, args, cons), subNode[1].compute(mc, args, cons));
@@ -259,7 +260,7 @@ public class ComputeExpression {
         }
 
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             T x = sn.compute(mc, args, cons);
             switch (op) {
                 case SQR:
@@ -324,7 +325,7 @@ public class ComputeExpression {
          * @see cn.ancono.math.number_models.ComputeExpression.Node#compute(cn.ancono.math.number_models.MathCalculator, java.lang.Object[])
          */
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             return mc.pow(x.compute(mc, args, cons), exp);
         }
 
@@ -355,7 +356,7 @@ public class ComputeExpression {
          * @see cn.ancono.math.number_models.ComputeExpression.Node#compute(cn.ancono.math.number_models.MathCalculator, java.lang.Object[])
          */
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             return mc.multiplyLong(x.compute(mc, args, cons), n);
         }
 
@@ -386,7 +387,7 @@ public class ComputeExpression {
          * @see cn.ancono.math.number_models.ComputeExpression.Node#compute(cn.ancono.math.number_models.MathCalculator, java.lang.Object[])
          */
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             return mc.divideLong(x.compute(mc, args, cons), n);
         }
 
@@ -415,7 +416,7 @@ public class ComputeExpression {
          * @see cn.ancono.math.number_models.ComputeExpression.Node#compute(cn.ancono.math.number_models.MathCalculator, java.lang.Object[])
          */
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             return args[index];
         }
 
@@ -442,7 +443,7 @@ public class ComputeExpression {
          * @see cn.ancono.math.number_models.ComputeExpression.Node#compute(cn.ancono.math.number_models.MathCalculator, java.lang.Object[])
          */
         @Override
-        public <T> T compute(MathCalculator<T> mc, T[] args, T[] cons) {
+        public <T> T compute(RealCalculator<T> mc, T[] args, T[] cons) {
             return cons[index];
         }
 
@@ -901,13 +902,13 @@ public class ComputeExpression {
 
     static class TEP<T> extends ExprParser {
         private T[] cons;
-        private MathCalculator<T> mc;
+        private RealCalculator<T> mc;
 
         /**
          * @param str
          * @param flag
          */
-        public TEP(String str, int flag, T[] cons, MathCalculator<T> mc) {
+        public TEP(String str, int flag, T[] cons, RealCalculator<T> mc) {
             super(str, flag);
             this.mc = Objects.requireNonNull(mc);
             this.cons = ArraySup.notEmpty(cons);
@@ -996,15 +997,15 @@ public class ComputeExpression {
      * The character {@code x} and {@code y} may represent any parameter or expression.
      * But notice that the brackets and comma must not be omitted.<br>
      * The "*" operator
-     * The operations in the String-form expression and the methods actually performed using a {@link MathCalculator}
+     * The operations in the String-form expression and the methods actually performed using a {@link RealCalculator}
      * are generally the identity. For example, if {@code exp($0,$1)} is input, then {@code mc.exp(paras[0],paras[1]} will
      * be performed when computing.
      * But there are some exceptions:
      * <p>
-     * The "^" operator or {@code exp(x,y)} will be translated as {@link MathCalculator#pow(Object, long)} if the latter number is a plain long
-     * number, or be translated as {@link MathCalculator#exp(Object, Object)}. Multiplication will invoke {@link MathCalculator#product(Object...)}
+     * The "^" operator or {@code exp(x,y)} will be translated as {@link RealCalculator#pow(Object, long)} if the latter number is a plain long
+     * number, or be translated as {@link RealCalculator#exp(Object, Object)}. Multiplication will invoke {@link RealCalculator#product(Object...)}
      * if there are more than two terms and the {@code flags} permits, otherwise it will be reduced to several parts invoking
-     * {@link MathCalculator#multiply(Object, Object)}, which is the identity to addition.
+     * {@link RealCalculator#multiply(Object, Object)}, which is the identity to addition.
      * <h3>Parameters:</h3>
      * The parameters in the expression should always be input as
      * <pre>$n</pre>, where {@code n} is an non-negative integer, representing the
@@ -1027,43 +1028,43 @@ public class ComputeExpression {
     }
 
     /**
-     * Builds a compute expression of a genetic type, use {@link #mapTo(Function, MathCalculator)} operation to
+     * Builds a compute expression of a genetic type, use {@link #mapTo(Function, RealCalculator)} operation to
      * convert it to a required type. This type of compute expression should not maintain constant values.
-     * <P>
+     * <p>
      *
      * @param expr
      * @param flags
      * @return
      */
-    public static <T> TypeComputeExpression<T> compileTyped(String expr, int flags, T[] cons, MathCalculator<T> mc) {
+    public static <T> TypeComputeExpression<T> compileTyped(String expr, int flags, T[] cons, RealCalculator<T> mc) {
         TEP<T> par = new TEP<>(expr, flags, cons, mc);
         return par.parse();
     }
 
     /**
-     * Builds a compute expression of a genetic type, use {@link #mapTo(Function, MathCalculator)} operation to
+     * Builds a compute expression of a genetic type, use {@link #mapTo(Function, RealCalculator)} operation to
      * convert it to a required type. This type of compute expression should not maintain constant values.
+     *
      * @param expr
      * @param flag
      * @return
      */
-    public static <T> TypeComputeExpression<T> compileTyped(String expr, T[] cons, MathCalculator<T> mc) {
+    public static <T> TypeComputeExpression<T> compileTyped(String expr, T[] cons, RealCalculator<T> mc) {
         return compileTyped(expr, 0, cons, mc);
     }
 
     /**
-     *
      * @param ce
      * @param mc
      * @return
      */
-    public static <T> TypeComputeExpression<T> convertToTyped(ComputeExpression ce, MathCalculator<T> mc) {
+    public static <T> TypeComputeExpression<T> convertToTyped(ComputeExpression ce, RealCalculator<T> mc) {
         return new TypeComputeExpression<>(ce.argLen, ce.root, null, mc);
     }
 
     public static class TypeComputeExpression<T> extends ComputeExpression {
         final T[] cons;
-        final MathCalculator<T> mc;
+        final RealCalculator<T> mc;
 
         /**
          * @param mc
@@ -1072,7 +1073,7 @@ public class ComputeExpression {
          * @param cons
          */
         TypeComputeExpression(int argLength,
-                              Node root, T[] cons, MathCalculator<T> mc) {
+                              Node root, T[] cons, RealCalculator<T> mc) {
             super(argLength, root);
             this.cons = cons;
             this.mc = mc;
@@ -1090,7 +1091,7 @@ public class ComputeExpression {
         /* (non-Javadoc)
          * @see cn.ancono.math.number_models.ComputeExpression#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
          */
-        public <N> TypeComputeExpression<N> mapTo(Function<Object, N> mapper, MathCalculator<N> newCalculator) {
+        public <N> TypeComputeExpression<N> mapTo(Function<Object, N> mapper, RealCalculator<N> newCalculator) {
             N[] ncons = null;
             if (cons != null)
                 ncons = ArraySup.mapTo(cons, mapper);

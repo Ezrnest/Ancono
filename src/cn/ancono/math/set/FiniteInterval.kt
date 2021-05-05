@@ -5,7 +5,7 @@ import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberTheory.IntCalculator
+import cn.ancono.math.numberModels.api.IntCalculator
 import java.math.BigInteger
 import java.util.function.Function
 

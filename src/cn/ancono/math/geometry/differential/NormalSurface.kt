@@ -1,12 +1,12 @@
 package cn.ancono.math.geometry.differential
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.function.NDerivableFunction
 import cn.ancono.math.function.invoke
 import cn.ancono.math.function.partial1
 import cn.ancono.math.function.partial2
 import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.geometry.analytic.space.SpaceParametricSurface
+import cn.ancono.math.numberModels.api.RealCalculator
 
 /**
  * Binary derivative vector function
@@ -119,7 +119,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
                 a: NDerivableFunction<T, T>,
                 b: NDerivableFunction<T, T>,
                 c: NDerivableFunction<T, T>,
-                mc: MathCalculator<T>
+                mc: RealCalculator<T>
         ): NormalSurface<T> {
             return NormalSurfaceXYZ(a, b, c, mc)
         }
@@ -131,7 +131,7 @@ internal class NormalSurfaceXYZ<T>(
         val x: NDerivableFunction<T, T>,
         val y: NDerivableFunction<T, T>,
         val z: NDerivableFunction<T, T>,
-        override val calculator: MathCalculator<T>
+        override val calculator: RealCalculator<T>
 ) : NormalSurface<T>() {
     override val ru: BDVFunction<T> by lazy {
         NDerivableFunction.mergeOf3(x.partial1, y.partial1, z.partial1) { x, y, z ->

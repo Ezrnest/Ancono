@@ -3,9 +3,9 @@
  */
 package cn.ancono.math.equation.inequation;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.equation.SVCompareStructure;
 import cn.ancono.math.equation.Type;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -20,7 +20,7 @@ public abstract class SVInquation<T> extends Inequation<T, T> implements SVCompa
      * @param mc
      * @param op
      */
-    protected SVInquation(MathCalculator<T> mc, Type op) {
+    protected SVInquation(RealCalculator<T> mc, Type op) {
         super(mc, op);
     }
 
@@ -33,5 +33,5 @@ public abstract class SVInquation<T> extends Inequation<T, T> implements SVCompa
     }
 
     @NotNull
-    public abstract <N> SVInquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SVInquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

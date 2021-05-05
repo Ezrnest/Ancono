@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
+import cn.ancono.math.numberModels.api.RealCalculator
 
 
 /**
@@ -12,7 +12,7 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException
  * @param T the type of number to deal with
  *
  */
-abstract class MathCalculatorAdapter<T> : MathCalculator<T> {
+abstract class MathCalculatorAdapter<T> : RealCalculator<T> {
 
     override val one: T
         get() {
@@ -103,7 +103,7 @@ abstract class MathCalculatorAdapter<T> : MathCalculator<T> {
     }
 
     override fun arccos(x: T): T {
-        return subtract(divideLong(constantValue(MathCalculator.STR_PI)!!, 2L), arcsin(x))
+        return subtract(divideLong(constantValue(RealCalculator.STR_PI)!!, 2L), arcsin(x))
     }
 
 
@@ -112,7 +112,7 @@ abstract class MathCalculatorAdapter<T> : MathCalculator<T> {
     }
 
     /**
-     * @see MathCalculator.nroot
+     * @see RealCalculator.nroot
      */
     override fun nroot(x: T, n: Long): T {
         throwFor()

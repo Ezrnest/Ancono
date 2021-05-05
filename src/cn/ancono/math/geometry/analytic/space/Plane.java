@@ -1,7 +1,6 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
@@ -12,6 +11,7 @@ import cn.ancono.math.geometry.analytic.plane.Circle;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.geometry.analytic.plane.Triangle;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     private SVector<T> normalVector = null;
 
 
-    protected Plane(MathCalculator<T> mc, T a, T b, T c, T d) {
+    protected Plane(RealCalculator<T> mc, T a, T b, T c, T d) {
         super(mc);
         this.a = a;
         this.b = b;
@@ -62,7 +62,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         this.d = d;
     }
 
-    protected Plane(MathCalculator<T> mc, SVector<T> nv, T d) {
+    protected Plane(RealCalculator<T> mc, SVector<T> nv, T d) {
         super(mc);
         this.a = nv.x;
         this.b = nv.y;
@@ -582,7 +582,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         final SPoint<T> O;
         final Plane<T> p;
 
-        PlaneCoordinateConverter(MathCalculator<T> mc, SVector<T> x, SVector<T> y, SPoint<T> O, T unit, Plane<T> p) {
+        PlaneCoordinateConverter(RealCalculator<T> mc, SVector<T> x, SVector<T> y, SPoint<T> O, T unit, Plane<T> p) {
             super(mc);
             D = mc.subtract(mc.multiply(x.x, y.y), mc.multiply(y.x, x.y));
             this.unit = unit;
@@ -708,7 +708,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
         @NotNull
         @Override
-        public <N> PlaneCoordinateConverter<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> PlaneCoordinateConverter<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new PlaneCoordinateConverter<>(newCalculator, x.mapTo(newCalculator, mapper), y.mapTo(newCalculator, mapper),
                     O.mapTo(newCalculator, mapper), mapper.apply(unit), p.mapTo(newCalculator, mapper));
         }
@@ -725,7 +725,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     @NotNull
     @Override
-    public <N> Plane<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Plane<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Plane<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d));
     }
 
@@ -835,7 +835,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @param mc
      * @return a new plane
      */
-    public static <T> Plane<T> generalFormula(T a, T b, T c, T d, MathCalculator<T> mc) {
+    public static <T> Plane<T> generalFormula(T a, T b, T c, T d, RealCalculator<T> mc) {
         if (a == null || b == null || c == null || d == null) {
             throw new NullPointerException();
         }
@@ -848,7 +848,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane that contains {@code p} and has normal vector {@code nv}.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param p  a point
      * @param nv a vector, not zero
@@ -858,7 +858,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         if (nv.isZero()) {
             throw new IllegalArgumentException("zero vector");
         }
-        MathCalculator<T> mc = p.getCalculator();
+        RealCalculator<T> mc = p.getCalculator();
         T d = mc.add(mc.multiply(p.x, nv.x), mc.add(mc.multiply(p.y, nv.y), mc.multiply(p.z, nv.z)));
         d = mc.negate(d);
         Plane<T> pl = new Plane<>(mc, nv.x, nv.y, nv.z, d);
@@ -868,7 +868,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through a line and a point outside the line.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param l a line
      * @param p a point
@@ -885,7 +885,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through two lines.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param l1 a line
      * @param l2 another line
@@ -907,7 +907,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through three points.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @return a new plane
      */
@@ -922,7 +922,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     }
 
 
-    private static <T> Plane<T> vectorPoint0(SVector<T> v1, SVector<T> v2, SPoint<T> p, MathCalculator<T> mc) {
+    private static <T> Plane<T> vectorPoint0(SVector<T> v1, SVector<T> v2, SPoint<T> p, RealCalculator<T> mc) {
         //here we solve the equation and get one solution as
         //v1=(x,y,z), v2=(k,q,j)
         //a = jy - qz , b = kz - jx , c = qx - ky
@@ -958,14 +958,14 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
         SVector<T> pv = p.getVector();
         T d = mc.negate(abc.innerProduct(pv));
-        Plane<T> pl = new Plane<>((MathCalculator<T>) mc, abc.getX(), abc.getY(), abc.getZ(), d); //TODO
+        Plane<T> pl = new Plane<>((RealCalculator<T>) mc, abc.getX(), abc.getY(), abc.getZ(), d); //TODO
         pl.normalVector = abc;
         return pl;
     }
 
     /**
      * Create a plane with two vector and a point. The two vector must not be parallel.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param v1
      * @param v2

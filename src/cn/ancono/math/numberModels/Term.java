@@ -1,11 +1,11 @@
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
 import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.addableSet.MathAdder;
 import cn.ancono.math.numberModels.api.Computable;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.property.Mergeable;
 import org.jetbrains.annotations.NotNull;
@@ -54,21 +54,21 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
     /**
      * Describes the character constant value Pi
      *
-     * @see MathCalculator#STR_PI
+     * @see RealCalculator#STR_PI
      */
-    public static final String PI_STR = MathCalculator.STR_PI;
+    public static final String PI_STR = RealCalculator.STR_PI;
     /**
      * Describes the character constant value e
      *
-     * @see MathCalculator#STR_E
+     * @see RealCalculator#STR_E
      */
-    public static final String E_STR = MathCalculator.STR_E;
+    public static final String E_STR = RealCalculator.STR_E;
     /**
      * Describes the character constant value i
      *
-     * @see MathCalculator#STR_I
+     * @see RealCalculator#STR_I
      */
-    public static final String I_STR = MathCalculator.STR_I;
+    public static final String I_STR = RealCalculator.STR_I;
 
     /**
      * Describes the operation of square root in a term.
@@ -1027,7 +1027,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
      * @param valueMap a mapping function to get the value of characters.
      * @param valueOf  converting a BigInteger to the type T
      */
-    public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc, Function<BigInteger, T> valueOf) {
+    public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc, Function<BigInteger, T> valueOf) {
         if (isZero()) {
             return mc.getZero();
         }
@@ -1060,7 +1060,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
      *
      * @param valueMap a mapping function to get the value of characters.
      */
-    public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+    public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
         return compute(valueMap, mc, CalculatorUtils.parserBigInteger(mc));
     }
 

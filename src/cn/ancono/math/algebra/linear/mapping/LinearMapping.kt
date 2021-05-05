@@ -2,7 +2,6 @@ package cn.ancono.math.algebra.linear.mapping
 
 import cn.ancono.math.AbstractFlexibleMathObject
 import cn.ancono.math.FMathObject
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.linear.*
 import cn.ancono.math.function.Bijection
@@ -202,12 +201,12 @@ abstract class LinearMapping<T> internal constructor(
         }
 
         @JvmStatic
-        fun <T> zeroMapping(dimSrc: Int, dimDest: Int, mc: MathCalculator<T>): LinearMapping<T> {
+        fun <T> zeroMapping(dimSrc: Int, dimDest: Int, mc: RealCalculator<T>): LinearMapping<T> {
             return DLinearMapping(Matrix.zero(dimDest, dimSrc, mc), dimSrc, dimDest, mc)
         }
 
         @JvmStatic
-        fun <T> getCalculator(dimSrc: Int, dimDest: Int, mc: MathCalculator<T>): LinearMapCal<T> {
+        fun <T> getCalculator(dimSrc: Int, dimDest: Int, mc: RealCalculator<T>): LinearMapCal<T> {
             return LinearMapCal(mc, dimSrc, dimDest);
         }
 
@@ -371,18 +370,18 @@ internal constructor(
          * Creates a linear transformation from a function.
          */
         @JvmStatic
-        fun <T> fromFunction(dim: Int, mc: MathCalculator<T>, f: SVFunction<Vector<T>>): LinearTrans<T> {
+        fun <T> fromFunction(dim: Int, mc: RealCalculator<T>, f: SVFunction<Vector<T>>): LinearTrans<T> {
             val transMatrix = Matrix.fromVectors(Vector.unitVectors(dim, mc).map { f(it) })
             return fromMatrix(transMatrix)
         }
 
         @JvmStatic
-        fun <T> zeroTrans(dim: Int, mc: MathCalculator<T>): LinearTrans<T> {
+        fun <T> zeroTrans(dim: Int, mc: RealCalculator<T>): LinearTrans<T> {
             return fromMatrix(Matrix.zero(dim, dim, mc))
         }
 
         @JvmStatic
-        fun <T> getCalculator(dim: Int, mc: MathCalculator<T>): LinearTransCal<T> {
+        fun <T> getCalculator(dim: Int, mc: RealCalculator<T>): LinearTransCal<T> {
             return LinearTransCal(mc, dim)
         }
 
@@ -405,7 +404,7 @@ class DLinearTrans<T> internal constructor(
     }
 }
 
-class LinearMapCal<T>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: Int) : LinearSpaceCalculator<T, LinearMapping<T>> {
+class LinearMapCal<T>(val mc: RealCalculator<T>, val dimSrc: Int, val dimDest: Int) : LinearSpaceCalculator<T, LinearMapping<T>> {
 
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
@@ -434,7 +433,7 @@ class LinearMapCal<T>(val mc: MathCalculator<T>, val dimSrc: Int, val dimDest: I
     }
 }
 
-class LinearTransCal<T>(val mc: MathCalculator<T>, val dim: Int) : AlgebraCalculator<T, LinearTrans<T>> {
+class LinearTransCal<T>(val mc: RealCalculator<T>, val dim: Int) : AlgebraCalculator<T, LinearTrans<T>> {
 
 
     override val scalarCalculator: FieldCalculator<T>

@@ -2,12 +2,12 @@ package cn.ancono.math.algebra;
 
 import cn.ancono.math.AbstractFlexibleMathObject;
 import cn.ancono.math.FMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.AbelSemiGroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.BiMathFunction;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.structure.WithLong;
 import org.jetbrains.annotations.NotNull;
@@ -1021,7 +1021,7 @@ public abstract class Progression<T> extends AbstractFlexibleMathObject<T, Equal
      * @return a newly created progression.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Progression<T> createProgressionRecur2(BiMathFunction<T, T, T> recursiveFormula, T first, T second, long length, MathCalculator<T> mc) {
+    public static <T> Progression<T> createProgressionRecur2(BiMathFunction<T, T, T> recursiveFormula, T first, T second, long length, RealCalculator<T> mc) {
         return new FillingCachedProgression<>(mc, length,
                 (progression, index) -> recursiveFormula.apply(progression.get(index - 2), progression.get(index - 1)),
                 (T[]) new Object[]{first, second});
@@ -1078,7 +1078,7 @@ public abstract class Progression<T> extends AbstractFlexibleMathObject<T, Equal
      * @param mc    a math calculator
      * @return a newly created progression.
      */
-    public static <T> Progression<T> fromArray(T[] array, MathCalculator<T> mc) {
+    public static <T> Progression<T> fromArray(T[] array, RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[array.length];
         for (int i = 0; i < arr.length; i++) {
@@ -1096,7 +1096,7 @@ public abstract class Progression<T> extends AbstractFlexibleMathObject<T, Equal
      * @return a new progression
      */
     @SuppressWarnings("unchecked")
-    public static <T> Progression<T> fromList(List<T> list, MathCalculator<T> mc) {
+    public static <T> Progression<T> fromList(List<T> list, RealCalculator<T> mc) {
         return fromArray((T[]) list.toArray(), mc);
     }
 

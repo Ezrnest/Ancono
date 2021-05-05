@@ -2,7 +2,6 @@ package cn.ancono.math.geometry.projective
 
 import cn.ancono.math.AbstractFlexibleMathObject
 import cn.ancono.math.FMathObject
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
@@ -26,7 +25,7 @@ class MobiusTrans<T>(
         /**
          * The complex calculator
          */
-        val cc: MathCalculator<Complex<T>>,
+        val cc: RealCalculator<Complex<T>>,
         /**
          * The transformation matrix ((a,b),(c,d))
          */

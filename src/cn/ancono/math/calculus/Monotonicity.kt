@@ -1,8 +1,8 @@
 package cn.ancono.math.calculus
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.RealCalculator
 
 
 enum class MonoType {
@@ -20,7 +20,7 @@ object Monotonicity {
      * represented by the limit result. Return `1` for increasing, `0` for stable and
      * `-1` for decreasing.
      */
-    fun <T> power(x: LimitResult<T>, pow: Fraction, mc: MathCalculator<T>): Int {
+    fun <T> power(x: LimitResult<T>, pow: Fraction, mc: RealCalculator<T>): Int {
         if (pow.isZero()) {
             return 0
         }

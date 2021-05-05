@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.LEquation;
@@ -9,6 +8,7 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.*;
 import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import kotlin.Pair;
@@ -101,7 +101,7 @@ ConicSection<T>
      * @param E
      * @param F
      */
-    protected ConicSection(MathCalculator<T> mc, T A, T B, T C, T D, T E, T F) {
+    protected ConicSection(RealCalculator<T> mc, T A, T B, T C, T D, T E, T F) {
         super(mc);
         if (mc.isZero(A) && mc.isZero(C) && mc.isZero(B)) {
             throw new IllegalArgumentException("A=B=C=0 for conic section");

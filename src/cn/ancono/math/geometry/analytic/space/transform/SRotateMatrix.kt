@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.analytic.space.transform
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
@@ -11,6 +10,7 @@ import cn.ancono.math.function.MathFunction
 import cn.ancono.math.geometry.analytic.space.SPoint
 import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.numberModels.api.AlgebraModel
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.property.Composable
 import cn.ancono.utilities.ArraySup
 import org.jetbrains.annotations.NotNull
@@ -129,12 +129,12 @@ class SRotateMatrix<T> internal constructor(override val calculator: FieldCalcul
             val x = mat[0][0] * p.x + mat[0][1] * p.y + mat[0][2] * p.z
             val y = mat[1][0] * p.x + mat[1][1] * p.y + mat[1][2] * p.z
             val z = mat[2][0] * p.x + mat[2][1] * p.y + mat[2][2] * p.z
-            SPoint.valueOf(x, y, z, this as MathCalculator<T>)  //TODO
+            SPoint.valueOf(x, y, z, this as RealCalculator<T>)  //TODO
         }
     }
 
     fun transform(v: SVector<T>): SVector<T> {
-        val mc = calculator as MathCalculator<T> //TODO
+        val mc = calculator as RealCalculator<T> //TODO
         val arr = Array<Any?>(3) { i ->
             var re = mc.zero
             for (j in 0..2) {
@@ -190,7 +190,7 @@ class SRotateMatrix<T> internal constructor(override val calculator: FieldCalcul
             return SRotateMatrix(mat.calculator as FieldCalculator<T>, mat.getValues())
         }
 
-        fun <T> multiplyBy(kx: T, ky: T, kz: T, mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> multiplyBy(kx: T, ky: T, kz: T, mc: RealCalculator<T>): SRotateMatrix<T> {
             val zero = mc.zero
             val mat = arrayOf(
                     arrayOf<Any?>(kx, zero, zero),
@@ -199,15 +199,15 @@ class SRotateMatrix<T> internal constructor(override val calculator: FieldCalcul
             return SRotateMatrix(mc, mat)
         }
 
-        fun <T> multiplyBy(k: T, mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> multiplyBy(k: T, mc: RealCalculator<T>): SRotateMatrix<T> {
             return multiplyBy(k, k, k, mc)
         }
 
-        fun <T> identity(mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> identity(mc: RealCalculator<T>): SRotateMatrix<T> {
             return multiplyBy(mc.one, mc)
         }
 
-        fun <T> valueOf(mat: List<List<T>>, mc: MathCalculator<T>): SRotateMatrix<T> {
+        fun <T> valueOf(mat: List<List<T>>, mc: RealCalculator<T>): SRotateMatrix<T> {
             val nMat = Array(3) { i ->
                 Array<Any?>(3) { j ->
                     mat[i][j]

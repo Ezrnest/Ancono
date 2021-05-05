@@ -1,10 +1,10 @@
 package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathUtils
-import cn.ancono.math.algebra.abs.calculator.QCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.api.FieldNumberModel
+import cn.ancono.math.numberModels.api.QCalculator
 import cn.ancono.math.numberModels.api.Simplifier
 import cn.ancono.math.numberTheory.NTUtils
 import cn.ancono.utilities.ArraySup
@@ -616,15 +616,16 @@ internal constructor(
         fun squareRoot(x: Fraction): Fraction {
             if (x.isZero()) {
                 return ZERO
-            } else if (x.isPositive) {
-                val noe = MathUtils.squareRootExact(x.numerator)
-                val deo = MathUtils.squareRootExact(x.denominator)
-                if (noe != -1L && deo != -1L) {
-                    return Fraction(noe, deo)
-                }
             }
-
-            throw UnsupportedCalculationException()
+            if (x.isNegative) {
+                ExceptionUtil.sqrtForNegative()
+            }
+            val noe = MathUtils.squareRootExact(x.numerator)
+            val deo = MathUtils.squareRootExact(x.denominator)
+            if (noe != -1L && deo != -1L) {
+                return Fraction(noe, deo)
+            }
+            throw UnsupportedCalculationException("The sqrt of $this is not rational!")
         }
 
         override fun pow(x: Fraction, n: Long): Fraction {

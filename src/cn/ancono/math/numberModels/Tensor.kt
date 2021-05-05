@@ -7,10 +7,7 @@ import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.discrete.combination.Permutations
 import cn.ancono.math.numberModels.Tensor.Companion.checkShape
-import cn.ancono.math.numberModels.api.AlgebraModel
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberModels.api.GenTensor
-import cn.ancono.math.numberModels.api.Index
+import cn.ancono.math.numberModels.api.*
 import cn.ancono.utilities.IterUtils
 import java.util.*
 import java.util.function.Function
@@ -736,7 +733,7 @@ infix fun <T> MutableTensor<T>.matmul(y: Tensor<T>): MutableTensor<T> = this.mat
 fun <T> Tensor<T>.toMatrix(): Matrix<T> {
     require(dim == 2)
     val (row, column) = shape
-    return Matrix.of(row, column, calculator as MathCalculator<T>, flattenToList())
+    return Matrix.of(row, column, calculator as RealCalculator<T>, flattenToList())
 }
 
 interface MutableTensor<T> : Tensor<T> {

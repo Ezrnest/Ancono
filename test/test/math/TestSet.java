@@ -4,7 +4,7 @@
 package test.math;
 
 import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.numberTheory.IntCalculator;
+import cn.ancono.math.numberModels.api.IntCalculator;
 import cn.ancono.math.set.IntersectableSet;
 import cn.ancono.math.set.Interval;
 import cn.ancono.math.set.IntervalUnion;

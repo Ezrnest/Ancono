@@ -6,7 +6,6 @@ import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.function.Function
 
@@ -175,9 +174,13 @@ class PFraction<T>(mc: FieldCalculator<T>, val nume: Polynomial<T>, val deno: Po
     }
 }
 
-class PFractionCalculator<T>(val mc: FieldCalculator<T>, val sim: Simplifier<T>?) : MathCalculatorAdapter<PFraction<T>>() {
+class PFractionCalculator<T>(val mc: FieldCalculator<T>, val sim: Simplifier<T>?) : FieldCalculator<PFraction<T>> {
     override val one: PFraction<T> = PFraction.one(mc)
     override val zero: PFraction<T> = PFraction.zero(mc)
+
+    override val characteristic: Long
+        get() = mc.characteristic
+
 
     override fun isZero(x: PFraction<T>): Boolean {
         return x.isZero()
@@ -202,7 +205,7 @@ class PFractionCalculator<T>(val mc: FieldCalculator<T>, val sim: Simplifier<T>?
     }
 
     override fun negate(x: PFraction<T>): PFraction<T> {
-        return super.negate(x)
+        return x.negate()
     }
 
     override fun subtract(x: PFraction<T>, y: PFraction<T>): PFraction<T> {
@@ -236,6 +239,7 @@ class PFractionCalculator<T>(val mc: FieldCalculator<T>, val sim: Simplifier<T>?
     override fun of(x: Fraction): PFraction<T> {
         return PFraction.of(Polynomial.constant(mc, mc.of(x)))
     }
+
 
     override val numberClass: Class<PFraction<T>>
         get() = super.numberClass

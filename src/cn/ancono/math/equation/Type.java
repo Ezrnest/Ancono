@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.equation;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
  * An enumeration that describes all the types of a compare structure.
@@ -128,7 +128,7 @@ public enum Type {
 
     /**
      * Determines whether the {@code signum}, which is often the
-     * result of {@link MathCalculator#compare(Object, Object)},
+     * result of {@link RealCalculator#compare(Object, Object)},
      * matches the inequation operation type.
      *
      * @param signum

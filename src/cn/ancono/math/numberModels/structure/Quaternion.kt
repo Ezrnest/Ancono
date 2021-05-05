@@ -1,6 +1,5 @@
 package cn.ancono.math.numberModels.structure
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.abs.FiniteGroups
@@ -11,10 +10,11 @@ import cn.ancono.math.algebra.abs.group.finite.AbstractFiniteGroup
 import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.numberModels.api.FieldNumberModel
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 import java.util.function.Function
 
 
-class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T>)
+class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T>)
     : MathObjectExtend<T>(mc), FieldNumberModel<Quaternion<T>> {
     val tensor: T by lazy(LazyThreadSafetyMode.NONE) {
         a * a + b * b + c * c + d * d
@@ -176,47 +176,47 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T
             j 	j 	−k 	−1 	i
             k 	k 	j 	−i 	−1
      */
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Quaternion<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Quaternion<N> {
         return Quaternion(mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d), newCalculator)
     }
 
     companion object {
 
-        fun <T> real(a: T, mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> real(a: T, mc: RealCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(a, it, it, it, mc) }
         }
 
-        fun <T> valueOf(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> valueOf(a: T, b: T, c: T, d: T, mc: RealCalculator<T>): Quaternion<T> {
             return Quaternion(a, b, c, d, mc)
         }
 
-        fun <T> parse(str: String, mc: MathCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
+        fun <T> parse(str: String, mc: RealCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
             val arr = deliminator.split(str).map(parser)
             return valueOf(arr[0], arr[1], arr[2], arr[3], mc)
         }
 
-        fun <T> zero(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> zero(mc: RealCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(it, it, it, it, mc) }
         }
 
-        fun <T> one(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> one(mc: RealCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(one, zero, zero, zero, mc) }
         }
 
-        fun <T> baseI(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseI(mc: RealCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, one, zero, zero, mc) }
         }
 
-        fun <T> baseJ(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseJ(mc: RealCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, one, zero, mc) }
         }
 
-        fun <T> baseK(mc: MathCalculator<T>): Quaternion<T> {
+        fun <T> baseK(mc: RealCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, zero, one, mc) }
         }
 
 
-        fun <T> calculator(mc: MathCalculator<T>): QuaternionCalculator<T> {
+        fun <T> calculator(mc: RealCalculator<T>): QuaternionCalculator<T> {
             return QuaternionCalculator(mc)
         }
 
@@ -224,7 +224,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T
          * Returns the quaternion eight-group, whose elements are `1,-1,i,j,k,-i,-j,-k` and
          * the group operation is multiplication.
          */
-        fun <T> quaternionGroup(mc: MathCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
+        fun <T> quaternionGroup(mc: RealCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
             val qc = calculator(mc)
             val gc = qc.asGroupCalculator()
             val e = one(mc)
@@ -244,7 +244,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T
 
 }
 
-class QuaternionCalculator<T>(val mc: MathCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
+class QuaternionCalculator<T>(val mc: RealCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
 //    override val isMultiplyCommutative: Boolean
 //        get() = false
 

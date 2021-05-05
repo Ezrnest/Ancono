@@ -2,7 +2,6 @@ package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.AbstractFlexibleMathObject
 import cn.ancono.math.FMathObject
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.utilities.ArraySup
@@ -57,7 +56,7 @@ abstract class AbstractVector<T>(
      * @return `|this|`
      */
     open fun norm(): T {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         return mc.squareRoot(normSq())
     }
 
@@ -144,7 +143,7 @@ abstract class Vector<T>(
      * @return <pre> arccos(this · v / (|this| |v|))</pre>
      */
     open fun angle(v: Vector<T>): T {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         return mc.arccos(angleCos(v))
     }
 
@@ -156,7 +155,7 @@ abstract class Vector<T>(
      */
     open fun angleCos(v: Vector<T>): T {
         val pro = inner(v)
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         return mc.divide(pro, mc.multiply(norm(), v.norm()))
     }
 

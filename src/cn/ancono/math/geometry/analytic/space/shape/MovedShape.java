@@ -3,9 +3,9 @@
  */
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.space.*;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -25,7 +25,7 @@ public class MovedShape<T> extends SpaceObject<T> {
      * @param mc
      * @param pl
      */
-    MovedShape(MathCalculator<T> mc, SpacePlaneObject<T> spo, SVector<T> vec) {
+    MovedShape(RealCalculator<T> mc, SpacePlaneObject<T> spo, SVector<T> vec) {
         super(mc);
         this.spo = spo;
         this.vec = vec;
@@ -47,11 +47,11 @@ public class MovedShape<T> extends SpaceObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
     @NotNull
     @Override
-    public <N> MovedShape<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> MovedShape<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         // TODO Auto-generated method stub
         return null;
     }

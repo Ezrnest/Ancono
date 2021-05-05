@@ -3,11 +3,11 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.function.AbstractSVFunction;
 import cn.ancono.math.function.SVFunction;
 import cn.ancono.math.geometry.analytic.plane.PlanePointSet;
 import cn.ancono.math.geometry.analytic.plane.Point;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -21,7 +21,7 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
     /**
      * @param mc
      */
-    public AbstractPlaneFunction(MathCalculator<T> mc) {
+    public AbstractPlaneFunction(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -43,9 +43,9 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
     }
 
     /*
-     * @see cn.ancono.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.geometry.analytic.planeAG.curve.AbstractPlaneCurve#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
     @NotNull
     @Override
-    public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

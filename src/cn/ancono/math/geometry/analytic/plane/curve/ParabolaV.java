@@ -3,11 +3,11 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.geometry.analytic.plane.Line;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.geometry.analytic.plane.TransMatrix;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +35,7 @@ public final class ParabolaV<T> extends ConicSection<T> {
      * @param E
      * @param F
      */
-    protected ParabolaV(MathCalculator<T> mc, T A, T B, T C, T D, T E, T F, T p, boolean onX) {
+    protected ParabolaV(RealCalculator<T> mc, T A, T B, T C, T D, T E, T F, T p, boolean onX) {
         super(mc, A, B, C, D, E, F);
         this.p = p;
         this.onX = onX;
@@ -103,11 +103,11 @@ public final class ParabolaV<T> extends ConicSection<T> {
 
 
     /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
     @NotNull
     @Override
-    public <N> ParabolaV<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> ParabolaV<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new ParabolaV<>(newCalculator, mapper.apply(A), mapper.apply(B),
                 mapper.apply(C), mapper.apply(D), mapper.apply(E), mapper.apply(F), mapper.apply(p), onX);
     }
@@ -123,12 +123,13 @@ public final class ParabolaV<T> extends ConicSection<T> {
     /**
      * Returns y^2 - 2px = 0 if {@code onX}
      * or x^2 - 2py = 0.
+     *
      * @param p
      * @param onX
      * @param mc
      * @return
      */
-    static <T> ParabolaV<T> generalFormla0(T p, boolean onX, MathCalculator<T> mc) {
+    static <T> ParabolaV<T> generalFormla0(T p, boolean onX, RealCalculator<T> mc) {
         T zero = mc.getZero(), one = mc.getOne();
         T A = onX ? zero : one;
         T C = onX ? one : zero;
@@ -140,12 +141,13 @@ public final class ParabolaV<T> extends ConicSection<T> {
     /**
      * Returns a parabola: {@code y^2 - 2px = 0} if {@code onX}
      * or otherwise {@code x^2 - 2py = 0}
+     *
      * @param p
      * @param onX
      * @param mc
      * @return
      */
-    public static <T> ParabolaV<T> generalFormula(T p, boolean onX, MathCalculator<T> mc) {
+    public static <T> ParabolaV<T> generalFormula(T p, boolean onX, RealCalculator<T> mc) {
         if (mc.isZero(p)) {
             throw new IllegalArgumentException("p==0");
         }

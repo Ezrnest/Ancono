@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
  * @author liyicheng
@@ -16,7 +16,7 @@ public abstract class Pyramid<T> extends Polyhedron<T> {
      * @param mc
      * @param num the number of lean edge
      */
-    protected Pyramid(MathCalculator<T> mc, int num) {
+    protected Pyramid(RealCalculator<T> mc, int num) {
         super(mc);
         this.num = num;
     }

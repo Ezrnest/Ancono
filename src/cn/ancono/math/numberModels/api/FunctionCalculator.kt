@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels.api
 
-import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 
 //Created by lyc at 2021-03-31 22:53
 
@@ -8,7 +8,7 @@ import cn.ancono.math.MathCalculator
 /**
  * A function calculator is a calculator for functions with named variables.
  */
-interface FunctionCalculator<F> : MathCalculator<F> {
+interface FunctionCalculator<F> : FieldCalculator<F> {
 
 
     /**

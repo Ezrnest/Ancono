@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.Triangle;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
     //often-used variable
     private T area;
 
-    protected STriangle(MathCalculator<T> mc, Plane<T> p, SPoint<T> A, SPoint<T> B, SPoint<T> C,
+    protected STriangle(RealCalculator<T> mc, Plane<T> p, SPoint<T> A, SPoint<T> B, SPoint<T> C,
                         Segment<T> a, Segment<T> b, Segment<T> c) {
         super(mc, p);
         this.c = c;
@@ -442,7 +442,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 
     @NotNull
     @Override
-    public <N> STriangle<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> STriangle<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         STriangle<N> s = new STriangle<>(newCalculator, pl.mapTo(newCalculator, mapper),
                 A.mapTo(newCalculator, mapper), B.mapTo(newCalculator, mapper), C.mapTo(newCalculator, mapper),
                 a.mapTo(newCalculator, mapper), b.mapTo(newCalculator, mapper), c.mapTo(newCalculator, mapper));
@@ -514,7 +514,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 
     /**
      * Creates a new STriangle.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param A
      * @param B
@@ -561,7 +561,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return
      * @see #prismSurfaces(SPoint, List)
      */
-    public static <T> List<STriangle<T>> prismSurfaces(SPoint<T> p, List<SPoint<T>> points, MathCalculator<T> mc) {
+    public static <T> List<STriangle<T>> prismSurfaces(SPoint<T> p, List<SPoint<T>> points, RealCalculator<T> mc) {
         if (points.size() < 2) {
             throw new IllegalArgumentException("Not enough point");
         }
@@ -591,7 +591,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * The order of the triangles is specified, as well as the vertexes. Assume the points in {@code points} are
      * named <tt>P0,P1,P2,...</tt>, then the first triangle returned will be <tt>P0-P-P1</tt>, which the vertexA of this
      * triangle will be <tt>P0</tt>
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param p
      * @param points

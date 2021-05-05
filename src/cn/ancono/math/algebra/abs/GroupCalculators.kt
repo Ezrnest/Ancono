@@ -3,10 +3,10 @@
  */
 package cn.ancono.math.algebra.abs
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.numberModels.MathCalculatorAdapter
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.property.Composable
 import cn.ancono.math.property.Invertible
 
@@ -109,12 +109,12 @@ object GroupCalculators {
     }
 
     /**
-     * Returns a [MathCalculator] from the GroupCalculator, mapping the group's operation to "add" in MathCalculator
+     * Returns a [RealCalculator] from the GroupCalculator, mapping the group's operation to "add" in MathCalculator
      * @param gc
      * @return
      */
     @JvmStatic
-    fun <T> toMathCalculatorAdd(gc: GroupCalculator<T>): MathCalculator<T> {
+    fun <T> toMathCalculatorAdd(gc: GroupCalculator<T>): RealCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
             /*
@@ -154,14 +154,14 @@ object GroupCalculators {
     }
 
     /**
-     * Returns a [MathCalculator] from the EqualPredicate, which only supports `isEqual(Object,Object)` method.
+     * Returns a [RealCalculator] from the EqualPredicate, which only supports `isEqual(Object,Object)` method.
      * @param gc
      * @return
      */
     @JvmStatic
-    fun <T> toMathCalculatorEqual(gc: EqualPredicate<T>): MathCalculator<T> {
-        return if (gc is MathCalculator<*>) {
-            gc as MathCalculator<T>
+    fun <T> toMathCalculatorEqual(gc: EqualPredicate<T>): RealCalculator<T> {
+        return if (gc is RealCalculator<*>) {
+            gc as RealCalculator<T>
         } else object : MathCalculatorAdapter<T>() {
             /*
 			 * @see cn.ancono.math.numberModels.MathCalculatorAdapter#isEqual(java.lang.Object, java.lang.Object)
@@ -173,11 +173,11 @@ object GroupCalculators {
     }
 
     /**
-     * Returns a [MathCalculator] from the RingCalculator, mapping add, subtract, multiply.
+     * Returns a [RealCalculator] from the RingCalculator, mapping add, subtract, multiply.
      * @return
      */
     @JvmStatic
-    fun <T> toMathCalculatorRing(rc: RingCalculator<T>): MathCalculator<T> {
+    fun <T> toMathCalculatorRing(rc: RingCalculator<T>): RealCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
             override val zero: T
@@ -214,13 +214,13 @@ object GroupCalculators {
     }
 
     /**
-     * Returns a [MathCalculator] from the RingCalculator, mapping add, subtract, multiply.
+     * Returns a [RealCalculator] from the RingCalculator, mapping add, subtract, multiply.
      * @param fc
      * @param <T>
      * @return
      */
     @JvmStatic
-    fun <T> toMathCalculatorDR(fc: DivisionRingCalculator<T>): MathCalculator<T> {
+    fun <T> toMathCalculatorDR(fc: DivisionRingCalculator<T>): RealCalculator<T> {
         return object : MathCalculatorAdapter<T>() {
 
             override val one: T

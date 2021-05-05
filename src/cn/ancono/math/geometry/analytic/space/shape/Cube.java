@@ -1,11 +1,11 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.space.Line;
 import cn.ancono.math.geometry.analytic.space.Plane;
 import cn.ancono.math.geometry.analytic.space.SPoint;
 import cn.ancono.math.geometry.analytic.space.Segment;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -53,7 +53,7 @@ public final class Cube<T> extends RightPrism<T> {
 
     private final T a;
 
-    protected Cube(MathCalculator<T> mc, SPoint<T>[] vertex, Segment<T>[] edge, Plane<T>[] surface, T a) {
+    protected Cube(RealCalculator<T> mc, SPoint<T>[] vertex, Segment<T>[] edge, Plane<T>[] surface, T a) {
         super(mc, 4);
         this.vertex = vertex;
         this.edge = edge;
@@ -193,7 +193,7 @@ public final class Cube<T> extends RightPrism<T> {
 
     @NotNull
     @Override
-    public <N> Cube<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Cube<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -260,7 +260,7 @@ public final class Cube<T> extends RightPrism<T> {
         return null;
     }
 
-    public static <T> Cube<T> unitCube(MathCalculator<T> mc) {
+    public static <T> Cube<T> unitCube(RealCalculator<T> mc) {
         return defaultPosition(mc.getOne(), mc);
     }
 
@@ -273,7 +273,7 @@ public final class Cube<T> extends RightPrism<T> {
      * @param mc
      * @return
      */
-    public static <T> Cube<T> defaultPosition(T a, MathCalculator<T> mc) {
+    public static <T> Cube<T> defaultPosition(T a, RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         SPoint<T>[] vec = (SPoint<T>[]) new SPoint<?>[VERTEX_NUM];
         T z = mc.getZero();
@@ -288,7 +288,7 @@ public final class Cube<T> extends RightPrism<T> {
         return eightPoints(a, vec, mc);
     }
 
-    private static <T> Cube<T> eightPoints(T a, SPoint<T>[] vs, MathCalculator<T> mc) {
+    private static <T> Cube<T> eightPoints(T a, SPoint<T>[] vs, RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         Segment<T>[] vec = (Segment<T>[]) new Segment<?>[EDGE_NUM];
         for (int i = 0; i < 4; i++) {

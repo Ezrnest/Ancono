@@ -1,9 +1,9 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 
     final T x, y, z;
 
-    public SPoint(MathCalculator<T> mc, T x, T y, T z) {
+    public SPoint(RealCalculator<T> mc, T x, T y, T z) {
         super(mc);
         this.x = x;
         this.y = y;
@@ -81,7 +81,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 
     /**
      * Return the distance of {@code this} and the given point {@code p}.The operation
-     * {@linkplain MathCalculator#squareRoot(Object)} is required when this method is called.
+     * {@linkplain RealCalculator#squareRoot(Object)} is required when this method is called.
      * Make sure that the calculator implements the operation.
      *
      * @param p another point
@@ -174,7 +174,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
 
     @NotNull
     @Override
-    public <N> SPoint<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> SPoint<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new SPoint<>(newCalculator, mapper.apply(x), mapper.apply(y), mapper.apply(z));
     }
 
@@ -243,17 +243,17 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @param mc a MathCalculator
      * @return a new point
      */
-    public static <T> SPoint<T> valueOf(T x, T y, T z, MathCalculator<T> mc) {
+    public static <T> SPoint<T> valueOf(T x, T y, T z, RealCalculator<T> mc) {
         return new SPoint<>(mc, x, y, z);
     }
 
     /**
      * Returns the point (0,0).
      *
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return point (0,0)
      */
-    public static <T> SPoint<T> pointO(MathCalculator<T> mc) {
+    public static <T> SPoint<T> pointO(RealCalculator<T> mc) {
         return new SPoint<>(mc, mc.getZero(), mc.getZero(), mc.getZero());
     }
 
@@ -264,7 +264,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @return point(x, y, z)
      */
     public static <T> SPoint<T> valueOf(SVector<T> v) {
-        return new SPoint<>((MathCalculator<T>) v.getCalculator(), v.getX(), v.getY(), v.getZ());
+        return new SPoint<>((RealCalculator<T>) v.getCalculator(), v.getX(), v.getY(), v.getZ());
     }
 
     /**
@@ -276,7 +276,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      */
     @SafeVarargs
     public static <T> SPoint<T> average(SPoint<T>... points) {
-        MathCalculator<T> mc = points[0].getMc();
+        RealCalculator<T> mc = points[0].getMc();
         final int num = points.length;
         var arr = new ArrayList<T>(points.length);
         for (SPoint<T> point : points) {
@@ -302,7 +302,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
         /**
          * @param mc
          */
-        public SPointGenerator(MathCalculator<T> mc) {
+        public SPointGenerator(RealCalculator<T> mc) {
             super(mc);
         }
 
@@ -323,7 +323,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
          */
         @NotNull
         @Override
-        public <N> SPointGenerator<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> SPointGenerator<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new SPointGenerator<>(newCalculator);
         }
 

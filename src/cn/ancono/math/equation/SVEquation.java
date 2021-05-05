@@ -1,6 +1,6 @@
 package cn.ancono.math.equation;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -12,7 +12,7 @@ import java.util.function.Function;
  */
 public abstract class SVEquation<T> extends Equation<T, T> implements SVCompareStructure<T> {
 
-    protected SVEquation(MathCalculator<T> mc) {
+    protected SVEquation(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -32,5 +32,5 @@ public abstract class SVEquation<T> extends Equation<T, T> implements SVCompareS
      */
     @NotNull
     @Override
-    public abstract <N> SVEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SVEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

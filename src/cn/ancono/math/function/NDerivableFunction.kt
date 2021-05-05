@@ -1,7 +1,7 @@
 package cn.ancono.math.function
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.numberModels.Fraction
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.MathSet
 import cn.ancono.math.set.MathSets
 
@@ -83,7 +83,7 @@ interface NDerivableFunction<T, R> : NMathFunction<T, R> {
          * Returns a derivable function of `f/g`.
          */
         fun <T, S> divide(f: NDerivableFunction<T, S>, g: NDerivableFunction<T, T>,
-                          mc: MathCalculator<T>,
+                          mc: RealCalculator<T>,
                           formalAdd: (S, S) -> S,
                           formalSubtract: (S, S) -> S,
                           formalMultiply: (T, S) -> S)
@@ -289,7 +289,7 @@ internal open class NDerivableCompose<T, R, S>(
 
 internal class NDerivableDivide<T, S>(private val f: NDerivableFunction<T, S>,
                                       private val g: NDerivableFunction<T, T>,
-                                      private val mc: MathCalculator<T>,
+                                      private val mc: RealCalculator<T>,
                                       private val formalMultiply: (T, S) -> S,
                                       private val formalAdd: (S, S) -> S,
                                       private val formalSubtract: (S, S) -> S

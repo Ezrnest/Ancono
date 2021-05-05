@@ -3,19 +3,19 @@
  */
 package cn.ancono.math.exceptions;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
  * Throws when the calculation of a math calculator is not satisfied.For example,
- * if the result of {@code 1+2} and the result of {@code 1+1+1} doesn't match, but 
- * the user requires that the result must match, then this  
- * kind of exception can be thrown. 
- * Usually, the unsatisfied calculation exception 
+ * if the result of {@code 1+2} and the result of {@code 1+1+1} doesn't match, but
+ * the user requires that the result must match, then this
+ * kind of exception can be thrown.
+ * Usually, the unsatisfied calculation exception
  * is caused by unsuitable calculator or some kind of precision fault.<br>
  * The calculator can be get through the method {@link #getMathCalculator()}
- * if the {@link MathCalculator} is applied.
- * @author liyicheng
+ * if the {@link RealCalculator} is applied.
  *
+ * @author liyicheng
  */
 public final class UnsatisfiedCalculationResultException extends RuntimeException {
     /**
@@ -23,12 +23,12 @@ public final class UnsatisfiedCalculationResultException extends RuntimeExceptio
      */
     private static final long serialVersionUID = -7587468617714312865L;
 
-    private final MathCalculator<?> mc;
+    private final RealCalculator<?> mc;
 
     /**
      * Constructs an UnsatisfiedCalculationResultException with no detail message.
      */
-    public UnsatisfiedCalculationResultException(MathCalculator<?> mc) {
+    public UnsatisfiedCalculationResultException(RealCalculator<?> mc) {
         this.mc = mc;
     }
 
@@ -59,7 +59,7 @@ public final class UnsatisfiedCalculationResultException extends RuntimeExceptio
      *         unknown.)
      * @since 1.5
      */
-    public UnsatisfiedCalculationResultException(String message, MathCalculator<?> cause) {
+    public UnsatisfiedCalculationResultException(String message, RealCalculator<?> cause) {
         super(message);
         this.mc = cause;
     }
@@ -68,7 +68,7 @@ public final class UnsatisfiedCalculationResultException extends RuntimeExceptio
      * Returns the MathCalculator that caused UnsatisfiedCalculationResultException.
      * @return a MathCalculator, or {@code null}
      */
-    public MathCalculator<?> getMathCalculator() {
+    public RealCalculator<?> getMathCalculator() {
         return mc;
     }
 

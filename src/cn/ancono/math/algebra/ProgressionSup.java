@@ -1,10 +1,10 @@
 package cn.ancono.math.algebra;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
@@ -465,15 +465,15 @@ public final class ProgressionSup {
     /**
      * Gets a collector of stream which provides a progression.
      *
-     * @param mc  a {@link MathCalculator}
+     * @param mc  a {@link RealCalculator}
      * @param <T> the type of the number
      * @return a progression
      */
-    public static <T> Collector<T, ?, Progression<T>> getCollector(MathCalculator<T> mc) {
+    public static <T> Collector<T, ?, Progression<T>> getCollector(RealCalculator<T> mc) {
         return Collectors.collectingAndThen(Collectors.toList(), list -> Progression.fromList(list, mc));
     }
 
-    public static <T> Progression<T> fibonacci(T first, T second, MathCalculator<T> mc) {
+    public static <T> Progression<T> fibonacci(T first, T second, RealCalculator<T> mc) {
         return Progression.createProgressionRecur2(mc::add, first, second,
                 Progression.UNLIMITED, mc);
     }

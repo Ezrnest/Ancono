@@ -1,10 +1,10 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.geometry.analytic.space.Line;
 import cn.ancono.math.geometry.analytic.space.Plane;
 import cn.ancono.math.geometry.analytic.space.SPoint;
 import cn.ancono.math.geometry.analytic.space.Segment;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -20,7 +20,7 @@ import java.util.function.Function;
  */
 public abstract class Polyhedron<T> extends SpaceObject<T> {
 
-    protected Polyhedron(MathCalculator<T> mc) {
+    protected Polyhedron(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -118,5 +118,5 @@ public abstract class Polyhedron<T> extends SpaceObject<T> {
 
     @NotNull
     @Override
-    public abstract <N> Polyhedron<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> Polyhedron<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

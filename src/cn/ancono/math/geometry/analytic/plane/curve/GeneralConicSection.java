@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.algebra.linear.Vector;
@@ -9,6 +8,7 @@ import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.PVector;
 import cn.ancono.math.geometry.analytic.plane.TransMatrix;
 import cn.ancono.math.numberModels.ComputeExpression;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifier;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -27,14 +27,14 @@ import java.util.function.Function;
 public final class GeneralConicSection<T> extends ConicSection<T> {
 
 
-    protected GeneralConicSection(MathCalculator<T> mc, T A, T B, T C, T D, T E, T F) {
+    protected GeneralConicSection(RealCalculator<T> mc, T A, T B, T C, T D, T E, T F) {
         super(mc, A, B, C, D, E, F);
     }
 
 
     @NotNull
     @Override
-    public <N> GeneralConicSection<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> GeneralConicSection<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         N a = mapper.apply(A);
         N b = mapper.apply(B);
         N c = mapper.apply(C);
@@ -235,10 +235,10 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * This method requires that {@code A!=0 || B!=0 || C!=0}.
      *
      * @param list a list of coefficient
-     * @param mc   a {@link MathCalculator}
+     * @param mc   a {@link RealCalculator}
      * @return a new conic section
      */
-    public static <T> GeneralConicSection<T> generalFormula(List<T> list, MathCalculator<T> mc) {
+    public static <T> GeneralConicSection<T> generalFormula(List<T> list, RealCalculator<T> mc) {
         Iterator<T> it = list.iterator();
         return new GeneralConicSection<T>(mc, it.next(), it.next(), it.next(),
                 it.next(), it.next(), it.next());
@@ -252,12 +252,12 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * <p>
      * For example, {@code generalFormula(mc,1,null,1)} creates a circle: x^2+y^2=1.
      *
-     * @param mc           the {@link MathCalculator}
+     * @param mc           the {@link RealCalculator}
      * @param coefficients the coefficients
      * @return
      */
     @SafeVarargs
-    public static <T> GeneralConicSection<T> generalFormula(MathCalculator<T> mc, T... coefficients) {
+    public static <T> GeneralConicSection<T> generalFormula(RealCalculator<T> mc, T... coefficients) {
         if (coefficients.length == 0) {
             throw new IllegalArgumentException();
         }
@@ -283,11 +283,11 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * @param mc
      * @return
      */
-    public static <T> GeneralConicSection<T> generalFormula(T A, T B, T C, T D, T E, T F, MathCalculator<T> mc) {
+    public static <T> GeneralConicSection<T> generalFormula(T A, T B, T C, T D, T E, T F, RealCalculator<T> mc) {
         return new GeneralConicSection<T>(mc, A, B, C, D, E, F);
     }
 
-    static <T> GeneralConicSection<T> generalFormula0(MathCalculator<T> mc, T[] c) {
+    static <T> GeneralConicSection<T> generalFormula0(RealCalculator<T> mc, T[] c) {
         if (c.length != 6) {
             throw new IllegalArgumentException();
         }
@@ -316,7 +316,7 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * @param F
      * @return ellipse
      */
-    public static <T> GeneralConicSection<T> ellipse(T A, T C, T F, MathCalculator<T> mc) {
+    public static <T> GeneralConicSection<T> ellipse(T A, T C, T F, RealCalculator<T> mc) {
         T z = mc.getZero();
         return new GeneralConicSection<T>(mc, A, z, C, z, z, F);
     }
@@ -330,7 +330,7 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * @param F
      * @return hyperbola
      */
-    public static <T> GeneralConicSection<T> hyperbola(T A, T C, T F, MathCalculator<T> mc) {
+    public static <T> GeneralConicSection<T> hyperbola(T A, T C, T F, RealCalculator<T> mc) {
         T z = mc.getZero();
         return new GeneralConicSection<T>(mc, A, z, mc.negate(C), z, z, F);
     }
@@ -340,10 +340,10 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * <pre>y^2 = 2px </pre>
      *
      * @param p  coefficient
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return parabola
      */
-    public static <T> GeneralConicSection<T> parabola(T p, MathCalculator<T> mc) {
+    public static <T> GeneralConicSection<T> parabola(T p, RealCalculator<T> mc) {
         return parabola(p, true, mc);
     }
 
@@ -352,10 +352,10 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * y^2 = 2px,if {@code onX}<br>or<br> x^2 = 2py if {@code !onX}
      *
      * @param p  coefficient, nonzero
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return parabola
      */
-    public static <T> GeneralConicSection<T> parabola(T p, boolean onX, MathCalculator<T> mc) {
+    public static <T> GeneralConicSection<T> parabola(T p, boolean onX, RealCalculator<T> mc) {
         if (mc.isZero(p)) {
             throw new IllegalArgumentException("p==0");
         }
@@ -377,7 +377,7 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
      * @param <T>
      * @return
      */
-    public static <T> GeneralConicSection<T> quadraticFunction(T a, T b, T c, MathCalculator<T> mc) {
+    public static <T> GeneralConicSection<T> quadraticFunction(T a, T b, T c, RealCalculator<T> mc) {
         T o = mc.getZero();
         return new GeneralConicSection<>(mc, a, o, o, b, mc.negate(mc.getOne()), c);
     }

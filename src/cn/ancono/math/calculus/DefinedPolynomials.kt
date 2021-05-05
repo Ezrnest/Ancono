@@ -2,17 +2,13 @@ package cn.ancono.math.calculus
 
 import cn.ancono.math.AbstractFlexibleMathObject
 import cn.ancono.math.FMathObject
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
-import cn.ancono.math.algebra.abs.calculator.QCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.discrete.combination.CombUtils
 import cn.ancono.math.numberModels.BigFraction
 import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberModels.api.minus
-import cn.ancono.math.numberModels.api.times
+import cn.ancono.math.numberModels.api.*
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.math.set.Interval
 import java.util.function.Function
@@ -60,7 +56,7 @@ abstract class OrthPolynomials<T>(val name: String, mc: QCalculator<T>)
      */
     @Suppress("UNCHECKED_CAST")
     open fun norm(n: Int): T {
-        return (calculator as MathCalculator<T>).squareRoot(normSq(n))
+        return (calculator as RealCalculator<T>).squareRoot(normSq(n))
     }
 
     /**
@@ -161,11 +157,11 @@ class TchebychevOrthPoly<T>(mc: QCalculator<T>)
     }
 
     override fun weight(x: T): T {
-        return (calculator as MathCalculator).eval { one / squareRoot(one - x * x) }
+        return (calculator as RealCalculator).eval { one / squareRoot(one - x * x) }
     }
 
     override fun normSq(n: Int): T {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         val pi = mc.constantValue("pi")!!
         return if (n == 0) {
             pi
@@ -226,7 +222,7 @@ class LaguerreOrthPoly<T>(mc: QCalculator<T>)
     }
 
     override fun weight(x: T): T {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         return mc.exp(mc.negate(x))
     }
 
@@ -293,14 +289,14 @@ class HermiteOrthPoly<T>(mc: QCalculator<T>)
 
 
     override fun weight(x: T): T {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         return mc.eval { exp(-x * x / 2L) }
     }
 
     override fun normSq(n: Int): T {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         return mc.eval {
-            squareRoot(2.v * constantValue(MathCalculator.STR_PI)!!) *
+            squareRoot(2.v * constantValue(RealCalculator.STR_PI)!!) *
                     CombUtils.factorial(n)
         }
     }
@@ -428,7 +424,7 @@ object DefinedPolynomials {
      *     L_1(x) = -x + 1 + α
      *
      */
-    fun <T> generalizedLaguerrePoly(alpha: T, mc: MathCalculator<T>): Sequence<Polynomial<T>> {
+    fun <T> generalizedLaguerrePoly(alpha: T, mc: RealCalculator<T>): Sequence<Polynomial<T>> {
         return sequence {
             var p0 = Polynomial.one(mc)
             val n1 = mc.negate(mc.one)

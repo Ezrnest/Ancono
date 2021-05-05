@@ -15,6 +15,7 @@ import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.math.numberModels.structure.Polynomial.*
+import cn.ancono.math.numberTheory.NTUtils
 import cn.ancono.math.numberTheory.ZModPCalculator
 import java.util.*
 import kotlin.math.absoluteValue
@@ -1016,7 +1017,7 @@ object PolynomialUtil {
             val d = mc.eval {
                 subtract(multiply(a1, a1), 4 * multiply(a0, a2))
             }
-            val e = mc.squareRoot(d)
+            val e = NTUtils.sqrtModP(d.toLong(), mc.p).toInt()
             results += mc.eval { divide(-a1 + e, 2 * a2) }
             results += mc.eval { divide(-a1 - e, 2 * a2) }
             return

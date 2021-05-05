@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -18,9 +18,9 @@ import java.util.function.Function;
 public final class Point<T> implements MathObject<T> {
 
     public final T x, y;
-    private final MathCalculator<T> mc;
+    private final RealCalculator<T> mc;
 
-    public Point(MathCalculator<T> mc, T x, T y) {
+    public Point(RealCalculator<T> mc, T x, T y) {
         this.mc = mc;
         this.x = x;
         this.y = y;
@@ -69,7 +69,7 @@ public final class Point<T> implements MathObject<T> {
 
     /**
      * Return the distance of {@code this} and the given point {@code p}.The operation
-     * {@linkplain MathCalculator#squareRoot(Object)} is required when this method is called.
+     * {@linkplain RealCalculator#squareRoot(Object)} is required when this method is called.
      * Make sure that the calculator implements the operation.
      *
      * @param p another point
@@ -123,7 +123,7 @@ public final class Point<T> implements MathObject<T> {
     }
 
     @Override
-    public <N> Point<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Point<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Point<>(newCalculator, mapper.apply(x), mapper.apply(y));
     }
 
@@ -199,7 +199,7 @@ public final class Point<T> implements MathObject<T> {
 
     @NotNull
     @Override
-    public MathCalculator<T> getCalculator() {
+    public RealCalculator<T> getCalculator() {
         return mc;
     }
 
@@ -211,17 +211,17 @@ public final class Point<T> implements MathObject<T> {
      * @param mc a MathCalculator
      * @return a new point
      */
-    public static <T> Point<T> valueOf(T x, T y, MathCalculator<T> mc) {
+    public static <T> Point<T> valueOf(T x, T y, RealCalculator<T> mc) {
         return new Point<>(mc, x, y);
     }
 
     /**
      * Returns the point (0,0).
      *
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return point (0,0)
      */
-    public static <T> Point<T> pointO(MathCalculator<T> mc) {
+    public static <T> Point<T> pointO(RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         Point<T> p = (Point<T>) opoints.get(mc);
         if (p == null) {
@@ -231,7 +231,7 @@ public final class Point<T> implements MathObject<T> {
         return p;
     }
 
-    private static final Map<MathCalculator<?>, Point<?>> opoints = new ConcurrentHashMap<>();
+    private static final Map<RealCalculator<?>, Point<?>> opoints = new ConcurrentHashMap<>();
 
 
     /**
@@ -249,7 +249,7 @@ public final class Point<T> implements MathObject<T> {
     }
 
     public static <T> Point<T> fromVector(PVector<T> v) {
-        return new Point<>((MathCalculator<T>) v.getCalculator(), v.x, v.y); //TODO
+        return new Point<>((RealCalculator<T>) v.getCalculator(), v.x, v.y); //TODO
     }
 
 

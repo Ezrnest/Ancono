@@ -1,7 +1,7 @@
 /*
  * 2017-09-09
  */
-package cn.ancono.math.numberTheory;
+package cn.ancono.math.numberModels.api;
 
 
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;

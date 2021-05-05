@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.differential
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.linear.AbstractVector
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Vector
@@ -9,8 +8,8 @@ import cn.ancono.math.function.DerivableFunction
 import cn.ancono.math.function.DerivableSVFunction
 import cn.ancono.math.function.NDerivableFunction
 import cn.ancono.math.geometry.analytic.space.SVector
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.api.plus
-import cn.ancono.math.numberModels.api.times
 
 
 /**
@@ -28,7 +27,7 @@ object DifferentialUtil {
     /**
      * Returns the inner product of two derivable vector function as a derivable function.
      */
-    fun <T> innerProduct(mc: MathCalculator<T>, f: DerivableFunction<T, out AbstractVector<T>>,
+    fun <T> innerProduct(mc: RealCalculator<T>, f: DerivableFunction<T, out AbstractVector<T>>,
                          g: DerivableFunction<T, out AbstractVector<T>>
     ): DerivableSVFunction<T> {
         return DerivableFunction.multiplySV(f, g, mc::add, AbstractVector<T>::inner)
@@ -45,7 +44,7 @@ object DifferentialUtil {
     /**
      * Returns the outer product of two derivable vector function as a derivable function.
      */
-    fun <T> mixedProduct(f: DVFunction<T>, g: DVFunction<T>, h: DVFunction<T>, mc: MathCalculator<T>
+    fun <T> mixedProduct(f: DVFunction<T>, g: DVFunction<T>, h: DVFunction<T>, mc: RealCalculator<T>
     ): DerivableSVFunction<T> {
         return DerivableFunction.multiplyAllSV(listOf(f, g, h), { ls -> SVector.mixedProduct(ls[0], ls[1], ls[2]) }, { ls ->
             ls.reduce(mc::add)
@@ -55,7 +54,7 @@ object DifferentialUtil {
     /**
      * Returns the length of a derivable vector function as a derivable function.
      */
-    fun <T> length(mc: MathCalculator<T>, f: DerivableFunction<T, out AbstractVector<T>>): DerivableSVFunction<T> {
+    fun <T> length(mc: RealCalculator<T>, f: DerivableFunction<T, out AbstractVector<T>>): DerivableSVFunction<T> {
         val l2 = innerProduct(mc, f, f)
         val sqrt = AbstractSVFunction.sqrt(mc)
         return DerivableFunction.composeSV(l2, sqrt, mc)
@@ -64,7 +63,7 @@ object DifferentialUtil {
     /**
      * Returns a derivable function of `f(t)/|f(t)|`
      */
-    fun <T> unitVector(mc: MathCalculator<T>, f: DerivableFunction<T, Vector<T>>): DerivableFunction<T, Vector<T>> {
+    fun <T> unitVector(mc: RealCalculator<T>, f: DerivableFunction<T, Vector<T>>): DerivableFunction<T, Vector<T>> {
         val len = length(mc, f)
         @Suppress("UNCHECKED_CAST")
         return DerivableFunction.divide(f, len, mc,
@@ -76,7 +75,7 @@ object DifferentialUtil {
     /**
      * Returns a derivable function of `f(t)/|f(t)|`
      */
-    fun <T> unitVectorSpace(mc: MathCalculator<T>, f: DerivableFunction<T, SVector<T>>): DerivableFunction<T, SVector<T>> {
+    fun <T> unitVectorSpace(mc: RealCalculator<T>, f: DerivableFunction<T, SVector<T>>): DerivableFunction<T, SVector<T>> {
         val len = length(mc, f)
         @Suppress("UNCHECKED_CAST")
         return DerivableFunction.divide(f, len, mc,
@@ -88,7 +87,7 @@ object DifferentialUtil {
     /**
      * Returns the inner product of two derivable vector function as a derivable function.
      */
-    fun <T> innerProduct(mc: MathCalculator<T>, f: NDerivableFunction<T, out AbstractVector<T>>, g: NDerivableFunction<T, out AbstractVector<T>>
+    fun <T> innerProduct(mc: RealCalculator<T>, f: NDerivableFunction<T, out AbstractVector<T>>, g: NDerivableFunction<T, out AbstractVector<T>>
     ): NDerivableFunction<T, T> {
         return NDerivableFunction.multiply(f, g, mc::add, AbstractVector<T>::inner)
     }
@@ -104,7 +103,7 @@ object DifferentialUtil {
     /**
      * Returns the length of a derivable vector function as a derivable function.
      */
-    fun <T> length(mc: MathCalculator<T>, f: NDerivableFunction<T, out AbstractVector<T>>): NDerivableFunction<T, T> {
+    fun <T> length(mc: RealCalculator<T>, f: NDerivableFunction<T, out AbstractVector<T>>): NDerivableFunction<T, T> {
         val l2 = innerProduct(mc, f, f)
         val sqrt = AbstractSVFunction.sqrt(mc)
         return NDerivableFunction.compose(l2, sqrt, mc::add, mc::multiply)
@@ -113,7 +112,7 @@ object DifferentialUtil {
     /**
      * Returns a derivable function of `f(t)/|f(t)|`
      */
-    fun <T> unitVectorSpace(mc: MathCalculator<T>, f: NDerivableFunction<T, SVector<T>>): NDerivableFunction<T, SVector<T>> {
+    fun <T> unitVectorSpace(mc: RealCalculator<T>, f: NDerivableFunction<T, SVector<T>>): NDerivableFunction<T, SVector<T>> {
         val len = length(mc, f)
         @Suppress("UNCHECKED_CAST")
         return NDerivableFunction.divide(f, len, mc,

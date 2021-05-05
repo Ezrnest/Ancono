@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.equation;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -20,7 +20,7 @@ public abstract class AbstractSVCompareStructure<T> extends AbstractCompareStruc
      * @param mc
      * @param op
      */
-    protected AbstractSVCompareStructure(MathCalculator<T> mc, Type op) {
+    protected AbstractSVCompareStructure(RealCalculator<T> mc, Type op) {
         super(mc, op);
     }
 
@@ -36,9 +36,9 @@ public abstract class AbstractSVCompareStructure<T> extends AbstractCompareStruc
     }
 
     /*
-     * @see cn.ancono.math.equation.AbstractCompareStructure#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.equation.AbstractCompareStructure#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
     @NotNull
     @Override
-    public abstract <N> AbstractSVCompareStructure<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractSVCompareStructure<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

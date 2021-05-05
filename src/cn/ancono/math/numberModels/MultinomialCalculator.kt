@@ -1,18 +1,17 @@
 package cn.ancono.math.numberModels
 
-import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Multinomial.*
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.api.Simplifier
 import java.math.BigInteger
 import java.util.*
 
 @Suppress("NAME_SHADOWING")
-class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multinomial> {
+class MultinomialCalculator : UFDCalculator<Multinomial>, TotalOrderPredicate<Multinomial> {
 
-    override val isComparable: Boolean
-        get() = true
 
     override val zero: Multinomial
         get() = ZERO
@@ -27,7 +26,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return of(x)
     }
 
-    override fun of(x: Fraction): Multinomial {
+    fun of(x: Fraction): Multinomial {
         return monomial(Term.valueOf(x))
     }
 
@@ -99,10 +98,6 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.negate()
     }
 
-    override fun abs(x: Multinomial): Multinomial {
-        return x
-    }
-
     override fun subtract(x: Multinomial, y: Multinomial): Multinomial {
         return x.subtract(y)
     }
@@ -132,11 +127,18 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         // no negative powers are allowed
     }
 
-    override fun divide(x: Multinomial, y: Multinomial): Multinomial {
+    fun abs(x: Multinomial): Multinomial {
+        return x // TODO
+//        if (x.isMonomial) {
+//            return x.first.ab
+//        }
+    }
+
+    fun divide(x: Multinomial, y: Multinomial): Multinomial {
         return x.divide(y)
     }
 
-    override fun reciprocal(x: Multinomial): Multinomial {
+    fun reciprocal(x: Multinomial): Multinomial {
         return x.reciprocal()
     }
 
@@ -144,18 +146,18 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.multiply(Term.valueOf(n))
     }
 
-    override fun divideLong(x: Multinomial, n: Long): Multinomial {
+    fun divideLong(x: Multinomial, n: Long): Multinomial {
         return x.divide(Term.valueOf(n))
     }
 
-    override fun squareRoot(x: Multinomial): Multinomial {
+    fun squareRoot(x: Multinomial): Multinomial {
         if (x.isMonomial) {
             return monomial(x.first.squareRoot())
         }
         throw UnsupportedCalculationException("Too complex")
     }
 
-    override fun nroot(x: Multinomial, n: Long): Multinomial {
+    fun nroot(x: Multinomial, n: Long): Multinomial {
         if (n < 0) {
             return nroot(x, n).reciprocal()
         }
@@ -178,16 +180,16 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         return x.pow(Math.toIntExact(n))
     }
 
-    override fun constantValue(name: String): Multinomial {
+    fun constantValue(name: String): Multinomial {
         when (name) {
-            MathCalculator.STR_PI -> return PI
-            MathCalculator.STR_E -> return E
-            MathCalculator.STR_I -> return I
+            RealCalculator.STR_PI -> return PI
+            RealCalculator.STR_E -> return E
+            RealCalculator.STR_I -> return I
         }
         throw UnsupportedCalculationException(name)
     }
 
-    override fun exp(a: Multinomial, b: Multinomial): Multinomial {
+    fun exp(a: Multinomial, b: Multinomial): Multinomial {
         // a^b
         if (a == ZERO) {
             if (b == ZERO) {
@@ -228,7 +230,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         throw UnsupportedCalculationException()
     }
 
-    override fun exp(x: Multinomial): Multinomial {
+    fun exp(x: Multinomial): Multinomial {
         if (x.isMonomial) {
             val t = x.first
             if (t.isFraction) {
@@ -239,11 +241,11 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         throw UnsupportedCalculationException()
     }
 
-    override fun log(a: Multinomial, b: Multinomial): Multinomial {
+    fun log(a: Multinomial, b: Multinomial): Multinomial {
         throw UnsupportedCalculationException()//TODO
     }
 
-    override fun ln(x: Multinomial): Multinomial {
+    fun ln(x: Multinomial): Multinomial {
         if (!x.isMonomial) {
             throw UnsupportedCalculationException()
         }
@@ -252,12 +254,12 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
             return ZERO
         }
         if (t.haveSameChar(Term.E) && t.isCoefficientOne) {
-            return monomial(Term.valueOf(t.getCharacterPower(MathCalculator.STR_E)))
+            return monomial(Term.valueOf(t.getCharacterPower(RealCalculator.STR_E)))
         }
         throw UnsupportedCalculationException()
     }
 
-    override fun sin(x: Multinomial): Multinomial {
+    fun sin(x: Multinomial): Multinomial {
         if (x.isMonomial) {
             val t = x.first
             val re = sinf(t)
@@ -268,7 +270,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         throw UnsupportedCalculationException("Can't calculate sin")
     }
 
-    override fun cos(x: Multinomial): Multinomial {
+    fun cos(x: Multinomial): Multinomial {
         if (x.isMonomial) {
             val t = x.first
             val re = cosf(t)
@@ -360,7 +362,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         }
     }
 
-    override fun tan(x: Multinomial): Multinomial {
+    fun tan(x: Multinomial): Multinomial {
         if (x.isMonomial) {
             val t = x.first
             val re = tanf(t)
@@ -439,7 +441,7 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
 
     }
 
-    override fun arcsin(x: Multinomial): Multinomial {
+    fun arcsin(x: Multinomial): Multinomial {
         var result: Multinomial? = ARCSIN_VALUE[x]
         if (result != null)
             return result
@@ -459,12 +461,12 @@ class MultinomialCalculator : MathCalculator<Multinomial>, UFDCalculator<Multino
         throw UnsupportedCalculationException()
     }
 
-    override fun arccos(x: Multinomial): Multinomial {
+    fun arccos(x: Multinomial): Multinomial {
         //arccos(x) + arcsin(x) = Pi/2 --> arccos(x) = Pi/2 - arcsin(x)
         return monomial(Term.valueOf("Pi/2")).subtract(arcsin(x))
     }
 
-    override fun arctan(x: Multinomial): Multinomial {
+    fun arctan(x: Multinomial): Multinomial {
         var result: Multinomial? = ARCTAN_VALUE[x]
         if (result != null)
             return result

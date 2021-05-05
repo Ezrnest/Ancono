@@ -3,11 +3,11 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.function.Bijection;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.CollectionSup;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
      *
      * @param mc
      */
-    CollectionSet(MathCalculator<T> mc, Collection<T> coll) {
+    CollectionSet(RealCalculator<T> mc, Collection<T> coll) {
         super(mc);
         list = new ArrayList<>(coll);
     }
@@ -44,7 +44,7 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
      * @param mc
      * @param list
      */
-    CollectionSet(MathCalculator<T> mc, List<T> list) {
+    CollectionSet(RealCalculator<T> mc, List<T> list) {
         super(mc);
         this.list = list;
     }
@@ -89,11 +89,11 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
 
 
     /**
-     * @see MathObject#mapTo(MathCalculator, Function)
+     * @see MathObject#mapTo(RealCalculator, Function)
      */
     @NotNull
     @Override
-    public <N> CollectionSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> CollectionSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         List<N> nlist = new ArrayList<>(list.size());
         for (T t : list) {
             nlist.add(mapper.apply(t));
@@ -162,7 +162,7 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
     @NotNull
     @Override
     public <S> CollectionSet<S> mapTo(@NotNull Bijection<T, S> f) {
-        return new CollectionSet<>(MathCalculator.Companion.mappedCalculator(getCalculator(), f),
+        return new CollectionSet<>(RealCalculator.Companion.mappedCalculator(getCalculator(), f),
                 CollectionSup.mapList(list, f));
     }
 }

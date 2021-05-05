@@ -2,10 +2,10 @@ package cn.ancono.math.calculus
 
 import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.numberModels.api.FunctionCalculator
 import cn.ancono.math.numberModels.structure.AlgebraMultinomialTemplate
@@ -408,6 +408,10 @@ class DifferentialForm<T> internal constructor(terms: NavigableSet<DFBase<T>>, v
             return DifferentialForm(terms, DFBaseCalculator(mc))
         }
 
+        fun <T> calculator(mc: FunctionCalculator<T>): DiffFormCalculator<T> {
+            return DiffFormCalculator(mc)
+        }
+
 
     }
 
@@ -416,11 +420,9 @@ class DifferentialForm<T> internal constructor(terms: NavigableSet<DFBase<T>>, v
 
 
 class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
-    : MathCalculatorAdapter<DifferentialForm<T>>(), AlgebraCalculator<T, DifferentialForm<T>> {
+    : AlgebraCalculator<T, DifferentialForm<T>>, UnitRingCalculator<DifferentialForm<T>> {
     val dc = DFBaseCalculator(mc)
 
-    override val isComparable: Boolean
-        get() = false
     override val zero: DifferentialForm<T> = DifferentialForm.zero(dc)
     override val one: DifferentialForm<T> = DifferentialForm.zeroForm(dc.mc.one, dc)
 
@@ -447,15 +449,15 @@ class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
     }
 
 
-    override fun divideLong(x: DifferentialForm<T>, n: Long): DifferentialForm<T> {
+    fun divideLong(x: DifferentialForm<T>, n: Long): DifferentialForm<T> {
         return x.multiply(mc.of(Fraction.of(1, n)))
     }
 
 
-    override fun constantValue(name: String): DifferentialForm<T>? {
-        val c = mc.constantValue(name) ?: return null
-        return DifferentialForm.zeroForm(c, dc)
-    }
+//    override fun constantValue(name: String): DifferentialForm<T>? {
+//        val c = mc.constantValue(name) ?: return null
+//        return DifferentialForm.zeroForm(c, dc)
+//    }
 
 
     override val scalarCalculator: FieldCalculator<T>
@@ -469,9 +471,9 @@ class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
         return DifferentialForm.zeroForm(mc.of(x), dc)
     }
 
-    override fun of(x: Fraction): DifferentialForm<T> {
-        return DifferentialForm.zeroForm(mc.of(x), dc)
-    }
+//    override fun of(x: Fraction): DifferentialForm<T> {
+//        return DifferentialForm.zeroForm(mc.of(x), dc)
+//    }
 
     override fun isLinearDependent(u: DifferentialForm<T>, v: DifferentialForm<T>): Boolean {
         return u.isLinearRelevant(v)
@@ -483,12 +485,13 @@ class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
     }
 
     override fun isZero(x: DifferentialForm<T>): Boolean {
-        return super<MathCalculatorAdapter>.isZero(x)
+        return x.isZero()
     }
 
 
+    @Suppress("UNCHECKED_CAST")
     override val numberClass: Class<DifferentialForm<T>>
-        get() = super<MathCalculatorAdapter>.numberClass
+        get() = DifferentialForm::class.java as Class<DifferentialForm<T>>
 
 
     override fun isUnit(x: DifferentialForm<T>): Boolean {

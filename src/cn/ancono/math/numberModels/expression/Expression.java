@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.numberModels.expression;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.function.SVFunction;
 import cn.ancono.math.numberModels.Fraction;
@@ -11,6 +10,7 @@ import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.ParserUtils;
 import cn.ancono.math.numberModels.Term;
 import cn.ancono.math.numberModels.api.Computable;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import cn.ancono.utilities.Printer;
 import cn.ancono.utilities.StringSup;
@@ -108,7 +108,7 @@ public final class Expression implements Computable, Serializable {
     }
 
     @Override
-    public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+    public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
         return root.compute(valueMap, mc);
     }
 

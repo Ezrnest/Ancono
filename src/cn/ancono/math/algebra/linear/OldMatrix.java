@@ -1,6 +1,6 @@
 //package cn.ancono.math.algebra.linear;
 //
-//import cn.ancono.math.MathCalculator;
+//import cn.ancono.math.numberModels.api.MathCalculator;
 //import cn.ancono.math.MathObject;
 //import cn.ancono.math.MathObjectExtend;
 //import cn.ancono.math.algebra.abs.calculator.EUDCalculator;

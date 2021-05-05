@@ -1,10 +1,10 @@
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.PVector;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.api.FieldNumberModel;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.SNFSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -405,7 +405,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      *
      * @return a point
      */
-    public Point<Double> toPoint(MathCalculator<Double> mc) {
+    public Point<Double> toPoint(RealCalculator<Double> mc) {
         return new Point<>(mc, a, b);
     }
 
@@ -415,7 +415,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      *
      * @return a vector
      */
-    public PVector<Double> toVector(MathCalculator<Double> mc) {
+    public PVector<Double> toVector(RealCalculator<Double> mc) {
         return PVector.valueOf(a, b, mc);
     }
 

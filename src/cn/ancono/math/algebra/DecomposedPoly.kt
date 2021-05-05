@@ -1,6 +1,6 @@
 package cn.ancono.math.algebra
 
-import cn.ancono.math.MathCalculator
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.structure.Polynomial
 
 
@@ -46,7 +46,7 @@ open class DecomposedPoly<T>(val decomposed: List<Pair<Polynomial<T>, Int>>) {
     }
 
 
-    fun <N> map(newCalculator: MathCalculator<N>, mapper: (T) -> N): DecomposedPoly<N> {
+    fun <N> map(newCalculator: RealCalculator<N>, mapper: (T) -> N): DecomposedPoly<N> {
         val mp = java.util.function.Function(mapper)
         val re = DecomposedPoly(decomposed.map { (poly, n) -> poly.mapTo(newCalculator, mp) to n })
         re.expandedBackingField = expandedBackingField?.mapTo(newCalculator, mp)

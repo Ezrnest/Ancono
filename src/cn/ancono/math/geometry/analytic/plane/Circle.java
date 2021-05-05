@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
@@ -8,6 +7,7 @@ import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.curve.ClosedCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.ConicSection;
 import cn.ancono.math.geometry.analytic.plane.curve.RectifiableCurve;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +70,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @param oy
      * @param r
      */
-    protected Circle(MathCalculator<T> mc, T ox, T oy, T r) {
+    protected Circle(RealCalculator<T> mc, T ox, T oy, T r) {
         super(mc, mc.getOne(),
                 mc.getZero(),
                 mc.getOne(),
@@ -91,7 +91,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @param F
      * @param b  identifier,useless.
      */
-    protected Circle(MathCalculator<T> mc, T D, T E, T F, boolean b) {
+    protected Circle(RealCalculator<T> mc, T D, T E, T F, boolean b) {
         super(mc,
                 mc.getOne(),
                 mc.getZero(),
@@ -114,7 +114,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @param F
      * @param r  optional
      */
-    protected Circle(MathCalculator<T> mc, Point<T> o, T r2, T D, T E, T F, T r) {
+    protected Circle(RealCalculator<T> mc, Point<T> o, T r2, T D, T E, T F, T r) {
         super(mc,
                 mc.getOne(),
                 mc.getZero(),
@@ -196,7 +196,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @return the area of this circle
      */
     public T getArea() {
-        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        T pi = getMc().constantValue(RealCalculator.STR_PI);
         return getMc().multiply(pi, r2);
     }
 
@@ -207,7 +207,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @return the perimeter of this circle.
      */
     public T getPerimeter() {
-        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        T pi = getMc().constantValue(RealCalculator.STR_PI);
         return getMc().multiply(getMc().multiplyLong(pi, 2l), getRadius());
     }
 
@@ -636,7 +636,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 
     @NotNull
     @Override
-    public <N> Circle<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Circle<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         Point<N> op = o.mapTo(newCalculator, mapper);
         N r2 = mapper.apply(this.r2);
         N r = this.r == null ? null : mapper.apply(this.r);
@@ -685,11 +685,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      *
      * @param o  center of this circle
      * @param r  the radius of this circle,positive.
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new circle
      * @throws IllegalArgumentException if {@code r<=0}
      */
-    public static <T> Circle<T> centerAndRadius(Point<T> o, T r, MathCalculator<T> mc) {
+    public static <T> Circle<T> centerAndRadius(Point<T> o, T r, RealCalculator<T> mc) {
         try {
             if (mc.compare(r, mc.getZero()) <= 0) {
                 throw new IllegalArgumentException("Not Positive Radius");
@@ -710,11 +710,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      *
      * @param o  center of this circle
      * @param r  the square of the radius of this circle,positive.
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new circle
      * @throws IllegalArgumentException if {@code r<=0}
      */
-    public static <T> Circle<T> centerAndRadiusSquare(Point<T> o, T r2, MathCalculator<T> mc) {
+    public static <T> Circle<T> centerAndRadiusSquare(Point<T> o, T r2, RealCalculator<T> mc) {
         try {
             if (mc.compare(r2, mc.getZero()) <= 0) {
                 throw new IllegalArgumentException("Not Positive Radius");
@@ -740,11 +740,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @param D  coefficient
      * @param E  coefficient
      * @param F  coefficient
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new circle
      * @throws IllegalArgumentException if {@literal D²+E²-4F <= 0}
      */
-    public static <T> Circle<T> generalFormula(T D, T E, T F, MathCalculator<T> mc) {
+    public static <T> Circle<T> generalFormula(T D, T E, T F, RealCalculator<T> mc) {
         //check first.
         T delta = mc.subtract(mc.add(mc.multiply(D, D), mc.multiply(E, E)), mc.multiplyLong(F, 4l));
         try {
@@ -765,11 +765,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @param p1 a point
      * @param p2 a point
      * @param p3 a point
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a circle
      * @throws IllegalArgumentException if {@code p1,p2,p3} is on the identity line.
      */
-    public static <T> Circle<T> threePoints(Point<T> p1, Point<T> p2, Point<T> p3, MathCalculator<T> mc) {
+    public static <T> Circle<T> threePoints(Point<T> p1, Point<T> p2, Point<T> p3, RealCalculator<T> mc) {
         Triangle<T> tri = Triangle.fromVertex(mc, p1.x, p1.y
                 , p2.x, p2.y
                 , p3.x, p3.y);
@@ -791,7 +791,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @throws IllegalArgumentException if {@code p1,p2,p3} is on the identity line.
      */
     public static <T> Circle<T> threePoints(Point<T> p1, Point<T> p2, Point<T> p3) {
-        MathCalculator<T> mc = p1.getCalculator();
+        RealCalculator<T> mc = p1.getCalculator();
         Triangle<T> tri = Triangle.fromVertex(mc, p1.x, p1.y
                 , p2.x, p2.y
                 , p3.x, p3.y);
@@ -810,11 +810,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      *
      * @param p1 a point
      * @param p2 a point
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a circle
      * @throws IllegalArgumentException if {@code p1.valueEquals(p2)}
      */
-    public static <T> Circle<T> diameterPoint(Point<T> p1, Point<T> p2, MathCalculator<T> mc) {
+    public static <T> Circle<T> diameterPoint(Point<T> p1, Point<T> p2, RealCalculator<T> mc) {
         if (p1.valueEquals(p2)) {
             throw new IllegalArgumentException("p1 = p2");
         }
@@ -832,11 +832,11 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      *
      * @param l  a line
      * @param p  a point
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a circle
      * @throws IllegalArgumentException if {@code l.containsPoint(p)}
      */
-    public static <T> Circle<T> tangentCircle(Line<T> l, Point<T> p, MathCalculator<T> mc) {
+    public static <T> Circle<T> tangentCircle(Line<T> l, Point<T> p, RealCalculator<T> mc) {
         if (l.contains(p)) {
             throw new IllegalArgumentException("point is on the line");
         }

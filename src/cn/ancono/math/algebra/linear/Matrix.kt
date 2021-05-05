@@ -2,7 +2,6 @@ package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.AbstractFlexibleMathObject
 import cn.ancono.math.FMathObject
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.equation.EquationSolver
 import cn.ancono.math.equation.SVPEquation
@@ -258,7 +257,7 @@ abstract class AbstractMatrix<T>(
      * It is required that the math calculator supports `abs()` and `compare()`
      */
     open fun normInf(): T {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         var m = mc.zero
         for (i in rowIndices) {
             for (j in colIndices) {
@@ -278,8 +277,8 @@ abstract class AbstractMatrix<T>(
      *
      * It is required that the calculator supports `abs()` and `exp()`.
      */
-    open fun norm(p: T = (calculator as MathCalculator).of(2L)): T {
-        val mc = calculator as MathCalculator
+    open fun norm(p: T = (calculator as RealCalculator).of(2L)): T {
+        val mc = calculator as RealCalculator
         var r = mc.zero
         for (i in 0 until row) {
             for (j in 0 until column) {
@@ -596,7 +595,7 @@ abstract class Matrix<T>(
      * `λI-this`, which is a matrix of polynomial.
      */
     open fun charMatrix(): Matrix<Polynomial<T>> {
-        return MatrixImpl.charMatrix(this, Polynomial.calculator(calculator as MathCalculator<T>)) //TODO
+        return MatrixImpl.charMatrix(this, Polynomial.calculator(calculator as RealCalculator<T>)) //TODO
     }
 
     /**
@@ -935,7 +934,7 @@ abstract class Matrix<T>(
          * Determines whether the two matrices are similar.
          */
         fun <T> isSimilar(a: Matrix<T>, b: Matrix<T>): Boolean {
-            val pc = Polynomial.calculator(a.calculator as MathCalculator<T>)
+            val pc = Polynomial.calculator(a.calculator as RealCalculator<T>)
             var x = MatrixImpl.charMatrix(a, pc)
             var y = MatrixImpl.charMatrix(b, pc)
             x = x.toNormalForm()

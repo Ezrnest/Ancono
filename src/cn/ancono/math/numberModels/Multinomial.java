@@ -1,6 +1,5 @@
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.IPolynomial;
@@ -9,6 +8,7 @@ import cn.ancono.math.discrete.combination.Permutation;
 import cn.ancono.math.discrete.combination.Permutations;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.api.Computable;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.RingNumberModel;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberModels.structure.Polynomial;
@@ -964,7 +964,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     @Override
-    public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+    public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
         T re = mc.getZero();
         for (Term t : terms) {
             re = mc.add(re, t.compute(valueMap, mc));

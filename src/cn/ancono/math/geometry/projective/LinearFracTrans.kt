@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.projective
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.abs.calculator.eval
@@ -8,6 +7,7 @@ import cn.ancono.math.function.Bijection
 import cn.ancono.math.geometry.analytic.plane.TransMatrix
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.MulGroupNumberModel
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.property.Composable
 import org.jetbrains.annotations.NotNull
 import java.util.function.Function
@@ -18,7 +18,7 @@ import java.util.function.Function
  *
  */
 class LinearFracTrans<T> internal constructor(private val m: TransMatrix<T>)
-    : MathObjectExtend<T>(m.calculator as MathCalculator<T>),
+    : MathObjectExtend<T>(m.calculator as RealCalculator<T>),
         Bijection<T, T>,
         Composable<LinearFracTrans<T>>,
         MulGroupNumberModel<LinearFracTrans<T>> {
@@ -61,7 +61,7 @@ class LinearFracTrans<T> internal constructor(private val m: TransMatrix<T>)
     }
 
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearFracTrans<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): LinearFracTrans<N> {
         return LinearFracTrans(m.mapTo(newCalculator, mapper))
     }
 
@@ -80,7 +80,7 @@ class LinearFracTrans<T> internal constructor(private val m: TransMatrix<T>)
     companion object {
 
 
-        fun <T> of(a: T, b: T, c: T, d: T, mc: MathCalculator<T>): LinearFracTrans<T> {
+        fun <T> of(a: T, b: T, c: T, d: T, mc: RealCalculator<T>): LinearFracTrans<T> {
             val det = mc.eval { a * c - b * d }
             if (mc.isZero(det)) {
                 throw IllegalArgumentException("ac-bd = 0")

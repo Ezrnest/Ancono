@@ -1,8 +1,8 @@
 package cn.ancono.math.prob
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.MathCalculatorAdapter
+import cn.ancono.math.numberModels.api.RealCalculator
 
 
 /**
@@ -42,7 +42,7 @@ sealed class RandomVariable<out T> {
          *
          * Note that the calculator can not support methods `isEqual` and `compare`.
          */
-        fun <T> getCalculator(mc: MathCalculator<T>): RVCalculator<T> {
+        fun <T> getCalculator(mc: RealCalculator<T>): RVCalculator<T> {
             return RVCalculator(mc)
         }
     }
@@ -213,7 +213,7 @@ class ExpRV(val k: Double, override val space: StandardExpSpace) : SimpleRV<Doub
  *
  * Note that the calculator can not support methods `isEqual` and `compare`.
  */
-class RVCalculator<T>(val mc: MathCalculator<T>) : MathCalculatorAdapter<RandomVariable<T>>() {
+class RVCalculator<T>(val mc: RealCalculator<T>) : MathCalculatorAdapter<RandomVariable<T>>() {
     override val one: RandomVariable<T> = ConstantRV(mc.one)
     override val zero: RandomVariable<T> = ConstantRV(mc.zero)
 

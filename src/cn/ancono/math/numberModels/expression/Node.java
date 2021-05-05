@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.numberModels.expression;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Multinomial;
@@ -11,6 +10,7 @@ import cn.ancono.math.numberModels.MultinomialCalculator;
 import cn.ancono.math.numberModels.Term;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.expression.anno.AllowModify;
 import cn.ancono.math.numberModels.expression.anno.DisallowModify;
 import cn.ancono.math.numberModels.expression.simplification.SimplificationStrategy;
@@ -953,7 +953,7 @@ public abstract class Node implements Computable, Serializable {
         }
 
         @Override
-        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
             return p.compute(valueMap, mc);
         }
 
@@ -1058,7 +1058,7 @@ public abstract class Node implements Computable, Serializable {
         }
 
         @Override
-        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
             T re;
             if (p != null) {
                 re = p.compute(valueMap, mc);
@@ -1193,7 +1193,7 @@ public abstract class Node implements Computable, Serializable {
 
 
         @Override
-        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
             T re;
             if (p != null) {
                 re = p.compute(valueMap, mc);
@@ -1316,7 +1316,7 @@ public abstract class Node implements Computable, Serializable {
 
         @SuppressWarnings("unchecked")
         @Override
-        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
             T x = child.compute(valueMap, mc);
             return ExprFunction.findFunctionAndApply(mc, functionName, x);
         }
@@ -1443,7 +1443,7 @@ public abstract class Node implements Computable, Serializable {
 
         @SuppressWarnings("unchecked")
         @Override
-        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
             T p1 = c1.compute(valueMap, mc);
             T p2 = c2.compute(valueMap, mc);
             return ExprFunction.findFunctionAndApply(mc, functionName, p1, p2);
@@ -1558,7 +1558,7 @@ public abstract class Node implements Computable, Serializable {
         }
 
         @Override
-        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
             @SuppressWarnings("unchecked")
             T[] paras = (T[]) new Object[children.size()];
             int pos = 0;
@@ -1644,7 +1644,7 @@ public abstract class Node implements Computable, Serializable {
         }
 
         @Override
-        public <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc) {
+        public <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc) {
             T nu = c1.compute(valueMap, mc);
             T de = c2.compute(valueMap, mc);
             return mc.divide(nu, de);

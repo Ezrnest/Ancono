@@ -3,14 +3,13 @@
  */
 package cn.ancono.math.exceptions;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
- * Exception to throw when a {@link MathCalculator} cannot do such calculation to the
+ * Exception to throw when a {@link RealCalculator} cannot do such calculation to the
  * number type.
  *
  * @author lyc
- *
  */
 public class UnsupportedCalculationException extends RuntimeException {
 

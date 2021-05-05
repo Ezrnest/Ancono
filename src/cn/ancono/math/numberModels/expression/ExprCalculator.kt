@@ -3,13 +3,13 @@
  */
 package cn.ancono.math.numberModels.expression
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.MultinomialCalculator
 import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.api.FunctionCalculator
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.api.Simplifier
 import cn.ancono.math.numberModels.expression.Node.*
 import cn.ancono.math.numberModels.expression.anno.AllowModify
@@ -22,7 +22,7 @@ import java.util.function.ToDoubleFunction
 @Suppress("NAME_SHADOWING")
 /**
  * Expression Calculator deals with the calculation of the Expression. Unlike
- * most types of [MathCalculator] which have few things to configure,
+ * most types of [RealCalculator] which have few things to configure,
  * expression calculator provides a wide variety of configurations and plug-ins
  * that enable the calculator to handle customized calculation.
  * <h3>Functions</h3> In addition to basic math operations like add, multiply
@@ -107,7 +107,7 @@ class ExprCalculator
          *
          * @return the ss
          */
-        val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : FunctionCalculator<Expression> {
+        val simStraHolder: SimStraHolder = SimStraHolder.getDefault()) : RealCalculator<Expression>, FunctionCalculator<Expression> {
     internal val enabledTags: MutableSet<String> = SimplificationStrategies.getDefaultTags()
     internal val properties: MutableMap<String, String>
 
@@ -122,13 +122,13 @@ class ExprCalculator
     internal val pMinusOne: Multinomial
 
     /*
-	 * @see cn.ancono.math.MathCalculator#getZero()
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#getZero()
 	 */
     override val zero: Expression
         get() = Expression.ZERO
 
     /*
-	 * @see cn.ancono.math.MathCalculator#getOne()
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#getOne()
 	 */
     override val one: Expression
         get() = Expression.ONE
@@ -140,7 +140,7 @@ class ExprCalculator
 
 
     /*
-     * @see cn.ancono.math.MathCalculator#getNumberClass()
+     * @see cn.ancono.math.numberModels.api.MathCalculator#getNumberClass()
      */
     override val numberClass: Class<Expression>
         get() = Expression::class.java
@@ -262,7 +262,7 @@ class ExprCalculator
 
     /*
              * @see
-             * cn.ancono.math.MathCalculator#isEqual(java.lang.Object,
+             * cn.ancono.math.numberModels.api.MathCalculator#isEqual(java.lang.Object,
              * java.lang.Object)
              */
     override fun isEqual(x: Expression, y: Expression): Boolean {
@@ -272,15 +272,15 @@ class ExprCalculator
 
     private val compareCompute: ToDoubleFunction<String> = ToDoubleFunction { x ->
         when (x) {
-            MathCalculator.STR_E -> Math.E
-            MathCalculator.STR_PI -> Math.PI
+            RealCalculator.STR_E -> Math.E
+            RealCalculator.STR_PI -> Math.PI
             else -> throw UnsupportedOperationException("Cannot compare with unassigned character: $x")
         }
     }
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#compare(java.lang.Object,
+	 * cn.ancono.math.numberModels.api.MathCalculator#compare(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun compare(x: Expression, y: Expression): Int {
@@ -292,7 +292,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#add(java.lang.Object,
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#add(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun add(x: Expression, y: Expression): Expression {
@@ -315,7 +315,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#negate(java.lang.Object)
+	 * cn.ancono.math.numberModels.api.MathCalculator#negate(java.lang.Object)
 	 */
     override fun negate(x: Expression): Expression {
         if (isPolynomial(x.root)) {
@@ -327,7 +327,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#abs(java.lang.Object)
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#abs(java.lang.Object)
 	 */
     override fun abs(x: Expression): Expression {
         var rt: Node = wrapCloneNodeSF("abs", x.root)
@@ -337,7 +337,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#subtract(java.lang.Object,
+	 * cn.ancono.math.numberModels.api.MathCalculator#subtract(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun subtract(x: Expression, y: Expression): Expression {
@@ -355,7 +355,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#isZero(java.lang.Object)
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#isZero(java.lang.Object)
 	 */
     override fun isZero(x: Expression): Boolean {
         return isEqual(zero, x)
@@ -363,7 +363,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#multiply(java.lang.Object,
+	 * cn.ancono.math.numberModels.api.MathCalculator#multiply(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun multiply(x: Expression, y: Expression): Expression {
@@ -380,7 +380,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#divide(java.lang.Object,
+	 * cn.ancono.math.numberModels.api.MathCalculator#divide(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun divide(x: Expression, y: Expression): Expression {
@@ -390,7 +390,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#reciprocal(java.lang.
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#reciprocal(java.lang.
 	 * Object)
 	 */
     override fun reciprocal(x: Expression): Expression {
@@ -401,7 +401,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#multiplyLong(java.lang.
+	 * cn.ancono.math.numberModels.api.MathCalculator#multiplyLong(java.lang.
 	 * Object, long)
 	 */
     override fun multiplyLong(x: Expression, n: Long): Expression {
@@ -416,7 +416,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#divideLong(java.lang.
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#divideLong(java.lang.
 	 * Object, long)
 	 */
     override fun divideLong(x: Expression, n: Long): Expression {
@@ -430,7 +430,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#squareRoot(java.lang.
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#squareRoot(java.lang.
 	 * Object)
 	 */
     override fun squareRoot(x: Expression): Expression {
@@ -439,7 +439,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#nroot(java.lang.Object,
+	 * cn.ancono.math.numberModels.api.MathCalculator#nroot(java.lang.Object,
 	 * long)
 	 */
     override fun nroot(x: Expression, n: Long): Expression {
@@ -449,7 +449,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#pow(java.lang.Object,
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#pow(java.lang.Object,
 	 * long)
 	 */
     override fun pow(x: Expression, n: Long): Expression {
@@ -460,7 +460,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#constantValue(java.lang.
+	 * cn.ancono.math.numberModels.api.MathCalculator#constantValue(java.lang.
 	 * String)
 	 */
     override fun constantValue(name: String): Expression {
@@ -493,21 +493,21 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#exp(java.lang.Object)
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#exp(java.lang.Object)
 	 */
     override fun exp(x: Expression): Expression {
         return sfunction("exp", x)
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#ln(java.lang.Object)
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#ln(java.lang.Object)
 	 */
     override fun ln(x: Expression): Expression {
         return sfunction("ln", x)
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#sin(java.lang.Object)
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#sin(java.lang.Object)
 	 */
     override fun sin(x: Expression): Expression {
         return sfunction("sin", x)
@@ -515,7 +515,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#arcsin(java.lang.Object)
+	 * cn.ancono.math.numberModels.api.MathCalculator#arcsin(java.lang.Object)
 	 */
     override fun arcsin(x: Expression): Expression {
         return sfunction("arcsin", x)
@@ -523,7 +523,7 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#arccos(java.lang.Object)
+	 * cn.ancono.math.numberModels.api.MathCalculator#arccos(java.lang.Object)
 	 */
     override fun arccos(x: Expression): Expression {
         return sfunction("arccos", x)
@@ -531,21 +531,21 @@ class ExprCalculator
 
     /*
 	 * @see
-	 * cn.ancono.math.MathCalculator#arctan(java.lang.Object)
+	 * cn.ancono.math.numberModels.api.MathCalculator#arctan(java.lang.Object)
 	 */
     override fun arctan(x: Expression): Expression {
         return sfunction("arctan", x)
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#cos(java.lang.Object)
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#cos(java.lang.Object)
 	 */
     override fun cos(x: Expression): Expression {
         return sfunction("cos", x)
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#exp(java.lang.Object,
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#exp(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun exp(a: Expression, b: Expression): Expression {
@@ -553,7 +553,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#log(java.lang.Object,
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#log(java.lang.Object,
 	 * java.lang.Object)
 	 */
     override fun log(a: Expression, b: Expression): Expression {
@@ -561,7 +561,7 @@ class ExprCalculator
     }
 
     /*
-	 * @see cn.ancono.math.MathCalculator#tan(java.lang.Object)
+	 * @see cn.ancono.math.numberModels.api.MathCalculator#tan(java.lang.Object)
 	 */
     override fun tan(x: Expression): Expression {
         return sfunction("tan", x)

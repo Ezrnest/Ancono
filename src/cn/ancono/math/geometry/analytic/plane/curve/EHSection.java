@@ -1,11 +1,11 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.Line;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.geometry.analytic.plane.TransMatrix;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import kotlin.Pair;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public abstract class EHSection<T> extends ConicSection<T> {
     protected final boolean onX;
     protected T e;
 
-    protected EHSection(MathCalculator<T> mc, T A, T C
+    protected EHSection(RealCalculator<T> mc, T A, T C
             , T a, T b, T c, T a2, T b2, T c2
             , boolean onX) {
         super(mc, A, mc.getZero(), C, mc.getZero(), mc.getZero(), mc.negate(mc.getOne()));

@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.geometry.analytic.space.SPoint;
 import cn.ancono.math.geometry.analytic.space.SpacePointSet;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.set.InfiniteSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ import java.util.function.Function;
  */
 public abstract class SpaceObject<T> extends SpacePointSet<T> implements InfiniteSet<SPoint<T>> {
 
-    protected SpaceObject(MathCalculator<T> mc) {
+    protected SpaceObject(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -64,5 +64,5 @@ public abstract class SpaceObject<T> extends SpacePointSet<T> implements Infinit
      */
     @NotNull
     @Override
-    public abstract <N> SpaceObject<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SpaceObject<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 }

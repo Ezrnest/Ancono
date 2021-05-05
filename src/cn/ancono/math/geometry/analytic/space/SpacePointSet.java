@@ -1,9 +1,9 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.set.InfiniteSet;
 import cn.ancono.math.set.MathSet;
 import cn.ancono.utilities.ArraySup;
@@ -23,14 +23,14 @@ import java.util.function.Function;
  * implemented by default in this abstract class, and proper overriding is
  * recommended.<p>
  * This class also provides basic point sets by method
- * {@link #getEmptySet(MathCalculator)} and {@link #getUniverseSet(MathCalculator)}.
+ * {@link #getEmptySet(RealCalculator)} and {@link #getUniverseSet(RealCalculator)}.
  *
  * @param <T>
  * @author liyicheng
  */
 public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements MathSet<SPoint<T>> {
 
-    protected SpacePointSet(MathCalculator<T> mc) {
+    protected SpacePointSet(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -47,7 +47,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
      */
     @NotNull
     @Override
-    public abstract <N> SpacePointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SpacePointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * Returns the intersect of the two space point sets.
@@ -81,11 +81,11 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     /**
      * Return a UniversePointSet which contains all the points.
      *
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a space point set
      */
     @SuppressWarnings("unchecked")
-    public static <T> UniversePointSet<T> getUniverseSet(MathCalculator<T> mc) {
+    public static <T> UniversePointSet<T> getUniverseSet(RealCalculator<T> mc) {
         UniversePointSet<T> u = (UniversePointSet<T>) usets.get(mc);
         if (u == null) {
             u = new UniversePointSet<>(mc);
@@ -97,11 +97,11 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     /**
      * Return a EmptyPointSet which contains no point.
      *
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a space point set
      */
     @SuppressWarnings("unchecked")
-    public static <T> EmptyPointSet<T> getEmptySet(MathCalculator<T> mc) {
+    public static <T> EmptyPointSet<T> getEmptySet(RealCalculator<T> mc) {
         EmptyPointSet<T> u = (EmptyPointSet<T>) esets.get(mc);
         if (u == null) {
             u = new EmptyPointSet<>(mc);
@@ -114,10 +114,10 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
      * Returns an empty set if it is {@code null}, or return the given set.
      *
      * @param set
-     * @param mc  a {@link MathCalculator}
+     * @param mc  a {@link RealCalculator}
      * @return a set, not null.
      */
-    public static <T> SpacePointSet<T> cenvertNull(SpacePointSet<T> set, MathCalculator<T> mc) {
+    public static <T> SpacePointSet<T> cenvertNull(SpacePointSet<T> set, RealCalculator<T> mc) {
         if (set == null) {
             return getEmptySet(mc);
         }
@@ -144,12 +144,12 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         return set instanceof UniversePointSet;
     }
 
-    private static final Map<MathCalculator<?>, UniversePointSet<?>> usets = new HashMap<>();
-    private static final Map<MathCalculator<?>, EmptyPointSet<?>> esets = new HashMap<>();
+    private static final Map<RealCalculator<?>, UniversePointSet<?>> usets = new HashMap<>();
+    private static final Map<RealCalculator<?>, EmptyPointSet<?>> esets = new HashMap<>();
 
     /**
      * Returns a new intersect set of the two sets.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
      *
      * @param s1 a space point set.
      * @param s2 another space point set.
@@ -167,7 +167,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
 
     /**
      * Returns a new intersect set of the sets.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
      *
      * @param sets
      * @return an intersect set
@@ -175,7 +175,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     @SafeVarargs
     public static <T> SpacePointSet<T> intersectOf(SpacePointSet<T>... sets) {
         List<SpacePointSet<T>> list = new ArrayList<>(sets.length);
-        MathCalculator<T> mc = sets[0].getCalculator();
+        RealCalculator<T> mc = sets[0].getCalculator();
         for (SpacePointSet<T> sps : sets) {
             if (isEmptySet(sps)) {
                 return getEmptySet(mc);
@@ -187,7 +187,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
 
     /**
      * Returns a new union set of the two sets.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
      *
      * @param s1 a space point set.
      * @param s2 another space point set.
@@ -205,7 +205,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
 
     /**
      * Returns a new union set of the sets.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
      *
      * @param sets
      * @return an union set
@@ -213,7 +213,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     @SafeVarargs
     public static <T> SpacePointSet<T> unionOf(SpacePointSet<T>... sets) {
         List<SpacePointSet<T>> list = new ArrayList<>(sets.length);
-        MathCalculator<T> mc = sets[0].getCalculator();
+        RealCalculator<T> mc = sets[0].getCalculator();
         for (SpacePointSet<T> sps : sets) {
             if (isUniverseSet(sps)) {
                 return getUniverseSet(mc);
@@ -228,7 +228,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         /**
          * @param mc
          */
-        UniversePointSet(MathCalculator<T> mc) {
+        UniversePointSet(RealCalculator<T> mc) {
             super(mc);
         }
 
@@ -253,7 +253,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public <N> UniversePointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> UniversePointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new UniversePointSet<>(newCalculator);
         }
 
@@ -329,7 +329,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         /**
          * @param mc
          */
-        EmptyPointSet(MathCalculator<T> mc) {
+        EmptyPointSet(RealCalculator<T> mc) {
             super(mc);
         }
 
@@ -346,7 +346,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public <N> EmptyPointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> EmptyPointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new EmptyPointSet<>(newCalculator);
         }
 
@@ -426,7 +426,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         /**
          * @param mc
          */
-        CombinedSpacePointSet(MathCalculator<T> mc, List<SpacePointSet<T>> list, int flag) {
+        CombinedSpacePointSet(RealCalculator<T> mc, List<SpacePointSet<T>> list, int flag) {
             super(mc);
             this.list = list;
             this.flag = flag;
@@ -465,7 +465,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public <N> CombinedSpacePointSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> CombinedSpacePointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             List<SpacePointSet<N>> ln = new ArrayList<>(list.size());
             for (SpacePointSet<T> set : list) {
                 ln.add(set.mapTo(newCalculator, mapper));

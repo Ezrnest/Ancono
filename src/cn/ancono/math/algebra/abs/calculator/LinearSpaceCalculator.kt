@@ -26,4 +26,11 @@ interface LinearSpaceCalculator<K, V> : ModuleCalculator<K, V> {
     fun isLinearDependent(vs: List<V>): Boolean {
         throw UnsupportedOperationException()
     }
+
+
+    @JvmDefault
+    fun scalarDivide(x: V, k: K): V {
+        return scalarMultiply(scalarCalculator.reciprocal(k), x)
+    }
+
 }

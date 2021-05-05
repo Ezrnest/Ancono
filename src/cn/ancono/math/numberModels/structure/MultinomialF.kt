@@ -5,14 +5,12 @@ import cn.ancono.math.algebra.IMTerm
 import cn.ancono.math.algebra.IMultinomial
 import cn.ancono.math.algebra.IPolynomial
 import cn.ancono.math.algebra.PolynomialUtil.subResultantGCD
-import cn.ancono.math.algebra.abs.calculator.EqualPredicate
-import cn.ancono.math.algebra.abs.calculator.FieldCalculator
-import cn.ancono.math.algebra.abs.calculator.UFDCalculator
-import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.utilities.CollectionSup
 import cn.ancono.utilities.ModelPatterns
 import java.util.*
@@ -662,8 +660,8 @@ internal constructor(
 
 }
 
-class MultinomialFCalculator<T>(val mc: MathCalculator<T>)
-    : MathCalculatorAdapter<MultinomialF<T>>(), UFDCalculator<MultinomialF<T>> {
+class MultinomialFCalculator<T>(val mc: RealCalculator<T>)
+    : UFDCalculator<MultinomialF<T>>, TotalOrderPredicate<MultinomialF<T>> {
     override val one: MultinomialF<T> = MultinomialF.one(mc)
     override val zero: MultinomialF<T> = MultinomialF.zero(mc)
 
@@ -684,9 +682,6 @@ class MultinomialFCalculator<T>(val mc: MathCalculator<T>)
         return x.compareTo(y)
     }
 
-    override val isComparable: Boolean
-        get() = true
-
     override fun add(x: MultinomialF<T>, y: MultinomialF<T>): MultinomialF<T> {
         return x.add(y)
     }
@@ -703,21 +698,21 @@ class MultinomialFCalculator<T>(val mc: MathCalculator<T>)
         return x.multiply(y)
     }
 
-    override fun divide(x: MultinomialF<T>, y: MultinomialF<T>): MultinomialF<T> {
-        val pair = x.divideAndRemainder(y)
-        if (pair.second.isZero()) {
-            return pair.first
-        }
-        throw UnsupportedOperationException()
-    }
+//    override fun divide(x: MultinomialF<T>, y: MultinomialF<T>): MultinomialF<T> {
+//        val pair = x.divideAndRemainder(y)
+//        if (pair.second.isZero()) {
+//            return pair.first
+//        }
+//        throw UnsupportedOperationException()
+//    }
 
     override fun multiplyLong(x: MultinomialF<T>, n: Long): MultinomialF<T> {
         return x.multiply(CalculatorUtils.valueOfLong(n, mc))
     }
 
-    override fun divideLong(x: MultinomialF<T>, n: Long): MultinomialF<T> {
-        return x.multiply(mc.reciprocal(CalculatorUtils.valueOfLong(n, mc)))
-    }
+//    override fun divideLong(x: MultinomialF<T>, n: Long): MultinomialF<T> {
+//        return x.multiply(mc.reciprocal(CalculatorUtils.valueOfLong(n, mc)))
+//    }
 
 
     private fun gcd0(a: MultinomialF<T>, b: MultinomialF<T>): MultinomialF<T> {
@@ -764,7 +759,7 @@ class MultinomialFCalculator<T>(val mc: MathCalculator<T>)
 
     }
 
-    override fun of(x: Fraction): MultinomialF<T> {
+    fun of(x: Fraction): MultinomialF<T> {
         return MultinomialF.monomial(TermF.constant(mc.of(x)), mc)
     }
 }

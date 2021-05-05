@@ -1,12 +1,12 @@
 package cn.ancono.math.numeric.linear
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.T
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.algebra.linear.toMutable
+import cn.ancono.math.numberModels.api.RealCalculator
 import java.util.*
 
 object LinearEquations {
@@ -72,7 +72,7 @@ object LinearEquations {
 //        require(m.isSquare)
         require(M.column > M.row)
         val n = M.row
-        val mc = M.calculator as MathCalculator
+        val mc = M.calculator as RealCalculator
 
         val matrix = M.toMutable()
         for (k in 0 until n) {

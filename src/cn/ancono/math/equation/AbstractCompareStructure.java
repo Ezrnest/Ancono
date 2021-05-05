@@ -4,8 +4,7 @@
 package cn.ancono.math.equation;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
  * @author liyicheng
@@ -21,7 +20,7 @@ public abstract class AbstractCompareStructure<T, S> extends AbstractMathObject<
     /**
      * @param mc
      */
-    protected AbstractCompareStructure(MathCalculator<T> mc, Type op) {
+    protected AbstractCompareStructure(RealCalculator<T> mc, Type op) {
         super(mc);
         this.op = op;
     }

@@ -4,10 +4,10 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.property.Invertible;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +40,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
     /**
      * @param mc
      */
-    protected PAffineTrans(MathCalculator<T> mc, TransMatrix<T> mat, PVector<T> v) {
+    protected PAffineTrans(RealCalculator<T> mc, TransMatrix<T> mat, PVector<T> v) {
         super(mc);
         this.mat = Objects.requireNonNull(mat);
         this.v = Objects.requireNonNull(v);
@@ -178,7 +178,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
      */
     @Override
-    public <N> @NotNull PAffineTrans<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> @NotNull PAffineTrans<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new PAffineTrans<>(newCalculator, mat.mapTo(newCalculator, mapper), v.mapTo(newCalculator, mapper));
     }
 
@@ -273,11 +273,11 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
     /**
      * Returns a identity affine transformation, which keeps all the points unmoved.
      * <pre>x' = x
-     *y'= y
+     * y'= y
      * @param mc
      * @return a new PAffineTrans
      */
-    public static <T> PAffineTrans<T> identity(MathCalculator<T> mc) {
+    public static <T> PAffineTrans<T> identity(RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         PAffineTrans<T> pt = (PAffineTrans<T>) identities.get(mc);
         if (pt == null) {
@@ -287,7 +287,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
         return pt;
     }
 
-    private static final Map<MathCalculator<?>, PAffineTrans<?>> identities = new ConcurrentHashMap<>();
+    private static final Map<RealCalculator<?>, PAffineTrans<?>> identities = new ConcurrentHashMap<>();
 
     /**
      * Returns a transformation that translates points.
@@ -296,7 +296,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @return a new PAffineTrans
      */
     public static <T> PAffineTrans<T> ofTranslation(PVector<T> v) {
-        MathCalculator<T> mc = (MathCalculator<T>) v.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) v.getCalculator();
         return new PAffineTrans<>(mc, TransMatrix.identityTrans(mc), v);
     }
 
@@ -307,7 +307,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @return a new PAffineTrans
      */
     public static <T> PAffineTrans<T> ofTransMatrix(TransMatrix<T> m) {
-        MathCalculator<T> mc = (MathCalculator<T>) m.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) m.getCalculator();
         return new PAffineTrans<>(mc, m, PVector.zeroVector(mc));
     }
 
@@ -319,7 +319,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @return a new PAffineTrans
      */
     public static <T> PAffineTrans<T> valueOf(TransMatrix<T> m, PVector<T> v) {
-        MathCalculator<T> mc = (MathCalculator<T>) m.getCalculator(); //TODO
+        RealCalculator<T> mc = (RealCalculator<T>) m.getCalculator(); //TODO
         return new PAffineTrans<>(mc, m, v);
     }
 

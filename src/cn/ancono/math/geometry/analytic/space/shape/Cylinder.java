@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.space.SPoint;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -17,7 +17,7 @@ public final class Cylinder<T> extends SpaceObject<T> {
 
     //a cylinder has it
 
-    protected Cylinder(MathCalculator<T> mc) {
+    protected Cylinder(RealCalculator<T> mc) {
         super(mc);
     }
 
@@ -41,7 +41,7 @@ public final class Cylinder<T> extends SpaceObject<T> {
 
     @NotNull
     @Override
-    public <N> Cylinder<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Cylinder<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         // TODO Auto-generated method stub
         return null;
     }

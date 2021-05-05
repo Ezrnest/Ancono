@@ -1,10 +1,10 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 public abstract class Cuboid<T> extends Parallelepiped<T> {
 
-    protected Cuboid(MathCalculator<T> mc) {
+    protected Cuboid(RealCalculator<T> mc) {
         super(mc, 4);
     }
 

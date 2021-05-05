@@ -8,7 +8,7 @@ import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.group.Homomorphism
 import cn.ancono.math.algebra.abs.structure.*
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberTheory.IntCalculator
+import cn.ancono.math.numberModels.api.IntCalculator
 import cn.ancono.math.set.MathSet
 
 

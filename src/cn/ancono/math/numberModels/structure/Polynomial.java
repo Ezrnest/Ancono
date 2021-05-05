@@ -5,7 +5,6 @@ package cn.ancono.math.numberModels.structure;
 
 import cn.ancono.math.AbstractFlexibleMathObject;
 import cn.ancono.math.FMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.PolynomialUtil;
@@ -18,6 +17,7 @@ import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.*;
 import cn.ancono.math.numberModels.api.AlgebraModel;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
 import cn.ancono.utilities.ArraySup;
@@ -642,7 +642,7 @@ public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalcu
     public Polynomial<T> sumOfN() {
         //use lagrange
         var points = new Point[degree + 2];
-        var mc = (MathCalculator<T>) getCalculator();
+        var mc = (RealCalculator<T>) getCalculator();
         points[0] = Point.pointO(mc);
         for (int i = 1; i < points.length; i++) {
             points[i] = Point.valueOf(CalculatorUtils.valueOfLong(i, mc), CalculatorUtils.sigma(1, i + 1, mc, j ->
@@ -935,7 +935,7 @@ public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalcu
         } else if (mp < degree) {
             return 1;
         }
-        var mc = (MathCalculator<T>) getCalculator();
+        var mc = (RealCalculator<T>) getCalculator();
         for (int i = mp; i > -1; i--) {
             T a = get(i);
             T b = o.get(i);
@@ -1906,8 +1906,8 @@ public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalcu
                                                                      RingCalculator<T> cal,
                                                                      Simplifier<T> sim) {
 
-        if (cal instanceof MathCalculator) {
-            var mc = (MathCalculator<T>) cal;
+        if (cal instanceof RealCalculator) {
+            var mc = (RealCalculator<T>) cal;
             if (mc.isComparable()) {
                 if (mc.compare(g.first(), mc.getZero()) < 0) {
                     return new Pair<>(f.negate(), g.negate());

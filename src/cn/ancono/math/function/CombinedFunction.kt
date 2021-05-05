@@ -3,9 +3,9 @@
  */
 package cn.ancono.math.function
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 import java.util.function.Function
 
 /**
@@ -17,11 +17,11 @@ import java.util.function.Function
 abstract class CombinedFunction<T>
 /**
  *
- */ internal constructor(protected open val f: AbstractSVFunction<T>, protected open val g: AbstractSVFunction<T>, mc: MathCalculator<T>?) : AbstractSVFunction<T>(mc!!) {
+ */ internal constructor(protected open val f: AbstractSVFunction<T>, protected open val g: AbstractSVFunction<T>, mc: RealCalculator<T>?) : AbstractSVFunction<T>(mc!!) {
     /*
-     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    abstract override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): CombinedFunction<N>
+    abstract override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): CombinedFunction<N>
 
     /**
      * Defines the combined function:
@@ -37,7 +37,7 @@ abstract class CombinedFunction<T>
      * @param g
      * @param mc
      */
-    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
+    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
         /*
          * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
          */
@@ -46,9 +46,9 @@ abstract class CombinedFunction<T>
         }
 
         /*
-         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Add<N> {
+        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Add<N> {
             return Add(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -110,7 +110,7 @@ abstract class CombinedFunction<T>
      * @param g
      * @param mc
      */
-    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
+    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
         /*
          * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
          */
@@ -119,9 +119,9 @@ abstract class CombinedFunction<T>
         }
 
         /*
-         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Subtract<N> {
+        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Subtract<N> {
             return Subtract(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -180,7 +180,7 @@ abstract class CombinedFunction<T>
     /**
      *
      */
-    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
+    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
         /*
          * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
          */
@@ -189,9 +189,9 @@ abstract class CombinedFunction<T>
         }
 
         /*
-         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Multiply<N> {
+        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Multiply<N> {
             return Multiply(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -257,7 +257,7 @@ abstract class CombinedFunction<T>
      * @param g
      * @param mc
      */
-    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
+    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
         /*
          * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
          */
@@ -266,9 +266,9 @@ abstract class CombinedFunction<T>
         }
 
         /*
-         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Divide<N> {
+        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Divide<N> {
             return Divide(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -306,7 +306,7 @@ abstract class CombinedFunction<T>
      * @param g
      * @param mc
      */
-    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
+    internal constructor(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>?) : CombinedFunction<T>(f, g, mc) {
         /*
          * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
          */
@@ -315,9 +315,9 @@ abstract class CombinedFunction<T>
         }
 
         /*
-         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+         * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Combine<N> {
+        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Combine<N> {
             return Combine(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
         }
 
@@ -365,19 +365,19 @@ abstract class CombinedFunction<T>
 //    }
 
     companion object {
-        fun <T> add(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Add<T> {
+        fun <T> add(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>): Add<T> {
             return Add(f, g, mc)
         }
 
-        fun <T> subtract(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Subtract<T> {
+        fun <T> subtract(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>): Subtract<T> {
             return Subtract(f, g, mc)
         }
 
-        fun <T> multiply(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Multiply<T> {
+        fun <T> multiply(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>): Multiply<T> {
             return Multiply(f, g, mc)
         }
 
-        fun <T> divide(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: MathCalculator<T>): Divide<T> {
+        fun <T> divide(f: AbstractSVFunction<T>, g: AbstractSVFunction<T>, mc: RealCalculator<T>): Divide<T> {
             return Divide(f, g, mc)
         }
 

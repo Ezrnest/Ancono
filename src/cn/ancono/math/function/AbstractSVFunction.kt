@@ -4,11 +4,11 @@
 package cn.ancono.math.function
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.calculus.Derivable
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.Interval
 import cn.ancono.math.set.IntervalUnion
 import java.util.function.Function
@@ -21,7 +21,7 @@ import java.util.function.Function
  * 2017-10-06 10:02
  */
 abstract class AbstractSVFunction<T>
-protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunction<T> {
+protected constructor(mc: RealCalculator<T>) : AbstractMathObject<T>(mc), SVFunction<T> {
 
     /**
      * Returns the String representation of this function, the prefix 'f(x)='
@@ -31,10 +31,10 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
 
 
     /*
-	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
 	 */
     abstract override fun <N> mapTo(
-            newCalculator: MathCalculator<N>,
+            newCalculator: RealCalculator<N>,
             mapper: Function<T, N>
     ): AbstractSVFunction<N>
 
@@ -42,27 +42,27 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
     companion object {
 
 
-        fun <T> constant(c: T, mc: MathCalculator<T>): AbstractSVPFunction.ConstantFunction<T> {
+        fun <T> constant(c: T, mc: RealCalculator<T>): AbstractSVPFunction.ConstantFunction<T> {
             return AbstractSVPFunction.ConstantFunction(mc, c)
         }
 
         /**
          * Returns the function : e^x
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return e^x
          */
         @Suppress("UNCHECKED_CAST")
-        fun <T> naturalExp(mc: MathCalculator<T>): Ex<T> {
+        fun <T> naturalExp(mc: RealCalculator<T>): Ex<T> {
             return Ex(mc)
         }
 
         /**
          * Returns the function : ln(x)
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return ln(x)
          */
         @Suppress("UNCHECKED_CAST")
-        fun <T> naturalLog(mc: MathCalculator<T>): Ln<T> {
+        fun <T> naturalLog(mc: RealCalculator<T>): Ln<T> {
             return Ln(mc)
         }
 
@@ -70,10 +70,10 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
          * Returns the exponential function:
          * <pre>c*a^x</pre>
          * where `c!=0 && a > 0 && a!=1`
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return <pre>c*a^x</pre>
          */
-        fun <T> exp(a: T, c: T, mc: MathCalculator<T>): Exp<T> {
+        fun <T> exp(a: T, c: T, mc: RealCalculator<T>): Exp<T> {
             if (mc.isZero(c)) {
                 throw IllegalArgumentException("c == 0")
             }
@@ -87,10 +87,10 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
          * Returns the exponential function:
          * <pre>a^x</pre>
          * where `a > 0 && a!=1`
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return <pre>a^x</pre>
          */
-        fun <T> exp(a: T, mc: MathCalculator<T>): Exp<T> {
+        fun <T> exp(a: T, mc: RealCalculator<T>): Exp<T> {
             if (mc.compare(a, mc.zero) <= 0 || mc.isEqual(mc.one, a)) {
                 throw IllegalArgumentException("a <= 0 || a==1")
             }
@@ -102,10 +102,10 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
          * <pre>log<sup>a</sup>x</pre>
          * where a&gt;0 &amp;&amp; a!=1
          * @param a the base
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return <pre>log<sup>a</sup>x</pre>
          */
-        fun <T> log(a: T, mc: MathCalculator<T>): Log<T> {
+        fun <T> log(a: T, mc: RealCalculator<T>): Log<T> {
             if (mc.compare(a, mc.zero) <= 0 || mc.isEqual(mc.one, a)) {
                 throw IllegalArgumentException("a <= 0 || a==1")
             }
@@ -118,10 +118,10 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
          * where n is a rational number.
          * @param a
          * @param n
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return <pre>a*x^n</pre>
          */
-        fun <T> pow(a: T, n: Fraction, mc: MathCalculator<T>): Power<T> {
+        fun <T> pow(a: T, n: Fraction, mc: RealCalculator<T>): Power<T> {
             return if (mc.isZero(a)) {
                 Power(mc)
             } else Power(mc, a, n)
@@ -130,7 +130,7 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
         /**
          * Returns the function `x^(1/2)`.
          */
-        fun <T> sqrt(mc: MathCalculator<T>): Power<T> {
+        fun <T> sqrt(mc: RealCalculator<T>): Power<T> {
             return pow(Fraction.HALF, mc)
         }
 
@@ -139,10 +139,10 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
          * <pre>x^n</pre>
          * where n is a rational number.
          * @param n
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return <pre>x^n</pre>
          */
-        fun <T> pow(n: Fraction, mc: MathCalculator<T>): Power<T> {
+        fun <T> pow(n: Fraction, mc: RealCalculator<T>): Power<T> {
             return Power(mc, n)
         }
     }
@@ -161,7 +161,7 @@ class Ln<T>
 /**
  * @param mc
  */
-internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivable<T, T, Power<T>> {
+internal constructor(mc: RealCalculator<T>) : AbstractSVFunction<T>(mc), Derivable<T, T, Power<T>> {
 
     /*
      * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
@@ -185,9 +185,9 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     }
 
     /*
-     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Ln<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Ln<N> {
         return Ln(newCalculator)
     }
 
@@ -196,7 +196,7 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
      */
     override fun valueEquals(obj: MathObject<T>): Boolean {
         if (obj is Log<*>) {
-            return mc.isEqual((obj as Log<T>).a, mc.constantValue(MathCalculator.STR_E)!!)
+            return mc.isEqual((obj as Log<T>).a, mc.constantValue(RealCalculator.STR_E)!!)
         }
         return obj is Ln<*>
     }
@@ -221,7 +221,7 @@ class Log<T>
 /**
  * @param mc
  */
-(mc: MathCalculator<T>, val a: T) : AbstractSVFunction<T>(mc), Derivable<T, T, Power<T>> {
+(mc: RealCalculator<T>, val a: T) : AbstractSVFunction<T>(mc), Derivable<T, T, Power<T>> {
     /*
      * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
      */
@@ -251,9 +251,9 @@ class Log<T>
     }
 
     /*
-     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Log<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Log<N> {
         return Log(newCalculator, mapper.apply(a))
     }
 
@@ -287,7 +287,7 @@ class Power<T>
 /**
  * @param mc
  */
-@JvmOverloads internal constructor(mc: MathCalculator<T>,
+@JvmOverloads internal constructor(mc: RealCalculator<T>,
                                    /**
                                     * Gets the a:<pre>a*x^n</pre>
                                     * @return the a
@@ -304,7 +304,7 @@ class Power<T>
     /**
      * @param mc
      */
-    internal constructor(mc: MathCalculator<T>, n: Fraction) : this(mc, mc.one, n) {}
+    internal constructor(mc: RealCalculator<T>, n: Fraction) : this(mc, mc.one, n) {}
 
     /*
      * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
@@ -395,9 +395,9 @@ class Power<T>
     }
 
     /*
-     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Power<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Power<N> {
         return Power(newCalculator, mapper.apply(a), n)
     }
 
@@ -428,7 +428,7 @@ class Power<T>
  * @param <T>
  */
 class Exp<T>
-internal constructor(mc: MathCalculator<T>,
+internal constructor(mc: RealCalculator<T>,
                      /**
                       * Gets the c:<pre>c*a^x</pre>
                       * @return the c
@@ -471,9 +471,9 @@ internal constructor(mc: MathCalculator<T>,
     }
 
     /*
-     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Exp<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Exp<N> {
         return Exp(newCalculator, mapper.apply(c), mapper.apply(a))
     }
 
@@ -505,7 +505,7 @@ class Ex<T>
 /**
  * @param mc
  */
-internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), DerivableSVFunction<T> {
+internal constructor(mc: RealCalculator<T>) : AbstractSVFunction<T>(mc), DerivableSVFunction<T> {
     /*
      * @see cn.ancono.math.function.SVFunction#apply(java.lang.Object)
      */
@@ -525,9 +525,9 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     }
 
     /*
-     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Ex<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Ex<N> {
         return Ex(newCalculator)
     }
 
@@ -537,7 +537,7 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     override fun valueEquals(obj: MathObject<T>): Boolean {
         if (obj is Exp<*>) {
             val exp = obj as Exp<T>
-            return mc.isEqual(mc.one, exp.c) && mc.isEqual(mc.constantValue(MathCalculator.STR_E)!!, exp.a)
+            return mc.isEqual(mc.one, exp.c) && mc.isEqual(mc.constantValue(RealCalculator.STR_E)!!, exp.a)
         }
         return obj is Ex<*>
     }

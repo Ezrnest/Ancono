@@ -3,9 +3,9 @@
  */
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.function.SVFunction;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
 import cn.ancono.utilities.ArraySup;
 import kotlin.Triple;
@@ -36,11 +36,11 @@ public final class CalculatorUtils {
      * Returns a BiPredicate:
      * {@code (x,y)->mc.isEqual(x, mapper.apply(y))}
      *
-     * @param mc     a {@link MathCalculator}
+     * @param mc     a {@link RealCalculator}
      * @param mapper the map function
      * @return
      */
-    public static <T, S> BiPredicate<T, S> mappedIsEqual(MathCalculator<T> mc, Function<S, T> mapper) {
+    public static <T, S> BiPredicate<T, S> mappedIsEqual(RealCalculator<T> mc, Function<S, T> mapper) {
         return (x, y) -> mc.isEqual(x, mapper.apply(y));
     }
 
@@ -54,19 +54,19 @@ public final class CalculatorUtils {
         return comp < 0 ? a : b;
     }
 
-    public static <T> Function<BigInteger, T> parserBigInteger(MathCalculator<T> mc) {
+    public static <T> Function<BigInteger, T> parserBigInteger(RealCalculator<T> mc) {
         return x -> valueOfBigInteger(x, mc);
     }
 
-    public static <T> Function<Fraction, T> parserFraction(MathCalculator<T> mc) {
+    public static <T> Function<Fraction, T> parserFraction(RealCalculator<T> mc) {
         return x -> valueOfFraction(x, mc);
     }
 
-    public static <T> LongFunction<T> parserLong(MathCalculator<T> mc) {
+    public static <T> LongFunction<T> parserLong(RealCalculator<T> mc) {
         return x -> valueOfLong(x, mc);
     }
 
-    public static <T> T valueOfBigInteger(BigInteger x, MathCalculator<T> mc) {
+    public static <T> T valueOfBigInteger(BigInteger x, RealCalculator<T> mc) {
         return mc.multiplyLong(mc.getOne(), x.longValueExact());
     }
 
@@ -90,7 +90,7 @@ public final class CalculatorUtils {
      * Computes the sum of a arithmetic progression which starts from {@code start} and has the difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T sigma(T start, T end, T step, MathCalculator<T> mc) {
+    public static <T> T sigma(T start, T end, T step, RealCalculator<T> mc) {
         if (!mc.isComparable()) {
             throw new ArithmeticException("MathCalculator of type " + mc.getNumberClass() + " is not comparable.");
         }
@@ -108,10 +108,11 @@ public final class CalculatorUtils {
     }
 
     /**
-     * Computes the sum of applying {@code f} to a arithmetic progression which starts from {@code start} and has the difference of
+     * Computes the sum of applying {@code f} to a arithmetic progression which starts from {@code start} and has the
+     * difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T sigma(T start, T end, T step, MathCalculator<T> mc, SVFunction<T> f) {
+    public static <T> T sigma(T start, T end, T step, RealCalculator<T> mc, SVFunction<T> f) {
         if (!mc.isComparable()) {
             throw new ArithmeticException("MathCalculator of type " + mc.getNumberClass() + " is not comparable.");
         }
@@ -128,7 +129,7 @@ public final class CalculatorUtils {
         return re;
     }
 
-    public static <T> T sigma(int startInclusive, int endExclusive, MathCalculator<T> mc, IntFunction<T> f) {
+    public static <T> T sigma(int startInclusive, int endExclusive, RealCalculator<T> mc, IntFunction<T> f) {
         T re = mc.getZero();
         for (int i = startInclusive; i < endExclusive; i++) {
             re = mc.add(re, f.apply(i));
@@ -136,7 +137,7 @@ public final class CalculatorUtils {
         return re;
     }
 
-    public static <T> T multiplyAll(int startInclusive, int endExclusive, MathCalculator<T> mc, IntFunction<T> f) {
+    public static <T> T multiplyAll(int startInclusive, int endExclusive, RealCalculator<T> mc, IntFunction<T> f) {
         T re = mc.getOne();
         for (int i = startInclusive; i < endExclusive; i++) {
             re = mc.multiply(re, f.apply(i));
@@ -145,10 +146,11 @@ public final class CalculatorUtils {
     }
 
     /**
-     * Computes the result of multiplying all the elements in a arithmetic progression which starts from {@code start} and has the difference of
+     * Computes the result of multiplying all the elements in a arithmetic progression which starts from {@code start}
+     * and has the difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T multiplyAll(T start, T end, T step, MathCalculator<T> mc) {
+    public static <T> T multiplyAll(T start, T end, T step, RealCalculator<T> mc) {
         if (!mc.isComparable()) {
             throw new ArithmeticException("MathCalculator of type " + mc.getNumberClass() + " is not comparable.");
         }
@@ -170,7 +172,7 @@ public final class CalculatorUtils {
      * which starts from {@code start} and has the difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T multiplyAll(T start, T end, T step, MathCalculator<T> mc, SVFunction<T> f) {
+    public static <T> T multiplyAll(T start, T end, T step, RealCalculator<T> mc, SVFunction<T> f) {
         if (!mc.isComparable()) {
             throw new ArithmeticException("MathCalculator of type " + mc.getNumberClass() + " is not comparable.");
         }
@@ -235,13 +237,13 @@ public final class CalculatorUtils {
      * @param y
      * @return
      */
-    public static <T> T arctan(MathCalculator<T> mc, T x, T y) {
+    public static <T> T arctan(RealCalculator<T> mc, T x, T y) {
         if (mc.isZero(x)) {
             int comp = mc.compare(y, mc.getZero());
             if (comp == 0) {
                 throw new ArithmeticException("x=y=0!");
             }
-            T pi_2 = mc.divideLong(Objects.requireNonNull(mc.constantValue(MathCalculator.STR_PI)), 2L);
+            T pi_2 = mc.divideLong(Objects.requireNonNull(mc.constantValue(RealCalculator.STR_PI)), 2L);
             return comp > 0 ? pi_2 : mc.negate(pi_2);
         }
         return mc.arctan(mc.divide(y, x));

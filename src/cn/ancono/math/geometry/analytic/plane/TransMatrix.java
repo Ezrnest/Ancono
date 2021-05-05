@@ -1,7 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.FMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
@@ -9,6 +8,7 @@ import cn.ancono.math.algebra.linear.AbstractMatrix;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.numberModels.api.AlgebraModel;
 import cn.ancono.math.numberModels.api.GenMatrix;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.property.Composable;
 import kotlin.jvm.functions.Function1;
 import kotlin.sequences.Sequence;
@@ -343,10 +343,10 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * Where (x,y) is the coordinate before rotation, and (x',y') is the coordinate after rotation.
      *
      * @param angle the angle to rotate (anti-clockwise)
-     * @param mc    a {@link MathCalculator}
+     * @param mc    a {@link RealCalculator}
      * @return a rotation matrix
      */
-    public static <T> TransMatrix<T> rotate(T angle, MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> rotate(T angle, RealCalculator<T> mc) {
         //(cos x -sinx)
         //(sin x cos x)
         T cos = mc.cos(angle);
@@ -375,7 +375,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (0 ky)
      * </pre>
      */
-    public static <T> TransMatrix<T> multiply(T kx, T ky, MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> multiply(T kx, T ky, RealCalculator<T> mc) {
         T z = mc.getZero();
         return valueOf(kx, z, z, ky, mc);
     }
@@ -387,7 +387,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (0  1)
      * </pre>
      */
-    public static <T> TransMatrix<T> multiplyX(T kx, MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> multiplyX(T kx, RealCalculator<T> mc) {
         T z = mc.getZero();
         return valueOf(kx, z, z, mc.getOne(), mc);
     }
@@ -399,7 +399,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (0 ky)
      * </pre>
      */
-    public static <T> TransMatrix<T> multiplyY(T ky, MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> multiplyY(T ky, RealCalculator<T> mc) {
         T z = mc.getZero();
         return valueOf(mc.getOne(), z, z, ky, mc);
     }
@@ -411,7 +411,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (0 1)
      * </pre>
      *
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new TransMatrix
      */
     public static <T> TransMatrix<T> identityTrans(UnitRingCalculator<T> mc) {

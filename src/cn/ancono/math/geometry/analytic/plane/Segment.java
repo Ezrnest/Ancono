@@ -1,12 +1,12 @@
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
 import cn.ancono.math.numberModels.CalculatorUtils;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     //determines whether the x coordinate of the direct vector is zero
     final boolean xZero;
 
-    Segment(Line<T> line, Point<T> A, Point<T> B, PVector<T> v, MathCalculator<T> mc) {
+    Segment(Line<T> line, Point<T> A, Point<T> B, PVector<T> v, RealCalculator<T> mc) {
         super(mc);
         this.line = line;
         this.A = A;
@@ -37,7 +37,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
 
     @NotNull
     @Override
-    public <N> AbstractPlaneCurve<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> AbstractPlaneCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         var nline = line.mapTo(newCalculator, mapper);
         var nA = A.mapTo(newCalculator, mapper);
         var nB = B.mapTo(newCalculator, mapper);
@@ -202,7 +202,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
         if (A.valueEquals(B)) {
             throw new IllegalArgumentException("A==B");
         }
-        MathCalculator<T> mc = A.getCalculator();
+        RealCalculator<T> mc = A.getCalculator();
         Line<T> line = Line.twoPoint(A, B, mc);
         PVector<T> v = A.directVector(B);
         return new Segment<>(line, A, B, v, mc);

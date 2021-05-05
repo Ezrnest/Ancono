@@ -1,6 +1,5 @@
 package cn.ancono.math.equation;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.DecomposedPoly;
@@ -9,6 +8,7 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.AbstractSVPFunction;
 import cn.ancono.math.numberModels.CalculatorUtils;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberModels.structure.Polynomial;
@@ -35,7 +35,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         implements IPolynomial<T>, Simplifiable<T, SVPEquation<T>> {
     protected final int mp;
 
-    protected SVPEquation(MathCalculator<T> mc, int mp) {
+    protected SVPEquation(RealCalculator<T> mc, int mp) {
         super(mc);
         this.mp = mp;
     }
@@ -137,11 +137,11 @@ public abstract class SVPEquation<T> extends SVEquation<T>
     }
 
     /*
-     * @see cn.ancono.math.SingleVEquation#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.SingleVEquation#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
     @NotNull
     @Override
-    public abstract <N> SVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SVPEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * A default implements for the equation.
@@ -155,7 +155,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
         private transient int hash = 0;
 
-        DSVPEquation(MathCalculator<T> mc, T[] coes) {
+        DSVPEquation(RealCalculator<T> mc, T[] coes) {
             super(mc, coes.length - 1);
             this.coes = coes;
         }
@@ -183,7 +183,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
         @NotNull
         @Override
-        public <N> DSVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> DSVPEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newCoes = (N[]) new Object[coes.length];
             for (int i = 0; i < newCoes.length; i++) {
@@ -242,7 +242,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         /**
          * @param mc
          */
-        protected SVPFEquation(MathCalculator<T> mc, AbstractSVPFunction<T> f) {
+        protected SVPFEquation(RealCalculator<T> mc, AbstractSVPFunction<T> f) {
             super(mc, f.getDegree());
             this.f = f;
         }
@@ -272,11 +272,11 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         /*
-         * @see cn.ancono.math.SingleVEquation#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+         * @see cn.ancono.math.SingleVEquation#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
         @NotNull
         @Override
-        public <N> SVPEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> SVPEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new SVPFEquation<>(newCalculator, (AbstractSVPFunction<N>) f.mapTo(newCalculator, mapper));
         }
 
@@ -289,10 +289,10 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * For example, a list [1,2,3] represents for {@literal 3x^2+2x+1}.
      *
      * @param coes a list of coefficient
-     * @param mc   a {@link MathCalculator}
+     * @param mc   a {@link RealCalculator}
      * @return an equation
      */
-    public static <T> SVPEquation<T> valueOf(List<T> coes, MathCalculator<T> mc) {
+    public static <T> SVPEquation<T> valueOf(List<T> coes, RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) coes.toArray();
         for (int i = 0; i < arr.length; i++) {
@@ -306,13 +306,13 @@ public abstract class SVPEquation<T> extends SVEquation<T>
     /**
      * Creates an equation with it coefficients. The coefficient of x^n is {@code coes[n]}.
      *
-     * @param mc   a {@link MathCalculator}
+     * @param mc   a {@link RealCalculator}
      * @param coes an array of coefficients, if an element is {@code null},
      *             then it will be considered as zero.
      * @return a SVPEquation
      */
     @SafeVarargs
-    public static <T> SVPEquation<T> valueOf(MathCalculator<T> mc, T... coes) {
+    public static <T> SVPEquation<T> valueOf(RealCalculator<T> mc, T... coes) {
         for (int i = 0; i < coes.length; i++) {
             if (coes[i] == null) {
                 coes[i] = mc.getZero();
@@ -330,10 +330,10 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * Returns an equation from a multinomial.
      *
      * @param m  a {@link IPolynomial}
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a {@link SVPEquation}
      */
-    public static <T> SVPEquation<T> fromPolynomial(IPolynomial<T> m, MathCalculator<T> mc) {
+    public static <T> SVPEquation<T> fromPolynomial(IPolynomial<T> m, RealCalculator<T> mc) {
         if (m instanceof SVPEquation) {
             return (SVPEquation<T>) m;
         }
@@ -365,10 +365,10 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      *
      * @param a  coefficient
      * @param p  power of the expression,should be larger than 0.
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return an equation
      */
-    public static <T> SVPEquation<T> binomialPower(T a, int p, MathCalculator<T> mc) {
+    public static <T> SVPEquation<T> binomialPower(T a, int p, RealCalculator<T> mc) {
         if (p <= 0) {
             throw new IllegalArgumentException("p <= 0 ");
         }
@@ -388,14 +388,14 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         private final DecomposedPoly<T> p;
 
 
-        RootEquation(MathCalculator<T> mc, DecomposedPoly<T> p) {
+        RootEquation(RealCalculator<T> mc, DecomposedPoly<T> p) {
             super(mc, p.getDegree());
             this.p = p;
         }
 
 
         @Override
-        public <N> RootEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> RootEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new RootEquation<>(newCalculator, p.map(newCalculator, mapper::apply));
         }
 
@@ -418,10 +418,10 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      *
      * @param a  coefficient of x.
      * @param b  coefficient.
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new LEquation
      */
-    public static <T> LEquation<T> linear(T a, T b, MathCalculator<T> mc) {
+    public static <T> LEquation<T> linear(T a, T b, RealCalculator<T> mc) {
         return new LEquation<T>(mc, a, b);
     }
 
@@ -432,10 +432,10 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * @param a  the coefficient of x^2.
      * @param b  the coefficient of x.
      * @param c  the constant coefficient
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return an equation
      */
-    public static <T> QEquation<T> quadratic(T a, T b, T c, MathCalculator<T> mc) {
+    public static <T> QEquation<T> quadratic(T a, T b, T c, RealCalculator<T> mc) {
         if (mc.isZero(a)) {
             throw new IllegalArgumentException("a == 0");
         }
@@ -447,10 +447,10 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * <pre>(x-d)^2 = 0</pre>
      *
      * @param d  an coefficient
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return an equation
      */
-    public static <T> QEquation<T> perfectSquare(T d, MathCalculator<T> mc) {
+    public static <T> QEquation<T> perfectSquare(T d, RealCalculator<T> mc) {
         T a = mc.getOne();
         T b = mc.multiplyLong(d, -2l);
         T c = mc.multiply(d, d);
@@ -470,14 +470,14 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
         private final T a, b, c;
 
-        protected QEquation(MathCalculator<T> mc, T a, T b, T c) {
+        protected QEquation(RealCalculator<T> mc, T a, T b, T c) {
             super(mc, 2);
             this.a = Objects.requireNonNull(a);
             this.b = Objects.requireNonNull(b);
             this.c = Objects.requireNonNull(c);
         }
 
-        private QEquation(MathCalculator<T> mc, T a, T b, T c, T x1, T x2, T delta, int d) {
+        private QEquation(RealCalculator<T> mc, T a, T b, T c, T x1, T x2, T delta, int d) {
             super(mc, 2);
             this.a = a;
             this.b = b;
@@ -663,7 +663,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public <N> QEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> QEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new QEquation<>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c)
                     , x1 == null ? null : mapper.apply(x1), x2 == null ? null : mapper.apply(x2), delta == null ? null : mapper.apply(delta), d);
         }
@@ -743,7 +743,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         private final T a, b;
         private final T sol;
 
-        protected LEquation(MathCalculator<T> mc, T a, T b) {
+        protected LEquation(RealCalculator<T> mc, T a, T b) {
             super(mc, 1);
             if (mc.isZero(a)) {
                 throw new IllegalArgumentException("a=0");
@@ -753,7 +753,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
             sol = mc.negate(mc.divide(b, a));
         }
 
-        private LEquation(MathCalculator<T> mc, T a, T b, T sol) {
+        private LEquation(RealCalculator<T> mc, T a, T b, T sol) {
             super(mc, 1);
             this.a = Objects.requireNonNull(a);
             this.b = Objects.requireNonNull(b);
@@ -795,7 +795,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public <N> LEquation<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> LEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new LEquation<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(sol));
         }
 

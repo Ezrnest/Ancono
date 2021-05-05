@@ -1,11 +1,11 @@
 package cn.ancono.math.set;
 
 import cn.ancono.math.AbstractFlexibleMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -15,7 +15,8 @@ import java.util.function.Function;
 
 /**
  * Abstract interval is the superclass of all the interval. Interval is a set of real number which has clear
- * upper bound and downer bound, which is often shown as {@literal [a,b]}, {@literal (a,b)},  {@literal [a,b)} or {@literal (a,b]}.
+ * upper bound and downer bound, which is often shown as {@literal [a,b]}, {@literal (a,b)},  {@literal [a,b)} or
+ * {@literal (a,b]}.
  * The interval contains a number if the number fits: {@code downerBound <= number <= upperBound}, but whether the
  * equal sign is suitable is dependent on the type of the interval.
  * <p>The mathematical restriction is that {@code downerBound < upperBound}, but this class also permits that
@@ -23,8 +24,9 @@ import java.util.function.Function;
  * <p>
  * The interval is immutable, any method that returns an interval as the result will always creates a new one.
  * <p>
- * The given calculator should implement the method {@link MathCalculator#compare(Object, Object)},
- * and only when the method {@code lengthOf()} is called, the method {@link MathCalculator#subtract(Object, Object)} is needed.
+ * The given calculator should implement the method {@link RealCalculator#compare(Object, Object)},
+ * and only when the method {@code lengthOf()} is called, the method {@link RealCalculator#subtract(Object, Object)} is
+ * needed.
  *
  * @param <T> the format of number to be stored
  * @author lyc
@@ -254,7 +256,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      *
      * @param downer the downer bound
      * @param upper  the upper bound
-     * @param mc     a {@link MathCalculator}
+     * @param mc     a {@link RealCalculator}
      * @return [downer, upper]
      */
     public static <T> Interval<T> closedInterval(T downer, T upper, TotalOrderPredicate<T> mc) {
@@ -267,7 +269,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      *
      * @param downer the downer bound
      * @param upper  the upper bound
-     * @param mc     a {@link MathCalculator}
+     * @param mc     a {@link RealCalculator}
      * @return (downer, upper)
      */
     public static <T> Interval<T> openInterval(T downer, T upper, TotalOrderPredicate<T> mc) {
@@ -280,7 +282,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      *
      * @param downer the downer bound
      * @param upper  the upper bound
-     * @param mc     a {@link MathCalculator}
+     * @param mc     a {@link RealCalculator}
      * @return (downer, upper]
      */
     public static <T> Interval<T> leftOpenRightClosed(T downer, T upper, TotalOrderPredicate<T> mc) {
@@ -293,7 +295,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      *
      * @param downer the downer bound
      * @param upper  the upper bound
-     * @param mc     a {@link MathCalculator}
+     * @param mc     a {@link RealCalculator}
      * @return [downer, upper)
      */
     public static <T> Interval<T> leftClosedRightOpen(T downer, T upper, TotalOrderPredicate<T> mc) {
@@ -305,7 +307,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      *
      * @param upper  the upper bound
      * @param closed determines whether this
-     * @param mc     a {@link MathCalculator}
+     * @param mc     a {@link RealCalculator}
      * @return (- ∞, upper) or (-∞,upper]
      */
     public static <T> Interval<T> fromNegativeInf(T upper, boolean closed, TotalOrderPredicate<T> mc) {
@@ -318,7 +320,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      *
      * @param downer the downer bound
      * @param closed determines whether this
-     * @param mc     a {@link MathCalculator}
+     * @param mc     a {@link RealCalculator}
      * @return (downer, + ∞) or [downer,+∞)
      */
     public static <T> Interval<T> toPositiveInf(T downer, boolean closed, TotalOrderPredicate<T> mc) {
@@ -330,7 +332,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * Returns the interval representing the whole real number, whose downer bound
      * is negative infinity and upper bound is positive infinity.
      *
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return (- ∞, + ∞)
      */
     public static <T> Interval<T> universe(TotalOrderPredicate<T> mc) {
@@ -355,10 +357,10 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * Returns the interval representing a single real number, whose downer bound
      * and upper bound are both {@code x}
      *
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return [x, x]
      */
-    public static <T> Interval<T> single(T x, MathCalculator<T> mc) {
+    public static <T> Interval<T> single(T x, RealCalculator<T> mc) {
         return new IntervalI<T>(mc, x, x, 0);
     }
 
@@ -368,11 +370,11 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @param mc
      * @return {@literal (0,+∞)}
      */
-    public static <T> Interval<T> positive(MathCalculator<T> mc) {
+    public static <T> Interval<T> positive(RealCalculator<T> mc) {
         return toPositiveInf(mc.getZero(), false, mc);
     }
 
-    private static final Map<MathCalculator<?>, Interval<?>> negativemap = new ConcurrentHashMap<>();
+    private static final Map<RealCalculator<?>, Interval<?>> negativemap = new ConcurrentHashMap<>();
 
     /**
      * Returns the interval representing the negative numbers.
@@ -380,7 +382,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @param mc
      * @return {@literal (-∞,0)}
      */
-    public static <T> Interval<T> negative(MathCalculator<T> mc) {
+    public static <T> Interval<T> negative(RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         Interval<T> in = (Interval<T>) negativemap.get(mc);
         if (in == null) {

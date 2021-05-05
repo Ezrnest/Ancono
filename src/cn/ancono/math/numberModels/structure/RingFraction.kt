@@ -2,13 +2,13 @@ package cn.ancono.math.numberModels.structure
 
 
 import cn.ancono.math.FlexibleMathObject
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.IntCalculator
 import cn.ancono.math.numberModels.api.Simplifier
-import cn.ancono.math.numberTheory.IntCalculator
 import java.util.*
 import java.util.function.Function
 
@@ -89,10 +89,13 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
     class RFCalculator<T> internal constructor(mc: RingCalculator<T>,
                                                internal val sim: Simplifier<T>?,
                                                private val nonZero: T)
-        : MathCalculatorAdapter<RingFraction<T>>() {
+        : FieldCalculator<RingFraction<T>> {
         internal val mc: RingCalculator<T> = Objects.requireNonNull(mc)
         override val zero: RingFraction<T> = RingFraction(mc.zero, nonZero, mc)
         override val one: RingFraction<T> = RingFraction(nonZero, nonZero, mc)
+
+        override val characteristic: Long
+            get() = throw UnsupportedOperationException()
 
         /**
          * Returns a fraction that is equal to `x/1`. Note that if there is no multiplication unit in the ring,

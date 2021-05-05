@@ -1,6 +1,5 @@
 package cn.ancono.math.numberModels.api;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.numberModels.Calculators;
 
 import java.util.Map;
@@ -21,7 +20,7 @@ public interface Computable {
      * @param mc       a MathCalculator of type T
      * @return the computation result
      */
-    <T> T compute(Function<String, T> valueMap, MathCalculator<T> mc);
+    <T> T compute(Function<String, T> valueMap, RealCalculator<T> mc);
 
 
     /**
@@ -46,9 +45,9 @@ public interface Computable {
     ToDoubleFunction<String> DEFAULT_ASSIGNMENT = name -> {
         //noinspection Duplicates
         switch (name) {
-            case MathCalculator.STR_E:
+            case RealCalculator.STR_E:
                 return Math.E;
-            case MathCalculator.STR_PI:
+            case RealCalculator.STR_PI:
                 return Math.PI;
         }
         return 1d;
@@ -57,9 +56,9 @@ public interface Computable {
     ToDoubleFunction<String> DEFAULT_OR_EXCEPTION = name -> {
         //noinspection Duplicates
         switch (name) {
-            case MathCalculator.STR_E:
+            case RealCalculator.STR_E:
                 return Math.E;
-            case MathCalculator.STR_PI:
+            case RealCalculator.STR_PI:
                 return Math.PI;
         }
         throw new IllegalArgumentException();
@@ -67,8 +66,8 @@ public interface Computable {
 
     /**
      * Returns a composed function which will apply default values to variables if
-     * the given valueMap assigns the value to NaN. The default values assign {@linkplain MathCalculator#STR_PI}
-     * to {@linkplain Math#PI}, {@linkplain MathCalculator#STR_E}
+     * the given valueMap assigns the value to NaN. The default values assign {@linkplain RealCalculator#STR_PI}
+     * to {@linkplain Math#PI}, {@linkplain RealCalculator#STR_E}
      * to {@linkplain Math#E}, and remaining variables to one.
      *
      * @param valueMap a mapping function which can return NaN.

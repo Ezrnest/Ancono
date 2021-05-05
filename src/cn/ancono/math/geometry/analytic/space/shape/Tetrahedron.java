@@ -1,10 +1,10 @@
 
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.exceptions.UnsatisfiedCalculationResultException;
 import cn.ancono.math.geometry.analytic.space.*;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      * @param mc
      * @param num
      */
-    protected Tetrahedron(MathCalculator<T> mc,
+    protected Tetrahedron(RealCalculator<T> mc,
                           STriangle<T> bot, STriangle<T> f1, STriangle<T> f2, STriangle<T> f3) {
         super(mc, 3);
         ps[0] = f1.getB();
@@ -377,7 +377,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      */
     @NotNull
     @Override
-    public <N> Tetrahedron<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Tetrahedron<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         Tetrahedron<N> te = new Tetrahedron<>(newCalculator,
                 bot.mapTo(newCalculator, mapper),
                 f1.mapTo(newCalculator, mapper),
@@ -449,7 +449,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
 
     /**
      * Create a tetrahedron by four points.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param p
      * @param A

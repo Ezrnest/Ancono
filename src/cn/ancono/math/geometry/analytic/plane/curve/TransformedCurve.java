@@ -3,11 +3,11 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -28,7 +28,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
     /**
      * @param mc
      */
-    protected TransformedCurve(MathCalculator<T> mc, AbstractPlaneCurve<T> original, PAffineTrans<T> bk) {
+    protected TransformedCurve(RealCalculator<T> mc, AbstractPlaneCurve<T> original, PAffineTrans<T> bk) {
         super(mc);
         this.original = original;
         backward = bk;
@@ -59,7 +59,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 
     @NotNull
     @Override
-    public <N> TransformedCurve<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> TransformedCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         // this should be assured that the returned type is a plane curve of type N.
         AbstractPlaneCurve<N> npc = original.mapTo(newCalculator, mapper);
         return new TransformedCurve<N>(newCalculator, npc, backward.mapTo(newCalculator, mapper));

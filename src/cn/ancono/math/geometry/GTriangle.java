@@ -1,12 +1,12 @@
 package cn.ancono.math.geometry;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.*;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +44,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param B  angle B
      * @param C  angle C
      */
-    GTriangle(MathCalculator<T> mc, T a, T b, T c, T A, T B, T C) {
+    GTriangle(RealCalculator<T> mc, T a, T b, T c, T A, T B, T C) {
         super(mc);
         this.a = a;
         this.b = b;
@@ -60,7 +60,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param b  edge b
      * @param c  edge c
      */
-    GTriangle(MathCalculator<T> mc, T a, T b, T c) {
+    GTriangle(RealCalculator<T> mc, T a, T b, T c) {
         this(mc, a, b, c, null, null, null);
     }
 
@@ -247,7 +247,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
 
     @NotNull
     @Override
-    public <N> MathObject<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> MathObject<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         GTriangle<N> tri = new GTriangle<>(newCalculator,
                 mapper.apply(a),
                 mapper.apply(b),
@@ -347,7 +347,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param <T>
      * @return
      */
-    public static <T> boolean validSides(T a, T b, T c, MathCalculator<T> mc) {
+    public static <T> boolean validSides(T a, T b, T c, RealCalculator<T> mc) {
         if (mc.compare(mc.add(a, b), c) <= 0) {
             return false;
         }
@@ -368,7 +368,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param <T>
      * @return
      */
-    public static <T> GTriangle<T> sss(T a, T b, T c, MathCalculator<T> mc) {
+    public static <T> GTriangle<T> sss(T a, T b, T c, RealCalculator<T> mc) {
         //firstly check the validation of sides a,b,c
         if (mc.isComparable()) {
             if (mc.compare(mc.add(a, b), c) <= 0) {
@@ -394,7 +394,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param <T>
      * @return
      */
-    public static <T> GTriangle<T> sas(T angleA, T sideB, T sideC, MathCalculator<T> mc) {
+    public static <T> GTriangle<T> sas(T angleA, T sideB, T sideC, RealCalculator<T> mc) {
         if (mc.isComparable()) {
             if (!Calculators.isPositive(sideB, mc)) {
                 throw new IllegalArgumentException("b<=0");
@@ -402,7 +402,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
             if (!Calculators.isPositive(sideC, mc)) {
                 throw new IllegalArgumentException("c<=0");
             }
-            if (!Calculators.between(angleA, mc.getZero(), mc.constantValue(MathCalculator.STR_PI), mc)) {
+            if (!Calculators.between(angleA, mc.getZero(), mc.constantValue(RealCalculator.STR_PI), mc)) {
                 throw new IllegalArgumentException("A<=0 or A>=pi");
             }
         }
@@ -410,13 +410,13 @@ public class GTriangle<T> extends AbstractMathObject<T> {
         return new GTriangle<>(mc, a, sideB, sideC, angleA, null, null);
     }
 
-    public static <T> T oppositeSide(T sideA, T sideB, T angleC, MathCalculator<T> mc) {
+    public static <T> T oppositeSide(T sideA, T sideB, T angleC, RealCalculator<T> mc) {
         return oppositeSideCos(sideA, sideB, mc.cos(angleC), mc);
     }
 
     static final ComputeExpression LAW_OF_COSINE = ComputeExpression.compile("$0^2+$1^2-2$0$1$2");
 
-    public static <T> T oppositeSideCos(T sideA, T sideB, T cosC, MathCalculator<T> mc) {
+    public static <T> T oppositeSideCos(T sideA, T sideB, T cosC, RealCalculator<T> mc) {
         return mc.squareRoot(LAW_OF_COSINE.compute(mc, sideA, sideB, cosC));
     }
 
@@ -430,7 +430,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param <T>
      * @return
      */
-    public static <T> T oppositeAngleCos(T a, T b, T c, MathCalculator<T> mc) {
+    public static <T> T oppositeAngleCos(T a, T b, T c, RealCalculator<T> mc) {
         //a²=b²+c²-2bcCos(A)
         T nume = mc.subtract(mc.add(Calculators.square(b, mc), Calculators.square(c, mc)), Calculators.square(a, mc));
         T deno = mc.multiplyLong(mc.multiply(b, c), 2l);
@@ -448,8 +448,8 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param <T>
      * @return
      */
-    public static <T> GTriangle<T> asa(T angleB, T sideA, T angleC, MathCalculator<T> mc) {
-        T angleA = mc.subtract(mc.constantValue(MathCalculator.STR_PI), mc.add(angleB, angleC));
+    public static <T> GTriangle<T> asa(T angleB, T sideA, T angleC, RealCalculator<T> mc) {
+        T angleA = mc.subtract(mc.constantValue(RealCalculator.STR_PI), mc.add(angleB, angleC));
         if (mc.isComparable()) {
             if (!Calculators.isPositive(sideA, mc)) {
                 throw new IllegalArgumentException("a<=0");
@@ -483,7 +483,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param <T>
      * @return
      */
-    public static <T> List<GTriangle<T>> ssaList(T sideA, T sideB, T angleA, MathCalculator<T> mc) {
+    public static <T> List<GTriangle<T>> ssaList(T sideA, T sideB, T angleA, RealCalculator<T> mc) {
         T h = mc.multiply(sideB, mc.sin(angleA));
         if (!mc.isComparable()) {
             return ssaTwo(sideA, sideB, angleA, h, mc);
@@ -505,7 +505,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
         return Collections.singletonList(ssaOne(sideA, sideB, angleA, h, mc));
     }
 
-    private static <T> List<GTriangle<T>> ssaTwo(T sideA, T sideB, T angleA, T h, MathCalculator<T> mc) {
+    private static <T> List<GTriangle<T>> ssaTwo(T sideA, T sideB, T angleA, T h, RealCalculator<T> mc) {
         T bcos = mc.multiply(sideB, mc.cos(angleA));
         T acos = mc.squareRoot(mc.subtract(Calculators.square(sideA, mc), Calculators.square(h, mc)));
         T sideC1 = mc.add(bcos, acos);
@@ -520,7 +520,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
         return list;
     }
 
-    private static <T> GTriangle<T> ssaOneH(T sideA, T sideB, T angleA, MathCalculator<T> mc) {
+    private static <T> GTriangle<T> ssaOneH(T sideA, T sideB, T angleA, RealCalculator<T> mc) {
         T angleB = mc.divideLong(Calculators.pi(mc), 2);
         T sideC = mc.multiply(sideB, mc.cos(angleA));
         var tri = new GTriangle<>(mc, sideA, sideB, sideC);
@@ -529,7 +529,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
         return tri;
     }
 
-    private static <T> GTriangle<T> ssaOne(T sideA, T sideB, T angleA, T h, MathCalculator<T> mc) {
+    private static <T> GTriangle<T> ssaOne(T sideA, T sideB, T angleA, T h, RealCalculator<T> mc) {
         T bcos = mc.multiply(sideB, mc.cos(angleA));
         T acos = mc.squareRoot(mc.subtract(Calculators.square(sideA, mc), Calculators.square(h, mc)));
         T sideC = mc.add(bcos, acos);
@@ -539,14 +539,14 @@ public class GTriangle<T> extends AbstractMathObject<T> {
     }
 
 
-    private static <T> void checkValidSSA(T sideA, T sideB, T angleA, MathCalculator<T> mc) {
+    private static <T> void checkValidSSA(T sideA, T sideB, T angleA, RealCalculator<T> mc) {
         if (!Calculators.isPositive(sideA, mc)) {
             throw new IllegalArgumentException("a<=0");
         }
         if (!Calculators.isPositive(sideB, mc)) {
             throw new IllegalArgumentException("b<=0");
         }
-        if (!Calculators.between(angleA, mc.getZero(), mc.constantValue(MathCalculator.STR_PI), mc)) {
+        if (!Calculators.between(angleA, mc.getZero(), mc.constantValue(RealCalculator.STR_PI), mc)) {
             throw new IllegalArgumentException("A<=0 or A>=pi");
         }
     }
@@ -563,7 +563,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
      * @param <T>
      * @return
      */
-    public static <T> GTriangle<T> ssa(T sideA, T sideB, T angleA, MathCalculator<T> mc) {
+    public static <T> GTriangle<T> ssa(T sideA, T sideB, T angleA, RealCalculator<T> mc) {
         if (!mc.isComparable()) {
             throw new IllegalArgumentException();
         }

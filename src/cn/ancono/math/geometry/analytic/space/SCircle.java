@@ -3,10 +3,10 @@
  */
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.Circle;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -24,7 +24,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
     /**
      * @param mc
      */
-    protected SCircle(MathCalculator<T> mc, SPoint<T> o, T r2, Plane<T> pl) {
+    protected SCircle(RealCalculator<T> mc, SPoint<T> o, T r2, Plane<T> pl) {
         super(mc, pl);
         this.o = o;
         this.r2 = r2;
@@ -104,7 +104,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return the area of this circle
      */
     public T getArea() {
-        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        T pi = getMc().constantValue(RealCalculator.STR_PI);
         return getMc().multiply(pi, r2);
     }
 
@@ -114,7 +114,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return the perimeter of this circle.
      */
     public T getPerimeter() {
-        T pi = getMc().constantValue(MathCalculator.STR_PI);
+        T pi = getMc().constantValue(RealCalculator.STR_PI);
         return getMc().multiply(getMc().multiplyLong(pi, 2l), getRadius());
     }
 
@@ -202,11 +202,11 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
     @NotNull
     @Override
-    public <N> SCircle<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> SCircle<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         SCircle<N> sc = new SCircle<N>(newCalculator,
                 o.mapTo(newCalculator, mapper), mapper.apply(r2), pl.mapTo(newCalculator, mapper));
         fillFields(sc, mapper);

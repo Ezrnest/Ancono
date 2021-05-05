@@ -1,6 +1,5 @@
 package cn.ancono.math.algebra.abs.field
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberTheory.Primes
@@ -23,7 +22,7 @@ class PField(val p: Int) : AbstractFiniteField<Int>() {
         }
     }
 
-    private val mc: MathCalculator<Int> = Calculators.intModP(p)
+    private val mc: FieldCalculator<Int> = Calculators.intModP(p)
 
 
     private val elements: FiniteSet<Int> = MathSets.asSet(mc, *Array(p) { it })

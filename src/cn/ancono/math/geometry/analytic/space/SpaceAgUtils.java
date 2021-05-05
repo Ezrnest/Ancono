@@ -3,8 +3,8 @@
  */
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.numberModels.Calculators;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
  * A tool for spaceAG.
@@ -46,7 +46,7 @@ public final class SpaceAgUtils {
      * @return
      */
     public static <T> int compareVector(SVector<T> v1, SVector<T> v2) {
-        MathCalculator<T> mc = (MathCalculator<T>) v1.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) v1.getCalculator();
         T t1 = v1.x, t2 = v2.x;
         if (mc.isZero(t1)) {
             if (mc.isZero(v2.y)) {

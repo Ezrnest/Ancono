@@ -6,7 +6,7 @@ package test.math;
 import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.equation.Type;
 import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.junit.Test;
 
 import static cn.ancono.utilities.Printer.print;
@@ -23,7 +23,7 @@ public class TestEquation {
     public TestEquation() {
     }
 
-    MathCalculator<Double> mc = Calculators.doubleCal();
+    RealCalculator<Double> mc = Calculators.doubleCal();
 
     @Test
     public void testSolve() {

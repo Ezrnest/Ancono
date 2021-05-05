@@ -1,12 +1,12 @@
 package cn.ancono.math.geometry.analytic.space.transform
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.MathObject
 import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.geometry.analytic.space.SPoint
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.utilities.StringSup
 import java.util.function.Function
 
@@ -20,7 +20,7 @@ import java.util.function.Function
  * </pre>
  * (x',y',z', _ ) = mat * (x,y,z,1)T
  */
-class STransMatrix<T> internal constructor(mc: MathCalculator<T>, val matrix: Matrix<T>) : MathObjectExtend<T>(mc) {
+class STransMatrix<T> internal constructor(mc: RealCalculator<T>, val matrix: Matrix<T>) : MathObjectExtend<T>(mc) {
 
     val rotateMatrix: SRotateMatrix<T> = SRotateMatrix.valueOf(matrix.subMatrix(0, 0, 3, 3))
 
@@ -32,7 +32,7 @@ class STransMatrix<T> internal constructor(mc: MathCalculator<T>, val matrix: Ma
     }
 
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): STransMatrix<N> {
+    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): STransMatrix<N> {
         return STransMatrix(newCalculator, matrix.mapTo(newCalculator, mapper))
     }
 

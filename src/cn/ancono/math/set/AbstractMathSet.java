@@ -4,8 +4,8 @@
 package cn.ancono.math.set;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -21,13 +21,13 @@ public abstract class AbstractMathSet<T> extends AbstractMathObject<T> implement
     /**
      * @param mc
      */
-    protected AbstractMathSet(MathCalculator<T> mc) {
+    protected AbstractMathSet(RealCalculator<T> mc) {
         super(mc);
     }
 
     @NotNull
     @Override
-    public abstract <N> AbstractMathSet<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractMathSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
 }

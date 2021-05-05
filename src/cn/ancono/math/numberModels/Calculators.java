@@ -3,11 +3,14 @@
  */
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathUtils;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
-import cn.ancono.math.numberTheory.IntCalculator;
+import cn.ancono.math.numberModels.api.IntCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberTheory.NTUtils;
 import cn.ancono.math.numberTheory.Primes;
 import cn.ancono.math.numberTheory.ZModPCalculator;
@@ -20,7 +23,7 @@ import java.math.MathContext;
 import java.util.List;
 
 /**
- * Provides some utility methods for {@link MathCalculator}
+ * Provides some utility methods for {@link RealCalculator}
  *
  * @author liyicheng
  * 2017-09-22 20:35
@@ -38,7 +41,7 @@ public final class Calculators {
      * Determines whether the two numbers are the identity in sign, which means they are both positive, negative or
      * zero.
      */
-    public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, MathCalculator<T> mc) {
+    public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, RealCalculator<T> mc) {
         T z = mc.getZero();
         //noinspection SuspiciousNameCombination
         return mc.compare(x, z) == mc.compare(y, z);
@@ -51,61 +54,61 @@ public final class Calculators {
      * @param mc
      * @return
      */
-    public static <T> int signum(@NotNull T x, MathCalculator<T> mc) {
+    public static <T> int signum(@NotNull T x, RealCalculator<T> mc) {
         return mc.compare(x, mc.getZero());
     }
 
-    public static <T> boolean isPositive(@NotNull T x, @NotNull MathCalculator<T> mc) {
+    public static <T> boolean isPositive(@NotNull T x, @NotNull RealCalculator<T> mc) {
         return signum(x, mc) > 0;
     }
 
-    public static <T> boolean isNegative(@NotNull T x, @NotNull MathCalculator<T> mc) {
+    public static <T> boolean isNegative(@NotNull T x, @NotNull RealCalculator<T> mc) {
         return signum(x, mc) < 0;
     }
 
     /**
      * Determines whether a<x<b or b<x<a.
      */
-    public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, MathCalculator<T> mc) {
+    public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, RealCalculator<T> mc) {
         return mc.compare(a, x) * mc.compare(x, b) > 0;
     }
 
     /**
      * Returns {@code (x-a)(y-a)<=0}
      */
-    public static <T> boolean oppositeSign(T x, T y, T a, MathCalculator<T> mc) {
+    public static <T> boolean oppositeSign(T x, T y, T a, RealCalculator<T> mc) {
         return mc.compare(x, a) * mc.compare(y, a) <= 0;
     }
 
-    public static <T> T square(@NotNull T x, MathCalculator<T> mc) {
+    public static <T> T square(@NotNull T x, RealCalculator<T> mc) {
         return mc.multiply(x, x);
     }
 
-    public static <T> T cube(@NotNull T x, MathCalculator<T> mc) {
+    public static <T> T cube(@NotNull T x, RealCalculator<T> mc) {
         return mc.multiply(x, mc.multiply(x, x));
     }
 
-    public static <T> T doubleOf(@NotNull T x, MathCalculator<T> mc) {
+    public static <T> T doubleOf(@NotNull T x, RealCalculator<T> mc) {
         return mc.multiplyLong(x, 2L);
     }
 
-    public static <T> T half(@NotNull T x, MathCalculator<T> mc) {
+    public static <T> T half(@NotNull T x, RealCalculator<T> mc) {
         return mc.divideLong(x, 2L);
     }
 
-    public static <T> T plus1(@NotNull T x, MathCalculator<T> mc) {
+    public static <T> T plus1(@NotNull T x, RealCalculator<T> mc) {
         return mc.add(x, mc.getOne());
     }
 
-    public static <T> T minus1(@NotNull T x, MathCalculator<T> mc) {
+    public static <T> T minus1(@NotNull T x, RealCalculator<T> mc) {
         return mc.add(x, mc.getOne());
     }
 
-    public static <T> T pi(MathCalculator<T> mc) {
-        return mc.constantValue(MathCalculator.STR_PI);
+    public static <T> T pi(RealCalculator<T> mc) {
+        return mc.constantValue(RealCalculator.STR_PI);
     }
 
-    public static <T> T hypot(@NotNull T a, @NotNull T b, MathCalculator<T> mc) {
+    public static <T> T hypot(@NotNull T a, @NotNull T b, RealCalculator<T> mc) {
         return mc.squareRoot(mc.add(square(a, mc), square(b, mc)));
     }
 
@@ -1540,7 +1543,7 @@ public final class Calculators {
      * @param mc a math context
      * @return a MathCalculator
      */
-    public static MathCalculator<BigDecimal> bigDecimal(MathContext mc) {
+    public static RealCalculator<BigDecimal> bigDecimal(MathContext mc) {
         return new BigDecimalCalculator(mc);
     }
 
@@ -1549,12 +1552,12 @@ public final class Calculators {
      * <p>The calculator has {@code MathCalculator#STR_PI} and {@code MathCalculator#STR_E} as constant values,
      * which are the double values in Math.<p>
      * This calculator doesn't consider the deviation of double and it
-     * {@link MathCalculator#isEqual(Object, Object)} method is just equal to {@code d1 == d2}.
+     * {@link RealCalculator#isEqual(Object, Object)} method is just equal to {@code d1 == d2}.
      *
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> doubleCal() {
+    public static RealCalculator<Double> doubleCal() {
         return DoubleCalculator.dc;
     }
 
@@ -1568,7 +1571,7 @@ public final class Calculators {
      * @return a MathCalculator
      */
     @NotNull
-    public static MathCalculator<Double> doubleDev() {
+    public static RealCalculator<Double> doubleDev() {
         return DoubleCalculatorWithDeviation.dc;
     }
 
@@ -1580,11 +1583,11 @@ public final class Calculators {
      *
      * @return a MathCalculator
      */
-    public static MathCalculator<Double> doubleDev(double dev) {
+    public static RealCalculator<Double> doubleDev(double dev) {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
-    public static class ZModNCalculator extends MathCalculatorAdapter<Integer> {
+    public static class ZModNCalculator implements UnitRingCalculator<Integer>, TotalOrderPredicate<Integer> {
         protected final int n;
 
         ZModNCalculator(int n) {
@@ -1624,16 +1627,16 @@ public final class Calculators {
             return 0;
         }
 
+
+        @Override
+        public boolean isCommutative() {
+            return true;
+        }
+
         @Override
         public int compare(@NotNull Integer x, @NotNull Integer y) {
             return x.compareTo(y);
         }
-
-        @Override
-        public boolean isComparable() {
-            return true;
-        }
-
 
         @Override
         public boolean isZero(@NotNull Integer para) {
@@ -1685,13 +1688,11 @@ public final class Calculators {
 
 
         @NotNull
-        @Override
         public Integer reciprocal(@NotNull Integer x) {
             return inverseOf(x);
         }
 
         @NotNull
-        @Override
         public Integer divide(@NotNull Integer x, @NotNull Integer y) {
             //noinspection SuspiciousNameCombination
             return multiply(x.intValue(), inverseOf(y));
@@ -1714,7 +1715,6 @@ public final class Calculators {
         }
 
         @NotNull
-        @Override
         public Integer divideLong(@NotNull Integer x, long n) {
             return multiply(x.intValue(), inverseOf(modN(n)));
         }
@@ -1727,7 +1727,6 @@ public final class Calculators {
 
 
         @NotNull
-        @Override
         public Integer squareRoot(@NotNull Integer x) {
             int _x = x;
             for (int n = 0; n < this.n; n++) {
@@ -1745,38 +1744,6 @@ public final class Calculators {
             return MathUtils.powMod(p, exp, this.n);
         }
 
-        @NotNull
-        @Override
-        public Integer exp(@NotNull Integer a, @NotNull Integer b) {
-            return MathUtils.powMod(a, b, n);
-        }
-
-//        @Override
-//        public Integer powerAndMod(Integer at, Integer nt, Integer mt) {
-//            return powerAndMod(at, nt.longValue(), mt);
-//        }
-//
-//        @Override
-//        public Integer powerAndMod(Integer at, long n, Integer m) {
-//            int a = modP(at);
-//            int mod = m;
-//            if (mod == 1) {
-//                return 0;
-//            }
-//            if (a == 0 || a == 1) {
-//                return a;
-//            }
-//            int ans = 1;
-//            a = a % mod;
-//            while (n > 0) {
-//                if ((n & 1) == 1) {
-//                    ans = multiply(a, ans) % mod;
-//                }
-//                a = multiply(a, a) % mod;
-//                n >>= 1;
-//            }
-//            return ans;
-//        }
 
         @NotNull
         @Override
@@ -1785,7 +1752,6 @@ public final class Calculators {
         }
 
         @NotNull
-        @Override
         public Integer abs(@NotNull Integer x) {
             return modN(x);
         }
@@ -1947,13 +1913,6 @@ public final class Calculators {
             return p;
         }
 
-        @Override
-        public @NotNull Integer exp(@NotNull Integer a, @NotNull Integer b) {
-            if (a == 0 && b == 0) {
-                ExceptionUtil.zeroExponent();
-            }
-            return a;
-        }
 
         @Override
         public @NotNull Integer negate(@NotNull Integer para) {
@@ -2011,15 +1970,19 @@ public final class Calculators {
     /**
      * Returns a calculator for ring <code>Z<sub>n</sub></code>, where <code>n >= 2</code>.
      */
-    public static MathCalculator<Integer> intModN(int n) {
+    public static UnitRingCalculator<Integer> intModN(int n) {
         if (n < 2) {
             throw new IllegalArgumentException("It is required that n >= 2");
         }
         return new ZModNCalculator(n);
     }
 
+    static class BooleanCalculator implements FieldCalculator<Boolean>, TotalOrderPredicate<Boolean> {
 
-    static class BooleanCalculator extends MathCalculatorAdapter<Boolean> {
+        @Override
+        public long getCharacteristic() {
+            return 2L;
+        }
 
         @NotNull
         @Override
@@ -2048,10 +2011,6 @@ public final class Calculators {
             return Boolean.compare(x, y);
         }
 
-        @Override
-        public boolean isComparable() {
-            return true;
-        }
 
         @NotNull
         @Override
@@ -2066,7 +2025,6 @@ public final class Calculators {
         }
 
         @NotNull
-        @Override
         public Boolean abs(@NotNull Boolean x) {
             return x;
         }
@@ -2117,13 +2075,11 @@ public final class Calculators {
         }
 
         @NotNull
-        @Override
         public Boolean squareRoot(@NotNull Boolean x) {
             return x;
         }
 
         @NotNull
-        @Override
         public Boolean nroot(@NotNull Boolean x, long n) {
             return x;
         }
@@ -2153,7 +2109,7 @@ public final class Calculators {
     /**
      * Returns a calculator for boolean as binary field F2.
      */
-    public static MathCalculator<Boolean> bool() {
+    public static FieldCalculator<Boolean> bool() {
         return BooleanCalculator.INSTANCE;
     }
 

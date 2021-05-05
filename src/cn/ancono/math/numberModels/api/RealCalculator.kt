@@ -1,13 +1,11 @@
-package cn.ancono.math
+package cn.ancono.math.numberModels.api
 
-import cn.ancono.math.algebra.abs.calculator.FieldCalculator
-import cn.ancono.math.algebra.abs.calculator.QCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
 import cn.ancono.math.numberModels.Fraction
 
-/**
+/*
  * Describes a general calculator that can perform basic operations for
  * number models. This interface is created to give some math objects full
  * flexibility to operate with all kind of number models.
@@ -41,7 +39,13 @@ import cn.ancono.math.numberModels.Fraction
  * @author lyc
  * @see MathObject
  */
-interface MathCalculator<T> : QCalculator<T> {
+
+//Created by lyc at 2021-05-05 18:59
+
+/**
+ * Describes the calculator for real numbers or its generalization.
+ */
+interface RealCalculator<T> : QCalculator<T> {
 
     /**
      * Determines whether this calculator supports `compare()` method.
@@ -90,7 +94,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x a number
      * @param y another number
      * @return `true` if `para1 == para2`,otherwise `false`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      */
     override fun isEqual(x: T, y: T): Boolean
 
@@ -115,7 +118,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x a number
      * @param y another number
      * @return `para1 + para2`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     override fun add(x: T, y: T): T
@@ -135,7 +137,6 @@ interface MathCalculator<T> : QCalculator<T> {
      *
      * @param ps a list of numbers
      * @return the sum of `ps`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
@@ -152,7 +153,6 @@ interface MathCalculator<T> : QCalculator<T> {
      *
      * @param x a number
      * @return `-para`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     override fun negate(x: T): T
@@ -174,7 +174,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x a number
      * @param y another number
      * @return `para1-para2`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
@@ -187,7 +186,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x a number
      * @param y another number
      * @return `x * y`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     override fun multiply(x: T, y: T): T
@@ -203,7 +201,6 @@ interface MathCalculator<T> : QCalculator<T> {
      *
      * @param ps a list of numbers
      * @return the result
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
@@ -221,7 +218,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x a number as dividend
      * @param y another number as divisor
      * @return `x / y`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
@@ -233,7 +229,6 @@ interface MathCalculator<T> : QCalculator<T> {
      *
      * @param x a number
      * @return `1/p`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     override fun reciprocal(x: T): T
@@ -246,7 +241,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x a number
      * @param n another number of long
      * @return `x*n`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
@@ -260,7 +254,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x a number as dividend
      * @param n another number of long as divisor
      * @return `x / n`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
@@ -299,7 +292,6 @@ interface MathCalculator<T> : QCalculator<T> {
      * @param x   a number
      * @param n the exponent
      * @return `p ^ exp`.
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
@@ -489,7 +481,6 @@ interface MathCalculator<T> : QCalculator<T> {
     }
 
 
-
     companion object {
 
         /**
@@ -509,12 +500,12 @@ interface MathCalculator<T> : QCalculator<T> {
         const val STR_I = "i"
 
         /**
-         * Returns a [MathCalculator] based on the given [mc] and the [Bijection] [f]. It is assured that [mappedCalculator(mc,Bijection.identity()]
+         * Returns a [RealCalculator] based on the given [mc] and the [Bijection] [f]. It is assured that [mappedCalculator(mc,Bijection.identity()]
          * returns the identity value of all methods as [mc].
          */
         @Suppress("unused")
-        fun <T, S> mappedCalculator(mc: MathCalculator<T>, f: Bijection<T, S>): MathCalculator<S> {
-            return object : MathCalculator<S> {
+        fun <T, S> mappedCalculator(mc: RealCalculator<T>, f: Bijection<T, S>): RealCalculator<S> {
+            return object : RealCalculator<S> {
                 override val isComparable: Boolean = mc.isComparable
                 override val zero: S = f(mc.zero)
                 override val one: S = f(mc.one)

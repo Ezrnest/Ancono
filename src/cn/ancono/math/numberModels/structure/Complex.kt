@@ -2,7 +2,6 @@ package cn.ancono.math.numberModels.structure
 
 import cn.ancono.math.AbstractFlexibleMathObject
 import cn.ancono.math.FMathObject
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
@@ -130,7 +129,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
      */
     fun modulus(): T {
         if (m == null) {
-            val mc = calculator as MathCalculator
+            val mc = calculator as RealCalculator
             m = mc.squareRoot(mc.add(mc.multiply(a, a), mc.multiply(b, b)))
         }
         return m!!
@@ -157,7 +156,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
      * @return point(a,b)
      */
     fun toPoint(): Point<T> {
-        return Point.valueOf(a, b, calculator as MathCalculator<T>)
+        return Point.valueOf(a, b, calculator as RealCalculator<T>)
     }
 
     /**
@@ -182,8 +181,8 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
      */
     fun arg(): T {
         if (arg == null) {
-            val mc = calculator as MathCalculator
-            val pi = mc.constantValue(MathCalculator.STR_PI)!!
+            val mc = calculator as RealCalculator
+            val pi = mc.constantValue(RealCalculator.STR_PI)!!
             val compa = mc.compare(a, mc.zero)
             val compb = mc.compare(b, mc.zero)
             if (compa == 0) {
@@ -359,7 +358,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
 
 
     fun squareRoot(): Complex<T> {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         fun nonNegative(t: T): Boolean {
             return mc.compare(t, mc.zero) > 0
         }
@@ -391,7 +390,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
      * Returns a complex `x` that `x^n = this`.
      */
     fun nroot(n: Long): Complex<T> {
-        val mc = calculator as MathCalculator
+        val mc = calculator as RealCalculator
         if (isReal()) {
             return real(mc.nroot(a, n), mc)
         }
@@ -560,7 +559,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
         }
 
         /**
-         * @see MathCalculator.nroot
+         * @see RealCalculator.nroot
          */
         override fun nroot(x: Complex<T>, n: Long): Complex<T> {
             return x.nroot(n)
@@ -576,7 +575,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
                     return Complex(mc, mc.zero, mc.one)
                 }
             }
-            val x = (mc as MathCalculator).constantValue(name) ?: return null
+            val x = (mc as RealCalculator).constantValue(name) ?: return null
             return Complex(mc, x, mc.zero)
         }
 
@@ -586,7 +585,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
          * argument is equal to b.
          */
         override fun exp(x: Complex<T>): Complex<T> {
-            return modArg((mc as MathCalculator).exp(x.a), x.b, mc)
+            return modArg((mc as RealCalculator).exp(x.a), x.b, mc)
         }
 
         /**
@@ -872,7 +871,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
          * <pre>a + bi</pre>
          * @param a real part of the complex
          * @param b imaginary part of the complex
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new complex.
          */
         @JvmStatic
@@ -901,7 +900,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
          * <pre>a</pre>
          * The imaginary part of this number will be 0.
          * @param a the real part
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new complex.
          */
         @JvmStatic
@@ -920,7 +919,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
          * <pre>bi</pre>
          * The real part of this number will be 0.
          * @param b the imaginary part
-         * @param mc a [MathCalculator]
+         * @param mc a [RealCalculator]
          * @return a new complex.
          */
         @JvmStatic
@@ -936,7 +935,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
          * @return
          */
         @JvmStatic
-        fun <T> modArg(r: T, theta: T, mc: MathCalculator<T>): Complex<T> {
+        fun <T> modArg(r: T, theta: T, mc: RealCalculator<T>): Complex<T> {
             return Complex(mc, mc.multiply(r, mc.cos(theta)), mc.multiply(r, mc.sin(theta)))
         }
 
@@ -952,7 +951,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
          * Gets a calculator for the extended complex.
          */
         @JvmStatic
-        fun <T> calculatorE(mc: MathCalculator<T>): ComplexECalculator<T> {
+        fun <T> calculatorE(mc: RealCalculator<T>): ComplexECalculator<T> {
             return ComplexECalculator(calculator(mc))
         }
 
@@ -975,7 +974,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
         /**
          * Returns the bijection of stereographic projection from north pole (0,0,1).
          */
-        fun <T> stereographicProjection(mc: MathCalculator<T>): Bijection<SPoint<T>, ComplexE<T>> {
+        fun <T> stereographicProjection(mc: RealCalculator<T>): Bijection<SPoint<T>, ComplexE<T>> {
             return object : Bijection<SPoint<T>, ComplexE<T>> {
                 override fun apply(x: SPoint<T>): ComplexE<T> {
                     //x/(1-z),y/(1-z)

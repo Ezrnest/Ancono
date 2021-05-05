@@ -1,10 +1,10 @@
 package cn.ancono.math.algebra.linear;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.numberModels.Fraction;
+import cn.ancono.math.numberModels.api.RealCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,43 +102,43 @@ public class MatrixSup {
         }
     }
 
-    public static <T> void multiplyAndAddColumn(T[][] mat, int c1, int c2, T f, MathCalculator<T> mc) {
+    public static <T> void multiplyAndAddColumn(T[][] mat, int c1, int c2, T f, RealCalculator<T> mc) {
         for (int i = 0; i < mat.length; i++) {
             mat[i][c2] = mc.add(mat[i][c2], mc.multiply(mat[i][c1], f));
         }
     }
 
-    public static <T> void multiplyAndAddRow(T[][] mat, int r1, int r2, T f, MathCalculator<T> mc) {
+    public static <T> void multiplyAndAddRow(T[][] mat, int r1, int r2, T f, RealCalculator<T> mc) {
         for (int i = 0; i < mat[r1].length; i++) {
             mat[r2][i] = mc.add(mat[r2][i], mc.multiply(mat[r1][i], f));
         }
     }
 
-    public static <T> void multiplyAndAddRow(T[][] mat, int r1, int r2, int fromColumn, T f, MathCalculator<T> mc) {
+    public static <T> void multiplyAndAddRow(T[][] mat, int r1, int r2, int fromColumn, T f, RealCalculator<T> mc) {
         for (int i = fromColumn; i < mat[r1].length; i++) {
             mat[r2][i] = mc.add(mat[r2][i], mc.multiply(mat[r1][i], f));
         }
     }
 
-    public static <T> void multiplyNumberColumn(T[][] mat, int c, T f, MathCalculator<T> mc) {
+    public static <T> void multiplyNumberColumn(T[][] mat, int c, T f, RealCalculator<T> mc) {
         for (int i = 0; i < mat.length; i++) {
             mat[i][c] = mc.multiply(mat[i][c], f);
         }
     }
 
-    public static <T> void multiplyNumberRow(T[][] mat, int r, T f, MathCalculator<T> mc) {
+    public static <T> void multiplyNumberRow(T[][] mat, int r, T f, RealCalculator<T> mc) {
         for (int i = 0; i < mat[r].length; i++) {
             mat[r][i] = mc.multiply(mat[r][i], f);
         }
     }
 
-    public static <T> void multiplyNumberRow(T[][] mat, int r, int fromColumn, T f, MathCalculator<T> mc) {
+    public static <T> void multiplyNumberRow(T[][] mat, int r, int fromColumn, T f, RealCalculator<T> mc) {
         for (int i = fromColumn; i < mat[r].length; i++) {
             mat[r][i] = mc.multiply(mat[r][i], f);
         }
     }
 
-    public static <T> void addMatrix(T[][] dest, T[][] toAdd, MathCalculator<T> mc) {
+    public static <T> void addMatrix(T[][] dest, T[][] toAdd, RealCalculator<T> mc) {
         for (int i = 0; i < dest.length; i++) {
             for (int j = 0; j < dest[i].length; j++) {
                 dest[i][j] = mc.add(dest[i][j], toAdd[i][j]);
@@ -146,7 +146,7 @@ public class MatrixSup {
         }
     }
 
-    public static <T> void multiplyMatrix(T[][] dest, T k, MathCalculator<T> mc) {
+    public static <T> void multiplyMatrix(T[][] dest, T k, RealCalculator<T> mc) {
         for (int i = 0; i < dest.length; i++) {
             for (int j = 0; j < dest[i].length; j++) {
                 dest[i][j] = mc.multiply(k, dest[i][j]);
@@ -276,7 +276,7 @@ public class MatrixSup {
     }
 
     public static <T> Matrix<T> parseMatrix(String str, String rowDeliminator, String columnDeliminator,
-                                            MathCalculator<T> mc, Function<String, ? extends T> parser) {
+                                            RealCalculator<T> mc, Function<String, ? extends T> parser) {
         String[] rows = str.split(rowDeliminator);
         String[][] data = new String[rows.length][];
         for (int i = 0; i < rows.length; i++) {
@@ -337,7 +337,7 @@ public class MatrixSup {
      * @param deliminator the deliminator which will be treated as regex
      */
     public static <T> Vector<T> parseVector(String str, String deliminator,
-                                            MathCalculator<T> mc, Function<String, ? extends T> parser) {
+                                            RealCalculator<T> mc, Function<String, ? extends T> parser) {
         return parseVector0(str, Pattern.compile(deliminator), mc, parser);
     }
 
@@ -701,7 +701,7 @@ public class MatrixSup {
      * <p>
      * It is required that the calculator of the matrix supports the method
      * {@link cn.ancono.math.algebra.abs.calculator.UnitRingCalculator#isUnit(Object)} and
-     * {@link MathCalculator#divide(Object, Object)}
+     * {@link RealCalculator#divide(Object, Object)}
      *
      * <p>
      * This method can be used to compute the modular inverse of a matrix on Z/Zn, where n is not necessarily a prime.

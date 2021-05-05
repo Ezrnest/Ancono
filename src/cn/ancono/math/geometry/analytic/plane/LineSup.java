@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifier;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class LineSup {
         // |a1 b1 c1|
         // |a2 b2 c2| = 0 for true
         // |a3 b3 c3|
-        MathCalculator<T> mc = l1.getCalculator();
+        RealCalculator<T> mc = l1.getCalculator();
         T result = mc.multiply(l1.a, mc.multiply(l2.b, l3.c));
         result = mc.add(result, mc.multiply(l1.b, mc.multiply(l2.c, l3.a)));
         result = mc.add(result, mc.multiply(l1.c, mc.multiply(l2.a, l3.b)));
@@ -79,7 +79,7 @@ public class LineSup {
      * @param mc
      * @return
      */
-    public static <T> Line<T> xAxis(MathCalculator<T> mc) {
+    public static <T> Line<T> xAxis(RealCalculator<T> mc) {
         T zero = mc.getZero();
         return Line.parallelX(zero, mc);
     }
@@ -90,7 +90,7 @@ public class LineSup {
      * @param mc
      * @return
      */
-    public static <T> Line<T> yAxis(MathCalculator<T> mc) {
+    public static <T> Line<T> yAxis(RealCalculator<T> mc) {
         T zero = mc.getZero();
         return Line.parallelY(zero, mc);
     }

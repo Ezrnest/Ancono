@@ -4,9 +4,9 @@
 package test.math;
 
 import cn.ancono.math.FMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
@@ -38,27 +38,27 @@ public final class TestUtils {
 				return f.test((T)item);
 				}catch(ClassCastException es) {
 					return false;
-				}
-			}
+                }
+            }
 
-			@Override
-			public void describeTo(Description description) {
-				description.appendText(des);
-			}
-		};
-	}
-	
-	public static <T> org.hamcrest.Matcher<T> isZero(MathCalculator<T> mc){
-		return new BaseMatcher<T>() {
-			/*
-			 * @see org.hamcrest.Matcher#matches(java.lang.Object)
-			 */
-			@SuppressWarnings("unchecked")
-			@Override
-			public boolean matches(Object item) {
-				try {
-				return mc.isZero((T)item);
-				}catch(ClassCastException es) {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(des);
+            }
+        };
+    }
+
+    public static <T> org.hamcrest.Matcher<T> isZero(RealCalculator<T> mc) {
+        return new BaseMatcher<T>() {
+            /*
+             * @see org.hamcrest.Matcher#matches(java.lang.Object)
+             */
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                try {
+                    return mc.isZero((T) item);
+                } catch (ClassCastException es) {
 					return false;
 				}
 			}
@@ -70,7 +70,7 @@ public final class TestUtils {
         };
     }
 
-    public static <T> void assertMathEquals(T expected, T actual, MathCalculator<T> mc) {
+    public static <T> void assertMathEquals(T expected, T actual, RealCalculator<T> mc) {
         if (!mc.isEqual(expected, actual)) {
             throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
         }

@@ -1,10 +1,10 @@
 package test.math;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.Progression;
 import cn.ancono.math.algebra.ProgressionSup;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.set.Interval;
 import cn.ancono.math.set.IntervalI;
 import cn.ancono.utilities.Printer;
@@ -429,7 +429,7 @@ class Test {
     }
 	
 	static void progressionTest5() {
-        MathCalculator<Double> mc = Calculators.doubleCal();
+        RealCalculator<Double> mc = Calculators.doubleCal();
         Progression<Double> ps = Progression.createProgressionRecur1(d -> (d * (3.5d - d)), 0.7d, -1, mc);
         ps.stream().limit(30).forEach(Printer::print);
     }
@@ -452,7 +452,7 @@ class Test {
 	
 	static void progressionDemo() {
 
-        MathCalculator<Double> mc = Calculators.doubleCal();
+        RealCalculator<Double> mc = Calculators.doubleCal();
         Progression<Double> ps = Progression.
                 createProgression(Math::sqrt, -1, mc);
 //		Progression<Long> p2 = ps.mapTo(d -> Math.round(d),

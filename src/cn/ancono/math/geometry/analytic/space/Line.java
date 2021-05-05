@@ -1,11 +1,11 @@
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.utilities.ArraySup;
@@ -45,7 +45,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     final SPoint<T> p0;
 
 
-    protected Line(MathCalculator<T> mc, SPoint<T> p0, SVector<T> vec) {
+    protected Line(RealCalculator<T> mc, SPoint<T> p0, SVector<T> vec) {
         super(mc);
         this.vec = vec;
         this.p0 = p0;
@@ -340,7 +340,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
 
     @NotNull
     @Override
-    public <N> Line<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Line<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Line<>(newCalculator, p0.mapTo(newCalculator, mapper), vec.mapTo(newCalculator, mapper));
     }
 
@@ -487,7 +487,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     /**
      * Create a line that contains the point p and its direct vector is vec, the
      * direct vector cannot be zero vector.<p>
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param p   a point
      * @param vec the direct vector
@@ -503,10 +503,10 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      *
      * @param p   a point
      * @param vec the direct vector
-     * @param mc  a {@link MathCalculator}
+     * @param mc  a {@link RealCalculator}
      * @return a new line
      */
-    public static <T> Line<T> pointDirect(SPoint<T> p, SVector<T> vec, MathCalculator<T> mc) {
+    public static <T> Line<T> pointDirect(SPoint<T> p, SVector<T> vec, RealCalculator<T> mc) {
         if (p == null) {
             throw new NullPointerException();
         }
@@ -519,7 +519,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     /**
      * Create a line passing through the two points, throws an exception if the two
      * points are the identity.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param p1
      * @param p2

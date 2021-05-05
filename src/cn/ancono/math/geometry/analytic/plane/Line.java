@@ -1,13 +1,13 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import org.jetbrains.annotations.NotNull;
@@ -24,30 +24,30 @@ import java.util.function.Function;
  * There are many ways to create a new line,they are all listed below:
  * <ul>
  * <li>General Formula:Use the general formula to create a line.<p> <ul>
- * {@link #generalFormula(Object, Object, Object, MathCalculator)}
+ * {@link #generalFormula(Object, Object, Object, RealCalculator)}
  * </ul><li>Two Point:Create a line that passes through the two points.<p> <ul>
- * {@link #twoPoint(Point, Point, MathCalculator)},<p>
- * {@link #twoPoint(Object, Object, Object, Object, MathCalculator)}
+ * {@link #twoPoint(Point, Point, RealCalculator)},<p>
+ * {@link #twoPoint(Object, Object, Object, Object, RealCalculator)}
  * </ul><li>Point Direction:Create a line that passes through the point and has such a direction vector.<p> <ul>
  * {@link #pointDirection(Point, PVector)},<p>
- * {@link #pointDirection(Point, Object, Object, MathCalculator)},<p>
- * {@link #pointDirection(Object, Object, Object, Object, MathCalculator)}<p>
+ * {@link #pointDirection(Point, Object, Object, RealCalculator)},<p>
+ * {@link #pointDirection(Object, Object, Object, Object, RealCalculator)}<p>
  * </ul><li>Point Slope:Create a line that passes through the point and has such a slope<p>
  * <ul>
- * {@link #pointSlope(Point, Object, MathCalculator)},<p>
- * {@link #pointSlope(Object, Object, Object, MathCalculator)}
+ * {@link #pointSlope(Point, Object, RealCalculator)},<p>
+ * {@link #pointSlope(Object, Object, Object, RealCalculator)}
  * </ul>
  * <li>Point Normal Vector:Create a line with the normal vector that passes through the point.<p>
  * <ul>
  * {@link #pointNormal(Point, PVector)},<p>
- * {@link #pointNormal(Object, Object, Object, Object, MathCalculator)}
+ * {@link #pointNormal(Object, Object, Object, Object, RealCalculator)}
  * </ul>
  * <li>Two Intercept:Use intercept in x axis and y axis to create a line.<p>
  * <ul>
- * {@link #xyIntercept(Object, Object, MathCalculator)}
+ * {@link #xyIntercept(Object, Object, RealCalculator)}
  * </ul>
  * <li>Slope Intercept:Use the slope and the intercept to create a line.<p>
- * <ul>{@link #slopeIntercept(Object, Object, MathCalculator)}
+ * <ul>{@link #slopeIntercept(Object, Object, RealCalculator)}
  * </ul>
  * </ul>
  * <h2>Relations between two lines</h2>
@@ -89,7 +89,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @param b
      * @param c
      */
-    protected Line(MathCalculator<T> mc, T a, T b, T c) {
+    protected Line(RealCalculator<T> mc, T a, T b, T c) {
         super(mc);
         if (mc.isZero(a)) {
             //a == 0
@@ -793,7 +793,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 
     @NotNull
     @Override
-    public <N> Line<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Line<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new Line<>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
     }
 
@@ -915,7 +915,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@code ax + by + c = 0}
      * @throws IllegalArgumentException if {@literal a = b = 0}
      */
-    public static <T> Line<T> generalFormula(T a, T b, T c, MathCalculator<T> mc) {
+    public static <T> Line<T> generalFormula(T a, T b, T c, RealCalculator<T> mc) {
         return new Line<T>(mc, Objects.requireNonNull(a),
                 Objects.requireNonNull(b),
                 Objects.requireNonNull(c));
@@ -941,7 +941,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@code (x - p.x) / v.x = (y - p.y) / v.y}
      * @throws IllegalArgumentException if {@code |v| = 0}
      */
-    public static <T> Line<T> pointDirection(Point<T> p, PVector<T> v, MathCalculator<T> mc) {
+    public static <T> Line<T> pointDirection(Point<T> p, PVector<T> v, RealCalculator<T> mc) {
         return pointDirection(p.x, p.y, v.x, v.y, mc);
     }
 
@@ -966,7 +966,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@code (x - px) / vx = (y - py) / vy}
      * @throws IllegalArgumentException if {@literal vx == vy == 0}
      */
-    public static <T> Line<T> pointDirection(T px, T py, T vx, T vy, MathCalculator<T> mc) {
+    public static <T> Line<T> pointDirection(T px, T py, T vx, T vy, RealCalculator<T> mc) {
         T b = mc.negate(vx);
         T c = mc.subtract(mc.multiply(vx, py), mc.multiply(vy, px));
         return new Line<T>(mc, vy, b, c);
@@ -992,7 +992,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@code (x - p.x) / vx = (y - p.y) / vy}
      * @throws IllegalArgumentException if {@literal vx == vy == 0}
      */
-    public static <T> Line<T> pointDirection(Point<T> p, T vx, T vy, MathCalculator<T> mc) {
+    public static <T> Line<T> pointDirection(Point<T> p, T vx, T vy, RealCalculator<T> mc) {
         return pointDirection(p.x, p.y, vx, vy, mc);
     }
 
@@ -1036,7 +1036,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@literal (x - p1.x) / (p1.x - p2.x) = (y - p2.y) / (p1.y - p2.y)}
      * @throws IllegalArgumentException if{@code p1 = p2}
      */
-    public static <T> Line<T> twoPoint(Point<T> p1, Point<T> p2, MathCalculator<T> mc) {
+    public static <T> Line<T> twoPoint(Point<T> p1, Point<T> p2, RealCalculator<T> mc) {
         return twoPoint(p1.x, p1.y, p2.x, p2.y, mc);
     }
 
@@ -1078,7 +1078,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @param mc a math calculator
      * @return line {@literal (x - x1) / (x1 - x2) = (y - y2) / (y1 - y2)}
      */
-    public static <T> Line<T> twoPoint(T x1, T y1, T x2, T y2, MathCalculator<T> mc) {
+    public static <T> Line<T> twoPoint(T x1, T y1, T x2, T y2, RealCalculator<T> mc) {
         T a = mc.subtract(y1, y2);
         T b = mc.subtract(x2, x1);
         T c = mc.subtract(mc.multiply(x1, y2), mc.multiply(x2, y1));
@@ -1102,7 +1102,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @param mc a math calculator
      * @return line {@literal k * (x - x1) = y - y1}
      */
-    public static <T> Line<T> pointSlope(T x1, T y1, T k, MathCalculator<T> mc) {
+    public static <T> Line<T> pointSlope(T x1, T y1, T k, RealCalculator<T> mc) {
         T b = mc.negate(mc.getOne());
         T c = mc.subtract(y1, mc.multiply(k, x1));
         return new Line<T>(mc, k, b, c);
@@ -1124,7 +1124,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @param mc a math calculator
      * @return line {@literal k * (x - p.x) = y - p.y}
      */
-    public static <T> Line<T> pointSlope(Point<T> p, T k, MathCalculator<T> mc) {
+    public static <T> Line<T> pointSlope(Point<T> p, T k, RealCalculator<T> mc) {
         return pointSlope(p.x, p.y, k, mc);
     }
 
@@ -1165,7 +1165,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @param mc a math calculator
      * @return line {@literal y  = kx + b}
      */
-    public static <T> Line<T> slopeIntercept(T k, T b, MathCalculator<T> mc) {
+    public static <T> Line<T> slopeIntercept(T k, T b, RealCalculator<T> mc) {
         T b0 = mc.negate(mc.getOne());
         return new Line<T>(mc, k, b0, b);
     }
@@ -1190,7 +1190,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@literal vx * (x - xp) + xy * (y - yp) = 0}
      * @throws IllegalArgumentException if {@code vx==0 && vy==0}
      */
-    public static <T> Line<T> pointNormal(T xp, T yp, T vx, T vy, MathCalculator<T> mc) {
+    public static <T> Line<T> pointNormal(T xp, T yp, T vx, T vy, RealCalculator<T> mc) {
         T c = mc.negate(mc.add(mc.multiply(vx, xp), mc.multiply(vy, yp)));
         return new Line<T>(mc, vx, vy, c);
     }
@@ -1214,7 +1214,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@literal v.x * (x - p.x) + v.y * (y - p.y) = 0}
      * @throws IllegalArgumentException if {@code |v|==0}
      */
-    public static <T> Line<T> pointNormal(Point<T> p, PVector<T> v, MathCalculator<T> mc) {
+    public static <T> Line<T> pointNormal(Point<T> p, PVector<T> v, RealCalculator<T> mc) {
         return pointNormal(p.x, p.y, v.x, v.y, mc);
     }
 
@@ -1259,7 +1259,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@literal x / xi + y / yi = 1}
      * @throws IllegalArgumentException if {@code xi==yi==0}
      */
-    public static <T> Line<T> xyIntercept(T xi, T yi, MathCalculator<T> mc) {
+    public static <T> Line<T> xyIntercept(T xi, T yi, RealCalculator<T> mc) {
         return new Line<T>(mc, yi, xi, mc.negate(mc.multiply(xi, yi)));
     }
 
@@ -1275,7 +1275,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * </pre>
      * <b>This is provided for convenience.</b>
      */
-    public static <T> Line<T> parallelY(T x0, MathCalculator<T> mc) {
+    public static <T> Line<T> parallelY(T x0, RealCalculator<T> mc) {
         return new Line<T>(mc, mc.getOne(), mc.getZero(), mc.negate(x0));
     }
 
@@ -1291,7 +1291,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * </pre>
      * <b>This is provided for convenience.</b>
      */
-    public static <T> Line<T> parallelX(T y0, MathCalculator<T> mc) {
+    public static <T> Line<T> parallelX(T y0, RealCalculator<T> mc) {
         return new Line<T>(mc, mc.getZero(), mc.getOne(), mc.negate(y0));
     }
 
@@ -1305,7 +1305,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @param mc
      * @return
      */
-    public static <T> Line<T> yEkx(T k, MathCalculator<T> mc) {
+    public static <T> Line<T> yEkx(T k, RealCalculator<T> mc) {
         return new Line<T>(mc, k, mc.negate(mc.getOne()), mc.getZero());
     }
 

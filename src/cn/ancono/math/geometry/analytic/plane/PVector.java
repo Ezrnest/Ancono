@@ -4,7 +4,6 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.FMathObject;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
@@ -15,6 +14,7 @@ import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.VectorModel;
 import kotlin.jvm.functions.Function1;
 import kotlin.sequences.Sequence;
@@ -94,7 +94,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     public T norm() {
         if (length == null) {
-            var mc = (MathCalculator<T>) getCalculator();
+            var mc = (RealCalculator<T>) getCalculator();
             length = mc.squareRoot(normSq());
         }
         return length;
@@ -313,7 +313,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
         //The rotate matrix is
         //(cos x -sinx)
         //(sin x cos x)
-        var mc = (MathCalculator<T>) getCalculator();
+        var mc = (RealCalculator<T>) getCalculator();
         return TransMatrix.rotate(angle, mc).transform(this);
     }
 
@@ -406,7 +406,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      *
      * @param x
      * @param y
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new SVector
      */
     public static <T> PVector<T> valueOf(T x, T y, RingCalculator<T> mc) {
@@ -425,7 +425,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      *
      * @param A  point A
      * @param B  point B
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new vector
      */
     public static <T> PVector<T> vector(Point<T> A, Point<T> B, RingCalculator<T> mc) {
@@ -438,7 +438,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * __
      * AB
      * </pre>
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      *
      * @param A point A
      * @param B point B
@@ -453,10 +453,10 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * array's length is not equal to 2, only the first three element will be considered.
      *
      * @param xy
-     * @param mc a {@link MathCalculator}
+     * @param mc a {@link RealCalculator}
      * @return a new SVector
      */
-    public static <T> PVector<T> vector(T[] xy, MathCalculator<T> mc) {
+    public static <T> PVector<T> vector(T[] xy, RealCalculator<T> mc) {
         if (xy.length < 2) {
             throw new IllegalArgumentException("Not enough length");
         }
@@ -507,10 +507,10 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * Returns a vector according to the list first three elements.
      *
      * @param list a list
-     * @param mc   a {@link MathCalculator}
+     * @param mc   a {@link RealCalculator}
      * @return a new vector
      */
-    public static <T> PVector<T> fromList(List<T> list, MathCalculator<T> mc) {
+    public static <T> PVector<T> fromList(List<T> list, RealCalculator<T> mc) {
         return new PVector<T>(list.get(0), list.get(1), mc);
     }
 
@@ -520,7 +520,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @param mc
      * @return a new vector
      */
-    public static <T> PVector<T> zeroVector(MathCalculator<T> mc) {
+    public static <T> PVector<T> zeroVector(RealCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         PVector<T> v = (PVector<T>) zvs.get(mc);
         if (v == null) {
@@ -532,6 +532,6 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
 
     }
 
-    private static final Map<MathCalculator<?>, PVector<?>> zvs = new ConcurrentHashMap<>();
+    private static final Map<RealCalculator<?>, PVector<?>> zvs = new ConcurrentHashMap<>();
 
 }

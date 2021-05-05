@@ -1,4 +1,7 @@
-package cn.ancono.math.algebra.abs.calculator
+package cn.ancono.math.numberModels.api
+
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
 
 /**
  * Calculator for Quotient numbers.

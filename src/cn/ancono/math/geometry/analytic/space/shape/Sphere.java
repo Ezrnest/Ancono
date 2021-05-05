@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
@@ -11,6 +10,7 @@ import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.space.Line;
 import cn.ancono.math.geometry.analytic.space.SPoint;
+import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.Printer;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +62,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     /**
      * @param mc
      */
-    protected Sphere(MathCalculator<T> mc, T r, T r2, SPoint<T> o) {
+    protected Sphere(RealCalculator<T> mc, T r, T r2, SPoint<T> o) {
         super(mc);
         this.r = r;
         this.o = o;
@@ -105,7 +105,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     public T surfaceArea() {
         if (surfaceArea == null) {
             surfaceArea = getMc().multiplyLong(getMc().multiply(r2,
-                    getMc().constantValue(MathCalculator.STR_PI)), 2l);
+                    getMc().constantValue(RealCalculator.STR_PI)), 2l);
         }
         return surfaceArea;
     }
@@ -119,7 +119,7 @@ public final class Sphere<T> extends SpaceObject<T> {
     public T volume() {
         if (volume == null) {
             volume = getMc().divideLong(getMc().multiplyLong(getMc().multiply(
-                    getMc().multiply(r2, getRadius()), getMc().constantValue(MathCalculator.STR_PI)), 4l), 3l);
+                    getMc().multiply(r2, getRadius()), getMc().constantValue(RealCalculator.STR_PI)), 4l), 3l);
         }
         return volume;
     }
@@ -303,7 +303,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @NotNull
     @Override
-    public <N> Sphere<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Sphere<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         Sphere<N> sp = new Sphere<N>(newCalculator,
                 r == null ? null : mapper.apply(r)
                 , mapper.apply(r2), o.mapTo(newCalculator, mapper));
@@ -384,13 +384,14 @@ public final class Sphere<T> extends SpaceObject<T> {
 
     /**
      * Creates a sphere with its center point and its radius.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     *
      * @param p a point
      * @param r the radius, must be positive.
      * @return a new sphere
      */
     public static <T> Sphere<T> centerRadius(SPoint<T> p, T r) {
-        MathCalculator<T> mc = p.getCalculator();
+        RealCalculator<T> mc = p.getCalculator();
         if (mc.compare(r, mc.getZero()) <= 0) {
             throw new IllegalArgumentException("r<=0");
         }
@@ -399,13 +400,13 @@ public final class Sphere<T> extends SpaceObject<T> {
 
     /**
      * Creates a sphere with its center point and its radius' square.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      * @param p a point
      * @param r2 square of the radius, must be positive.
      * @return a new sphere
      */
     public static <T> Sphere<T> centerRadiusSq(SPoint<T> p, T r2) {
-        MathCalculator<T> mc = p.getCalculator();
+        RealCalculator<T> mc = p.getCalculator();
         if (mc.compare(r2, mc.getZero()) <= 0) {
             throw new IllegalArgumentException("r<=0");
         }
@@ -414,7 +415,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 
     /**
      * Creates a sphere with four points, they must not be on the identity plane.
-     * <p>The {@link MathCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
      * @param a
      * @param b
      * @param c
@@ -423,7 +424,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> Sphere<T> fourPoints(SPoint<T> a, SPoint<T> b, SPoint<T> c, SPoint<T> d) {
-        MathCalculator<T> mc = a.getCalculator();
+        RealCalculator<T> mc = a.getCalculator();
         SPoint<T>[] ps = new SPoint[]{a, b, c, d};
         T[][] mat = (T[][]) new Object[3][4];
         for (int i = 0; i < 3; i++) {

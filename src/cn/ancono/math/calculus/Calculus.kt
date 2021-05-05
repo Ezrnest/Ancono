@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.calculus
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.DecomposedPoly
 import cn.ancono.math.algebra.IPolynomial
 import cn.ancono.math.algebra.PolynomialUtil
@@ -16,6 +15,7 @@ import cn.ancono.math.function.invoke
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
+import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.numberModels.expression.DerivativeHelper
 import cn.ancono.math.numberModels.expression.ExprCalculator
@@ -149,7 +149,7 @@ object Calculus {
      * Returns the derivation of a polynomial.
      */
     @JvmStatic
-    fun <T> derivation(f: IPolynomial<T>, mc: MathCalculator<T>): IPolynomial<T> {
+    fun <T> derivation(f: IPolynomial<T>, mc: RealCalculator<T>): IPolynomial<T> {
         if (f is Polynomial) {
             return f.derivative()
         }

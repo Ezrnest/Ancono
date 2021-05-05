@@ -4,7 +4,7 @@
 package test.math;
 
 import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.numberTheory.IntCalculator;
 import cn.ancono.math.set.IntersectableSet;
 import cn.ancono.math.set.Interval;
 import cn.ancono.math.set.IntervalUnion;
@@ -38,7 +38,7 @@ public class TestSet {
         print(set1.toString() + " ∩ " + set2.toString() + " = " + set1.intersect(set2));
     }
 
-    MathCalculator<Integer> mc = Calculators.integer();
+    IntCalculator<Integer> mc = Calculators.integer();
 
 
     public void testInterval() {

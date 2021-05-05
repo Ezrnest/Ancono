@@ -435,7 +435,7 @@ class Test {
     }
 	
 	static void progressionSum(){
-		MathCalculator<Fraction> mc = Fraction.getCalculator();
+        var mc = Fraction.getCalculator();
         Progression<Fraction> a = Progression.createProgression(
                 l -> Fraction.of(l).add(Fraction.ONE).squareOf().reciprocal(), -1, mc);
         Progression<Fraction> b = Progression.createProgression(

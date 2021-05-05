@@ -1,7 +1,7 @@
 package cn.ancono.math
 
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
+import cn.ancono.math.algebra.abs.calculator.QCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
@@ -41,7 +41,7 @@ import cn.ancono.math.numberModels.Fraction
  * @author lyc
  * @see MathObject
  */
-interface MathCalculator<T> : FieldCalculator<T>, TotalOrderPredicate<T> {
+interface MathCalculator<T> : QCalculator<T> {
 
     /**
      * Determines whether this calculator supports `compare()` method.
@@ -165,7 +165,7 @@ interface MathCalculator<T> : FieldCalculator<T>, TotalOrderPredicate<T> {
      * @throws UnsupportedCalculationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    fun abs(x: T): T
+    override fun abs(x: T): T
 
     /**
      * Returns the result of `para1-para2`,this method should return the identity
@@ -488,17 +488,7 @@ interface MathCalculator<T> : FieldCalculator<T>, TotalOrderPredicate<T> {
         return re
     }
 
-    /**
-     * Returns the number value corresponding to the integer.
-     */
-    val Int.v
-        get() = of(this.toLong())
 
-    /**
-     * Returns the number value corresponding to the integer.
-     */
-    val Long.v
-        get() = of(this)
 
     companion object {
 

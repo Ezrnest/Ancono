@@ -1,13 +1,14 @@
 package cn.ancono.math.numberModels.structure
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.*
 import cn.ancono.math.algebra.IMTerm
 import cn.ancono.math.algebra.IMultinomial
 import cn.ancono.math.algebra.IPolynomial
 import cn.ancono.math.algebra.PolynomialUtil.subResultantGCD
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.api.AlgebraModel
@@ -155,13 +156,13 @@ data class TermF<F>(override val coefficient: F, override val characters: CharMa
  */
 class MultinomialF<F>
 internal constructor(
-        mc: MathCalculator<F>,
+        mc: FieldCalculator<F>,
         /**
          * A navigable set, non-empty.
          */
         internal val ts: NavigableSet<TermF<F>>) :
 
-        MathObjectExtend<F>(mc),
+        AbstractFlexibleMathObject<F, FieldCalculator<F>>(mc),
         IMultinomial<F>,
         AlgebraModel<F, MultinomialF<F>> {
 
@@ -188,7 +189,7 @@ internal constructor(
         }
 
 
-    private fun fromTerms(ts: TermSet<F>): MultinomialF<F> = MultinomialF(mc, ts)
+    private fun fromTerms(ts: TermSet<F>): MultinomialF<F> = MultinomialF(calculator, ts)
 
     private fun getTS(): TermSet<F> {
         return TreeSet(ts.comparator())
@@ -212,11 +213,11 @@ internal constructor(
     }
 
     private fun TermF<F>.isZero(): Boolean {
-        return mc.isZero(this.coefficient)
+        return calculator.isZero(this.coefficient)
     }
 
     private fun zeroTerm(): TermF<F> {
-        return TermF(mc.zero)
+        return TermF(calculator.zero)
     }
 
     private fun zeroMul(): MultinomialF<F> {
@@ -225,12 +226,12 @@ internal constructor(
     }
 
     private fun oneMul(): MultinomialF<F> {
-        val set = singleTerm(TermF(mc.one))
+        val set = singleTerm(TermF(calculator.one))
         return fromTerms(set)
     }
 
     private operator fun TermF<F>.plus(tx: TermF<F>): TermF<F> {
-        return TermF(coefficient + tx.coefficient, characters)
+        return TermF(calculator.add(coefficient, tx.coefficient), characters)
     }
 
     private operator fun TermF<F>.times(tx: TermF<F>): TermF<F> {
@@ -240,7 +241,7 @@ internal constructor(
         if (tx.isZero()) {
             return tx
         }
-        return TermF(coefficient * tx.coefficient, TermF.multiplyCharMap(this.characters, tx.characters))
+        return TermF(calculator.eval { coefficient * tx.coefficient }, TermF.multiplyCharMap(this.characters, tx.characters))
     }
 
     private operator fun TermF<F>.div(tx: TermF<F>): TermF<F> {
@@ -250,14 +251,14 @@ internal constructor(
         if (tx.isZero()) {
             ExceptionUtil.dividedByZero()
         }
-        return TermF(coefficient / tx.coefficient, TermF.divideCharMap(this.characters, tx.characters))
+        return TermF(calculator.eval { coefficient / tx.coefficient }, TermF.divideCharMap(this.characters, tx.characters))
     }
 
     private operator fun TermF<F>.unaryMinus(): TermF<F> {
         if (this.isZero()) {
             return this
         }
-        return TermF(-coefficient, characters)
+        return TermF(calculator.negate(coefficient), characters)
     }
 
 
@@ -334,14 +335,15 @@ internal constructor(
     }
 
     override fun multiply(k: F): MultinomialF<F> {
-        if (mc.isZero(k)) {
+
+        if (calculator.isZero(k)) {
             return zeroMul()
         }
-        return applyAll { TermF(it.coefficient * k, it.characters) }
+        return applyAll { TermF(calculator.multiply(it.coefficient, k), it.characters) }
     }
 
     override fun divide(k: F): MultinomialF<F> {
-        return multiply(mc.reciprocal(k))
+        return multiply(calculator.reciprocal(k))
     }
 
     /**
@@ -392,7 +394,7 @@ internal constructor(
     }
 
     fun isOne(): Boolean {
-        return ts.size == 1 && ts.first().run { characters.isEmpty() && coefficient == mc.one }
+        return ts.size == 1 && ts.first().run { characters.isEmpty() && coefficient == calculator.one }
     }
 
     fun isUnit(): Boolean {
@@ -400,7 +402,7 @@ internal constructor(
             return false
         }
         val t = ts.first()
-        return t.isConstant() && mc.isUnit(t.coefficient)
+        return t.isConstant() && calculator.isUnit(t.coefficient)
     }
 
     fun divideAndRemainder(y: MultinomialF<F>): Pair<MultinomialF<F>, MultinomialF<F>> {
@@ -477,13 +479,13 @@ internal constructor(
 //    }
 
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<F, N>): MultinomialF<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<F, N>): MultinomialF<N> {
         return MultinomialF(
-                newCalculator,
+                newCalculator as FieldCalculator,
                 ts.mapTo(getDefaultTermsSet()) { TermF(mapper.apply(it.coefficient), it.characters) })
     }
 
-    override fun valueEquals(obj: MathObject<F>): Boolean {
+    override fun valueEquals(obj: FMathObject<F, FieldCalculator<F>>): Boolean {
         if (obj !is MultinomialF) {
             return false
         }
@@ -501,7 +503,7 @@ internal constructor(
             if (t1.characters != t2.characters) {
                 return false
             }
-            if (!mc.isEqual(t1.coefficient, t2.coefficient)) {
+            if (!calculator.isEqual(t1.coefficient, t2.coefficient)) {
                 return false
             }
         }
@@ -526,22 +528,22 @@ internal constructor(
         }
 
 
-        fun <F> monomial(t: TermF<F>, mc: MathCalculator<F>): MultinomialF<F> {
+        fun <F> monomial(t: TermF<F>, mc: FieldCalculator<F>): MultinomialF<F> {
             val s = getDefaultTermsSet<F>()
             s.add(t)
             return MultinomialF(mc, s)
         }
 
-        fun <F> one(mc: MathCalculator<F>): MultinomialF<F> {
+        fun <F> one(mc: FieldCalculator<F>): MultinomialF<F> {
             return monomial(TermF(mc.one), mc)
         }
 
-        fun <F> zero(mc: MathCalculator<F>): MultinomialF<F> {
+        fun <F> zero(mc: FieldCalculator<F>): MultinomialF<F> {
             return monomial(TermF(mc.zero), mc)
         }
 
 
-        fun <F> of(mc: MathCalculator<F>, terms: List<TermF<F>>): MultinomialF<F> {
+        fun <F> of(mc: FieldCalculator<F>, terms: List<TermF<F>>): MultinomialF<F> {
             val set = getDefaultTermsSet<F>()
             val re = MultinomialF(mc, set)
             re.mergingAddAll(set, terms)
@@ -551,7 +553,7 @@ internal constructor(
             return re
         }
 
-        fun <F> of(mc: MathCalculator<F>, vararg terms: TermF<F>): MultinomialF<F> {
+        fun <F> of(mc: FieldCalculator<F>, vararg terms: TermF<F>): MultinomialF<F> {
             return of(mc, terms.asList())
         }
 
@@ -559,7 +561,7 @@ internal constructor(
          * Returns a multinomial built from the given coefficients and character strings.
          * The format
          */
-        fun <F> of(mc: MathCalculator<F>, vararg terms: Pair<F, String>): MultinomialF<F> {
+        fun <F> of(mc: FieldCalculator<F>, vararg terms: Pair<F, String>): MultinomialF<F> {
             return of(mc, terms.map { (c, s) -> TermF.parse(c, s) })
         }
 
@@ -583,7 +585,7 @@ internal constructor(
          *     ab^2c{pi}^-2z
          *     1*ab-2*cd{pi}^2z
          */
-        fun <F> parse(expr: String, mc: MathCalculator<F>, parser: (String) -> F): MultinomialF<F> {
+        fun <F> parse(expr: String, mc: FieldCalculator<F>, parser: (String) -> F): MultinomialF<F> {
             var idx = 0
 
             val terms = arrayListOf<TermF<F>>()
@@ -622,7 +624,7 @@ internal constructor(
 //        fun <F> gcd()
 
         fun <F> asPolynomial(m: MultinomialF<F>, ch: String, mmc: MultinomialFCalculator<F>): Polynomial<MultinomialF<F>> {
-            val mc = m.mc
+            val mc = m.calculator
             var deg = 0
             for (f in m.ts) {
                 val pow: Int = f.getCharPow(ch)
@@ -644,7 +646,7 @@ internal constructor(
         }
 
         fun <F> fromPolynomialM(p: IPolynomial<MultinomialF<F>>, ch: String): MultinomialF<F> {
-            val mc = p.constant().mc
+            val mc = p.constant().calculator
             val dummy = zero(mc)
             val result = dummy.ts
             for (i in 0..p.leadingPower) {

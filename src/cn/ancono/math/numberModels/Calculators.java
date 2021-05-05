@@ -118,140 +118,7 @@ public final class Calculators {
         throw new UnsupportedCalculationException(s);
     }
 
-    static class IntegerCalculatorExact extends IntegerCalculator {
-        private static final IntegerCalculatorExact cal = new IntegerCalculatorExact();
 
-        IntegerCalculatorExact() {
-        }
-
-
-        @NotNull
-        @Override
-        public Integer add(@NotNull Integer x, @NotNull Integer y) {
-            return Math.addExact(x, y);
-        }
-
-        @NotNull
-        @Override
-        public Integer subtract(@NotNull Integer x, @NotNull Integer y) {
-            return Math.subtractExact(x, y);
-        }
-
-        @NotNull
-        @Override
-        public Integer multiply(@NotNull Integer x, @NotNull Integer y) {
-            return Math.multiplyExact(x, y);
-        }
-
-
-        @NotNull
-        @Override
-        public Integer multiplyLong(@NotNull Integer p, long l) {
-            return Math.toIntExact(p * l);
-        }
-
-
-        @NotNull
-        @Override
-        public Integer squareRoot(@NotNull Integer x) {
-            int s = (int) MathUtils.squareRootExact(x);
-            if (s < 0) {
-                throw new UnsupportedCalculationException("No square root for " + x);
-            }
-            return s;
-        }
-
-        @NotNull
-        @Override
-        public Integer pow(@NotNull Integer p, long exp) {
-            int n = p;
-            //range check
-            if (n == 0 || n == 1) {
-                return p;
-            }
-            if (n == -1) {
-                return exp % 2 == 0 ? Integer.valueOf(1) : Integer.valueOf(-1);
-            }
-            if (exp == 0) {
-                return 1;
-            }
-            if (exp >= Integer.SIZE || exp < 0) {
-                //impossible exponent
-                throw new ArithmeticException("For exp:" + exp);
-            }
-            int ex = (int) exp;
-            int re = n;
-            for (int i = 1; i < ex; i++) {
-                re = Math.multiplyExact(re, n);
-            }
-            return re;
-        }
-
-        @NotNull
-        @Override
-        public Integer constantValue(@NotNull String name) {
-            throwFor("No constant value avaliable");
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public Integer exp(@NotNull Integer a, @NotNull Integer b) {
-            int d = a, z = b;
-
-            if (z < 0) {
-                if (d == 1) {
-                    return 1;
-                } else if (d == -1) {
-                    return (z & 1) == 0 ? 1 : -1;
-                }
-                throwFor("Negative Exp");
-            } else if (z == 0) {
-                if (d == 0) {
-                    throw new ArithmeticException("0^0");
-                }
-                return 1;
-            }
-            // log(z)
-            int re = 1;
-            while (z != 0) {
-                if ((z & 1) != 0) {
-                    re = Math.multiplyExact(re, d);
-                }
-                d = Math.multiplyExact(d, d);
-                z >>= 1;
-            }
-            return re;
-        }
-
-        @Override
-        public Integer decrease(Integer x) {
-            return Math.decrementExact(x);
-        }
-
-        @Override
-        public Integer increase(Integer x) {
-            return Math.incrementExact(x);
-        }
-
-        /**
-         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public Integer powMod(Integer at, Integer nt, Integer mt) {
-            return MathUtils.powMod(at, nt, mt);
-        }
-
-
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
-         */
-        @NotNull
-        @Override
-        public Class<Integer> getNumberClass() {
-            return Integer.class;
-        }
-    }
 
     /**
      * An implements for integer, which also implements {@link IntCalculator}.
@@ -259,7 +126,7 @@ public final class Calculators {
      * @author liyicheng
      * 2017-09-10 12:10
      */
-    public static class IntegerCalculator extends MathCalculatorAdapter<Integer> implements IntCalculator<Integer> {
+    public static class IntegerCalculator implements IntCalculator<Integer> {
         private static final IntegerCalculator cal = new IntegerCalculator();
 
         IntegerCalculator() {
@@ -279,11 +146,6 @@ public final class Calculators {
         @Override
         public int compare(@NotNull Integer x, @NotNull Integer y) {
             return x.compareTo(y);
-        }
-
-        @Override
-        public boolean isComparable() {
-            return true;
         }
 
         @NotNull
@@ -316,12 +178,6 @@ public final class Calculators {
             return x * y;
         }
 
-        @NotNull
-        @Override
-        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
-            return MathUtils.divideExact(x, y);
-        }
-
         @Override
         public @NotNull Integer exactDivide(@NotNull Integer x, @NotNull Integer y) {
             return MathUtils.divideExact(x, y);
@@ -331,15 +187,6 @@ public final class Calculators {
         @Override
         public Integer multiplyLong(@NotNull Integer p, long l) {
             return (int) (p * l);
-        }
-
-        @NotNull
-        @Override
-        public Integer divideLong(@NotNull Integer p, long n) {
-            if (p % n != 0) {
-                ExceptionUtil.notExactDivision(p, n);
-            }
-            return (int) (p / n);
         }
 
         @NotNull
@@ -357,24 +204,6 @@ public final class Calculators {
         @Override
         public Integer getOne() {
             return 1;
-        }
-
-        @NotNull
-        @Override
-        public Integer reciprocal(@NotNull Integer p) {
-            if (p == 1) {
-                return 1;
-            } else if (p == -1) {
-                return -1;
-            }
-//            ExceptionUtil.not
-            throw new UnsupportedCalculationException("No inverse for " + p);
-        }
-
-        @NotNull
-        @Override
-        public Integer squareRoot(@NotNull Integer x) {
-            return (int) Math.sqrt(x);
         }
 
         @NotNull
@@ -402,43 +231,6 @@ public final class Calculators {
             return re;
         }
 
-        @NotNull
-        @Override
-        public Integer constantValue(@NotNull String name) {
-            throwFor("No constant value available");
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public Integer exp(@NotNull Integer a, @NotNull Integer b) {
-            int d = a, z = b;
-
-            if (z < 0) {
-                if (d == 1) {
-                    return 1;
-                } else if (d == -1) {
-                    return (z & 1) == 0 ? 1 : -1;
-                }
-                throwFor("Negative Exp");
-            } else if (z == 0) {
-                if (d == 0) {
-                    throw new ArithmeticException("0^0");
-                }
-                return 1;
-            }
-            // log(z)
-            int re = 1;
-            while (z != 0) {
-                if ((z & 1) != 0) {
-                    re *= d;
-                }
-                d *= d;
-                z >>= 1;
-            }
-            return re;
-        }
-
         /**
          * @see IntCalculator#divideToInteger(java.lang.Object, java.lang.Object)
          */
@@ -448,9 +240,6 @@ public final class Calculators {
             return a / b;
         }
 
-        /**
-         * @see IntCalculator#mod(java.lang.Object, java.lang.Object)
-         */
         @NotNull
         @Override
         public Integer mod(@NotNull Integer a, @NotNull Integer b) {
@@ -458,25 +247,6 @@ public final class Calculators {
             return Math.abs(x) % Math.abs(y);
         }
 
-//        /**
-//         * @see IntCalculator#isInteger(java.lang.Object)
-//         */
-//        @Override
-//        public boolean isInteger(Integer x) {
-//            return true;
-//        }
-
-//        /**
-//         * @see IntCalculator#isQuotient(java.lang.Object)
-//         */
-//        @Override
-//        public boolean isQuotient(Integer x) {
-//            return true;
-//        }
-
-        /**
-         * @see IntCalculator#gcd(java.lang.Object, java.lang.Object)
-         */
         @NotNull
         @Override
         public Integer gcd(@NotNull Integer a, @NotNull Integer b) {
@@ -494,74 +264,47 @@ public final class Calculators {
             return MathUtils.lcm(a, b);
         }
 
-        /**
-         * @see IntCalculator#decrease(java.lang.Object)
-         */
         @Override
         public Integer decrease(Integer x) {
             return x - 1;
         }
 
-        /**
-         * @see IntCalculator#increase(java.lang.Object)
-         */
         @Override
         public Integer increase(Integer x) {
             return x + 1;
         }
 
-        /**
-         * @see IntCalculator#isEven(java.lang.Object)
-         */
         @Override
         public boolean isEven(Integer x) {
             return (x & 1) == 0;
         }
 
-        /**
-         * @see IntCalculator#isOdd(java.lang.Object)
-         */
         @Override
         public boolean isOdd(Integer x) {
             return (x & 1) != 0;
         }
 
-        /**
-         * @see IntCalculator#isPositive(java.lang.Object)
-         */
         @Override
         public boolean isPositive(Integer x) {
             return x > 0;
         }
 
-        /**
-         * @see IntCalculator#remainder(java.lang.Object, java.lang.Object)
-         */
         @NotNull
         @Override
         public Integer remainder(@NotNull Integer a, @NotNull Integer b) {
             return a % b;
         }
 
-        /**
-         * @see IntCalculator#deg(java.lang.Object, java.lang.Object)
-         */
         @Override
         public Integer deg(Integer a, Integer b) {
             return MathUtils.deg(a, b);
         }
 
-        /**
-         * @see IntCalculator#isExactDivide(java.lang.Object, java.lang.Object)
-         */
         @Override
         public boolean isExactDivide(@NotNull Integer a, @NotNull Integer b) {
             return a % b == 0;
         }
 
-        /**
-         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
-         */
         @Override
         public Integer powMod(Integer a, Integer n, Integer m) {
             return MathUtils.powMod(a, n, m);
@@ -590,15 +333,6 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Integer of(@NotNull Fraction x) {
-            if (x.isInteger()) {
-                return x.toInt();
-            }
-            throw new ArithmeticException();
-        }
-
-        @NotNull
-        @Override
         public Class<Integer> getNumberClass() {
             return Integer.class;
         }
@@ -606,7 +340,92 @@ public final class Calculators {
 
     }
 
+    static class IntegerCalculatorExact extends IntegerCalculator {
+        private static final IntegerCalculatorExact cal = new IntegerCalculatorExact();
 
+        IntegerCalculatorExact() {
+        }
+
+
+        @NotNull
+        @Override
+        public Integer add(@NotNull Integer x, @NotNull Integer y) {
+            return Math.addExact(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Integer subtract(@NotNull Integer x, @NotNull Integer y) {
+            return Math.subtractExact(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Integer multiply(@NotNull Integer x, @NotNull Integer y) {
+            return Math.multiplyExact(x, y);
+        }
+
+
+        @NotNull
+        @Override
+        public Integer multiplyLong(@NotNull Integer p, long l) {
+            return Math.toIntExact(p * l);
+        }
+
+        @NotNull
+        @Override
+        public Integer pow(@NotNull Integer p, long exp) {
+            int n = p;
+            //range check
+            if (n == 0 || n == 1) {
+                return p;
+            }
+            if (n == -1) {
+                return exp % 2 == 0 ? Integer.valueOf(1) : Integer.valueOf(-1);
+            }
+            if (exp == 0) {
+                return 1;
+            }
+            if (exp >= Integer.SIZE || exp < 0) {
+                //impossible exponent
+                throw new ArithmeticException("For exp:" + exp);
+            }
+            int ex = (int) exp;
+            int re = n;
+            for (int i = 1; i < ex; i++) {
+                re = Math.multiplyExact(re, n);
+            }
+            return re;
+        }
+
+        @Override
+        public Integer decrease(Integer x) {
+            return Math.decrementExact(x);
+        }
+
+        @Override
+        public Integer increase(Integer x) {
+            return Math.incrementExact(x);
+        }
+
+        /**
+         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public Integer powMod(Integer at, Integer nt, Integer mt) {
+            return MathUtils.powMod(at, nt, mt);
+        }
+
+
+        /* (non-Javadoc)
+         * @see cn.ancono.cn.ancono.utilities.math.MathCalculator#getNumberClass()
+         */
+        @NotNull
+        @Override
+        public Class<Integer> getNumberClass() {
+            return Integer.class;
+        }
+    }
 
     /**
      * An implements for long, which also implements {@link IntCalculator}.
@@ -1652,8 +1471,7 @@ public final class Calculators {
     /**
      * Return an exact calculator for Integer,all operations that will cause a overflow will
      * not be operated and an exception will be thrown.<p>
-     * <p>The {@link IntegerCalculator#squareRoot(Integer)}
-     * The calculator does not have any constant values.
+     * <p>
      *
      * @return a MathCalculator
      */

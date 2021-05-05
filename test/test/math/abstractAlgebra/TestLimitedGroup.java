@@ -3,7 +3,6 @@
  */
 package test.math.abstractAlgebra;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.FiniteGroups;
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
 import cn.ancono.math.algebra.abs.group.finite.AbstractFiniteGroup;
@@ -34,7 +33,7 @@ public class TestLimitedGroup {
 	
 	@Test
 	public void test1() {
-        MathCalculator<Integer> mc = Calculators.integer();
+        var mc = Calculators.integer();
         GroupCalculator<TransMatrix<Integer>> matmc = new GroupCalculator<>() {
             @Override
             public boolean isCommutative() {

@@ -1,6 +1,7 @@
 package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathUtils
+import cn.ancono.math.algebra.abs.calculator.QCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.api.FieldNumberModel
@@ -555,8 +556,9 @@ internal constructor(
     }
 
 
-    class FractionCalculator : MathCalculatorAdapter<Fraction>() {
+    class FractionCalculator : QCalculator<Fraction> {
         override val numberClass: Class<Fraction> = Fraction::class.java
+
 
         override fun isEqual(x: Fraction, y: Fraction): Boolean {
             return x == y
@@ -566,7 +568,6 @@ internal constructor(
             return x.compareTo(y)
         }
 
-        override val isComparable: Boolean = true
 
         override fun add(x: Fraction, y: Fraction): Fraction {
             return x.add(y)
@@ -612,7 +613,7 @@ internal constructor(
             return x.divide(n)
         }
 
-        override fun squareRoot(x: Fraction): Fraction {
+        fun squareRoot(x: Fraction): Fraction {
             if (x.isZero()) {
                 return ZERO
             } else if (x.isPositive) {
@@ -630,11 +631,8 @@ internal constructor(
             return x.pow(Math.toIntExact(n))
         }
 
-        override fun constantValue(name: String): Fraction {
-            throw UnsupportedCalculationException("No constant value available")
-        }
 
-        override fun exp(a: Fraction, b: Fraction): Fraction {
+        fun exp(a: Fraction, b: Fraction): Fraction {
             return a.exp(b)
         }
 
@@ -645,6 +643,7 @@ internal constructor(
         override fun of(x: Fraction): Fraction {
             return x
         }
+
 
         companion object {
             internal val cal = FractionCalculator()

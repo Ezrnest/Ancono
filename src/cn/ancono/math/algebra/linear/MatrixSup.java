@@ -215,7 +215,7 @@ public class MatrixSup {
      * Parse a two-dimension string array to a matrix.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Matrix<T> parseMatrix(String[][] mat, MathCalculator<T> mc, Function<String, ? extends T> parser) {
+    public static <T> Matrix<T> parseMatrix(String[][] mat, RingCalculator<T> mc, Function<String, ? extends T> parser) {
         Objects.requireNonNull(mc);
         int rowCount = mat.length;
         int columnCount = mat[0].length;
@@ -246,7 +246,7 @@ public class MatrixSup {
      * <p>
      * For example, <pre>[[1 2 3][4 5 6][7 8 9]]</pre> is a valid matrix.
      */
-    public static <T> Matrix<T> parseMatrix(String str, MathCalculator<T> mc, Function<String, ? extends T> parser) {
+    public static <T> Matrix<T> parseMatrix(String str, RingCalculator<T> mc, Function<String, ? extends T> parser) {
         if (str.startsWith("[")) {
             str = str.substring(1, str.length() - 1);
         }
@@ -291,7 +291,7 @@ public class MatrixSup {
      * @param str a string of matrix to parse
      */
     public static <T> Matrix<T> parseMatrixD(String str,
-                                             MathCalculator<T> mc, Function<String, ? extends T> parser) {
+                                             RingCalculator<T> mc, Function<String, ? extends T> parser) {
         String[] rows = LINE_SEPARATOR.split(str);
         String[][] data = new String[rows.length][];
         for (int i = 0; i < rows.length; i++) {
@@ -313,11 +313,11 @@ public class MatrixSup {
      * <p>
      * For example, <pre>1 2 3</pre> is a valid vector.
      */
-    public static <T> Vector<T> parseVector(String str, MathCalculator<T> mc, Function<String, ? extends T> parser) {
+    public static <T> Vector<T> parseVector(String str, RingCalculator<T> mc, Function<String, ? extends T> parser) {
         return parseVector0(str, SPACE, mc, parser);
     }
 
-    private static <T> Vector<T> parseVector0(String str, Pattern deliminator, MathCalculator<T> mc, Function<String, ? extends T> parser) {
+    private static <T> Vector<T> parseVector0(String str, Pattern deliminator, RingCalculator<T> mc, Function<String, ? extends T> parser) {
         if (str.startsWith("[")) {
             str = str.substring(1, str.length() - 1);
         }

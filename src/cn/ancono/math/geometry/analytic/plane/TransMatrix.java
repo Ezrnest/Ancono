@@ -4,6 +4,7 @@ import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.algebra.linear.AbstractMatrix;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.numberModels.api.AlgebraModel;
@@ -290,7 +291,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (1 0)
      * </pre>
      */
-    public static <T> TransMatrix<T> flipXY(MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> flipXY(UnitRingCalculator<T> mc) {
         T z = mc.getZero();
         T o = mc.getOne();
         return valueOf(z, o, o, z, mc);
@@ -303,7 +304,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * ( 0 1)
      * </pre>
      */
-    public static <T> TransMatrix<T> flipX(MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> flipX(UnitRingCalculator<T> mc) {
         T z = mc.getZero();
         T o = mc.getOne();
         return valueOf(mc.negate(o), z, z, o, mc);
@@ -316,7 +317,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (0 -1)
      * </pre>
      */
-    public static <T> TransMatrix<T> flipY(MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> flipY(UnitRingCalculator<T> mc) {
         T z = mc.getZero();
         T o = mc.getOne();
         return valueOf(o, z, z, mc.negate(o), mc);
@@ -329,7 +330,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (0 -1)
      * </pre>
      */
-    public static <T> TransMatrix<T> centralSymmetry(MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> centralSymmetry(UnitRingCalculator<T> mc) {
         T z = mc.getZero();
         T o = mc.negate(mc.getOne());
         return valueOf(o, z, z, o, mc);
@@ -413,7 +414,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * @param mc a {@link MathCalculator}
      * @return a new TransMatrix
      */
-    public static <T> TransMatrix<T> identityTrans(MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> identityTrans(UnitRingCalculator<T> mc) {
         T z = mc.getZero();
         T o = mc.getOne();
         return valueOf(o, z, z, o, mc);

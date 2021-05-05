@@ -1,6 +1,6 @@
 package test.math.numberTheory;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.structure.Polynomial;
@@ -34,7 +34,7 @@ public class NTCalculatorTest {
         }
     }
 
-    private Polynomial<Fraction> randomPolynomial(Random rd, MathCalculator<Fraction> cal) {
+    private Polynomial<Fraction> randomPolynomial(Random rd, FieldCalculator<Fraction> cal) {
         int bound = 5;
         PrimitiveIterator.OfInt ints = rd.ints(-bound, bound).iterator();
         int deg = rd.nextInt(3) + 1;

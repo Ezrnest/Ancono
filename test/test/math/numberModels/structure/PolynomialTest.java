@@ -1,17 +1,17 @@
 package test.math.numberModels.structure;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.math.numberModels.structure.Polynomial;
 import org.junit.Test;
 
-import static cn.ancono.utilities.Printer.print;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PolynomialTest {
-    private MathCalculator<Fraction> mc = Fraction.getCalculator();
-    private MathCalculator<Integer> mci = Calculators.integer();
+    private FieldCalculator<Fraction> mc = Fraction.getCalculator();
+    private Calculators.IntegerCalculator mci = Calculators.integer();
 
     @Test
     public void multiply() {

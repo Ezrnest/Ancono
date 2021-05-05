@@ -283,7 +283,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @param mc     a {@link MathCalculator}
      * @return (downer, upper]
      */
-    public static <T> Interval<T> leftOpenRightClosed(T downer, T upper, MathCalculator<T> mc) {
+    public static <T> Interval<T> leftOpenRightClosed(T downer, T upper, TotalOrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, false, true, mc);
     }
 
@@ -296,7 +296,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @param mc     a {@link MathCalculator}
      * @return [downer, upper)
      */
-    public static <T> Interval<T> leftClosedRightOpen(T downer, T upper, MathCalculator<T> mc) {
+    public static <T> Interval<T> leftClosedRightOpen(T downer, T upper, TotalOrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, true, false, mc);
     }
 
@@ -308,7 +308,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @param mc     a {@link MathCalculator}
      * @return (- ∞, upper) or (-∞,upper]
      */
-    public static <T> Interval<T> fromNegativeInf(T upper, boolean closed, MathCalculator<T> mc) {
+    public static <T> Interval<T> fromNegativeInf(T upper, boolean closed, TotalOrderPredicate<T> mc) {
         return new IntervalI<>(mc, null, Objects.requireNonNull(upper),
                 IntervalI.LEFT_OPEN_MASK | (closed ? 0 : IntervalI.RIGHT_OPEN_MASK));
     }
@@ -321,7 +321,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @param mc     a {@link MathCalculator}
      * @return (downer, + ∞) or [downer,+∞)
      */
-    public static <T> Interval<T> toPositiveInf(T downer, boolean closed, MathCalculator<T> mc) {
+    public static <T> Interval<T> toPositiveInf(T downer, boolean closed, TotalOrderPredicate<T> mc) {
         return new IntervalI<>(mc, Objects.requireNonNull(downer), null,
                 IntervalI.RIGHT_OPEN_MASK | (closed ? 0 : IntervalI.LEFT_OPEN_MASK));
     }
@@ -346,7 +346,8 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @param downerInclusive determines whether downer should be inclusive
      * @param upperInclusive  determines whether upper should be inclusive
      */
-    public static <T> Interval<T> valueOf(T downer, T upper, boolean downerInclusive, boolean upperInclusive, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> valueOf(T downer, T upper, boolean downerInclusive, boolean upperInclusive,
+                                          TotalOrderPredicate<T> mc) {
         return new IntervalI<T>(mc, downer, upper, downerInclusive, upperInclusive);
     }
 

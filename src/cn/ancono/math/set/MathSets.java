@@ -3,12 +3,8 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathCalculatorHolder;
-import cn.ancono.math.algebra.abs.EqualRelation;
 import cn.ancono.math.algebra.abs.GroupCalculators;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
-import cn.ancono.utilities.CollectionSup;
 import kotlin.Pair;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
@@ -52,9 +48,10 @@ public final class MathSets {
         return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(mc), list);
     }
 
+    @SuppressWarnings("unchecked")
     @SafeVarargs
     public static <T> CollectionSet<T> asSet(T... ts) {
-        return asSet(EqualPredicate.naturalEqual(), ts);
+        return asSet(EqualPredicate.naturalEqual((Class<T>) ts[0].getClass()), ts);
     }
 
     /**
@@ -399,19 +396,18 @@ public final class MathSets {
     }
 
 
-
-    @SuppressWarnings("unchecked")
-    public static <T> List<FiniteSet<T>> partition(FiniteSet<T> set, EqualRelation<T> er) {
-        MathCalculator<T> mc;
-        if (set instanceof MathCalculatorHolder) {
-            mc = ((MathCalculatorHolder<T>) set).getCalculator();
-        } else {
-            mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.naturalEqual());
-        }
-        List<List<T>> parted = CollectionSup.partition(set, er);
-        return CollectionSup.mapList(parted, x ->
-                MathSets.fromCollection(x, mc));
-    }
+//    @SuppressWarnings("unchecked")
+//    public static <T> List<FiniteSet<T>> partition(FiniteSet<T> set, EqualRelation<T> er) {
+//        EqualPredicate<T> mc;
+//        if (set instanceof MathCalculatorHolder) {
+//            mc = ((MathCalculatorHolder<T>) set).getCalculator();
+//        } else {
+//            mc = EqualPredicate.naturalEqual();
+//        }
+//        List<List<T>> parted = CollectionSup.partition(set, er);
+//        return CollectionSup.mapList(parted, x ->
+//                MathSets.fromCollection(x, mc));
+//    }
 
     public static <T> FiniteSet<T> filter(FiniteSet<T> set, EqualPredicate<T> er, Predicate<T> filter) {
         var list = new ArrayList<T>();

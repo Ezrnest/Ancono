@@ -4,6 +4,7 @@
 package cn.ancono.math.algebra;
 
 import cn.ancono.math.MathCalculatorHolder;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.algebra.linear.Vector;
@@ -101,6 +102,22 @@ public interface IPolynomial<T> {
         int mp = m1.getDegree();
         for (int i = 0; i <= mp; i++) {
             if (!equal.test(m1.get(i), m2.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Determines whether the two polynomial are equal.
+     */
+    static <T> boolean isEqual(IPolynomial<T> m1, IPolynomial<T> m2, EqualPredicate<T> predicate) {
+        if (m1.getDegree() != m2.getDegree()) {
+            return false;
+        }
+        int mp = m1.getDegree();
+        for (int i = 0; i <= mp; i++) {
+            if (!predicate.isEqual(m1.get(i), m2.get(i))) {
                 return false;
             }
         }

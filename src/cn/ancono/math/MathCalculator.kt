@@ -1,6 +1,7 @@
 package cn.ancono.math
 
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
@@ -40,7 +41,7 @@ import cn.ancono.math.numberModels.Fraction
  * @author lyc
  * @see MathObject
  */
-interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
+interface MathCalculator<T> : FieldCalculator<T>, TotalOrderPredicate<T> {
 
     /**
      * Determines whether this calculator supports `compare()` method.
@@ -463,8 +464,6 @@ interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
     fun arctan(x: T): T {
         return arcsin(divide(x, squareRoot(add(one, multiply(x, x)))))
     }
-
-    operator fun T.compareTo(y: T) = compare(this, y)
 
     /**
      * Returns a value that represents the given integer.

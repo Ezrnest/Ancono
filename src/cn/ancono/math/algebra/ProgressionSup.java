@@ -1,7 +1,9 @@
 package cn.ancono.math.algebra;
 
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
@@ -35,23 +37,29 @@ public final class ProgressionSup {
          * @param k
          * @param b
          */
-        private ArithmeticProgression(T k, T b, MathCalculator<T> mc) {
+        private ArithmeticProgression(T k, T b, RingCalculator<T> mc) {
             super(mc, UNLIMITED);
             this.k = k;
             this.b = b;
         }
 
-        private ArithmeticProgression(T k, T b, long size, MathCalculator<T> mc) {
+        private ArithmeticProgression(T k, T b, long size, RingCalculator<T> mc) {
             super(mc, size);
             this.k = k;
             this.b = b;
         }
 
+        @NotNull
+        @Override
+        public RingCalculator<T> getCalculator() {
+            return (RingCalculator<T>) super.getCalculator();
+        }
 
         @Override
         public T get(long index) {
             if (inRange(index)) {
-                return getMc().add(getMc().multiplyLong(k, index), b);
+                var mc = (RingCalculator<T>) getCalculator();
+                return mc.add(mc.multiplyLong(k, index), b);
             }
             throw new IndexOutOfBoundsException("for index:" + index);
         }
@@ -69,8 +77,9 @@ public final class ProgressionSup {
             @SuppressWarnings("unchecked")
             T[] arr = (T[]) new Object[len];
             T t = b;
+            var mc = getCalculator();
             for (int i = 0; i < len; i++) {
-                t = getMc().add(t, k);
+                t = mc.add(t, k);
                 arr[i] = t;
             }
             return arr;
@@ -100,7 +109,7 @@ public final class ProgressionSup {
             public T next() {
                 if (hasNext()) {
                     T re = cur;
-                    cur = getMc().add(cur, k);
+                    cur = getCalculator().add(cur, k);
                     index++;
                     return re;
                 }
@@ -125,7 +134,7 @@ public final class ProgressionSup {
                 try {
                     @SuppressWarnings("unchecked")
                     ArithmeticProgression<T> ap = (ArithmeticProgression<T>) obj;
-                    return ap.length == length && getMc().isEqual(ap.b, b) && getMc().isEqual(ap.k, k);
+                    return ap.length == length && getCalculator().isEqual(ap.b, b) && getCalculator().isEqual(ap.k, k);
                 } catch (ClassCastException x) {
                     //class cast different
                     return false;
@@ -151,7 +160,7 @@ public final class ProgressionSup {
         @Override
         public Progression<T> limit(long limit) {
             if ((limit > 0) && (length == UNLIMITED || limit <= length)) {
-                return new ArithmeticProgression<>(k, b, limit, getMc());
+                return new ArithmeticProgression<>(k, b, limit, getCalculator());
             }
             throw new IllegalArgumentException();
         }
@@ -160,15 +169,16 @@ public final class ProgressionSup {
         public T sumOf(long start, long end) {
             //use the arithmetic progression sum formula :
             // average of the first number and the last and multiply them with the count of number
-            T sum = getMc().add(get(start), get(end - 1));
+            var mc = (FieldCalculator<T>) getCalculator();
+            T sum = mc.add(get(start), get(end - 1));
             long count = end - start;
             if (count % 2 == 0) {
                 //not necessary to divide the number.
-                return getMc().multiplyLong(sum, count / 2);
+                return mc.multiplyLong(sum, count / 2);
             }
             try {
-                sum = getMc().divideLong(sum, 2);
-                sum = getMc().multiplyLong(sum, count);
+                sum = mc.divideLong(sum, 2);
+                sum = mc.multiplyLong(sum, count);
                 return sum;
             } catch (RuntimeException re) {
                 return super.sumOf(start, end);
@@ -179,26 +189,27 @@ public final class ProgressionSup {
         @NotNull
         @Override
         public <N> Progression<N> mapTo(
-                @NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new ArithmeticProgression<>(mapper.apply(k), mapper.apply(b), length, newCalculator);
+                @NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new ArithmeticProgression<>(mapper.apply(k), mapper.apply(b), length, (RingCalculator<N>) newCalculator);
         }
 
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj,
-                                       @NotNull Function<N, T> mapper) {
-            if (obj instanceof ArithmeticProgression) {
-                ArithmeticProgression<N> ap = (ArithmeticProgression<N>) obj;
-                return ap.length == this.length && getMc().isEqual(mapper.apply(ap.k), k) && getMc().isEqual(mapper.apply(ap.b), b);
-            }
-            return false;
-        }
+//        @Override
+//        public <N> boolean valueEquals(@NotNull MathObject<N> obj,
+//                                       @NotNull Function<N, T> mapper) {
+//            if (obj instanceof ArithmeticProgression) {
+//                ArithmeticProgression<N> ap = (ArithmeticProgression<N>) obj;
+//                var mc = getCalculator();
+//                return ap.length == this.length && mc.isEqual(mapper.apply(ap.k), k) && mc.isEqual(mapper.apply(ap.b), b);
+//            }
+//            return false;
+//        }
     }
 
     public static class ConstantProgression<T> extends Progression<T> {
         private final T constant;
 
 
-        private ConstantProgression(T constant, long size, MathCalculator<T> mc) {
+        private ConstantProgression(T constant, long size, EqualPredicate<T> mc) {
             super(mc, size);
             this.constant = constant;
         }
@@ -277,7 +288,7 @@ public final class ProgressionSup {
         @Override
         public Progression<T> limit(long limit) {
             if (limit <= length) {
-                return new ConstantProgression<T>(constant, limit, getMc());
+                return new ConstantProgression<T>(constant, limit, getCalculator());
             }
             throw new IllegalArgumentException();
         }
@@ -304,7 +315,7 @@ public final class ProgressionSup {
          * @param a0
          * @param q
          */
-        protected GeometricProgression(MathCalculator<T> mc, long length, T a0, T q) {
+        protected GeometricProgression(RingCalculator<T> mc, long length, T a0, T q) {
             super(mc, length);
             this.a0 = a0;
             if (mc.isEqual(mc.getZero(), q)) {
@@ -313,11 +324,17 @@ public final class ProgressionSup {
             this.q = q;
         }
 
+        @NotNull
+        @Override
+        public RingCalculator<T> getCalculator() {
+            return (RingCalculator<T>) super.getCalculator();
+        }
 
         @Override
         public T get(long index) {
             if (inRange(index)) {
-                return getMc().multiply(a0, getMc().pow(q, index));
+                var mc = getCalculator();
+                return mc.multiply(a0, mc.pow(q, index));
             }
             throw new IndexOutOfBoundsException("For index : " + index);
         }
@@ -355,9 +372,10 @@ public final class ProgressionSup {
 
             @Override
             public T next() {
+                var mc = getCalculator();
                 if (hasNext()) {
                     T re = cur;
-                    cur = getMc().multiply(cur, q);
+                    cur = mc.multiply(cur, q);
                     return re;
                 }
                 throw new NoSuchElementException();
@@ -366,17 +384,18 @@ public final class ProgressionSup {
 
         @Override
         public T sumOf(long start, long end) {
+            var mc = (FieldCalculator<T>) getCalculator();
             if (inRange(start) && inRange(end - 1) && start < end) {
                 //use the general formula of geometric progression
-                if (getMc().isEqual(a0, getMc().getZero())) {
-                    return getMc().getZero();
+                if (mc.isEqual(a0, mc.getZero())) {
+                    return mc.getZero();
                 }
                 long count = end - start;
-                if (getMc().isEqual(q, getMc().getOne())) {
-                    return getMc().multiplyLong(a0, count);
+                if (mc.isEqual(q, mc.getOne())) {
+                    return mc.multiplyLong(a0, count);
                 }
-                T upper = getMc().multiply(a0, getMc().subtract(getMc().pow(q, end), getMc().pow(q, start)));
-                return getMc().divide(upper, getMc().subtract(q, getMc().getOne()));
+                T upper = mc.multiply(a0, mc.subtract(mc.pow(q, end), mc.pow(q, start)));
+                return mc.divide(upper, mc.subtract(q, mc.getOne()));
             }
             throw new IllegalArgumentException();
         }
@@ -384,10 +403,10 @@ public final class ProgressionSup {
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> Progression<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             N a0N = mapper.apply(a0);
             N qN = mapper.apply(q);
-            return new GeometricProgression<>(newCalculator, length, a0N, qN);
+            return new GeometricProgression<>((RingCalculator<N>) newCalculator, length, a0N, qN);
         }
     }
 
@@ -400,7 +419,7 @@ public final class ProgressionSup {
      * @param mc a MathCalculator
      * @return an ArithmeticProgression
      */
-    public static <T> ArithmeticProgression<T> asFirstElementAndDifferece(T a0, T d, MathCalculator<T> mc) {
+    public static <T> ArithmeticProgression<T> asFirstElementAndDifferece(T a0, T d, RingCalculator<T> mc) {
         return new ArithmeticProgression<>(d, a0, mc);
     }
 
@@ -412,7 +431,7 @@ public final class ProgressionSup {
      * @param mc a MathCalculator
      * @return an ArithmeticProgression
      */
-    public static <T> ArithmeticProgression<T> createArithmeticProgression(T k, T b, MathCalculator<T> mc) {
+    public static <T> ArithmeticProgression<T> createArithmeticProgression(T k, T b, RingCalculator<T> mc) {
         return new ArithmeticProgression<>(k, b, mc);
     }
 
@@ -424,7 +443,7 @@ public final class ProgressionSup {
      * @param mc a MathCalculator
      * @return a new GeometricProgression
      */
-    public static <T> GeometricProgression<T> createGeometricProgression(T a0, T k, MathCalculator<T> mc) {
+    public static <T> GeometricProgression<T> createGeometricProgression(T a0, T k, RingCalculator<T> mc) {
         return new GeometricProgression<T>(mc, UNLIMITED, a0, k);
     }
 
@@ -435,11 +454,11 @@ public final class ProgressionSup {
      * @param constant the constant
      * @return a new ConstantProgression
      */
-    public static <T> ConstantProgression<T> asConstant(MathCalculator<T> mc, T constant) {
+    public static <T> ConstantProgression<T> asConstant(EqualPredicate<T> mc, T constant) {
         return new ConstantProgression<>(constant, UNLIMITED, mc);
     }
 
-    public static <T> ConstantProgression<T> asConstantLimited(T constant, long size, MathCalculator<T> mc) {
+    public static <T> ConstantProgression<T> asConstantLimited(T constant, long size, EqualPredicate<T> mc) {
         return new ConstantProgression<>(constant, size, mc);
     }
 

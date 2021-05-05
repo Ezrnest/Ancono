@@ -58,7 +58,7 @@ public class PolynomialSample {
         var g = Polynomial.parse("x^11 + x^10 + x^6 + x^5 + x^4 + x^2 +1", mc, Integer::parseInt);
         System.out.println("g(x) = " + g);
         var p = Polynomial.parse("x^23+1", mc, Integer::parseInt);
-        var pc = Polynomial.getCalculator(mc);
+        var pc = Polynomial.calculator(mc);
         var h = pc.divideToInteger(p, g);
         System.out.println("The inverse of g(x) in Z2[x]/(x^23+1) is: " + h);
     }

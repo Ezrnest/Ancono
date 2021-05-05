@@ -183,6 +183,12 @@ abstract class AbstractFiniteGroup<T>
                 return x.group === y.group && x.subGroup == y.subGroup
                         && x.set.contains(y.set.get(0))
             }
+
+            @Suppress("UNCHECKED_CAST")
+            override val numberClass: Class<FiniteCoset<T>>
+                get() {
+                    return FiniteCoset::class.java as Class<FiniteCoset<T>>
+                }
         })
     }
 
@@ -232,8 +238,8 @@ abstract class AbstractFiniteGroup<T>
 	 */
     override fun getSubgroups(): FiniteSet<out AbstractFiniteGroup<T>> {
         //TODO: find methods to find all the subgroups of this finit group
-        mc
-        return MathSets.asSet(EqualPredicate.naturalEqual(), this, FiniteGroups.identityGroup(calculator))
+        TODO()
+//        return MathSets.asSet(EqualPredicate.naturalEqual(), this, FiniteGroups.identityGroup(calculator))
     }
 
     /*

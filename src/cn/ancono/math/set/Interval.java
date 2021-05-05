@@ -1,6 +1,9 @@
 package cn.ancono.math.set;
 
+import cn.ancono.math.AbstractFlexibleMathObject;
 import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +29,9 @@ import java.util.function.Function;
  * @param <T> the format of number to be stored
  * @author lyc
  */
-public abstract class Interval<T> extends AbstractMathSet<T> implements IntersectableSet<T, Interval<T>> {
+public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrderPredicate<T>> implements IntersectableSet<T, Interval<T>> {
 
-    protected Interval(MathCalculator<T> mc) {
+    protected Interval(TotalOrderPredicate<T> mc) {
         super(mc);
     }
 
@@ -224,7 +227,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
 
     @NotNull
     @Override
-    public abstract <N> Interval<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> Interval<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * Returns the mathematical expression of this interval. Like {@literal (0,2)} or {@literal [2,3)}.
@@ -254,7 +257,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      * @param mc     a {@link MathCalculator}
      * @return [downer, upper]
      */
-    public static <T> Interval<T> closedInterval(T downer, T upper, MathCalculator<T> mc) {
+    public static <T> Interval<T> closedInterval(T downer, T upper, TotalOrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, true, true, mc);
     }
 
@@ -267,7 +270,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      * @param mc     a {@link MathCalculator}
      * @return (downer, upper)
      */
-    public static <T> Interval<T> openInterval(T downer, T upper, MathCalculator<T> mc) {
+    public static <T> Interval<T> openInterval(T downer, T upper, TotalOrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, false, false, mc);
     }
 
@@ -330,19 +333,9 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      * @param mc a {@link MathCalculator}
      * @return (- ∞, + ∞)
      */
-    public static <T> Interval<T> universe(MathCalculator<T> mc) {
-        if (universemap.containsKey(mc)) {
-            @SuppressWarnings("unchecked")
-            Interval<T> in = (Interval<T>) universemap.get(mc);
-            return in;
-        } else {
-            Interval<T> in = new IntervalI<T>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
-            universemap.put(mc, in);
-            return in;
-        }
+    public static <T> Interval<T> universe(TotalOrderPredicate<T> mc) {
+        return new IntervalI<T>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
     }
-
-    private static final Map<MathCalculator<?>, Interval<?>> universemap = new ConcurrentHashMap<>();
 
     /**
      * Create a new Interval with the given arguments.
@@ -353,7 +346,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      * @param downerInclusive determines whether downer should be inclusive
      * @param upperInclusive  determines whether upper should be inclusive
      */
-    public static <T> Interval<T> valueOf(T downer, T upper, boolean downerInclusive, boolean upperInclusive, MathCalculator<T> mc) {
+    public static <T> Interval<T> valueOf(T downer, T upper, boolean downerInclusive, boolean upperInclusive, TotalOrderPredicate<T> mc) {
         return new IntervalI<T>(mc, downer, upper, downerInclusive, upperInclusive);
     }
 
@@ -368,8 +361,6 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
         return new IntervalI<T>(mc, x, x, 0);
     }
 
-    private static final Map<MathCalculator<?>, Interval<?>> positivemap = new ConcurrentHashMap<>();
-
     /**
      * Returns the interval representing the positive numbers.
      *
@@ -377,13 +368,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      * @return {@literal (0,+∞)}
      */
     public static <T> Interval<T> positive(MathCalculator<T> mc) {
-        @SuppressWarnings("unchecked")
-        Interval<T> in = (Interval<T>) positivemap.get(mc);
-        if (in == null) {
-            in = toPositiveInf(mc.getZero(), false, mc);
-            positivemap.put(mc, in);
-        }
-        return in;
+        return toPositiveInf(mc.getZero(), false, mc);
     }
 
     private static final Map<MathCalculator<?>, Interval<?>> negativemap = new ConcurrentHashMap<>();
@@ -404,7 +389,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
         return in;
     }
 
-    static <T> Interval<T> instanceNonNull(T a, T b, boolean dc, boolean uc, MathCalculator<T> mc) {
+    static <T> Interval<T> instanceNonNull(T a, T b, boolean dc, boolean uc, TotalOrderPredicate<T> mc) {
         return new IntervalI<T>(mc, Objects.requireNonNull(a), Objects.requireNonNull(b), dc, uc);
     }
 

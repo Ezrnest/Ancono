@@ -241,7 +241,7 @@ object PolynomialUtil {
      * `d^(A.degree - B.degree + 1) A = BQ + R` and `R.degree < B.degree`. It is required that `B` is not zero and
      * `A.degree >= B.degree`.
      *
-     * @param T the math calculator for [T] should at least be a ring calculator.
+     * @param T the calculator for [T] should at least be a ring calculator.
      */
     @JvmStatic
     fun <T> pseudoDivision(A: Polynomial<T>, B: Polynomial<T>): Pair<Polynomial<T>, Polynomial<T>> {
@@ -278,7 +278,7 @@ object PolynomialUtil {
      * `d^(A.degree - B.degree + 1) A = BQ + R` and `R.degree < B.degree`. It is required that `B` is not zero and
      * `A.degree >= B.degree`.
      *
-     * @param T the math calculator for [T] should at least be a ring calculator.
+     * @param T the calculator for [T] should at least be a ring calculator.
      */
     @JvmStatic
     fun <T> pseudoDivisionR(A: Polynomial<T>, B: Polynomial<T>): Polynomial<T> {

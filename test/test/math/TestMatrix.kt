@@ -3,12 +3,10 @@
  */
 package test.math
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.linear.LinearEquationSolution
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Matrix.Companion.of
 import cn.ancono.math.algebra.linear.Vector
-import cn.ancono.math.equation.SVPEquation
 import cn.ancono.math.geometry.analytic.plane.curve.ConicSection
 import cn.ancono.math.geometry.analytic.plane.curve.GeneralConicSection
 import cn.ancono.math.numberModels.Calculators
@@ -25,7 +23,7 @@ import kotlin.test.assertEquals
  * @author liyicheng 2018-01-25 17:38
  */
 class TestMatrix {
-    var mc: MathCalculator<Long> = Calculators.longCal()
+    var mc = Calculators.longCal()
     var mcd = Calculators.doubleDev()
 
     private fun <T> isUpperTriangular(m: Matrix<T>): Boolean {
@@ -140,21 +138,21 @@ class TestMatrix {
     }
 
 
-    @Test
-    fun testEigenEquation() {
-        var mat = of(arrayOf(arrayOf(1L, 0L), arrayOf(0L, 4L)), Calculators.longCal())
-        var equation = mat.charEquation()
-        var expected: SVPEquation<Long> = SVPEquation.quadratic(1L, -5L, 4L, mc)
-        Assert.assertTrue("EigenEquation:", expected.valueEquals(equation))
-        mat = of(arrayOf(arrayOf(1, 2), arrayOf(3, 4)), Calculators.longCal())
-        equation = mat.charEquation()
-        expected = SVPEquation.quadratic(1L, -5L, -2L, mc)
-        Assert.assertTrue("EigenEquation:", expected.valueEquals(equation))
-        mat = of(arrayOf(arrayOf(1, 2, 3), arrayOf(3, 4, 5), arrayOf(4, 5, 6)), Calculators.longCal())
-        equation = mat.charEquation()
-        expected = SVPEquation.valueOf(mc, 0L, -9L, -11L, 1L)
-        Assert.assertTrue("EigenEquation:", expected.valueEquals(equation))
-    }
+//    @Test
+//    fun testEigenEquation() {
+//        var mat = of(arrayOf(arrayOf(1L, 0L), arrayOf(0L, 4L)), Calculators.longCal())
+//        var equation = mat.charEquation()
+//        var expected: SVPEquation<Long> = SVPEquation.quadratic(1L, -5L, 4L, mc)
+//        Assert.assertTrue("EigenEquation:", expected.valueEquals(equation))
+//        mat = of(arrayOf(arrayOf(1, 2), arrayOf(3, 4)), Calculators.longCal())
+//        equation = mat.charEquation()
+//        expected = SVPEquation.quadratic(1L, -5L, -2L, mc)
+//        Assert.assertTrue("EigenEquation:", expected.valueEquals(equation))
+//        mat = of(arrayOf(arrayOf(1, 2, 3), arrayOf(3, 4, 5), arrayOf(4, 5, 6)), Calculators.longCal())
+//        equation = mat.charEquation()
+//        expected = SVPEquation.valueOf(mc, 0L, -9L, -11L, 1L)
+//        Assert.assertTrue("EigenEquation:", expected.valueEquals(equation))
+//    }
 
     @Test
     fun testSolveEquation() {

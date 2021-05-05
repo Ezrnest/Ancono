@@ -606,182 +606,7 @@ public final class Calculators {
 
     }
 
-    static class LongCalculatorExact extends LongCalculator {
-        private static final LongCalculatorExact cal = new LongCalculatorExact();
 
-        LongCalculatorExact() {
-        }
-
-
-        @Override
-        public boolean isEqual(@NotNull Long x, @NotNull Long y) {
-            return x.equals(y);
-        }
-
-        @Override
-        public int compare(@NotNull Long x, @NotNull Long y) {
-            return x.compareTo(y);
-        }
-
-        @NotNull
-        @Override
-        public Long add(@NotNull Long x, @NotNull Long y) {
-            return Math.addExact(x, y);
-        }
-
-        @NotNull
-        @Override
-        public Long negate(@NotNull Long para) {
-            return -para;
-        }
-
-        @NotNull
-        @Override
-        public Long abs(@NotNull Long x) {
-            return Math.abs(x);
-        }
-
-        @NotNull
-        @Override
-        public Long subtract(@NotNull Long x, @NotNull Long y) {
-            return Math.subtractExact(x, y);
-        }
-
-        @NotNull
-        @Override
-        public Long multiply(@NotNull Long x, @NotNull Long y) {
-            return Math.multiplyExact(x, y);
-        }
-
-        @NotNull
-        @Override
-        public Long divide(@NotNull Long x, @NotNull Long y) {
-            return MathUtils.divideExact(x, y);
-        }
-
-        @NotNull
-        @Override
-        public Long multiplyLong(@NotNull Long p, long l) {
-            return Math.multiplyExact(p, l);
-        }
-
-        @NotNull
-        @Override
-        public Long divideLong(@NotNull Long p, long n) {
-            return MathUtils.divideExact(p, n);
-        }
-
-        private static final Long ZERO = 0L,
-                ONE = 1L;
-
-        @NotNull
-        @Override
-        public Long getZero() {
-            return ZERO;
-        }
-
-        @Override
-        public boolean isZero(@NotNull Long para) {
-            return ZERO.equals(para);
-        }
-
-        @NotNull
-        @Override
-        public Long getOne() {
-            return ONE;
-        }
-
-        @NotNull
-        @Override
-        public Long reciprocal(@NotNull Long p) {
-            throwFor();
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public Long squareRoot(@NotNull Long x) {
-            return (long) Math.sqrt(x);
-        }
-
-        @NotNull
-        @Override
-        public Long pow(@NotNull Long p, long exp) {
-            return exp0(p, exp);
-        }
-
-        @NotNull
-        @Override
-        public Long constantValue(@NotNull String name) {
-            throwFor("No constant value avaliable");
-            return null;
-        }
-
-        @NotNull
-        public Long exp0(long a, long b) {
-            long d = a, z = b;
-
-            if (z < 0L) {
-                if (d == 1L) {
-                    return 1L;
-                } else if (d == -1L) {
-                    return (z & 1L) == 0L ? 1L : -1L;
-                }
-                throwFor("Negative Exp");
-            } else if (z == 0L) {
-                if (d == 0L) {
-                    throw new ArithmeticException("0^0");
-                }
-                return 1L;
-            }
-            // log(z)
-            long re = 1L;
-            while (z != 0L) {
-                if ((z & 1L) != 0L) {
-                    re = Math.multiplyExact(re, d);
-                }
-                d = Math.multiplyExact(d, d);
-                z >>= 1L;
-            }
-            return re;
-        }
-
-        @NotNull
-        @Override
-        public Long exp(@NotNull Long a, @NotNull Long b) {
-            return exp0(a, b);
-        }
-
-        /**
-         *
-         */
-        @Override
-        public Long decrease(Long x) {
-            return Math.decrementExact(x);
-        }
-
-        /**
-         *
-         */
-        @Override
-        public Long increase(Long x) {
-            return Math.incrementExact(x);
-        }
-
-        /**
-         *
-         */
-        @Override
-        public Long powMod(Long at, Long nt, Long mt) {
-            return MathUtils.powMod(at, nt, mt);
-        }
-
-        @NotNull
-        @Override
-        public Class<Long> getNumberClass() {
-            return Long.class;
-        }
-    }
 
     /**
      * An implements for long, which also implements {@link IntCalculator}.
@@ -789,7 +614,7 @@ public final class Calculators {
      * @author liyicheng
      * 2017-09-10 12:10
      */
-    public static class LongCalculator extends MathCalculatorAdapter<Long> implements IntCalculator<Long> {
+    public static class LongCalculator implements IntCalculator<Long> {
         private static final LongCalculator cal = new LongCalculator();
 
         LongCalculator() {
@@ -803,11 +628,6 @@ public final class Calculators {
         @Override
         public int compare(@NotNull Long x, @NotNull Long y) {
             return x.compareTo(y);
-        }
-
-        @Override
-        public boolean isComparable() {
-            return true;
         }
 
         @NotNull
@@ -851,8 +671,12 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Long divide(@NotNull Long x, @NotNull Long y) {
-            return divideLong(x, y);
+        public Long exactDivide(@NotNull Long x, @NotNull Long y) {
+            var q = x / y;
+            if ((q * y != x)) {
+                ExceptionUtil.notExactDivision(x, y);
+            }
+            return q;
         }
 
         @NotNull
@@ -861,11 +685,6 @@ public final class Calculators {
             return p * l;
         }
 
-        @NotNull
-        @Override
-        public Long divideLong(@NotNull Long p, long n) {
-            return p / n;
-        }
 
         private static final Long ZERO = 0L,
                 ONE = 1L;
@@ -878,7 +697,7 @@ public final class Calculators {
 
         @Override
         public boolean isZero(@NotNull Long para) {
-            return ZERO.equals(para);
+            return para == 0L;
         }
 
         @NotNull
@@ -893,36 +712,12 @@ public final class Calculators {
             return t == 1 || t == -1;
         }
 
-        @NotNull
-        @Override
-        public Long reciprocal(@NotNull Long p) {
-            throwFor();
-            return null;
-        }
 
-        @NotNull
-        @Override
-        public Long squareRoot(@NotNull Long x) {
-            return (long) Math.sqrt(x);
-        }
 
         @NotNull
         @Override
         public Long pow(@NotNull Long p, long exp) {
             return exp0(p, exp);
-        }
-
-        @NotNull
-        @Override
-        public Long constantValue(@NotNull String name) {
-            throwFor("No constant value avaliable");
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public Long exp(@NotNull Long a, @NotNull Long b) {
-            return exp0(a, b);
         }
 
         public Long exp0(long a, long b) {
@@ -1096,15 +891,6 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Long of(@NotNull Fraction x) {
-            if (x.isInteger()) {
-                return x.toLong();
-            }
-            throw new ArithmeticException();
-        }
-
-        @NotNull
-        @Override
         public Long of(long x) {
             return x;
         }
@@ -1116,13 +902,109 @@ public final class Calculators {
         }
     }
 
+    static class LongCalculatorExact extends LongCalculator {
+        private static final LongCalculatorExact cal = new LongCalculatorExact();
+
+        LongCalculatorExact() {
+        }
+
+        @NotNull
+        @Override
+        public Long add(@NotNull Long x, @NotNull Long y) {
+            return Math.addExact(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Long negate(@NotNull Long para) {
+            return Math.negateExact(para);
+        }
+
+        @NotNull
+        @Override
+        public Long abs(@NotNull Long x) {
+            return Math.absExact(x);
+        }
+
+        @NotNull
+        @Override
+        public Long subtract(@NotNull Long x, @NotNull Long y) {
+            return Math.subtractExact(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Long multiply(@NotNull Long x, @NotNull Long y) {
+            return Math.multiplyExact(x, y);
+        }
+
+        @NotNull
+        @Override
+        public Long multiplyLong(@NotNull Long p, long l) {
+            return Math.multiplyExact(p, l);
+        }
+
+        @NotNull
+        public Long exp0(long a, long b) {
+            long d = a, z = b;
+
+            if (z < 0L) {
+                if (d == 1L) {
+                    return 1L;
+                } else if (d == -1L) {
+                    return (z & 1L) == 0L ? 1L : -1L;
+                }
+                throwFor("Negative Exp");
+            } else if (z == 0L) {
+                if (d == 0L) {
+                    throw new ArithmeticException("0^0");
+                }
+                return 1L;
+            }
+            long re = 1L;
+            while (z != 0L) {
+                if ((z & 1L) != 0L) {
+                    re = Math.multiplyExact(re, d);
+                }
+                d = Math.multiplyExact(d, d);
+                z >>= 1L;
+            }
+            return re;
+        }
+
+        /**
+         *
+         */
+        @Override
+        public Long decrease(Long x) {
+            return Math.decrementExact(x);
+        }
+
+        /**
+         *
+         */
+        @Override
+        public Long increase(Long x) {
+            return Math.incrementExact(x);
+        }
+
+        /**
+         *
+         */
+        @Override
+        public Long powMod(Long at, Long nt, Long mt) {
+            return MathUtils.powMod(at, nt, mt);
+        }
+
+    }
+
     /**
      * An implements for BigInteger, which also implements {@link IntCalculator}.
      *
      * @author liyicheng
      * 2017-09-10 12:10
      */
-    public static class BigIntegerCalculator extends MathCalculatorAdapter<BigInteger> implements IntCalculator<BigInteger> {
+    public static class BigIntegerCalculator implements IntCalculator<BigInteger> {
 
         static final BigIntegerCalculator cal = new BigIntegerCalculator();
 
@@ -1138,11 +1020,6 @@ public final class Calculators {
         @Override
         public int compare(@NotNull BigInteger x, @NotNull BigInteger y) {
             return x.compareTo(y);
-        }
-
-        @Override
-        public boolean isComparable() {
-            return true;
         }
 
         @NotNull
@@ -1187,11 +1064,11 @@ public final class Calculators {
             return x.multiply(y);
         }
 
-        @NotNull
-        @Override
-        public BigInteger divide(@NotNull BigInteger x, @NotNull BigInteger y) {
-            return x.divide(y);
-        }
+//        @NotNull
+//        @Override
+//        public BigInteger exactDivide(@NotNull BigInteger x, @NotNull BigInteger y) {
+//            return x.divide(y);
+//        }
 
         @NotNull
         @Override
@@ -1204,30 +1081,11 @@ public final class Calculators {
             return x.abs().equals(BigInteger.ONE);
         }
 
-        @NotNull
-        @Override
-        public BigInteger reciprocal(@NotNull BigInteger p) {
-            //impossible
-            throwFor();
-            return null;
-        }
 
         @NotNull
         @Override
         public BigInteger multiplyLong(@NotNull BigInteger p, long l) {
             return p.multiply(BigInteger.valueOf(l));
-        }
-
-        @NotNull
-        @Override
-        public BigInteger divideLong(@NotNull BigInteger p, long n) {
-            return p.divide(BigInteger.valueOf(n));
-        }
-
-        @NotNull
-        @Override
-        public BigInteger squareRoot(@NotNull BigInteger x) {
-            return BigInteger.valueOf((long) Math.sqrt(x.doubleValue()));
         }
 
         @NotNull
@@ -1241,124 +1099,58 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigInteger constantValue(@NotNull String name) {
-            throwFor();
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public BigInteger exp(@NotNull BigInteger a, @NotNull BigInteger b) {
-            try {
-                int t = b.intValueExact();
-                return a.pow(t);
-            } catch (ArithmeticException ae) {
-                throw new UnsupportedCalculationException("Exp too big:" + b.toString());
-            }
-        }
-
-        /**
-         *
-         */
-        @NotNull
-        @Override
         public BigInteger divideToInteger(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.divide(b);
         }
 
-        /**
-         * @see IntCalculator#mod(java.lang.Object, java.lang.Object)
-         */
         @Override
         public @NotNull BigInteger mod(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.mod(b.abs());
         }
 
-//        /**
-//         *
-//         */
-//        @Override
-//        public boolean isInteger(BigInteger x) {
-//            return true;
-//        }
 
-//        /**
-//         * @see IntCalculator#isQuotient(java.lang.Object)
-//         */
-//        @Override
-//        public boolean isQuotient(BigInteger x) {
-//            return true;
-//        }
-
-        /**
-         * @see IntCalculator#gcd(java.lang.Object, java.lang.Object)
-         */
         @NotNull
         @Override
         public BigInteger gcd(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.gcd(b);
         }
 
-        /**
-         * @see IntCalculator#decrease(java.lang.Object)
-         */
         @Override
         public BigInteger decrease(@NotNull BigInteger x) {
             return x.subtract(BigInteger.ONE);
         }
 
-        /**
-         * @see IntCalculator#increase(java.lang.Object)
-         */
         @Override
         public BigInteger increase(@NotNull BigInteger x) {
             return x.add(BigInteger.ONE);
         }
 
-        /**
-         * @see IntCalculator#isEven(java.lang.Object)
-         */
         @Override
         public boolean isEven(@NotNull BigInteger x) {
             return !x.testBit(0);
         }
 
-        /**
-         * @see IntCalculator#isOdd(java.lang.Object)
-         */
         @Override
         public boolean isOdd(@NotNull BigInteger x) {
             return x.testBit(0);
         }
 
-        /**
-         * @see IntCalculator#isPositive(java.lang.Object)
-         */
         @Override
         public boolean isPositive(@NotNull BigInteger x) {
             return x.signum() > 0;
         }
 
-        /**
-         * @see IntCalculator#remainder(java.lang.Object, java.lang.Object)
-         */
         @NotNull
         @Override
         public BigInteger remainder(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.remainder(b);
         }
 
-        /**
-         * @see IntCalculator#isExactDivide(java.lang.Object, java.lang.Object)
-         */
         @Override
         public boolean isExactDivide(@NotNull BigInteger a, @NotNull BigInteger b) {
             return a.mod(b).equals(BigInteger.ZERO);
         }
 
-        /**
-         * @see IntCalculator#powMod(java.lang.Object, java.lang.Object, java.lang.Object)
-         */
         @Override
         public BigInteger powMod(@NotNull BigInteger a, @NotNull BigInteger n, @NotNull BigInteger mod) {
             return a.modPow(n, mod);
@@ -1382,15 +1174,6 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigInteger of(@NotNull Fraction x) {
-            if (x.isInteger()) {
-                return BigInteger.valueOf(x.toLong());
-            }
-            throw new ArithmeticException();
-        }
-
-        @NotNull
-        @Override
         public Class<BigInteger> getNumberClass() {
             return BigInteger.class;
         }
@@ -1398,7 +1181,7 @@ public final class Calculators {
 
     static class BigDecimalCalculator extends MathCalculatorAdapter<BigDecimal> {
 
-        private MathContext mc;
+        private final MathContext mc;
 
         public static final BigDecimal PI_VALUE =
                 new BigDecimal("3.1415926535897932384626433832795028", MathContext.DECIMAL128);

@@ -1,7 +1,6 @@
 package cn.ancono.math.algebra.abs.group.finite
 
 import cn.ancono.math.algebra.abs.GroupCalculators
-import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.discrete.combination.Permutations
@@ -23,9 +22,9 @@ internal constructor(
          * Gets the permutation size.
          * @return the permutation size
          */
-        val permutationSize: Int, private val set: FiniteSet<Permutation>) : AbstractFiniteGroup<Permutation>() {
-
-    private val mc = getPermutationCalculator(permutationSize)
+        val permutationSize: Int,
+        val mc: GroupCalculator<Permutation>,
+        private val set: FiniteSet<Permutation>) : AbstractFiniteGroup<Permutation>() {
 
     override fun regularRepresent(isRight: Boolean): PermutationGroup {
         return this
@@ -72,8 +71,8 @@ internal constructor(
                 list.add(p)
             }
         }
-        return PermutationGroup(permutationSize,
-                MathSets.fromCollection(list, EqualPredicate.naturalEqual()))
+        return PermutationGroup(permutationSize, calculator,
+                MathSets.fromCollection(list, calculator))
     }
 
     /**
@@ -81,7 +80,7 @@ internal constructor(
      */
     fun stabilizer(vararg n: Int): PermutationGroup {
         val re = MathSets.filter(set, calculator) { it.apply(n).contentEquals(n) }
-        return PermutationGroup(permutationSize, re)
+        return PermutationGroup(permutationSize, calculator, re)
     }
 
     /**
@@ -89,7 +88,7 @@ internal constructor(
      */
     fun stabilizer(n: Int): PermutationGroup {
         val re = MathSets.filter(set, calculator) { it.apply(n) == n }
-        return PermutationGroup(permutationSize, re)
+        return PermutationGroup(permutationSize, calculator, re)
     }
 
     /**
@@ -140,7 +139,7 @@ internal constructor(
                 throw IllegalArgumentException("Invalid n=$n")
             }
             val set = Permutations.universe(n)
-            return PermutationGroup(n, set)
+            return PermutationGroup(n, getPermutationCalculator(n), set)
         }
 
         /**
@@ -151,7 +150,7 @@ internal constructor(
         @JvmStatic
         fun alternatingGroups(n: Int): PermutationGroup {
             val set = Permutations.even(n)
-            return PermutationGroup(n, set)
+            return PermutationGroup(n, getPermutationCalculator(n), set)
         }
 
         /**
@@ -163,7 +162,7 @@ internal constructor(
         @JvmStatic
         fun groupOfChecked(set: FiniteSet<Permutation>): PermutationGroup {
             val n = set.get(0).size()
-            return PermutationGroup(n, set)
+            return PermutationGroup(n, getPermutationCalculator(n), set)
         }
 
 
@@ -197,7 +196,8 @@ internal constructor(
                 set.add(n)
                 addToWaitingsIfNotExist(set, waitings, n, n.inverse())
             }
-            return PermutationGroup(size, MathSets.fromCollection(set, EqualPredicate.naturalEqual()))
+            val mc = getPermutationCalculator(size)
+            return PermutationGroup(size, mc, MathSets.fromCollection(set, mc))
         }
 
         //	private static int[] MATH_INDEXED_ARRAY = new int[]{1,2,3,4};

@@ -5,17 +5,10 @@ import cn.ancono.math.function.MathBinaryOperator
 import cn.ancono.utilities.ModelPatterns
 import kotlin.math.abs
 
-interface ICalculator<T> : EqualPredicate<T> {
-    /**
-     * Returns the class of the number.
-     */
-    @JvmDefault
-    val numberClass: Class<T>
-}
 
-inline fun <T, C : ICalculator<T>, R> C.eval(block: C.() -> R): R = this.run(block)
+inline fun <T, C : EqualPredicate<T>, R> C.eval(block: C.() -> R): R = this.run(block)
 
-interface AbelSemiGroupCal<T> : ICalculator<T> {
+interface AbelSemiGroupCal<T> : EqualPredicate<T> {
     //Created by lyc at 2021-05-03 22:09
 
 
@@ -137,7 +130,7 @@ interface AbelGroupCal<T> : AbelMonoidCal<T> {
  * @author liyicheng
  * 2018-02-27 17:31
  */
-interface MulSemiGroupCal<T> : ICalculator<T> {
+interface MulSemiGroupCal<T> : EqualPredicate<T> {
     /**
      * Applies the operation defined in the semigroup.
      */
@@ -267,7 +260,7 @@ interface MulGroupCal<T> : MulMonoidCal<T> {
  * @author liyicheng
  * 2018-02-27 17:31
  */
-interface SemigroupCalculator<T> : ICalculator<T>, MathBinaryOperator<T> {
+interface SemigroupCalculator<T> : EqualPredicate<T>, MathBinaryOperator<T> {
     /**
      * Applies the operation defined in the semigroup.
      */

@@ -4,9 +4,8 @@
 package cn.ancono.math.numberTheory;
 
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
-import cn.ancono.math.exceptions.ExceptionUtil;
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ import java.math.BigInteger;
  *
  * @author liyicheng 2017-09-09 20:33
  */
-public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
+public interface IntCalculator<T> extends EUDCalculator<T>, TotalOrderPredicate<T> {
 
     /**
      * Returns the integer <code>1</code> of type T.
@@ -34,12 +33,10 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
     T getOne();
 
     /**
-     * Integers are comparable.
+     * Returns the absolute value of <code>x</code>.
      */
-    @Override
-    default boolean isComparable() {
-        return true;
-    }
+    T abs(T x);
+
     // methods that is often used as a number theory calculator.
 
     /**
@@ -244,13 +241,16 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
     }
 
 
-    @Override
-    default T exactDivide(T x, T y) {
+//    @Override
+//    T exactDivide(T x, T y)
+    /*
+    {
         if (!isExactDivide(x, y)) {
             ExceptionUtil.notExactDivision(x, y);
         }
         return divide(x, y);
     }
+     */
 
     /**
      * Determines whether the number is an odd number. A number is an odd number
@@ -437,7 +437,7 @@ public interface IntCalculator<T> extends MathCalculator<T>, EUDCalculator<T> {
         a = abs(a);
         b = abs(b);
         T gcd = gcd(a, b);
-        return multiply(divide(a, gcd), b);
+        return multiply(exactDivide(a, gcd), b);
     }
 
     /**

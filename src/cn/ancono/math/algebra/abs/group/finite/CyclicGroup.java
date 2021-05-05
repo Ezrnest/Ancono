@@ -89,7 +89,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
             }
             n += generator;
         }
-        return MathSets.fromCollection(list, EqualPredicate.naturalEqual());
+        return MathSets.fromCollection(list, EqualPredicate.naturalEqual(CyclicGroup.class));
     }
 
     @NotNull
@@ -108,7 +108,7 @@ public class CyclicGroup extends AbstractFiniteGroup<Integer> implements Abelian
             }
         }
         list.add(this);
-        return MathSets.fromCollection(list, EqualPredicate.naturalEqual());
+        return MathSets.fromCollection(list, EqualPredicate.naturalEqual(CyclicGroup.class));
     }
 
     /**

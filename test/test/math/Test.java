@@ -383,7 +383,7 @@ class Test {
 	static <T> void progerssionTest(T a){
         Progression<Long> p2 = ProgressionSup.asFirstElementAndDifferece(1L, 1L, Calculators.longCal());
         p2 = Progression.combinedProgression(Calculators.longCal(), ls -> ls[0] * ls[0], p2);
-        p2.limit(100).stream().forEachOrdered(l -> print(l));
+        p2.limit(100).stream().forEachOrdered(Printer::print);
 
     }
 	
@@ -417,15 +417,15 @@ class Test {
         Progression<Long> p2 = ProgressionSup.
                 createGeometricProgression(1L, 2L, Calculators.longCal());
         Progression<Long> pr = Progression.combinedProgression(Calculators.longCal(), ls -> ls[0] * ls[1], p1, p2);
-        pr.limit(20).forEach(l -> print(l));
+        pr.limit(20).forEach(Printer::print);
         print("sum = " + pr.sumOf(0, 20));
     }
 	
 	static void progressionTest4() {
-        MathCalculator<Long> mc = Calculators.longCal();
+        var mc = Calculators.longCal();
         Progression<Long> p0 = Progression.createProgression(l -> l * l - 10 * l - 100, -1, mc);
         Interval<Long> iv = new IntervalI<>(mc, null, 10L, false, true);
-        p0.limit(100).stream().filter(l -> iv.contains(l)).forEach(l -> print(l));
+        p0.limit(100).stream().filter(iv::contains).forEach(Printer::print);
     }
 	
 	static void progressionTest5() {
@@ -469,7 +469,7 @@ class Test {
 	}
 	
 	static void progression6() {
-        MathCalculator<Long> mc = Calculators.longCal();
+        var mc = Calculators.longCal();
         Progression<Long> p1 = ProgressionSup.createArithmeticProgression(5L, 0L, mc);
         Progression<Long> p2 = Progression.createPeriodicProgression(
                 Arrays.copyOf(p1.limit(25).toArray(), 25, Long[].class), mc, Progression.UNLIMITED);

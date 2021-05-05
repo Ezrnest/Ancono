@@ -48,7 +48,7 @@ public class NTCalculatorTest {
     @Test
     public void gcdUV2() {
         var calFrac = Fraction.getCalculator();
-        var cal = Polynomial.getCalculator(calFrac);
+        var cal = Polynomial.calculator(calFrac);
         var rd = new Random();
 
 

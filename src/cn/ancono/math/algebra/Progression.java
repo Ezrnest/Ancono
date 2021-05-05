@@ -1,8 +1,10 @@
 package cn.ancono.math.algebra;
 
-import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.AbstractFlexibleMathObject;
+import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.AbelSemiGroupCal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.BiMathFunction;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
@@ -29,7 +31,7 @@ import java.util.stream.StreamSupport;
  * @param <T> the type of number returned as the number in the progression
  * @author lyc
  */
-public abstract class Progression<T> extends AbstractMathObject<T> implements Iterable<T> {
+public abstract class Progression<T> extends AbstractFlexibleMathObject<T, EqualPredicate<T>> implements Iterable<T> {
     /**
      * The length of this progression, set it as UNLIMITED to indicate this progression is
      * unlimited.
@@ -43,7 +45,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
     public static final long UNLIMITED = -1;
 
 
-    protected Progression(MathCalculator<T> mc, long length) {
+    protected Progression(EqualPredicate<T> mc, long length) {
         super(mc);
         this.length = length;
     }
@@ -145,8 +147,9 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      */
     public T sumOf(long start, long end) {
         T sum = get(start);
+        var mc = (AbelSemiGroupCal<T>) getCalculator();
         while (++start < end) {
-            sum = getMc().add(sum, get(start));
+            sum = mc.add(sum, get(start));
         }
         return sum;
     }
@@ -230,7 +233,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
     public boolean equals(Object obj) {
         if (obj instanceof Progression) {
             Progression<?> pro = (Progression<?>) obj;
-            if (pro.getMc() != this.getMc()) {
+            if (pro.getCalculator() != this.getCalculator()) {
                 return false;
             }
             // the identity progression type.
@@ -254,7 +257,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      */
     @Override
     public int hashCode() {
-        int hash = getMc().hashCode();
+        int hash = getCalculator().hashCode();
         hash = hash * 37 + get(0).hashCode();
         hash = hash * 37 + get(1).hashCode();
         return hash;
@@ -282,7 +285,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
                 while (p < size) {
                     arr[p++] = it.next();
                 }
-                return new ArrayProgression<>(getMc(), arr);
+                return new ArrayProgression<>(getCalculator(), arr);
             }
         }
         throw new UnsupportedOperationException("Method failed!");
@@ -318,31 +321,31 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
     @NotNull
     @Override
     public <N> Progression<N> mapTo(
-            @NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+            @NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new MappedProgression<>(newCalculator, mapper, this);
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Progression) {
-            Progression<N> pro = (Progression<N>) obj;
-            if (this.isLimited() && this.getLength() == pro.getLength()) {
-                long i = this.getLength();
-                Iterator<T> it1 = this.iterator();
-                Iterator<N> it2 = pro.iterator();
-                while (i-- > 0) {
-                    if (!getMc().isEqual(it1.next(), mapper.apply(it2.next()))) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+//        if (obj instanceof Progression) {
+//            Progression<N> pro = (Progression<N>) obj;
+//            if (this.isLimited() && this.getLength() == pro.getLength()) {
+//                long i = this.getLength();
+//                Iterator<T> it1 = this.iterator();
+//                Iterator<N> it2 = pro.iterator();
+//                while (i-- > 0) {
+//                    if (!getCalculator().isEqual(it1.next(), mapper.apply(it2.next()))) {
+//                        return false;
+//                    }
+//                }
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull FMathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof Progression) {
             Progression<T> pro = (Progression<T>) obj;
             if (this.isLimited() && length == pro.length) {
@@ -350,7 +353,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
                 Iterator<T> it1 = this.iterator();
                 Iterator<T> it2 = pro.iterator();
                 while (i-- > 0) {
-                    if (!getMc().isEqual(it1.next(), it2.next())) {
+                    if (!getCalculator().isEqual(it1.next(), it2.next())) {
                         return false;
                     }
                 }
@@ -380,21 +383,21 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
 
         private final Progression<T> proSource;
 
-        MappedProgression(MathCalculator<N> mc, Function<T, N> mapper, Progression<T> proSource) {
+        MappedProgression(EqualPredicate<N> mc, Function<T, N> mapper, Progression<T> proSource) {
             super(mc, proSource.length);
             this.mapper = mapper;
 
             this.proSource = proSource;
         }
 
-        MappedProgression(MathCalculator<N> mc, Function<T, N> mapper, Progression<T> proSource, long length) {
+        MappedProgression(EqualPredicate<N> mc, Function<T, N> mapper, Progression<T> proSource, long length) {
             super(mc, length);
             this.mapper = mapper;
 
             this.proSource = proSource;
         }
 
-        <T1> MappedProgression(MathCalculator<N> mc, Function<T1, N> mapper, MappedProgression<T, T1> proSource) {
+        <T1> MappedProgression(EqualPredicate<N> mc, Function<T1, N> mapper, MappedProgression<T, T1> proSource) {
             super(mc, proSource.length);
             this.mapper = proSource.mapper.andThen(mapper);
             this.proSource = proSource.proSource;
@@ -437,7 +440,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
 
         @NotNull
         @Override
-        public <N1> Progression<N1> mapTo(@NotNull MathCalculator<N1> newCalculator, @NotNull Function<N, N1> mapper) {
+        public <N1> Progression<N1> mapTo(@NotNull EqualPredicate<N1> newCalculator, @NotNull Function<N, N1> mapper) {
             return new MappedProgression<>(newCalculator, this.mapper.andThen(mapper), proSource);
         }
 
@@ -446,7 +449,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
             if (limit <= 0 || (length != UNLIMITED && limit > length)) {
                 throw new IllegalArgumentException();
             }
-            return new MappedProgression<>(getMc(), mapper, proSource.limit(limit), limit);
+            return new MappedProgression<>(getCalculator(), mapper, proSource.limit(limit), limit);
         }
 
     }
@@ -473,7 +476,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
          * @param func
          * @param ps
          */
-        protected CombinedProgression(MathCalculator<R> mc, Function<T[], R> func, Progression<T>[] ps) {
+        protected CombinedProgression(EqualPredicate<R> mc, Function<T[], R> func, Progression<T>[] ps) {
             super(mc, ps[0].length);
             this.func = func;
             this.ps = ps;
@@ -488,7 +491,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
          * @param func
          * @param ps
          */
-        protected CombinedProgression(MathCalculator<R> mc, Function<T[], R> func, Progression<T>[] ps, long length) {
+        protected CombinedProgression(EqualPredicate<R> mc, Function<T[], R> func, Progression<T>[] ps, long length) {
             super(mc, length);
             this.func = func;
             this.ps = ps;
@@ -521,12 +524,12 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
             if (length != UNLIMITED && limit > length) {
                 throw new IllegalArgumentException();
             }
-            return new CombinedProgression<>(getMc(), func, ps, limit);
+            return new CombinedProgression<>(getCalculator(), func, ps, limit);
         }
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<R, N> mapper) {
+        public <N> Progression<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<R, N> mapper) {
             return new CombinedProgression<>(newCalculator, func.andThen(mapper), ps, length);
         }
 
@@ -537,7 +540,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
         private final T[] arr;
 
         //the length of this kind of array is bigger than 0.
-        protected ArrayProgression(MathCalculator<T> mc, T[] arr) {
+        protected ArrayProgression(EqualPredicate<T> mc, T[] arr) {
             super(mc, arr.length);
             this.arr = arr;
         }
@@ -593,7 +596,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
                 throw new IllegalArgumentException();
             }
             T[] arrN = Arrays.copyOf(arr, (int) limit);
-            return new ArrayProgression<>(getMc(), arrN);
+            return new ArrayProgression<>(getCalculator(), arrN);
 
         }
 
@@ -605,15 +608,16 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
             int s = (int) start;
             int e = (int) end;
             T sum = arr[s];
+            var mc = (AbelSemiGroupCal<T>) getCalculator();
             while (++s < e) {
-                sum = getMc().add(sum, arr[s]);
+                sum = mc.add(sum, arr[s]);
             }
             return sum;
         }
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> Progression<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newArr = (N[]) new Object[arr.length];
             for (int i = 0; i < arr.length; i++) {
@@ -645,7 +649,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
          */
         @SuppressWarnings("unchecked")
         protected CachedProgression(Progression<T> pro, long startIndex, long endIndex, long length) {
-            super(pro.getMc(), length);
+            super(pro.getCalculator(), length);
             if (pro instanceof ArrayProgression) {
                 //no need to allocate a new array
                 ArrayProgression<T> ap = (ArrayProgression<T>) pro;
@@ -690,7 +694,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
         }
 
         private CachedProgression(Progression<T> pro, T[] cache, long startIndex, long endIndex) {
-            super(pro.getMc(), pro.length);
+            super(pro.getCalculator(), pro.length);
             this.pro = pro;
             this.cache = cache;
             this.startIndex = startIndex;
@@ -752,7 +756,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
          */
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> Progression<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newCache = (N[]) new Object[cache.length];
             for (int i = 0; i < newCache.length; i++) {
@@ -769,7 +773,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
 
         private final LongFunction<T> f;
 
-        protected GeneralFormulaProgression(MathCalculator<T> mc, long length, LongFunction<T> generalFormula) {
+        protected GeneralFormulaProgression(EqualPredicate<T> mc, long length, LongFunction<T> generalFormula) {
             super(mc, length);
             this.f = generalFormula;
         }
@@ -783,7 +787,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> Progression<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new GeneralFormulaProgression<>(newCalculator, length, l -> mapper.apply(f.apply(l)));
         }
     }
@@ -807,7 +811,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
         private static final int arraySize = 16;
 
         @SuppressWarnings("unchecked")
-        protected FillingCachedProgression(MathCalculator<T> mc, long length, BiMathFunction<Progression<T>, Long, T> recursiveFormula, T[] firstSeveral) {
+        protected FillingCachedProgression(EqualPredicate<T> mc, long length, BiMathFunction<Progression<T>, Long, T> recursiveFormula, T[] firstSeveral) {
             super(mc, length);
             this.rf = recursiveFormula;
             storage = (T[]) new Object[Math.max(arraySize, firstSeveral.length)];
@@ -816,7 +820,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
         }
 
         @SuppressWarnings("unchecked")
-        protected FillingCachedProgression(MathCalculator<T> mc, long length, BiMathFunction<Progression<T>, Long, T> recursiveFormula, T first) {
+        protected FillingCachedProgression(EqualPredicate<T> mc, long length, BiMathFunction<Progression<T>, Long, T> recursiveFormula, T first) {
             super(mc, length);
             this.rf = recursiveFormula;
             storage = (T[]) new Object[arraySize];
@@ -824,7 +828,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
             maxKnownIndex = 0;
         }
 
-        private FillingCachedProgression(MathCalculator<T> mc, long length, BiMathFunction<Progression<T>, Long, T> recursiveFormula, T[] arr, int maxKnown) {
+        private FillingCachedProgression(EqualPredicate<T> mc, long length, BiMathFunction<Progression<T>, Long, T> recursiveFormula, T[] arr, int maxKnown) {
             super(mc, length);
             rf = recursiveFormula;
             storage = arr;
@@ -894,14 +898,14 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
         @Override
         public Progression<T> limit(long limit) {
             if (limit > 0 && (length == UNLIMITED || limit <= length)) {
-                return new FillingCachedProgression<>(getMc(), limit, rf, storage, maxKnownIndex);
+                return new FillingCachedProgression<>(getCalculator(), limit, rf, storage, maxKnownIndex);
             }
             throw new IndexOutOfBoundsException("for index:" + limit);
         }
 
         @NotNull
         @Override
-        public <N> Progression<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> Progression<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             return super.mapTo(newCalculator, mapper);
         }
     }
@@ -911,7 +915,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
         private final T[] loop;
         private final int loopLength;
 
-        protected CycleProgression(MathCalculator<T> mc, long length, T[] loop) {
+        protected CycleProgression(EqualPredicate<T> mc, long length, T[] loop) {
             super(mc, length);
             this.loop = loop;
             this.loopLength = loop.length;
@@ -968,7 +972,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
         @Override
         public Progression<T> limit(long limit) {
             if (limit > 0 && (length == UNLIMITED || limit <= length)) {
-                return new CycleProgression<>(getMc(), limit, loop);
+                return new CycleProgression<>(getCalculator(), limit, loop);
             }
             throw new IndexOutOfBoundsException("for index:" + limit);
         }
@@ -986,7 +990,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      * @param mc      a math calculator
      * @return a newly created progression.
      */
-    public static <T> Progression<T> createProgression(LongFunction<T> formula, long length, MathCalculator<T> mc) {
+    public static <T> Progression<T> createProgression(LongFunction<T> formula, long length, EqualPredicate<T> mc) {
         return new GeneralFormulaProgression<>(mc, length < 0 ? UNLIMITED : length, formula);
     }
 
@@ -1001,7 +1005,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      * @param mc               a math calculator
      * @return a newly created progression.
      */
-    public static <T> Progression<T> createProgressionRecur1(Function<T, T> recursiveFormula, T first, long length, MathCalculator<T> mc) {
+    public static <T> Progression<T> createProgressionRecur1(Function<T, T> recursiveFormula, T first, long length, EqualPredicate<T> mc) {
         return new FillingCachedProgression<>(mc, length, (progression, index) -> recursiveFormula.apply(progression.get(index - 1)), first);
     }
 
@@ -1035,13 +1039,13 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      */
     @SafeVarargs
     public static <T> Progression<T> createProgressionRecur(BiMathFunction<Progression<T>, Long, T> recur, long length,
-                                                            MathCalculator<T> mc, T... firstSeveral) {
+                                                            EqualPredicate<T> mc, T... firstSeveral) {
         return new FillingCachedProgression<>(mc, length, recur, firstSeveral);
     }
 
     @SafeVarargs
     public static <T> Progression<T> createProgressionRecur1WithIndex(MathFunction<WithLong<T>, T> recur, long length,
-                                                                      MathCalculator<T> mc, T... firstSeveral) {
+                                                                      EqualPredicate<T> mc, T... firstSeveral) {
         return createProgressionRecur((Progression<T> p, Long l) -> recur.apply(new WithLong<>(l, p.get(l - 1))), length, mc, firstSeveral);
     }
 
@@ -1055,7 +1059,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      * @return a newly created progression.
      * @throws NullPointerException if any element in the array is null.
      */
-    public static <T> Progression<T> createPeriodicProgression(T[] array, MathCalculator<T> mc, long length) {
+    public static <T> Progression<T> createPeriodicProgression(T[] array, EqualPredicate<T> mc, long length) {
         for (T t : array) {
             if (t == null) {
                 throw new NullPointerException();
@@ -1115,7 +1119,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      */
     @SafeVarargs
     public static <R, T> Progression<R>
-    combinedProgression(MathCalculator<R> mc, Function<T[], R> function, Progression<T>... pros) {
+    combinedProgression(EqualPredicate<R> mc, Function<T[], R> function, Progression<T>... pros) {
         //length check
         long length = pros[0].length;
         for (int i = 1; i < pros.length; i++) {
@@ -1127,9 +1131,11 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
     }
 
     /**
-     * Assume the progression {@code pro} is {@code p(n)},and this method will return a new progression that is {@code f(p(n))}.
-     * The new progression has the identity length as the original one.This method is like a one-parameter version of method
-     * {@link #combinedProgression(MathCalculator, Function, Progression...)},while it has better performance.
+     * Assume the progression {@code pro} is {@code p(n)},and this method will return a new progression that is {@code
+     * f(p(n))}.
+     * The new progression has the identity length as the original one.This method is like a one-parameter version of
+     * method
+     * {@link #combinedProgression(EqualPredicate, Function, Progression...)},while it has better performance.
      *
      * @param mc  a new calculator for the progression
      * @param f   a function
@@ -1137,7 +1143,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      * @return a new mapped progression
      * @throws NullPointerException if the given arguments are null.
      */
-    public static <R, T> Progression<R> computeProgression(MathCalculator<R> mc, Function<T, R> f, Progression<T> pro) {
+    public static <R, T> Progression<R> computeProgression(EqualPredicate<R> mc, Function<T, R> f, Progression<T> pro) {
         return new MappedProgression<>(mc, f, pro);
     }
 

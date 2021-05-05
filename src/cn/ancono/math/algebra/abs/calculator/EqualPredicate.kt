@@ -1,7 +1,9 @@
-/**
+/*
  * 2018-02-28
  */
-package cn.ancono.math.algebra.abs.calculator;
+package cn.ancono.math.algebra.abs.calculator
+
+import java.util.*
 
 /**
  * A predicate that tests whether two objects are equal. EqualPredicate
@@ -10,11 +12,11 @@ package cn.ancono.math.algebra.abs.calculator;
  * @author liyicheng
  * 2018-02-28 17:33
  */
-@FunctionalInterface
-public interface EqualPredicate<T> {
+interface EqualPredicate<T> {
     /**
      * Evaluates whether the two objects are equal.
-     * <p>
+     *
+     *
      * * It is *reflexive*: for any non-null reference value `x`,
      * `test(x,x)` should return `true`.
      * * It is *symmetric*: for any non-null reference values `x` and
@@ -30,22 +32,33 @@ public interface EqualPredicate<T> {
      *
      * @throws NullPointerException if `x==null || y == null`
      */
-    boolean isEqual(T x, T y);
+    fun isEqual(x: T, y: T): Boolean
 
+    val numberClass: Class<T>
 
-    /**
-     * Returns a equal predicate that considers two elements are equal if and only if
-     * the two objects are equal by [Any.equals].
-     */
-    static <T> EqualPredicate<T> naturalEqual() {
-        return Object::equals;
+    companion object {
+
+        @JvmStatic
+        fun <T> naturalEqual(clz: Class<T>): EqualPredicate<T> {
+            return object : EqualPredicate<T> {
+                override fun isEqual(x: T, y: T): Boolean {
+                    return Objects.equals(x, y)
+                }
+
+                override val numberClass: Class<T> = clz
+            }
+        }
+
+        @JvmStatic
+        fun <T> refEqual(clz: Class<T>): EqualPredicate<T> {
+            return object : EqualPredicate<T> {
+                override fun isEqual(x: T, y: T): Boolean {
+                    return x === y
+                }
+
+                override val numberClass: Class<T> = clz
+            }
+        }
     }
 
-    /**
-     * Returns a equal predicate that considers two elements are equal if and only if
-     * the two objects are equal by reference.
-     */
-    static <T> EqualPredicate<T> refEqual() {
-        return (x, y) -> x == y;
-    }
 }

@@ -478,7 +478,8 @@ public final class FiniteGroups {
         if (e == a) {
             throw new IllegalArgumentException("e == a");
         }
-        var set = MathSets.asSet(EqualPredicate.refEqual(), e, a);
+        @SuppressWarnings("unchecked")
+        var set = MathSets.asSet(EqualPredicate.refEqual((Class<T>) e.getClass()), e, a);
         GroupCalculator<T> cal = new GroupCalculator<>() {
             @Override
             public boolean isCommutative() {
@@ -539,7 +540,8 @@ public final class FiniteGroups {
         // 0 1 2
         // 1 2 0
         // 2 0 1
-        var set = MathSets.asSet(EqualPredicate.refEqual(), e, a, b);
+        @SuppressWarnings("unchecked")
+        var set = MathSets.asSet(EqualPredicate.refEqual((Class<T>) e.getClass()), e, a, b);
         var cal = new GroupCalculator<T>() {
 
             @Override

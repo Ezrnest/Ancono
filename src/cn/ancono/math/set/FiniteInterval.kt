@@ -1,7 +1,8 @@
 package cn.ancono.math.set
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
+import cn.ancono.math.FMathObject
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberTheory.IntCalculator
@@ -15,6 +16,8 @@ import java.util.function.Function
  */
 class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T, val upper: T)
     : Interval<T>(calculator), FiniteSet<T> {
+
+
     override fun contains(n: T): Boolean {
         return calculator.compare(downer, n) <= 0 && calculator.compare(n, upper) <= 0
     }
@@ -34,9 +37,8 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
     override fun isDownerBoundInclusive(): Boolean {
         return true
     }
-
     override fun lengthOf(): T {
-        return mc.subtract(upper, downer)
+        return calculator.subtract(upper, downer)
     }
 
     override fun downerPart(n: T): Interval<T> {
@@ -95,6 +97,7 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
         val iR = iv.upperBound()!!
         val right = upper
         val left = downer
+        val mc = calculator
         return if ((mc.compare(right, iL) >= 0) && (mc.compare(iR, left) >= 0)) {
             if (mc.compare(left, iL) < 0) {
                 FiniteInterval(calculator, iL, right)
@@ -104,8 +107,8 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
         } else null
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Interval<N> {
-        return closedInterval(mapper.apply(downer), mapper.apply(upper), newCalculator)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Interval<N> {
+        return closedInterval(mapper.apply(downer), mapper.apply(upper), newCalculator as IntCalculator)
     }
 
     override fun toString(): String {
@@ -116,10 +119,11 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
         return "[${nf.format(downer)},${nf.format(upper)}]"
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, TotalOrderPredicate<T>>): Boolean {
         if (obj !is FiniteInterval) {
             return false
         }
+        val mc = calculator
         return mc.isEqual(downer, obj.downer) && mc.isEqual(upper, obj.upper)
     }
 
@@ -168,7 +172,7 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
             if (!hasNext()) {
                 throw NoSuchElementException()
             }
-            val re = calculator.eval { (cur - downer) / one }
+            val re = calculator.eval { exactDivide(cur - downer, one) }
             return calculator.asLong(re).toInt()
         }
 
@@ -184,7 +188,7 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
             if (!hasPrevious()) {
                 throw NoSuchElementException()
             }
-            val re = calculator.eval { (cur - downer) / one }
+            val re = calculator.eval { exactDivide(cur - downer, one) }
             return calculator.asLong(re).toInt() - 1
         }
 
@@ -195,12 +199,12 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
     }
 
     override fun size(): Long {
-        val re = calculator.eval { (upper - downer) / one }
+        val re = calculator.eval { exactDivide(upper - downer, one) }
         return calculator.asLong(re) + 1
     }
 
     override fun sizeAsBigInteger(): BigInteger {
-        val re = calculator.eval { (upper - downer) / one }
+        val re = calculator.eval { exactDivide(upper - downer, one) }
         return calculator.asBigInteger(re).inc()
     }
 

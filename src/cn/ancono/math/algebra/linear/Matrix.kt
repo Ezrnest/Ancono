@@ -596,7 +596,7 @@ abstract class Matrix<T>(
      * `λI-this`, which is a matrix of polynomial.
      */
     open fun charMatrix(): Matrix<Polynomial<T>> {
-        return MatrixImpl.charMatrix(this, Polynomial.getCalculator(calculator as MathCalculator<T>)) //TODO
+        return MatrixImpl.charMatrix(this, Polynomial.calculator(calculator as MathCalculator<T>)) //TODO
     }
 
     /**
@@ -843,6 +843,9 @@ abstract class Matrix<T>(
         }
 
 
+        /**
+         * Gets a calculator for `(row, column)` matrices.
+         */
         @JvmStatic
         fun <T> calculator(row: Int, column: Int, mc: RingCalculator<T>): MatrixCal<T> {
             require(row > 0 && column > 0)
@@ -852,10 +855,22 @@ abstract class Matrix<T>(
             return MatrixCal(mc, row, column)
         }
 
+        /**
+         * Gets a calculator for `(n, n)` matrices.
+         */
         @JvmStatic
         fun <T> calculator(n: Int, mc: FieldCalculator<T>): SquareMatrixCal<T> {
             require(n > 0)
             return SquareMatrixCal(mc, n)
+        }
+
+        /**
+         * Gets a calculator for `(n, n)` matrices on a ring.
+         */
+        @JvmStatic
+        fun <T> calculator(n: Int, mc: RingCalculator<T>): SquareMatrixCalRing<T> {
+            require(n > 0)
+            return SquareMatrixCalRing(mc, n)
         }
 
         @JvmStatic
@@ -920,7 +935,7 @@ abstract class Matrix<T>(
          * Determines whether the two matrices are similar.
          */
         fun <T> isSimilar(a: Matrix<T>, b: Matrix<T>): Boolean {
-            val pc = Polynomial.getCalculator(a.calculator as MathCalculator<T>)
+            val pc = Polynomial.calculator(a.calculator as MathCalculator<T>)
             var x = MatrixImpl.charMatrix(a, pc)
             var y = MatrixImpl.charMatrix(b, pc)
             x = x.toNormalForm()
@@ -1923,6 +1938,19 @@ open class MatrixCal<T>(calculator: RingCalculator<T>, val r: Int, val c: Int) :
         return v.multiply(k)
     }
 }
+
+class SquareMatrixCalRing<T>(mc: RingCalculator<T>, n: Int) :
+        MatrixCal<T>(mc, n, n), RingCalculator<Matrix<T>> {
+
+    override fun multiply(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
+        return x.multiply(y)
+    }
+
+    override fun multiplyLong(x: Matrix<T>, n: Long): Matrix<T> {
+        return x.applyAll { mc.multiplyLong(it, n) }
+    }
+}
+
 
 class SquareMatrixCal<T>(override val mc: FieldCalculator<T>, n: Int) :
         MatrixCal<T>(mc, n, n), AlgebraCalculator<T, Matrix<T>>, UnitRingCalculator<Matrix<T>> {

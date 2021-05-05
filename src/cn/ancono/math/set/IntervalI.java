@@ -1,10 +1,13 @@
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.FMathObject;
+import cn.ancono.math.algebra.abs.calculator.AbelGroupCal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
 import java.util.function.Function;
 
 public final class IntervalI<T> extends Interval<T> {
@@ -29,7 +32,7 @@ public final class IntervalI<T> extends Interval<T> {
      * @param downerInclusive determines whether downer should be inclusive
      * @param upperInclusive  determines whether upper should be inclusive
      */
-    public IntervalI(MathCalculator<T> mc, T downerBound, T upperBound, boolean downerInclusive, boolean upperInclusive) {
+    public IntervalI(TotalOrderPredicate<T> mc, T downerBound, T upperBound, boolean downerInclusive, boolean upperInclusive) {
         super(mc);
         int type = 0;
         if (downerBound == null || !downerInclusive) {
@@ -38,8 +41,10 @@ public final class IntervalI<T> extends Interval<T> {
         if (upperBound == null || !upperInclusive) {
             type |= RIGHT_OPEN_MASK;
         }
+
         if (downerBound != null && upperBound != null) {
-            int t = mc.compare(downerBound, upperBound);
+            @SuppressWarnings("unchecked")
+            int t = ((Comparator<T>) mc).compare(downerBound, upperBound);
             if (t > 0) {
                 throw new IllegalArgumentException("downerBound > upperBound");
             }
@@ -53,7 +58,7 @@ public final class IntervalI<T> extends Interval<T> {
     }
 
 
-    IntervalI(MathCalculator<T> mc, T left, T right, int type) {
+    IntervalI(TotalOrderPredicate<T> mc, T left, T right, int type) {
         super(mc);
         this.left = left;
         this.right = right;
@@ -67,7 +72,7 @@ public final class IntervalI<T> extends Interval<T> {
             if (right == null) {
                 return true;
             }
-            int t = getMc().compare(n, right);
+            int t = getCalculator().compare(n, right);
             if ((type & RIGHT_OPEN_MASK) == RIGHT_OPEN_MASK) {
                 // right open
                 return t < 0;
@@ -75,17 +80,17 @@ public final class IntervalI<T> extends Interval<T> {
                 return t < 0 || t == 0;
             }
         } else if (right == null) {
-            int t = getMc().compare(left, n);
+            int t = getCalculator().compare(left, n);
             if ((type & LEFT_OPEN_MASK) == LEFT_OPEN_MASK) {
                 //left open
                 return t < 0;
             } else {
-                return t != 1;
+                return t <= 0;
             }
         }
-        int rl = getMc().compare(left, n);
+        int rl = getCalculator().compare(left, n);
         if ((type & LEFT_OPEN_MASK) == LEFT_OPEN_MASK) {
-            if (rl != -1) {
+            if (rl >= 0) {
                 return false;
             }
         } else {
@@ -93,11 +98,11 @@ public final class IntervalI<T> extends Interval<T> {
                 return false;
             }
         }
-        int rr = getMc().compare(n, right);
+        int rr = getCalculator().compare(n, right);
         if ((type & RIGHT_OPEN_MASK) == RIGHT_OPEN_MASK) {
             return rr < 0;
         } else {
-            return rr != 1;
+            return rr <= 0;
         }
 
     }
@@ -127,11 +132,12 @@ public final class IntervalI<T> extends Interval<T> {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public T lengthOf() {
         if (left == null || right == null)
             return null;
-        return getMc().subtract(right, left);
+        return ((AbelGroupCal<T>) getCalculator()).subtract(right, left);
     }
 
 
@@ -140,18 +146,18 @@ public final class IntervalI<T> extends Interval<T> {
             if (left == null) {
                 return true;
             }
-            return getMc().compare(left, n) < 0;
+            return getCalculator().compare(left, n) < 0;
         }
         if (left == null) {
-            return getMc().compare(n, right) < 0;
+            return getCalculator().compare(n, right) < 0;
         }
 
-        int t = getMc().compare(left, n);
-        if (t != -1) {
+        int t = getCalculator().compare(left, n);
+        if (t >= 0) {
             return false;
         }
-        t = getMc().compare(n, right);
-        return t == -1;
+        t = getCalculator().compare(n, right);
+        return t < 0;
     }
 
 
@@ -163,7 +169,7 @@ public final class IntervalI<T> extends Interval<T> {
     @Override
     public Interval<T> downerPart(T n) {
         if (inRangeExclusive(n)) {
-            return new IntervalI<>(getMc(), left, n, type);
+            return new IntervalI<>(getCalculator(), left, n, type);
         }
         thr(n);
         return null;
@@ -173,7 +179,7 @@ public final class IntervalI<T> extends Interval<T> {
     @Override
     public Interval<T> downerPart(T n, boolean include) {
         if (inRangeExclusive(n)) {
-            return new IntervalI<>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
+            return new IntervalI<>(getCalculator(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
         }
         thr(n);
         return null;
@@ -183,7 +189,7 @@ public final class IntervalI<T> extends Interval<T> {
     @Override
     public Interval<T> upperPart(T n) {
         if (inRangeExclusive(n)) {
-            return new IntervalI<>(getMc(), n, right, type);
+            return new IntervalI<>(getCalculator(), n, right, type);
         }
         thr(n);
         return null;
@@ -193,7 +199,7 @@ public final class IntervalI<T> extends Interval<T> {
     @Override
     public Interval<T> upperPart(T n, boolean include) {
         if (inRangeExclusive(n)) {
-            return new IntervalI<>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
+            return new IntervalI<>(getCalculator(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
         }
         thr(n);
         return null;
@@ -202,8 +208,8 @@ public final class IntervalI<T> extends Interval<T> {
 
     @Override
     public Interval<T> expandUpperBound(T n) {
-        if (getMc().compare(right, n) < 0) {
-            return new IntervalI<>(getMc(), left, n, type);
+        if (getCalculator().compare(right, n) < 0) {
+            return new IntervalI<>(getCalculator(), left, n, type);
         }
         thr(n);
         return null;
@@ -212,8 +218,8 @@ public final class IntervalI<T> extends Interval<T> {
 
     @Override
     public Interval<T> expandUpperBound(T n, boolean include) {
-        if (getMc().compare(right, n) < 0) {
-            return new IntervalI<>(getMc(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
+        if (getCalculator().compare(right, n) < 0) {
+            return new IntervalI<>(getCalculator(), left, n, (type & LEFT_OPEN_MASK) | (include ? 0 : RIGHT_OPEN_MASK));
         }
         thr(n);
         return null;
@@ -222,8 +228,8 @@ public final class IntervalI<T> extends Interval<T> {
 
     @Override
     public Interval<T> expandDownerBound(T n) {
-        if (getMc().compare(left, n) < 0) {
-            return new IntervalI<>(getMc(), n, right, type);
+        if (getCalculator().compare(left, n) < 0) {
+            return new IntervalI<>(getCalculator(), n, right, type);
         }
         thr(n);
         return null;
@@ -232,8 +238,8 @@ public final class IntervalI<T> extends Interval<T> {
 
     @Override
     public Interval<T> expandDownerBound(T n, boolean include) {
-        if (getMc().compare(left, n) < 0) {
-            return new IntervalI<>(getMc(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
+        if (getCalculator().compare(left, n) < 0) {
+            return new IntervalI<>(getCalculator(), n, right, (type & RIGHT_OPEN_MASK) | (include ? 0 : LEFT_OPEN_MASK));
         }
         thr(n);
         return null;
@@ -245,7 +251,7 @@ public final class IntervalI<T> extends Interval<T> {
         if (downerBound == null || upperBound == null) {
             throw new NullPointerException();
         }
-        return new IntervalI<>(getMc(), downerBound, upperBound, type);
+        return new IntervalI<>(getCalculator(), downerBound, upperBound, type);
     }
 
 
@@ -255,7 +261,7 @@ public final class IntervalI<T> extends Interval<T> {
         T iR = iv.upperBound();
         //left side judge
         if (left != null) {
-            int t = getMc().compare(left, iL);
+            int t = getCalculator().compare(left, iL);
             if (t > 0) {
                 return false;
             }
@@ -264,7 +270,7 @@ public final class IntervalI<T> extends Interval<T> {
             }
         }
         if (right != null) {
-            int t = getMc().compare(iR, right);
+            int t = getCalculator().compare(iR, right);
             if (t > 0) {
                 return false;
             }
@@ -280,20 +286,20 @@ public final class IntervalI<T> extends Interval<T> {
     public Interval<T> intersect(Interval<T> iv) {
         T iL = iv.downerBound();
         T iR = iv.upperBound();
-        if ((right == null || iL == null || getMc().compare(right, iL) >= 0) &&
-                (iR == null || left == null || getMc().compare(iR, left) >= 0)) {
-            if (getMc().compare(left, iL) < 0) {
-                if (getMc().isEqual(right, iL) && (!isUpperBoundInclusive() || !iv.isDownerBoundInclusive())) {
+        if ((right == null || iL == null || getCalculator().compare(right, iL) >= 0) &&
+                (iR == null || left == null || getCalculator().compare(iR, left) >= 0)) {
+            if (getCalculator().compare(left, iL) < 0) {
+                if (getCalculator().isEqual(right, iL) && (!isUpperBoundInclusive() || !iv.isDownerBoundInclusive())) {
                     return null;
                 }
                 return new IntervalI<>
-                        (getMc(), iL, right, iv.isDownerBoundInclusive(), isUpperBoundInclusive());
+                        (getCalculator(), iL, right, iv.isDownerBoundInclusive(), isUpperBoundInclusive());
             } else {
-                if (getMc().isEqual(left, iR) && (!isDownerBoundInclusive() || !iv.isUpperBoundInclusive())) {
+                if (getCalculator().isEqual(left, iR) && (!isDownerBoundInclusive() || !iv.isUpperBoundInclusive())) {
                     return null;
                 }
                 return new IntervalI<>
-                        (getMc(), left, iR, isDownerBoundInclusive(), iv.isUpperBoundInclusive());
+                        (getCalculator(), left, iR, isDownerBoundInclusive(), iv.isUpperBoundInclusive());
             }
         }
         return null;
@@ -340,8 +346,8 @@ public final class IntervalI<T> extends Interval<T> {
 
     @NotNull
     @Override
-    public <N> Interval<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new IntervalI<>(newCalculator, mapper.apply(left), mapper.apply(right), type);
+    public <N> Interval<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new IntervalI<>((TotalOrderPredicate<N>) newCalculator, mapper.apply(left), mapper.apply(right), type);
     }
 
 
@@ -351,7 +357,7 @@ public final class IntervalI<T> extends Interval<T> {
             Interval<?> iv = (Interval<?>) obj;
             if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()
                     && isUpperBoundInclusive() == iv.isUpperBoundInclusive()) {
-                return getMc().equals(iv.getCalculator()) && (left == null ? iv.downerBound() == null : left.equals(iv.downerBound())) &&
+                return getCalculator().equals(iv.getCalculator()) && (left == null ? iv.downerBound() == null : left.equals(iv.downerBound())) &&
                         (right == null ? iv.upperBound() == null : right.equals(iv.upperBound()));
             }
         }
@@ -360,7 +366,7 @@ public final class IntervalI<T> extends Interval<T> {
 
     @Override
     public int hashCode() {
-        int hash = getMc().hashCode();
+        int hash = getCalculator().hashCode();
         hash = hash + 31 * type;
         hash = hash * 37 + left.hashCode();
         hash = hash * 37 + right.hashCode();
@@ -368,35 +374,35 @@ public final class IntervalI<T> extends Interval<T> {
     }
 
 
+//    @Override
+//    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+//        if (obj instanceof Interval) {
+//            Interval<N> iv = (Interval<N>) obj;
+//            if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()
+//                    && isUpperBoundInclusive() == iv.isUpperBoundInclusive()) {
+//                N iL = iv.downerBound();
+//                N iR = iv.upperBound();
+//                if (mappingSideNotEquals(mapper, iL, left)) return false;
+//                return !mappingSideNotEquals(mapper, iR, right);
+//
+//            }
+//        }
+//        return false;
+//    }
+//
+//    private <N> boolean mappingSideNotEquals(@NotNull Function<N, T> mapper, N iR, T right) {
+//        if (iR == null) {
+//            return right != null;
+//        } else if (right == null) {
+//            return true;
+//        } else {
+//            T iRM = mapper.apply(iR);
+//            return !getCalculator().isEqual(iRM, right);
+//        }
+//    }
+
     @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Interval) {
-            Interval<N> iv = (Interval<N>) obj;
-            if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()
-                    && isUpperBoundInclusive() == iv.isUpperBoundInclusive()) {
-                N iL = iv.downerBound();
-                N iR = iv.upperBound();
-                if (mappingSideNotEquals(mapper, iL, left)) return false;
-                return !mappingSideNotEquals(mapper, iR, right);
-
-            }
-        }
-        return false;
-    }
-
-    private <N> boolean mappingSideNotEquals(@NotNull Function<N, T> mapper, N iR, T right) {
-        if (iR == null) {
-            return right != null;
-        } else if (right == null) {
-            return true;
-        } else {
-            T iRM = mapper.apply(iR);
-            return !getMc().isEqual(iRM, right);
-        }
-    }
-
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull FMathObject<T, TotalOrderPredicate<T>> obj) {
         if (obj instanceof Interval) {
             Interval<T> iv = (Interval<T>) obj;
             if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()
@@ -417,7 +423,7 @@ public final class IntervalI<T> extends Interval<T> {
         } else if (side2 == null) {
             return true;
         } else {
-            return !getMc().isEqual(side1, side2);
+            return !getCalculator().isEqual(side1, side2);
         }
     }
 

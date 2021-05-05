@@ -26,7 +26,7 @@ class NormalCurveComposed<T>(val a: DerivableSVFunction<T>,
     override fun domain(): Interval<T> = domain
 
     override fun substitute(t: T): SVector<T> {
-        return SVector.valueOf(a(t), b(t), c(t), mathCalculator)
+        return SVector.valueOf(a(t), b(t), c(t), calculator)
     }
 
     override fun asFunctionX(): DerivableSVFunction<T> = a
@@ -41,7 +41,7 @@ class NormalCurveComposed<T>(val a: DerivableSVFunction<T>,
     override fun substituteY(t: T): T = b(t)
     override fun substituteZ(t: T): T = c(t)
 
-    override fun substituteAsPoint(t: T): SPoint<T> = SPoint.valueOf(a(t), b(t), c(t), mathCalculator)
+    override fun substituteAsPoint(t: T): SPoint<T> = SPoint.valueOf(a(t), b(t), c(t), calculator)
 
 }
 

@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.algebra.abs.calculator
 
+import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.api.FieldNumberModel
 
 /**
@@ -29,5 +30,10 @@ interface FieldCalculator<T> : DivisionRingCalculator<T> {
      */
     val characteristic: Long
 
+
+    @JvmDefault
+    fun of(x: Fraction): T {
+        return divideLong(of(x.numerator), x.denominator)
+    }
 
 }

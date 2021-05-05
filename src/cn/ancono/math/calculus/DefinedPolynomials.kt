@@ -65,7 +65,7 @@ abstract class OrthPolynomials<T>(val name: String, mc: MathCalculator<T>) : Mat
     abstract fun normSq(n: Int): T
 
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return "$name Polynomials"
     }
 

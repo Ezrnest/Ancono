@@ -137,7 +137,7 @@ object Calculus {
     fun <T> derivation(f: SVPFunction<T>): AbstractSVPFunction<T> {
         @Suppress("UNCHECKED_CAST")
         val cns = arrayOfNulls<Any>(f.degree) as Array<T>
-        val mc = f.mathCalculator
+        val mc = f.calculator
         for (i in 1..f.degree) {
             //(Ax^i)' = iA*x^(i-1)
             cns[i - 1] = mc.multiplyLong(f.get(i), i.toLong())
@@ -166,7 +166,7 @@ object Calculus {
     fun <T> integrate(f: SVPFunction<T>): AbstractSVPFunction<T> {
         @Suppress("UNCHECKED_CAST")
         val cns = arrayOfNulls<Any>(f.degree + 2) as Array<T>
-        val mc = f.mathCalculator
+        val mc = f.calculator
         for (i in 0..f.degree) {
             //(Ax^(i+1))' = (i+1)*Ax^i
             cns[i + 1] = mc.divideLong(f.get(i), (i + 1).toLong())

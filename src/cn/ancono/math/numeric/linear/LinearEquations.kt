@@ -1,5 +1,7 @@
 package cn.ancono.math.numeric.linear
 
+import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.T
@@ -16,7 +18,7 @@ object LinearEquations {
     fun <T> solveUpper(U: Matrix<T>, b: Vector<T>): Vector<T> {
         require(U.isSquare())
         require(U.row == b.size)
-        val mc = U.mathCalculator
+        val mc = U.calculator as FieldCalculator
         val n = U.row
 
         @Suppress("UNCHECKED_CAST")
@@ -42,7 +44,7 @@ object LinearEquations {
     fun <T> solveLower(L: Matrix<T>, b: Vector<T>): Vector<T> {
         require(L.isSquare())
         require(L.row == b.size)
-        val mc = L.mathCalculator
+        val mc = L.calculator as FieldCalculator
         val n = L.row
         val x = ArrayList<T>(n)
         for (i in 0 until n) {
@@ -70,7 +72,7 @@ object LinearEquations {
 //        require(m.isSquare)
         require(M.column > M.row)
         val n = M.row
-        val mc = M.mathCalculator
+        val mc = M.calculator as MathCalculator
 
         val matrix = M.toMutable()
         for (k in 0 until n) {
@@ -115,10 +117,10 @@ object LinearEquations {
 
     private fun <T> solveDiagonal(D: Matrix<T>, b: Vector<T>): Vector<T> {
         val n = b.size
-        val mc = b.mathCalculator
+        val mc = b.calculator as FieldCalculator
         return Vector.of((0 until n).map { i ->
             mc.divide(b[i], D[i, i])
-        }, b.mathCalculator)
+        }, b.calculator)
     }
 
     /**
@@ -138,7 +140,7 @@ object LinearEquations {
         val n = diag.size
         require(upper.size == n - 1 && lower.size == n - 1)
         require(b.size == n)
-        val mc = diag.mathCalculator
+        val mc = diag.calculator as FieldCalculator
         val u = ArrayList<T>(n)
         val l = ArrayList<T>(n)
         val c = upper

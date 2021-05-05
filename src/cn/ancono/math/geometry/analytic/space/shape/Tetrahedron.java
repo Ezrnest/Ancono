@@ -462,7 +462,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
         STriangle<T> f1 = list.get(0),
                 f2 = list.get(1),
                 f3 = list.get(2);
-        return new Tetrahedron<>(p.getMathCalculator(), STriangle.sides(
+        return new Tetrahedron<>(p.getCalculator(), STriangle.sides(
                 f1.getEdgeC().reverse(), f2.getEdgeC().reverse(), f3.getEdgeC().reverse()),
                 f1, f2, f3);
     }

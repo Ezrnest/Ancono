@@ -1,9 +1,9 @@
 package cn.ancono.math.algebra.linear
 
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.FMathObject
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.utilities.ArraySup
 import java.util.function.Function
@@ -18,12 +18,12 @@ import kotlin.math.roundToLong
 
 
 abstract class AbstractVector<T>(
-        mc: MathCalculator<T>,
+        mc: RingCalculator<T>,
         /**
          * The size of this vector, the number of element that this vector contains.
          */
         final override val size: Int)
-    : MathObjectExtend<T>(mc), GenVector<T> {
+    : AbstractFlexibleMathObject<T, RingCalculator<T>>(mc), GenVector<T> {
     protected fun checkSameSize(v: AbstractVector<*>) {
         require(size == v.size) {
             "Shape mismatch: $size and ${v.size}"
@@ -40,7 +40,7 @@ abstract class AbstractVector<T>(
      * @return `|this|^2`
      */
     open fun normSq(): T {
-        val mc = mc
+        val mc = calculator
         var re = mc.zero
         for (i in 0 until size) {
             val t = get(i)
@@ -57,6 +57,7 @@ abstract class AbstractVector<T>(
      * @return `|this|`
      */
     open fun norm(): T {
+        val mc = calculator as MathCalculator
         return mc.squareRoot(normSq())
     }
 
@@ -71,32 +72,38 @@ abstract class AbstractVector<T>(
      */
     open infix fun inner(v: AbstractVector<T>): T {
         checkSameSize(v)
-        val mc = mc
+        val mc = calculator
         var re = mc.zero
+
         for (i in 0 until size) {
-            re += this[i] * v[i]
+            mc.eval {
+                re += get(i) * v[i]
+            }
         }
+
         return re
     }
 
     abstract override fun applyAll(f: (T) -> T): AbstractVector<T>
 
-    abstract override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AbstractVector<N>
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    abstract override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AbstractVector<N>
+
+    override fun valueEquals(obj: FMathObject<T, RingCalculator<T>>): Boolean {
         if (obj !is Vector) {
             return false
         }
-        return indices.all { i -> mc.isEqual(this[i], obj[i]) }
+        return indices.all { i -> calculator.isEqual(this[i], obj[i]) }
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
-        return indices.joinToString(", ", "(", ")") { nf.format(get(it), mc) }
+
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        return indices.joinToString(", ", "(", ")") { nf.format(get(it)) }
     }
 }
 
 abstract class Vector<T>(
-        mc: MathCalculator<T>,
+        mc: RingCalculator<T>,
         size: Int)
     : AbstractVector<T>(mc, size), VectorModel<T, Vector<T>>, GenVector<T> {
 
@@ -111,7 +118,7 @@ abstract class Vector<T>(
      * @return a vector
      */
     open fun unitize(): Vector<T> {
-        val mc = mc
+        val mc = calculator as FieldCalculator
         val norm = norm()
         if (mc.isZero(norm)) {
             throw ArithmeticException("This vector is zero!")
@@ -127,7 +134,7 @@ abstract class Vector<T>(
      * @return `true` of the vectors are perpendicular
      */
     open fun isPerpendicular(v: Vector<T>): Boolean {
-        return mc.isZero(inner(v))
+        return calculator.isZero(inner(v))
     }
 
     /**
@@ -137,6 +144,7 @@ abstract class Vector<T>(
      * @return <pre> arccos(this · v / (|this| |v|))</pre>
      */
     open fun angle(v: Vector<T>): T {
+        val mc = calculator as MathCalculator
         return mc.arccos(angleCos(v))
     }
 
@@ -148,6 +156,7 @@ abstract class Vector<T>(
      */
     open fun angleCos(v: Vector<T>): T {
         val pro = inner(v)
+        val mc = calculator as MathCalculator
         return mc.divide(pro, mc.multiply(norm(), v.norm()))
     }
 
@@ -156,7 +165,7 @@ abstract class Vector<T>(
      * Determines whether this vector is a zero vector.
      */
     open fun isZero(): Boolean {
-        val mc = mc
+        val mc = calculator
         return (0 until size).all { mc.isZero(this[it]) }
     }
 
@@ -164,7 +173,7 @@ abstract class Vector<T>(
      * Determines whether this vector is an unit vector.
      */
     open fun isUnitVector(): Boolean {
-        val mc = mc
+        val mc = calculator as UnitRingCalculator
         return mc.isEqual(normSq(), mc.one)
     }
 
@@ -183,7 +192,7 @@ abstract class Vector<T>(
         if (isZero() || v.isZero()) {
             return true
         }
-        val mc = mc
+        val mc = calculator as FieldCalculator
         var not0 = 0
         while (mc.isZero(get(not0))) {
             if (!mc.isZero(v[not0])) {
@@ -210,7 +219,7 @@ abstract class Vector<T>(
      * in this and remaining elements are set to zero.
      */
     open fun resize(size: Int): Vector<T> {
-        return AVector.copyOfRange(size, this, 0, size, 0, mathCalculator)
+        return AVector.copyOfRange(size, this, 0, size, 0, calculator)
     }
 
     /**
@@ -221,10 +230,10 @@ abstract class Vector<T>(
         val start = min(0, left)
         val end = size - min(0, right)
         val destIdx = max(0, left)
-        return AVector.copyOfRange(newSize, this, start, end, destIdx, mathCalculator)
+        return AVector.copyOfRange(newSize, this, start, end, destIdx, calculator)
     }
 
-    abstract override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Vector<N>
+    abstract override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Vector<N>
 
 
     override fun add(y: Vector<T>): Vector<T> {
@@ -267,7 +276,7 @@ abstract class Vector<T>(
          * Returns a vector whose elements are all [x].
          */
         @JvmStatic
-        fun <T> constant(x: T, size: Int, mc: MathCalculator<T>): MutableVector<T> {
+        fun <T> constant(x: T, size: Int, mc: RingCalculator<T>): MutableVector<T> {
             return AVector.constant(x, size, mc)
         }
 
@@ -275,7 +284,7 @@ abstract class Vector<T>(
          * Returns a vector with all ones.
          */
         @JvmStatic
-        fun <T> ones(size: Int, mc: MathCalculator<T>): MutableVector<T> {
+        fun <T> ones(size: Int, mc: UnitRingCalculator<T>): MutableVector<T> {
             return constant(mc.one, size, mc)
         }
 
@@ -283,14 +292,14 @@ abstract class Vector<T>(
          * Returns a zero vector.
          */
         @JvmStatic
-        fun <T> zero(size: Int, mc: MathCalculator<T>): MutableVector<T> {
+        fun <T> zero(size: Int, mc: RingCalculator<T>): MutableVector<T> {
             return AVector.zero(size, mc)
         }
 
         /**
          * Returns a unit column vector of the given [size].
          */
-        fun <T> unitVector(size: Int, unitIndex: Int, mc: MathCalculator<T>): Vector<T> {
+        fun <T> unitVector(size: Int, unitIndex: Int, mc: UnitRingCalculator<T>): Vector<T> {
             return AVector.unitVector(size, unitIndex, mc)
         }
 
@@ -298,7 +307,7 @@ abstract class Vector<T>(
         /**
          * Returns a list of all unit vectors of the given [size].
          */
-        fun <T> unitVectors(size: Int, mc: MathCalculator<T>): List<Vector<T>> {
+        fun <T> unitVectors(size: Int, mc: UnitRingCalculator<T>): List<Vector<T>> {
             return AVector.unitVectors(size, mc)
         }
 
@@ -306,7 +315,7 @@ abstract class Vector<T>(
          * Creates a vector according to the given supplier.
          */
         @JvmStatic
-        fun <T> of(size: Int, mc: MathCalculator<T>, supplier: (Int) -> T): MutableVector<T> {
+        fun <T> of(size: Int, mc: RingCalculator<T>, supplier: (Int) -> T): MutableVector<T> {
             return AVector.of(size, mc, supplier)
         }
 
@@ -314,7 +323,7 @@ abstract class Vector<T>(
          * Creates a vector with the given [elements] list.
          */
         @JvmStatic
-        fun <T> of(elements: List<T>, mc: MathCalculator<T>): MutableVector<T> {
+        fun <T> of(elements: List<T>, mc: RingCalculator<T>): MutableVector<T> {
             return AVector.of(elements, mc)
         }
 
@@ -322,7 +331,7 @@ abstract class Vector<T>(
          * Creates a vector with the given [elements] array.
          */
         @JvmStatic
-        fun <T> of(mc: MathCalculator<T>, vararg elements: T): MutableVector<T> {
+        fun <T> of(mc: RingCalculator<T>, vararg elements: T): MutableVector<T> {
             return of(elements.asList(), mc)
         }
 
@@ -338,7 +347,7 @@ abstract class Vector<T>(
         @JvmStatic
         fun <T> multiplyToVector(mat: AbstractMatrix<T>, v: AbstractVector<T>): Vector<T> {
             require(mat.column == v.size) { "mat.column != v.size" }
-            val mc = mat.mathCalculator
+            val mc = mat.calculator
             val result = Array<Any?>(mat.row) { k ->
                 var t = mc.zero
                 for (j in mat.colIndices) {
@@ -361,7 +370,7 @@ abstract class Vector<T>(
         @JvmStatic
         fun <T> multiplyByVector(v: AbstractVector<T>, mat: AbstractMatrix<T>): Vector<T> {
             require(mat.row == v.size) { "mat.row != v.size" }
-            val mc = mat.mathCalculator
+            val mc = mat.calculator
             val result = Array<Any?>(mat.column) { k ->
                 var t = mc.zero
                 for (i in mat.rowIndices) {
@@ -393,7 +402,7 @@ abstract class Vector<T>(
             }
             val size = vs[0].size
             require(vs.all { it.size == size })
-            val mc = vs[0].mathCalculator
+            val mc = vs[0].calculator
 
             val list: MutableList<Vector<T>> = ArrayList(n)
             val us = ArrayList<Vector<T>>(n - 1)
@@ -453,12 +462,12 @@ abstract class Vector<T>(
             }
         }
 
-        fun <T> copyOf(v: GenVector<T>, mc: MathCalculator<T>): MutableVector<T> {
+        fun <T> copyOf(v: GenVector<T>, mc: RingCalculator<T>): MutableVector<T> {
             return AVector.copyOf(v, mc)
         }
 
         fun <T> copyOf(v: AbstractVector<T>): MutableVector<T> {
-            return copyOf(v, v.mathCalculator)
+            return copyOf(v, v.calculator)
         }
 
         fun <T> isLinearDependent(vs: List<AbstractVector<T>>): Boolean {
@@ -487,7 +496,7 @@ internal object VectorImpl {
         val data = Array<Any?>(x.size) { k ->
             f(x[k], y[k])
         }
-        return AVector(x.mathCalculator, data)
+        return AVector(x.calculator, data)
     }
 
     private inline fun <T> apply1(x: Vector<T>, f: (T) -> T): AVector<T> {
@@ -495,63 +504,63 @@ internal object VectorImpl {
             @Suppress("UNCHECKED_CAST")
             f(x[k])
         }
-        return AVector(x.mathCalculator, newData)
+        return AVector(x.calculator, newData)
     }
 
     fun <T> add(x: Vector<T>, y: Vector<T>): AVector<T> {
-        val mc = x.mathCalculator
+        val mc = x.calculator
         return apply2(x, y, mc::add)
     }
 
     fun <T> subtract(x: Vector<T>, y: Vector<T>): AVector<T> {
-        val mc = x.mathCalculator
+        val mc = x.calculator
         return apply2(x, y, mc::subtract)
     }
 
     fun <T> negate(x: Vector<T>): AVector<T> {
-        val mc = x.mathCalculator
+        val mc = x.calculator
         return apply1(x, mc::negate)
     }
 
     fun <T> multiply(x: Vector<T>, k: T): AVector<T> {
-        val mc = x.mathCalculator
+        val mc = x.calculator
         return apply1(x) { mc.multiply(k, it) }
     }
 
     fun <T> divide(x: Vector<T>, k: T): AVector<T> {
-        val mc = x.mathCalculator
+        val mc = x.calculator as FieldCalculator
         return apply1(x) { mc.divide(k, it) }
     }
 
 }
 
-abstract class MutableVector<T>(mc: MathCalculator<T>, size: Int) : Vector<T>(mc, size) {
+abstract class MutableVector<T>(mc: RingCalculator<T>, size: Int) : Vector<T>(mc, size) {
 
     abstract operator fun set(i: Int, x: T)
 
     open operator fun plusAssign(y: Vector<T>) {
-        val mc = mathCalculator
+        val mc = calculator
         for (idx in indices) {
             this[idx] = mc.add(this[idx], y[idx])
         }
     }
 
     open operator fun minusAssign(y: Vector<T>) {
-        val mc = mathCalculator
+        val mc = calculator
         for (idx in indices) {
             this[idx] = mc.subtract(this[idx], y[idx])
         }
     }
 
     open operator fun timesAssign(k: T) {
-        val mc = mathCalculator
+        val mc = calculator
         for (idx in indices) {
             this[idx] = mc.multiply(k, this[idx])
         }
     }
 
     open operator fun divAssign(k: T) {
-        val mc = mathCalculator
+        val mc = calculator as FieldCalculator
         for (idx in indices) {
             this[idx] = mc.divide(this[idx], k)
         }
@@ -562,8 +571,11 @@ abstract class MutableVector<T>(mc: MathCalculator<T>, size: Int) : Vector<T>(mc
      *     this = this + k * y
      */
     open fun addMulAssign(k: T, y: Vector<T>) {
-        for (i in 0 until size) {
-            this[i] += k * y[i]
+        val x = this
+        calculator.eval {
+            for (i in 0 until size) {
+                x[i] += k * y[i]
+            }
         }
     }
 
@@ -580,19 +592,19 @@ abstract class MutableVector<T>(mc: MathCalculator<T>, size: Int) : Vector<T>(mc
 }
 
 class AVector<T>
-internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
+internal constructor(mc: RingCalculator<T>, val data: Array<Any?>)
     : MutableVector<T>(mc, data.size) {
 
     override fun set(i: Int, x: T) {
         data[i] = x
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AVector<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AVector<N> {
         val newData = Array<Any?>(size) {
             @Suppress("UNCHECKED_CAST")
             mapper.apply(data[it] as T)
         }
-        return AVector(newCalculator, newData)
+        return AVector(newCalculator as RingCalculator, newData)
     }
 
     override fun elementSequence(): Sequence<T> {
@@ -616,33 +628,39 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
 
     override fun add(y: Vector<T>): Vector<T> {
         if (y is AVector) {
+            val mc = calculator
             return apply2(this, y, mc::add)
         }
         return super.add(y)
     }
 
     override fun negate(): Vector<T> {
+        val mc = calculator
         return apply1(this, mc::negate)
     }
 
     override fun multiply(k: T): Vector<T> {
+        val mc = calculator
         return apply1(this) { mc.multiply(k, it) }
     }
 
     override fun divide(k: T): Vector<T> {
+        val mc = calculator as FieldCalculator
         return apply1(this) { mc.divide(it, k) }
     }
 
     override fun multiply(n: Long): Vector<T> {
+        val mc = calculator
         return apply1(this) { x -> mc.multiplyLong(x, n) }
     }
 
     override fun resize(size: Int): Vector<T> {
         val result = data.copyOf(size)
         if (size > this.size) {
+            val mc = calculator
             result.fill(mc.zero, this.size)
         }
-        return AVector(mathCalculator, result)
+        return AVector(calculator, result)
     }
 
 
@@ -656,7 +674,8 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
             val newData = Array<Any?>(d1.size) { k ->
                 f(d1[k] as T, d2[k] as T)
             }
-            return AVector(x.mc, newData)
+
+            return AVector(x.calculator, newData)
         }
 
         private inline fun <T> apply1(x: AVector<T>, f: (T) -> T): AVector<T> {
@@ -665,25 +684,25 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
                 @Suppress("UNCHECKED_CAST")
                 f(data[k] as T)
             }
-            return AVector(x.mc, ndata)
+            return AVector(x.calculator, ndata)
         }
 
 
-        fun <T> constant(x: T, size: Int, mc: MathCalculator<T>): AVector<T> {
+        fun <T> constant(x: T, size: Int, mc: RingCalculator<T>): AVector<T> {
             require(size > 0)
             val data = ArraySup.fillArr(size, x, Any::class.java)
             return AVector(mc, data)
         }
 
-        fun <T> zero(size: Int, mc: MathCalculator<T>): AVector<T> {
+        fun <T> zero(size: Int, mc: RingCalculator<T>): AVector<T> {
             return constant(mc.zero, size, mc)
         }
 
-        fun <T> ones(size: Int, mc: MathCalculator<T>): AVector<T> {
+        fun <T> ones(size: Int, mc: UnitRingCalculator<T>): AVector<T> {
             return constant(mc.one, size, mc)
         }
 
-        fun <T> of(size: Int, mc: MathCalculator<T>, supplier: (Int) -> T): AVector<T> {
+        fun <T> of(size: Int, mc: RingCalculator<T>, supplier: (Int) -> T): AVector<T> {
             require(size > 0)
             val data = Array<Any?>(size) {
                 supplier(it)
@@ -691,20 +710,20 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
             return AVector(mc, data)
         }
 
-        fun <T> of(elements: List<T>, mc: MathCalculator<T>): AVector<T> {
+        fun <T> of(elements: List<T>, mc: RingCalculator<T>): AVector<T> {
             return AVector(mc, elements.toTypedArray())
         }
 
-        fun <T> copyOf(v: GenVector<T>, mc: MathCalculator<T>): AVector<T> {
+        fun <T> copyOf(v: GenVector<T>, mc: RingCalculator<T>): AVector<T> {
             return if (v is AVector) {
-                AVector(v.mathCalculator, v.data.clone())
+                AVector(v.calculator, v.data.clone())
             } else {
                 val data = Array<Any?>(v.size) { v[it] }
                 AVector(mc, data)
             }
         }
 
-        fun <T> copyOfRange(newSize: Int, v: GenVector<T>, start: Int, end: Int, destIdx: Int, mc: MathCalculator<T>): AVector<T> {
+        fun <T> copyOfRange(newSize: Int, v: GenVector<T>, start: Int, end: Int, destIdx: Int, mc: RingCalculator<T>): AVector<T> {
             val result = zero(newSize, mc)
             if (v is AVector) {
                 v.data.copyInto(result.data, destIdx, start, end)
@@ -719,7 +738,7 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
         /**
          * Returns a unit column vector of the given length.
          */
-        fun <T> unitVector(length: Int, unitIndex: Int, mc: MathCalculator<T>): AVector<T> {
+        fun <T> unitVector(length: Int, unitIndex: Int, mc: UnitRingCalculator<T>): AVector<T> {
             val result = zero(length, mc)
             result[unitIndex] = mc.one
             return result
@@ -729,7 +748,7 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
         /**
          * Returns a list of all unit vectors of the given length.
          */
-        fun <T> unitVectors(length: Int, mc: MathCalculator<T>): List<AVector<T>> {
+        fun <T> unitVectors(length: Int, mc: UnitRingCalculator<T>): List<AVector<T>> {
             return (0 until length).map { unitVector(length, it, mc) }
         }
     }
@@ -740,12 +759,12 @@ internal constructor(mc: MathCalculator<T>, val data: Array<Any?>)
  * Converts this vector as a column matrix whose shape is `(size, 1)`.
  */
 fun <T> Vector<T>.asColumnMatrix(): Matrix<T> {
-    return Matrix.of(size, 1, mathCalculator, toList())
+    return Matrix.of(size, 1, calculator, toList())
 }
 
 /**
  * Converts this vector as a row matrix whose shape is `(1, size)`.
  */
 fun <T> Vector<T>.asRowMatrix(): Matrix<T> {
-    return Matrix.of(1, size, mathCalculator, toList())
+    return Matrix.of(1, size, calculator, toList())
 }

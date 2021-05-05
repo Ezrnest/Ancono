@@ -29,7 +29,7 @@ open class SlicedView<T>(
         protected val axisMap: IntArray,
 
         shape: IntArray,
-) : AbstractTensor<T>(tensor.mathCalculator, shape) {
+) : AbstractTensor<T>(tensor.calculator, shape) {
 
     protected open val t = tensor
 
@@ -142,7 +142,7 @@ class MutableSliceView<T>(
     }
 
     override fun applyAll(f: (T) -> T): MutableTensor<T> {
-        return mapTo(mathCalculator, f)
+        return mapTo(calculator, f)
     }
 
 
@@ -192,7 +192,7 @@ class MutableSliceView<T>(
     }
 
     override fun sumAll(): T {
-        val mc = mathCalculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemiGroupCal
         return originalIndicesNoOrder.map { idx -> t[idx] }.reduce(mc::add) // no order here
     }
 
@@ -203,12 +203,12 @@ class MutableSliceView<T>(
 }
 
 abstract class CombinedView<T>(tensors: List<Tensor<T>>, shape: IntArray)
-    : AbstractTensor<T>(tensors[0].mathCalculator, shape) {
+    : AbstractTensor<T>(tensors[0].calculator, shape) {
     open val ts: List<Tensor<T>> = tensors
 
 
     override fun sumAll(): T {
-        val mc = mathCalculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemiGroupCal
         return ts.asSequence().map { it.sumAll() }.reduce(mc::add)
     }
 
@@ -285,7 +285,7 @@ open class StackView<T>(val axis: Int, tensors: List<Tensor<T>>, shape: IntArray
     }
 
     override fun sumAll(): T {
-        val mc = mathCalculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemiGroupCal
         return ts.asSequence().map { it.sumAll() }.reduce(mc::add)
     }
 
@@ -313,7 +313,7 @@ class MutableStackView<T>(axis: Int, tensors: List<MutableTensor<T>>, shape: Int
 
 
 open class ReshapedView<T>(tensor: Tensor<T>, shape: IntArray)
-    : AbstractTensor<T>(tensor.mathCalculator, shape) {
+    : AbstractTensor<T>(tensor.calculator, shape) {
 
     open val t: Tensor<T> = tensor
 
@@ -432,7 +432,7 @@ class BroadcastView<T>(
         val d: Int,
         private val extendedAxes: IntArray,
 //                             val newAxes: IntArray
-) : AbstractTensor<T>(t.mathCalculator, shape) {
+) : AbstractTensor<T>(t.calculator, shape) {
     /*
      * originAxes[i]
      */
@@ -462,7 +462,7 @@ class BroadcastView<T>(
         for (ax in 0 until d) {
             k *= sh[ax]
         }
-        val mc = mathCalculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemiGroupCal
         return mc.multiplyLong(re, k)
     }
 
@@ -477,7 +477,7 @@ open class IndexMapView<T>(
          */
         val am: IntArray,
         val offsets: IntArray,
-        shape: IntArray) : AbstractTensor<T>(tensor.mathCalculator, shape) {
+        shape: IntArray) : AbstractTensor<T>(tensor.calculator, shape) {
 
     protected fun mapIdx(idx: Index): IntArray {
         val tIdx = offsets.clone()
@@ -515,7 +515,7 @@ internal object TensorImpl {
 
     fun <T> add(x: Tensor<T>, y: Tensor<T>): MutableTensor<T> {
         val (x1, y1) = broadcast(x, y)
-        val mc = x.mathCalculator as AbelSemiGroupCal<T>
+        val mc = x.calculator as AbelSemiGroupCal<T>
         return ATensor.buildFromSequence(mc, x1.shape, x1.indices.map { idx -> mc.add(x1[idx], y1[idx]) })
     }
 
@@ -524,7 +524,7 @@ internal object TensorImpl {
      *
      */
     fun <T> negate(x: Tensor<T>): MutableTensor<T> {
-        val mc = x.mathCalculator as AbelGroupCal
+        val mc = x.calculator as AbelGroupCal
         return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.negate(x[idx]) })
     }
 
@@ -536,7 +536,7 @@ internal object TensorImpl {
      */
     fun <T> subtract(x0: Tensor<T>, y0: Tensor<T>): MutableTensor<T> {
         val (x, y) = broadcast(x0, y0)
-        val mc = x.mathCalculator as AbelGroupCal
+        val mc = x.calculator as AbelGroupCal
         return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.subtract(x[idx], y[idx]) })
     }
 
@@ -544,7 +544,7 @@ internal object TensorImpl {
      * Returns the result of multiplying this tensor with a scalar.
      */
     fun <T> multiply(x: Tensor<T>, k: T): MutableTensor<T> {
-        val mc = x.mathCalculator as RingCalculator
+        val mc = x.calculator as RingCalculator
         return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.multiply(k, x[idx]) })
     }
 
@@ -552,7 +552,7 @@ internal object TensorImpl {
      * Returns the result of dividing this tensor with a scalar.
      */
     fun <T> divide(x: Tensor<T>, k: T): MutableTensor<T> {
-        val mc = x.mathCalculator as DivisionRingCalculator
+        val mc = x.calculator as DivisionRingCalculator
         return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.divide(k, x[idx]) })
     }
 
@@ -562,7 +562,7 @@ internal object TensorImpl {
      */
     fun <T> multiply(x0: Tensor<T>, y0: Tensor<T>): MutableTensor<T> {
         val (x, y) = broadcast(x0, y0)
-        val mc = x.mathCalculator as RingCalculator
+        val mc = x.calculator as RingCalculator
         return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.multiply(x[idx], y[idx]) })
     }
 
@@ -574,7 +574,7 @@ internal object TensorImpl {
     fun <T> divide(x0: Tensor<T>, y0: Tensor<T>): MutableTensor<T> {
 //        Tensor.checkShape(x, y)
         val (x, y) = broadcast(x0, y0)
-        val mc = x.mathCalculator as DivisionRingCalculator
+        val mc = x.calculator as DivisionRingCalculator
         return ATensor.buildFromSequence(mc, x.shape, x.indices.map { idx -> mc.divide(x[idx], y[idx]) })
     }
 
@@ -583,7 +583,7 @@ internal object TensorImpl {
             "Two tensor must have the same shape for inner!" +
                     "Given shapes: ${x.shape.contentToString()}, ${y.shape.contentToString()}."
         }
-        val mc = x.mathCalculator as RingCalculator
+        val mc = x.calculator as RingCalculator
         return x.elementSequence().zip(y.elementSequence()).fold(mc.zero) { re, (a, b) ->
             mc.eval { re + a * b }
         }
@@ -594,7 +594,7 @@ internal object TensorImpl {
             return ATensor.wedge(x, y)
         }
         val shape = x.shape + y.shape
-        val mc = x.mathCalculator as RingCalculator
+        val mc = x.calculator as RingCalculator
         val result = ATensor.constant(mc.zero, shape, mc)
         val data = result.data
         var pos = 0
@@ -614,7 +614,7 @@ internal object TensorImpl {
         if (x.isZero() || y.isZero()) {
             return true
         }
-        val mc = x.mathCalculator as FieldCalculator
+        val mc = x.calculator as FieldCalculator
 //        val a = x[idx]
 //        val b = y[idx]
         var k: T? = null
@@ -881,17 +881,17 @@ internal object TensorImpl {
             tToMulList += tToMul.toIntArray()
         }
         //TODO optimize the order of mul
-        val mc = ts[0].mathCalculator as UnitRingCalculator
+        val mc = ts[0].calculator as UnitRingCalculator
         return einsum(ts, resShape, mulShape, tToResList, tToMulList, mc)
     }
 
 
     fun <T> sumInOneAxis(t: Tensor<T>, sumAxis: Int): MutableTensor<T> {
-        val mc = t.mathCalculator as RingCalculator
+        val mc = t.calculator as RingCalculator
         val axis = addIfNegative(sumAxis, t.dim)
         require(axis in 0 until t.dim)
         if (t.dim == 1) {
-            return Tensor.scalar(t.sumAll(), t.mathCalculator)
+            return Tensor.scalar(t.sumAll(), t.calculator)
         }
         val tShape = t.shape
         val shape = IntArray(t.dim - 1)
@@ -919,7 +919,7 @@ internal object TensorImpl {
      * Returns the sum of [t] in given [sumAxes] and [remAxes], it is required that both axes are non-empty.
      */
     fun <T> sumInAxes(t: Tensor<T>, sumAxes: IntArray, remAxes: IntArray): MutableTensor<T> {
-        val mc = t.mathCalculator as RingCalculator
+        val mc = t.calculator as RingCalculator
         val tShape = t.shape
         fun makeShapeArray(axes: IntArray): IntArray {
             val shape = IntArray(axes.size)
@@ -958,7 +958,7 @@ internal object TensorImpl {
 
     fun <T> sum(t: Tensor<T>, sumAxesList: List<Int>): MutableTensor<T> {
         if (sumAxesList.isEmpty()) {
-            return Tensor.scalar(t.sumAll(), t.mathCalculator)
+            return Tensor.scalar(t.sumAll(), t.calculator)
         }
         if (sumAxesList.size == 1) {
             return sumInOneAxis(t, sumAxesList.first())
@@ -969,7 +969,7 @@ internal object TensorImpl {
             axis
         }.toSet()
         if (axesSet.size == t.dim) {
-            return Tensor.scalar(t.sumAll(), t.mathCalculator)
+            return Tensor.scalar(t.sumAll(), t.calculator)
         }
         val sumAxes = axesSet.toMutableList()
         val remAxes = (0 until t.dim).filterNotTo(arrayListOf()) { it in axesSet }
@@ -1131,7 +1131,7 @@ internal object TensorImpl {
         val shape2 = y.shape
         val dim1 = shape1.size
         val dim2 = shape2.size
-        val mc = x.mathCalculator as RingCalculator
+        val mc = x.calculator as RingCalculator
         require(dim1 >= r && dim2 >= r)
         if (dim1 == r && dim2 == r) {
             return Tensor.scalar(x.inner(y), mc)

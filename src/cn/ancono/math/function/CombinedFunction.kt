@@ -55,7 +55,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+        override fun toString(nf: FlexibleNumberFormatter<T>): String {
             return f.toString(nf) + " + " + g.toString(nf)
         }
 
@@ -128,7 +128,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+        override fun toString(nf: FlexibleNumberFormatter<T>): String {
             return f.toString(nf) + " - " + g.toString(nf)
         }
 
@@ -198,7 +198,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+        override fun toString(nf: FlexibleNumberFormatter<T>): String {
             return "(" + f.toString(nf) + ")*(" + g.toString(nf) + ")"
         }
 
@@ -275,7 +275,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+        override fun toString(nf: FlexibleNumberFormatter<T>): String {
             return "(" + f.toString(nf) + ")/(" + g.toString(nf) + ")"
         }
 
@@ -324,7 +324,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+        override fun toString(nf: FlexibleNumberFormatter<T>): String {
             return "(" + f.toString(nf) + ")/(" + g.toString(nf) + ")"
         }
 

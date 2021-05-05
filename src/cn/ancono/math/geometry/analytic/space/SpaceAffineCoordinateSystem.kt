@@ -6,7 +6,6 @@ import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.plus
-import cn.ancono.math.numberModels.api.times
 import java.util.function.Function
 
 class SpaceAffineCoordinateSystem<T> internal constructor(val o: SPoint<T>,
@@ -37,7 +36,7 @@ class SpaceAffineCoordinateSystem<T> internal constructor(val o: SPoint<T>,
         return o.valueEquals(obj.o) && i.valueEquals(obj.i) && j.valueEquals(obj.j) && k.valueEquals(obj.k)
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return "{${o.toString(nf)};${i.toString(nf)},${j.toString(nf)},${k.toString(nf)}}"
     }
 
@@ -57,7 +56,7 @@ class SpaceAffineCoordinateSystem<T> internal constructor(val o: SPoint<T>,
     companion object {
         fun <T> valueOf(o: SPoint<T>, i: SVector<T>, j: SVector<T>, k: SVector<T>): SpaceAffineCoordinateSystem<T> {
             require(!SVector.isOnSamePlane(i, j, k))
-            return SpaceAffineCoordinateSystem(o, i, j, k, o.mathCalculator)
+            return SpaceAffineCoordinateSystem(o, i, j, k, o.calculator)
         }
     }
 }

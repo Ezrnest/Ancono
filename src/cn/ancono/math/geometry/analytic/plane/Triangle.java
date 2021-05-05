@@ -532,13 +532,13 @@ public final class Triangle<T> implements MathObject<T> {
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         return "Triangle: A:" + A.toString(nf) + " B:" + B.toString(nf) + " C:" + C.toString(nf);
     }
 
     @NotNull
     @Override
-    public MathCalculator<T> getMathCalculator() {
+    public MathCalculator<T> getCalculator() {
         return mc;
     }
 
@@ -644,7 +644,7 @@ public final class Triangle<T> implements MathObject<T> {
      * @return a newly created triangle
      */
     public static <T> Triangle<T> fromVertex(Point<T> A, Point<T> B, Point<T> C) {
-        MathCalculator<T> mc = A.getMathCalculator();
+        MathCalculator<T> mc = A.getCalculator();
         Triangle<T> tri = new Triangle<>(mc, A, B, C);
         if (mc.isZero(tri.areaPN())) {
             throw new IllegalArgumentException("Three points a line.");

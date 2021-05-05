@@ -3,8 +3,12 @@
  */
 package cn.ancono.math.geometry.analytic.plane;
 
+import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.AbstractVector;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
@@ -37,7 +41,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
     /**
      *
      */
-    protected PVector(T x, T y, MathCalculator<T> mc) {
+    protected PVector(T x, T y, RingCalculator<T> mc) {
         super(mc, 2);
         this.x = x;
         this.y = y;
@@ -90,7 +94,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     public T norm() {
         if (length == null) {
-            length = getMc().squareRoot(normSq());
+            var mc = (MathCalculator<T>) getCalculator();
+            length = mc.squareRoot(normSq());
         }
         return length;
     }
@@ -101,7 +106,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     public T normSq() {
         if (lengthSq == null) {
-            lengthSq = getMc().add(getMc().multiply(x, x), getMc().multiply(y, y));
+            var mc = getCalculator();
+            lengthSq = mc.add(mc.multiply(x, x), mc.multiply(y, y));
         }
         return lengthSq;
     }
@@ -112,7 +118,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     @Override
     public @NotNull PVector<T> applyAll(@NotNull Function1<? super T, ? extends T> f) {
-        return new PVector<T>(f.invoke(x), f.invoke(y), getMc());
+        return new PVector<T>(f.invoke(x), f.invoke(y), getCalculator());
     }
 
 
@@ -121,7 +127,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     @Override
     public @NotNull PVector<T> negate() {
-        return new PVector<T>(getMc().negate(x), getMc().negate(y), getMc());
+        var mc = getCalculator();
+        return new PVector<T>(mc.negate(x), mc.negate(y), mc);
     }
 
     /* (non-Javadoc)
@@ -130,12 +137,14 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
 
     @Override
     public @NotNull PVector<T> multiply(long n) {
-        return new PVector<>(getMc().multiplyLong(x, n), getMc().multiplyLong(y, n), getMc());
+        var mc = getCalculator();
+        return new PVector<>(mc.multiplyLong(x, n), mc.multiplyLong(y, n), mc);
     }
 
     @Override
     public @NotNull PVector<T> multiply(T n) {
-        return new PVector<>(getMc().multiply(x, n), getMc().multiply(y, n), getMc());
+        var mc = getCalculator();
+        return new PVector<>(mc.multiply(x, n), mc.multiply(y, n), mc);
     }
 
     /**
@@ -163,7 +172,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @return this + s
      */
     public @NotNull PVector<T> add(PVector<T> s) {
-        return new PVector<>(getMc().add(x, s.x), getMc().add(y, s.y), getMc());
+        var mc = getCalculator();
+        return new PVector<>(mc.add(x, s.x), mc.add(y, s.y), mc);
     }
 
     /**
@@ -173,13 +183,14 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @return this - s
      */
     public @NotNull PVector<T> subtract(PVector<T> s) {
-        return new PVector<>(getMc().subtract(x, s.x), getMc().subtract(y, s.y), getMc());
+        var mc = getCalculator();
+        return new PVector<>(mc.subtract(x, s.x), mc.subtract(y, s.y), mc);
     }
 
     @NotNull
     @Override
     public PVector<T> divide(T k) {
-        var mc = getMathCalculator();
+        var mc = (FieldCalculator<T>) getCalculator();
         return new PVector<>(mc.divide(x, k), mc.divide(y, k), mc);
     }
 
@@ -193,7 +204,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @return this · s
      */
     public T innerProduct(PVector<T> s) {
-        return getMc().add(getMc().multiply(x, s.x), getMc().multiply(y, s.y));
+        var mc = getCalculator();
+        return mc.add(mc.multiply(x, s.x), mc.multiply(y, s.y));
     }
 
     /**
@@ -204,8 +216,9 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @return <pre> arccos(this · s / (|this| |s|))</pre>
      */
     public <R> R angle(PVector<T> s, MathFunction<T, R> arccos) {
+        var mc = (FieldCalculator<T>) getCalculator();
         T pro = innerProduct(s);
-        pro = getMc().divide(pro, getMc().multiply(norm(), s.norm()));
+        pro = mc.divide(pro, mc.multiply(norm(), s.norm()));
         return arccos.apply(pro);
     }
 
@@ -218,7 +231,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     public T angleCos(PVector<T> s) {
         T pro = innerProduct(s);
-        return getMc().divide(pro, getMc().multiply(norm(), s.norm()));
+        var mc = (FieldCalculator<T>) getCalculator();
+        return mc.divide(pro, mc.multiply(norm(), s.norm()));
     }
 
     @Override
@@ -230,7 +244,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * Determines whether the two vectors are parallel.
      */
     public boolean isParallel(PVector<T> s) {
-        return getMc().isEqual(getMc().multiply(x, s.y), getMc().multiply(y, s.x));
+        var mc = (FieldCalculator<T>) getCalculator();
+        return mc.isEqual(mc.multiply(x, s.y), mc.multiply(y, s.x));
     }
 
     /**
@@ -240,7 +255,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @return
      */
     public boolean isPerpendicular(PVector<T> s) {
-        return getMc().isZero(innerProduct(s));
+        var mc = getCalculator();
+        return mc.isZero(innerProduct(s));
     }
 
     /**
@@ -250,11 +266,12 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     public PVector<T> unitVector() {
         T length = norm();
-        PVector<T> s = new PVector<>(getMc().divide(x, length),
-                getMc().divide(y, length),
-                getMc());
-        s.length = getMc().getOne();
-        s.lengthSq = getMc().getOne();
+        var mc = (FieldCalculator<T>) getCalculator();
+        PVector<T> s = new PVector<>(mc.divide(x, length),
+                mc.divide(y, length),
+                mc);
+        s.length = mc.getOne();
+        s.lengthSq = mc.getOne();
         return s;
     }
 
@@ -266,9 +283,10 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     public PVector<T> parallel(T len) {
         T length = norm();
-        PVector<T> s = new PVector<>(getMc().multiply(len, getMc().divide(x, length)),
-                getMc().multiply(len, getMc().divide(y, length)),
-                getMc());
+        var mc = (FieldCalculator<T>) getCalculator();
+        PVector<T> s = new PVector<>(mc.multiply(len, mc.divide(x, length)),
+                mc.multiply(len, mc.divide(y, length)),
+                mc);
         s.length = len;
         return s;
     }
@@ -277,8 +295,8 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * Determines whether this vector is a zero vector.
      */
     public boolean isZero() {
-        //noinspection SuspiciousNameCombination
-        return getMc().isZero(x) && getMc().isZero(y);
+        var mc = getCalculator();
+        return mc.isZero(x) && mc.isZero(y);
     }
 
     /**
@@ -295,13 +313,14 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
         //The rotate matrix is
         //(cos x -sinx)
         //(sin x cos x)
-        return TransMatrix.rotate(angle, getMc()).transform(this);
+        var mc = (MathCalculator<T>) getCalculator();
+        return TransMatrix.rotate(angle, mc).transform(this);
     }
 
     @NotNull
     @Override
-    public <N> PVector<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        PVector<N> sn = new PVector<>(mapper.apply(x), mapper.apply(y), newCalculator);
+    public <N> PVector<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        PVector<N> sn = new PVector<>(mapper.apply(x), mapper.apply(y), (RingCalculator<N>) newCalculator);
         if (length != null) {
             sn.length = mapper.apply(length);
         }
@@ -314,9 +333,9 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
 
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        return '(' + nf.format(x, getMc()) +
-                ',' + nf.format(y, getMc()) +
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        return '(' + nf.format(x) +
+                ',' + nf.format(y) +
                 ')';
     }
 
@@ -345,16 +364,16 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
         return super.equals(obj);
     }
 
-
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull FMathObject<T, RingCalculator<T>> obj) {
         if (this == obj) {
             return true;
         }
         if (obj instanceof PVector) {
             PVector<T> s = (PVector<T>) obj;
-            return getMc().isEqual(x, s.x) &&
-                    getMc().isEqual(y, s.y);
+            var mc = getCalculator();
+            return mc.isEqual(x, s.x) &&
+                    mc.isEqual(y, s.y);
         }
         return super.valueEquals(obj);
     }
@@ -390,7 +409,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @param mc a {@link MathCalculator}
      * @return a new SVector
      */
-    public static <T> PVector<T> valueOf(T x, T y, MathCalculator<T> mc) {
+    public static <T> PVector<T> valueOf(T x, T y, RingCalculator<T> mc) {
         if (x == null || y == null) {
             throw new NullPointerException("");
         }
@@ -409,7 +428,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @param mc a {@link MathCalculator}
      * @return a new vector
      */
-    public static <T> PVector<T> vector(Point<T> A, Point<T> B, MathCalculator<T> mc) {
+    public static <T> PVector<T> vector(Point<T> A, Point<T> B, RingCalculator<T> mc) {
         return new PVector<>(mc.subtract(B.x, A.x), mc.subtract(B.y, A.y), mc);
     }
 
@@ -426,7 +445,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * @return a new vector
      */
     public static <T> PVector<T> vector(Point<T> A, Point<T> B) {
-        return vector(A, B, A.getMathCalculator());
+        return vector(A, B, A.getCalculator());
     }
 
     /**
@@ -456,7 +475,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      */
     @SafeVarargs
     public static <T> PVector<T> sum(PVector<T>... vectors) {
-        MathCalculator<T> mc = vectors[0].getMc();
+        RingCalculator<T> mc = vectors[0].getCalculator();
         var arr = new ArrayList<T>(vectors.length);
         for (PVector<T> vector : vectors) {
             arr.add(vector.x);
@@ -481,7 +500,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
         if (v.getSize() < 2) {
             throw new IllegalArgumentException("Too small");
         }
-        return new PVector<T>(v.get(0), v.get(1), v.getMathCalculator());
+        return new PVector<T>(v.get(0), v.get(1), v.getCalculator());
     }
 
     /**

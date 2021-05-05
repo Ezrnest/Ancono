@@ -491,11 +491,11 @@ public class IntervalUnion<T> extends AbstractMathSet<T> {
     }
 
     /**
-     *
+     * @param nf
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         if (is.isEmpty()) {
             return MathSymbol.EMPTY_SET;
         } else {
@@ -674,7 +674,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T> {
      * @return a new IntervalUnion
      */
     public static <T> IntervalUnion<T> valueOf(List<Interval<T>> intervals) {
-        MathCalculator<T> mc = intervals.get(0).getMathCalculator();
+        MathCalculator<T> mc = intervals.get(0).getCalculator();
         List<Interval<T>> is = new ArrayList<>(intervals.size());
         for (Interval<T> inv : intervals) {
             unionWith0(is, inv, mc);
@@ -692,7 +692,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T> {
      */
     @SafeVarargs
     public static <T> IntervalUnion<T> valueOf(Interval<T> interval, Interval<T>... intervals) {
-        MathCalculator<T> mc = interval.getMathCalculator();
+        MathCalculator<T> mc = interval.getCalculator();
         List<Interval<T>> is = new ArrayList<>(intervals.length);
         is.add(interval);
         for (Interval<T> inv : intervals) {
@@ -708,7 +708,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T> {
      * @return a new IntervalUnion
      */
     public static <T> IntervalUnion<T> valueOf(Interval<T> interval) {
-        return new IntervalUnion<>(interval.getMathCalculator(), interval);
+        return new IntervalUnion<>(interval.getCalculator(), interval);
     }
 
     private static final Map<MathCalculator<?>, IntervalUnion<?>> universemap = new HashMap<>(),
@@ -763,7 +763,7 @@ public class IntervalUnion<T> extends AbstractMathSet<T> {
         for (T t : set) {
             list[n++] = t;
         }
-        MathCalculator<T> mc = set.getMathCalculator();
+        MathCalculator<T> mc = set.getCalculator();
         Arrays.sort(list, mc);
         List<Interval<T>> ins = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {

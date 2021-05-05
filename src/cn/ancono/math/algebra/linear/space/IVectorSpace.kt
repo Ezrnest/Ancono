@@ -1,6 +1,5 @@
 package cn.ancono.math.algebra.linear.space
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.LinearSpaceCalculator
 import cn.ancono.math.algebra.abs.structure.FiniteLinearSpace
@@ -70,7 +69,7 @@ interface VectorSpaceCalculator<T> : LinearSpaceCalculator<T, Vector<T>> {
 
 }
 
-class VectorSpaceCalculatorImpl<T>(override val vectorLength: Int, private val mc: MathCalculator<T>) : VectorSpaceCalculator<T> {
+class VectorSpaceCalculatorImpl<T>(override val vectorLength: Int, private val mc: FieldCalculator<T>) : VectorSpaceCalculator<T> {
     override val scalarCalculator: FieldCalculator<T>
         get() = mc
     override val zero: Vector<T>

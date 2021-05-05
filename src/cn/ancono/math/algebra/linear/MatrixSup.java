@@ -1,6 +1,7 @@
 package cn.ancono.math.algebra.linear;
 
 import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.equation.EquationSolver;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.numberModels.Fraction;
@@ -564,7 +565,7 @@ public class MatrixSup {
      * array contains right type of element.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T det3(Object[][] mat, MathCalculator<T> mc) {
+    public static <T> T det3(Object[][] mat, RingCalculator<T> mc) {
         T sum = mc.multiply(mc.multiply((T) mat[0][0], (T) mat[1][1]), (T) mat[2][2]);
         sum = mc.add(sum, mc.multiply(mc.multiply((T) mat[0][1], (T) mat[1][2]), (T) mat[2][0]));
         sum = mc.add(sum, mc.multiply(mc.multiply((T) mat[0][2], (T) mat[1][0]), (T) mat[2][1]));
@@ -574,7 +575,7 @@ public class MatrixSup {
         return sum;
     }
 
-    public static <T> T det2(T[][] mat, MathCalculator<T> mc) {
+    public static <T> T det2(T[][] mat, RingCalculator<T> mc) {
         return mc.subtract(mc.multiply(mat[0][0], mat[1][1]), mc.multiply(mat[0][1], mat[1][0]));
     }
 
@@ -588,7 +589,7 @@ public class MatrixSup {
     public static <T> Matrix<T> similarDiag(Matrix<T> mat, EquationSolver<T, SVPEquation<T>> equationSolver) {
         SVPEquation<T> equation = SVPEquation.fromPolynomial(mat.charPoly());
         List<T> eigenvalues = equationSolver.solve(equation);
-        return Matrix.diag(eigenvalues, mat.getMathCalculator());
+        return Matrix.diag(eigenvalues, mat.getCalculator());
     }
 
 //    /**

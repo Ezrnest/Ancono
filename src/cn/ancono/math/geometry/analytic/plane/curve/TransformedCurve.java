@@ -111,7 +111,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder(64);
         sb.append("TransformedCurve:original=").append(original.toString(nf)).append(", inversed transformation=").append(backward.toString(nf));
         return sb.toString();

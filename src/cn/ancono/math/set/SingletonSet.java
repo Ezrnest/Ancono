@@ -6,7 +6,6 @@ package cn.ancono.math.set;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
-import cn.ancono.math.numberModels.api.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -133,8 +132,8 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
      * @see MathObject#toString(NumberFormatter)
      */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        return "{" + nf.format(element, getMc()) + "}";
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        return "{" + nf.format(element) + "}";
     }
 
 }

@@ -1,6 +1,6 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.MathCalculator
+import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.numberModels.api.colIndices
 import cn.ancono.math.numberModels.api.rowIndices
 import java.util.*
@@ -13,7 +13,7 @@ import java.util.*
 
 class TransposeMatrixView<T>(
         val origin: AbstractMatrix<T>) :
-        Matrix<T>(origin.mathCalculator, origin.column, origin.row) {
+        Matrix<T>(origin.calculator, origin.column, origin.row) {
     override fun getChecked(i: Int, j: Int): T {
         return origin[j, i]
     }
@@ -35,7 +35,7 @@ class TransposeMatrixView<T>(
 }
 
 class SubMatrixView<T>
-internal constructor(mc: MathCalculator<T>, row: Int, column: Int,
+internal constructor(mc: RingCalculator<T>, row: Int, column: Int,
                      val dRow: Int, val dCol: Int, val m: AbstractMatrix<T>) : Matrix<T>(mc, row, column) {
     override fun getChecked(i: Int, j: Int): T {
         return m[i + dRow, j + dCol]
@@ -47,7 +47,7 @@ internal constructor(mc: MathCalculator<T>, row: Int, column: Int,
             val c = colEnd - colStart
             require(0 <= rowStart && rowEnd <= m.row && r > 0)
             require(0 <= colStart && colEnd <= m.column && c > 0)
-            return SubMatrixView(m.mathCalculator, r, c, rowStart, colStart, m)
+            return SubMatrixView(m.calculator, r, c, rowStart, colStart, m)
         }
     }
 }
@@ -56,7 +56,7 @@ class FactorMatrixView<T>
 internal constructor(
         val rowMap: IntArray, val columnMap: IntArray,
         val m: AbstractMatrix<T>)
-    : Matrix<T>(m.mathCalculator, rowMap.size, columnMap.size) {
+    : Matrix<T>(m.calculator, rowMap.size, columnMap.size) {
 
     override fun getChecked(i: Int, j: Int): T {
         return m[rowMap[i], columnMap[j]]

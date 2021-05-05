@@ -38,7 +38,7 @@ public interface SVPFunction<T> extends SVFunction<T>, MathCalculatorHolder<T>, 
     int getDegree();
 
     public default Vector<T> coefficientVector() {
-        return IPolynomial.coefficientVector(this, getMathCalculator());
+        return IPolynomial.coefficientVector(this, getCalculator());
     }
 
     /**

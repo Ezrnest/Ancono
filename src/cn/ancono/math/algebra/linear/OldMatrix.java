@@ -1746,7 +1746,7 @@
 //     */
 //    @NotNull
 //    @Override
-//    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+//    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
 //        return "Matrix:row=" + row + ",column=" + column;
 //    }
 //
@@ -1754,7 +1754,7 @@
 //     * Returns a string representation of this matrix in detail.
 //     */
 //    @SuppressWarnings("unchecked")
-//    public String contentToString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+//    public String contentToString(@NotNull FlexibleNumberFormatter<T> nf) {
 //        return StringSup.formatMatrix(ArraySup.mapTo2(getValues(), (Object n) -> nf.format((T) n, getMc()), String.class));
 //    }
 //
@@ -2505,7 +2505,7 @@
 //     */
 //    public String toLatexString(NumberFormatter<T> formatter) {
 //        if (formatter == null) {
-//            formatter = NumberFormatter.defaultFormatter();
+//            formatter = FlexibleNumberFormatter.defaultFormatter();
 //        }
 //        return MatrixSupKt.INSTANCE.toLatexString(this, formatter, "pmatrix");
 //    }

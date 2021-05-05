@@ -1,6 +1,5 @@
 package cn.ancono.math.algebra
 
-import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 
 
@@ -12,8 +11,8 @@ interface IMTerm<T> {
     val coefficient: T
 
     companion object {
-        fun <T, MC : EqualPredicate<T>> stringOf(term: IMTerm<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>): String = buildString {
-            append(nf.format(term.coefficient, mc))
+        fun <T> stringOf(term: IMTerm<T>, nf: FlexibleNumberFormatter<T>): String = buildString {
+            append(nf.format(term.coefficient))
             if (term.characters.isNotEmpty()) {
                 var hasMul = true
                 append('*')
@@ -59,10 +58,10 @@ interface IMultinomial<T> {
             return c == '+' || c == '-'
         }
 
-        fun <T, MC : EqualPredicate<T>> stringOf(m: IMultinomial<T>, mc: MC, nf: FlexibleNumberFormatter<T, MC>) = buildString {
+        fun <T> stringOf(m: IMultinomial<T>, nf: FlexibleNumberFormatter<T>) = buildString {
             var start = true
             for (term in m.terms) {
-                val s = IMTerm.stringOf(term, mc, nf)
+                val s = IMTerm.stringOf(term, nf)
                 if (!start && !isPlusOrMinus(s[0]) && !isPlusOrMinus(last())) {
                     append("+")
                 }

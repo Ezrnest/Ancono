@@ -144,14 +144,14 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
 
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         if (size() == 0) {
             return MathSymbol.EMPTY_SET;
         }
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         for (T t : list) {
-            sb.append(nf.format(t, getMc()));
+            sb.append(nf.format(t));
             sb.append(',');
         }
         sb.deleteCharAt(sb.length() - 1);
@@ -162,7 +162,7 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
     @NotNull
     @Override
     public <S> CollectionSet<S> mapTo(@NotNull Bijection<T, S> f) {
-        return new CollectionSet<>(MathCalculator.Companion.mappedCalculator(getMathCalculator(), f),
+        return new CollectionSet<>(MathCalculator.Companion.mappedCalculator(getCalculator(), f),
                 CollectionSup.mapList(list, f));
     }
 }

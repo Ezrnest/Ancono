@@ -329,11 +329,11 @@ public class GTriangle<T> extends AbstractMathObject<T> {
     }
 
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder("Triangle:a=");
-        sb.append(nf.format(a, getMc()));
-        sb.append(",b=").append(nf.format(b, getMc()));
-        sb.append(",c=").append(nf.format(c, getMc()));
+        sb.append(nf.format(a));
+        sb.append(",b=").append(nf.format(b));
+        sb.append(",c=").append(nf.format(c));
         return sb.toString();
     }
 

@@ -508,8 +508,8 @@ internal constructor(
         return true
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<F, MathCalculator<F>>): String {
-        return IMultinomial.stringOf(this, mc, nf)
+    override fun toString(nf: FlexibleNumberFormatter<F>): String {
+        return IMultinomial.stringOf(this, nf)
     }
 
     override val size: Int
@@ -740,7 +740,7 @@ class MultinomialFCalculator<T>(val mc: MathCalculator<T>)
             return a
         }
         if (a.isConstant() || b.isConstant()) {
-            return MultinomialF.one(a.mathCalculator)
+            return MultinomialF.one(a.calculator)
         }
         return gcd0(a, b)
     }

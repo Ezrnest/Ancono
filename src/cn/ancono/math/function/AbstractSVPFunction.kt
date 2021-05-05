@@ -112,7 +112,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
     /* (non-Javadoc)
 	 * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
 	 */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return IPolynomial.stringOf(this, mc, nf)
     }
 
@@ -314,8 +314,8 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.numberModels.api.NumberFormatter)
 		 */
-        override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
-            return nf.format(result, mc)
+        override fun toString(nf: FlexibleNumberFormatter<T>): String {
+            return nf.format(result)
         }
 
 
@@ -451,7 +451,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          */
         fun <T> fromPolynomial(m: IPolynomial<T>): AbstractSVPFunction<T> {
             val holder = m as MathCalculatorHolder<T>
-            return fromPolynomial(m, holder.mathCalculator)
+            return fromPolynomial(m, holder.calculator)
         }
 
         /**
@@ -463,7 +463,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         fun <T> add(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
             val max = max(p1.degree, p2.degree)
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
-            val mc = p1.mathCalculator
+            val mc = p1.calculator
             for (i in 0..max) {
                 coes[i] = mc.add(p1.get(i), p2.get(i))
             }
@@ -479,7 +479,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         fun <T> subtract(p1: SVPFunction<T>, p2: SVPFunction<T>): AbstractSVPFunction<T> {
             val max = max(p1.degree, p2.degree)
             val coes = arrayOfNulls<Any>(max + 1) as Array<T>
-            val mc = p1.mathCalculator
+            val mc = p1.calculator
             for (i in 0..max) {
                 coes[i] = mc.subtract(p1.get(i), p2.get(i))
             }
@@ -511,7 +511,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
          * @return
          */
         private fun <T> multiplyToMap(p1: SVPFunction<T>, p2: SVPFunction<T>, max: Int): AbstractSVPFunction<T> {
-            val mc = p1.mathCalculator
+            val mc = p1.calculator
             val map = HashMap<Int, T>()
             var i = 0
             val max1 = p1.degree
@@ -530,7 +530,7 @@ protected constructor(mc: MathCalculator<T>, internal val mp: Int) : AbstractSVF
         }
 
         private fun <T> multiplyToArr(p1: SVPFunction<T>, p2: SVPFunction<T>, max: Int): AbstractSVPFunction<T> {
-            val mc = p1.mathCalculator
+            val mc = p1.calculator
             val arr = arrayOfNulls<Any>(max + 1) as Array<T?>
             run {
                 var i = 0

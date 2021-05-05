@@ -178,7 +178,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
      */
     @Override
-    public <N> PAffineTrans<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> @NotNull PAffineTrans<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new PAffineTrans<>(newCalculator, mat.mapTo(newCalculator, mapper), v.mapTo(newCalculator, mapper));
     }
 
@@ -227,23 +227,23 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
         return mat.valueEquals(pat.mat) && v.valueEquals(pat.v);
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (!(obj instanceof PAffineTrans)) {
-            return false;
-        }
-        PAffineTrans<N> pat = (PAffineTrans<N>) obj;
-        return mat.valueEquals(pat.mat, mapper) && v.valueEquals(pat.v, mapper);
-    }
+//    /* (non-Javadoc)
+//     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
+//     */
+//    @Override
+//    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+//        if (!(obj instanceof PAffineTrans)) {
+//            return false;
+//        }
+//        PAffineTrans<N> pat = (PAffineTrans<N>) obj;
+//        return mat.valueEquals(pat.mat, mapper) && v.valueEquals(pat.v, mapper);
+//    }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public @NotNull String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         sb.append("Affine Transformation: x'=");
         append(sb, nf, 0);
@@ -253,18 +253,18 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
         return sb.toString();
     }
 
-    private void append(StringBuilder sb, FlexibleNumberFormatter<T, MathCalculator<T>> nf, int n) {
+    private void append(StringBuilder sb, FlexibleNumberFormatter<T> nf, int n) {
         boolean appended = false;
         if (!getMc().isZero(mat.get(n, 0))) {
             appended = true;
-            sb.append("(").append(nf.format(mat.get(n, 0), getMc())).append(")x+");
+            sb.append("(").append(nf.format(mat.get(n, 0))).append(")x+");
         }
         if (!getMc().isZero(mat.get(n, 1))) {
             appended = true;
-            sb.append("(").append(nf.format(mat.get(n, 1), getMc())).append(")y+");
+            sb.append("(").append(nf.format(mat.get(n, 1))).append(")y+");
         }
         if (!appended || !getMc().isZero(v.get(n))) {
-            sb.append(nf.format(v.get(n), getMc()));
+            sb.append(nf.format(v.get(n)));
         } else {
             sb.deleteCharAt(sb.length() - 1);
         }
@@ -296,7 +296,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @return a new PAffineTrans
      */
     public static <T> PAffineTrans<T> ofTranslation(PVector<T> v) {
-        MathCalculator<T> mc = v.getMathCalculator();
+        MathCalculator<T> mc = (MathCalculator<T>) v.getCalculator();
         return new PAffineTrans<>(mc, TransMatrix.identityTrans(mc), v);
     }
 
@@ -307,7 +307,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @return a new PAffineTrans
      */
     public static <T> PAffineTrans<T> ofTransMatrix(TransMatrix<T> m) {
-        MathCalculator<T> mc = m.getMathCalculator();
+        MathCalculator<T> mc = (MathCalculator<T>) m.getCalculator();
         return new PAffineTrans<>(mc, m, PVector.zeroVector(mc));
     }
 
@@ -319,7 +319,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @return a new PAffineTrans
      */
     public static <T> PAffineTrans<T> valueOf(TransMatrix<T> m, PVector<T> v) {
-        MathCalculator<T> mc = m.getMathCalculator();
+        MathCalculator<T> mc = (MathCalculator<T>) m.getCalculator(); //TODO
         return new PAffineTrans<>(mc, m, v);
     }
 

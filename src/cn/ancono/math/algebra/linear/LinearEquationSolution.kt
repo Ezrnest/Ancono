@@ -59,7 +59,7 @@ private constructor(
             }
             if (basis.rank == 0) {
                 return LinearEquationSolution(SolutionType.SINGLE, special,
-                        VectorBasis.zero(special.size, special.mathCalculator))
+                        VectorBasis.zero(special.size, basis.calculator))
             }
             return LinearEquationSolution(SolutionType.INFINITE, special, basis)
         }

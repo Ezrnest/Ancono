@@ -28,7 +28,7 @@ public class LineSup {
         // |a1 b1 c1|
         // |a2 b2 c2| = 0 for true
         // |a3 b3 c3|
-        MathCalculator<T> mc = l1.getMathCalculator();
+        MathCalculator<T> mc = l1.getCalculator();
         T result = mc.multiply(l1.a, mc.multiply(l2.b, l3.c));
         result = mc.add(result, mc.multiply(l1.b, mc.multiply(l2.c, l3.a)));
         result = mc.add(result, mc.multiply(l1.c, mc.multiply(l2.a, l3.b)));
@@ -52,7 +52,7 @@ public class LineSup {
         list.add(l.b);
         list.add(l.c);
         list = sim.simplify(list);
-        return Line.generalFormula(list.get(0), list.get(1), list.get(2), l.getMathCalculator());
+        return Line.generalFormula(list.get(0), list.get(1), list.get(2), l.getCalculator());
     }
 
     /**
@@ -70,7 +70,7 @@ public class LineSup {
         }
         Point<T> M = A.middle(B);
         PVector<T> nv = A.directVector(B);
-        return Line.pointNormal(M, nv, A.getMathCalculator());
+        return Line.pointNormal(M, nv, A.getCalculator());
     }
 
     /**

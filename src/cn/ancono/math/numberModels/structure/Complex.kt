@@ -45,7 +45,7 @@ class ComplexInf<T> internal constructor(mc: MathCalculator<T>) : ComplexE<T>(mc
         return obj is ComplexInf
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return "Inf"
     }
 
@@ -407,7 +407,7 @@ class Complex<T> internal constructor(mc: MathCalculator<T>, a: T, b: T) : Compl
      * Return the form of (a)+(b)i
      * @return
      */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         if (mc.isZero(a)) {
             return when {
                 mc.isZero(b) -> {
@@ -424,24 +424,24 @@ class Complex<T> internal constructor(mc: MathCalculator<T>, a: T, b: T) : Compl
 //                    }else{
 //                        return "($s)"
 //                    }
-                    return "(" + nf.format(b, mc) + ")i"
+                    return "(" + nf.format(b) + ")i"
                 }
             }
         } else {
             if (mc.isZero(b)) {
-                return nf.format(a, mc)
+                return nf.format(a)
             }
 
             val sb = StringBuilder()
             sb.append('(')
-                    .append(nf.format(a, mc))
+                    .append(nf.format(a))
                     .append(")")
                     .append('+')
             if (mc.isEqual(b, mc.one)) {
                 sb.append('i')
             } else {
                 sb.append('(')
-                        .append(nf.format(b, mc))
+                        .append(nf.format(b))
                         .append(")i")
             }
             return sb.toString()

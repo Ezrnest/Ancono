@@ -74,7 +74,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         return this.getClass().getName();
     }
 
@@ -158,11 +158,11 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     public static <T> SpacePointSet<T> intersectOf(SpacePointSet<T> s1, SpacePointSet<T> s2) {
         List<SpacePointSet<T>> list = new ArrayList<>(2);
         if (isEmptySet(s1) || isEmptySet(s2)) {
-            return getEmptySet(s1.getMathCalculator());
+            return getEmptySet(s1.getCalculator());
         }
         list.add(s1);
         list.add(s2);
-        return new CombinedSpacePointSet<>(s1.getMathCalculator(), list, CombinedSpacePointSet.INTERSECT);
+        return new CombinedSpacePointSet<>(s1.getCalculator(), list, CombinedSpacePointSet.INTERSECT);
     }
 
     /**
@@ -175,7 +175,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     @SafeVarargs
     public static <T> SpacePointSet<T> intersectOf(SpacePointSet<T>... sets) {
         List<SpacePointSet<T>> list = new ArrayList<>(sets.length);
-        MathCalculator<T> mc = sets[0].getMathCalculator();
+        MathCalculator<T> mc = sets[0].getCalculator();
         for (SpacePointSet<T> sps : sets) {
             if (isEmptySet(sps)) {
                 return getEmptySet(mc);
@@ -198,9 +198,9 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         list.add(s1);
         list.add(s2);
         if (isUniverseSet(s1) || isUniverseSet(s2)) {
-            return getUniverseSet(s1.getMathCalculator());
+            return getUniverseSet(s1.getCalculator());
         }
-        return new CombinedSpacePointSet<>(s1.getMathCalculator(), list, CombinedSpacePointSet.UNION);
+        return new CombinedSpacePointSet<>(s1.getCalculator(), list, CombinedSpacePointSet.UNION);
     }
 
     /**
@@ -213,14 +213,14 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     @SafeVarargs
     public static <T> SpacePointSet<T> unionOf(SpacePointSet<T>... sets) {
         List<SpacePointSet<T>> list = new ArrayList<>(sets.length);
-        MathCalculator<T> mc = sets[0].getMathCalculator();
+        MathCalculator<T> mc = sets[0].getCalculator();
         for (SpacePointSet<T> sps : sets) {
             if (isUniverseSet(sps)) {
                 return getUniverseSet(mc);
             }
             list.add(sps);
         }
-        return new CombinedSpacePointSet<>(sets[0].getMathCalculator(), list, CombinedSpacePointSet.UNION);
+        return new CombinedSpacePointSet<>(sets[0].getCalculator(), list, CombinedSpacePointSet.UNION);
     }
 
 
@@ -304,7 +304,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
             return "Universe set";
         }
 
@@ -397,7 +397,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
             return "Empty set";
         }
 
@@ -531,7 +531,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
             return "CombinedSpacePointSet:" + (flag == INTERSECT ? "Intersect" : "Union") + ":" + list.toString();
         }
     }

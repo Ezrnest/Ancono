@@ -66,7 +66,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         return "Segment:A" + A.toString(nf) + "-B" + B.toString(nf);
     }
 
@@ -202,7 +202,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
         if (A.valueEquals(B)) {
             throw new IllegalArgumentException("A==B");
         }
-        MathCalculator<T> mc = A.getMathCalculator();
+        MathCalculator<T> mc = A.getCalculator();
         Line<T> line = Line.twoPoint(A, B, mc);
         PVector<T> v = A.directVector(B);
         return new Segment<>(line, A, B, v, mc);

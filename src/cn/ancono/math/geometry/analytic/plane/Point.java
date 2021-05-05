@@ -186,18 +186,20 @@ public final class Point<T> implements MathObject<T> {
      * <pre>
      * "( "+x.toString()+" , "+y.toString()+" )"
      * </pre>
+     *
+     * @param nf
      */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         sb.append("( ");
-        sb.append(nf.format(x, mc)).append(" , ").append(nf.format(y, mc)).append(" )");
+        sb.append(nf.format(x)).append(" , ").append(nf.format(y)).append(" )");
         return sb.toString();
     }
 
     @NotNull
     @Override
-    public MathCalculator<T> getMathCalculator() {
+    public MathCalculator<T> getCalculator() {
         return mc;
     }
 
@@ -247,7 +249,7 @@ public final class Point<T> implements MathObject<T> {
     }
 
     public static <T> Point<T> fromVector(PVector<T> v) {
-        return new Point<>(v.getMathCalculator(), v.x, v.y);
+        return new Point<>((MathCalculator<T>) v.getCalculator(), v.x, v.y); //TODO
     }
 
 

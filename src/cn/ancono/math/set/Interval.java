@@ -242,7 +242,7 @@ public abstract class Interval<T> extends AbstractMathSet<T> implements Intersec
      */
     @NotNull
     @Override
-    public abstract String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf);
+    public abstract String toString(@NotNull FlexibleNumberFormatter<T> nf);
 
 
     /**

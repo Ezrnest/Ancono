@@ -12,7 +12,7 @@ typealias DVFunction<T> = DerivableFunction<T, SVector<T>>
  *  Describe a normal parametric curve. It is required that the vector function `r(t)` is differentiable of sufficient
  *  order and the derivative `r'(t) != 0`.
  */
-abstract class NormalCurve<T>(override val mathCalculator: MathCalculator<T>) : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
+abstract class NormalCurve<T>(override val calculator: MathCalculator<T>) : SpaceParametricCurve<T>, DerivableFunction<T, SVector<T>> {
 
 
     override fun asPointFunction() = this.andThenMap { SPoint.valueOf(it) }
@@ -31,7 +31,7 @@ abstract class NormalCurve<T>(override val mathCalculator: MathCalculator<T>) : 
      * Returns `ds/dt` of this parametric curve. `ds/dt = |r'(t)|`
      */
     open val ds: DerivableSVFunction<T> by lazy {
-        DifferentialUtil.length(mathCalculator, derivative)
+        DifferentialUtil.length(calculator, derivative)
     }
 //        get() = MathFunction.composeSV(this.derive(), { x -> x.calLength() })
 
@@ -43,19 +43,19 @@ abstract class NormalCurve<T>(override val mathCalculator: MathCalculator<T>) : 
         // k(t) = |r' × r''| / |r'|^3
         val r1 = derivative
         val r2 = derivative.derivative
-        val nume = DifferentialUtil.length(mathCalculator, DifferentialUtil.outerProduct(r1, r2))
-        val deno = DerivableFunction.composeSV(ds, AbstractSVFunction.pow(Fraction.of(3L), mathCalculator), mathCalculator)
-        DerivableFunction.divideSV(nume, deno, mathCalculator)
+        val nume = DifferentialUtil.length(calculator, DifferentialUtil.outerProduct(r1, r2))
+        val deno = DerivableFunction.composeSV(ds, AbstractSVFunction.pow(Fraction.of(3L), calculator), calculator)
+        DerivableFunction.divideSV(nume, deno, calculator)
     }
 
     val torsion: DerivableSVFunction<T> by lazy {
         val r1 = derivative
         val r2 = r1.derivative
         val r3 = r2.derivative
-        val nume = DifferentialUtil.mixedProduct(r1, r2, r3, mathCalculator)
+        val nume = DifferentialUtil.mixedProduct(r1, r2, r3, calculator)
         val w = DifferentialUtil.outerProduct(r1, r2)
-        val deno = DifferentialUtil.innerProduct(mathCalculator, w, w)
-        DerivableFunction.divideSV(nume, deno, mathCalculator)
+        val deno = DifferentialUtil.innerProduct(calculator, w, w)
+        DerivableFunction.divideSV(nume, deno, calculator)
     }
 
     /**
@@ -89,14 +89,14 @@ abstract class NormalCurve<T>(override val mathCalculator: MathCalculator<T>) : 
      * `alpha(t)`,which is a unit vector parallel to tangent vector.
      */
     open val alpha: DVFunction<T> by lazy {
-        DifferentialUtil.unitVectorSpace(mathCalculator, tangentVector)
+        DifferentialUtil.unitVectorSpace(calculator, tangentVector)
     }
 
     /**
      * `beta(t)`,which is a unit vector parallel to main normal vector.
      */
     open val beta: DVFunction<T> by lazy {
-        DifferentialUtil.unitVectorSpace(mathCalculator, mainNormalVector)
+        DifferentialUtil.unitVectorSpace(calculator, mainNormalVector)
     }
 //        get() = MathFunctionSup.mergeOf(alpha, gamma) { a, b -> a.outerProduct(b) }
 
@@ -196,7 +196,7 @@ fun <T> NormalCurve<T>.arcLength(integralHelper: (SVFunction<T>, T, T) -> T): T 
  * function and the derivative of [tu] must be all non-zero.
  */
 fun <T> NormalCurve<T>.parametricTrans(tu: DerivableSVFunction<T>, newDomain: Interval<T>): NormalCurve<T> {
-    val mc = mathCalculator
+    val mc = calculator
     val origin = this
     return object : NormalCurve<T>(mc) {
         override fun domain(): Interval<T> {

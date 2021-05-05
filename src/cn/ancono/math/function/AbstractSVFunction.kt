@@ -27,7 +27,7 @@ protected constructor(mc: MathCalculator<T>) : AbstractMathObject<T>(mc), SVFunc
      * Returns the String representation of this function, the prefix 'f(x)='
      * should not be included.
      */
-    abstract override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String
+    abstract override fun toString(nf: FlexibleNumberFormatter<T>): String
 
 
     /*
@@ -204,7 +204,7 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return "ln(x)"
     }
 }
@@ -246,8 +246,8 @@ class Log<T>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
-        return "log(" + nf.format(a, mc) + ",x)"
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        return "log(" + nf.format(a) + ",x)"
     }
 
     /*
@@ -373,15 +373,15 @@ class Power<T>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         if (mc.isZero(a)) {
             return "0"
         } else if (n.signum == 0) {
-            return nf.format(a, mc)
+            return nf.format(a)
         }
         val sb = StringBuilder()
         if (!mc.isEqual(a, mc.one)) {
-            sb.append(nf.format(a, mc))
+            sb.append(nf.format(a))
         }
         sb.append("x")
         if (n.denominator == 1L && n.signum > 0) {
@@ -454,12 +454,12 @@ internal constructor(mc: MathCalculator<T>,
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         val sb = StringBuilder()
         if (!mc.isEqual(mc.one, a)) {
-            sb.append(nf.format(a, mc))
+            sb.append(nf.format(a))
         }
-        val `as` = nf.format(a, mc)
+        val `as` = nf.format(a)
         if (`as`.length == 1) {
             sb.append(`as`)
         } else {
@@ -520,7 +520,7 @@ internal constructor(mc: MathCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return "e^x"
     }
 

@@ -115,7 +115,7 @@ class MobiusTrans<T>(
         return m.multiply(det2).valueEquals(m2.multiply(det1))
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return "f(x)=( (${m[0, 0].toString(nf)})x + ${m[0, 1].toString(nf)} ) /" +
                 "( (${m[1, 0].toString(nf)})x + ${m[1, 1].toString(nf)} )"
     }
@@ -141,7 +141,7 @@ class MobiusTrans<T>(
         }
 
         fun <T> of(a: Complex<T>, b: Complex<T>, c: Complex<T>, d: Complex<T>): MobiusTrans<T> {
-            val mc = a.mathCalculator
+            val mc = a.calculator
             val det = a * d - b * c
             if (det.isZero()) {
                 throw IllegalArgumentException("ad - bc= 0")
@@ -160,9 +160,9 @@ class MobiusTrans<T>(
                 if (a !is Complex) {
                     throw ArithmeticException()
                 }
-                a.mathCalculator
+                a.calculator
             } else {
-                b.mathCalculator
+                b.calculator
             }
             // (x-a)(b-c)
             // ----------

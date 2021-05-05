@@ -1,8 +1,12 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.*;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
@@ -42,11 +46,11 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
     private T lenSq;
 
-    SVector(T[] vec, MathCalculator<T> mc) {
+    SVector(T[] vec, RingCalculator<T> mc) {
         this(vec[0], vec[1], vec[2], mc);
     }
 
-    SVector(T x, T y, T z, MathCalculator<T> mc) {
+    SVector(T x, T y, T z, RingCalculator<T> mc) {
         super(mc, 3);
         this.x = x;
         this.y = y;
@@ -55,24 +59,27 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
     @Override
     public @NotNull SVector<T> negate() {
-        return new SVector<>(getMc().negate(x), getMc().negate(y), getMc().negate(z), getMc());
+        var mc = getCalculator();
+        return new SVector<>(mc.negate(x), mc.negate(y), mc.negate(z), mc);
     }
 
 
     @Override
     public @NotNull SVector<T> multiply(long n) {
-        return new SVector<>(getMc().multiplyLong(x, n), getMc().multiplyLong(y, n), getMc().multiplyLong(z, n), getMc());
+        var mc = getCalculator();
+        return new SVector<>(mc.multiplyLong(x, n), mc.multiplyLong(y, n), mc.multiplyLong(z, n), mc);
     }
 
 
     @Override
     public @NotNull SVector<T> multiply(T n) {
-        return new SVector<>(getMc().multiply(x, n), getMc().multiply(y, n), getMc().multiply(z, n), getMc());
+        var mc = getCalculator();
+        return new SVector<>(mc.multiply(x, n), mc.multiply(y, n), mc.multiply(z, n), mc);
     }
 
     @Override
     public boolean isLinearRelevant(@NotNull SVector<T> v) {
-        var mc = getMathCalculator();
+        var mc = getCalculator();
         return mc.isZero(mc.subtract(mc.multiply(x, v.y), mc.multiply(v.x, y)));
     }
 
@@ -142,7 +149,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return this + s
      */
     public @NotNull SVector<T> add(SVector<T> s) {
-        return new SVector<>(getMc().add(x, s.x), getMc().add(y, s.y), getMc().add(z, s.z), getMc());
+        var mc = getCalculator();
+        return new SVector<>(mc.add(x, s.x), mc.add(y, s.y), mc.add(z, s.z), mc);
     }
 
     /**
@@ -152,7 +160,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return this - s
      */
     public @NotNull SVector<T> subtract(SVector<T> s) {
-        return new SVector<>(getMc().subtract(x, s.x), getMc().subtract(y, s.y), getMc().subtract(z, s.z), getMc());
+        var mc = getCalculator();
+        return new SVector<>(mc.subtract(x, s.x), mc.subtract(y, s.y), mc.subtract(z, s.z), mc);
     }
 
     /**
@@ -165,7 +174,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return this · s
      */
     public T innerProduct(SVector<T> s) {
-        return getMc().add(getMc().add(getMc().multiply(x, s.x), getMc().multiply(y, s.y)), getMc().multiply(z, s.z));
+        var mc = getCalculator();
+        return mc.add(mc.add(mc.multiply(x, s.x), mc.multiply(y, s.y)), mc.multiply(z, s.z));
     }
 
     /**
@@ -178,11 +188,11 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return this × s
      */
     public SVector<T> outerProduct(SVector<T> s) {
-        var mc = getMc();
+        var mc = getCalculator();
         T nx = mc.subtract(mc.multiply(y, s.z), mc.multiply(s.y, z));
         T ny = mc.subtract(mc.multiply(z, s.x), mc.multiply(s.z, x));
         T nz = mc.subtract(mc.multiply(x, s.y), mc.multiply(s.x, y));
-        return new SVector<T>(nx, ny, nz, getMc());
+        return new SVector<T>(nx, ny, nz, mc);
     }
 
     /**
@@ -194,7 +204,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
     @Override
     public T norm() {
         if (length == null) {
-            length = getMc().squareRoot(normSq());
+            var mc = (MathCalculator<T>) getCalculator();
+            length = mc.squareRoot(normSq());
         }
         return length;
     }
@@ -228,13 +239,14 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
     @NotNull
     @Override
     public SVector<T> applyAll(@NotNull Function1<? super T, ? extends T> f) {
-        return new SVector<>(f.invoke(x), f.invoke(y), f.invoke(z), getMc());
+        var mc = getCalculator();
+        return new SVector<>(f.invoke(x), f.invoke(y), f.invoke(z), mc);
     }
 
     @NotNull
     @Override
     public SVector<T> divide(T t) {
-        var mc = getMathCalculator();
+        var mc = (FieldCalculator<T>) getCalculator();
         return new SVector<>(
                 mc.divide(x, t),
                 mc.divide(y, t),
@@ -257,7 +269,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      */
     public <R> R angle(SVector<T> s, MathFunction<T, R> arccos) {
         T pro = innerProduct(s);
-        pro = getMc().divide(pro, getMc().multiply(norm(), s.norm()));
+        var mc = (FieldCalculator<T>) getCalculator();
+        pro = mc.divide(pro, mc.multiply(norm(), s.norm()));
         return arccos.apply(pro);
     }
 
@@ -269,8 +282,9 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return <pre>this �� s / (|this| |s|)</pre>
      */
     public T angleCos(SVector<T> s) {
+        var mc = (FieldCalculator<T>) getCalculator();
         T pro = innerProduct(s);
-        return getMc().divide(pro, getMc().multiply(norm(), s.norm()));
+        return mc.divide(pro, mc.multiply(norm(), s.norm()));
     }
 
     /**
@@ -280,18 +294,19 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return
      */
     public boolean isParallel(SVector<T> s) {
-        if (!getMc().isZero(x)) {
-            if (getMc().isZero(s.x)) {
+        var mc = (FieldCalculator<T>) getCalculator();
+        if (!mc.isZero(x)) {
+            if (mc.isZero(s.x)) {
                 return false;
             }
-            return getMc().isEqual(getMc().multiply(x, s.y), getMc().multiply(y, s.x)) &&
-                    getMc().isEqual(getMc().multiply(x, s.z), getMc().multiply(z, s.x));
+            return mc.isEqual(mc.multiply(x, s.y), mc.multiply(y, s.x)) &&
+                    mc.isEqual(mc.multiply(x, s.z), mc.multiply(z, s.x));
         }
         //x == 0
-        if (!getMc().isZero(s.x)) {
+        if (!mc.isZero(s.x)) {
             return false;
         }
-        return getMc().isEqual(getMc().multiply(y, s.z), getMc().multiply(z, s.y));
+        return mc.isEqual(mc.multiply(y, s.z), mc.multiply(z, s.y));
     }
 
     /**
@@ -307,8 +322,9 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
             return false;
         }
         T t1 = x, t2 = s.x;
-        if (getMc().isZero(t1)) {
-            if (getMc().isZero(y)) {
+        var mc = (MathCalculator<T>) getCalculator();
+        if (mc.isZero(t1)) {
+            if (mc.isZero(y)) {
                 t1 = z;
                 t2 = s.z;
             } else {
@@ -316,7 +332,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
                 t2 = s.y;
             }
         }
-        return Calculators.isSameSign(t1, t2, getMc());
+        return Calculators.isSameSign(t1, t2, mc);
     }
 
     /**
@@ -326,7 +342,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return
      */
     public boolean isPerpendicular(SVector<T> s) {
-        return getMc().isZero(innerProduct(s));
+        return getCalculator().isZero(innerProduct(s));
     }
 
     /**
@@ -335,12 +351,13 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return an unit vector
      */
     public SVector<T> unitVector() {
+        var mc = (FieldCalculator<T>) getCalculator();
         T length = norm();
-        SVector<T> s = new SVector<>(getMc().divide(x, length),
-                getMc().divide(y, length),
-                getMc().divide(z, length), getMc());
-        s.length = getMc().getOne();
-        s.lenSq = getMc().getOne();
+        SVector<T> s = new SVector<>(mc.divide(x, length),
+                mc.divide(y, length),
+                mc.divide(z, length), mc);
+        s.length = mc.getOne();
+        s.lenSq = mc.getOne();
         return s;
     }
 
@@ -351,10 +368,11 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return a new SVector
      */
     public SVector<T> parallel(T len) {
+        var mc = (FieldCalculator<T>) getCalculator();
         T length = norm();
-        SVector<T> s = new SVector<>(getMc().multiply(len, getMc().divide(x, length)),
-                getMc().multiply(len, getMc().divide(y, length)),
-                getMc().multiply(len, getMc().divide(z, length)), getMc());
+        SVector<T> s = new SVector<>(mc.multiply(len, mc.divide(x, length)),
+                mc.multiply(len, mc.divide(y, length)),
+                mc.multiply(len, mc.divide(z, length)), mc);
         s.length = len;
         return s;
     }
@@ -365,7 +383,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return
      */
     public boolean isZero() {
-        var mc = getMathCalculator();
+        var mc = getCalculator();
         return mc.isZero(x) && mc.isZero(y) && mc.isZero(z);
     }
 
@@ -386,11 +404,12 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return
      */
     public SVector<T> perpendicular(SVector<T> v) {
-        T k = getMc().negate(getMc().divide(innerProduct(v), normSq()));
-        T nx = getMc().add(v.x, getMc().multiply(k, x));
-        T ny = getMc().add(v.y, getMc().multiply(k, y));
-        T nz = getMc().add(v.z, getMc().multiply(k, z));
-        return new SVector<T>(nx, ny, nz, getMc());
+        var mc = (FieldCalculator<T>) getCalculator();
+        T k = mc.negate(mc.divide(innerProduct(v), normSq()));
+        T nx = mc.add(v.x, mc.multiply(k, x));
+        T ny = mc.add(v.y, mc.multiply(k, y));
+        T nz = mc.add(v.z, mc.multiply(k, z));
+        return new SVector<T>(nx, ny, nz, mc);
     }
 
     /**
@@ -404,8 +423,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
     @NotNull
     @Override
-    public <N> SVector<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        SVector<N> sn = new SVector<>(mapper.apply(x), mapper.apply(y), mapper.apply(z), newCalculator);
+    public <N> SVector<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        SVector<N> sn = new SVector<>(mapper.apply(x), mapper.apply(y), mapper.apply(z), (RingCalculator<N>) newCalculator);
         if (length != null) {
             sn.length = mapper.apply(length);
         }
@@ -439,24 +458,26 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
         return super.equals(obj);
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof SVector) {
-            SVector<N> s = (SVector<N>) obj;
-            return getMc().isEqual(x, mapper.apply(s.x)) &&
-                    getMc().isEqual(y, mapper.apply(s.y)) &&
-                    getMc().isEqual(z, mapper.apply(s.z));
-        }
-        return false;
-    }
+//    @Override
+//    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+//        if (obj instanceof SVector) {
+//            SVector<N> s = (SVector<N>) obj;
+//            return mc.isEqual(x, mapper.apply(s.x)) &&
+//                    mc.isEqual(y, mapper.apply(s.y)) &&
+//                    mc.isEqual(z, mapper.apply(s.z));
+//        }
+//        return false;
+//    }
+
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull FMathObject<T, RingCalculator<T>> obj) {
         if (obj instanceof SVector) {
+            var mc = getCalculator();
             SVector<T> s = (SVector<T>) obj;
-            return getMc().isEqual(x, s.x) &&
-                    getMc().isEqual(y, s.y) &&
-                    getMc().isEqual(z, s.z);
+            return mc.isEqual(x, s.x) &&
+                    mc.isEqual(y, s.y) &&
+                    mc.isEqual(z, s.z);
         }
         return false;
     }
@@ -539,7 +560,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return a new vector
      */
     public static <T> SVector<T> vector(SPoint<T> A, SPoint<T> B) {
-        return vector(A, B, A.getMathCalculator());
+        return vector(A, B, A.getCalculator());
     }
 
     /**
@@ -571,7 +592,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      */
     @SafeVarargs
     public static <T> SVector<T> sum(SVector<T>... vectors) {
-        MathCalculator<T> mc = vectors[0].getMc();
+        RingCalculator<T> mc = vectors[0].getCalculator();
         final int num = vectors.length;
         var arr = new ArrayList<T>(vectors.length);
         for (SVector<T> point : vectors) {
@@ -601,7 +622,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
         if (v.getSize() < 3) {
             throw new IllegalArgumentException("Too small");
         }
-        return new SVector<T>(v.get(0), v.get(1), v.get(2), v.getMathCalculator());
+        return new SVector<T>(v.get(0), v.get(1), v.get(2), v.getCalculator());
     }
 
     /**
@@ -626,7 +647,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return result
      */
     public static <T> T mixedProduct(SVector<T> a, SVector<T> b, SVector<T> c) {
-        return MatrixSup.det3(toMatrix(a, b, c), a.getMc());
+        return MatrixSup.det3(toMatrix(a, b, c), a.getCalculator());
     }
 
     /**
@@ -639,7 +660,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return
      */
     public static <T> SVector<T> angledVector(SVector<T> v, SVector<T> n, T tan) {
-        MathCalculator<T> mc = v.getMathCalculator();
+        var mc = (FieldCalculator<T>) v.getCalculator();
         SVector<T> perp = n.outerProduct(v);
         SVector<T> res = perp.multiply(v.norm());
         res = res.add(v.multiply(mc.divide(perp.norm(), tan)));
@@ -658,7 +679,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      */
     public static <T> List<SVector<T>> angledVectorTwo(SVector<T> v, SVector<T> n, T tan) {
         List<SVector<T>> list = new ArrayList<>(2);
-        MathCalculator<T> mc = v.getMathCalculator();
+        var mc = v.getCalculator();
         SVector<T> perp = n.outerProduct(v);
         SVector<T> res = perp.multiply(mc.multiply(tan, v.norm()));
         SVector<T> t = v.multiply(perp.norm());
@@ -683,7 +704,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * Determines whether the three vectors are on the same plane.
      */
     public static <T> boolean isOnSamePlane(SVector<T> v1, SVector<T> v2, SVector<T> v3) {
-        var mc = v1.getMathCalculator();
+        var mc = v1.getCalculator();
         return mc.isZero(SVector.mixedProduct(v1, v2, v3));
     }
 
@@ -714,7 +735,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @return a new vector base
      */
     public static <T> VectorBasis<T> createBase(SVector<T> x, SVector<T> y, SVector<T> z) {
-        MathCalculator<T> mc = x.getMc();
+        var mc = (FieldCalculator<T>) x.getCalculator();
         T[][] mat = toMatrix(x, y, z);
         T d = MatrixSup.det3(mat, mc);
         if (mc.isZero(d)) {
@@ -768,7 +789,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 //        }
 //
 //        public SVector<T> reduce(SVector<T> s) {
-//            var mc = getMc();
+//            var mc = mc;
 //            @SuppressWarnings("unchecked")
 //            T[] v = (T[]) new Object[]{s.x, s.y, s.z};
 //            T[][] mt2 = mat.clone();
@@ -836,7 +857,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 //         * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
 //         */
 //        @Override
-//        public @NotNull String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+//        public @NotNull String toString(@NotNull FlexibleNumberFormatter<T> nf) {
 //            return "SVectorBase";
 //        }
 //
@@ -860,7 +881,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
          * @return
          */
         public SVector<T> of(T x, T y, T z) {
-            return SVector.valueOf(x, y, z, getMc());
+            return SVector.valueOf(x, y, z, getCalculator());
         }
 
         /* (non-Javadoc)
@@ -878,7 +899,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof SVectorGenerator) {
-                return getMc().equals(((SVectorGenerator<?>) obj).getMc());
+                var mc = getCalculator();
+                return mc.equals(((SVectorGenerator<?>) obj).getCalculator());
             }
             return false;
         }
@@ -888,7 +910,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
          */
         @Override
         public int hashCode() {
-            return getMc().hashCode();
+            var mc = getCalculator();
+            return mc.hashCode();
         }
 
         /* (non-Javadoc)
@@ -911,7 +934,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
         @Override
-        public @NotNull String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public @NotNull String toString(@NotNull FlexibleNumberFormatter<T> nf) {
             return "SVectorGenerator";
         }
     }

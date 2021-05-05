@@ -10,6 +10,6 @@ package cn.ancono.math
  */
 interface MathCalculatorHolder<T> : CalculatorHolder<T, MathCalculator<T>> {
 
-    override val mathCalculator: MathCalculator<T>
+    override val calculator: MathCalculator<T>
 
 }

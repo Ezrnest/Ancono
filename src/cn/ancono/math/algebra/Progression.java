@@ -365,7 +365,7 @@ public abstract class Progression<T> extends AbstractMathObject<T> implements It
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         return "Progression:" + this.getClass().getName();
     }
 

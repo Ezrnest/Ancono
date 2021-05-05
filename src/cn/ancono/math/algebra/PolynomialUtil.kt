@@ -1,6 +1,7 @@
 package cn.ancono.math.algebra
 
 import cn.ancono.math.MathUtils
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
@@ -23,6 +24,7 @@ import kotlin.math.absoluteValue
  * Provides utility algorithms for polynomials, including partial fraction decomposition, pseudo division and
  * GCD for polynomial on a ring, factorizing and so on.
  */
+@Suppress("LocalVariableName")
 object PolynomialUtil {
 
 
@@ -125,7 +127,7 @@ object PolynomialUtil {
         //coefficient matrix
         val terms = arrayListOf<Pair<SinglePoly<T>, Boolean>>()
         var coeCount = 0
-        val mc = nume.mathCalculator
+        val mc = nume.calculator
         val all: Polynomial<T> = deno.expanded
         for ((poly, pow) in deno.decomposed) {
             var d = poly
@@ -252,7 +254,7 @@ object PolynomialUtil {
         val n = B.degree
         require(!B.isZero())
         require(m >= n)
-        val mc = A.mathCalculator
+        val mc = A.calculator
 
         val d = B.first()
         var R = A
@@ -291,7 +293,7 @@ object PolynomialUtil {
         if (m < n) {
             return A
         }
-        val mc = A.mathCalculator
+        val mc = A.calculator
         val d = B.first()
         var R = A
         var e = m - n + 1
@@ -326,7 +328,7 @@ object PolynomialUtil {
         'A Course in Computational Algebraic Number Theory', Henri Cohen
         Created by lyc at 2020-03-01 16:02
          */
-        val mc = f.mathCalculator
+        val mc = f.calculator
 
         @Suppress("UNCHECKED_CAST")
         val rc = mc as UFDCalculator<T>
@@ -378,7 +380,7 @@ object PolynomialUtil {
         if (B.isZero()) {
             return A
         }
-        val mc = f.mathCalculator
+        val mc = f.calculator
 
         @Suppress("UNCHECKED_CAST")
         val rc = mc as UFDCalculator<T>
@@ -400,7 +402,7 @@ object PolynomialUtil {
             A = B
             B = R.divide(mc.multiply(g1, mc.pow(h1, t)))
             g1 = A.first()
-            h1 = mc.multiply(h1, mc.pow(mc.divide(g1, h1), t))
+            h1 = mc.multiply(h1, mc.pow(mc.exactDivide(g1, h1), t))
         }
         return d * B.toPrimitive()
     }
@@ -414,7 +416,7 @@ object PolynomialUtil {
     private fun <T> polynomialChDiv(f: Polynomial<T>, p: Int): Polynomial<T> {
         require(f.degree % p == 0)
         val d = f.degree / p
-        return of(f.mathCalculator, d) { i ->
+        return of(f.calculator, d) { i ->
             f.get(i * p)
         }
     }
@@ -565,7 +567,7 @@ object PolynomialUtil {
      */
     @JvmStatic
     fun <T> squarefreeFactorize(f: Polynomial<T>): List<Pair<Polynomial<T>, Int>> {
-        val mc = f.mathCalculator
+        val mc = f.calculator as FieldCalculator
         val p = Math.toIntExact(mc.characteristic)
         val m = f.monic()
         return if (p == 0) {
@@ -657,7 +659,7 @@ object PolynomialUtil {
      * It is required that the calculator for f is a [ZModPCalculator].
      */
     fun <T> isIrreducibleModP(f: Polynomial<T>): Boolean {
-        require(f.mathCalculator is ZModPCalculator) {
+        require(f.calculator is ZModPCalculator) {
             "A ZModPCalculator is required!"
         }
         if (f.degree <= 1) {
@@ -699,11 +701,11 @@ object PolynomialUtil {
 
         Necessity: Obvious by lemma 2.
          */
-        val mc = f.mathCalculator as ZModPCalculator
+        val mc = f.calculator
         val p = mc.p
         val n = f.degree
         val x = oneX(mc)
-        val xPn = powMod(x, MathUtils.pow(p.toLong(), n), f)
+        val xPn = powMod(x, MathUtils.pow(p, n), f)
         // x^{p^n}
         if (!xPn.valueEquals(x)) {
             return false
@@ -765,7 +767,7 @@ object PolynomialUtil {
 
         while (true) {
             val t = randomPolynomial(rd, d, mc)
-            val power = (MathUtils.pow(mc.p.toLong(), d) - 1) / 2
+            val power = (MathUtils.pow(mc.p, d) - 1) / 2
             val tp = powMod(t, power, f) - one(mc)
             val g = f.gcd(tp)
             if (g.degree == 0 || g.degree == f.degree) {
@@ -841,7 +843,7 @@ object PolynomialUtil {
 
     private fun buildPowerMatrix(A: Polynomial<Int>, p: Int): Matrix<Int> {
         val n = A.degree
-        val mc = A.mathCalculator
+        val mc = A.calculator as FieldCalculator
         val builder = Matrix.zero(n, n, mc)
         builder[0, 0] = 1
         for (k in 1 until n) {
@@ -865,7 +867,7 @@ object PolynomialUtil {
         Note: this method is not used because of its slowness
          */
         val Q = buildPowerMatrix(A, p)
-        val mc = A.mathCalculator
+        val mc = A.calculator as FieldCalculator
         val n = A.degree
         val vectors = (Q - Matrix.identity(n, mc)).kernel().vectors
         val r = vectors.size
@@ -917,7 +919,7 @@ object PolynomialUtil {
          */
         require(p >= 3)
         val Q = buildPowerMatrix(A, p)
-        val mc = A.mathCalculator
+        val mc = A.calculator as FieldCalculator
         val n = A.degree
         val vectors = (Q - Matrix.identity(n, mc)).kernel().vectors
         val ts = vectors.map { v -> of(mc, v.toList()) }
@@ -974,7 +976,7 @@ object PolynomialUtil {
     fun factorizeModP(f: Polynomial<Int>): DecomposedPoly<Int> {
         val squarefree = squarefreeFactorize(f)
         val results = arrayListOf<Pair<Polynomial<Int>, Int>>()
-        val mc = f.mathCalculator as ZModPCalculator<Int>
+        val mc = f.calculator as ZModPCalculator<Int>
         val p = Math.toIntExact(mc.p)
         for ((ak, k) in squarefree) {
             val distinct = distinctDegreeFactorizeModP(ak, mc)
@@ -1050,7 +1052,7 @@ object PolynomialUtil {
      * @return a sorted list of roots
      */
     fun findRootsModP(f: Polynomial<Int>): List<Int> {
-        val mc = f.mathCalculator as ZModPCalculator<Int>
+        val mc = f.calculator as ZModPCalculator<Int>
         if (mc.p == 2L) {
             return (0..1).filter { f.compute(it) % 2 == 0 }
         }

@@ -1,12 +1,9 @@
 package cn.ancono.math.algebra.linear.mapping
 
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.FMathObject
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
-import cn.ancono.math.algebra.abs.calculator.FieldCalculator
-import cn.ancono.math.algebra.abs.calculator.LinearSpaceCalculator
-import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.linear.*
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.SVFunction
@@ -138,8 +135,8 @@ abstract class LinearMapping<T> internal constructor(
 //        override val transMatrix: Matrix<T>,
         override val dimSrc: Int,
         override val dimDest: Int,
-        mc: MathCalculator<T>
-) : MathObjectExtend<T>(mc), VLinearMapping<T> {
+        mc: FieldCalculator<T>
+) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc), VLinearMapping<T> {
 
     override val kernel: VectorBasis<T> by lazy { super.kernel }
 
@@ -173,23 +170,22 @@ abstract class LinearMapping<T> internal constructor(
         return fromMatrix(transMatrix.multiply(k))
     }
 
-
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is LinearMapping) {
             return false
         }
-        return mathCalculator == obj.mathCalculator &&
+        return calculator == obj.calculator &&
                 transMatrix.valueEquals(obj.transMatrix) && dimSrc == obj.dimSrc && dimDest == obj.dimDest
     }
 
-    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        if (obj !is LinearMapping) {
-            return false
-        }
-        return dimSrc == obj.dimSrc && dimDest == obj.dimDest && transMatrix.valueEquals(obj.transMatrix, mapper)
-    }
+//    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+//        if (obj !is LinearMapping) {
+//            return false
+//        }
+//        return dimSrc == obj.dimSrc && dimDest == obj.dimDest && transMatrix.valueEquals(obj.transMatrix, mapper)
+//    }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
         appendLine("Linear mapping, dimSrc=$dimSrc, dimDest=$dimDest, matrix = ")
         appendLine(transMatrix.toString(nf))
     }
@@ -219,7 +215,7 @@ abstract class LinearMapping<T> internal constructor(
             val m1 = f.transMatrix
             val m2 = g.transMatrix
             require(m1.isSameShape(m2))
-            val mc = f.mc
+            val mc = f.calculator
             val a = m1[0, 0]
             val b = m2[0, 0]
             for (i in 0 until m1.row) {
@@ -243,14 +239,14 @@ abstract class LinearMapping<T> internal constructor(
 /**
  * Default matrix implementation for linear mapping
  */
-internal class DLinearMapping<T> internal constructor(override val transMatrix: Matrix<T>, dimSrc: Int, dimDest: Int, mc: MathCalculator<T>)
+internal class DLinearMapping<T> internal constructor(override val transMatrix: Matrix<T>, dimSrc: Int, dimDest: Int, mc: FieldCalculator<T>)
     : LinearMapping<T>(dimSrc, dimDest, mc) {
 
     internal constructor(transMatrix: Matrix<T>)
-            : this(transMatrix, transMatrix.column, transMatrix.row, transMatrix.mathCalculator)
+            : this(transMatrix, transMatrix.column, transMatrix.row, transMatrix.calculator as FieldCalculator<T>)
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearMapping<N> {
-        return DLinearMapping(transMatrix.mapTo(newCalculator, mapper), dimSrc, dimDest, newCalculator)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): LinearMapping<N> {
+        return DLinearMapping(transMatrix.mapTo(newCalculator, mapper), dimSrc, dimDest, newCalculator as FieldCalculator<N>)
     }
 
 
@@ -259,7 +255,7 @@ internal class DLinearMapping<T> internal constructor(override val transMatrix: 
 abstract class LinearTrans<T>
 internal constructor(
         dimension: Int,
-        mc: MathCalculator<T>
+        mc: FieldCalculator<T>
 ) : LinearMapping<T>(dimension, dimension, mc),
         VLinearTrans<T>,
         Composable<LinearTrans<T>>,
@@ -304,24 +300,24 @@ internal constructor(
     }
 
     override fun inverse(): LinearTrans<T> {
-        return DLinearTrans(transMatrix.inverse(), dimension, mc)
+        return DLinearTrans(transMatrix.inverse(), dimension, calculator)
     }
 
 
     override fun add(y: LinearTrans<T>): LinearTrans<T> {
-        return DLinearTrans(transMatrix + y.transMatrix, dimension, mc)
+        return DLinearTrans(transMatrix + y.transMatrix, dimension, calculator)
     }
 
     override fun negate(): LinearTrans<T> {
-        return DLinearTrans(-transMatrix, dimension, mc)
+        return DLinearTrans(-transMatrix, dimension, calculator)
     }
 
     override fun multiply(k: T): LinearTrans<T> {
-        return DLinearTrans(transMatrix.multiply(k), dimension, mc)
+        return DLinearTrans(transMatrix.multiply(k), dimension, calculator)
     }
 
     override fun divide(k: T): LinearTrans<T> {
-        return multiply(mc.reciprocal(k))
+        return multiply(calculator.reciprocal(k))
     }
 
     override fun isLinearRelevant(v: LinearTrans<T>): Boolean {
@@ -341,7 +337,7 @@ internal constructor(
     }
 
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
         appendLine("Linear trans, dim=$dimension, matrix = ")
         appendLine(transMatrix.toString(nf))
     }
@@ -397,14 +393,15 @@ internal constructor(
 class DLinearTrans<T> internal constructor(
         override val transMatrix: Matrix<T>,
         dimension: Int,
-        mc: MathCalculator<T>
+        mc: FieldCalculator<T>
 ) : LinearTrans<T>(dimension, mc) {
 
-    internal constructor(transMatrix: Matrix<T>) : this(transMatrix, transMatrix.row, transMatrix.mathCalculator)
+    internal constructor(transMatrix: Matrix<T>) : this(transMatrix, transMatrix.row, transMatrix.calculator as FieldCalculator<T>)
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): LinearTrans<N> {
+
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): LinearTrans<N> {
         val nMatrix = transMatrix.mapTo(newCalculator, mapper)
-        return DLinearTrans(nMatrix, dimension, newCalculator)
+        return DLinearTrans(nMatrix, dimension, newCalculator as FieldCalculator<N>)
     }
 }
 
@@ -478,7 +475,7 @@ class LinearTransCal<T>(val mc: MathCalculator<T>, val dim: Int) : AlgebraCalcul
 //        return Vector.multiplyToVector(transMatrix, v) + translationVector
 //    }
 //
-//    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
+//    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
 //        appendln("Linear transformation, expanded matrix = ")
 //        appendln(expandedMatrix.contentToString(nf))
 //    }

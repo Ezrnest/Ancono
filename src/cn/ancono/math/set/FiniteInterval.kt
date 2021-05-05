@@ -13,10 +13,10 @@ import java.util.function.Function
  * Created at 2018/10/10 10:10
  * @author  liyicheng
  */
-class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downer: T, val upper: T)
-    : Interval<T>(mathCalculator), FiniteSet<T> {
+class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T, val upper: T)
+    : Interval<T>(calculator), FiniteSet<T> {
     override fun contains(n: T): Boolean {
-        return mathCalculator.compare(downer, n) <= 0 && mathCalculator.compare(n, upper) <= 0
+        return calculator.compare(downer, n) <= 0 && calculator.compare(n, upper) <= 0
     }
 
     override fun upperBound(): T {
@@ -40,8 +40,8 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
     }
 
     override fun downerPart(n: T): Interval<T> {
-        require(mathCalculator.eval { n > downer && n < upper })
-        return FiniteInterval(mathCalculator, downer, n)
+        require(calculator.eval { n > downer && n < upper })
+        return FiniteInterval(calculator, downer, n)
     }
 
     override fun downerPart(n: T, include: Boolean): Interval<T> {
@@ -50,8 +50,8 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
     }
 
     override fun upperPart(n: T): Interval<T> {
-        require(mathCalculator.eval { n > downer && n < upper })
-        return FiniteInterval(mathCalculator, n, upper)
+        require(calculator.eval { n > downer && n < upper })
+        return FiniteInterval(calculator, n, upper)
     }
 
     override fun upperPart(n: T, include: Boolean): Interval<T> {
@@ -60,8 +60,8 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
     }
 
     override fun expandUpperBound(n: T): Interval<T> {
-        require(mathCalculator.eval { n > upper })
-        return FiniteInterval(mathCalculator, downer, n)
+        require(calculator.eval { n > upper })
+        return FiniteInterval(calculator, downer, n)
     }
 
     override fun expandUpperBound(n: T, include: Boolean): Interval<T> {
@@ -70,8 +70,8 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
     }
 
     override fun expandDownerBound(n: T): Interval<T> {
-        require(mathCalculator.eval { n < downer })
-        return FiniteInterval(mathCalculator, n, upper)
+        require(calculator.eval { n < downer })
+        return FiniteInterval(calculator, n, upper)
     }
 
     override fun expandDownerBound(n: T, include: Boolean): Interval<T> {
@@ -80,11 +80,11 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
     }
 
     override fun sameTypeInterval(downerBound: T, upperBound: T): Interval<T> {
-        return FiniteInterval(mathCalculator, downer, upper)
+        return FiniteInterval(calculator, downer, upper)
     }
 
     override fun contains(iv: Interval<T>): Boolean {
-        return mathCalculator.eval {
+        return calculator.eval {
             upper >= iv.upperBound() &&
                     downer <= iv.downerBound()
         }
@@ -97,9 +97,9 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
         val left = downer
         return if ((mc.compare(right, iL) >= 0) && (mc.compare(iR, left) >= 0)) {
             if (mc.compare(left, iL) < 0) {
-                FiniteInterval(mathCalculator, iL, right)
+                FiniteInterval(calculator, iL, right)
             } else {
-                FiniteInterval(mathCalculator, left, iR)
+                FiniteInterval(calculator, left, iR)
             }
         } else null
     }
@@ -112,8 +112,8 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
         return "[$downer,$upper]"
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
-        return "[${nf.format(downer, mc)},${nf.format(upper, mc)}]"
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        return "[${nf.format(downer)},${nf.format(upper)}]"
     }
 
     override fun valueEquals(obj: MathObject<T>): Boolean {
@@ -148,17 +148,17 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
 
 
         override fun hasNext(): Boolean {
-            return mathCalculator.eval { cur <= upper }
+            return calculator.eval { cur <= upper }
         }
 
         override fun hasPrevious(): Boolean {
-            return mathCalculator.eval { cur > downer }
+            return calculator.eval { cur > downer }
         }
 
         override fun next(): T {
             if (hasNext()) {
                 val t = cur
-                cur = mathCalculator.increase(cur)
+                cur = calculator.increase(cur)
                 return t
             }
             throw NoSuchElementException()
@@ -168,13 +168,13 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
             if (!hasNext()) {
                 throw NoSuchElementException()
             }
-            val re = mathCalculator.eval { (cur - downer) / one }
-            return mathCalculator.asLong(re).toInt()
+            val re = calculator.eval { (cur - downer) / one }
+            return calculator.asLong(re).toInt()
         }
 
         override fun previous(): T {
             if (hasPrevious()) {
-                cur = mathCalculator.decrease(cur)
+                cur = calculator.decrease(cur)
                 return cur
             }
             throw NoSuchElementException()
@@ -184,8 +184,8 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
             if (!hasPrevious()) {
                 throw NoSuchElementException()
             }
-            val re = mathCalculator.eval { (cur - downer) / one }
-            return mathCalculator.asLong(re).toInt() - 1
+            val re = calculator.eval { (cur - downer) / one }
+            return calculator.asLong(re).toInt() - 1
         }
 
     }
@@ -195,20 +195,20 @@ class FiniteInterval<T>(override val mathCalculator: IntCalculator<T>, val downe
     }
 
     override fun size(): Long {
-        val re = mathCalculator.eval { (upper - downer) / one }
-        return mathCalculator.asLong(re) + 1
+        val re = calculator.eval { (upper - downer) / one }
+        return calculator.asLong(re) + 1
     }
 
     override fun sizeAsBigInteger(): BigInteger {
-        val re = mathCalculator.eval { (upper - downer) / one }
-        return mathCalculator.asBigInteger(re).inc()
+        val re = calculator.eval { (upper - downer) / one }
+        return calculator.asBigInteger(re).inc()
     }
 
     override fun get(index: Long): T {
-        return mathCalculator.eval { downer + index * one }
+        return calculator.eval { downer + index * one }
     }
 
     override fun get(index: BigInteger): T {
-        return mathCalculator.eval { downer + index.longValueExact() * one }
+        return calculator.eval { downer + index.longValueExact() * one }
     }
 }

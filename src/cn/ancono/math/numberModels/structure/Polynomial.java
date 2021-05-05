@@ -3,25 +3,21 @@
  */
 package cn.ancono.math.numberModels.structure;
 
-import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.AbstractFlexibleMathObject;
+import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathCalculatorHolder;
-import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.PolynomialUtil;
-import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
-import cn.ancono.math.algebra.abs.calculator.UFDCalculator;
+import cn.ancono.math.algebra.abs.calculator.*;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.discrete.combination.CombUtils;
 import cn.ancono.math.exceptions.ExceptionUtil;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.*;
 import cn.ancono.math.numberModels.api.AlgebraModel;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
-import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
 import cn.ancono.utilities.ArraySup;
@@ -46,7 +42,7 @@ import java.util.function.IntFunction;
  * @author liyicheng
  * @see IPolynomial
  *///created by liyicheng at 2017-11-21 17:10
-public final class Polynomial<T> extends AbstractMathObject<T> implements
+public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalculator<T>> implements
         IPolynomial<T>,
         Comparable<Polynomial<T>>,
         AlgebraModel<T, Polynomial<T>>,
@@ -75,7 +71,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * <code>coes</code> contains all non-null elements and the last element must be non-zero.
      */
     @SuppressWarnings("unchecked")
-    Polynomial(MathCalculator<T> calculator, @NotNull Object[] coes) {
+    Polynomial(RingCalculator<T> calculator, @NotNull Object[] coes) {
         super(calculator);
         this.coes = (T[]) coes;
         this.degree = coes.length - 1;
@@ -100,13 +96,13 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             throw new IndexOutOfBoundsException("n = " + n + " < 0 !");
         }
         if (n > degree) {
-            return getMc().getZero();
+            return getCalculator().getZero();
         }
         return coes[n];
     }
 
     public Vector<T> coefficientVector() {
-        return IPolynomial.coefficientVector(this, getMathCalculator());
+        return IPolynomial.coefficientVector(this, getCalculator());
     }
 
     /**
@@ -122,7 +118,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     public boolean isOne() {
-        var mc = getMc();
+        var mc = (UnitRingCalculator<T>) getCalculator();
         return degree == 0 && mc.isEqual(mc.getOne(), get(0));
     }
 
@@ -134,11 +130,11 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     @Override
     @NotNull
     public Polynomial<T> add(Polynomial<T> y) {
-        var resultArr = addArray(this.coes, y.coes, getMc());
-        return new Polynomial<>(getMc(), resultArr);
+        var resultArr = addArray(this.coes, y.coes, getCalculator());
+        return new Polynomial<>(getCalculator(), resultArr);
     }
 
-    static <T> T[] trimLeadingZeros(T[] arr, MathCalculator<T> mc) {
+    static <T> T[] trimLeadingZeros(T[] arr, RingCalculator<T> mc) {
         int len = 0;
         for (int i = arr.length - 1; i > -1; i--) {
             if (!mc.isZero(arr[i])) {
@@ -152,7 +148,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return Arrays.copyOf(arr, len);
     }
 
-    static <T> T[] trimLeadingZerosAndCopy(T[] arr, MathCalculator<T> mc) {
+    static <T> T[] trimLeadingZerosAndCopy(T[] arr, RingCalculator<T> mc) {
         int len = 0;
         for (int i = arr.length - 1; i > -1; i--) {
             if (!mc.isZero(arr[i])) {
@@ -163,7 +159,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return Arrays.copyOf(arr, len);
     }
 
-    static <T> T[] addArray(T[] a, T[] b, MathCalculator<T> mc) {
+    static <T> T[] addArray(T[] a, T[] b, RingCalculator<T> mc) {
         int len = Math.max(a.length, b.length);
         int minLen = Math.min(a.length, b.length);
         T[] result = getArr(len);
@@ -181,7 +177,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return result;
     }
 
-    static <T> T[] subtractArray(T[] a, T[] b, MathCalculator<T> mc) {
+    static <T> T[] subtractArray(T[] a, T[] b, RingCalculator<T> mc) {
         int len = Math.max(a.length, b.length);
         int minLen = Math.min(a.length, b.length);
         T[] result = getArr(len);
@@ -201,7 +197,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return result;
     }
 
-    static <T> void addToArray(T[] dest, int destPos, T[] toAdd, int pos, int len, MathCalculator<T> mc) {
+    static <T> void addToArray(T[] dest, int destPos, T[] toAdd, int pos, int len, RingCalculator<T> mc) {
         for (int i = 0; i < len; i++) {
             dest[i + destPos] = mc.add(dest[i + destPos], toAdd[pos + i]);
         }
@@ -210,7 +206,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
     @Override
     public @NotNull Polynomial<T> negate() {
-        var mc = getMc();
+        var mc = getCalculator();
         T[] result = getArr(coes.length);
         for (int i = 0; i < coes.length; i++) {
             result[i] = mc.negate(coes[i]);
@@ -221,18 +217,18 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     @Override
     @NotNull
     public Polynomial<T> subtract(Polynomial<T> y) {
-        var resultArr = subtractArray(this.coes, y.coes, getMc());
-        return new Polynomial<>(getMc(), resultArr);
+        var resultArr = subtractArray(this.coes, y.coes, getCalculator());
+        return new Polynomial<>(getCalculator(), resultArr);
     }
 
     @Override
     @NotNull
     public Polynomial<T> multiply(Polynomial<T> y) {
-        var arr = multiplyArray(coes, y.coes, getMc());
-        return new Polynomial<>(getMc(), arr);
+        var arr = multiplyArray(coes, y.coes, getCalculator());
+        return new Polynomial<>(getCalculator(), arr);
     }
 
-    static <T> T[] multiplyArray(T[] x, T[] y, MathCalculator<T> mc) {
+    static <T> T[] multiplyArray(T[] x, T[] y, RingCalculator<T> mc) {
         if (x.length == 0) {
             return x;
         }
@@ -258,10 +254,10 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public T compute(T x) {
         if (degree < 0) {
-            return getMc().getZero();
+            return getCalculator().getZero();
         }
         T re = get(degree);
-        var mc = getMc();
+        var mc = getCalculator();
         for (int i = degree - 1; i > -1; i--) {
             //noinspection SuspiciousNameCombination
             re = mc.multiply(re, x); // left-multiply x.
@@ -275,9 +271,9 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public Polynomial<T> substitute(Polynomial<T> sub) {
         if (degree < 0) {
-            return zero(getMc());
+            return zero(getCalculator());
         }
-        var mc = getMc();
+        var mc = getCalculator();
         var re = constant(mc, get(degree));
         for (int i = degree - 1; i > -1; i--) {
             re = sub.multiply(re);
@@ -310,7 +306,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * Divides this polynomial by a number to get a new polynomial whose leading coefficient is one.
      */
     public Polynomial<T> monic() {
-        var mc = getMc();
+        var mc = (UnitRingCalculator<T>) getCalculator();
         if (isZero() || mc.isEqual(mc.getOne(), get(degree))) {
             return this;
         }
@@ -325,7 +321,8 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     @Override
     public boolean isUnit() {
-        return isConstant() && getMc().isUnit(get(0));
+        var mc = (UnitRingCalculator<T>) getCalculator();
+        return isConstant() && mc.isUnit(get(0));
     }
 
     /**
@@ -333,7 +330,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     @NotNull
     public Polynomial<T> multiply(T k) {
-        var mc = getMc();
+        var mc = getCalculator();
         if (mc.isZero(k)) {
             return zero(mc);
         }
@@ -349,7 +346,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
     @NotNull
     public Polynomial<T> multiply(long n) {
-        var mc = getMc();
+        var mc = getCalculator();
         if (n == 0) {
             return zero(mc);
         }
@@ -368,7 +365,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * Returns <code>1/k*this</code>
      */
     public @NotNull Polynomial<T> divide(T k) {
-        var mc = getMc();
+        var mc = (FieldCalculator<T>) getCalculator();
         if (isZero()) {
             return this;
         }
@@ -381,7 +378,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
     @NotNull
     public Polynomial<T> divideLong(long k) {
-        var mc = getMc();
+        var mc = (FieldCalculator<T>) getCalculator();
         if (isZero()) {
             return this;
         }
@@ -397,7 +394,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      *
      * @param top exclusive
      */
-    static <T> int degArr(T[] arr, int top, MathCalculator<T> mc) {
+    static <T> int degArr(T[] arr, int top, RingCalculator<T> mc) {
         for (int i = top - 1; i > -1; i--) {
             if (!mc.isZero(arr[i])) {
                 return i;
@@ -410,7 +407,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * remains -= k*x^pow * toSubtract
      */
-    static <T> void subtractKFromArr(T[] remains, T k, int pow, T[] toSub, int toSubLen, MathCalculator<T> mc) {
+    static <T> void subtractKFromArr(T[] remains, T k, int pow, T[] toSub, int toSubLen, RingCalculator<T> mc) {
         for (int i = 0; i < toSubLen; i++) {
             int idx = i + pow;
             remains[idx] = mc.subtract(remains[idx], mc.multiply(k, toSub[i]));
@@ -426,7 +423,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public kotlin.@NotNull Pair<Polynomial<T>, Polynomial<T>> divideAndRemainder(Polynomial<T> g) {
         var f = this;
-        var mc = getMc();
+        var mc = (FieldCalculator<T>) getCalculator();
         int deg1 = f.degree, deg2 = g.degree;
         if (deg2 > deg1) {
             return new kotlin.Pair<>(zero(mc), f);
@@ -491,7 +488,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             ExceptionUtil.dividedByZero();
         }
         var f = this;
-        var mc = getMc();
+        var mc = (FieldCalculator<T>) getCalculator();
         int deg2 = g.degree;
         if (deg2 > f.degree) {
             return f;
@@ -519,7 +516,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     /*
-     * @see cn.ancono.math.MathCalculator#pow(java.lang.Object, long)
+     * @see cn.ancono.math.RingCalculator#pow(java.lang.Object, long)
      */
     @Override
     @NotNull
@@ -527,7 +524,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         if (exp == 1) {
             return this;
         }
-        var mc = getMc();
+        var mc = getCalculator();
         if (this.degree <= 0) {
             //single
             return constant(mc, mc.pow(get(0), exp));
@@ -536,7 +533,10 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         if (mp > Integer.MAX_VALUE || mp < 0) {
             throw new ArithmeticException("Too big for exp=" + exp);
         }
-        return ModelPatterns.binaryProduce(exp, one(mc), this, Polynomial::multiply);
+        if (exp == 0) {
+            return one((UnitRingCalculator<T>) mc);
+        }
+        return ModelPatterns.<Polynomial<T>>binaryProduce(exp, this, Polynomial::multiply);
     }
 
 
@@ -551,9 +551,9 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public Polynomial<T> shift(int d) {
         if (degree < 0 || d + degree <= 0) {
-            return Polynomial.zero(getMc());
+            return Polynomial.zero(getCalculator());
         }
-        var mc = getMc();
+        var mc = getCalculator();
         T[] arr = getArr(degree + d + 1);
         if (d < 0) {
             System.arraycopy(coes, -d, arr, 0, degree + 1 + d);
@@ -571,7 +571,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @return <code>Δf(x)</code>
      */
     public Polynomial<T> difference() {
-        var mc = getMc();
+        var mc = getCalculator();
         if (degree == 0) {
             return zero(mc);
         }
@@ -601,7 +601,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @return the derivative of this polynomial(formally)
      */
     public Polynomial<T> derivative() {
-        var mc = getMc();
+        var mc = getCalculator();
         if (isConstant()) {
             return zero(mc);
         }
@@ -620,7 +620,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         if (isZero()) {
             return this;
         }
-        var mc = getMc();
+        var mc = (FieldCalculator<T>) getCalculator();
         T[] result = getArr(coes.length + 1);
         result[0] = mc.getZero();
         for (int n = 0; n <= degree; n++) {
@@ -639,7 +639,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     public Polynomial<T> sumOfN() {
         //use lagrange
         var points = new Point[degree + 2];
-        var mc = getMc();
+        var mc = (MathCalculator<T>) getCalculator();
         points[0] = Point.pointO(mc);
         for (int i = 1; i < points.length; i++) {
             points[i] = Point.valueOf(CalculatorUtils.valueOfLong(i, mc), CalculatorUtils.sigma(1, i + 1, mc, j ->
@@ -653,10 +653,10 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns the gcd of all coefficients.
      * <br>
-     * It is required that the MathCalculator is an instance of UFDCalculator.
+     * It is required that the RingCalculator is an instance of UFDCalculator.
      */
     public T cont() {
-        var mc = getMc();
+        var mc = getCalculator();
         @SuppressWarnings("unchecked")
         var gc = (UFDCalculator<T>) mc;
         T re = gc.getZero();
@@ -672,7 +672,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns the primitive polynomial corresponding to this polynomial.
      * <br>
-     * It is required that the <code>MathCalculator</code> is an instance of <code>UFDCalculator</code>.
+     * It is required that the <code>RingCalculator</code> is an instance of <code>UFDCalculator</code>.
      */
     public Polynomial<T> toPrimitive() {
         return divide(cont());
@@ -702,14 +702,15 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         if (b.isZero()) {
             return a.monic();
         } else {
-            return one(getMathCalculator());
+            return one((FieldCalculator<T>) getCalculator());
         }
     }
 
     @NotNull
     @Override
     public Triple<Polynomial<T>, Polynomial<T>, Polynomial<T>> gcdUV(@NotNull Polynomial<T> y) {
-        return CalculatorUtils.gcdUV(this, y, zero(getMc()), one(getMc()));
+        var mc = (FieldCalculator<T>) getCalculator();
+        return CalculatorUtils.gcdUV(this, y, zero(getCalculator()), one(mc));
     }
 
     @NotNull
@@ -784,7 +785,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             return this;
         }
         var arr = Arrays.copyOf(coes, n + 1);
-        return new Polynomial<>(getMc(), trimLeadingZeros(arr, getMc()));
+        return new Polynomial<>(getCalculator(), trimLeadingZeros(arr, getCalculator()));
     }
 
     /**
@@ -792,9 +793,9 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * <code>p</code> is a non-negative integer.
      *
      * @param p  a non-negative integer
-     * @param mc a MathCalculator
+     * @param mc a RingCalculator
      */
-    public static <T> Polynomial<T> sumOfXP(int p, MathCalculator<T> mc) {
+    public static <T> Polynomial<T> sumOfXP(int p, FieldCalculator<T> mc) {
         if (p < 0) {
             throw new IllegalArgumentException("p<0");
         }
@@ -811,13 +812,13 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return powerX(p, mc).sumOfN();
     }
 
-    private static <T> Polynomial<T> sumOfX1(MathCalculator<T> mc) {
+    private static <T> Polynomial<T> sumOfX1(FieldCalculator<T> mc) {
         //1+2+...n = (n+1)n / 2 = 1/2 * n^2 + 1/2 * n
         var half = mc.divideLong(mc.getOne(), 2L);
         return Polynomial.of(mc, mc.getZero(), half, half);
     }
 
-    private static <T> Polynomial<T> sumOfX2(MathCalculator<T> mc) {
+    private static <T> Polynomial<T> sumOfX2(FieldCalculator<T> mc) {
         //1^2+2^2+...n^2 = n(n+1)(2n+1)/6 = 1/3*n^3+1/2*n^2+1/6*n
         var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 3), mc);
         var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
@@ -825,7 +826,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return Polynomial.of(mc, mc.getZero(), c3, c2, c1);
     }
 
-    private static <T> Polynomial<T> sumOfX3(MathCalculator<T> mc) {
+    private static <T> Polynomial<T> sumOfX3(FieldCalculator<T> mc) {
         //1^2+2^2+...n^2 = (n(n+1)/2)^2 = 1/4*n^4+1/2*n^3+1/4*n^2
         var c1 = CalculatorUtils.valueOfFraction(Fraction.of(1, 4), mc);
         var c2 = CalculatorUtils.valueOfFraction(Fraction.of(1, 2), mc);
@@ -871,10 +872,11 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     public T determinant() {
         var det = sylvesterMatrix(derivative());
         var re = det.det();
-        re = getMc().divide(re, first());
+        var mc = (FieldCalculator<T>) getCalculator();
+        re = mc.divide(re, first());
         int n = getDegree();
         if (n % 4 == 2 || n % 4 == 3) {
-            return getMc().negate(re);
+            return getCalculator().negate(re);
         } else {
             return re;
         }
@@ -882,44 +884,41 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
 
     /*
-     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.MathCalculator)
+     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.RingCalculator)
      */
     @Override
-    public <N> @NotNull Polynomial<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> @NotNull Polynomial<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         var arr = ArraySup.mapTo(coes, mapper);
-        return new Polynomial<>(newCalculator, arr);
+        return new Polynomial<>((FieldCalculator<N>) newCalculator, arr);
     }
 
-    /*
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
-     */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull FMathObject<T, RingCalculator<T>> obj) {
         if (!(obj instanceof Polynomial)) {
             return false;
         }
-        return IPolynomial.isEqual(this, (Polynomial<T>) obj, getMc()::isEqual);
+        return IPolynomial.isEqual(this, (Polynomial<T>) obj, getCalculator()::isEqual);
     }
 
 
-    /*
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (!(obj instanceof Polynomial)) {
-            return false;
-        }
-        return IPolynomial.isEqual(this, (Polynomial<N>) obj, (x, y) -> getMc().isEqual(x, mapper.apply(y)));
-    }
+//    /*
+//     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
+//     */
+//    @Override
+//    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+//        if (!(obj instanceof Polynomial)) {
+//            return false;
+//        }
+//        return IPolynomial.isEqual(this, (Polynomial<N>) obj, (x, y) -> getCalculator().isEqual(x, mapper.apply(y)));
+//    }
 
     /*
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
-        return IPolynomial.stringOf(this, getMc(), nf);
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        return IPolynomial.stringOf(this, getCalculator(), nf);
     }
 
     /*
@@ -933,7 +932,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         } else if (mp < degree) {
             return 1;
         }
-        var mc = getMc();
+        var mc = (MathCalculator<T>) getCalculator();
         for (int i = mp; i > -1; i--) {
             T a = get(i);
             T b = o.get(i);
@@ -971,7 +970,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
     public List<T> getNonZeroCoefficients() {
         var result = new ArrayList<T>(coes.length);
-        var mc = getMc();
+        var mc = getCalculator();
         for (T coe : coes) {
             if (!mc.isZero(coe)) {
                 result.add(coe);
@@ -1003,7 +1002,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
                 deg = p.degree;
             }
         }
-        var mc = ps.get(0).getMathCalculator();
+        var mc = ps.get(0).getCalculator();
         T[] result = getZeroArr(deg, mc);
         for (var p : ps) {
             for (int i = 0; i <= p.degree; i++) {
@@ -1026,27 +1025,27 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns zero.
      */
-    public static <T> Polynomial<T> zero(MathCalculator<T> mc) {
+    public static <T> Polynomial<T> zero(RingCalculator<T> mc) {
         return new Polynomial<>(mc, EMPTY_ARRAY);
     }
 
     /**
      * Returns the polynomial {@literal 1}。
      */
-    public static <T> Polynomial<T> one(MathCalculator<T> mc) {
+    public static <T> Polynomial<T> one(UnitRingCalculator<T> mc) {
         return constant(mc, mc.getOne());
     }
 
     /**
      * Returns the polynomial {@literal x}.
      */
-    public static <T> Polynomial<T> oneX(MathCalculator<T> mc) {
+    public static <T> Polynomial<T> oneX(UnitRingCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[]{mc.getZero(), mc.getOne()};
         return new Polynomial<>(mc, arr);
     }
 
-    private static <T> T[] getZeroArr(int deg, MathCalculator<T> mc) {
+    private static <T> T[] getZeroArr(int deg, RingCalculator<T> mc) {
         @SuppressWarnings("unchecked") T[] arr = (T[]) new Object[deg + 1];
         Arrays.fill(arr, mc.getZero());
         return arr;
@@ -1059,7 +1058,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @param n the power of x, it is required to be bigger than 1.
      * @param b the constance term
      */
-    public static <T> Polynomial<T> twoTerms(MathCalculator<T> mc, T a, int n, T b) {
+    public static <T> Polynomial<T> twoTerms(RingCalculator<T> mc, T a, int n, T b) {
         var arr = getZeroArr(n, mc);
         if (mc.isZero(a)) {
             return constant(mc, b);
@@ -1073,7 +1072,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns the constant polynomial <code>c</code>.
      */
-    public static <T> Polynomial<T> constant(MathCalculator<T> mc, T c) {
+    public static <T> Polynomial<T> constant(RingCalculator<T> mc, T c) {
         if (mc.isZero(c)) {
             return zero(mc);
         }
@@ -1084,7 +1083,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns the linear polynomial <code>ax+b</code>.
      */
-    public static <T> Polynomial<T> linear(MathCalculator<T> mc, T a, T b) {
+    public static <T> Polynomial<T> linear(RingCalculator<T> mc, T a, T b) {
         return twoTerms(mc, a, 1, b);
     }
 
@@ -1094,7 +1093,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * @param coes coefficients of the polynomial, <code>null</code> will be treated as zero.
      */
     @SafeVarargs
-    public static <T> Polynomial<T> of(MathCalculator<T> mc, T... coes) {
+    public static <T> Polynomial<T> of(RingCalculator<T> mc, T... coes) {
         if (coes.length == 0) {
             return zero(mc);
         }
@@ -1112,7 +1111,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      *
      * @param coes coefficients of the polynomial, <code>null</code> will be treated as zero.
      */
-    public static <T> Polynomial<T> of(MathCalculator<T> mc, List<T> coes) {
+    public static <T> Polynomial<T> of(RingCalculator<T> mc, List<T> coes) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) coes.toArray();
         return of(mc, arr);
@@ -1121,7 +1120,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Creates a polynomial with the given coefficient map.
      */
-    public static <T> Polynomial<T> of(MathCalculator<T> mc, Map<Integer, T> coeMap) {
+    public static <T> Polynomial<T> of(RingCalculator<T> mc, Map<Integer, T> coeMap) {
         int maxPow = Collections.max(coeMap.keySet());
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[maxPow + 1];
@@ -1135,7 +1134,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Creates a polynomial with the given coefficient supplier.
      */
-    public static <T> Polynomial<T> of(MathCalculator<T> mc, int degree, IntFunction<T> supplier) {
+    public static <T> Polynomial<T> of(RingCalculator<T> mc, int degree, IntFunction<T> supplier) {
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[degree + 1];
         for (int i = 0; i <= degree; i++) {
@@ -1155,7 +1154,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * pow  ::= \d+
      * </pre>
      */
-    public static <T> Polynomial<T> parse(String expr, MathCalculator<T> mc, Function<String, T> parser) {
+    public static <T> Polynomial<T> parse(String expr, UnitRingCalculator<T> mc, Function<String, T> parser) {
         var terms = new HashMap<Integer, T>();
         int idx = 0;
         var length = expr.length();
@@ -1207,7 +1206,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns <code>x<sup>p</sup></code>, where p is a non-negative integer.
      */
-    public static <T> Polynomial<T> powerX(int p, MathCalculator<T> mc) {
+    public static <T> Polynomial<T> powerX(int p, UnitRingCalculator<T> mc) {
         if (p < 0) {
             throw new IllegalArgumentException("p<0");
         }
@@ -1219,7 +1218,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns <code>k*x<sup>p</sup></code>, where p is a non-negative integer.
      */
-    public static <T> Polynomial<T> powerX(int p, T k, MathCalculator<T> mc) {
+    public static <T> Polynomial<T> powerX(int p, T k, RingCalculator<T> mc) {
         if (p < 0) {
             throw new IllegalArgumentException("p<0");
         }
@@ -1264,7 +1263,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Converts a polynomial to a PolynomialX.
      */
-    public static <T> Polynomial<T> fromPolynomial(IPolynomial<T> p, MathCalculator<T> mc) {
+    public static <T> Polynomial<T> fromPolynomial(IPolynomial<T> p, RingCalculator<T> mc) {
         if (p instanceof Polynomial) {
             return (Polynomial<T>) p;
         }
@@ -1284,30 +1283,30 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * Returns a polynomial that is equal to <code>multiplyAll(x-roots[i])</code>.
      * If <code>roots.length==0</code>, then the result is <code>1</code>
      *
-     * @param mc    a MathCalculator
+     * @param mc    a RingCalculator
      * @param roots the roots
      */
     @SafeVarargs
-    public static <T> Polynomial<T> ofRoots(MathCalculator<T> mc, T... roots) {
+    public static <T> Polynomial<T> ofRoots(UnitRingCalculator<T> mc, T... roots) {
         return ofRoots(mc, roots, 0, roots.length);
     }
 
     /**
      * Returns a polynomial of <code>x - root</code>
      */
-    public static <T> Polynomial<T> ofRoot(MathCalculator<T> mc, T root) {
+    public static <T> Polynomial<T> ofRoot(UnitRingCalculator<T> mc, T root) {
         return of(mc, mc.negate(root), mc.getOne());
     }
 
     /**
      * Returns a polynomial of <code>multiplyAll(x-roots[i], i from startInclusive to endExclusive)</code>.
      *
-     * @param mc             a MathCalculator
+     * @param mc             a RingCalculator
      * @param rts            the roots
      * @param startInclusive index of i to start with(inclusive)
      * @param endExclusive   index of i to end with(exclusive)
      */
-    public static <T> Polynomial<T> ofRoots(MathCalculator<T> mc, T[] rts, int startInclusive, int endExclusive) {
+    public static <T> Polynomial<T> ofRoots(UnitRingCalculator<T> mc, T[] rts, int startInclusive, int endExclusive) {
         if (startInclusive == endExclusive) {
             return one(mc);
         }
@@ -1331,7 +1330,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         if (points.length == 0) {
             throw new IllegalArgumentException("points.length==0");
         }
-        var mc = points[0].getMathCalculator();
+        var mc = points[0].getCalculator();
         Polynomial<T> re = zero(mc);
         @SuppressWarnings("unchecked") T[] roots = (T[]) new Object[points.length];
         @SuppressWarnings("unchecked") Polynomial<T>[] rootPoly = (Polynomial<T>[]) new Polynomial[points.length];
@@ -1362,7 +1361,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns the polynomial of <code>(x-x0)<sup>n</sup></code>
      */
-    public static <T> Polynomial<T> binomialPower(T x0, int n, MathCalculator<T> mc) {
+    public static <T> Polynomial<T> binomialPower(T x0, int n, UnitRingCalculator<T> mc) {
         if (mc.isZero(x0)) {
             return powerX(n, mc);
         }
@@ -1378,7 +1377,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         return new Polynomial<>(mc, arr);
     }
 
-    private static <T> T[] fillPowArr(T x, int n, MathCalculator<T> mc) {
+    private static <T> T[] fillPowArr(T x, int n, RingCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         T[] re = (T[]) new Object[n + 1];
         T t = x;
@@ -1392,7 +1391,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * Returns the polynomial of <code>(ax-b)<sup>n</sup></code>
      */
-    public static <T> Polynomial<T> binomialPower(T a, T b, int n, MathCalculator<T> mc) {
+    public static <T> Polynomial<T> binomialPower(T a, T b, int n, RingCalculator<T> mc) {
         T[] result = getArr(n + 1);
 
         T[] aPow = fillPowArr(a, n, mc);
@@ -1407,31 +1406,32 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     /**
-     * Gets a calculator of the specific type of polynomial. This calculator requires that the given MathCalculator is
+     * Gets a calculator of the specific type of polynomial. This calculator requires that the given RingCalculator is
      * actually a field calculator.
      */
-    public static <T> PolynomialCalculator<T> getCalculator(MathCalculator<T> mc) {
+    public static <T> PolynomialCalculator<T> getCalculator(FieldCalculator<T> mc) {
         return new PolynomialCalculator<>(mc);
     }
 
-    /**
-     * Gets a calculator of the specific type of polynomial. The given calculator must be an instance of UFDCalculator.
-     */
-    public static <T> PolyCalRing<T> getCalRing(MathCalculator<T> mc) {
-        if (!(mc instanceof UFDCalculator)) {
-            throw new IllegalArgumentException("The given calculator is not an UFDCalculator");
-        }
-        return new PolyCalRing<>(mc);
-    }
-
-    /**
-     * Returns a calculator for quotient field `T[x]/(p)`.
-     *
-     * @param p an irreducible polynomial.
-     */
-    public static <T> ModPolyCalculator<T> getModCal(Polynomial<T> p) {
-        return new ModPolyCalculator<>(p);
-    }
+    //TODO
+//    /**
+//     * Gets a calculator of the specific type of polynomial. The given calculator must be an instance of UFDCalculator.
+//     */
+//    public static <T> PolyCalRing<T> getCalRing(RingCalculator<T> mc) {
+//        if (!(mc instanceof UFDCalculator)) {
+//            throw new IllegalArgumentException("The given calculator is not an UFDCalculator");
+//        }
+//        return new PolyCalRing<>(mc);
+//    }
+//
+//    /**
+//     * Returns a calculator for quotient field `T[x]/(p)`.
+//     *
+//     * @param p an irreducible polynomial.
+//     */
+//    public static <T> ModPolyCalculator<T> getModCal(Polynomial<T> p) {
+//        return new ModPolyCalculator<>(p);
+//    }
 
 
     /**
@@ -1446,12 +1446,12 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             throw new IllegalArgumentException("n < 0");
         }
         if (n == 0 || mod.isUnit()) {
-            return Polynomial.zero(x.getMathCalculator());
+            return Polynomial.zero(x.getCalculator());
         }
         if (n == 1) {
             return x;
         }
-        var mc = x.getMathCalculator();
+        var mc = (FieldCalculator<T>) x.getCalculator();
         return ModelPatterns.binaryProduce(n, one(mc), x, (a, b) -> a.multiply(b).mod(mod));
     }
 
@@ -1459,61 +1459,52 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     /**
      * A calculator for polynomials on a field.
      */
-    public static class PolynomialCalculator<T> extends MathCalculatorAdapter<Polynomial<T>>
-            implements MathCalculatorHolder<T>, EUDCalculator<Polynomial<T>> {
-        protected final MathCalculator<T> mc;
+    public static class PolynomialCalculator<T>
+            implements EUDCalculator<Polynomial<T>> {
+        protected final FieldCalculator<T> mc;
         protected final Polynomial<T> zero, one;
 
         /**
          *
          */
-        PolynomialCalculator(MathCalculator<T> mc) {
+        PolynomialCalculator(FieldCalculator<T> mc) {
             this.mc = mc;
             zero = zero(mc);
             one = one(mc);
         }
 
-        /*
-         * @see cn.ancono.math.MathCalculatorHolder#getMathCalculator()
-         */
-        @NotNull
-        @Override
-        public MathCalculator<T> getMathCalculator() {
-            return mc;
-        }
 
-
-        @NotNull
-        @Override
-        public Polynomial<T> of(long x) {
-            return Polynomial.constant(mc, mc.of(x));
-        }
-
-        @NotNull
-        @Override
-        public Polynomial<T> of(@NotNull Fraction x) {
-            return Polynomial.constant(mc, mc.of(x));
-        }
+//        @NotNull
+//        @Override
+//        public Polynomial<T> of(long x) {
+//            return Polynomial.constant(mc, mc.of(x));
+//        }
+//
+//        @NotNull
+//        @Override
+//        public Polynomial<T> of(@NotNull Fraction x) {
+//            return Polynomial.constant(mc, mc.of(x));
+//        }
 
         /*
-         * @see cn.ancono.math.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
+         * @see cn.ancono.math.RingCalculator#isEqual(java.lang.Object, java.lang.Object)
          */
         @Override
         public boolean isEqual(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
             return IPolynomial.isEqual(para1, para2, mc::isEqual);
         }
 
-        /*
-         * @see cn.ancono.math.MathCalculator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return para1.compareTo(para2);
-        }
+//        /*
+//         * @see cn.ancono.math.RingCalculator#compare(java.lang.Object, java.lang.Object)
+//         */
+//        @Override
+//        public int compare(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return para1.compareTo(para2);
+//        }
 
 
         /*
-         * @see cn.ancono.math.MathCalculator#add(java.lang.Object, java.lang.Object)
+         * @see cn.ancono.math.RingCalculator#add(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
@@ -1521,13 +1512,13 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             return x.add(y);
         }
 
-        @Override
-        public Polynomial<T> sum(@NotNull List<? extends Polynomial<T>> ps) {
-            return Polynomial.sum(ps);
-        }
+//        @Override
+//        public Polynomial<T> sum(@NotNull List<? extends Polynomial<T>> ps) {
+//            return Polynomial.sum(ps);
+//        }
 
         /*
-         * @see cn.ancono.math.MathCalculator#negate(java.lang.Object)
+         * @see cn.ancono.math.RingCalculator#negate(java.lang.Object)
          */
         @NotNull
         @Override
@@ -1537,7 +1528,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
 
         /*
-         * @see cn.ancono.math.MathCalculator#subtract(java.lang.Object, java.lang.Object)
+         * @see cn.ancono.math.RingCalculator#subtract(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
@@ -1546,7 +1537,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
 
         /*
-         * @see cn.ancono.math.MathCalculator#getZero()
+         * @see cn.ancono.math.RingCalculator#getZero()
          */
         @NotNull
         @Override
@@ -1555,7 +1546,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
 
         /*
-         * @see cn.ancono.math.MathCalculator#isZero(java.lang.Object)
+         * @see cn.ancono.math.RingCalculator#isZero(java.lang.Object)
          */
         @Override
         public boolean isZero(@NotNull Polynomial<T> para) {
@@ -1563,7 +1554,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
 
         /*
-         * @see cn.ancono.math.MathCalculator#multiply(java.lang.Object, java.lang.Object)
+         * @see cn.ancono.math.RingCalculator#multiply(java.lang.Object, java.lang.Object)
          */
         @NotNull
         @Override
@@ -1576,18 +1567,18 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             return x.degree == 0;
         }
 
-        /*
-         * @see cn.ancono.math.MathCalculator#divide(java.lang.Object, java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> divide(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            Pair<Polynomial<T>, Polynomial<T>> p = divideAndRemainder(para1, para2);
-            if (!isZero(p.getSecond())) {
-                throw new UnsupportedCalculationException("Reminder!= 0, see divideAndReminder");
-            }
-            return p.getFirst();
-        }
+//        /*
+//         * @see cn.ancono.math.RingCalculator#divide(java.lang.Object, java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> divide(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            Pair<Polynomial<T>, Polynomial<T>> p = divideAndRemainder(para1, para2);
+//            if (!isZero(p.getSecond())) {
+//                throw new UnsupportedCalculationException("Reminder!= 0, see divideAndReminder");
+//            }
+//            return p.getFirst();
+//        }
 
         /**
          * Returns a pair of quotient and the reminder of the division of two PolynomialX.
@@ -1613,7 +1604,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
 
         /*
-         * @see cn.ancono.math.MathCalculator#getOne()
+         * @see cn.ancono.math.RingCalculator#getOne()
          */
         @NotNull
         @Override
@@ -1623,7 +1614,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
 
         /*
-         * @see cn.ancono.math.MathCalculator#multiplyLong(java.lang.Object, long)
+         * @see cn.ancono.math.RingCalculator#multiplyLong(java.lang.Object, long)
          */
         @NotNull
         @Override
@@ -1631,36 +1622,36 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             return p.multiply(n);
         }
 
-        /*
-         * @see cn.ancono.math.MathCalculator#divideLong(java.lang.Object, long)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> divideLong(@NotNull Polynomial<T> p, long n) {
-            return p.divideLong(n);
-        }
+//        /*
+//         * @see cn.ancono.math.RingCalculator#divideLong(java.lang.Object, long)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> divideLong(@NotNull Polynomial<T> p, long n) {
+//            return p.divideLong(n);
+//        }
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#squareRoot(java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> squareRoot(@NotNull Polynomial<T> x) {
+//            throw new UnsupportedCalculationException();
+//        }
+
+//        /*
+//         * @see cn.ancono.math.RingCalculator#nroot(java.lang.Object, long)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> nroot(@NotNull Polynomial<T> x, long n) {
+//            throw new UnsupportedCalculationException();
+//        }
+
 
         /*
-         * @see cn.ancono.math.MathCalculator#squareRoot(java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> squareRoot(@NotNull Polynomial<T> x) {
-            throw new UnsupportedCalculationException();
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#nroot(java.lang.Object, long)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> nroot(@NotNull Polynomial<T> x, long n) {
-            throw new UnsupportedCalculationException();
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#pow(java.lang.Object, long)
+         * @see cn.ancono.math.RingCalculator#pow(java.lang.Object, long)
          */
         @NotNull
         @Override
@@ -1668,25 +1659,25 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
             return p.pow(exp);
         }
 
-        /*
-         * @see cn.ancono.math.MathCalculator#constantValue(java.lang.String)
-         */
-        @Override
-        public Polynomial<T> constantValue(@NotNull String name) {
-            return constant(mc, mc.constantValue(name));
-        }
+//        /*
+//         * @see cn.ancono.math.RingCalculator#constantValue(java.lang.String)
+//         */
+//        @Override
+//        public Polynomial<T> constantValue(@NotNull String name) {
+//            return constant(mc, mc.constantValue(name));
+//        }
 
-        /*
-         * @see cn.ancono.math.numberModels.MathCalculatorAdapter#abs(java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
-            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
-                return negate(x);
-            }
-            return x;
-        }
+//        /*
+//         * @see cn.ancono.math.numberModels.RingCalculatorAdapter#abs(java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
+//            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
+//                return negate(x);
+//            }
+//            return x;
+//        }
 
         /**
          * Returns a the greatest common divisor of {@code a} and {@code b}. A greatest common divisor of polynomial
@@ -1704,7 +1695,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 
 
         /*
-         * @see cn.ancono.math.MathCalculator#getNumberClass()
+         * @see cn.ancono.math.RingCalculator#getNumberClass()
          */
         @SuppressWarnings("unchecked")
         @NotNull
@@ -1724,349 +1715,331 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
         }
     }
 
-    /**
-     * A calculator for polynomials on a ring.
-     */
-    public static class PolyCalRing<T> extends MathCalculatorAdapter<Polynomial<T>>
-            implements MathCalculatorHolder<T>, UFDCalculator<Polynomial<T>> {
-        protected final MathCalculator<T> mc;
-        protected final Polynomial<T> zero, one;
-
-        /**
-         *
-         */
-        PolyCalRing(MathCalculator<T> mc) {
-            this.mc = mc;
-            zero = zero(mc);
-            one = one(mc);
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculatorHolder#getMathCalculator()
-         */
-        @NotNull
-        @Override
-        public MathCalculator<T> getMathCalculator() {
-            return mc;
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#isEqual(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public boolean isEqual(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return IPolynomial.isEqual(para1, para2, mc::isEqual);
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return para1.compareTo(para2);
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#add(java.lang.Object, java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> add(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
-            return x.add(y);
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#negate(java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> negate(@NotNull Polynomial<T> para) {
-            return para.negate();
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#subtract(java.lang.Object, java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> subtract(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return para1.subtract(para2);
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#getZero()
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> getZero() {
-            return zero;
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#isZero(java.lang.Object)
-         */
-        @Override
-        public boolean isZero(@NotNull Polynomial<T> para) {
-            return isEqual(zero, para);
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#multiply(java.lang.Object, java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> multiply(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return para1.multiply(para2);
-        }
-
-        @Override
-        public boolean isUnit(@NotNull Polynomial<T> x) {
-            return x.degree == 0 && mc.isUnit(x.first());
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#divide(java.lang.Object, java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> divide(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
-            return exactDivide(x, y);
-        }
-
-        @NotNull
-        @Override
-        public Polynomial<T> exactDivide(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
-            var pair = PolynomialUtil.pseudoDivision(x, y);
-            if (!pair.getSecond().isZero()) {
-                ExceptionUtil.notExactDivision(x, y);
-            }
-            return pair.getFirst();
-        }
-
-        @Override
-        public boolean isExactDivide(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return PolynomialUtil.pseudoDivisionR(a, b).isZero();
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#getOne()
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> getOne() {
-            return one;
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#multiplyLong(java.lang.Object, long)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> multiplyLong(@NotNull Polynomial<T> p, long n) {
-            return p.multiply(n);
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#divideLong(java.lang.Object, long)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> divideLong(@NotNull Polynomial<T> p, long n) {
-            return p.divideLong(n);
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#squareRoot(java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> squareRoot(@NotNull Polynomial<T> x) {
-            throw new UnsupportedCalculationException();
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#nroot(java.lang.Object, long)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> nroot(@NotNull Polynomial<T> x, long n) {
-            throw new UnsupportedCalculationException();
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#pow(java.lang.Object, long)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> pow(@NotNull Polynomial<T> p, long exp) {
-            return p.pow(exp);
-        }
-
-        /*
-         * @see cn.ancono.math.MathCalculator#constantValue(java.lang.String)
-         */
-        @Override
-        public Polynomial<T> constantValue(@NotNull String name) {
-            return constant(mc, mc.constantValue(name));
-        }
-
-        /*
-         * @see cn.ancono.math.numberModels.MathCalculatorAdapter#abs(java.lang.Object)
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
-            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
-                return negate(x);
-            }
-            return x;
-        }
-
-        /**
-         * Returns a the greatest common divisor of {@code a} and {@code b}. A greatest common divisor of polynomial
-         * {@code p} and {@code q}
-         * is a polynomial {@code d} that divides {@code p} and {@code q} such that every common divisor of {@code p}
-         * and {@code q} also divides {@code d}.
-         *
-         * @return the  greatest common divisor of {@code a} and {@code b}, whose leading coefficient is one.
-         */
-        @NotNull
-        @Override
-        public Polynomial<T> gcd(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return PolynomialUtil.subResultantGCD(a, b);
-        }
-
-
-        /*
-         * @see cn.ancono.math.MathCalculator#getNumberClass()
-         */
-        @SuppressWarnings("unchecked")
-        @NotNull
-        @Override
-        public Class<Polynomial<T>> getNumberClass() {
-            var t = (Class<?>) Polynomial.class;
-            return (Class<Polynomial<T>>) t;
-        }
-
-    }
-
-
-    public static class ModPolyCalculator<T> extends PolynomialCalculator<T> {
-        private final Polynomial<T> p;
-
-        public ModPolyCalculator(Polynomial<T> p) {
-            super(p.getMathCalculator());
-            this.p = p;
-        }
-
-        @Override
-        public boolean isEqual(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return super.isEqual(mod(para1), mod(para2));
-        }
-
-        @Override
-        public @NotNull Polynomial<T> add(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return mod(super.add(mod(para1), mod(para2)));
-        }
-
-        @Override
-        public @NotNull Polynomial<T> subtract(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return mod(super.subtract(mod(para1), mod(para2)));
-        }
-
-        @Override
-        public boolean isZero(@NotNull Polynomial<T> para) {
-            return super.isZero(mod(para));
-        }
-
-        @Override
-        public @NotNull Polynomial<T> multiply(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return mod(super.multiply(mod(para1), mod(para2)));
-        }
-
-        @Override
-        public @NotNull Polynomial<T> divide(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
-            return super.divide(para1, para2);
-        }
-
-        @NotNull
-        @Override
-        public Pair<Polynomial<T>, Polynomial<T>> divideAndRemainder(@NotNull Polynomial<T> p1, @NotNull Polynomial<T> p2) {
-            return super.divideAndRemainder(mod(p1), mod(p2));
-        }
-
-        @NotNull
-        @Override
-        public Polynomial<T> remainder(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return super.remainder(a, b);
-        }
-
-        @Override
-        public @NotNull Polynomial<T> pow(@NotNull Polynomial<T> p, long exp) {
-            if (exp == 1) {
-                return p;
-            }
-            if (p.degree == 0) {
-                //single
-                return constant(mc, mc.pow(p.get(0), exp));
-            }
-            long mp = exp * p.degree;
-            if (mp > Integer.MAX_VALUE || mp < 0) {
-                throw new ArithmeticException("Too big for exp=" + exp);
-            }
-            return ModelPatterns.binaryProduce(exp, one, p, this::multiply);
-        }
-
-        public Polynomial<T> mod(Polynomial<T> a) {
-            if (a.degree < p.degree) {
-                return a;
-            }
-            return a.remainder(p);
-        }
-
-//        @Override
-//        public Polynomial<T> mod(Polynomial<T> a, Polynomial<T> b) {
-//            return super.mod(a, b);
+//    /**
+//     * A calculator for polynomials on a ring.
+//     */
+//    public static class PolyCalRing<T> extends RingCalculatorAdapter<Polynomial<T>>
+//            implements RingCalculatorHolder<T>, UFDCalculator<Polynomial<T>> {
+//        protected final RingCalculator<T> mc;
+//        protected final Polynomial<T> zero, one;
+//
+//        /**
+//         *
+//         */
+//        PolyCalRing(RingCalculator<T> mc) {
+//            this.mc = mc;
+//            zero = zero(mc);
+//            one = one(mc);
 //        }
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculatorHolder#getRingCalculator()
+//         */
+//        @NotNull
+//        @Override
+//        public RingCalculator<T> getCalculator() {
+//            return mc;
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#isEqual(java.lang.Object, java.lang.Object)
+//         */
+//        @Override
+//        public boolean isEqual(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return IPolynomial.isEqual(para1, para2, mc::isEqual);
+//        }
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#compare(java.lang.Object, java.lang.Object)
+//         */
+//        @Override
+//        public int compare(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return para1.compareTo(para2);
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#add(java.lang.Object, java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> add(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
+//            return x.add(y);
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#negate(java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> negate(@NotNull Polynomial<T> para) {
+//            return para.negate();
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#subtract(java.lang.Object, java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> subtract(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return para1.subtract(para2);
+//        }
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#getZero()
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> getZero() {
+//            return zero;
+//        }
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#isZero(java.lang.Object)
+//         */
+//        @Override
+//        public boolean isZero(@NotNull Polynomial<T> para) {
+//            return isEqual(zero, para);
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#multiply(java.lang.Object, java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> multiply(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return para1.multiply(para2);
+//        }
+//
+//        @Override
+//        public boolean isUnit(@NotNull Polynomial<T> x) {
+//            return x.degree == 0 && mc.isUnit(x.first());
+//        }
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#divide(java.lang.Object, java.lang.Object)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> divide(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
+//            return exactDivide(x, y);
+//        }
+//
+//        @NotNull
+//        @Override
+//        public Polynomial<T> exactDivide(@NotNull Polynomial<T> x, @NotNull Polynomial<T> y) {
+//            var pair = PolynomialUtil.pseudoDivision(x, y);
+//            if (!pair.getSecond().isZero()) {
+//                ExceptionUtil.notExactDivision(x, y);
+//            }
+//            return pair.getFirst();
+//        }
+//
+//        @Override
+//        public boolean isExactDivide(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
+//            return PolynomialUtil.pseudoDivisionR(a, b).isZero();
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#getOne()
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> getOne() {
+//            return one;
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#multiplyLong(java.lang.Object, long)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> multiplyLong(@NotNull Polynomial<T> p, long n) {
+//            return p.multiply(n);
+//        }
+//
+//        /*
+////         * @see cn.ancono.math.RingCalculator#divideLong(java.lang.Object, long)
+////         */
+////        @NotNull
+////        @Override
+////        public Polynomial<T> divideLong(@NotNull Polynomial<T> p, long n) {
+////            return p.divideLong(n);
+////        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#pow(java.lang.Object, long)
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> pow(@NotNull Polynomial<T> p, long exp) {
+//            return p.pow(exp);
+//        }
+//
+////        /*
+////         * @see cn.ancono.math.RingCalculator#constantValue(java.lang.String)
+////         */
+////        @Override
+////        public Polynomial<T> constantValue(@NotNull String name) {
+////            return constant(mc, mc.constantValue(name));
+////        }
+////
+////        /*
+////         * @see cn.ancono.math.numberModels.RingCalculatorAdapter#abs(java.lang.Object)
+////         */
+////        @NotNull
+////        @Override
+////        public Polynomial<T> abs(@NotNull Polynomial<T> x) {
+////            if (mc.compare(x.get(x.degree), mc.getZero()) < 0) {
+////                return negate(x);
+////            }
+////            return x;
+////        }
+//
+//        /**
+//         * Returns a the greatest common divisor of {@code a} and {@code b}. A greatest common divisor of polynomial
+//         * {@code p} and {@code q}
+//         * is a polynomial {@code d} that divides {@code p} and {@code q} such that every common divisor of {@code p}
+//         * and {@code q} also divides {@code d}.
+//         *
+//         * @return the  greatest common divisor of {@code a} and {@code b}, whose leading coefficient is one.
+//         */
+//        @NotNull
+//        @Override
+//        public Polynomial<T> gcd(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
+//            return PolynomialUtil.subResultantGCD(a, b);
+//        }
+//
+//
+//        /*
+//         * @see cn.ancono.math.RingCalculator#getNumberClass()
+//         */
+//        @SuppressWarnings("unchecked")
+//        @NotNull
+//        @Override
+//        public Class<Polynomial<T>> getNumberClass() {
+//            var t = (Class<?>) Polynomial.class;
+//            return (Class<Polynomial<T>>) t;
+//        }
+//
+//    }
 
-        @NotNull
-        @Override
-        public Polynomial<T> divideToInteger(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
-            return super.divideToInteger(a, b);
-        }
 
-        @Override
-        public boolean isUnit(@NotNull Polynomial<T> x) {
-            var t = x.gcdUV(p); //ut + vp = 1
-            var gcd = t.getFirst();
-            return gcd.isOne();
+//    public static class ModPolyCalculator<T> extends PolynomialCalculator<T> {
+//        private final Polynomial<T> p;
+//
+//        public ModPolyCalculator(Polynomial<T> p) {
+//            super(p.getCalculator());
+//            this.p = p;
+//        }
+//
+//        @Override
+//        public boolean isEqual(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return super.isEqual(mod(para1), mod(para2));
+//        }
+//
+//        @Override
+//        public @NotNull Polynomial<T> add(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return mod(super.add(mod(para1), mod(para2)));
+//        }
+//
+//        @Override
+//        public @NotNull Polynomial<T> subtract(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return mod(super.subtract(mod(para1), mod(para2)));
+//        }
+//
+//        @Override
+//        public boolean isZero(@NotNull Polynomial<T> para) {
+//            return super.isZero(mod(para));
+//        }
+//
+//        @Override
+//        public @NotNull Polynomial<T> multiply(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return mod(super.multiply(mod(para1), mod(para2)));
+//        }
+//
+//        @Override
+//        public @NotNull Polynomial<T> divide(@NotNull Polynomial<T> para1, @NotNull Polynomial<T> para2) {
+//            return super.divide(para1, para2);
+//        }
+//
+//        @NotNull
+//        @Override
+//        public Pair<Polynomial<T>, Polynomial<T>> divideAndRemainder(@NotNull Polynomial<T> p1, @NotNull Polynomial<T> p2) {
+//            return super.divideAndRemainder(mod(p1), mod(p2));
+//        }
+//
+//        @NotNull
+//        @Override
+//        public Polynomial<T> remainder(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
+//            return super.remainder(a, b);
+//        }
+//
+//        @Override
+//        public @NotNull Polynomial<T> pow(@NotNull Polynomial<T> p, long exp) {
+//            if (exp == 1) {
+//                return p;
+//            }
+//            if (p.degree == 0) {
+//                //single
+//                return constant(mc, mc.pow(p.get(0), exp));
+//            }
+//            long mp = exp * p.degree;
+//            if (mp > Integer.MAX_VALUE || mp < 0) {
+//                throw new ArithmeticException("Too big for exp=" + exp);
+//            }
+//            return ModelPatterns.binaryProduce(exp, one, p, this::multiply);
+//        }
+//
+//        public Polynomial<T> mod(Polynomial<T> a) {
+//            if (a.degree < p.degree) {
+//                return a;
+//            }
+//            return a.remainder(p);
+//        }
+//
+////        @Override
+////        public Polynomial<T> mod(Polynomial<T> a, Polynomial<T> b) {
+////            return super.mod(a, b);
+////        }
+//
+//        @NotNull
+//        @Override
+//        public Polynomial<T> divideToInteger(@NotNull Polynomial<T> a, @NotNull Polynomial<T> b) {
+//            return super.divideToInteger(a, b);
+//        }
+//
+//        @Override
+//        public boolean isUnit(@NotNull Polynomial<T> x) {
+//            var t = x.gcdUV(p); //ut + vp = 1
+//            var gcd = t.getFirst();
+//            return gcd.isOne();
+//
+//        }
+//
+//        @NotNull
+//        @Override
+//        public Polynomial<T> reciprocal(@NotNull Polynomial<T> x) {
+//            var t = x.gcdUV(p); //ut + vp = 1
+//            var gcd = t.getFirst();
+//            if (!gcd.isOne()) {
+//                throw new UnsupportedCalculationException("Polynomial (" + x + ") is not invertible!");
+//            }
+//            var u = t.getSecond();
+//            return mod(u);
+//        }
+//    }
 
-        }
 
-        @NotNull
-        @Override
-        public Polynomial<T> reciprocal(@NotNull Polynomial<T> x) {
-            var t = x.gcdUV(p); //ut + vp = 1
-            var gcd = t.getFirst();
-            if (!gcd.isOne()) {
-                throw new UnsupportedCalculationException("Polynomial (" + x + ") is not invertible!");
-            }
-            var u = t.getSecond();
-            return mod(u);
-        }
-    }
-
-
-    public static <T> NumberFormatter<Polynomial<T>> composedFormatter(NumberFormatter<T> formatter) {
-        return (p, mc) -> p.toString(formatter);
+    public static <T> FlexibleNumberFormatter<Polynomial<T>> formatterOf(FlexibleNumberFormatter<T> formatter) {
+        return (p) -> p.toString(formatter);
     }
 
     /**
@@ -2078,13 +2051,18 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
     }
 
     private static <T> Pair<Polynomial<T>, Polynomial<T>> adjustSign(Polynomial<T> f, Polynomial<T> g,
-                                                                     MathCalculator<T> mc,
+                                                                     RingCalculator<T> cal,
                                                                      Simplifier<T> sim) {
-        if (mc.isComparable()) {
-            if (mc.compare(g.first(), mc.getZero()) < 0) {
-                return new Pair<>(f.negate(), g.negate());
+
+        if (cal instanceof MathCalculator) {
+            var mc = (MathCalculator<T>) cal;
+            if (mc.isComparable()) {
+                if (mc.compare(g.first(), mc.getZero()) < 0) {
+                    return new Pair<>(f.negate(), g.negate());
+                }
             }
         }
+
         return new Pair<>(f, g);
     }
 
@@ -2092,7 +2070,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      * Simplifies the coefficient of two polynomials.
      */
     public static <T> Pair<Polynomial<T>, Polynomial<T>> simplifyCoefficient(Polynomial<T> f, Polynomial<T> g,
-                                                                             MathCalculator<T> mc,
+                                                                             RingCalculator<T> mc,
                                                                              Simplifier<T> sim) {
         List<T> list = new ArrayList<>(f.coes.length + g.coes.length);
         list.addAll(Arrays.asList(f.coes));
@@ -2110,7 +2088,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
      */
     public static <T> Pair<Polynomial<T>, Polynomial<T>> simplifyFraction(Polynomial<T> f, Polynomial<T> g,
                                                                           Simplifier<T> sim) {
-        var mc = f.getMathCalculator();
+        var mc = (FieldCalculator<T>) f.getCalculator();
         var gcd = f.gcd(g);
         f = f.divideToInteger(gcd);
         g = g.divideToInteger(gcd);
@@ -2160,7 +2138,7 @@ public final class Polynomial<T> extends AbstractMathObject<T> implements
 //    }
 
 //    public static void main(String[] args) {
-//		MathCalculator<Integer> mc = Calculators.getCalculatorInteger();
+//		RingCalculator<Integer> mc = Calculators.getCalculatorInteger();
 //        var p = Polynomial.valueOf(mc, 1, 2, 3);
 //        print(p);
 //        print(p.multiply(p));

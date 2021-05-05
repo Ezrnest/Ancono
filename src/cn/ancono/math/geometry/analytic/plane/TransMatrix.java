@@ -1,7 +1,9 @@
 package cn.ancono.math.geometry.analytic.plane;
 
+import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathCalculator;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.AbstractMatrix;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.numberModels.api.AlgebraModel;
@@ -28,7 +30,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * will be reflected to this Matrix.
      */
     TransMatrix(Matrix<T> mat) {
-        super(mat.getMathCalculator(), mat.getRow(), mat.getColumn());
+        super(mat.getCalculator(), mat.getRow(), mat.getColumn());
         matrix = mat;
     }
 
@@ -72,7 +74,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      */
     @Override
     public @NotNull TransMatrix<T> inverse() {
-        var mc = getMc();
+        var mc = getCalculator();
         if (inversed == null) {
             T deno = det();
             if (mc.isZero(deno)) {
@@ -93,9 +95,10 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * @return transformed vector
      */
     public PVector<T> transform(PVector<T> v) {
-        var mc = getMc();
-//        var v =
+        var mc = getCalculator();
+        //noinspection SuspiciousNameCombination
         T _x = mc.add(mc.multiply(get(0, 0), v.x), mc.multiply(get(0, 1), v.y));
+        //noinspection SuspiciousNameCombination
         T _y = mc.add(mc.multiply(get(1, 0), v.x), mc.multiply(get(1, 1), v.y));
         return new PVector<T>(_x, _y, mc);
     }
@@ -107,7 +110,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * @return transformed vector
      */
     public Point<T> transform(Point<T> p) {
-        return Point.fromVector(transform(PVector.valueOf(p.x, p.y, getMc())));
+        return Point.fromVector(transform(PVector.valueOf(p.x, p.y, getCalculator())));
     }
 
 //    /**
@@ -162,7 +165,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull FMathObject<T, RingCalculator<T>> obj) {
         if (!(obj instanceof TransMatrix)) {
             return false;
         }
@@ -172,7 +175,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
 
     @NotNull
     @Override
-    public <N> TransMatrix<N> mapTo(@NotNull MathCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> TransMatrix<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new TransMatrix<>(matrix.mapTo(newCalculator, mapper));
     }
 
@@ -247,7 +250,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
 //        T[][] data = (T[][]) new Object[][]{
 //                {x.x, x.y}, {y.x, y.y}
 //        };
-        return valueOf(x.x, y.y, y.x, y.y, x.getMathCalculator());
+        return valueOf(x.x, y.y, y.x, y.y, x.getCalculator());
     }
 
     /**
@@ -256,7 +259,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (c d)
      * </pre>
      */
-    public static <T> TransMatrix<T> valueOf(T a, T b, T c, T d, MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> valueOf(T a, T b, T c, T d, RingCalculator<T> mc) {
 //        @SuppressWarnings("unchecked")
 //        T[][] data = (T[][]) new Object[][]{
 //                {a, b}, {c, d}
@@ -271,7 +274,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
      * (c d)
      * </pre>
      */
-    public static <T> TransMatrix<T> valueOf(GenMatrix<T> mat, MathCalculator<T> mc) {
+    public static <T> TransMatrix<T> valueOf(GenMatrix<T> mat, RingCalculator<T> mc) {
         var a = mat.get(0, 0);
         var b = mat.get(0, 1);
         var c = mat.get(1, 0);
@@ -360,7 +363,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
         }
         v = v.unitVector();
         T cos = v.x, sin = v.y;
-        MathCalculator<T> mc = v.getMathCalculator();
+        var mc = v.getCalculator();
         return valueOf(cos, mc.negate(sin), sin, cos, mc);
     }
 

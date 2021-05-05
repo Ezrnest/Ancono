@@ -138,7 +138,7 @@ interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
-    fun sum(ps: List<T>): T {
+    override fun sum(ps: List<T>): T {
         var sum = zero
         for (t in ps) {
             sum = add(sum, t)
@@ -206,7 +206,7 @@ interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     @JvmDefault
-    fun product(ps: List<T>): T {
+    override fun product(ps: List<T>): T {
         var re = one
         for (t in ps) {
             re = multiply(re, t)
@@ -469,14 +469,16 @@ interface MathCalculator<T> : FieldCalculator<T>, Comparator<T> {
     /**
      * Returns a value that represents the given integer.
      */
-    fun of(x: Long): T {
+    @JvmDefault
+    override fun of(x: Long): T {
         return one * x
     }
 
     /**
      * Returns a value that represents the given fraction.
      */
-    fun of(x: Fraction): T {
+    @JvmDefault
+    override fun of(x: Fraction): T {
         if (x.isZero()) {
             return zero
         }

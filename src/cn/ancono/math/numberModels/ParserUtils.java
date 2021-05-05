@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.utilities.ArraySup;
 import kotlin.Pair;
 
@@ -140,7 +140,7 @@ public final class ParserUtils {
     }
 
 
-    public static <T> T parseCoefficient(String s, Function<String, T> parser, MathCalculator<T> mc) {
+    public static <T> T parseCoefficient(String s, Function<String, T> parser, UnitRingCalculator<T> mc) {
         s = s.trim();
         if (s.length() == 0) {
             return mc.getOne();

@@ -38,9 +38,9 @@ interface PlaneParametricCurve<T> : VectorFunction<T>, MathCalculatorHolder<T> {
 
 }
 
-internal class PPCImpl<T>(override val mathCalculator: MathCalculator<T>, val f: SVFunction<T>, val g: SVFunction<T>) : PlaneParametricCurve<T> {
+internal class PPCImpl<T>(override val calculator: MathCalculator<T>, val f: SVFunction<T>, val g: SVFunction<T>) : PlaneParametricCurve<T> {
     override fun substitute(t: T): PVector<T> {
-        return PVector.valueOf(f(t), g(t), mathCalculator)
+        return PVector.valueOf(f(t), g(t), calculator)
     }
 
     override fun substituteX(t: T): T {
@@ -60,7 +60,7 @@ internal class PPCImpl<T>(override val mathCalculator: MathCalculator<T>, val f:
     }
 
     override fun substituteAsPoint(t: T): Point<T> {
-        return Point.valueOf(f(t), g(t), mathCalculator)
+        return Point.valueOf(f(t), g(t), calculator)
     }
 
 

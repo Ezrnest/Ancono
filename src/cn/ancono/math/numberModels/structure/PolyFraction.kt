@@ -1,27 +1,28 @@
 package cn.ancono.math.numberModels.structure
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.FMathObject
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import java.util.function.Function
 
-class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Polynomial<T>)
-    : MathObjectExtend<T>(mc),
+class PFraction<T>(mc: FieldCalculator<T>, val nume: Polynomial<T>, val deno: Polynomial<T>)
+    : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc),
         FieldNumberModel<PFraction<T>>,
         AlgebraModel<T, PFraction<T>>,
         Simplifiable<T, PFraction<T>> {
 
     private fun ofT(t: T): PFraction<T> {
-        return of(Polynomial.constant(mc, t), Polynomial.one(mc))
+        return of(Polynomial.constant(calculator, t), Polynomial.one(calculator))
     }
 
     private fun of(nume: Polynomial<T>, deno: Polynomial<T>): PFraction<T> {
         val p = Polynomial.simplifyFraction(nume, deno)
-        return PFraction(mc, p.first, p.second)
+        return PFraction(calculator, p.first, p.second)
     }
 
     override fun add(y: PFraction<T>): PFraction<T> {
@@ -31,7 +32,7 @@ class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Pol
     }
 
     override fun negate(): PFraction<T> {
-        return PFraction(mc, nume.negate(), deno)
+        return PFraction(calculator, nume.negate(), deno)
     }
 
     override fun multiply(y: PFraction<T>): PFraction<T> {
@@ -41,27 +42,27 @@ class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Pol
     }
 
     override fun multiply(k: T): PFraction<T> {
-        if (mc.isZero(k)) {
-            return zero(mc)
+        if (calculator.isZero(k)) {
+            return zero(calculator)
         }
-        return PFraction(mc, nume.multiply(k), deno)
+        return PFraction(calculator, nume.multiply(k), deno)
     }
 
     override fun divide(k: T): PFraction<T> {
         if (isZero()) {
             return this
         }
-        if (mc.isZero(k)) {
+        if (calculator.isZero(k)) {
             ExceptionUtil.dividedByZero()
         }
-        return PFraction(mc, nume, deno.multiply(k))
+        return PFraction(calculator, nume, deno.multiply(k))
     }
 
     override fun multiply(n: Long): PFraction<T> {
         if (n == 0L) {
-            return zero(mc)
+            return zero(calculator)
         }
-        return PFraction(mc, nume.multiply(n), deno)
+        return PFraction(calculator, nume.multiply(n), deno)
     }
 
     override fun isZero(): Boolean {
@@ -119,17 +120,17 @@ class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Pol
 
     override fun simplify(sim: Simplifier<T>): PFraction<T> {
         val p = Polynomial.simplifyFraction(nume, deno, sim)
-        return PFraction(mc, p.first, p.second)
+        return PFraction(calculator, p.first, p.second)
     }
 
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): PFraction<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): PFraction<N> {
         val n2 = nume.mapTo(newCalculator, mapper)
         val d2 = nume.mapTo(newCalculator, mapper)
-        return PFraction(newCalculator, n2, d2)
+        return PFraction(newCalculator as FieldCalculator<N>, n2, d2)
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is PFraction) {
             return false
         }
@@ -138,7 +139,7 @@ class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Pol
         return p1.valueEquals(p2)
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         if (nume.isZero()) {
             return "0"
         }
@@ -152,29 +153,29 @@ class PFraction<T>(mc: MathCalculator<T>, val nume: Polynomial<T>, val deno: Pol
     companion object {
         @JvmStatic
         fun <T> of(p: Polynomial<T>): PFraction<T> {
-            val mc = p.mathCalculator
+            val mc = p.calculator as FieldCalculator
             return PFraction(mc, p, Polynomial.one(mc))
         }
 
         @JvmStatic
-        fun <T> one(mc: MathCalculator<T>): PFraction<T> {
+        fun <T> one(mc: FieldCalculator<T>): PFraction<T> {
             val polyOne = Polynomial.one(mc)
             return PFraction(mc, polyOne, polyOne)
         }
 
         @JvmStatic
-        fun <T> zero(mc: MathCalculator<T>): PFraction<T> {
+        fun <T> zero(mc: FieldCalculator<T>): PFraction<T> {
             return of(Polynomial.zero(mc))
         }
 
         @JvmStatic
-        fun <T> getCalculator(mc: MathCalculator<T>, sim: Simplifier<T>? = null): PFractionCalculator<T> {
+        fun <T> getCalculator(mc: FieldCalculator<T>, sim: Simplifier<T>? = null): PFractionCalculator<T> {
             return PFractionCalculator(mc, sim)
         }
     }
 }
 
-class PFractionCalculator<T>(val mc: MathCalculator<T>, val sim: Simplifier<T>?) : MathCalculatorAdapter<PFraction<T>>() {
+class PFractionCalculator<T>(val mc: FieldCalculator<T>, val sim: Simplifier<T>?) : MathCalculatorAdapter<PFraction<T>>() {
     override val one: PFraction<T> = PFraction.one(mc)
     override val zero: PFraction<T> = PFraction.zero(mc)
 

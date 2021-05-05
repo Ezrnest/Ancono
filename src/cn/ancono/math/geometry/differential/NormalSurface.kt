@@ -36,7 +36,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
      *     E = (ru, ru)
      */
     open val E: NDerivableFunction<T, T> by lazy {
-        DifferentialUtil.innerProduct(mathCalculator, ru, ru)
+        DifferentialUtil.innerProduct(calculator, ru, ru)
     }
 
     /**
@@ -45,7 +45,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
      *     F = (ru, rv)
      */
     open val F: NDerivableFunction<T, T> by lazy {
-        DifferentialUtil.innerProduct(mathCalculator, ru, rv)
+        DifferentialUtil.innerProduct(calculator, ru, rv)
     }
 
     /**
@@ -54,7 +54,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
      *     G = (rv, rv)
      */
     open val G: NDerivableFunction<T, T> by lazy {
-        DifferentialUtil.innerProduct(mathCalculator, rv, rv)
+        DifferentialUtil.innerProduct(calculator, rv, rv)
     }
 
     open val normalVector: BDVFunction<T> by lazy {
@@ -62,7 +62,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
     }
 
     open val unitNormalVector: BDVFunction<T> by lazy {
-        DifferentialUtil.unitVectorSpace(mathCalculator, normalVector)
+        DifferentialUtil.unitVectorSpace(calculator, normalVector)
     }
 
 
@@ -75,7 +75,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
      */
     open val L: NDerivableFunction<T, T> by lazy {
         // (n,r_uu)
-        DifferentialUtil.innerProduct(mathCalculator, unitNormalVector, ru.partial1)
+        DifferentialUtil.innerProduct(calculator, unitNormalVector, ru.partial1)
     }
 
     /**
@@ -86,7 +86,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
      */
     open val M: NDerivableFunction<T, T> by lazy {
         // (n,r_uv)
-        DifferentialUtil.innerProduct(mathCalculator, unitNormalVector, ru.partial2)
+        DifferentialUtil.innerProduct(calculator, unitNormalVector, ru.partial2)
     }
 
     /**
@@ -97,7 +97,7 @@ abstract class NormalSurface<T> : SpaceParametricSurface<T>, BDVFunction<T> {
      */
     open val N: NDerivableFunction<T, T> by lazy {
         // (n,r_vv)
-        DifferentialUtil.innerProduct(mathCalculator, unitNormalVector, rv.partial2)
+        DifferentialUtil.innerProduct(calculator, unitNormalVector, rv.partial2)
     }
 
 //    open val wingartenTransform
@@ -131,23 +131,23 @@ internal class NormalSurfaceXYZ<T>(
         val x: NDerivableFunction<T, T>,
         val y: NDerivableFunction<T, T>,
         val z: NDerivableFunction<T, T>,
-        override val mathCalculator: MathCalculator<T>
+        override val calculator: MathCalculator<T>
 ) : NormalSurface<T>() {
     override val ru: BDVFunction<T> by lazy {
         NDerivableFunction.mergeOf3(x.partial1, y.partial1, z.partial1) { x, y, z ->
-            SVector.valueOf(x, y, z, mathCalculator)
+            SVector.valueOf(x, y, z, calculator)
         }
     }
 
     override val rv: BDVFunction<T> by lazy {
         NDerivableFunction.mergeOf3(x.partial2, y.partial2, z.partial2) { x, y, z ->
-            SVector.valueOf(x, y, z, mathCalculator)
+            SVector.valueOf(x, y, z, calculator)
         }
     }
 
     override fun apply(u: T, v: T): SVector<T> {
         val p = listOf(u, v)
-        return SVector.valueOf(x(p), y(p), z(p), mathCalculator)
+        return SVector.valueOf(x(p), y(p), z(p), calculator)
     }
 
     override fun partial(i: Int): NDerivableFunction<T, SVector<T>> {

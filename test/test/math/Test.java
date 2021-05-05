@@ -1,10 +1,10 @@
 package test.math;
 
+import cn.ancono.math.MathCalculator;
 import cn.ancono.math.algebra.Progression;
 import cn.ancono.math.algebra.ProgressionSup;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.Fraction;
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.set.Interval;
 import cn.ancono.math.set.IntervalI;
 import cn.ancono.utilities.Printer;
@@ -390,7 +390,7 @@ class Test {
 	static void progerssionTest2() {
         Progression<Long> p1 = ProgressionSup.asFirstElementAndDifferece(1L, 1L, Calculators.longCal());
         Progression<Double> p2 = p1.mapTo(Calculators.doubleCal(), l -> Math.log(Math.abs(l * l - l) + 2));
-        p2 = Progression.computeProgression(p2.getMathCalculator(), l -> Math.cos(l * 2 - l * l), p2);
+        p2 = Progression.computeProgression(p2.getCalculator(), l -> Math.cos(l * 2 - l * l), p2);
 
         Progression<BigDecimal> pr = p2.mapTo(Calculators.bigDecimal(MathContext.DECIMAL128), d -> new BigDecimal(d * d * d - d * d));
 

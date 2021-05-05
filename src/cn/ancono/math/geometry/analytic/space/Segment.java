@@ -366,7 +366,7 @@ public final class Segment<T> extends SpacePointSet<T> {
         if (p1.valueEquals(p2)) {
             throw new IllegalArgumentException("p1=p2");
         }
-        MathCalculator<T> mc = p1.getMathCalculator();
+        MathCalculator<T> mc = p1.getCalculator();
         Line<T> l = new Line<>(mc, p1, SVector.vector(p1, p2));
         return new Segment<>(mc, l, p1, p2);
     }
@@ -382,7 +382,7 @@ public final class Segment<T> extends SpacePointSet<T> {
         if (p1.valueEquals(p2)) {
             return p1;
         }
-        MathCalculator<T> mc = p1.getMathCalculator();
+        MathCalculator<T> mc = p1.getCalculator();
         Line<T> l = new Line<>(mc, p1, SVector.vector(p1, p2));
         return new Segment<>(mc, l, p1, p2);
     }

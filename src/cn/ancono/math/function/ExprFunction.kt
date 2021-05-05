@@ -8,7 +8,7 @@ import cn.ancono.math.numberModels.expression.Node
 import cn.ancono.math.property.Composable
 
 class ExprFunction(val expr: Expression,
-                   override val mathCalculator: ExprCalculator,
+                   override val calculator: ExprCalculator,
                    val variableName: String = "x") :
         SVFunction<Expression>,
         MathCalculatorHolder<Expression>,
@@ -26,42 +26,42 @@ class ExprFunction(val expr: Expression,
 
     override fun add(y: ExprFunction): ExprFunction {
         require(variableName == y.variableName)
-        return functionOf(mathCalculator.add(expr, y.expr))
+        return functionOf(calculator.add(expr, y.expr))
     }
 
     override fun negate(): ExprFunction {
-        return functionOf(mathCalculator.negate(expr))
+        return functionOf(calculator.negate(expr))
     }
 
     private fun functionOf(expr: Expression): ExprFunction {
-        return ExprFunction(expr, mathCalculator, variableName)
+        return ExprFunction(expr, calculator, variableName)
     }
 
     override fun multiply(y: ExprFunction): ExprFunction {
         require(variableName == y.variableName)
-        return functionOf(mathCalculator.multiply(expr, y.expr))
+        return functionOf(calculator.multiply(expr, y.expr))
     }
 
     override fun reciprocal(): ExprFunction {
-        return functionOf(mathCalculator.reciprocal(expr))
+        return functionOf(calculator.reciprocal(expr))
     }
 
     override fun divide(y: ExprFunction): ExprFunction {
         require(variableName == y.variableName)
-        return functionOf(mathCalculator.divide(expr, y.expr))
+        return functionOf(calculator.divide(expr, y.expr))
     }
 
     override fun subtract(y: ExprFunction): ExprFunction {
         require(variableName == y.variableName)
-        return functionOf(mathCalculator.subtract(expr, y.expr))
+        return functionOf(calculator.subtract(expr, y.expr))
     }
 
     override fun apply(x: Expression): Expression {
-        return mathCalculator.substitute(expr, variableName, x)
+        return calculator.substitute(expr, variableName, x)
     }
 
     override fun compose(before: ExprFunction): ExprFunction {
-        return ExprFunction(mathCalculator.substitute(expr, variableName, before.expr), mathCalculator, before.variableName)
+        return ExprFunction(calculator.substitute(expr, variableName, before.expr), calculator, before.variableName)
     }
 
     override fun andThen(after: ExprFunction): ExprFunction {
@@ -69,7 +69,7 @@ class ExprFunction(val expr: Expression,
     }
 
     override val derivative: DerivableSVFunction<Expression> by lazy {
-        ExprFunction(mathCalculator.differential(expr, (variableName)), mathCalculator, variableName)
+        ExprFunction(calculator.differential(expr, (variableName)), calculator, variableName)
     }
 }
 
@@ -77,7 +77,7 @@ fun Expression.asFunction(mc: ExprCalculator, variableName: String = "x") = Expr
 
 
 class NExprFunction(val expr: Expression,
-                    override val mathCalculator: ExprCalculator,
+                    override val calculator: ExprCalculator,
                     val variables: List<String>) :
         NDerivableFunction<Expression, Expression>,
         NMathFunction<Expression, Expression>,
@@ -97,38 +97,38 @@ class NExprFunction(val expr: Expression,
     override fun add(y: NExprFunction): NExprFunction {
         require(variables == y.variables)
 //        require(variableName == y.variableName)
-        return functionOf(mathCalculator.add(expr, y.expr))
+        return functionOf(calculator.add(expr, y.expr))
     }
 
     override fun negate(): NExprFunction {
-        return functionOf(mathCalculator.negate(expr))
+        return functionOf(calculator.negate(expr))
     }
 
     private fun functionOf(expr: Expression): NExprFunction {
-        return NExprFunction(expr, mathCalculator, variables)
+        return NExprFunction(expr, calculator, variables)
     }
 
     override fun multiply(y: NExprFunction): NExprFunction {
         require(variables == y.variables)
-        return functionOf(mathCalculator.multiply(expr, y.expr))
+        return functionOf(calculator.multiply(expr, y.expr))
     }
 
     override fun reciprocal(): NExprFunction {
-        return functionOf(mathCalculator.reciprocal(expr))
+        return functionOf(calculator.reciprocal(expr))
     }
 
     override fun divide(y: NExprFunction): NExprFunction {
         require(variables == y.variables)
-        return functionOf(mathCalculator.divide(expr, y.expr))
+        return functionOf(calculator.divide(expr, y.expr))
     }
 
     override fun subtract(y: NExprFunction): NExprFunction {
         require(variables == y.variables)
-        return functionOf(mathCalculator.subtract(expr, y.expr))
+        return functionOf(calculator.subtract(expr, y.expr))
     }
 
     override fun apply(x: List<Expression>): Expression {
-        return mathCalculator.substituteAll(expr, variables.zip(x).toMap())
+        return calculator.substituteAll(expr, variables.zip(x).toMap())
     }
 
 
@@ -141,8 +141,8 @@ class NExprFunction(val expr: Expression,
         if (t != null) {
             return t
         }
-        val p = mathCalculator.differential(expr, variables[i])
-        val f = NExprFunction(p, mathCalculator, variables)
+        val p = calculator.differential(expr, variables[i])
+        val f = NExprFunction(p, calculator, variables)
         cachedPartials[i] = f
         return f
     }

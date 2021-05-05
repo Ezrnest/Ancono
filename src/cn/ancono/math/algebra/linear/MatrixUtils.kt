@@ -1,10 +1,12 @@
 package cn.ancono.math.algebra.linear
 
+import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.numberModels.api.NumberFormatter
+import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.colIndices
 import cn.ancono.math.numberModels.api.requireSquare
 import cn.ancono.math.numberTheory.IntCalculator
@@ -26,7 +28,7 @@ object MatrixUtils {
         //Re-written by lyc at 2021-04-30 13:00
         A.requireSquare()
         val vs = A.columnVectors()
-        val mc = A.mathCalculator
+        val mc = A.calculator
         val R = Matrix.zero(A.row, A.column, mc)
         val ws = ArrayList<MutableVector<T>>(A.row)
         for (i in 0 until A.row) {
@@ -49,7 +51,7 @@ object MatrixUtils {
 
     private fun <T> checkSymmetric(A: AbstractMatrix<T>) {
         A.requireSquare()
-        val mc = A.mathCalculator
+        val mc = A.calculator
         for (i in 0 until A.row) {
             for (j in 0 until i) {
                 require(mc.isEqual(A[i, j], A[j, i])) {
@@ -71,8 +73,8 @@ object MatrixUtils {
         checkSymmetric(A)
         //Re-written by lyc at 2021-04-30 13:00
         val n = A.row
-        val mc = A.mathCalculator
-        val x = AMatrix.zero(2 * n, n, A.mathCalculator)
+        val mc = A.calculator as FieldCalculator
+        val x = AMatrix.zero(2 * n, n, A.calculator)
         x.setAll(0, 0, A)
         val one = mc.one
         for (i in 0 until n) {
@@ -134,7 +136,7 @@ object MatrixUtils {
         require(m.isSquare()) {
             "The matrix must be square!"
         }
-        val mc = m.mathCalculator
+        val mc = m.calculator as MathCalculator
         val n = m.row
         val matrix = m.toMutable()
 //        val operations = mutableListOf<MatrixOperation<T>>()
@@ -187,7 +189,7 @@ object MatrixUtils {
         require(A.isSquare()) {
             "The matrix must be square!"
         }
-        val mc = A.mathCalculator
+        val mc = A.calculator as MathCalculator
         val n = A.row
 
         @Suppress("LocalVariableName")
@@ -226,7 +228,7 @@ object MatrixUtils {
         require(A.isSquare()) {
             "The matrix must be square!"
         }
-        val mc = A.mathCalculator
+        val mc = A.calculator as FieldCalculator
         val n = A.row
 
         @Suppress("LocalVariableName")
@@ -262,10 +264,10 @@ object MatrixUtils {
         //TODO check correctness
         M.requireSquare()
         val n = M.column
-        val mc = M.mathCalculator
+        val mc = M.calculator as FieldCalculator
 
         @Suppress("UNCHECKED_CAST")
-        val euc = M.mathCalculator as EUDCalculator<T>
+        val euc = M.calculator as EUDCalculator<T>
 
 
         @Suppress("UNCHECKED_CAST")
@@ -337,7 +339,7 @@ object MatrixUtils {
      * [cn.ancono.math.algebra.abs.calculator.EUDCalculator].
      */
     fun <T> toHermitForm(m: AbstractMatrix<T>): Matrix<T> {
-        val mc = m.mathCalculator as IntCalculator<T>
+        val mc = m.calculator as IntCalculator<T>
         val mat = m.toMutable()
         //        @SuppressWarnings("unchecked")
 //        T[] temp = (T[]) new Object[m.row];
@@ -409,7 +411,7 @@ object MatrixUtils {
      * This method can be used to compute the modular inverse of a matrix on `Z/Zn`, where n is not necessarily a prime.
      */
     fun <T> inverseInRing(M: AbstractMatrix<T>): Matrix<T> {
-        val rc = M.mathCalculator as UnitRingCalculator<T>
+        val rc = M.calculator as UnitRingCalculator<T>
         val det = M.det()
         if (!rc.isUnit(det)) {
             ExceptionUtil.notInvertible()
@@ -420,14 +422,13 @@ object MatrixUtils {
     }
 
 
-    fun <T> toLatexString(M: Matrix<T>, formatter: NumberFormatter<T> = NumberFormatter.defaultFormatter(),
+    fun <T> toLatexString(M: Matrix<T>, formatter: FlexibleNumberFormatter<T> = FlexibleNumberFormatter.defaultFormatter(),
                           displayType: String = "pmatrix"): String = buildString {
-        val mc = M.mathCalculator
         append("\\begin{$displayType}")
         appendLine()
         for (i in 0 until M.row) {
             M.colIndices.joinTo(this, separator = " & ", postfix = "\\\\") { j ->
-                formatter.format(M[i, j], mc)
+                formatter.format(M[i, j])
             }
             appendLine()
         }

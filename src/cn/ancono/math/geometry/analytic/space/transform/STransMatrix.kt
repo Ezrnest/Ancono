@@ -47,13 +47,14 @@ class STransMatrix<T> internal constructor(mc: MathCalculator<T>, val matrix: Ma
         if (obj !is STransMatrix) {
             return false
         }
-        return matrix.valueEquals(obj.matrix, mapper)
+//        matrix.mapTo(obj.calculator,mapper).valueEquals(obj.matrix)
+        return matrix.valueEquals(obj.matrix.mapTo(calculator, mapper)) //TODO
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return StringSup.formatMatrix(Array(4) { i ->
             Array(4) { j ->
-                nf.format(matrix[i, j], mc)
+                nf.format(matrix[i, j])
             }
         })
     }
@@ -64,5 +65,5 @@ class STransMatrix<T> internal constructor(mc: MathCalculator<T>, val matrix: Ma
  * Returns a vector of (x,y,z,1)T, which is a column vector.
  */
 fun <T> SPoint<T>.extendVector(): Vector<T> {
-    return Vector.of(mathCalculator, x, y, z, mathCalculator.one)
+    return Vector.of(calculator, x, y, z, calculator.one)
 }

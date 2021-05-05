@@ -1,8 +1,8 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.PolynomialUtil
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.Fraction
@@ -27,7 +27,7 @@ class MultiplyAdd<T>(isRow: Boolean, val idx1: Int, val idx2: Int, val k: Polyno
 }
 typealias LambdaMatrix<T> = Matrix<Polynomial<T>>
 private typealias PData<T> = Array<Array<Polynomial<T>>>
-private typealias PMC<T> = MathCalculator<Polynomial<T>>
+private typealias PMC<T> = RingCalculator<Polynomial<T>>
 
 /**
  * Transform this lambda matrix to its normal form.
@@ -40,8 +40,8 @@ fun <T> LambdaMatrix<T>.toNormalForm(): LambdaMatrix<T> {
             get(i, j)
         }
     }
-    toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
-    return Matrix.of(data, mathCalculator)
+    toNormalForm(data, calculator as Polynomial.PolynomialCalculator<T>, 0)
+    return Matrix.of(data, calculator)
 }
 
 private fun <T> normalFormInvFac(mat: LambdaMatrix<T>): List<Polynomial<T>> {
@@ -89,7 +89,7 @@ object LambdaMatrixSup {
         val trans = arrayListOf<Vector<Fraction>>()
         for (pr in primaryFactor) {
             val lambda = pr.key
-            val mat = matrix - Matrix.diag(lambda, matrix.column, matrix.mathCalculator)
+            val mat = matrix - Matrix.diag(lambda, matrix.column, matrix.calculator)
             val solutions = mat.kernel()
             assert(solutions.vectorLength == pr.value.size)
             for ((alpha, n) in solutions.vectors.asSequence().zip(pr.value.asSequence())) {
@@ -112,14 +112,14 @@ object LambdaMatrixSup {
         @Suppress("UNCHECKED_CAST")
         val data = matrix.getValues() as Array<Array<T>>
 
-        toNormalForm(data, matrix.mathCalculator as EUDCalculator<T>, 0)
-        return Matrix.of(data, matrix.mathCalculator)
+        toNormalForm(data, matrix.calculator as EUDCalculator<T>, 0)
+        return Matrix.of(data, matrix.calculator)
     }
 }
 
 
 private fun buildJordanForm(primaryFactor: Map<Fraction, List<Int>>, origin: Matrix<Fraction>): Matrix<Fraction> {
-    val builder = Matrix.zero(origin.row, origin.column, origin.mathCalculator)
+    val builder = Matrix.zero(origin.row, origin.column, origin.calculator)
     var idx = 0
     for (pr in primaryFactor) {
         val lambda = pr.key
@@ -139,7 +139,7 @@ private fun buildJordanForm(primaryFactor: Map<Fraction, List<Int>>, origin: Mat
 /**
  * Transform this lambda matrix to its normal form.
  */
-fun <T> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> {
+fun <T> LambdaMatrix<T>.toFrobeniusForm(mc: FieldCalculator<T>): Matrix<T> {
     @Suppress("UNCHECKED_CAST")
     val data = Array(row) { i ->
         Array(column) { j ->
@@ -147,7 +147,7 @@ fun <T> LambdaMatrix<T>.toFrobeniusForm(mc: MathCalculator<T>): Matrix<T> {
         }
     }
 //    toNormalForm(data,mathCalculator,)
-    toNormalForm(data, mathCalculator as Polynomial.PolynomialCalculator<T>, 0)
+    toNormalForm(data, calculator as Polynomial.PolynomialCalculator<T>, 0)
     val builder = Matrix.zero(row, column, mc)
     var pos = 0
     val one = mc.one
@@ -329,7 +329,7 @@ fun <T> MutableMatrix<Polynomial<T>>.doLambdaOperation(op: LambdaPrimaryOperatio
             }
         }
         is Multiply -> {
-            val pk = Polynomial.constant(mathCalculator.zero.mathCalculator, op.k)
+            val pk = Polynomial.constant(calculator.zero.calculator, op.k)
             if (op.isRow) {
                 multiplyRow(op.idx, pk)
             } else {
@@ -378,11 +378,11 @@ fun <T> LambdaMatrix<T>.doLambdaOperations(ops: List<LambdaPrimaryOperation<T>>)
             get(i, j)
         }
     }
-    val mc = mathCalculator
+    val mc = calculator
     for (op in ops) {
         doLambdaOp1(data, op, mc)
     }
-    return Matrix.of(data, mathCalculator)
+    return Matrix.of(data, calculator)
 }
 
 //fun main(args: Array<String>) {

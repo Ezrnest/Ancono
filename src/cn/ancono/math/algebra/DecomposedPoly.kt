@@ -1,8 +1,6 @@
 package cn.ancono.math.algebra
 
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.algebra.abs.calculator.eval
-import cn.ancono.math.numberModels.api.times
 import cn.ancono.math.numberModels.structure.Polynomial
 
 
@@ -27,8 +25,9 @@ open class DecomposedPoly<T>(val decomposed: List<Pair<Polynomial<T>, Int>>) {
     val expanded: Polynomial<T>
         get() {
             if (expandedBackingField == null) {
-                expandedBackingField = decomposed.fold(Polynomial.one(decomposed[0].first.mathCalculator))
-                { acc: Polynomial<T>, (p, n) -> acc * p.pow(n.toLong()) }
+                expandedBackingField = decomposed.asSequence().map { (p, n) ->
+                    p.pow(n.toLong())
+                }.reduce(Polynomial<T>::add)
             }
             return expandedBackingField!!
         }
@@ -39,12 +38,11 @@ open class DecomposedPoly<T>(val decomposed: List<Pair<Polynomial<T>, Int>>) {
         }
 
     fun compute(x: T): T {
-        val mc = decomposed.first().first.mathCalculator
-        var r = mc.one
-        for ((p, n) in decomposed) {
-            r = mc.eval { r * mc.pow(p.compute(x), n.toLong()) }
-        }
-        return r
+        val mc = decomposed.first().first.calculator
+//        var r = mc.one
+        return decomposed.asSequence().map { (p, n) ->
+            mc.pow(p.compute(x), n.toLong())
+        }.reduce(mc::multiply)
     }
 
 

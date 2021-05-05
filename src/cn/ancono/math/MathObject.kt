@@ -2,7 +2,6 @@ package cn.ancono.math
 
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberModels.api.NumberFormatter
 
 import java.util.function.Function
 
@@ -25,7 +24,7 @@ interface MathObject<T>
     /**
      * Gets the `MathCalculator` kept by this math object.
      */
-    override val mathCalculator: MathCalculator<T>
+    override val calculator: MathCalculator<T>
 
     /**
      * Map this object using the number type `T` to a new object using the number type `N`. This
@@ -82,7 +81,7 @@ interface MathObject<T>
      * be used whenever a number is presented.
      * @param nf a number formatter
      */
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String
+    override fun toString(nf: FlexibleNumberFormatter<T>): String
 
     /**
      * Returns a String representing this object, it is recommended that
@@ -94,10 +93,10 @@ interface MathObject<T>
 
 abstract class AbstractMathObject<T>(protected val mc: MathCalculator<T>) : MathObject<T> {
     override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        return valueEquals(obj.mapTo(mathCalculator, mapper))
+        return valueEquals(obj.mapTo(calculator, mapper))
     }
 
-    override val mathCalculator: MathCalculator<T>
+    override val calculator: MathCalculator<T>
         get() = mc
 
     override fun toString(): String {
@@ -113,7 +112,7 @@ abstract class AbstractMathObject<T>(protected val mc: MathCalculator<T>) : Math
     }
 }
 
-abstract class AbstractFlexibleMathObject<T, S : EqualPredicate<T>>(override val mathCalculator: S) : FMathObject<T, S> {
+abstract class AbstractFlexibleMathObject<T, S : EqualPredicate<T>>(override val calculator: S) : FMathObject<T, S> {
 
     override fun toString(): String {
         return toString(FlexibleNumberFormatter.defaultFormatter())

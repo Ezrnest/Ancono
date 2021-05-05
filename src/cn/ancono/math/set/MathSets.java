@@ -404,7 +404,7 @@ public final class MathSets {
     public static <T> List<FiniteSet<T>> partition(FiniteSet<T> set, EqualRelation<T> er) {
         MathCalculator<T> mc;
         if (set instanceof MathCalculatorHolder) {
-            mc = ((MathCalculatorHolder<T>) set).getMathCalculator();
+            mc = ((MathCalculatorHolder<T>) set).getCalculator();
         } else {
             mc = GroupCalculators.toMathCalculatorEqual(EqualPredicate.naturalEqual());
         }

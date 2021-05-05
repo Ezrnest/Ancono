@@ -3,7 +3,6 @@ package cn.ancono.math.set;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
-import cn.ancono.math.numberModels.api.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -305,7 +304,7 @@ public final class IntervalI<T> extends Interval<T> {
     @NotNull
     @Override
     public String toString() {
-        return toString(NumberFormatter.defaultFormatter());
+        return toString(FlexibleNumberFormatter.defaultFormatter());
     }
 
     /* (non-Javadoc)
@@ -313,7 +312,7 @@ public final class IntervalI<T> extends Interval<T> {
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         if (isDownerBoundInclusive()) {
             sb.append('[');
@@ -323,13 +322,13 @@ public final class IntervalI<T> extends Interval<T> {
         if (left == null) {
             sb.append("-∞");
         } else {
-            sb.append(nf.format(left, getMc()));
+            sb.append(nf.format(left));
         }
         sb.append(',');
         if (right == null) {
             sb.append("+∞");
         } else {
-            sb.append(nf.format(right, getMc()));
+            sb.append(nf.format(right));
         }
         if (isUpperBoundInclusive()) {
             sb.append(']');
@@ -352,7 +351,7 @@ public final class IntervalI<T> extends Interval<T> {
             Interval<?> iv = (Interval<?>) obj;
             if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()
                     && isUpperBoundInclusive() == iv.isUpperBoundInclusive()) {
-                return getMc().equals(iv.getMathCalculator()) && (left == null ? iv.downerBound() == null : left.equals(iv.downerBound())) &&
+                return getMc().equals(iv.getCalculator()) && (left == null ? iv.downerBound() == null : left.equals(iv.downerBound())) &&
                         (right == null ? iv.upperBound() == null : right.equals(iv.upperBound()));
             }
         }

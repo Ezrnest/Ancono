@@ -1,8 +1,9 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.FMathObject
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.structure.FiniteLinearBasis
 import cn.ancono.math.exceptions.OutOfDomainException
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
@@ -103,7 +104,7 @@ interface IVectorBasis<T> : FiniteLinearBasis<T, Vector<T>> {
         val result = Array<Any?>(rank) { i ->
             vectors[i].inner(cordInThisBase)
         } as Array<T>
-        return Vector.of(cordInThisBase.mathCalculator, *result)
+        return Vector.of(cordInThisBase.calculator, *result)
     }
 
     fun canReduce(vb: IVectorBasis<T>): Boolean {
@@ -190,7 +191,7 @@ fun <T> IVectorBasis<T>.asVectorBase(): VectorBasis<T> {
 }
 
 @Suppress("RedundantOverride")//Provided for Java extension
-abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
+abstract class VectorBasis<T>(mc: FieldCalculator<T>) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc),
         IVectorBasis<T>, Composable<VectorBasis<T>>, Intersectable<VectorBasis<T>> {
 
 
@@ -305,7 +306,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         for (v in vb.vectors) {
             nVectors += v.expand(vectorLength, 0)
         }
-        return DVectorBasis(mc, nVectorDimension, nVectors)
+        return DVectorBasis(calculator, nVectorDimension, nVectors)
     }
 
     /**
@@ -321,7 +322,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         }
         val nVectors = vectors.map { it.resize(nVectorLength) }
         return if (nVectorLength > vectorLength) {
-            DVectorBasis(mc, nVectorLength, nVectors)
+            DVectorBasis(calculator, nVectorLength, nVectors)
         } else {
             generate(nVectors)
         }
@@ -386,7 +387,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
         val m = Matrix.fromVectors(this.vectors + vb.vectors)
         val solution = m.kernel() // at least zero solution
         if (solution.rank == 0) {
-            return VectorBasis.zero(vectorLength, mc)
+            return VectorBasis.zero(vectorLength, calculator)
         }
         val nBases = ArrayList<Vector<T>>(solution.rank)
         for (v in solution.vectors) {
@@ -396,15 +397,15 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
             }
             nBases.add(base)
         }
-        return DVectorBasis(mc, vectorLength, nBases)
+        return DVectorBasis(calculator, vectorLength, nBases)
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): VectorBasis<N> {
         val nVectors = vectors.map { it.mapTo(newCalculator, mapper) }
-        return DVectorBasis(newCalculator, vectorLength, nVectors)
+        return DVectorBasis(newCalculator as FieldCalculator<N>, vectorLength, nVectors)
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
         if (this == obj) {
             return true
         }
@@ -416,19 +417,20 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
                 CollectionSup.listEqual(vectors, vb.vectors) { v1, v2 -> v1.valueEquals(v2) }
     }
 
-    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        if (this == obj) {
-            return true
-        }
-        if (obj !is VectorBasis<*>) {
-            return false
-        }
-        val vb: VectorBasis<N> = obj as VectorBasis<N>
-        return vectorLength == vb.vectorLength && rank == vb.rank &&
-                CollectionSup.listEqual(vectors, vb.vectors) { v1, v2 -> v1.valueEquals(v2, mapper) }
-    }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
+//    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+//        if (this == obj) {
+//            return true
+//        }
+//        if (obj !is VectorBasis<*>) {
+//            return false
+//        }
+//        val vb: VectorBasis<N> = obj as VectorBasis<N>
+//        return vectorLength == vb.vectorLength && rank == vb.rank &&
+//                CollectionSup.listEqual(vectors, vb.vectors) { v1, v2 -> v1.valueEquals(v2, mapper) }
+//    }
+
+    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
         appendLine("VectorBase: dimension=$vectorLength, baseSize=$rank")
         for (v in vectors) {
             appendLine(v.toString(nf))
@@ -442,7 +444,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
          * operations.
          */
         @JvmStatic
-        fun <T> zero(dimension: Int, mc: MathCalculator<T>): VectorBasis<T> {
+        fun <T> zero(dimension: Int, mc: FieldCalculator<T>): VectorBasis<T> {
             return ZeroVectorBasis(mc, dimension)
         }
 
@@ -450,7 +452,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
          * Returns the standard base, which is both unit and orthogonal.
          */
         @JvmStatic
-        fun <T> standard(dimension: Int, mc: MathCalculator<T>): StandardVectorBasis<T> {
+        fun <T> standard(dimension: Int, mc: FieldCalculator<T>): StandardVectorBasis<T> {
             require(dimension > 0) { "Dimension must be positive." }
             return StandardVectorBasis(mc, dimension)
         }
@@ -460,7 +462,7 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
          * @param dimension the dimension(length) of all the vectors
          * @param baseSize the number of vectors that this base will have, must not exceed [dimension]
          */
-        fun <T> identity(dimension: Int, baseSize: Int, mc: MathCalculator<T>): VectorBasis<T> {
+        fun <T> identity(dimension: Int, baseSize: Int, mc: FieldCalculator<T>): VectorBasis<T> {
             require(baseSize > 0)
             require(dimension >= baseSize)
             val list = (0 until baseSize).map { Vector.unitVector(dimension, it, mc) }
@@ -576,9 +578,10 @@ abstract class VectorBasis<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc),
     }
 }
 
-internal class DVectorBasis<T>(mc: MathCalculator<T>, override val vectorLength: Int, override val vectors: List<Vector<T>>) :
+internal class DVectorBasis<T>(mc: FieldCalculator<T>, override val vectorLength: Int, override val vectors: List<Vector<T>>) :
         VectorBasis<T>(mc) {
-    constructor(vectorDimension: Int, vectors: List<Vector<T>>) : this(vectors[0].mathCalculator, vectorDimension, vectors)
+    constructor(vectorDimension: Int, vectors: List<Vector<T>>)
+            : this(vectors[0].calculator as FieldCalculator<T>, vectorDimension, vectors)
 
     override val rank: Int = vectors.size
 }
@@ -589,11 +592,12 @@ interface IFullVectorBasis<T> : IVectorBasis<T>
 /**
  * Describes a vector base whose [vectorLength] is equal to [rank].
  */
-open class FullVectorBasis<T> internal constructor(mc: MathCalculator<T>,
+open class FullVectorBasis<T> internal constructor(mc: FieldCalculator<T>,
                                                    final override val vectorLength: Int,
                                                    final override val vectors: List<Vector<T>>) :
         VectorBasis<T>(mc), IFullVectorBasis<T> {
-    internal constructor(dimension: Int, vectors: List<Vector<T>>) : this(vectors[0].mathCalculator, dimension, vectors)
+    internal constructor(dimension: Int, vectors: List<Vector<T>>)
+            : this(vectors[0].calculator as FieldCalculator<T>, dimension, vectors)
 
     init {
         require(vectorLength == vectors.size)
@@ -612,7 +616,7 @@ open class FullVectorBasis<T> internal constructor(mc: MathCalculator<T>,
         require(mat.column == vectorLength) { "The transformation matrix must have the same size of $vectorLength" }
         require(mat.isInvertible()) { "The transformation matrix must be invertible" }
 
-        return FullVectorBasis(mc, vectorLength, vectors.map { Vector.multiplyToVector(mat, it) })
+        return FullVectorBasis(calculator, vectorLength, vectors.map { Vector.multiplyToVector(mat, it) })
     }
 
     override fun asMatrix(): Matrix<T> {
@@ -670,13 +674,13 @@ open class FullVectorBasis<T> internal constructor(mc: MathCalculator<T>,
     fun transMatrixToStandard(): Matrix<T> = vectorMatrixInverse
 
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
-        return FullVectorBasis(newCalculator, vectorLength, vectors.map { it.mapTo(newCalculator, mapper) })
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): FullVectorBasis<N> {
+        return FullVectorBasis(newCalculator as FieldCalculator<N>, vectorLength, vectors.map { it.mapTo(newCalculator, mapper) })
     }
 
 }
 
-private fun <T> initUnitVectors(mc: MathCalculator<T>, dimension: Int): List<Vector<T>> {
+private fun <T> initUnitVectors(mc: FieldCalculator<T>, dimension: Int): List<Vector<T>> {
     val list = ArrayList<Vector<T>>(dimension)
     for (i in 0 until dimension) {
         list.add(Vector.unitVector(dimension, i, mc))
@@ -688,7 +692,7 @@ private fun <T> initUnitVectors(mc: MathCalculator<T>, dimension: Int): List<Vec
  * Describes the standard vector base, in which the base vectors are orthogonal and unit, the [vectorLength]
  * and [rank] are the same.
  */
-class StandardVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimension: Int) :
+class StandardVectorBasis<T> internal constructor(mc: FieldCalculator<T>, dimension: Int) :
         FullVectorBasis<T>(mc, dimension, initUnitVectors(mc, dimension)) {
 
     override fun reduce(v: Vector<T>): Vector<T> {
@@ -709,11 +713,11 @@ class StandardVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimensi
         return cordInThisBase
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String =
+    override fun toString(nf: FlexibleNumberFormatter<T>): String =
             "StandardVectorBase: dimension=$vectorLength"
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): FullVectorBasis<N> {
-        return StandardVectorBasis(newCalculator, vectorLength)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): FullVectorBasis<N> {
+        return StandardVectorBasis(newCalculator as FieldCalculator, vectorLength)
     }
 
     override fun compose(before: VectorBasis<T>): VectorBasis<T> {
@@ -731,7 +735,7 @@ class StandardVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimensi
 
 }
 
-class ZeroVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimension: Int) : VectorBasis<T>(mc) {
+class ZeroVectorBasis<T> internal constructor(mc: FieldCalculator<T>, dimension: Int) : VectorBasis<T>(mc) {
     override val rank: Int
         get() = 0
     override val vectorLength: Int = dimension
@@ -750,7 +754,7 @@ class ZeroVectorBasis<T> internal constructor(mc: MathCalculator<T>, dimension: 
         return v.isZero()
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): VectorBasis<N> {
-        return ZeroVectorBasis(newCalculator, vectorLength)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): VectorBasis<N> {
+        return ZeroVectorBasis(newCalculator as FieldCalculator, vectorLength)
     }
 }

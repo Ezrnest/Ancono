@@ -143,7 +143,7 @@ object EquationSup {
      */
     @JvmStatic
     fun <T> solveUsingFormula(sv: SVPEquation<T>): List<T> {
-        val mc = sv.mathCalculator
+        val mc = sv.calculator
         when (sv.mp) {
             1 -> {
                 return Arrays.asList(mc.negate(mc.divide(sv.get(0),
@@ -287,7 +287,7 @@ object EquationSup {
             }
         }
         if (multiplier != 1L) {
-            equa = equa.mapTo(equa.mathCalculator, Function { it.multiply(multiplier) })
+            equa = equa.mapTo(equa.calculator, Function { it.multiply(multiplier) })
         }
 
         val first = equa.first()!!.numerator.absoluteValue

@@ -1,7 +1,8 @@
 package cn.ancono.math.algebra.linear.space
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
+import cn.ancono.math.FMathObject
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.linear.IVectorBasis
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Vector
@@ -76,7 +77,7 @@ interface ILinearSpace<T> : CoordinateSystem<T> {
  * Describes an affine space
  */
 @Suppress("CanBePrimaryConstructorProperty")
-abstract class AffineSpace<T>(mc: MathCalculator<T>,
+abstract class AffineSpace<T>(mc: FieldCalculator<T>,
                               originVector: Vector<T>,
                               vectorBase: VectorBasis<T>) : AbstractCoordinateSystem<T>(mc), ILinearSpace<T> {
     override val vectorBasis: VectorBasis<T> = vectorBase
@@ -137,13 +138,13 @@ abstract class AffineSpace<T>(mc: MathCalculator<T>,
         return valueOf(ori, nBases)
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = buildString {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
         append("{$originVector;")
         vectorBasis.vectors.joinTo(this)
         append("}")
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is AffineSpace) {
             return false
         }
@@ -151,15 +152,15 @@ abstract class AffineSpace<T>(mc: MathCalculator<T>,
                 originVector.valueEquals(obj.originVector) && vectorBasis.valueEquals(obj.vectorBasis)
     }
 
-    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        if (obj !is AffineSpace) {
-            return false
-        }
-        return dimension == obj.dimension && standardDimension == obj.standardDimension
-                && originVector.valueEquals(obj.originVector, mapper) && vectorBasis.valueEquals(obj.vectorBasis, mapper)
-    }
+//    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
+//        if (obj !is AffineSpace) {
+//            return false
+//        }
+//        return dimension == obj.dimension && standardDimension == obj.standardDimension
+//                && originVector.valueEquals(obj.originVector, mapper) && vectorBasis.valueEquals(obj.vectorBasis, mapper)
+//    }
 
-    abstract override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AffineSpace<N>
+    abstract override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AffineSpace<N>
 
 
     companion object {
@@ -169,7 +170,7 @@ abstract class AffineSpace<T>(mc: MathCalculator<T>,
         @JvmStatic
         fun <T> valueOf(originVector: Vector<T>, vectorBase: VectorBasis<T>): AffineSpace<T> {
             require(originVector.size == vectorBase.vectorLength)
-            val mc = originVector.mathCalculator
+            val mc = vectorBase.calculator
             return DAffineSpace(mc, originVector, vectorBase)
         }
 
@@ -196,7 +197,7 @@ abstract class AffineSpace<T>(mc: MathCalculator<T>,
          */
         @JvmStatic
         fun <T> singlePoint(originVector: Vector<T>): AffineSpace<T> {
-            return valueOf(originVector, VectorBasis.zero(originVector.size, originVector.mathCalculator))
+            return valueOf(originVector, VectorBasis.zero(originVector.size, originVector.calculator as FieldCalculator<T>))
         }
 
     }
@@ -206,15 +207,16 @@ abstract class AffineSpace<T>(mc: MathCalculator<T>,
  * Returns a linear space whose origin vector is a zero vector and the vector base this `this`.
  */
 fun <T> VectorBasis<T>.toAffineSpace(): AffineSpace<T> {
-    return AffineSpace.valueOf(Vector.zero(vectorLength, mathCalculator), this)
+    return AffineSpace.valueOf(Vector.zero(vectorLength, calculator), this)
 }
 
-internal class DAffineSpace<T>(mc: MathCalculator<T>, originVector: Vector<T>,
+internal class DAffineSpace<T>(mc: FieldCalculator<T>, originVector: Vector<T>,
                                vectorBase: VectorBasis<T>) : AffineSpace<T>(mc, originVector, vectorBase) {
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): DAffineSpace<N> {
+
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): DAffineSpace<N> {
         return DAffineSpace(
-                newCalculator, originVector.mapTo(newCalculator, mapper), vectorBasis.mapTo(
+                newCalculator as FieldCalculator, originVector.mapTo(newCalculator, mapper), vectorBasis.mapTo(
                 newCalculator,
                 mapper
         )

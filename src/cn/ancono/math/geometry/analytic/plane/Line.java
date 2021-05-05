@@ -824,25 +824,25 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
     }
 
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         sb.append("Line: ");
         T z = getMc().getZero();
         T o = getMc().getOne();
         if (!getMc().isEqual(a, z)) {
             if (!getMc().isEqual(a, o)) {
-                sb.append('(').append(nf.format(a, getMc())).append(')');
+                sb.append('(').append(nf.format(a)).append(')');
             }
             sb.append("x + ");
         }
         if (!getMc().isEqual(b, z)) {
             if (!getMc().isEqual(b, o)) {
-                sb.append('(').append(nf.format(b, getMc())).append(')');
+                sb.append('(').append(nf.format(b)).append(')');
             }
             sb.append("y + ");
         }
         if (!getMc().isEqual(c, z))
-            sb.append('(').append(nf.format(c, getMc())).append(")   ");
+            sb.append('(').append(nf.format(c)).append(")   ");
         sb.delete(sb.length() - 2, sb.length());
         sb.append("= 0");
         return sb.toString();
@@ -892,7 +892,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
         list.add(b);
         list.add(c);
         list = sim.simplify(list);
-        return generalFormula(list.get(0), list.get(1), list.get(2), getMathCalculator());
+        return generalFormula(list.get(0), list.get(1), list.get(2), getCalculator());
     }
 
 
@@ -1017,7 +1017,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @throws IllegalArgumentException if {@literal vx == vy == 0}
      */
     public static <T> Line<T> pointDirection(Point<T> p, T vx, T vy) {
-        return pointDirection(p.x, p.y, vx, vy, p.getMathCalculator());
+        return pointDirection(p.x, p.y, vx, vy, p.getCalculator());
     }
 
     /**
@@ -1057,7 +1057,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @throws IllegalArgumentException if{@code p1 = p2}
      */
     public static <T> Line<T> twoPoint(Point<T> p1, Point<T> p2) {
-        return twoPoint(p1.x, p1.y, p2.x, p2.y, p1.getMathCalculator());
+        return twoPoint(p1.x, p1.y, p2.x, p2.y, p1.getCalculator());
     }
 
     /**
@@ -1145,7 +1145,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @return line {@literal k * (x - p.x) = y - p.y}
      */
     public static <T> Line<T> pointSlope(Point<T> p, T k) {
-        return pointSlope(p.x, p.y, k, p.getMathCalculator());
+        return pointSlope(p.x, p.y, k, p.getCalculator());
     }
 
     /**
@@ -1238,7 +1238,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @throws IllegalArgumentException if {@code |v|==0}
      */
     public static <T> Line<T> pointNormal(Point<T> p, PVector<T> v) {
-        return pointNormal(p.x, p.y, v.x, v.y, p.getMathCalculator());
+        return pointNormal(p.x, p.y, v.x, v.y, p.getCalculator());
     }
 
     /**
@@ -1329,7 +1329,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * @throws IllegalArgumentException if {@code |v| = 0}
      */
     public static <T> Line<T> pointDirection(Point<T> p, PVector<T> v) {
-        return pointDirection(p, v, p.getMathCalculator());
+        return pointDirection(p, v, p.getCalculator());
     }
 
 

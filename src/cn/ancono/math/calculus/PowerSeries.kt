@@ -34,17 +34,17 @@ class PowerSeries<T>(mc: MathCalculator<T>, val coefficient: Coefficient<T>)
         return coefficient == obj.coefficient
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return (0..3).asSequence().map { i ->
             when (i) {
                 0 -> {
-                    nf.format(coefficient(i), mc)
+                    nf.format(coefficient(i))
                 }
                 1 -> {
-                    "(${nf.format(coefficient(i), mc)})x"
+                    "(${nf.format(coefficient(i))})x"
                 }
                 else -> {
-                    "(${nf.format(coefficient(i), mc)})x^$i"
+                    "(${nf.format(coefficient(i))})x^$i"
                 }
             }
         }.joinToString(" + ")

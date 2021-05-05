@@ -44,6 +44,11 @@ interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
         get() = super<RingCalculator>.numberClass
 
 
+    @JvmDefault
+    fun of(x: Long): T {
+        return multiplyLong(one, x)
+    }
+
 }
 
 //fun <T> UnitRingCalculator<T>.asMonoidCalculator() = GroupCalculators.asMonoidCalculator(this)

@@ -5,7 +5,6 @@ package cn.ancono.math
 
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
-import cn.ancono.math.numberModels.api.NumberFormatter
 import java.util.function.Function
 
 /**
@@ -21,7 +20,7 @@ import java.util.function.Function
 interface FlexibleMathObject<T, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
 
 
-    override val mathCalculator: S
+    override val calculator: S
 
 
 //    /**
@@ -43,7 +42,7 @@ interface FlexibleMathObject<T, S : EqualPredicate<T>> : CalculatorHolder<T, S> 
      * @return
      * @see FlexibleNumberFormatter
      */
-    fun toString(nf: FlexibleNumberFormatter<T, S>): String
+    fun toString(nf: FlexibleNumberFormatter<T>): String
 
     /**
      * Returns a String representing this object, it is recommended that

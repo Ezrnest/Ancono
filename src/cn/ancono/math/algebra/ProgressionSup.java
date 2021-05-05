@@ -139,12 +139,12 @@ public final class ProgressionSup {
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
             StringBuilder sb = new StringBuilder();
             sb.append("ArithmeticProgression:");
-            sb.append("a[n]=(").append(nf.format(k, getMc()))
+            sb.append("a[n]=(").append(nf.format(k))
                     .append(")n").append("+")
-                    .append(nf.format(b, getMc()));
+                    .append(nf.format(b));
             return sb.toString();
         }
 

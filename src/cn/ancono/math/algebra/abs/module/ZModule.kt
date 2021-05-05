@@ -59,7 +59,7 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
 //Created by lyc at 2020-03-11 18:8
     : FlexibleMathObject<Z, IntCalculator<Z>>,
         ZModule<Z, V> {
-    override val mathCalculator: IntCalculator<Z>
+    override val calculator: IntCalculator<Z>
         get() = cal
 
     private val moduleCal: ModuleCalculator<Z, V> = ZModuleCalFromAGroup(cal, group.calculator)
@@ -153,7 +153,7 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
     }
 
 
-    override fun toString(nf: FlexibleNumberFormatter<Z, IntCalculator<Z>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<Z>): String {
         return "Z-module from $group"
     }
 

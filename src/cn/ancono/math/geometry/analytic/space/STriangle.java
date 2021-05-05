@@ -528,7 +528,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
         SVector<T> ab = c.getDirectVector(),
                 bc = a.getDirectVector();
         Plane<T> p = Plane.vectorPoint(ab, bc, A);
-        return new STriangle<>(A.getMathCalculator(), p, A, B, C, a, b, c);
+        return new STriangle<>(A.getCalculator(), p, A, B, C, a, b, c);
     }
 
     /**
@@ -545,13 +545,13 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
             throw new IllegalArgumentException("End point not the identity");
         }
         Plane<T> p = Plane.vectorPoint(a.getDirectVector(), c.getDirectVector(), A);
-        return new STriangle<>(A.getMathCalculator(), p, A, B, C, a, b, c);
+        return new STriangle<>(A.getCalculator(), p, A, B, C, a, b, c);
     }
 
     private static <T> STriangle<T> sides0(Segment<T> a, Segment<T> b, Segment<T> c) {
         SPoint<T> A = a.getEndPointA(), B = b.getEndPointA(), C = c.getEndPointA();
         Plane<T> p = Plane.vectorPoint(a.getDirectVector(), c.getDirectVector(), A);
-        return new STriangle<>(A.getMathCalculator(), p, A, B, C, a, b, c);
+        return new STriangle<>(A.getCalculator(), p, A, B, C, a, b, c);
     }
 
     /**
@@ -599,7 +599,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return
      */
     public static <T> List<STriangle<T>> prismSurfaces(SPoint<T> p, List<SPoint<T>> points) {
-        return prismSurfaces(p, points, points.iterator().next().getMathCalculator());
+        return prismSurfaces(p, points, points.iterator().next().getCalculator());
     }
 
     /**

@@ -1,8 +1,9 @@
 package cn.ancono.math.algebra.linear.space
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.FMathObject
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.algebra.linear.VectorBasis
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
@@ -18,13 +19,13 @@ import java.util.function.Function
  * Describes a vector space on of vectors of type [T].
  * @author liyicheng
  */
-class VectorSpace<T>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(basis.mathCalculator),
+class VectorSpace<T>(override val basis: VectorBasis<T>) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(basis.calculator),
         IVectorSpace<T> {
 
     override val vectorLength: Int
         get() = basis.vectorLength
 
-    private val vc: VectorSpaceCalculator<T> = Companion.getCalculator(vectorLength, mc)
+    private val vc: VectorSpaceCalculator<T> = Companion.getCalculator(vectorLength, calculator)
 
     operator fun contains(v: Vector<T>): Boolean {
         return basis.canReduce(v)
@@ -75,11 +76,11 @@ class VectorSpace<T>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(b
     }
 
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): MathObject<N> {
-        return VectorSpace(basis.mapTo(newCalculator, mapper))
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): VectorSpace<N> {
+        return VectorSpace(basis.mapTo(newCalculator as FieldCalculator, mapper))
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is VectorSpace) {
             return false
         }
@@ -87,7 +88,7 @@ class VectorSpace<T>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(b
         return basis.equivalentTo(b2)
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return basis.toString(nf)
     }
 
@@ -96,7 +97,7 @@ class VectorSpace<T>(override val basis: VectorBasis<T>) : MathObjectExtend<T>(b
          * Gets a calculator for a vector space.
          */
         @JvmStatic
-        fun <T> getCalculator(vectorLength: Int, mc: MathCalculator<T>): VectorSpaceCalculator<T> {
+        fun <T> getCalculator(vectorLength: Int, mc: FieldCalculator<T>): VectorSpaceCalculator<T> {
             return VectorSpaceCalculatorImpl(vectorLength, mc)
         }
     }

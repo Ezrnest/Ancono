@@ -112,8 +112,9 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
     /* (non-Javadoc)
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
+    @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder(IPolynomial.stringOf(this, getMc(), nf));
         sb.append(' ').append(op.toString());
         sb.append(" 0");

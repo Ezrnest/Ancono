@@ -16,6 +16,6 @@ interface CalculatorHolder<T, S : EqualPredicate<T>> {
      *
      * @return a calculator
      */
-    val mathCalculator: S
+    val calculator: S
 
 }

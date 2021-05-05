@@ -390,7 +390,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @return a new sphere
      */
     public static <T> Sphere<T> centerRadius(SPoint<T> p, T r) {
-        MathCalculator<T> mc = p.getMathCalculator();
+        MathCalculator<T> mc = p.getCalculator();
         if (mc.compare(r, mc.getZero()) <= 0) {
             throw new IllegalArgumentException("r<=0");
         }
@@ -405,7 +405,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @return a new sphere
      */
     public static <T> Sphere<T> centerRadiusSq(SPoint<T> p, T r2) {
-        MathCalculator<T> mc = p.getMathCalculator();
+        MathCalculator<T> mc = p.getCalculator();
         if (mc.compare(r2, mc.getZero()) <= 0) {
             throw new IllegalArgumentException("r<=0");
         }
@@ -423,7 +423,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> Sphere<T> fourPoints(SPoint<T> a, SPoint<T> b, SPoint<T> c, SPoint<T> d) {
-        MathCalculator<T> mc = a.getMathCalculator();
+        MathCalculator<T> mc = a.getCalculator();
         SPoint<T>[] ps = new SPoint[]{a, b, c, d};
         T[][] mat = (T[][]) new Object[3][4];
         for (int i = 0; i < 3; i++) {

@@ -333,7 +333,7 @@
 //
 //    @NotNull
 //    @Override
-//    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+//    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
 //        StringBuilder sb = new StringBuilder();
 //        sb.append('(');
 //        for (int i = 0, size = getSize(); i < size; i++) {

@@ -108,7 +108,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         return IPolynomial.stringOf(this, getMc(), nf) + " = 0";
 
     }
@@ -356,7 +356,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
     public static <T> SVPEquation<T> fromPolynomial(IPolynomial<T> m) {
         @SuppressWarnings("unchecked")
         MathCalculatorHolder<T> holder = (MathCalculatorHolder<T>) m;
-        return fromPolynomial(m, holder.getMathCalculator());
+        return fromPolynomial(m, holder.getCalculator());
     }
 
     /**

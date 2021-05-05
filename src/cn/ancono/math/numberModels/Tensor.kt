@@ -220,7 +220,7 @@ interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<
      * Returns the sum of all the elements in this tensor.
      */
     fun sumAll(): T {
-        val mc = mathCalculator as AbelSemiGroupCal<T>
+        val mc = calculator as AbelSemiGroupCal<T>
         return elementSequence().reduce(mc::add)
     }
 
@@ -306,7 +306,7 @@ interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<
      * Returns a new tensor of applying the given function to this tensor element-wise.
      */
     override fun applyAll(f: (T) -> T): Tensor<T> {
-        return mapTo(mathCalculator, f)
+        return mapTo(calculator, f)
     }
 
 
@@ -459,17 +459,16 @@ interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<
         if (obj !is Tensor) {
             return false
         }
-        val mc = mathCalculator
+        val mc = calculator
         if (!this.isSameShape(obj)) {
             return false
         }
         return elementSequence().zip(obj.elementSequence()).all { (a, b) -> mc.isEqual(a, b) }
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, EqualPredicate<T>>): String {
-        val mc = mathCalculator
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         return joinTo(StringBuilder()) {
-            nf.format(it, mc)
+            nf.format(it)
         }.toString()
     }
 
@@ -737,7 +736,7 @@ infix fun <T> MutableTensor<T>.matmul(y: Tensor<T>): MutableTensor<T> = this.mat
 fun <T> Tensor<T>.toMatrix(): Matrix<T> {
     require(dim == 2)
     val (row, column) = shape
-    return Matrix.of(row, column, mathCalculator as MathCalculator<T>, flattenToList())
+    return Matrix.of(row, column, calculator as MathCalculator<T>, flattenToList())
 }
 
 interface MutableTensor<T> : Tensor<T> {
@@ -767,7 +766,7 @@ interface MutableTensor<T> : Tensor<T> {
 
 
     operator fun plusAssign(y: Tensor<T>) {
-        val mc = mathCalculator as AbelSemiGroupCal<T>
+        val mc = calculator as AbelSemiGroupCal<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.add(this[idx], y1[idx])
@@ -775,7 +774,7 @@ interface MutableTensor<T> : Tensor<T> {
     }
 
     operator fun minusAssign(y: Tensor<T>) {
-        val mc = mathCalculator as AbelGroupCal<T>
+        val mc = calculator as AbelGroupCal<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.subtract(this[idx], y1[idx])
@@ -783,7 +782,7 @@ interface MutableTensor<T> : Tensor<T> {
     }
 
     operator fun timesAssign(y: Tensor<T>) {
-        val mc = mathCalculator as RingCalculator<T>
+        val mc = calculator as RingCalculator<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.multiply(this[idx], y1[idx])
@@ -791,7 +790,7 @@ interface MutableTensor<T> : Tensor<T> {
     }
 
     operator fun divAssign(y: Tensor<T>) {
-        val mc = mathCalculator as DivisionRingCalculator<T>
+        val mc = calculator as DivisionRingCalculator<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.divide(this[idx], y1[idx])
@@ -800,7 +799,7 @@ interface MutableTensor<T> : Tensor<T> {
 
 
     override fun applyAll(f: (T) -> T): MutableTensor<T> {
-        return mapTo(mathCalculator, f)
+        return mapTo(calculator, f)
     }
 
     /**
@@ -1105,7 +1104,7 @@ abstract class AbstractTensor<T>(
      * Determines whether this tensor is all-zero.
      */
     override fun isZero(): Boolean {
-        val mc = mathCalculator as RingCalculator<T>
+        val mc = calculator as RingCalculator<T>
         return elementSequence().all { mc.isZero(it) }
     }
 
@@ -1130,7 +1129,7 @@ abstract class AbstractTensor<T>(
 abstract class AbstractMutableTensor<T>(mc: EqualPredicate<T>, shape: IntArray)
     : AbstractTensor<T>(mc, shape), MutableTensor<T> {
     override fun applyAll(f: (T) -> T): MutableTensor<T> {
-        return mapTo(mathCalculator, f)
+        return mapTo(calculator, f)
     }
 
     override fun add(y: Tensor<T>): MutableTensor<T> {
@@ -1201,7 +1200,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
     }
 
     override fun copy(): ATensor<T> {
-        return ATensor(mathCalculator, sh, data.clone())
+        return ATensor(calculator, sh, data.clone())
     }
 
     override fun set(idx: Index, v: T) {
@@ -1227,7 +1226,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
             ndata[i] = f(data[i])
         }
         @Suppress("UNCHECKED_CAST")
-        return ATensor(mathCalculator, sh, ndata as Array<T>)
+        return ATensor(calculator, sh, ndata as Array<T>)
     }
 
     override fun transform(f: (T) -> T) {
@@ -1237,14 +1236,14 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
     }
 
     override fun isZero(): Boolean {
-        val mc = mathCalculator as RingCalculator
+        val mc = calculator as RingCalculator
         return data.all { mc.isZero(it) }
     }
 
 
     override fun add(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
-            val mc = mathCalculator as AbelSemiGroupCal<T>
+            val mc = calculator as AbelSemiGroupCal<T>
             return apply2(this, y, mc::add)
         }
         return super.add(y)
@@ -1252,31 +1251,31 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
     }
 
     override fun negate(): MutableTensor<T> {
-        val mc = mathCalculator as AbelGroupCal<T>
+        val mc = calculator as AbelGroupCal<T>
         return copy().inlineApplyAll(mc::negate)
     }
 
     override fun subtract(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
-            val mc = mathCalculator as AbelGroupCal<T>
+            val mc = calculator as AbelGroupCal<T>
             return apply2(this, y, mc::subtract)
         }
         return super.add(y)
     }
 
     override fun multiply(k: T): MutableTensor<T> {
-        val mc = mathCalculator as RingCalculator<T>
+        val mc = calculator as RingCalculator<T>
         return applyAll { t -> mc.multiply(k, t) }
     }
 
     override fun divide(k: T): MutableTensor<T> {
-        val mc = mathCalculator as FieldCalculator<T>
+        val mc = calculator as FieldCalculator<T>
         return applyAll { t -> mc.divide(k, t) }
     }
 
     override fun multiply(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
-            val mc = mathCalculator as RingCalculator<T>
+            val mc = calculator as RingCalculator<T>
             return apply2(this, y, mc::multiply)
         }
         return super.multiply(y)
@@ -1284,7 +1283,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
 
     override fun divide(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
-            val mc = mathCalculator as FieldCalculator
+            val mc = calculator as FieldCalculator
             return apply2(this, y, mc::divide)
         }
         return super.divide(y)
@@ -1310,29 +1309,29 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
 
     override fun plusAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, (mathCalculator as AbelSemiGroupCal<T>)::add)
+        return apply2InPlace(y1, (calculator as AbelSemiGroupCal<T>)::add)
     }
 
     override fun minusAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, (mathCalculator as AbelGroupCal<T>)::subtract)
+        return apply2InPlace(y1, (calculator as AbelGroupCal<T>)::subtract)
     }
 
     override fun timesAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, (mathCalculator as RingCalculator<T>)::multiply)
+        return apply2InPlace(y1, (calculator as RingCalculator<T>)::multiply)
     }
 
     override fun divAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, (mathCalculator as FieldCalculator<T>)::divide)
+        return apply2InPlace(y1, (calculator as FieldCalculator<T>)::divide)
     }
 
 
     override fun reshape(vararg newShape: Int): MutableTensor<T> {
         val sh = newShape.clone()
         TensorImpl.prepareNewShape(this, sh)
-        return ATensor(mathCalculator, sh, data)
+        return ATensor(calculator, sh, data)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -1367,7 +1366,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
             for (i in 0 until x.size) {
                 ndata[i] = f(d1[i], d2[i])
             }
-            return ATensor(x.mathCalculator, x.sh, ndata as Array<T>)
+            return ATensor(x.calculator, x.sh, ndata as Array<T>)
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -1382,7 +1381,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
             for (t in tensor.elementSequence()) {
                 data[pos++] = t
             }
-            return ATensor(tensor.mathCalculator, shape, data as Array<T>)
+            return ATensor(tensor.calculator, shape, data as Array<T>)
         }
 
         fun <T> constant(c: T, shape: IntArray, mc: EqualPredicate<T>): ATensor<T> {
@@ -1408,12 +1407,12 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
                 }
             }
             @Suppress("UNCHECKED_CAST")
-            return ATensor(m.mathCalculator, intArrayOf(r, c), data as Array<T>)
+            return ATensor(m.calculator, intArrayOf(r, c), data as Array<T>)
         }
 
         @Suppress("UNCHECKED_CAST")
         fun <T> wedge(x: ATensor<T>, y: ATensor<T>): ATensor<T> {
-            val mc = x.mathCalculator as RingCalculator
+            val mc = x.calculator as RingCalculator
             val shape = x.shape + y.shape
             val size = x.size * y.size
             val data = arrayOfNulls<Any>(size)

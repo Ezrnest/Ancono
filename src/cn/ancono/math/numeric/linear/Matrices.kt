@@ -1,5 +1,6 @@
 package cn.ancono.math.numeric.linear
 
+import cn.ancono.math.MathCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixOperation
@@ -77,7 +78,7 @@ object Matrices {
      */
     fun <T> inverseGaussJordanSteps(m: Matrix<T>): List<MatrixOperation<T>> {
         require(m.isSquare())
-        val mc = m.mathCalculator
+        val mc = m.calculator as MathCalculator
 
         @Suppress("UNCHECKED_CAST")
         val matrix = m.getValues() as Array<Array<T>>
@@ -138,7 +139,7 @@ object Matrices {
      * @param p a number `>=1`, or `null`.
      */
     fun <T> cond(m: Matrix<T>, p: T?): T {
-        val mc = m.mathCalculator
+        val mc = m.calculator
         val n = m.inverse()
         if (p == null) {
             return mc.eval { m.normInf() * n.normInf() }

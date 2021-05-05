@@ -25,7 +25,7 @@ public final class PlaneAgUtils {
      * @return
      */
     public static <T> T area(Point<T> A, Point<T> B, Point<T> C) {
-        Triangle<T> tri = new Triangle<>(A.getMathCalculator(), A, B, C);
+        Triangle<T> tri = new Triangle<>(A.getCalculator(), A, B, C);
         return tri.areaPN();
     }
 

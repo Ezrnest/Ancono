@@ -29,7 +29,7 @@ class TestMatrix {
     var mcd = Calculators.doubleDev()
 
     private fun <T> isUpperTriangular(m: Matrix<T>): Boolean {
-        val mc = m.mathCalculator
+        val mc = m.calculator
         val n = Math.min(m.row, m.column)
         for (i in 0 until n) {
             for (j in 0 until i) {

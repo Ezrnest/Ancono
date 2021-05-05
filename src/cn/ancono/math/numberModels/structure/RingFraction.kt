@@ -31,7 +31,7 @@ import java.util.function.Function
 open class RingFraction<T>
 internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
     : FlexibleMathObject<T, RingCalculator<T>> {
-    override val mathCalculator: RingCalculator<T>
+    override val calculator: RingCalculator<T>
         get() = mc
 
     /**
@@ -50,9 +50,9 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
 //    fun
 
 
-    override fun toString(nf: FlexibleNumberFormatter<T, RingCalculator<T>>): String {
-        return "(" + nf.format(nume, mc) +
-                ")/(" + nf.format(deno, mc) +
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        return "(" + nf.format(nume) +
+                ")/(" + nf.format(deno) +
                 ')'.toString()
     }
 

@@ -3,6 +3,7 @@ package cn.ancono.math.geometry.analytic.space;
 import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
@@ -524,8 +525,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     /**
      * Create a line that is perpendicular to this plane and passes through the point
      *
-     * @param l a line which is not perpendicular to this plane.
-     * @return a Plane
+     * @param p a point
+     * @return a line which is not perpendicular to this plane.
      */
     public Line<T> perpendicular(SPoint<T> p) {
         return Line.pointDirect(p, getNormalVector());
@@ -695,15 +696,15 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
             return false;
         }
 
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof PlaneCoordinateConverter) {
-                PlaneCoordinateConverter<N> pcc = (PlaneCoordinateConverter<N>) obj;
-                return getMc().isEqual(D, mapper.apply(pcc.D)) && getMc().isEqual(unit, mapper.apply(pcc.unit)) &&
-                        x.valueEquals(pcc.x, mapper) && y.valueEquals(pcc.y, mapper) && O.valueEquals(pcc.O, mapper);
-            }
-            return false;
-        }
+//        @Override
+//        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+//            if (obj instanceof PlaneCoordinateConverter) {
+//                PlaneCoordinateConverter<N> pcc = (PlaneCoordinateConverter<N>) obj;
+//                return getMc().isEqual(D, mapper.apply(pcc.D)) && getMc().isEqual(unit, mapper.apply(pcc.unit)) &&
+//                        x.valueEquals(pcc.x, mapper) && y.valueEquals(pcc.y, mapper) && O.valueEquals(pcc.O, mapper);
+//            }
+//            return false;
+//        }
 
         @NotNull
         @Override
@@ -715,8 +716,9 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         /* (non-Javadoc)
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
+        @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
             return "PlaneCoordinateConverter";
         }
     }
@@ -856,7 +858,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         if (nv.isZero()) {
             throw new IllegalArgumentException("zero vector");
         }
-        MathCalculator<T> mc = p.getMathCalculator();
+        MathCalculator<T> mc = p.getCalculator();
         T d = mc.add(mc.multiply(p.x, nv.x), mc.add(mc.multiply(p.y, nv.y), mc.multiply(p.z, nv.z)));
         d = mc.negate(d);
         Plane<T> pl = new Plane<>(mc, nv.x, nv.y, nv.z, d);
@@ -874,7 +876,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public static <T> Plane<T> linePoint(Line<T> l, SPoint<T> p) {
         SVector<T> v2 = SVector.vector(l.p0, p);
-        Plane<T> pr = vectorPoint0(l.vec, v2, l.p0, l.getMathCalculator());
+        Plane<T> pr = vectorPoint0(l.vec, v2, l.p0, l.getCalculator());
         if (pr == null) {
             throw new IllegalArgumentException("Point on the line");
         }
@@ -896,7 +898,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         } else {
             v2 = l2.vec;
         }
-        Plane<T> pr = vectorPoint0(l1.vec, v2, l1.p0, l1.getMathCalculator());
+        Plane<T> pr = vectorPoint0(l1.vec, v2, l1.p0, l1.getCalculator());
         if (pr == null) {
             throw new IllegalArgumentException("Coincide");
         }
@@ -912,7 +914,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public static <T> Plane<T> threePoints(SPoint<T> p1, SPoint<T> p2, SPoint<T> p3) {
         SVector<T> v1 = SVector.vector(p1, p2);
         SVector<T> v2 = SVector.vector(p1, p3);
-        Plane<T> p = vectorPoint0(v1, v2, p1, p1.getMathCalculator());
+        Plane<T> p = vectorPoint0(v1, v2, p1, p1.getCalculator());
         if (p == null) {
             throw new IllegalArgumentException("Three point one line");
         }
@@ -945,7 +947,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @param mc
      * @return a new plane
      */
-    public static <T> Plane<T> vectorPoint(SVector<T> v1, SVector<T> v2, SPoint<T> p, MathCalculator<T> mc) {
+    public static <T> Plane<T> vectorPoint(SVector<T> v1, SVector<T> v2, SPoint<T> p, RingCalculator<T> mc) {
         //here we solve the equation and get one solution as
         //v1=(x,y,z), v2=(k,q,j)
         //a = jy - qz , b = kz - jx , c = qx - ky
@@ -956,7 +958,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
         SVector<T> pv = p.getVector();
         T d = mc.negate(abc.innerProduct(pv));
-        Plane<T> pl = new Plane<>(mc, abc.getX(), abc.getY(), abc.getZ(), d);
+        Plane<T> pl = new Plane<>((MathCalculator<T>) mc, abc.getX(), abc.getY(), abc.getZ(), d); //TODO
         pl.normalVector = abc;
         return pl;
     }
@@ -971,7 +973,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return a new plane
      */
     public static <T> Plane<T> vectorPoint(SVector<T> v1, SVector<T> v2, SPoint<T> p) {
-        return vectorPoint(v1, v2, p, v1.getMathCalculator());
+        return vectorPoint(v1, v2, p, v1.getCalculator());
     }
 
     /**

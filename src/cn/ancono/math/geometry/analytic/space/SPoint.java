@@ -264,7 +264,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @return point(x, y, z)
      */
     public static <T> SPoint<T> valueOf(SVector<T> v) {
-        return new SPoint<>(v.getMathCalculator(), v.getX(), v.getY(), v.getZ());
+        return new SPoint<>((MathCalculator<T>) v.getCalculator(), v.getX(), v.getY(), v.getZ());
     }
 
     /**
@@ -365,8 +365,9 @@ public final class SPoint<T> extends SpacePointSet<T> {
         /* (non-Javadoc)
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
+        @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
             return "SPointGenerator";
         }
     }

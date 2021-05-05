@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.analytic
 
-import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.set.MathSet
 
@@ -62,7 +62,7 @@ interface CoordinateSystem<T> : MathSet<Vector<T>> {
 }
 
 @Suppress("RedundantOverride")
-abstract class AbstractCoordinateSystem<T>(mc: MathCalculator<T>) : MathObjectExtend<T>(mc), CoordinateSystem<T> {
+abstract class AbstractCoordinateSystem<T>(mc: FieldCalculator<T>) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc), CoordinateSystem<T> {
     override fun toAnotherCord(v: Vector<T>, another: CoordinateSystem<T>): Vector<T> {
         return super.toAnotherCord(v, another)
     }

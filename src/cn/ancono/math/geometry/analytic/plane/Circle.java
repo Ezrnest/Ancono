@@ -791,7 +791,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * @throws IllegalArgumentException if {@code p1,p2,p3} is on the identity line.
      */
     public static <T> Circle<T> threePoints(Point<T> p1, Point<T> p2, Point<T> p3) {
-        MathCalculator<T> mc = p1.getMathCalculator();
+        MathCalculator<T> mc = p1.getCalculator();
         Triangle<T> tri = Triangle.fromVertex(mc, p1.x, p1.y
                 , p2.x, p2.y
                 , p3.x, p3.y);

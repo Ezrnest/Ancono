@@ -56,7 +56,7 @@ public interface Simplifier<T> {
 
     @SuppressWarnings("unchecked")
     public static <T, S extends MathObject<T>> S singleSimplify(Simplifier<T> s, S x) {
-        return (S) x.mapTo(x.getMathCalculator(), s::simplify);
+        return (S) x.mapTo(x.getCalculator(), s::simplify);
     }
 
 

@@ -1,6 +1,5 @@
 package cn.ancono.math.numberModels.api;
 
-import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.Fraction;
 import cn.ancono.utilities.SNFSupport;
 
@@ -8,17 +7,16 @@ import cn.ancono.utilities.SNFSupport;
  * Describes a number formatter for a number model type combined with a calculator type.
  *
  * @param <T> the type of the number model
- * @param <S> the type of the calculator
  */
-public interface FlexibleNumberFormatter<T, S extends EqualPredicate<T>> {
+public interface FlexibleNumberFormatter<T> {
     /**
      * Formats the given number using an subclass of {@code EqualPredicate} .
      */
-    String format(T number, S mc);
+    String format(T number);
 
-    FlexibleNumberFormatter<?, ?> toString = (FlexibleNumberFormatter<Object, EqualPredicate<Object>>) (number, mc) -> number.toString();
+    FlexibleNumberFormatter<?> toString = (FlexibleNumberFormatter<Object>) Object::toString;
 
-    FlexibleNumberFormatter<?, ?> defaultFormatter = (FlexibleNumberFormatter<Object, EqualPredicate<Object>>) (number, mc) -> {
+    FlexibleNumberFormatter<?> defaultFormatter = (FlexibleNumberFormatter<Object>) (number) -> {
         if (number instanceof Number && (!(number instanceof Fraction))) {
             try {
                 return SNFSupport.format((Number) number);
@@ -33,14 +31,14 @@ public interface FlexibleNumberFormatter<T, S extends EqualPredicate<T>> {
      * <code>toString()</code> for fallback.
      */
     @SuppressWarnings("unchecked")
-    static <T, S extends EqualPredicate<T>> FlexibleNumberFormatter<T, S> defaultFormatter() {
-        return (FlexibleNumberFormatter<T, S>) defaultFormatter;
+    static <T> FlexibleNumberFormatter<T> defaultFormatter() {
+        return (FlexibleNumberFormatter<T>) defaultFormatter;
     }
 
     /**
      * Gets a number formatter for subclasses of <code>Number</code> that use a decimal formatter.
      */
-    static <T extends Number, S extends EqualPredicate<T>> FlexibleNumberFormatter<T, S> decimalFormatter() {
-        return (d, mc) -> SNFSupport.DF.format(d);
+    static <T extends Number> FlexibleNumberFormatter<T> decimalFormatter() {
+        return SNFSupport.DF::format;
     }
 }

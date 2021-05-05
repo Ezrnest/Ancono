@@ -31,6 +31,12 @@ interface AbelSemiGroupCal<T> : ICalculator<T> {
         return ModelPatterns.binaryProduce(n, x, this::add)
     }
 
+    @JvmDefault
+    fun sum(ps: List<T>): T {
+        require(ps.isNotEmpty())
+        return ps.reduce(this::add)
+    }
+
     /**
      * Operator function for [T].
      * @see multiplyLong
@@ -44,6 +50,7 @@ interface AbelSemiGroupCal<T> : ICalculator<T> {
      */
     @JvmDefault
     operator fun T.times(n: Long) = multiplyLong(this, n)
+
 
 }
 
@@ -69,6 +76,11 @@ interface AbelMonoidCal<T> : AbelSemiGroupCal<T> {
             return zero
         }
         return super.multiplyLong(x, n)
+    }
+
+    @JvmDefault
+    override fun sum(ps: List<T>): T {
+        return ps.fold(zero, this::add)
     }
 
     /**
@@ -143,6 +155,11 @@ interface MulSemiGroupCal<T> : ICalculator<T> {
         return ModelPatterns.binaryProduce(n, x, this::multiply)
     }
 
+    @JvmDefault
+    fun product(ps: List<T>): T {
+        return ps.reduce(this::multiply)
+    }
+
 
     /**
      * Operator function of add for [T].
@@ -176,6 +193,11 @@ interface MulMonoidCal<T> : MulSemiGroupCal<T> {
         } else {
             super.pow(x, n)
         }
+    }
+
+    @JvmDefault
+    override fun product(ps: List<T>): T {
+        return ps.fold(one, this::multiply)
     }
 
     /**

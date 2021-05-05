@@ -304,7 +304,7 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
         if (cs instanceof GeneralConicSection) {
             return (GeneralConicSection<T>) cs;
         }
-        return new GeneralConicSection<T>(cs.getMathCalculator(), cs.A, cs.B, cs.C, cs.D, cs.E, cs.F);
+        return new GeneralConicSection<T>(cs.getCalculator(), cs.A, cs.B, cs.C, cs.D, cs.E, cs.F);
     }
 
     /**

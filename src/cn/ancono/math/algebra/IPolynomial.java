@@ -3,8 +3,9 @@
  */
 package cn.ancono.math.algebra;
 
-import cn.ancono.math.MathCalculator;
 import cn.ancono.math.MathCalculatorHolder;
+import cn.ancono.math.algebra.abs.calculator.RingCalculator;
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +28,6 @@ import java.util.function.BiPredicate;
  * the degree of a polynomial is <code>n</code>, and degree of zero polynomial is defined to be <code>-1</code>.
  * <p></p>
  *
- *
- *
  * @author liyicheng
  * 2017-10-06 16:51
  */
@@ -45,7 +44,6 @@ public interface IPolynomial<T> {
     /**
      * Returns the power of the leading term. This method is equivalent to
      * <code>max(getDegree(),0)</code>
-     *
      */
     default int getLeadingPower() {
         return Math.max(getDegree(), 0);
@@ -146,11 +144,41 @@ public interface IPolynomial<T> {
         return hash;
     }
 
-    static <T> String stringOf(IPolynomial<T> m, MathCalculator<T> mc, FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    static <T> String stringOf(IPolynomial<T> m, RingCalculator<T> mc, FlexibleNumberFormatter<T> nf) {
+        if (mc instanceof UnitRingCalculator) {
+            return stringOf(m, (UnitRingCalculator<T>) mc, nf);
+        }
         int maxPower = m.getDegree();
         if (maxPower <= 0) {
-            return nf.format(m.get(0), mc);
+            return nf.format(m.get(0));
         }
+        StringBuilder sb = new StringBuilder();
+        for (int i = maxPower; i > 0; i--) {
+            if (mc.isZero(m.get(i)))
+                continue;
+            sb.append(nf.format(m.get(i)));
+            if (i != 1) {
+                sb.append("*x^").append(i);
+            } else {
+                sb.append("*x");
+            }
+            sb.append(" + ");
+        }
+        if (!mc.isZero(m.get(0))) {
+            sb.append(nf.format(m.get(0)));
+        } else {
+            sb.delete(sb.length() - 3, sb.length());
+
+        }
+        return sb.toString();
+    }
+
+    static <T> String stringOf(IPolynomial<T> m, UnitRingCalculator<T> mc, FlexibleNumberFormatter<T> nf) {
+        int maxPower = m.getDegree();
+        if (maxPower <= 0) {
+            return nf.format(m.get(0));
+        }
+
         StringBuilder sb = new StringBuilder();
         for (int i = maxPower; i > 0; i--) {
             if (mc.isZero(m.get(i)))
@@ -163,7 +191,7 @@ public interface IPolynomial<T> {
                     sb.append("x");
                 }
             } else {
-                sb.append(nf.format(m.get(i), mc));
+                sb.append(nf.format(m.get(i)));
                 if (i != 1) {
                     sb.append("*x^").append(i);
                 } else {
@@ -174,7 +202,7 @@ public interface IPolynomial<T> {
 
         }
         if (!mc.isZero(m.get(0))) {
-            sb.append(nf.format(m.get(0), mc));
+            sb.append(nf.format(m.get(0)));
         } else {
             sb.delete(sb.length() - 3, sb.length());
 
@@ -185,7 +213,7 @@ public interface IPolynomial<T> {
     /**
      * Returns a vector whose n-th element is the coefficient of x^n.
      */
-    static <T> Vector<T> coefficientVector(IPolynomial<T> fx, MathCalculator<T> mc) {
+    static <T> Vector<T> coefficientVector(IPolynomial<T> fx, RingCalculator<T> mc) {
         int length = fx.getDegree() + 1;
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) new Object[length];
@@ -199,7 +227,7 @@ public interface IPolynomial<T> {
      * Returns the last non-zero term in this polynomial,
      */
     static <T, S extends IPolynomial<T> & MathCalculatorHolder<T>> T last(S s) {
-        var mc = s.getMathCalculator();
+        var mc = s.getCalculator();
         int p = 0;
         T re;
         do {

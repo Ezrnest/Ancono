@@ -1,17 +1,13 @@
 package cn.ancono.math.algebra.linear
 
+import cn.ancono.math.AbstractFlexibleMathObject
+import cn.ancono.math.FMathObject
 import cn.ancono.math.MathCalculator
-import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.algebra.abs.calculator.EUDCalculator
-import cn.ancono.math.algebra.abs.calculator.UFDCalculator
-import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.equation.EquationSolver
 import cn.ancono.math.equation.SVPEquation
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Calculators
-import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.utilities.ArraySup
@@ -30,10 +26,10 @@ typealias TransformResult<T> = Pair<MutableMatrix<T>, List<MatrixOperation<T>>>
  * Defines the collection of basic methods for a matrix that is
  */
 abstract class AbstractMatrix<T>(
-        mc: MathCalculator<T>,
+        mc: RingCalculator<T>,
         final override val row: Int,
         final override val column: Int)
-    : MathObjectExtend<T>(mc), GenMatrix<T> {
+    : AbstractFlexibleMathObject<T, RingCalculator<T>>(mc), GenMatrix<T> {
 
     protected fun checkIdx(i: Int, j: Int) {
         require(i in rowIndices && j in colIndices) {
@@ -64,7 +60,7 @@ abstract class AbstractMatrix<T>(
      * Applies the function to this matrix to get a
      */
     override fun applyAll(f: (T) -> T): AbstractMatrix<T> {
-        return MatrixImpl.apply1(this, mathCalculator, f)
+        return MatrixImpl.apply1(this, calculator, f)
     }
 
 
@@ -106,7 +102,7 @@ abstract class AbstractMatrix<T>(
     open fun trace(): T {
         requireSquare()
         var z = this[0, 0]
-        val mc = mathCalculator
+        val mc = calculator
         for (i in 1 until row) {
             z = mc.add(z, this[i, i])
         }
@@ -117,6 +113,7 @@ abstract class AbstractMatrix<T>(
      * Returns the sum of all elements in this matrix.
      */
     open fun sum(): T {
+        val mc = calculator
         var z = mc.zero
         for (i in 0 until row) {
             for (j in 0 until column) {
@@ -172,7 +169,7 @@ abstract class AbstractMatrix<T>(
      */
     open fun getColumn(col: Int): Vector<T> {
         require(col in colIndices)
-        return Vector.of(row, mc) { i ->
+        return Vector.of(row, calculator) { i ->
             this.getChecked(i, col)
         }
     }
@@ -182,7 +179,7 @@ abstract class AbstractMatrix<T>(
      */
     open fun getRow(row: Int): Vector<T> {
         require(row in rowIndices)
-        return Vector.of(column, mc) { j ->
+        return Vector.of(column, calculator) { j ->
             this.getChecked(row, j)
         }
     }
@@ -215,6 +212,7 @@ abstract class AbstractMatrix<T>(
      * Determines whether this matrix is invertible.
      */
     open fun isInvertible(): Boolean {
+        val mc = calculator as UnitRingCalculator
         return mc.isUnit(det())
     }
 
@@ -260,6 +258,7 @@ abstract class AbstractMatrix<T>(
      * It is required that the math calculator supports `abs()` and `compare()`
      */
     open fun normInf(): T {
+        val mc = calculator as MathCalculator
         var m = mc.zero
         for (i in rowIndices) {
             for (j in colIndices) {
@@ -279,8 +278,8 @@ abstract class AbstractMatrix<T>(
      *
      * It is required that the calculator supports `abs()` and `exp()`.
      */
-    open fun norm(p: T = mc.of(2L)): T {
-        val mc = mathCalculator
+    open fun norm(p: T = (calculator as MathCalculator).of(2L)): T {
+        val mc = calculator as MathCalculator
         var r = mc.zero
         for (i in 0 until row) {
             for (j in 0 until column) {
@@ -290,22 +289,23 @@ abstract class AbstractMatrix<T>(
         return mc.exp(r, mc.reciprocal(p))
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String {
         val data = Array(row) { i ->
             Array<String>(column) { j ->
-                nf.format(this[i, j], mc)
+                nf.format(this[i, j])
             }
         }
         return StringSup.formatMatrix(data)
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: FMathObject<T, RingCalculator<T>>): Boolean {
         if (obj !is AbstractMatrix) {
             return false
         }
         if (!isSameShape(obj)) {
             return false
         }
+        val mc = calculator
         for (i in 0 until row) {
             for (j in 0 until column) {
                 if (!mc.isEqual(this[i, j], obj[i, j])) {
@@ -316,8 +316,9 @@ abstract class AbstractMatrix<T>(
         return true
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AbstractMatrix<N> {
-        return MatrixImpl.apply1(this, newCalculator) {
+
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AbstractMatrix<N> {
+        return MatrixImpl.apply1(this, newCalculator as RingCalculator<N>) {
             mapper.apply(it)
         }
     }
@@ -331,7 +332,7 @@ val <T> Matrix<T>.T: Matrix<T>
     get() = this.transpose()
 
 abstract class Matrix<T>(
-        mc: MathCalculator<T>,
+        mc: RingCalculator<T>,
         row: Int,
         column: Int)
     : AbstractMatrix<T>(mc, row, column), AlgebraModel<T, Matrix<T>> {
@@ -348,6 +349,7 @@ abstract class Matrix<T>(
      * Determines whether this matrix is all zeros.
      */
     override fun isZero(): Boolean {
+        val mc = calculator
         for (i in 0 until row) {
             for (j in 0 until column) {
                 if (!mc.isZero(this[i, j])) {
@@ -359,8 +361,8 @@ abstract class Matrix<T>(
     }
 
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): Matrix<N> {
-        return MatrixImpl.apply1(this, newCalculator) {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Matrix<N> {
+        return MatrixImpl.apply1(this, newCalculator as RingCalculator<N>) {
             mapper.apply(it)
         }
     }
@@ -370,7 +372,7 @@ abstract class Matrix<T>(
      * Applies the function to this matrix to get a
      */
     override fun applyAll(f: (T) -> T): Matrix<T> {
-        return MatrixImpl.apply1(this, mathCalculator, f)
+        return MatrixImpl.apply1(this, calculator, f)
     }
 
     override fun add(y: Matrix<T>): Matrix<T> {
@@ -420,7 +422,7 @@ abstract class Matrix<T>(
             if (isZero()) {
                 ExceptionUtil.zeroExponent()
             }
-            return identity(row, mathCalculator)
+            return identity(row, calculator as UnitRingCalculator<T>)
         }
         return super.pow(n)
     }
@@ -539,7 +541,7 @@ abstract class Matrix<T>(
      * Returns the Frobenius normal form of this matrix.
      */
     open fun toFrobeniusForm(): Matrix<T> {
-        return charMatrix().toFrobeniusForm(mathCalculator)
+        return charMatrix().toFrobeniusForm(calculator as FieldCalculator<T>)
     }
 
     /**
@@ -571,7 +573,7 @@ abstract class Matrix<T>(
      *     m[i,i] = 0, for i > r
      *
      *
-     * It is required that the MathCalculator of this matrix is an [EUDCalculator].
+     * It is required that the RingCalculator of this matrix is an [EUDCalculator].
      *
      * For example, the Smith normal form of matrix `[[1 2 3][4 5 6][7 8 9]]` can be
      * `diag(1,3,0)`
@@ -594,7 +596,7 @@ abstract class Matrix<T>(
      * `λI-this`, which is a matrix of polynomial.
      */
     open fun charMatrix(): Matrix<Polynomial<T>> {
-        return MatrixImpl.charMatrix(this, Polynomial.getCalculator(mathCalculator))
+        return MatrixImpl.charMatrix(this, Polynomial.getCalculator(calculator as MathCalculator<T>)) //TODO
     }
 
     /**
@@ -638,7 +640,7 @@ abstract class Matrix<T>(
         //vectors
         val result: MutableList<Pair<T, Vector<T>>> = ArrayList(eigenvalues.size)
         val size = eigenvalues.size
-        val mc = mc
+        val mc = calculator as FieldCalculator
         var i = 0
         while (i < size) {
             val x = eigenvalues[i]
@@ -672,7 +674,7 @@ abstract class Matrix<T>(
          * Creates a new matrix with all zeros.
          */
         @JvmStatic
-        fun <T> zero(row: Int, column: Int, mc: MathCalculator<T>): MutableMatrix<T> {
+        fun <T> zero(row: Int, column: Int, mc: RingCalculator<T>): MutableMatrix<T> {
             return AMatrix.zero(row, column, mc)
         }
 
@@ -680,14 +682,14 @@ abstract class Matrix<T>(
          * Creates a new matrix with the [supplier].
          */
         @JvmStatic
-        fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, supplier: (Int, Int) -> T): MutableMatrix<T> {
+        fun <T> of(row: Int, column: Int, mc: RingCalculator<T>, supplier: (Int, Int) -> T): MutableMatrix<T> {
             return AMatrix.of(row, column, mc, supplier)
         }
 
         /**
          * Creates a new matrix with the [supplier].
          */
-        operator fun <T> invoke(row: Int, column: Int, mc: MathCalculator<T>, supplier: (Int, Int) -> T)
+        operator fun <T> invoke(row: Int, column: Int, mc: RingCalculator<T>, supplier: (Int, Int) -> T)
                 : MutableMatrix<T> {
             return AMatrix.of(row, column, mc, supplier)
         }
@@ -704,7 +706,7 @@ abstract class Matrix<T>(
          *
          */
         @JvmStatic
-        fun <T> of(mat: Array<Array<T>>, mc: MathCalculator<T>): MutableMatrix<T> {
+        fun <T> of(mat: Array<Array<T>>, mc: RingCalculator<T>): MutableMatrix<T> {
             return AMatrix.of(mat, mc)
         }
 
@@ -715,7 +717,7 @@ abstract class Matrix<T>(
          * For example, `of(2, 2, mc, 1, 2, 3, 4)` will result in a matrix `[[1, 2], [3, 4]]`
          */
         @JvmStatic
-        fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, elements: List<T>): MutableMatrix<T> {
+        fun <T> of(row: Int, column: Int, mc: RingCalculator<T>, elements: List<T>): MutableMatrix<T> {
             return AMatrix.of(row, column, mc, elements)
         }
 
@@ -727,12 +729,12 @@ abstract class Matrix<T>(
          */
         @SafeVarargs
         @JvmStatic
-        fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, vararg elements: T): MutableMatrix<T> {
+        fun <T> of(row: Int, column: Int, mc: RingCalculator<T>, vararg elements: T): MutableMatrix<T> {
             return AMatrix.of(row, column, mc, elements.asList())
         }
 
 
-        fun <T> copyOf(m: GenMatrix<T>, mc: MathCalculator<T>): MutableMatrix<T> {
+        fun <T> copyOf(m: GenMatrix<T>, mc: RingCalculator<T>): MutableMatrix<T> {
             return MatrixImpl.copyOf(m, mc)
         }
 
@@ -741,7 +743,7 @@ abstract class Matrix<T>(
         }
 
 
-        fun <T> asMatrix(m: GenMatrix<T>, mc: MathCalculator<T>): Matrix<T> {
+        fun <T> asMatrix(m: GenMatrix<T>, mc: RingCalculator<T>): Matrix<T> {
             if (m is Matrix) {
                 return m
             }
@@ -749,20 +751,20 @@ abstract class Matrix<T>(
         }
 
         @JvmStatic
-        fun <T> diag(elements: List<T>, mc: MathCalculator<T>): MutableMatrix<T> {
+        fun <T> diag(elements: List<T>, mc: RingCalculator<T>): MutableMatrix<T> {
             return AMatrix.diag(elements, mc)
         }
 
         @JvmStatic
         fun <T> diag(elements: AbstractVector<T>): MutableMatrix<T> {
-            return AMatrix.diag(elements.toList(), elements.mathCalculator)
+            return AMatrix.diag(elements.toList(), elements.calculator)
         }
 
         /**
          * Creates a diagonal matrix of shape [n].
          */
         @JvmStatic
-        fun <T> diag(d: T, n: Int, mc: MathCalculator<T>): MutableMatrix<T> {
+        fun <T> diag(d: T, n: Int, mc: RingCalculator<T>): MutableMatrix<T> {
             return AMatrix.diag(d, n, mc)
         }
 
@@ -770,7 +772,7 @@ abstract class Matrix<T>(
          * Creates an identity matrix of rank [n].
          */
         @JvmStatic
-        fun <T> identity(n: Int, mc: MathCalculator<T>): MutableMatrix<T> {
+        fun <T> identity(n: Int, mc: UnitRingCalculator<T>): MutableMatrix<T> {
             return AMatrix.identity(n, mc)
         }
 
@@ -780,7 +782,7 @@ abstract class Matrix<T>(
          * It is required that `A` and `B` have that same row count.
          */
         fun <T> concatColumn(a: AbstractMatrix<T>, b: AbstractMatrix<T>): MutableMatrix<T> {
-            val expanded = AMatrix.zero(a.row, a.column + b.column, a.mathCalculator)
+            val expanded = AMatrix.zero(a.row, a.column + b.column, a.calculator)
             val col = a.column
             expanded.setAll(0, 0, a)
             expanded.setAll(0, col, b)
@@ -826,7 +828,7 @@ abstract class Matrix<T>(
             val n = p1.degree
             val m = p2.degree
             val size = m + n
-            val result = zero(size, size, p1.mathCalculator)
+            val result = zero(size, size, p1.calculator)
             for (row in 0 until m) {
                 for (i in 0..n) {
                     result[row, i + row] = p1[n - i]
@@ -842,23 +844,23 @@ abstract class Matrix<T>(
 
 
         @JvmStatic
-        fun <T> calculator(row: Int, column: Int, mc: MathCalculator<T>): MatrixCal<T> {
+        fun <T> calculator(row: Int, column: Int, mc: RingCalculator<T>): MatrixCal<T> {
             require(row > 0 && column > 0)
-            if (row == column) {
+            if (row == column && mc is FieldCalculator) {
                 return calculator(row, mc)
             }
             return MatrixCal(mc, row, column)
         }
 
         @JvmStatic
-        fun <T> calculator(n: Int, mc: MathCalculator<T>): SquareMatrixCal<T> {
+        fun <T> calculator(n: Int, mc: FieldCalculator<T>): SquareMatrixCal<T> {
             require(n > 0)
             return SquareMatrixCal(mc, n)
         }
 
         @JvmStatic
         fun <T> calculatorFor(m: Matrix<T>): MatrixCal<T> {
-            return calculator(m.row, m.column, m.mathCalculator)
+            return calculator(m.row, m.column, m.calculator)
         }
 
         /**
@@ -918,7 +920,7 @@ abstract class Matrix<T>(
          * Determines whether the two matrices are similar.
          */
         fun <T> isSimilar(a: Matrix<T>, b: Matrix<T>): Boolean {
-            val pc = Polynomial.getCalculator(a.mathCalculator)
+            val pc = Polynomial.getCalculator(a.calculator as MathCalculator<T>)
             var x = MatrixImpl.charMatrix(a, pc)
             var y = MatrixImpl.charMatrix(b, pc)
             x = x.toNormalForm()
@@ -931,7 +933,7 @@ abstract class Matrix<T>(
 }
 
 
-abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : Matrix<T>(mc, row, column) {
+abstract class MutableMatrix<T>(mc: RingCalculator<T>, row: Int, column: Int) : Matrix<T>(mc, row, column) {
 
     open operator fun set(i: Int, j: Int, x: T) {
         checkIdx(i, j)
@@ -950,7 +952,7 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
 
 
     override fun applyAll(f: (T) -> T): MutableMatrix<T> {
-        return MatrixImpl.apply1(this, mathCalculator, f)
+        return MatrixImpl.apply1(this, calculator, f)
     }
 
     override fun add(y: Matrix<T>): MutableMatrix<T> {
@@ -978,7 +980,7 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
     }
 
     open operator fun plusAssign(y: Matrix<T>) {
-        val mc = mathCalculator
+        val mc = calculator
         for (i in rowIndices) {
             for (j in colIndices) {
                 this[i, j] = mc.add(this[i, j], y[i, j])
@@ -987,7 +989,7 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
     }
 
     open operator fun minusAssign(y: Matrix<T>) {
-        val mc = mathCalculator
+        val mc = calculator
         for (i in rowIndices) {
             for (j in colIndices) {
                 this[i, j] = mc.subtract(this[i, j], y[i, j])
@@ -996,7 +998,7 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
     }
 
     open operator fun timesAssign(k: T) {
-        val mc = mathCalculator
+        val mc = calculator
         for (i in rowIndices) {
             for (j in colIndices) {
                 this[i, j] = mc.multiply(k, this[i, j])
@@ -1005,7 +1007,7 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
     }
 
     open operator fun divAssign(k: T) {
-        val mc = mathCalculator
+        val mc = calculator as FieldCalculator
         for (i in rowIndices) {
             for (j in colIndices) {
                 this[i, j] = mc.divide(this[i, j], k)
@@ -1022,11 +1024,11 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
     }
 
     open fun negateInplace() {
-        transform { mc.negate(it) }
+        transform { calculator.negate(it) }
     }
 
     open fun copy(): MutableMatrix<T> {
-        return AMatrix.copyOf(this, mathCalculator)
+        return AMatrix.copyOf(this, calculator)
     }
 
 
@@ -1060,7 +1062,7 @@ abstract class MutableMatrix<T>(mc: MathCalculator<T>, row: Int, column: Int) : 
 
 
 class AMatrix<T> internal constructor(
-        mc: MathCalculator<T>, row: Int, column: Int,
+        mc: RingCalculator<T>, row: Int, column: Int,
         val data: Array<Any?>)
     : MutableMatrix<T>(mc, row, column) {
 
@@ -1073,12 +1075,12 @@ class AMatrix<T> internal constructor(
         return i * column + j
     }
 
-    override fun <N> mapTo(newCalculator: MathCalculator<N>, mapper: Function<T, N>): AMatrix<N> {
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AMatrix<N> {
         val newData = Array<Any?>(data.size) {
             @Suppress("UNCHECKED_CAST")
             mapper.apply(data[it] as T)
         }
-        return AMatrix(newCalculator, row, column, newData)
+        return AMatrix(newCalculator as RingCalculator<N>, row, column, newData)
     }
 
     override fun getChecked(i: Int, j: Int): T {
@@ -1109,37 +1111,43 @@ class AMatrix<T> internal constructor(
     }
 
     override fun copy(): AMatrix<T> {
-        return AMatrix(mathCalculator, row, column, data.clone())
+        return AMatrix(calculator, row, column, data.clone())
     }
 
     override fun add(y: Matrix<T>): MutableMatrix<T> {
         if (y is AMatrix<T>) {
+            val mc = calculator
             return apply2(this, y, mc::add)
         }
         return super.add(y)
     }
 
     override fun negate(): MutableMatrix<T> {
+        val mc = calculator
         return apply1(this, mc::negate)
     }
 
     override fun subtract(y: Matrix<T>): MutableMatrix<T> {
         if (y is AMatrix<T>) {
+            val mc = calculator
             return apply2(this, y, mc::subtract)
         }
         return super.subtract(y)
     }
 
     override fun multiply(k: T): MutableMatrix<T> {
+        val mc = calculator
         return apply1(this) { mc.multiply(k, it) }
     }
 
     override fun divide(k: T): MutableMatrix<T> {
+        val mc = calculator as FieldCalculator
         return apply1(this) { mc.divide(k, it) }
     }
 
     override fun negateInplace() {
         for (i in data.indices) {
+            val mc = calculator
             @Suppress("UNCHECKED_CAST")
             data[i] = mc.negate(data[i] as T)
         }
@@ -1149,6 +1157,7 @@ class AMatrix<T> internal constructor(
     override fun multiplyAddRow(r1: Int, r2: Int, k: T, colStart: Int, colEnd: Int) {
         val s1 = toPos(r1, 0)
         val s2 = toPos(r2, 0)
+        val mc = calculator
         for (l in colStart until colEnd) {
             data[s2 + l] = mc.eval { (data[s2 + l] as T) + k * (data[s1 + l] as T) }
         }
@@ -1156,6 +1165,7 @@ class AMatrix<T> internal constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun multiplyAddCol(c1: Int, c2: Int, k: T, rowStart: Int, rowEnd: Int) {
+        val mc = calculator
         for (r in rowStart until rowEnd) {
             val l = toPos(r, 0)
             data[l + c2] = mc.eval { (data[l + c2] as T) + k * (data[l + c1] as T) }
@@ -1184,6 +1194,7 @@ class AMatrix<T> internal constructor(
 
     override fun multiplyRow(r: Int, k: T, colStart: Int, colEnd: Int) {
         val d = toPos(r, 0)
+        val mc = calculator
         for (l in colStart until colEnd) {
             @Suppress("UNCHECKED_CAST")
             data[d + l] = mc.multiply(k, data[d + l] as T)
@@ -1192,6 +1203,7 @@ class AMatrix<T> internal constructor(
 
     override fun divideRow(r: Int, k: T, colStart: Int, colEnd: Int) {
         val d = toPos(r, 0)
+        val mc = calculator as FieldCalculator
         for (l in colStart until colEnd) {
             @Suppress("UNCHECKED_CAST")
             data[d + l] = mc.divide(data[d + l] as T, k)
@@ -1199,6 +1211,7 @@ class AMatrix<T> internal constructor(
     }
 
     override fun multiplyCol(c: Int, k: T, rowStart: Int, rowEnd: Int) {
+        val mc = calculator
         for (r in rowStart until rowEnd) {
             val pos = toPos(r, c)
             @Suppress("UNCHECKED_CAST")
@@ -1207,6 +1220,7 @@ class AMatrix<T> internal constructor(
     }
 
     override fun divideCol(c: Int, k: T, rowStart: Int, rowEnd: Int) {
+        val mc = calculator as FieldCalculator
         for (r in rowStart until rowEnd) {
             val pos = toPos(r, c)
             @Suppress("UNCHECKED_CAST")
@@ -1224,7 +1238,7 @@ class AMatrix<T> internal constructor(
             val ndata = Array<Any?>(d1.size) { k ->
                 f(d1[k] as T, d2[k] as T)
             }
-            return AMatrix(x.mc, x.row, x.column, ndata)
+            return AMatrix(x.calculator, x.row, x.column, ndata)
         }
 
         private inline fun <T> apply1(x: AMatrix<T>, f: (T) -> T): AMatrix<T> {
@@ -1233,17 +1247,17 @@ class AMatrix<T> internal constructor(
                 @Suppress("UNCHECKED_CAST")
                 f(data[k] as T)
             }
-            return AMatrix(x.mc, x.row, x.column, newData)
+            return AMatrix(x.calculator, x.row, x.column, newData)
         }
 
-        fun <T> zero(row: Int, column: Int, mc: MathCalculator<T>): AMatrix<T> {
+        fun <T> zero(row: Int, column: Int, mc: RingCalculator<T>): AMatrix<T> {
             require(row > 0 && column > 0)
             val data = ArraySup.fillArr(row * column, mc.zero, Any::class.java)
             return AMatrix(mc, row, column, data)
         }
 
 
-        fun <T> copyOf(x: GenMatrix<T>, mc: MathCalculator<T>): AMatrix<T> {
+        fun <T> copyOf(x: GenMatrix<T>, mc: RingCalculator<T>): AMatrix<T> {
             val copy = zero(x.row, x.column, mc)
             for (i in copy.rowIndices) {
                 for (j in copy.colIndices) {
@@ -1265,10 +1279,10 @@ class AMatrix<T> internal constructor(
                 val pos = x.toPos(i + r0, c0)
                 System.arraycopy(data, pos, newData, i * c, c)
             }
-            return AMatrix(x.mathCalculator, r, c, newData)
+            return AMatrix(x.calculator, r, c, newData)
         }
 
-        fun <T> copyOfRange(x: GenMatrix<T>, mc: MathCalculator<T>,
+        fun <T> copyOfRange(x: GenMatrix<T>, mc: RingCalculator<T>,
                             rowStart: Int, colStart: Int,
                             rowEnd: Int, colEnd: Int): AMatrix<T> {
             if (x is AMatrix) {
@@ -1279,7 +1293,7 @@ class AMatrix<T> internal constructor(
             }
         }
 
-        fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, supplier: (Int, Int) -> T): AMatrix<T> {
+        fun <T> of(row: Int, column: Int, mc: RingCalculator<T>, supplier: (Int, Int) -> T): AMatrix<T> {
             require(row > 0 && column > 0)
             val data = arrayOfNulls<Any>(row * column)
             var pos = 0
@@ -1291,7 +1305,7 @@ class AMatrix<T> internal constructor(
             return AMatrix(mc, row, column, data)
         }
 
-        fun <T> of(mat: Array<Array<T>>, mc: MathCalculator<T>): AMatrix<T> {
+        fun <T> of(mat: Array<Array<T>>, mc: RingCalculator<T>): AMatrix<T> {
             require(mat.isNotEmpty() && mat[0].isNotEmpty()) {
                 "The given array is empty!"
             }
@@ -1305,7 +1319,7 @@ class AMatrix<T> internal constructor(
             return result
         }
 
-        fun <T> of(row: Int, column: Int, mc: MathCalculator<T>, elements: List<T>): AMatrix<T> {
+        fun <T> of(row: Int, column: Int, mc: RingCalculator<T>, elements: List<T>): AMatrix<T> {
             require(elements.size == row * column) {
                 "Required $row * $column = ${row * column} elements, but ${elements.size} is given."
             }
@@ -1317,7 +1331,7 @@ class AMatrix<T> internal constructor(
             return AMatrix(mc, row, column, data)
         }
 
-        fun <T> diag(elements: List<T>, mc: MathCalculator<T>): AMatrix<T> {
+        fun <T> diag(elements: List<T>, mc: RingCalculator<T>): AMatrix<T> {
             require(elements.isNotEmpty())
             val n = elements.size
             val result = zero(n, n, mc)
@@ -1329,7 +1343,7 @@ class AMatrix<T> internal constructor(
             return result
         }
 
-        fun <T> diag(d: T, n: Int, mc: MathCalculator<T>): AMatrix<T> {
+        fun <T> diag(d: T, n: Int, mc: RingCalculator<T>): AMatrix<T> {
             require(n > 0)
             val result = zero(n, n, mc)
             var l = 0
@@ -1340,12 +1354,12 @@ class AMatrix<T> internal constructor(
             return result
         }
 
-        fun <T> identity(n: Int, mc: MathCalculator<T>): AMatrix<T> {
+        fun <T> identity(n: Int, mc: UnitRingCalculator<T>): AMatrix<T> {
             return diag(mc.one, n, mc)
         }
 
         fun <T> fromVectors(vectors: List<AbstractVector<T>>, asColumn: Boolean): AMatrix<T> {
-            val mc = vectors[0].mathCalculator
+            val mc = vectors[0].calculator
             if (asColumn) {
                 val row = vectors[0].size
                 val column = vectors.size
@@ -1375,7 +1389,7 @@ class AMatrix<T> internal constructor(
 
 internal object MatrixImpl {
 
-    fun <T> copyOf(matrix: GenMatrix<T>, mc: MathCalculator<T>): MutableMatrix<T> {
+    fun <T> copyOf(matrix: GenMatrix<T>, mc: RingCalculator<T>): MutableMatrix<T> {
         if (matrix is MutableMatrix) {
             return matrix.copy()
         }
@@ -1383,7 +1397,7 @@ internal object MatrixImpl {
     }
 
     fun <T> copyOf(matrix: AbstractMatrix<T>): MutableMatrix<T> {
-        return copyOf(matrix, matrix.mathCalculator)
+        return copyOf(matrix, matrix.calculator)
     }
 
     internal fun <T> det(m: AbstractMatrix<T>): T {
@@ -1391,7 +1405,7 @@ internal object MatrixImpl {
         if (m.row == 1) {
             return m[0, 0]
         }
-        val mc = m.mathCalculator
+        val mc = m.calculator
         if (m.row == 2) {
             return mc.eval {
                 m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0]
@@ -1441,15 +1455,14 @@ internal object MatrixImpl {
         equal to the determinant of the remaining matrix.
 
          */
-        val mc = mat.mathCalculator
+        val mc = mat.calculator as UnitRingCalculator
         val division: (T, T) -> T = if (mc is UFDCalculator<*>) {
-            @Suppress("UNCHECKED_CAST")
             val ufd: EUDCalculator<T> = mc as EUDCalculator<T>
             ufd::divideToInteger
             // avoid numeric imprecision
             // for example, in Polynomial<Double>
         } else {
-            mc::divide
+            (mc as FieldCalculator)::divide
         }
         val n: Int = mat.row
         var d = mc.one // the denominator that we store
@@ -1496,7 +1509,7 @@ internal object MatrixImpl {
         require(x.column == y.row) {
             "Shape mismatch in multiplication: (${x.row},${x.column}) (${y.row},${y.column})"
         }
-        val mc = x.mathCalculator
+        val mc = x.calculator
         val result = AMatrix.zero(x.row, y.column, mc)
         for (i in x.rowIndices) {
             for (j in y.colIndices) {
@@ -1512,7 +1525,7 @@ internal object MatrixImpl {
 
     private inline fun <T> apply2(x: Matrix<T>, y: Matrix<T>, f: (T, T) -> T): AMatrix<T> {
         require(x.isSameShape(y))
-        val mc = x.mathCalculator
+        val mc = x.calculator
         val result = AMatrix.zero(x.row, x.column, mc)
         for (i in x.rowIndices) {
             for (j in x.colIndices) {
@@ -1522,7 +1535,7 @@ internal object MatrixImpl {
         return result
     }
 
-    internal inline fun <T, N> apply1(x: AbstractMatrix<T>, nc: MathCalculator<N>, f: (T) -> N)
+    internal inline fun <T, N> apply1(x: AbstractMatrix<T>, nc: RingCalculator<N>, f: (T) -> N)
             : AMatrix<N> {
         val result = AMatrix.zero(x.row, x.column, nc)
         for (i in x.rowIndices) {
@@ -1535,27 +1548,27 @@ internal object MatrixImpl {
 
 
     internal fun <T> add(x: Matrix<T>, y: Matrix<T>): AMatrix<T> {
-        return apply2(x, y, x.mathCalculator::add)
+        return apply2(x, y, x.calculator::add)
     }
 
     internal fun <T> subtract(x: Matrix<T>, y: Matrix<T>): AMatrix<T> {
-        return apply2(x, y, x.mathCalculator::subtract)
+        return apply2(x, y, x.calculator::subtract)
     }
 
     internal fun <T> negate(x: Matrix<T>): AMatrix<T> {
-        return apply1(x, x.mathCalculator, x.mathCalculator::negate)
+        return apply1(x, x.calculator, x.calculator::negate)
     }
 
 
     internal fun <T> multiply(x: Matrix<T>, k: T): AMatrix<T> {
-        val mc = x.mathCalculator
+        val mc = x.calculator
         return apply1(x, mc) {
             mc.multiply(k, it)
         }
     }
 
     internal fun <T> divide(x: Matrix<T>, k: T): AMatrix<T> {
-        val mc = x.mathCalculator
+        val mc = x.calculator as FieldCalculator
         return apply1(x, mc) {
             mc.divide(k, it)
         }
@@ -1570,7 +1583,7 @@ internal object MatrixImpl {
                                      operations: MutableList<MatrixOperation<T>>? = null,
                                      column: Int = M.column): List<Int> {
         //Created by lyc at 2021-04-29
-        val mc = M.mathCalculator
+        val mc = M.calculator as FieldCalculator
         val row = M.row
         var i = 0
         val pivots = ArrayList<Int>(min(M.row, column))
@@ -1624,7 +1637,7 @@ internal object MatrixImpl {
                                operations: MutableList<MatrixOperation<T>>? = null): List<Int> {
         //Created by lyc at 2021-04-29
         val pivots = toUpperTriangle(M, operations, column)
-        val mc = M.mathCalculator
+        val mc = M.calculator as FieldCalculator
         for (i in pivots.lastIndex downTo 0) {
             val j = pivots[i]
             if (!mc.isEqual(M[i, j], mc.one)) {
@@ -1650,9 +1663,9 @@ internal object MatrixImpl {
         val dim = column
         val k = dim - r
         if (k == 0) {
-            return VectorBasis.zero(dim, expanded.mathCalculator)
+            return VectorBasis.zero(dim, expanded.calculator as FieldCalculator<T>)
         }
-        val mc = expanded.mathCalculator
+        val mc = expanded.calculator as FieldCalculator
         val vectors = ArrayList<Vector<T>>(k)
         val negativeOne = mc.negate(mc.one)
         fun makeVector(j: Int) {
@@ -1679,7 +1692,7 @@ internal object MatrixImpl {
     }
 
     fun <T> specialSolutionOf(expanded: MutableMatrix<T>, column: Int, pivots: List<Int>): Matrix<T> {
-        val mc = expanded.mathCalculator
+        val mc = expanded.calculator
         val special = Matrix.zero(column, expanded.column - column, mc)
         for (k in pivots.indices) {
             val pk = pivots[k]
@@ -1693,7 +1706,7 @@ internal object MatrixImpl {
     fun <T> solveLinear(expanded: MutableMatrix<T>, colSep: Int): Triple<Matrix<T>, VectorBasis<T>, Boolean> {
         val pivots = toEchelon(expanded, colSep, null)
         val r = pivots.size
-        val mc = expanded.mathCalculator
+        val mc = expanded.calculator
         val special = specialSolutionOf(expanded, colSep, pivots)
         val basis = nullSpaceOf(expanded, colSep, pivots)
         val solvable = (r until expanded.row).all { i ->
@@ -1710,7 +1723,7 @@ internal object MatrixImpl {
 
     fun <T> solveLinear(m: AbstractMatrix<T>, b: AbstractVector<T>): Triple<Vector<T>, VectorBasis<T>, Boolean> {
         require(m.row == b.size)
-        val expanded = AMatrix.zero(m.row, m.column + 1, m.mathCalculator)
+        val expanded = AMatrix.zero(m.row, m.column + 1, m.calculator)
         val col = m.column
         expanded.setAll(0, 0, m)
         for (i in b.indices) {
@@ -1730,8 +1743,8 @@ internal object MatrixImpl {
     fun <T> inverse(m: AbstractMatrix<T>): Matrix<T> {
         require(m.isSquare())
         val n = m.row
-        val mc = m.mathCalculator
-        val expanded = AMatrix.zero(n, 2 * n, m.mathCalculator)
+        val mc = m.calculator as FieldCalculator
+        val expanded = AMatrix.zero(n, 2 * n, m.calculator)
         expanded.setAll(0, 0, m)
         for (i in 0 until n) {
             expanded[i, i + n] = mc.one
@@ -1743,8 +1756,8 @@ internal object MatrixImpl {
         return expanded.subMatrix(0, n, n, 2 * n)
     }
 
-    fun <T> charMatrix(m: AbstractMatrix<T>, pc: MathCalculator<Polynomial<T>>): Matrix<Polynomial<T>> {
-        val mc = m.mathCalculator
+    fun <T> charMatrix(m: AbstractMatrix<T>, pc: RingCalculator<Polynomial<T>>): Matrix<Polynomial<T>> {
+        val mc = m.calculator as FieldCalculator
         m.requireSquare()
         val n = m.row
         val result = Matrix.zero(n, n, pc)
@@ -1769,7 +1782,7 @@ internal object MatrixImpl {
     fun <T> adjointOf(matrix: AbstractMatrix<T>): Matrix<T> {
         matrix.requireSquare()
         if (matrix.size == 1) {
-            return Matrix.identity(1, matrix.mathCalculator)
+            return Matrix.identity(1, matrix.calculator as UnitRingCalculator<T>)
         }
         try {
             return adjointAndCharPoly(matrix).first
@@ -1777,7 +1790,7 @@ internal object MatrixImpl {
 
         }
         val n = matrix.row
-        val mc = matrix.mathCalculator
+        val mc = matrix.calculator
         return Matrix(n, n, mc) { i, j ->
             val cof = matrix.cofactor(j, i)
             val d = cof.det()
@@ -1796,7 +1809,7 @@ internal object MatrixImpl {
          */
         val M = matrix.asMatrix()
         M.requireSquare()
-        val mc = M.mathCalculator
+        val mc = M.calculator as FieldCalculator
         val n = M.row
         var C = Matrix.identity(n, mc)
         val a = ArrayList<T>(n + 1)
@@ -1821,7 +1834,7 @@ internal object MatrixImpl {
         require(matrix.isSquare())
         val H = matrix.toMutable()
         val n = matrix.row
-        val mc = matrix.mathCalculator
+        val mc = matrix.calculator as FieldCalculator
 
         for (m in 0 until (n - 1)) {
             println(H)
@@ -1863,22 +1876,23 @@ internal object MatrixImpl {
 /**
  * Returns a mutable copy of this matrix.
  */
-fun <T> AbstractMatrix<T>.toMutable(): MutableMatrix<T> = MatrixImpl.copyOf(this, mathCalculator)
+fun <T> AbstractMatrix<T>.toMutable(): MutableMatrix<T> = MatrixImpl.copyOf(this, calculator)
 
 /**
  * Converts this abstract matrix to a matrix.
  */
-fun <T> AbstractMatrix<T>.asMatrix(): Matrix<T> = Matrix.asMatrix(this, mathCalculator)
+fun <T> AbstractMatrix<T>.asMatrix(): Matrix<T> = Matrix.asMatrix(this, calculator)
 
-open class MatrixCal<T>(val mc: MathCalculator<T>, val r: Int, val c: Int) : MathCalculatorAdapter<Matrix<T>>() {
+open class MatrixCal<T>(calculator: RingCalculator<T>, val r: Int, val c: Int) : ModuleCalculator<T, Matrix<T>> {
     override val numberClass: Class<Matrix<T>>
         @Suppress("UNCHECKED_CAST")
         get() = Matrix::class.java as Class<Matrix<T>>
-    override val zero: Matrix<T> = Matrix.zero(r, c, mc)
+    open val mc: RingCalculator<T> = calculator
 
+    override val zero: Matrix<T> = Matrix.zero(r, c, calculator)
 
-    override val characteristic: Long
-        get() = throw UnsupportedCalculationException()
+    override val scalarCalculator: RingCalculator<T>
+        get() = mc
 
     override fun isZero(x: Matrix<T>): Boolean {
         return x.isZero()
@@ -1900,29 +1914,33 @@ open class MatrixCal<T>(val mc: MathCalculator<T>, val r: Int, val c: Int) : Mat
         return x.subtract(y)
     }
 
-    override fun multiply(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
-        return x.multiply(y)
-    }
-
-    override fun divide(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
-        return x.multiply(y.inverse())
-    }
 
     override fun multiplyLong(x: Matrix<T>, n: Long): Matrix<T> {
         return x.multiply(n)
     }
 
-    override fun divideLong(x: Matrix<T>, n: Long): Matrix<T> {
-        return x.applyAll { mc.divideLong(it, n) }
-    }
-
-    override fun reciprocal(x: Matrix<T>): Matrix<T> {
-        return x.inverse()
+    override fun scalarMultiply(k: T, v: Matrix<T>): Matrix<T> {
+        return v.multiply(k)
     }
 }
 
-class SquareMatrixCal<T>(mc: MathCalculator<T>, n: Int) : MatrixCal<T>(mc, n, n) {
+class SquareMatrixCal<T>(override val mc: FieldCalculator<T>, n: Int) :
+        MatrixCal<T>(mc, n, n), AlgebraCalculator<T, Matrix<T>>, UnitRingCalculator<Matrix<T>> {
     override val one: Matrix<T> = Matrix.identity(r, mc)
+
+    override val scalarCalculator: FieldCalculator<T>
+        get() = mc
+
+    override fun multiply(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
+        return x.multiply(y)
+    }
+
+    override fun multiplyLong(x: Matrix<T>, n: Long): Matrix<T> {
+        return x.applyAll { mc.multiplyLong(it, n) }
+    }
+
+    override val numberClass: Class<Matrix<T>>
+        get() = super<MatrixCal>.numberClass
 }
 
 

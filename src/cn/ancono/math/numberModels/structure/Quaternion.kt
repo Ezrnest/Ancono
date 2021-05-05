@@ -147,23 +147,23 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: MathCalculator<T
         return mc.isEqual(a, obj.a) && mc.isEqual(b, obj.b) && mc.isEqual(c, obj.c) && mc.isEqual(d, obj.d)
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T, MathCalculator<T>>): String = mc.run {
+    override fun toString(nf: FlexibleNumberFormatter<T>): String = mc.run {
         if (isZero(a) && isZero(b) && isZero(c) && isZero(d)) {
             return "0"
         }
         return buildString {
             if (!isZero(a)) {
-                append(nf.format(a, mc))
+                append(nf.format(a))
                 append("+")
             }
             if (!isZero(b)) {
-                append("(${nf.format(b, mc)})i+")
+                append("(${nf.format(b)})i+")
             }
             if (!isZero(c)) {
-                append("(${nf.format(c, mc)})j+")
+                append("(${nf.format(c)})j+")
             }
             if (!isZero(d)) {
-                append("(${nf.format(d, mc)})k+")
+                append("(${nf.format(d)})k+")
             }
             deleteCharAt(length - 1)
         }

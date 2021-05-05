@@ -494,7 +494,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      * @return a new line
      */
     public static <T> Line<T> pointDirect(SPoint<T> p, SVector<T> vec) {
-        return pointDirect(p, vec, p.getMathCalculator());
+        return pointDirect(p, vec, p.getCalculator());
     }
 
     /**
@@ -529,7 +529,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
         if (p1.valueEquals(p2)) {
             throw new IllegalArgumentException("p1==p2");
         }
-        return new Line<>(p1.getMathCalculator(), p1, SVector.vector(p1, p2));
+        return new Line<>(p1.getCalculator(), p1, SVector.vector(p1, p2));
     }
 
 //	public static void main(String[] args) {

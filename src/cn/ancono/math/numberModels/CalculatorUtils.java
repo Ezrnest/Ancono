@@ -4,6 +4,7 @@
 package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathCalculator;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.function.SVFunction;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
 import cn.ancono.utilities.ArraySup;
@@ -69,7 +70,7 @@ public final class CalculatorUtils {
         return mc.multiplyLong(mc.getOne(), x.longValueExact());
     }
 
-    public static <T> T valueOfFraction(Fraction x, MathCalculator<T> mc) {
+    public static <T> T valueOfFraction(Fraction x, FieldCalculator<T> mc) {
         if (x.isZero()) {
             return mc.getZero();
         }
@@ -81,7 +82,7 @@ public final class CalculatorUtils {
     }
 
 
-    public static <T> T valueOfLong(long x, MathCalculator<T> mc) {
+    public static <T> T valueOfLong(long x, FieldCalculator<T> mc) {
         return mc.multiplyLong(mc.getOne(), x);
     }
 

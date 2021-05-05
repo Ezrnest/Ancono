@@ -698,29 +698,32 @@ ConicSection<T>
 
     /**
      * Returns the general formula.
+     *
+     * @param nf
      */
+    @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T, MathCalculator<T>> nf) {
+    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         final String str = " + ";
         sb.append("ConicSection : ");
         if (!getMc().isZero(A)) {
-            sb.append('(').append(nf.format(A, getMc())).append(")x^2").append(str);
+            sb.append('(').append(nf.format(A)).append(")x^2").append(str);
         }
         if (!getMc().isZero(B)) {
-            sb.append('(').append(nf.format(B, getMc())).append(")xy").append(str);
+            sb.append('(').append(nf.format(B)).append(")xy").append(str);
         }
         if (!getMc().isZero(C)) {
-            sb.append('(').append(nf.format(C, getMc())).append(")y^2").append(str);
+            sb.append('(').append(nf.format(C)).append(")y^2").append(str);
         }
         if (!getMc().isZero(D)) {
-            sb.append('(').append(nf.format(D, getMc())).append(")x").append(str);
+            sb.append('(').append(nf.format(D)).append(")x").append(str);
         }
         if (!getMc().isZero(E)) {
-            sb.append('(').append(nf.format(E, getMc())).append(")y").append(str);
+            sb.append('(').append(nf.format(E)).append(")y").append(str);
         }
         if (!getMc().isZero(F)) {
-            sb.append('(').append(nf.format(F, getMc())).append(")").append(str);
+            sb.append('(').append(nf.format(F)).append(")").append(str);
         }
         sb.delete(sb.length() - str.length() + 1, sb.length());
         sb.append("= 0");

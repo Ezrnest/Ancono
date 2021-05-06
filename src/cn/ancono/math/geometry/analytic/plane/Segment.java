@@ -193,7 +193,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
         if (A.valueEquals(B)) {
             throw new IllegalArgumentException("A==B");
         }
-        RealCalculator<T> mc = A.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) A.getCalculator();
         Line<T> line = Line.twoPoint(A, B, mc);
         PVector<T> v = A.directVector(B);
         return new Segment<>(line, A, B, v, mc);

@@ -1,9 +1,11 @@
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.AbstractMathObjectReal;
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
@@ -56,7 +58,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     private SVector<T> normalVector = null;
 
 
-    protected Plane(RealCalculator<T> mc, T a, T b, T c, T d) {
+    protected Plane(FieldCalculator<T> mc, T a, T b, T c, T d) {
         super(mc);
         this.a = a;
         this.b = b;
@@ -64,7 +66,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         this.d = d;
     }
 
-    protected Plane(RealCalculator<T> mc, SVector<T> nv, T d) {
+    protected Plane(FieldCalculator<T> mc, SVector<T> nv, T d) {
         super(mc);
         this.a = nv.x;
         this.b = nv.y;
@@ -75,8 +77,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     @NotNull
     @Override
-    public RealCalculator<T> getCalculator() {
-        return (RealCalculator<T>) super.getCalculator();
+    public FieldCalculator<T> getCalculator() {
+        return (FieldCalculator<T>) super.getCalculator();
     }
 
     /**
@@ -312,7 +314,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public T angleCos(Plane<T> p2) {
         SVector<T> n1 = getNormalVector(),
                 n2 = p2.getNormalVector();
-        return getCalculator().abs(n1.angleCos(n2));
+        var mc = (OrderedFieldCal<T>) getCalculator();
+        return mc.abs(n1.angleCos(n2));
     }
 
 
@@ -337,7 +340,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public T angleSin(Line<T> l) {
         //we calculate the cos instead
-        var mc = getCalculator();
+        var mc = (OrderedFieldCal<T>) getCalculator();
         return mc.abs(getNormalVector().angleCos(l.vec));
     }
 
@@ -392,7 +395,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return the distance
      */
     public T distance(SPoint<T> p) {
-        var mc = getCalculator();
+        var mc = (OrderedFieldCal<T>) getCalculator();
         return mc.abs(distanceDirected(p));
     }
 
@@ -603,13 +606,13 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @author liyicheng
      * 2017-09-22 17:24
      */
-    public static class PlaneCoordinateConverter<T> extends AbstractMathObjectReal<T> {
+    public static class PlaneCoordinateConverter<T> extends AbstractMathObject<T, FieldCalculator<T>> {
         final T D, unit;
         final SVector<T> x, y;
         final SPoint<T> O;
         final Plane<T> p;
 
-        PlaneCoordinateConverter(RealCalculator<T> mc, SVector<T> x, SVector<T> y, SPoint<T> O, T unit, Plane<T> p) {
+        PlaneCoordinateConverter(FieldCalculator<T> mc, SVector<T> x, SVector<T> y, SPoint<T> O, T unit, Plane<T> p) {
             super(mc);
             D = mc.subtract(mc.multiply(x.x, y.y), mc.multiply(y.x, x.y));
             this.unit = unit;
@@ -691,9 +694,9 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
                 Point<T> p = toPlanePoint0(c.o);
                 var mc = getCalculator();
                 if (c.r != null) {
-                    return Circle.centerAndRadius(p, convertToPlaneLength(c.r), mc);
+                    return Circle.centerAndRadius(p, convertToPlaneLength(c.r), (RealCalculator<T>) mc);
                 } else {
-                    return Circle.centerAndRadiusSquare(p, mc.divide(c.r2, mc.multiply(unit, unit)), mc);
+                    return Circle.centerAndRadiusSquare(p, mc.divide(c.r2, mc.multiply(unit, unit)), (RealCalculator<T>) mc);
                 }
             }
             throw new IllegalArgumentException("NOT SAME PLANE");
@@ -719,7 +722,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+        public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
             if (obj instanceof PlaneCoordinateConverter) {
                 PlaneCoordinateConverter<T> pcc = (PlaneCoordinateConverter<T>) obj;
                 var mc = getCalculator();
@@ -742,7 +745,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         @NotNull
         @Override
         public <N> PlaneCoordinateConverter<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new PlaneCoordinateConverter<>((RealCalculator<N>) newCalculator, x.mapTo(newCalculator, mapper),
+            return new PlaneCoordinateConverter<>((FieldCalculator<N>) newCalculator, x.mapTo(newCalculator, mapper),
                     y.mapTo(newCalculator, mapper),
                     O.mapTo(newCalculator, mapper),
                     mapper.apply(unit),
@@ -762,7 +765,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     @NotNull
     @Override
     public <N> Plane<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Plane<N>((RealCalculator<N>) newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d));
+        return new Plane<N>((FieldCalculator<N>) newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d));
     }
 
     @Override
@@ -862,7 +865,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @param mc
      * @return a new plane
      */
-    public static <T> Plane<T> generalFormula(T a, T b, T c, T d, RealCalculator<T> mc) {
+    public static <T> Plane<T> generalFormula(T a, T b, T c, T d, FieldCalculator<T> mc) {
         if (a == null || b == null || c == null || d == null) {
             throw new NullPointerException();
         }
@@ -875,7 +878,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane that contains {@code p} and has normal vector {@code nv}.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p  a point
      * @param nv a vector, not zero
@@ -885,7 +888,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         if (nv.isZero()) {
             throw new IllegalArgumentException("zero vector");
         }
-        RealCalculator<T> mc = (RealCalculator<T>) p.getCalculator();
+        FieldCalculator<T> mc = (FieldCalculator<T>) p.getCalculator();
         T d = mc.add(mc.multiply(p.x, nv.x), mc.add(mc.multiply(p.y, nv.y), mc.multiply(p.z, nv.z)));
         d = mc.negate(d);
         Plane<T> pl = new Plane<>(mc, nv.x, nv.y, nv.z, d);
@@ -895,7 +898,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through a line and a point outside the line.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param l a line
      * @param p a point
@@ -912,7 +915,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through two lines.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param l1 a line
      * @param l2 another line
@@ -934,14 +937,14 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through three points.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @return a new plane
      */
     public static <T> Plane<T> threePoints(SPoint<T> p1, SPoint<T> p2, SPoint<T> p3) {
         SVector<T> v1 = SVector.vector(p1, p2);
         SVector<T> v2 = SVector.vector(p1, p3);
-        Plane<T> p = vectorPoint0(v1, v2, p1, (RealCalculator<T>) p1.getCalculator());
+        Plane<T> p = vectorPoint0(v1, v2, p1, (FieldCalculator<T>) p1.getCalculator());
         if (p == null) {
             throw new IllegalArgumentException("Three point one line");
         }
@@ -949,7 +952,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     }
 
 
-    private static <T> Plane<T> vectorPoint0(SVector<T> v1, SVector<T> v2, SPoint<T> p, RealCalculator<T> mc) {
+    private static <T> Plane<T> vectorPoint0(SVector<T> v1, SVector<T> v2, SPoint<T> p, FieldCalculator<T> mc) {
         //here we solve the equation and get one solution as
         //v1=(x,y,z), v2=(k,q,j)
         //a = jy - qz , b = kz - jx , c = qx - ky
@@ -985,14 +988,14 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
         SVector<T> pv = p.getVector();
         T d = mc.negate(abc.innerProduct(pv));
-        Plane<T> pl = new Plane<>((RealCalculator<T>) mc, abc.getX(), abc.getY(), abc.getZ(), d); //TODO
+        Plane<T> pl = new Plane<>((FieldCalculator<T>) mc, abc.getX(), abc.getY(), abc.getZ(), d); //TODO
         pl.normalVector = abc;
         return pl;
     }
 
     /**
      * Create a plane with two vector and a point. The two vector must not be parallel.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param v1
      * @param v2

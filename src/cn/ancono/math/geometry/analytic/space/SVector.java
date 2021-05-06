@@ -5,6 +5,7 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.*;
 import cn.ancono.math.function.MathFunction;
@@ -322,7 +323,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
             return false;
         }
         T t1 = x, t2 = s.x;
-        var mc = (RealCalculator<T>) getCalculator();
+        var mc = (FieldCalculator<T>) getCalculator();
         if (mc.isZero(t1)) {
             if (mc.isZero(y)) {
                 t1 = z;
@@ -332,7 +333,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
                 t2 = s.y;
             }
         }
-        return Calculators.isSameSign(t1, t2, mc);
+        return Calculators.isSameSign(t1, t2, (OrderedFieldCal<T>) mc);
     }
 
     /**
@@ -521,7 +522,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @param x
      * @param y
      * @param z
-     * @param mc a {@link RealCalculator}
+     * @param mc a {@link FieldCalculator}
      * @return a new SVector
      */
     public static <T> SVector<T> valueOf(T x, T y, T z, FieldCalculator<T> mc) {
@@ -540,7 +541,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      *
      * @param A  point A
      * @param B  point B
-     * @param mc a {@link RealCalculator}
+     * @param mc a {@link FieldCalculator}
      * @return a new vector
      */
     public static <T> SVector<T> vector(SPoint<T> A, SPoint<T> B, FieldCalculator<T> mc) {
@@ -553,7 +554,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * __
      * AB
      * </pre>
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param A point A
      * @param B point B
@@ -568,10 +569,10 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * array's length is not equal to 3, only the first three element will be considered.
      *
      * @param xyz
-     * @param mc  a {@link RealCalculator}
+     * @param mc  a {@link FieldCalculator}
      * @return a new SVector
      */
-    public static <T> SVector<T> vector(T[] xyz, RealCalculator<T> mc) {
+    public static <T> SVector<T> vector(T[] xyz, FieldCalculator<T> mc) {
         if (xyz.length < 3) {
             throw new IllegalArgumentException("Not enough length");
         }
@@ -629,10 +630,10 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * Returns a vector according to the list first three elements.
      *
      * @param list a list
-     * @param mc   a {@link RealCalculator}
+     * @param mc   a {@link FieldCalculator}
      * @return a new vector
      */
-    public static <T> SVector<T> fromList(List<T> list, RealCalculator<T> mc) {
+    public static <T> SVector<T> fromList(List<T> list, FieldCalculator<T> mc) {
         return new SVector<T>(list.get(0), list.get(1), list.get(2), mc);
     }
 
@@ -727,7 +728,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
     /**
      * Create a new vector base, the three SVector must not be parallel.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param x
      * @param y

@@ -3,11 +3,12 @@ package cn.ancono.math.geometry.analytic.space;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
-import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.utilities.ArraySup;
@@ -47,7 +48,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     final SPoint<T> p0;
 
 
-    protected Line(RealCalculator<T> mc, SPoint<T> p0, SVector<T> vec) {
+    protected Line(FieldCalculator<T> mc, SPoint<T> p0, SVector<T> vec) {
         super(mc);
         this.vec = vec;
         this.p0 = p0;
@@ -55,8 +56,8 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
 
     @NotNull
     @Override
-    public RealCalculator<T> getCalculator() {
-        return (RealCalculator<T>) super.getCalculator();
+    public FieldCalculator<T> getCalculator() {
+        return (FieldCalculator<T>) super.getCalculator();
     }
 
     /**
@@ -179,7 +180,8 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      * @return the cos value of the angle of {@code this} and {@code l}.
      */
     public T angleCos(Line<T> l) {
-        return getCalculator().abs(vec.angleCos(l.vec));
+        var mc = (OrderedFieldCal<T>) getCalculator();
+        return mc.abs(vec.angleCos(l.vec));
     }
 
     /**
@@ -312,7 +314,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
             return getCalculator().getZero();
         }
         SVector<T> d = SVector.vector(p0, l.p0);
-        T t = getCalculator().abs(s.innerProduct(d));
+        T t = ((OrderedFieldCal<T>) getCalculator()).abs(s.innerProduct(d));
         return getCalculator().divide(t, s.norm());
     }
 
@@ -349,7 +351,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     @NotNull
     @Override
     public <N> Line<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Line<>((RealCalculator<N>) newCalculator, p0.mapTo(newCalculator, mapper), vec.mapTo(newCalculator, mapper));
+        return new Line<>((FieldCalculator<N>) newCalculator, p0.mapTo(newCalculator, mapper), vec.mapTo(newCalculator, mapper));
     }
 
     @Override
@@ -487,14 +489,14 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     /**
      * Create a line that contains the point p and its direct vector is vec, the
      * direct vector cannot be zero vector.<p>
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p   a point
      * @param vec the direct vector
      * @return a new line
      */
     public static <T> Line<T> pointDirect(SPoint<T> p, SVector<T> vec) {
-        return pointDirect(p, vec, (RealCalculator<T>) p.getCalculator());
+        return pointDirect(p, vec, (FieldCalculator<T>) p.getCalculator());
     }
 
     /**
@@ -503,10 +505,10 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
      *
      * @param p   a point
      * @param vec the direct vector
-     * @param mc  a {@link RealCalculator}
+     * @param mc  a {@link FieldCalculator}
      * @return a new line
      */
-    public static <T> Line<T> pointDirect(SPoint<T> p, SVector<T> vec, RealCalculator<T> mc) {
+    public static <T> Line<T> pointDirect(SPoint<T> p, SVector<T> vec, FieldCalculator<T> mc) {
         if (p == null) {
             throw new NullPointerException();
         }
@@ -519,7 +521,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     /**
      * Create a line passing through the two points, throws an exception if the two
      * points are the identity.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
+     * <p>The {@link FieldCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p1
      * @param p2
@@ -529,7 +531,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
         if (p1.valueEquals(p2)) {
             throw new IllegalArgumentException("p1==p2");
         }
-        return new Line<>((RealCalculator<T>) p1.getCalculator(), p1, SVector.vector(p1, p2));
+        return new Line<>((FieldCalculator<T>) p1.getCalculator(), p1, SVector.vector(p1, p2));
     }
 
 //	public static void main(String[] args) {

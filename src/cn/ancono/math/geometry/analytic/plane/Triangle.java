@@ -1,8 +1,9 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathObject;
-import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.NumberFormatter;
@@ -33,13 +34,15 @@ import java.util.function.Function;
  * </pre>
  * <h2>Angle</h2>
  * In a triangle,we usually use the vertex to indicate a inner angle.For example, angle {@literal ∠}<i>ABC</i> is
- * called by {@literal ∠}<i>B</i>. In this class, as a result of the lack of trigonometric functions in {@linkplain RealCalculator},
+ * called by {@literal ∠}<i>B</i>. In this class, as a result of the lack of trigonometric functions in {@linkplain
+ * FieldCalculator},
  * the related methods usually require a supplementary trigonometric function.If the
  *
  * @param <T>
  * @author lyc
  */
-public final class Triangle<T> implements MathObjectReal<T> {
+@SuppressWarnings("SuspiciousNameCombination")
+public final class Triangle<T> implements MathObject<T, FieldCalculator<T>> {
 
     /**
      * The three vertexes of this triangle.
@@ -55,9 +58,9 @@ public final class Triangle<T> implements MathObjectReal<T> {
      */
     private T lenA, lenB, lenC;
 
-    private final RealCalculator<T> mc;
+    private final FieldCalculator<T> mc;
 
-    protected Triangle(RealCalculator<T> mc, Point<T> a, Point<T> b, Point<T> c) {
+    protected Triangle(FieldCalculator<T> mc, Point<T> a, Point<T> b, Point<T> c) {
         this.mc = mc;
         A = Objects.requireNonNull(a);
         B = Objects.requireNonNull(b);
@@ -65,12 +68,12 @@ public final class Triangle<T> implements MathObjectReal<T> {
 
     }
 
-    private Triangle(RealCalculator<T> mc, Point<T> A, Point<T> B, Point<T> C,
+    private Triangle(FieldCalculator<T> mc, Point<T> A, Point<T> B, Point<T> C,
                      Line<T> a, Line<T> b, Line<T> c) {
         this(mc, A, B, C, a, b, c, null, null, null);
     }
 
-    private Triangle(RealCalculator<T> mc, Point<T> A, Point<T> B, Point<T> C,
+    private Triangle(FieldCalculator<T> mc, Point<T> A, Point<T> B, Point<T> C,
                      Line<T> a, Line<T> b, Line<T> c, T lenA, T lenB, T lenC) {
         this(mc, A, B, C);
         this.a = a;
@@ -152,7 +155,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      */
     public T lengthA() {
         if (lenA == null) {
-            lenA = mc.squareRoot(B.distanceSq(C));
+            lenA = ((RealCalculator<T>) mc).squareRoot(B.distanceSq(C));
         }
         return lenA;
     }
@@ -164,7 +167,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      */
     public T lengthB() {
         if (lenB == null) {
-            lenB = mc.squareRoot(A.distanceSq(C));
+            lenB = ((RealCalculator<T>) mc).squareRoot(A.distanceSq(C));
         }
         return lenB;
     }
@@ -176,7 +179,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      */
     public T lengthC() {
         if (lenC == null) {
-            lenC = mc.squareRoot(A.distanceSq(B));
+            lenC = ((RealCalculator<T>) mc).squareRoot(A.distanceSq(B));
         }
         return lenC;
     }
@@ -211,7 +214,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      * @return the area of this triangle
      */
     public T area() {
-        return mc.abs(areaPN());
+        return ((OrderedFieldCal<T>) mc).abs(areaPN());
     }
 
     /**
@@ -468,6 +471,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      * @return
      */
     public boolean contains(Point<T> p) {
+        var mc = (OrderedFieldCal<T>) getCalculator();
         PVector<T> v = A.directVector(p);
         PVector<T> AB = A.directVector(B),
                 AC = A.directVector(C);
@@ -495,7 +499,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
 
     @Override
     public <N> Triangle<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Triangle<>((RealCalculator<N>) newCalculator, A.mapTo(newCalculator, mapper),
+        return new Triangle<>((FieldCalculator<N>) newCalculator, A.mapTo(newCalculator, mapper),
                 B.mapTo(newCalculator, mapper),
                 C.mapTo(newCalculator, mapper),
                 a == null ? null : a.mapTo(newCalculator, mapper),
@@ -540,7 +544,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
 
     @NotNull
     @Override
-    public RealCalculator<T> getCalculator() {
+    public FieldCalculator<T> getCalculator() {
         return mc;
     }
 
@@ -551,7 +555,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
         if (obj == this) {
             return true;
         }
@@ -577,7 +581,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      * @param cy Y coordinate of vertex C
      * @return a newly created triangle
      */
-    public static <T> Triangle<T> fromVertex(RealCalculator<T> mc, T ax, T ay, T bx, T by, T cx, T cy) {
+    public static <T> Triangle<T> fromVertex(FieldCalculator<T> mc, T ax, T ay, T bx, T by, T cx, T cy) {
         Point<T> A = new Point<T>(mc, ax, ay);
         Point<T> B = new Point<T>(mc, bx, by);
         Point<T> C = new Point<T>(mc, cx, cy);
@@ -601,7 +605,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      * @param C  vertex <i>C</i>
      * @return a newly created triangle
      */
-    public static <T> Triangle<T> fromVertex(RealCalculator<T> mc, Point<T> A, Point<T> B, Point<T> C) {
+    public static <T> Triangle<T> fromVertex(FieldCalculator<T> mc, Point<T> A, Point<T> B, Point<T> C) {
         Function<T, T> mapper = MathFunction.identity();
         Triangle<T> tri = new Triangle<>(mc, A.mapTo(mc, mapper),
                 B.mapTo(mc, mapper),
@@ -622,7 +626,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      * @return a newly created triangle
      */
     public static <T> Triangle<T> fromVertex(Point<T> A, Point<T> B, Point<T> C) {
-        RealCalculator<T> mc = A.getCalculator();
+        FieldCalculator<T> mc = A.getCalculator();
         Triangle<T> tri = new Triangle<>(mc, A, B, C);
         if (mc.isZero(tri.areaPN())) {
             throw new IllegalArgumentException("Three points a line.");
@@ -644,7 +648,7 @@ public final class Triangle<T> implements MathObjectReal<T> {
      * @return a triangle
      * @throws ArithmeticException if these three lines cannot intersect into a triangle
      */
-    public static <T> Triangle<T> fromSide(RealCalculator<T> mc, Line<T> a, Line<T> b, Line<T> c) {
+    public static <T> Triangle<T> fromSide(FieldCalculator<T> mc, Line<T> a, Line<T> b, Line<T> c) {
         //calculate the three intersect point
         Point<T> A = b.intersectPoint(c);
         Point<T> B = c.intersectPoint(a);

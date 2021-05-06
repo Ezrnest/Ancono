@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathObject;
-import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +17,12 @@ import java.util.function.Function;
  * @param <T> the type of number
  * @author lyc
  */
-public final class Point<T> implements MathObjectReal<T> {
+public final class Point<T> implements MathObject<T, FieldCalculator<T>> {
 
     public final T x, y;
-    private final RealCalculator<T> mc;
+    private final FieldCalculator<T> mc;
 
-    public Point(RealCalculator<T> mc, T x, T y) {
+    public Point(FieldCalculator<T> mc, T x, T y) {
         this.mc = mc;
         this.x = x;
         this.y = y;
@@ -70,16 +70,15 @@ public final class Point<T> implements MathObjectReal<T> {
     }
 
     /**
-     * Return the distance of {@code this} and the given point {@code p}.The operation
-     * {@linkplain RealCalculator#squareRoot(Object)} is required when this method is called.
-     * Make sure that the calculator implements the operation.
+     * Return the distance of {@code this} and the given point {@code p}.
+     * A real calculator is required.
      *
      * @param p another point
      * @return the distance of {@code this} and {@code p}
      * @see Point#distance(Point)
      */
     public T distance(Point<T> p) {
-        return mc.squareRoot(distanceSq(p));
+        return ((RealCalculator<T>) mc).squareRoot(distanceSq(p));
     }
 
     /**
@@ -126,7 +125,7 @@ public final class Point<T> implements MathObjectReal<T> {
 
     @Override
     public <N> Point<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Point<>((RealCalculator<N>) newCalculator, mapper.apply(x), mapper.apply(y));
+        return new Point<>((FieldCalculator<N>) newCalculator, mapper.apply(x), mapper.apply(y));
     }
 
     @Override
@@ -150,7 +149,7 @@ public final class Point<T> implements MathObjectReal<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
         if (obj == this) {
             return true;
         }
@@ -192,7 +191,7 @@ public final class Point<T> implements MathObjectReal<T> {
 
     @NotNull
     @Override
-    public RealCalculator<T> getCalculator() {
+    public FieldCalculator<T> getCalculator() {
         return mc;
     }
 
@@ -204,17 +203,17 @@ public final class Point<T> implements MathObjectReal<T> {
      * @param mc a MathCalculator
      * @return a new point
      */
-    public static <T> Point<T> valueOf(T x, T y, RealCalculator<T> mc) {
+    public static <T> Point<T> valueOf(T x, T y, FieldCalculator<T> mc) {
         return new Point<>(mc, x, y);
     }
 
     /**
      * Returns the point (0,0).
      *
-     * @param mc a {@link RealCalculator}
+     * @param mc a {@link FieldCalculator}
      * @return point (0,0)
      */
-    public static <T> Point<T> pointO(RealCalculator<T> mc) {
+    public static <T> Point<T> pointO(FieldCalculator<T> mc) {
         @SuppressWarnings("unchecked")
         Point<T> p = (Point<T>) opoints.get(mc);
         if (p == null) {
@@ -224,7 +223,7 @@ public final class Point<T> implements MathObjectReal<T> {
         return p;
     }
 
-    private static final Map<RealCalculator<?>, Point<?>> opoints = new ConcurrentHashMap<>();
+    private static final Map<FieldCalculator<?>, Point<?>> opoints = new ConcurrentHashMap<>();
 
 
     /**
@@ -242,7 +241,7 @@ public final class Point<T> implements MathObjectReal<T> {
     }
 
     public static <T> Point<T> fromVector(PVector<T> v) {
-        return new Point<>((RealCalculator<T>) v.getCalculator(), v.x, v.y); //TODO
+        return new Point<>((FieldCalculator<T>) v.getCalculator(), v.x, v.y); //TODO
     }
 
 

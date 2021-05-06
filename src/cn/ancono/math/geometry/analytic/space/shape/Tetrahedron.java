@@ -2,6 +2,8 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.exceptions.UnsatisfiedCalculationResultException;
 import cn.ancono.math.geometry.analytic.space.*;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -200,7 +202,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     public T surfaceArea() {
         if (surfaceArea == null) {
 
-            surfaceArea = getMc().sum(Arrays.asList(bot.area(), f1.area(), f2.area(), f3.area()));
+            surfaceArea = getCalculator().sum(Arrays.asList(bot.area(), f1.area(), f2.area(), f3.area()));
         }
         return surfaceArea;
     }
@@ -212,7 +214,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      */
     @Override
     public T volume() {
-        return getMc().abs(volumePN());
+        return getCalculator().abs(volumePN());
     }
 
     /**
@@ -221,7 +223,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      */
     public T volumePN() {
         if (volume == null) {
-            volume = getMc().divideLong(SVector.mixedProduct(
+            volume = getCalculator().divideLong(SVector.mixedProduct(
                     es[0].getDirectVector(), es[2].getDirectVector(), es[3].getDirectVector()), 6l);
         }
         return volume;
@@ -245,7 +247,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      * @return
      */
     public T radiusI() {
-        return getMc().multiplyLong(getMc().divide(volume(), surfaceArea()), 3l);
+        return getCalculator().multiplyLong(getCalculator().divide(volume(), surfaceArea()), 3l);
     }
 
     /**
@@ -278,25 +280,25 @@ public final class Tetrahedron<T> extends Pyramid<T> {
         initPlaneDirect();
         surfaceArea();
         T r = radiusI();
-        T x = getMc().add(getMc().add(getMc().multiply(
-                bot.area(), ps[0].getX()), getMc().multiply(
-                f2.area(), ps[1].getX())), getMc().add(getMc().multiply(
-                f3.area(), ps[2].getX()), getMc().multiply(
+        T x = getCalculator().add(getCalculator().add(getCalculator().multiply(
+                bot.area(), ps[0].getX()), getCalculator().multiply(
+                f2.area(), ps[1].getX())), getCalculator().add(getCalculator().multiply(
+                f3.area(), ps[2].getX()), getCalculator().multiply(
                 f1.area(), ps[3].getX())));
-        T y = getMc().add(getMc().add(getMc().multiply(
-                bot.area(), ps[0].getY()), getMc().multiply(
-                f2.area(), ps[1].getY())), getMc().add(getMc().multiply(
-                f3.area(), ps[2].getY()), getMc().multiply(
+        T y = getCalculator().add(getCalculator().add(getCalculator().multiply(
+                bot.area(), ps[0].getY()), getCalculator().multiply(
+                f2.area(), ps[1].getY())), getCalculator().add(getCalculator().multiply(
+                f3.area(), ps[2].getY()), getCalculator().multiply(
                 f1.area(), ps[3].getY())));
-        T z = getMc().add(getMc().add(getMc().multiply(
-                bot.area(), ps[0].getZ()), getMc().multiply(
-                f2.area(), ps[1].getZ())), getMc().add(getMc().multiply(
-                f3.area(), ps[2].getZ()), getMc().multiply(
+        T z = getCalculator().add(getCalculator().add(getCalculator().multiply(
+                bot.area(), ps[0].getZ()), getCalculator().multiply(
+                f2.area(), ps[1].getZ())), getCalculator().add(getCalculator().multiply(
+                f3.area(), ps[2].getZ()), getCalculator().multiply(
                 f1.area(), ps[3].getZ())));
-        x = getMc().divide(x, surfaceArea);
-        y = getMc().divide(y, surfaceArea);
-        z = getMc().divide(z, surfaceArea);
-        SPoint<T> center = SPoint.valueOf(x, y, z, getMc());
+        x = getCalculator().divide(x, surfaceArea);
+        y = getCalculator().divide(y, surfaceArea);
+        z = getCalculator().divide(z, surfaceArea);
+        SPoint<T> center = SPoint.valueOf(x, y, z, getCalculator());
         return Sphere.centerRadius(center, r);
     }
 
@@ -315,10 +317,10 @@ public final class Tetrahedron<T> extends Pyramid<T> {
         if (planeDirect == 0) {
             initPlaneDirect();
         }
-        T z = getMc().getZero();
-        int d1 = getMc().compare(f1.getPlane().distanceDirected(p), z);
-        int d2 = getMc().compare(f2.getPlane().distanceDirected(p), z);
-        int d3 = getMc().compare(f3.getPlane().distanceDirected(p), z);
+        T z = getCalculator().getZero();
+        int d1 = getCalculator().compare(f1.getPlane().distanceDirected(p), z);
+        int d2 = getCalculator().compare(f2.getPlane().distanceDirected(p), z);
+        int d3 = getCalculator().compare(f3.getPlane().distanceDirected(p), z);
         if (planeDirect > 0) {
             return d1 > 0 && d2 > 0 && d3 > 0;
         } else {
@@ -335,9 +337,9 @@ public final class Tetrahedron<T> extends Pyramid<T> {
     }
 
     private void initPlaneDirect() {
-        planeDirect = getMc().compare(bot.getPlane().distanceDirected(centerG()), getMc().getZero());
+        planeDirect = getCalculator().compare(bot.getPlane().distanceDirected(centerG()), getCalculator().getZero());
         if (planeDirect == 0) {
-            throw new UnsatisfiedCalculationResultException("Distance=0", getMc());
+            throw new UnsatisfiedCalculationResultException("Distance=0", getCalculator());
         }
     }
 
@@ -349,10 +351,10 @@ public final class Tetrahedron<T> extends Pyramid<T> {
         if (planeDirect == 0) {
             initPlaneDirect();
         }
-        T z = getMc().getZero();
-        int d1 = getMc().compare(f1.getPlane().distanceDirected(p), z);
-        int d2 = getMc().compare(f2.getPlane().distanceDirected(p), z);
-        int d3 = getMc().compare(f3.getPlane().distanceDirected(p), z);
+        T z = getCalculator().getZero();
+        int d1 = getCalculator().compare(f1.getPlane().distanceDirected(p), z);
+        int d2 = getCalculator().compare(f2.getPlane().distanceDirected(p), z);
+        int d3 = getCalculator().compare(f3.getPlane().distanceDirected(p), z);
         if (d1 == 0 || d2 == 0 || d3 == 0) {
             return true;
             //on surface
@@ -377,8 +379,8 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      */
     @NotNull
     @Override
-    public <N> Tetrahedron<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        Tetrahedron<N> te = new Tetrahedron<>(newCalculator,
+    public <N> Tetrahedron<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        Tetrahedron<N> te = new Tetrahedron<>((RealCalculator<N>) newCalculator,
                 bot.mapTo(newCalculator, mapper),
                 f1.mapTo(newCalculator, mapper),
                 f2.mapTo(newCalculator, mapper),
@@ -410,7 +412,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof Tetrahedron) {
             Tetrahedron<T> tr = (Tetrahedron<T>) obj;
             return ArraySup.arrayEqualNoOrder(ps, tr.ps, (p1, p2) -> p1.valueEquals(p2));
@@ -418,18 +420,6 @@ public final class Tetrahedron<T> extends Pyramid<T> {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Tetrahedron) {
-            Tetrahedron<N> tr = (Tetrahedron<N>) obj;
-            SPoint<T>[] ar = ArraySup.mapTo(tr.ps, p -> p.mapTo(getMc(), mapper));
-            return ArraySup.arrayEqualNoOrder(ps, ar, (p1, p2) -> p1.valueEquals(p2));
-        }
-        return false;
-    }
 
     /*
      * Returns <pre>
@@ -449,7 +439,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
 
     /**
      * Create a tetrahedron by four points.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p
      * @param A
@@ -462,7 +452,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
         STriangle<T> f1 = list.get(0),
                 f2 = list.get(1),
                 f3 = list.get(2);
-        return new Tetrahedron<>(p.getCalculator(), STriangle.sides(
+        return new Tetrahedron<>((RealCalculator<T>) p.getCalculator(), STriangle.sides(
                 f1.getEdgeC().reverse(), f2.getEdgeC().reverse(), f3.getEdgeC().reverse()),
                 f1, f2, f3);
     }

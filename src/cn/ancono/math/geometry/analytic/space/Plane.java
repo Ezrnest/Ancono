@@ -1,7 +1,9 @@
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.AbstractMathObjectReal;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
@@ -10,7 +12,7 @@ import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.Circle;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.geometry.analytic.plane.Triangle;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
@@ -71,6 +73,12 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         normalVector = nv;
     }
 
+    @NotNull
+    @Override
+    public RealCalculator<T> getCalculator() {
+        return (RealCalculator<T>) super.getCalculator();
+    }
+
     /**
      * Substitute the point's xyz coordinate into the expression ax+by+cz+d and returns the
      * result.
@@ -79,16 +87,18 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return the result
      */
     public T substitute(SPoint<T> p) {
-        T res = getMc().multiply(a, p.x);
-        res = getMc().add(res, getMc().multiply(b, p.y));
-        res = getMc().add(res, getMc().multiply(c, p.z));
-        return getMc().add(res, d);
+        var mc = getCalculator();
+        T res = mc.multiply(a, p.x);
+        res = mc.add(res, mc.multiply(b, p.y));
+        res = mc.add(res, mc.multiply(c, p.z));
+        return mc.add(res, d);
     }
 
     T compute(T x, T y, T z) {
-        T res = getMc().multiply(a, x);
-        res = getMc().add(res, getMc().multiply(b, y));
-        return getMc().add(res, getMc().multiply(c, z));
+        var mc = getCalculator();
+        T res = mc.multiply(a, x);
+        res = mc.add(res, mc.multiply(b, y));
+        return mc.add(res, mc.multiply(c, z));
     }
 
     /**
@@ -97,7 +107,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     @Override
     public boolean contains(SPoint<T> p) {
-        return getMc().isZero(substitute(p));
+        var mc = getCalculator();
+        return mc.isZero(substitute(p));
     }
 
     /**
@@ -109,9 +120,10 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return true if the plane contain the vector.
      */
     public boolean contains(SVector<T> vec) {
+        var mc = getCalculator();
         //or we can write
         //return mc.isZero(getNormalVector().innerProduct(vec));
-        return getMc().isZero(compute(vec.getX(), vec.getY(), vec.getZ()));
+        return mc.isZero(compute(vec.getX(), vec.getY(), vec.getZ()));
     }
 
     /**
@@ -137,7 +149,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         mat[1][1] = p.b;
         mat[1][2] = p.c;
         mat[1][3] = p.d;
-        return Matrix.of(mat, getMc());
+        var mc = getCalculator();
+        return Matrix.of(mat, mc);
     }
 
     /**
@@ -161,14 +174,15 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public Relation relationWith(Plane<T> p) {
         if (isParallel(p)) {
-            if (getMc().isZero(a)) {
-                if (getMc().isZero(b)) {
-                    return getMc().isEqual(getMc().multiply(c, p.d), getMc().multiply(d, p.c)) ? Relation.COINCIDE :
+            var mc = getCalculator();
+            if (mc.isZero(a)) {
+                if (mc.isZero(b)) {
+                    return mc.isEqual(mc.multiply(c, p.d), mc.multiply(d, p.c)) ? Relation.COINCIDE :
                             Relation.PARALLEL;
                 }
-                return getMc().isEqual(getMc().multiply(b, p.d), getMc().multiply(d, p.b)) ? Relation.COINCIDE : Relation.PARALLEL;
+                return mc.isEqual(mc.multiply(b, p.d), mc.multiply(d, p.b)) ? Relation.COINCIDE : Relation.PARALLEL;
             }
-            return getMc().isEqual(getMc().multiply(a, p.d), getMc().multiply(d, p.a)) ? Relation.COINCIDE : Relation.PARALLEL;
+            return mc.isEqual(mc.multiply(a, p.d), mc.multiply(d, p.a)) ? Relation.COINCIDE : Relation.PARALLEL;
         }
         return Relation.INTERSECT;
     }
@@ -212,8 +226,9 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
             throw new ArithmeticException("Coincide");
         }
         Vector<T> base = so.getSpecial();
-        return new Line<>(getMc(),
-                new SPoint<>(getMc(), base.get(0), base.get(1), base.get(2)),
+        var mc = getCalculator();
+        return new Line<>(mc,
+                new SPoint<>(mc, base.get(0), base.get(1), base.get(2)),
                 SVector.fromVector(basis.getVectors().get(0)));
     }
 
@@ -236,7 +251,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return
      */
     public Plane<T> moveToward(SVector<T> vec) {
-        Plane<T> p = new Plane<T>(getMc(), a, b, c, getMc().subtract(d, getNormalVector().innerProduct(vec)));
+        var mc = getCalculator();
+        Plane<T> p = new Plane<T>(mc, a, b, c, mc.subtract(d, getNormalVector().innerProduct(vec)));
         p.normalVector = normalVector;
         return p;
     }
@@ -248,7 +264,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return
      */
     public Plane<T> moveDistance(T dis) {
-        Plane<T> p = new Plane<T>(getMc(), a, b, c, getMc().subtract(d, getMc().multiply(getNormalVector().norm(), dis)));
+        var mc = getCalculator();
+        Plane<T> p = new Plane<T>(mc, a, b, c, mc.subtract(d, mc.multiply(getNormalVector().norm(), dis)));
         p.normalVector = normalVector;
         return p;
     }
@@ -264,9 +281,10 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public SVector<T>[] getDirectVectors() {
         @SuppressWarnings("unchecked")
         SVector<T>[] res = new SVector[2];
-        T a_ = getMc().negate(a);
-        res[0] = new SVector<T>(b, a_, getMc().getZero(), getMc());
-        res[1] = new SVector<T>(c, getMc().getZero(), a_, getMc());
+        var mc = getCalculator();
+        T a_ = mc.negate(a);
+        res[0] = new SVector<T>(b, a_, mc.getZero(), mc);
+        res[1] = new SVector<T>(c, mc.getZero(), a_, mc);
         return res;
     }
 
@@ -278,7 +296,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public SVector<T> getNormalVector() {
         if (normalVector == null) {
-            normalVector = new SVector<>(a, b, c, getMc());
+            var mc = getCalculator();
+            normalVector = new SVector<>(a, b, c, mc);
         }
         return normalVector;
     }
@@ -293,7 +312,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public T angleCos(Plane<T> p2) {
         SVector<T> n1 = getNormalVector(),
                 n2 = p2.getNormalVector();
-        return getMc().abs(n1.angleCos(n2));
+        return getCalculator().abs(n1.angleCos(n2));
     }
 
 
@@ -318,7 +337,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public T angleSin(Line<T> l) {
         //we calculate the cos instead
-        return getMc().abs(getNormalVector().angleCos(l.vec));
+        var mc = getCalculator();
+        return mc.abs(getNormalVector().angleCos(l.vec));
     }
 
     /**
@@ -340,16 +360,17 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return a point
      */
     public SPoint<T> projection(SPoint<T> p) {
+        var mc = getCalculator();
         T t = substitute(p);
-        if (getMc().isZero(t)) {
+        if (mc.isZero(t)) {
             //the point is on this plane.
             return p;
         }
-        T k = getMc().negate(getMc().divide(t, getNormalVector().normSq()));
-        T px = getMc().add(p.x, getMc().multiply(a, k));
-        T py = getMc().add(p.y, getMc().multiply(b, k));
-        T pz = getMc().add(p.z, getMc().multiply(c, k));
-        return new SPoint<>(getMc(), px, py, pz);
+        T k = mc.negate(mc.divide(t, getNormalVector().normSq()));
+        T px = mc.add(p.x, mc.multiply(a, k));
+        T py = mc.add(p.y, mc.multiply(b, k));
+        T pz = mc.add(p.z, mc.multiply(c, k));
+        return new SPoint<>(mc, px, py, pz);
     }
 
     /**
@@ -359,8 +380,9 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return the square of the distance
      */
     public T distanceSq(SPoint<T> p) {
+        var mc = getCalculator();
         T t = substitute(p);
-        return getMc().divide(getMc().multiply(t, t), getNormalVector().normSq());
+        return mc.divide(mc.multiply(t, t), getNormalVector().normSq());
     }
 
     /**
@@ -370,7 +392,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return the distance
      */
     public T distance(SPoint<T> p) {
-        return getMc().abs(distanceDirected(p));
+        var mc = getCalculator();
+        return mc.abs(distanceDirected(p));
     }
 
     /**
@@ -381,7 +404,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public T distanceDirected(SPoint<T> p) {
         T t = substitute(p);
-        return getMc().divide(t, getNormalVector().norm());
+        var mc = getCalculator();
+        return mc.divide(t, getNormalVector().norm());
     }
 
     /**
@@ -391,7 +415,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      */
     public Plane<T> reverse() {
         SVector<T> nor = getNormalVector().negate();
-        return new Plane<>(getMc(), nor, getMc().negate(d));
+        var mc = getCalculator();
+        return new Plane<>(mc, nor, mc.negate(d));
     }
 
     /**
@@ -427,17 +452,18 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     }
 
     private SPoint<T> projection0(SPoint<T> p, SVector<T> vec, T t) {
-        if (getMc().isZero(t)) {
+        var mc = getCalculator();
+        if (mc.isZero(t)) {
             if (contains(p)) {
                 return p;
             }
             return null;
         }
-        T k = getMc().negate(getMc().divide(substitute(p), t));
-        T xn = getMc().add(p.x, getMc().multiply(k, vec.x));
-        T yn = getMc().add(p.y, getMc().multiply(k, vec.y));
-        T zn = getMc().add(p.z, getMc().multiply(k, vec.z));
-        return new SPoint<>(getMc(), xn, yn, zn);
+        T k = mc.negate(mc.divide(substitute(p), t));
+        T xn = mc.add(p.x, mc.multiply(k, vec.x));
+        T yn = mc.add(p.y, mc.multiply(k, vec.y));
+        T zn = mc.add(p.z, mc.multiply(k, vec.z));
+        return new SPoint<>(mc, xn, yn, zn);
     }
 
     /**
@@ -461,7 +487,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public Line<T> projection(Line<T> l) {
         SPoint<T> ip = intersectPoint(l);
         SVector<T> vec = projection(l.vec);
-        return new Line<>(getMc(), ip, vec);
+        var mc = getCalculator();
+        return new Line<>(mc, ip, vec);
     }
 
     /**
@@ -515,7 +542,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @return a Plane
      */
     public Plane<T> perpendicular(Line<T> l) {
-        Plane<T> p = vectorPoint0(getNormalVector(), l.getDirectVector(), l.getOnePoint(), getMc());
+        Plane<T> p = vectorPoint0(getNormalVector(), l.getDirectVector(), l.getOnePoint(), getCalculator());
         if (p == null) {
             throw new IllegalArgumentException("Perpendicular");
         }
@@ -553,7 +580,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
             x = x.unitVector();
             y = y.unitVector();
         }
-        return new PlaneCoordinateConverter<>(getMc(), x, y, O, unitLength, this);
+        return new PlaneCoordinateConverter<>(getCalculator(), x, y, O, unitLength, this);
     }
 
     /**
@@ -576,7 +603,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
      * @author liyicheng
      * 2017-09-22 17:24
      */
-    public static class PlaneCoordinateConverter<T> extends AbstractMathObject<T> {
+    public static class PlaneCoordinateConverter<T> extends AbstractMathObjectReal<T> {
         final T D, unit;
         final SVector<T> x, y;
         final SPoint<T> O;
@@ -607,7 +634,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
          * @return
          */
         public T convertToPlaneLength(T lengthInSpace) {
-            return getMc().divide(lengthInSpace, unit);
+            var mc = getCalculator();
+            return mc.divide(lengthInSpace, unit);
         }
 
         /**
@@ -616,7 +644,8 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
          * @return
          */
         public T convertToSpaceLength(T lengthInPlane) {
-            return getMc().multiply(lengthInPlane, unit);
+            var mc = getCalculator();
+            return mc.multiply(lengthInPlane, unit);
         }
 
         public Point<T> toPlanePoint(SPoint<T> p) {
@@ -627,21 +656,23 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
 
         Point<T> toPlanePoint0(SPoint<T> p) {
-            T dx = getMc().subtract(p.x, O.x);
-            T dy = getMc().subtract(p.y, O.y);
-            T D1 = getMc().subtract(getMc().multiply(dx, y.y), getMc().multiply(y.x, dy));
-            T D2 = getMc().subtract(getMc().multiply(x.x, dy), getMc().multiply(dx, x.y));
-            T x = getMc().divide(D1, D);
-            T y = getMc().divide(D2, D);
-            return new Point<>(getMc(), x, y);
+            var mc = getCalculator();
+            T dx = mc.subtract(p.x, O.x);
+            T dy = mc.subtract(p.y, O.y);
+            T D1 = mc.subtract(mc.multiply(dx, y.y), mc.multiply(y.x, dy));
+            T D2 = mc.subtract(mc.multiply(x.x, dy), mc.multiply(dx, x.y));
+            T x = mc.divide(D1, D);
+            T y = mc.divide(D2, D);
+            return new Point<>(mc, x, y);
         }
 
         public SPoint<T> toSpacePoint(Point<T> p) {
+            var mc = getCalculator();
             T px = p.getX();
             T py = p.getY();
-            T sx = getMc().add(getMc().multiply(px, x.x), getMc().multiply(py, y.x));
-            T sy = getMc().add(getMc().multiply(px, x.y), getMc().multiply(py, y.y));
-            T sz = getMc().add(getMc().multiply(px, x.z), getMc().multiply(py, y.z));
+            T sx = mc.add(mc.multiply(px, x.x), mc.multiply(py, y.x));
+            T sy = mc.add(mc.multiply(px, x.y), mc.multiply(py, y.y));
+            T sz = mc.add(mc.multiply(px, x.z), mc.multiply(py, y.z));
             return O.moveToward(sx, sy, sz);
         }
 
@@ -650,7 +681,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
                 Point<T> a = toPlanePoint0(tri.getA());
                 Point<T> b = toPlanePoint0(tri.getB());
                 Point<T> c = toPlanePoint0(tri.getC());
-                return Triangle.fromVertex(getMc(), a, b, c);
+                return Triangle.fromVertex(getCalculator(), a, b, c);
             }
             throw new IllegalArgumentException("NOT SAME PLANE");
         }
@@ -658,10 +689,11 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         public Circle<T> toPlaneCircle(SCircle<T> c) {
             if (p.valueEquals(c.getPlane())) {
                 Point<T> p = toPlanePoint0(c.o);
+                var mc = getCalculator();
                 if (c.r != null) {
-                    return Circle.centerAndRadius(p, convertToPlaneLength(c.r), getMc());
+                    return Circle.centerAndRadius(p, convertToPlaneLength(c.r), mc);
                 } else {
-                    return Circle.centerAndRadiusSquare(p, getMc().divide(c.r2, getMc().multiply(unit, unit)), getMc());
+                    return Circle.centerAndRadiusSquare(p, mc.divide(c.r2, mc.multiply(unit, unit)), mc);
                 }
             }
             throw new IllegalArgumentException("NOT SAME PLANE");
@@ -687,10 +719,11 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
             if (obj instanceof PlaneCoordinateConverter) {
                 PlaneCoordinateConverter<T> pcc = (PlaneCoordinateConverter<T>) obj;
-                return getMc().isEqual(D, pcc.D) && getMc().isEqual(unit, pcc.unit) &&
+                var mc = getCalculator();
+                return mc.isEqual(D, pcc.D) && mc.isEqual(unit, pcc.unit) &&
                         x.valueEquals(pcc.x) && y.valueEquals(pcc.y) && O.valueEquals(pcc.O);
             }
             return false;
@@ -700,7 +733,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 //        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
 //            if (obj instanceof PlaneCoordinateConverter) {
 //                PlaneCoordinateConverter<N> pcc = (PlaneCoordinateConverter<N>) obj;
-//                return getMc().isEqual(D, mapper.apply(pcc.D)) && getMc().isEqual(unit, mapper.apply(pcc.unit)) &&
+//                return mc.isEqual(D, mapper.apply(pcc.D)) && mc.isEqual(unit, mapper.apply(pcc.unit)) &&
 //                        x.valueEquals(pcc.x, mapper) && y.valueEquals(pcc.y, mapper) && O.valueEquals(pcc.O, mapper);
 //            }
 //            return false;
@@ -708,9 +741,12 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
         @NotNull
         @Override
-        public <N> PlaneCoordinateConverter<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new PlaneCoordinateConverter<>(newCalculator, x.mapTo(newCalculator, mapper), y.mapTo(newCalculator, mapper),
-                    O.mapTo(newCalculator, mapper), mapper.apply(unit), p.mapTo(newCalculator, mapper));
+        public <N> PlaneCoordinateConverter<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new PlaneCoordinateConverter<>((RealCalculator<N>) newCalculator, x.mapTo(newCalculator, mapper),
+                    y.mapTo(newCalculator, mapper),
+                    O.mapTo(newCalculator, mapper),
+                    mapper.apply(unit),
+                    p.mapTo(newCalculator, mapper));
         }
 
         /* (non-Javadoc)
@@ -718,15 +754,15 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
          */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        public String toString(@NotNull NumberFormatter<T> nf) {
             return "PlaneCoordinateConverter";
         }
     }
 
     @NotNull
     @Override
-    public <N> Plane<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Plane<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d));
+    public <N> Plane<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Plane<N>((RealCalculator<N>) newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d));
     }
 
     @Override
@@ -749,23 +785,13 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof Line) {
             return this == obj || relationWith((Plane<T>) obj) == Relation.COINCIDE;
         }
         return false;
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Line) {
-            //just map the plane to a new line type T
-            Plane<N> l = (Plane<N>) obj;
-            Plane<T> ll = l.mapTo(getMc(), mapper);
-            return relationWith(ll) == Relation.COINCIDE;
-        }
-        return false;
-    }
 
     /**
      * Returns "Plane: ax+by+cz+d=0", where a,b,c,d are
@@ -776,27 +802,28 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Plane: ");
-        T z = getMc().getZero();
-        T o = getMc().getOne();
-        if (!getMc().isEqual(a, z)) {
-            if (!getMc().isEqual(a, o)) {
+        var mc = getCalculator();
+        T z = mc.getZero();
+        T o = mc.getOne();
+        if (!mc.isEqual(a, z)) {
+            if (!mc.isEqual(a, o)) {
                 sb.append('(').append(a.toString()).append(')');
             }
             sb.append("x + ");
         }
-        if (!getMc().isEqual(b, z)) {
-            if (!getMc().isEqual(b, o)) {
+        if (!mc.isEqual(b, z)) {
+            if (!mc.isEqual(b, o)) {
                 sb.append('(').append(b.toString()).append(')');
             }
             sb.append("y + ");
         }
-        if (!getMc().isEqual(c, z)) {
-            if (!getMc().isEqual(c, o)) {
+        if (!mc.isEqual(c, z)) {
+            if (!mc.isEqual(c, o)) {
                 sb.append('(').append(c.toString()).append(')');
             }
             sb.append("z + ");
         }
-        if (!getMc().isEqual(d, z))
+        if (!mc.isEqual(d, z))
             sb.append('(').append(d.toString()).append(")   ");
         sb.delete(sb.length() - 2, sb.length());
         sb.append("= 0");
@@ -820,7 +847,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     public Plane<T> simplify(Simplifier<T> sim) {
         List<T> ts = Arrays.asList(a, b, c, d);
         ts = sim.simplify(ts);
-        Plane<T> pl = new Plane<>(getMc(), a, b, c, d);
+        Plane<T> pl = new Plane<>(getCalculator(), ts.get(0), ts.get(1), ts.get(2), ts.get(3));
         return pl;
     }
 
@@ -848,7 +875,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane that contains {@code p} and has normal vector {@code nv}.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p  a point
      * @param nv a vector, not zero
@@ -858,7 +885,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         if (nv.isZero()) {
             throw new IllegalArgumentException("zero vector");
         }
-        RealCalculator<T> mc = p.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) p.getCalculator();
         T d = mc.add(mc.multiply(p.x, nv.x), mc.add(mc.multiply(p.y, nv.y), mc.multiply(p.z, nv.z)));
         d = mc.negate(d);
         Plane<T> pl = new Plane<>(mc, nv.x, nv.y, nv.z, d);
@@ -868,7 +895,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through a line and a point outside the line.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param l a line
      * @param p a point
@@ -885,7 +912,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through two lines.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param l1 a line
      * @param l2 another line
@@ -907,14 +934,14 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane through three points.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @return a new plane
      */
     public static <T> Plane<T> threePoints(SPoint<T> p1, SPoint<T> p2, SPoint<T> p3) {
         SVector<T> v1 = SVector.vector(p1, p2);
         SVector<T> v2 = SVector.vector(p1, p3);
-        Plane<T> p = vectorPoint0(v1, v2, p1, p1.getCalculator());
+        Plane<T> p = vectorPoint0(v1, v2, p1, (RealCalculator<T>) p1.getCalculator());
         if (p == null) {
             throw new IllegalArgumentException("Three point one line");
         }
@@ -965,7 +992,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
     /**
      * Create a plane with two vector and a point. The two vector must not be parallel.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param v1
      * @param v2
@@ -995,7 +1022,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
 
 
 //	public static void main(String[] args) {
-//		MathCalculator<Fraction> mc = Fraction.Companion.getCalculator();
+//		MathCalculator<Fraction> mc = Fraction.Companion.mc;
 //		SVector<Fraction> v1 = SVector.valueOf(Fraction.Companion.getONE(), Fraction.Companion.getZERO(), Fraction.Companion.getZERO(), mc);
 //		SVector<Fraction> v2 = SVector.valueOf(Fraction.Companion.getZERO(), Fraction.Companion.getONE(), Fraction.Companion.getZERO(), mc);
 ////				v3 = SVector.vector(3d, 4d, 1d, mc);

@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.projective
 
-import cn.ancono.math.AbstractFlexibleMathObject
-import cn.ancono.math.FMathObject
+import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
@@ -30,7 +30,7 @@ class MobiusTrans<T>(
          * The transformation matrix ((a,b),(c,d))
          */
         val m: TransMatrix<Complex<T>>
-) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc),
+) : AbstractMathObject<T, FieldCalculator<T>>(mc),
         Bijection<ComplexE<T>, ComplexE<T>>,
         Composable<MobiusTrans<T>>,
         MulGroupNumberModel<MobiusTrans<T>> {
@@ -106,7 +106,7 @@ class MobiusTrans<T>(
         return MobiusTrans(newCalculator, ncc, nMat)
     }
 
-    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is MobiusTrans) {
             return false
         }
@@ -116,7 +116,7 @@ class MobiusTrans<T>(
         return m.multiply(det2).valueEquals(m2.multiply(det1))
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return "f(x)=( (${m[0, 0].toString(nf)})x + ${m[0, 1].toString(nf)} ) /" +
                 "( (${m[1, 0].toString(nf)})x + ${m[1, 1].toString(nf)} )"
     }

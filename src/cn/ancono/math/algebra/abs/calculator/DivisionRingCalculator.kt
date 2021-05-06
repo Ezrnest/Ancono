@@ -29,8 +29,14 @@ interface DivisionRingCalculator<T> : UnitRingCalculator<T> {
      * @param y another number
      * @return `x / y`
      */
-    @JvmDefault
     fun divide(x: T, y: T): T = multiply(x, reciprocal(y))
+
+    /**
+     *
+     */
+    override fun exactDivide(x: T, y: T): T {
+        return divide(x, y)
+    }
 
     /**
      * Returns the result of `x / n`. The default implement is
@@ -39,7 +45,6 @@ interface DivisionRingCalculator<T> : UnitRingCalculator<T> {
      * @param n a non-zero long
      * @return `x / n`
      */
-    @JvmDefault
     fun divideLong(x: T, n: Long): T {
         if (n == 0L) {
             ExceptionUtil.dividedByZero()
@@ -50,7 +55,6 @@ interface DivisionRingCalculator<T> : UnitRingCalculator<T> {
     /*
 	 * @see cn.ancono.math.algebra.abstractAlgebra.calculator.UnitRingCalculator#pow(java.lang.Object, long)
 	 */
-    @JvmDefault
     override fun pow(x: T, n: Long): T {
         if (n == 0L) {
             return one
@@ -67,17 +71,14 @@ interface DivisionRingCalculator<T> : UnitRingCalculator<T> {
      * Operator function divide.
      * @see divide
      */
-    @JvmDefault
     operator fun T.div(y: T) = divide(this, y)
 
     /**
      * Operator function divideLong.
      * @see divideLong
      */
-    @JvmDefault
     operator fun T.div(y: Long) = divideLong(this, y)
 
-    @JvmDefault
     override fun isUnit(x: T): Boolean {
         // non-zero element in a division ring is always invertible
         return !isZero(x)

@@ -45,7 +45,7 @@ import cn.ancono.math.numberModels.Fraction
 /**
  * Describes the calculator for real numbers or its generalization.
  */
-interface RealCalculator<T> : QCalculator<T> {
+interface RealCalculator<T> : QuotientCalculator<T> {
 
     /**
      * Determines whether this calculator supports `compare()` method.
@@ -77,7 +77,6 @@ interface RealCalculator<T> : QCalculator<T> {
      *
      * @return the class
      */
-    @JvmDefault
     override val numberClass: Class<T>
         get() = super.numberClass
 
@@ -139,7 +138,6 @@ interface RealCalculator<T> : QCalculator<T> {
      * @return the sum of `ps`
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @JvmDefault
     override fun sum(ps: List<T>): T {
         var sum = zero
         for (t in ps) {
@@ -176,7 +174,6 @@ interface RealCalculator<T> : QCalculator<T> {
      * @return `para1-para2`
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @JvmDefault
     override fun subtract(x: T, y: T): T
 
 
@@ -203,7 +200,6 @@ interface RealCalculator<T> : QCalculator<T> {
      * @return the result
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @JvmDefault
     override fun product(ps: List<T>): T {
         var re = one
         for (t in ps) {
@@ -220,7 +216,6 @@ interface RealCalculator<T> : QCalculator<T> {
      * @return `x / y`
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @JvmDefault
     override fun divide(x: T, y: T): T
 
     /**
@@ -243,7 +238,6 @@ interface RealCalculator<T> : QCalculator<T> {
      * @return `x*n`
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @JvmDefault
     override fun multiplyLong(x: T, n: Long): T {
         return super.multiplyLong(x, n)
     }
@@ -256,7 +250,6 @@ interface RealCalculator<T> : QCalculator<T> {
      * @return `x / n`
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @JvmDefault
     override fun divideLong(x: T, n: Long): T
 
     /**
@@ -294,7 +287,6 @@ interface RealCalculator<T> : QCalculator<T> {
      * @return `p ^ exp`.
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
-    @JvmDefault
     override fun pow(x: T, n: Long): T {
         return super.pow(x, n)
     }
@@ -460,7 +452,6 @@ interface RealCalculator<T> : QCalculator<T> {
     /**
      * Returns a value that represents the given integer.
      */
-    @JvmDefault
     override fun of(x: Long): T {
         return one * x
     }
@@ -468,7 +459,6 @@ interface RealCalculator<T> : QCalculator<T> {
     /**
      * Returns a value that represents the given fraction.
      */
-    @JvmDefault
     override fun of(x: Fraction): T {
         if (x.isZero()) {
             return zero

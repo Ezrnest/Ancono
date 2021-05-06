@@ -1,7 +1,7 @@
 package cn.ancono.math.calculus
 
-import cn.ancono.math.AbstractFlexibleMathObject
-import cn.ancono.math.FMathObject
+import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.eval
@@ -31,8 +31,8 @@ import java.util.function.Function
  * @author
  * Created by lyc at 2021-03-31 12:29
  */
-abstract class OrthPolynomials<T>(val name: String, mc: QCalculator<T>)
-    : AbstractFlexibleMathObject<T, QCalculator<T>>(mc) {
+abstract class OrthPolynomials<T>(val name: String, mc: QuotientCalculator<T>)
+    : AbstractMathObject<T, QuotientCalculator<T>>(mc) {
 
     /**
      * The domain on which the polynomials are defined.
@@ -65,11 +65,11 @@ abstract class OrthPolynomials<T>(val name: String, mc: QCalculator<T>)
     abstract fun normSq(n: Int): T
 
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return "$name Polynomials"
     }
 
-    override fun valueEquals(obj: FMathObject<T, QCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, QuotientCalculator<T>>): Boolean {
         return this == obj
     }
 
@@ -93,10 +93,10 @@ abstract class OrthPolynomials<T>(val name: String, mc: QCalculator<T>)
  *     L_2(x) = (3x^2 - 1)/2
  *     L_3(x) = (5x^3 - 3x)/2
  */
-class LegendreOrthPoly<T>(mc: QCalculator<T>)
+class LegendreOrthPoly<T>(mc: QuotientCalculator<T>)
     : OrthPolynomials<T>("Legendre", mc) {
     override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): LegendreOrthPoly<N> {
-        return LegendreOrthPoly(newCalculator as QCalculator)
+        return LegendreOrthPoly(newCalculator as QuotientCalculator)
     }
 
 
@@ -149,11 +149,11 @@ class LegendreOrthPoly<T>(mc: QCalculator<T>)
  *
  * See: [Tchebychev orthogonal polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials)
  */
-class TchebychevOrthPoly<T>(mc: QCalculator<T>)
+class TchebychevOrthPoly<T>(mc: QuotientCalculator<T>)
     : OrthPolynomials<T>("Tchebychev", mc) {
 
     override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): TchebychevOrthPoly<N> {
-        return TchebychevOrthPoly(newCalculator as QCalculator)
+        return TchebychevOrthPoly(newCalculator as QuotientCalculator)
     }
 
     override fun weight(x: T): T {
@@ -210,7 +210,7 @@ class TchebychevOrthPoly<T>(mc: QCalculator<T>)
  * Implementation Note:
  * Norm values are extremely large, overflow will happen for big `n`.
  */
-class LaguerreOrthPoly<T>(mc: QCalculator<T>)
+class LaguerreOrthPoly<T>(mc: QuotientCalculator<T>)
     : OrthPolynomials<T>("Laguerre", mc) {
 
 
@@ -218,7 +218,7 @@ class LaguerreOrthPoly<T>(mc: QCalculator<T>)
 
 
     override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): LaguerreOrthPoly<N> {
-        return LaguerreOrthPoly(newCalculator as QCalculator)
+        return LaguerreOrthPoly(newCalculator as QuotientCalculator)
     }
 
     override fun weight(x: T): T {
@@ -278,13 +278,13 @@ class LaguerreOrthPoly<T>(mc: QCalculator<T>)
  * Implementation Note: The norm requires constant value pi, calculators must support the constant value.
  * Norm values are extremely large, overflow will happen for big `n`.
  */
-class HermiteOrthPoly<T>(mc: QCalculator<T>)
+class HermiteOrthPoly<T>(mc: QuotientCalculator<T>)
     : OrthPolynomials<T>("Hermite", mc) {
 
     override val domain: Interval<T> = Interval.universe(mc)
 
     override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): HermiteOrthPoly<N> {
-        return HermiteOrthPoly(newCalculator as QCalculator)
+        return HermiteOrthPoly(newCalculator as QuotientCalculator)
     }
 
 

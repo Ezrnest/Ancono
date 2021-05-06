@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.AbstractFlexibleMathObject
-import cn.ancono.math.FMathObject
+import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.utilities.ArraySup
@@ -22,7 +22,7 @@ abstract class AbstractVector<T>(
          * The size of this vector, the number of element that this vector contains.
          */
         final override val size: Int)
-    : AbstractFlexibleMathObject<T, RingCalculator<T>>(mc), GenVector<T> {
+    : AbstractMathObject<T, RingCalculator<T>>(mc), GenVector<T> {
     protected fun checkSameSize(v: AbstractVector<*>) {
         require(size == v.size) {
             "Shape mismatch: $size and ${v.size}"
@@ -88,7 +88,7 @@ abstract class AbstractVector<T>(
 
     abstract override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AbstractVector<N>
 
-    override fun valueEquals(obj: FMathObject<T, RingCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RingCalculator<T>>): Boolean {
         if (obj !is Vector) {
             return false
         }
@@ -96,7 +96,7 @@ abstract class AbstractVector<T>(
     }
 
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return indices.joinToString(", ", "(", ")") { nf.format(get(it)) }
     }
 }
@@ -428,6 +428,16 @@ abstract class Vector<T>(
         }
 
         /**
+         * Returns the sum of a non-empty list of vectors.
+         */
+        @JvmStatic
+        fun <T> sum(vs: List<Vector<T>>): Vector<T> {
+            require(vs.isNotEmpty())
+            return VectorImpl.sum(vs, vs[0].size, vs[0].calculator)
+
+        }
+
+        /**
          * Returns the vector of minimum norm in the Z-span of `a,b`, that is,
          * a vector `v` such that
          * <pre>|v| = min {|ma + nb| : m, n in Z}</pre>
@@ -483,6 +493,25 @@ abstract class Vector<T>(
             val pivots = MatrixImpl.toUpperTriangle(matrix)
             return VectorBasis.createBaseWithoutCheck(pivots.map { copyOf(vs[it]) })
         }
+
+        /**
+         * Returns a calculator for the given vector.
+         */
+        fun <T> calculatorFor(v: Vector<T>): VectorCalRing<T> {
+            val cal = v.calculator
+            if (cal is FieldCalculator) {
+                return calculator(v.size, cal)
+            }
+            return VectorCalRing(cal, v.size)
+        }
+
+        fun <T> calculator(size: Int, cal: FieldCalculator<T>): VectorCalField<T> {
+            return VectorCalField(cal, size)
+        }
+
+        fun <T> calculator(size: Int, cal: RingCalculator<T>): VectorCalRing<T> {
+            return VectorCalRing(cal, size)
+        }
     }
 
 }
@@ -529,6 +558,15 @@ internal object VectorImpl {
     fun <T> divide(x: Vector<T>, k: T): AVector<T> {
         val mc = x.calculator as FieldCalculator
         return apply1(x) { mc.divide(k, it) }
+    }
+
+    fun <T> sum(vs: List<Vector<T>>, size: Int, cal: RingCalculator<T>): AVector<T> {
+        require(vs.all { it.size == size }) { "Size mismatch! " }
+        val result = AVector.zero(size, cal)
+        for (v in vs) {
+            result += v
+        }
+        return result
     }
 
 }
@@ -766,4 +804,57 @@ fun <T> Vector<T>.asColumnMatrix(): Matrix<T> {
  */
 fun <T> Vector<T>.asRowMatrix(): Matrix<T> {
     return Matrix.of(1, size, calculator, toList())
+}
+
+open class VectorCalRing<T>(calculator: RingCalculator<T>, val size: Int) : ModuleCalculator<T, Vector<T>> {
+    open val cal: RingCalculator<T> = calculator
+    override fun isEqual(x: Vector<T>, y: Vector<T>): Boolean {
+        return x.valueEquals(y)
+    }
+
+    override val zero: Vector<T> = Vector.zero(size, calculator)
+
+    override fun negate(x: Vector<T>): Vector<T> {
+        return x.negate()
+    }
+
+    override fun scalarMultiply(k: T, v: Vector<T>): Vector<T> {
+        return v.multiply(k)
+    }
+
+    override val scalarCalculator: RingCalculator<T>
+        get() = cal
+
+    override fun add(x: Vector<T>, y: Vector<T>): Vector<T> {
+        return x.add(y)
+    }
+
+    override fun subtract(x: Vector<T>, y: Vector<T>): Vector<T> {
+        return x.subtract(y)
+    }
+
+    override fun isZero(x: Vector<T>): Boolean {
+        return x.isZero()
+    }
+
+    override fun sum(ps: List<Vector<T>>): Vector<T> {
+        if (ps.isEmpty()) {
+            return zero
+        }
+        return VectorImpl.sum(ps, size, cal)
+    }
+
+    override fun multiplyLong(x: Vector<T>, n: Long): Vector<T> {
+        return x.multiply(n)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override val numberClass: Class<Vector<T>>
+        get() = Vector::class.java as Class<Vector<T>>
+}
+
+class VectorCalField<T>(override val cal: FieldCalculator<T>, size: Int)
+    : VectorCalRing<T>(cal, size), LinearSpaceCalculator<T, Vector<T>> {
+    override val scalarCalculator: FieldCalculator<T>
+        get() = cal
 }

@@ -21,7 +21,6 @@ interface FieldCalculator<T> : DivisionRingCalculator<T> {
      */
     override fun multiply(x: T, y: T): T
 
-    @JvmDefault
     override val isCommutative: Boolean
         get() = true
 
@@ -31,7 +30,6 @@ interface FieldCalculator<T> : DivisionRingCalculator<T> {
     val characteristic: Long
 
 
-    @JvmDefault
     fun of(x: Fraction): T {
         return divideLong(of(x.numerator), x.denominator)
     }

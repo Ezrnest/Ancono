@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.equation;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,5 +41,5 @@ public abstract class AbstractSVCompareStructure<T> extends AbstractCompareStruc
      */
     @NotNull
     @Override
-    public abstract <N> AbstractSVCompareStructure<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractSVCompareStructure<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 }

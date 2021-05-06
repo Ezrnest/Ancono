@@ -6,11 +6,11 @@ package cn.ancono.math.function
 import cn.ancono.math.MathCalculatorHolder
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.IPolynomial
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.calculus.Calculus
 import cn.ancono.math.calculus.Calculus.derivation
 import cn.ancono.math.calculus.Integrable
-import cn.ancono.math.numberModels.CalculatorUtils
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.utilities.ArraySup
 import java.util.*
@@ -75,16 +75,15 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
 	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 	 */
     abstract override fun <N> mapTo(
-            newCalculator: RealCalculator<N>,
+            newCalculator: EqualPredicate<N>,
             mapper: Function<T, N>
     ): AbstractSVPFunction<N>
-
 
     /**
      * Compares whether the another one is also a SVPFunction and determines whether
      * they are equal
      */
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
         if (obj !is SVPFunction<*>) {
             return false
         }
@@ -95,24 +94,11 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
         return SVPFunction.isEqual(this, f) { para1, para2 -> mc.isEqual(para1, para2) }
     }
 
-    /* (non-Javadoc)
-	 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-	 */
-    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        if (obj !is SVPFunction<*>) {
-            return false
-        }
-        if (obj === this) {
-            return true
-        }
-        val f = obj as SVPFunction<N>
-        return IPolynomial.isEqual(this, f, CalculatorUtils.mappedIsEqual(mc, mapper))
-    }
 
     /* (non-Javadoc)
 	 * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
 	 */
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return IPolynomial.stringOf(this, mc, nf)
     }
 
@@ -146,10 +132,10 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
         override fun <N> mapTo(
-                newCalculator: RealCalculator<N>,
+                newCalculator: EqualPredicate<N>,
                 mapper: Function<T, N>
         ): SVPFunctionImpl1<N> {
-            return SVPFunctionImpl1(newCalculator, mp, ArraySup.mapTo(coes, mapper))
+            return SVPFunctionImpl1(newCalculator as RealCalculator, mp, ArraySup.mapTo(coes, mapper))
         }
 
         override fun equals(other: Any?): Boolean {
@@ -197,14 +183,14 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
 		 */
         override fun <N> mapTo(
-                newCalculator: RealCalculator<N>,
+                newCalculator: EqualPredicate<N>,
                 mapper: Function<T, N>
         ): SVPFunctionImpl2<N> {
             val nmap = HashMap<Int, N>(map.size)
             for ((key, value) in map) {
                 nmap[key] = mapper.apply(value)
             }
-            return SVPFunctionImpl2(newCalculator, mp, nmap)
+            return SVPFunctionImpl2(newCalculator as RealCalculator, mp, nmap)
         }
 
         /* (non-Javadoc)
@@ -264,8 +250,8 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.function.AbstractSVPFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
 		 */
-        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): LinearFunction<N> {
-            return LinearFunction(newCalculator, mapper.apply(a), mapper.apply(b))
+        override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): LinearFunction<N> {
+            return LinearFunction(newCalculator as RealCalculator, mapper.apply(a), mapper.apply(b))
         }
 
     }
@@ -294,18 +280,15 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
 		 */
-        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): ConstantFunction<N> {
-            return ConstantFunction(newCalculator, mapper.apply(result))
+        override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): ConstantFunction<N> {
+            return ConstantFunction(newCalculator as RealCalculator, mapper.apply(result))
         }
 
         override fun <S> mapTo(mapper: Bijection<T, S>): DerivableSVFunction<S> {
             return super<AbstractSVPFunction>.mapTo(mapper)
         }
 
-        /*
-                 * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
-                 */
-        override fun valueEquals(obj: MathObject<T>): Boolean {
+        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
             return if (obj !is ConstantFunction<*>) {
                 false
             } else mc.isEqual(result, (obj as ConstantFunction<T>).result)
@@ -314,7 +297,7 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
         /*
 		 * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.numberModels.api.NumberFormatter)
 		 */
-        override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        override fun toString(nf: NumberFormatter<T>): String {
             return nf.format(result)
         }
 

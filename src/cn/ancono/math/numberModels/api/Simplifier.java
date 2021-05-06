@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels.api;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
 import kotlin.Pair;
 
 import java.util.Arrays;
@@ -55,7 +55,7 @@ public interface Simplifier<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, S extends MathObject<T>> S singleSimplify(Simplifier<T> s, S x) {
+    public static <T, S extends MathObjectReal<T>> S singleSimplify(Simplifier<T> s, S x) {
         return (S) x.mapTo(x.getCalculator(), s::simplify);
     }
 

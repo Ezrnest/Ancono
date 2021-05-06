@@ -7,7 +7,7 @@ import cn.ancono.math.numberModels.BigFraction.Companion.fromFraction
 import cn.ancono.math.numberModels.BigFraction.Companion.valueOf
 import cn.ancono.math.numberModels.Fraction.Companion.EXPRESSION_PATTERN
 import cn.ancono.math.numberModels.api.FieldNumberModel
-import cn.ancono.math.numberModels.api.QCalculator
+import cn.ancono.math.numberModels.api.QuotientCalculator
 import java.io.Serializable
 import java.math.BigInteger
 import kotlin.math.absoluteValue
@@ -340,7 +340,7 @@ internal constructor(val signum: Int, val numerator: BigInteger, val denominator
     }
 }
 
-object BigFractionCalculator : QCalculator<BigFraction> {
+object BigFractionCalculator : QuotientCalculator<BigFraction> {
     override val one: BigFraction
         get() = ONE
     override val zero: BigFraction

@@ -5,7 +5,8 @@ package cn.ancono.math.geometry.analytic.plane.curve;
  *
  */
 
-import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.AbstractMathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.PlanePointSet;
 import cn.ancono.math.geometry.analytic.plane.Point;
@@ -20,7 +21,7 @@ import java.util.function.Function;
  * @param <T>
  * @author liyicheng
  */
-public abstract class AbstractPlaneCurve<T> extends AbstractMathObject<T> implements PlanePointSet<T> {
+public abstract class AbstractPlaneCurve<T> extends AbstractMathObjectReal<T> implements PlanePointSet<T> {
 
     protected AbstractPlaneCurve(RealCalculator<T> mc) {
         super(mc);
@@ -66,7 +67,7 @@ public abstract class AbstractPlaneCurve<T> extends AbstractMathObject<T> implem
      */
     @NotNull
     @Override
-    public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractPlaneCurve<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
 }

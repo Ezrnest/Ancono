@@ -1,15 +1,17 @@
 package cn.ancono.math.algebra.abs.module
 
-import cn.ancono.math.FlexibleMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.EqualRelation
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator
 import cn.ancono.math.algebra.abs.calculator.ModuleCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.group.Homomorphism
 import cn.ancono.math.algebra.abs.structure.*
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.IntCalculator
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.set.MathSet
+import java.util.function.Function
 
 
 /*
@@ -57,7 +59,7 @@ class ZModuleCalFromAGroup<Z, V>(val ic: IntCalculator<Z>, val gc: GroupCalculat
 class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
                               private val group: AbelianGroup<V>)
 //Created by lyc at 2020-03-11 18:8
-    : FlexibleMathObject<Z, IntCalculator<Z>>,
+    : MathObject<Z, IntCalculator<Z>>,
         ZModule<Z, V> {
     override val calculator: IntCalculator<Z>
         get() = cal
@@ -109,7 +111,7 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
     }
 
     override fun getSubgroups(): MathSet<out Group<V>> {
-        return group.getSubgroups()
+        return group.subgroups
     }
 
     override fun isSubgroup(g: Group<V>): Boolean {
@@ -153,7 +155,7 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
     }
 
 
-    override fun toString(nf: FlexibleNumberFormatter<Z>): String {
+    override fun toString(nf: NumberFormatter<Z>): String {
         return "Z-module from $group"
     }
 
@@ -163,6 +165,14 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
     }
 
     override fun toString(): String {
-        return toString(FlexibleNumberFormatter.defaultFormatter())
+        return toString(NumberFormatter.defaultFormatter())
+    }
+
+    override fun valueEquals(obj: MathObject<Z, IntCalculator<Z>>): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<Z, N>): MathObject<N, *> {
+        TODO("Not yet implemented")
     }
 }

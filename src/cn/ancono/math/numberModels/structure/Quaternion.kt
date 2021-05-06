@@ -1,42 +1,46 @@
 package cn.ancono.math.numberModels.structure
 
+import cn.ancono.math.AbstractMathObject
 import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
 import cn.ancono.math.algebra.abs.FiniteGroups
-import cn.ancono.math.algebra.abs.calculator.DivisionRingCalculator
-import cn.ancono.math.algebra.abs.calculator.asGroupCalculator
-import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.abs.group.finite.AbstractFiniteGroup
 import cn.ancono.math.geometry.analytic.space.SVector
 import cn.ancono.math.numberModels.api.FieldNumberModel
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
 import java.util.function.Function
 
 
-class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T>)
-    : MathObjectExtend<T>(mc), FieldNumberModel<Quaternion<T>> {
+class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: FieldCalculator<T>)
+    : AbstractMathObject<T, FieldCalculator<T>>(mc), FieldNumberModel<Quaternion<T>> {
     val tensor: T by lazy(LazyThreadSafetyMode.NONE) {
-        a * a + b * b + c * c + d * d
+        mc.eval {
+            a * a + b * b + c * c + d * d
+        }
     }
 
     /**
      * Returns the real part as a quaternion.
      */
     fun real(): Quaternion<T> {
-        return real(a, mc)
+        return real(a, calculator)
     }
 
     override fun isZero(): Boolean {
-        return mc.eval { isZero(a) && isZero(b) && isZero(c) && isZero(d) }
+        return calculator.eval { isZero(a) && isZero(b) && isZero(c) && isZero(d) }
     }
 
     operator fun plus(y: Quaternion<T>): Quaternion<T> {
-        return Quaternion(a + y.a, b + y.b, c + y.c, d + y.d, mc)
+        return calculator.eval {
+            Quaternion(a + y.a, b + y.b, c + y.c, d + y.d, this)
+        }
     }
 
     operator fun minus(y: Quaternion<T>): Quaternion<T> {
-        return Quaternion(a - y.a, b - y.b, c - y.c, d - y.d, mc)
+        return calculator.eval {
+            Quaternion(a - y.a, b - y.b, c - y.c, d - y.d, this)
+        }
     }
 
     operator fun times(y: Quaternion<T>): Quaternion<T> {
@@ -47,11 +51,13 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
             j 	j 	−k 	−1 	i
             k 	k 	j 	−i 	−1
      */
-        val na = a * y.a - b * y.b - c * y.c - d * y.d
-        val nb = b * y.a + a * y.b + c * y.d - d * y.c
-        val nc = c * y.a + a * y.c - b * y.d + d * y.b
-        val nd = d * y.a + a * y.d + b * y.c - c * y.b
-        return Quaternion(na, nb, nc, nd, mc)
+        return calculator.eval {
+            val na = a * y.a - b * y.b - c * y.c - d * y.d
+            val nb = b * y.a + a * y.b + c * y.d - d * y.c
+            val nc = c * y.a + a * y.c - b * y.d + d * y.b
+            val nd = d * y.a + a * y.d + b * y.c - c * y.b
+            Quaternion(na, nb, nc, nd, this)
+        }
     }
 
     override fun add(y: Quaternion<T>): Quaternion<T> {
@@ -67,7 +73,11 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
     }
 
 
-    operator fun unaryMinus(): Quaternion<T> = Quaternion(-a, -b, -c, -d, mc)
+    operator fun unaryMinus(): Quaternion<T> {
+        return calculator.eval {
+            Quaternion(-a, -b, -c, -d, this)
+        }
+    }
 
     /**
      * Returns the reciprocal of this quaternion:
@@ -81,7 +91,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
      * Returns the norm of this: ||this||
      */
     fun norm(): T {
-        return mc.squareRoot(tensor)
+        return (calculator as RealCalculator).squareRoot(tensor)
     }
 
     /**
@@ -89,18 +99,25 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
      * > a - bi - cj - dk
      */
     fun conj(): Quaternion<T> {
-        return Quaternion(a, -b, -c, -d, mc)
+        return calculator.eval {
+            Quaternion(a, -b, -c, -d, calculator)
+        }
     }
 
     operator fun times(y: T): Quaternion<T> {
-        return Quaternion(y * a, y * b, y * c, y * d, mc)
+        return calculator.eval {
+            Quaternion(y * a, y * b, y * c, y * d, calculator)
+        }
     }
 
     operator fun div(y: T): Quaternion<T> {
-        return Quaternion(a / y, b / y, c / y, d / y, mc)
+        return calculator.eval {
+            Quaternion(a / y, b / y, c / y, d / y, calculator)
+        }
     }
 
     override fun multiply(n: Long): Quaternion<T> {
+        val mc = calculator
         return Quaternion(mc.multiplyLong(a, n),
                 mc.multiplyLong(b, n),
                 mc.multiplyLong(c, n),
@@ -111,6 +128,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
 
 
     fun divide(n: Long): Quaternion<T> {
+        val mc = calculator
         return Quaternion(mc.divideLong(a, n),
                 mc.divideLong(b, n),
                 mc.divideLong(c, n),
@@ -138,16 +156,17 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
     operator fun component3() = c
     operator fun component4() = d
 
-    fun vectorPart(): SVector<T> = SVector.valueOf(b, c, d, mc)
+    fun vectorPart(): SVector<T> = SVector.valueOf(b, c, d, calculator as RealCalculator<T>) //TODO type
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is Quaternion) {
             return false
         }
+        val mc = calculator
         return mc.isEqual(a, obj.a) && mc.isEqual(b, obj.b) && mc.isEqual(c, obj.c) && mc.isEqual(d, obj.d)
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String = mc.run {
+    override fun toString(nf: NumberFormatter<T>): String = calculator.run {
         if (isZero(a) && isZero(b) && isZero(c) && isZero(d)) {
             return "0"
         }
@@ -176,47 +195,47 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
             j 	j 	−k 	−1 	i
             k 	k 	j 	−i 	−1
      */
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Quaternion<N> {
-        return Quaternion(mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d), newCalculator)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Quaternion<N> {
+        return Quaternion(mapper.apply(a), mapper.apply(b), mapper.apply(c), mapper.apply(d), newCalculator as FieldCalculator<N>)
     }
 
     companion object {
 
-        fun <T> real(a: T, mc: RealCalculator<T>): Quaternion<T> {
+        fun <T> real(a: T, mc: FieldCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(a, it, it, it, mc) }
         }
 
-        fun <T> valueOf(a: T, b: T, c: T, d: T, mc: RealCalculator<T>): Quaternion<T> {
+        fun <T> valueOf(a: T, b: T, c: T, d: T, mc: FieldCalculator<T>): Quaternion<T> {
             return Quaternion(a, b, c, d, mc)
         }
 
-        fun <T> parse(str: String, mc: RealCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
+        fun <T> parse(str: String, mc: FieldCalculator<T>, deliminator: Regex = Regex(","), parser: (String) -> T): Quaternion<T> {
             val arr = deliminator.split(str).map(parser)
             return valueOf(arr[0], arr[1], arr[2], arr[3], mc)
         }
 
-        fun <T> zero(mc: RealCalculator<T>): Quaternion<T> {
+        fun <T> zero(mc: FieldCalculator<T>): Quaternion<T> {
             return mc.zero.let { Quaternion(it, it, it, it, mc) }
         }
 
-        fun <T> one(mc: RealCalculator<T>): Quaternion<T> {
+        fun <T> one(mc: FieldCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(one, zero, zero, zero, mc) }
         }
 
-        fun <T> baseI(mc: RealCalculator<T>): Quaternion<T> {
+        fun <T> baseI(mc: FieldCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, one, zero, zero, mc) }
         }
 
-        fun <T> baseJ(mc: RealCalculator<T>): Quaternion<T> {
+        fun <T> baseJ(mc: FieldCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, one, zero, mc) }
         }
 
-        fun <T> baseK(mc: RealCalculator<T>): Quaternion<T> {
+        fun <T> baseK(mc: FieldCalculator<T>): Quaternion<T> {
             return mc.run { Quaternion(zero, zero, zero, one, mc) }
         }
 
 
-        fun <T> calculator(mc: RealCalculator<T>): QuaternionCalculator<T> {
+        fun <T> calculator(mc: FieldCalculator<T>): QuaternionCalculator<T> {
             return QuaternionCalculator(mc)
         }
 
@@ -224,7 +243,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
          * Returns the quaternion eight-group, whose elements are `1,-1,i,j,k,-i,-j,-k` and
          * the group operation is multiplication.
          */
-        fun <T> quaternionGroup(mc: RealCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
+        fun <T> quaternionGroup(mc: FieldCalculator<T>): AbstractFiniteGroup<Quaternion<T>> {
             val qc = calculator(mc)
             val gc = qc.asGroupCalculator()
             val e = one(mc)
@@ -244,7 +263,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: RealCalculator<T
 
 }
 
-class QuaternionCalculator<T>(val mc: RealCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
+class QuaternionCalculator<T>(val mc: FieldCalculator<T>) : DivisionRingCalculator<Quaternion<T>> {
 //    override val isMultiplyCommutative: Boolean
 //        get() = false
 

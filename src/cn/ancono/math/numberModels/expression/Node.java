@@ -9,7 +9,7 @@ import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.MultinomialCalculator;
 import cn.ancono.math.numberModels.Term;
 import cn.ancono.math.numberModels.api.Computable;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.expression.anno.AllowModify;
 import cn.ancono.math.numberModels.expression.anno.DisallowModify;
@@ -107,7 +107,7 @@ public abstract class Node implements Computable, Serializable {
     /*
      * @see java.lang.Object#toString()
      */
-    protected abstract void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended);
+    protected abstract void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended);
 
     /**
      * List this node and all it sub-nodes.
@@ -158,7 +158,7 @@ public abstract class Node implements Computable, Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        toString(sb, FlexibleNumberFormatter.defaultFormatter(), false);
+        toString(sb, NumberFormatter.defaultFormatter(), false);
         return sb.toString();
     }
 
@@ -923,7 +923,7 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter)
          */
         @Override
-        public void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             String str = nf.format(p);
             if (str.length() == 1) {
                 bracketRecommended = false;
@@ -1017,7 +1017,7 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter)
          */
         @Override
-        public void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             if (bracketRecommended) {
                 sb.append('(');
             }
@@ -1132,7 +1132,7 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        public void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+        public void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             if (bracketRecommended) {
                 sb.append('(');
             }//
@@ -1299,7 +1299,7 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             sb.append(functionName).append('(');
             child.toString(sb, nf, false);
             sb.append(')');
@@ -1407,7 +1407,7 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             sb.append(functionName).append('(');
             if (c1 == null) {
                 sb.append("null");
@@ -1524,7 +1524,7 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             sb.append(functionName).append('(');
             for (Node n : children) {
                 n.toString(sb, nf, false);
@@ -1622,7 +1622,7 @@ public abstract class Node implements Computable, Serializable {
          * @see cn.ancono.math.numberModels.expression.Node#toString(java.lang.StringBuilder, cn.ancono.math.numberModels.api.NumberFormatter, boolean)
          */
         @Override
-        protected void toString(StringBuilder sb, FlexibleNumberFormatter<Multinomial> nf, boolean bracketRecommended) {
+        protected void toString(StringBuilder sb, NumberFormatter<Multinomial> nf, boolean bracketRecommended) {
             if (bracketRecommended) {
                 sb.append('(');
             }

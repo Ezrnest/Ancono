@@ -1,5 +1,6 @@
 package cn.ancono.math.equation;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,5 +33,5 @@ public abstract class SVEquation<T> extends Equation<T, T> implements SVCompareS
      */
     @NotNull
     @Override
-    public abstract <N> SVEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SVEquation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 }

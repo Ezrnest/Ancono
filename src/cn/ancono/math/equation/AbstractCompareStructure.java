@@ -3,14 +3,14 @@
  */
 package cn.ancono.math.equation;
 
-import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.AbstractMathObjectReal;
 import cn.ancono.math.numberModels.api.RealCalculator;
 
 /**
  * @author liyicheng
  * 2017-10-08 11:34
  */
-public abstract class AbstractCompareStructure<T, S> extends AbstractMathObject<T>
+public abstract class AbstractCompareStructure<T, S> extends AbstractMathObjectReal<T>
         implements CompareStructure<T, S> {
     /**
      * The type of operation.

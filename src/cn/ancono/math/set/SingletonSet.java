@@ -4,8 +4,8 @@
 package cn.ancono.math.set;
 
 import cn.ancono.math.MathObject;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
-import cn.ancono.math.numberModels.api.RealCalculator;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -24,7 +24,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
     /**
      * @param mc
      */
-    protected SingletonSet(RealCalculator<T> mc, T ele) {
+    protected SingletonSet(EqualPredicate<T> mc, T ele) {
         super(mc);
         this.element = ele;
     }
@@ -64,7 +64,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
      */
     @NotNull
     @Override
-    public <N> SingletonSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> SingletonSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         return new SingletonSet<>(newCalculator, mapper.apply(element));
     }
 
@@ -89,7 +89,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
      */
     @Override
     public boolean contains(T t) {
-        return getMc().isEqual(element, t);
+        return getCalculator().isEqual(element, t);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
         ArrayList<T> list = new ArrayList<>(2);
         list.add(this.element);
         list.add(element);
-        return new CollectionSet<>(getMc(), list);
+        return new CollectionSet<>(getCalculator(), list);
     }
 
     /**
@@ -112,12 +112,8 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
         return element;
     }
 
-
-    /**
-     * @see MathObject#valueEquals(MathObject)
-     */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (this == obj) {
             return true;
         }
@@ -125,14 +121,11 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
             return false;
         }
         AbstractLimitedSet<T> ls = (AbstractLimitedSet<T>) obj;
-        return ls.size() == 1 && getMc().isEqual(element, ls.get(0));
+        return ls.size() == 1 && getCalculator().isEqual(element, ls.get(0));
     }
 
-    /**
-     * @see MathObject#toString(NumberFormatter)
-     */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public @NotNull String toString(@NotNull NumberFormatter<T> nf) {
         return "{" + nf.format(element) + "}";
     }
 

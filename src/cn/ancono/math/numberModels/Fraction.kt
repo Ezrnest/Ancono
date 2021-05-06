@@ -4,7 +4,7 @@ import cn.ancono.math.MathUtils
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.api.FieldNumberModel
-import cn.ancono.math.numberModels.api.QCalculator
+import cn.ancono.math.numberModels.api.QuotientCalculator
 import cn.ancono.math.numberModels.api.Simplifier
 import cn.ancono.math.numberTheory.NTUtils
 import cn.ancono.utilities.ArraySup
@@ -23,6 +23,7 @@ import kotlin.math.*
  * the denominator is always positive.
  * @author lyc
  */
+//@JvmRecord
 data class Fraction
 //numerator,denominator
 /**
@@ -556,7 +557,7 @@ internal constructor(
     }
 
 
-    class FractionCalculator : QCalculator<Fraction> {
+    class FractionCalculator : QuotientCalculator<Fraction> {
         override val numberClass: Class<Fraction> = Fraction::class.java
 
 

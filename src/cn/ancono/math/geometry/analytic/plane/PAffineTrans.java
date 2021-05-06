@@ -3,10 +3,11 @@
  */
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.AbstractMathObjectReal;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.MathFunction;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.property.Invertible;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ import java.util.function.Function;
  * @author liyicheng
  *
  */
-public final class PAffineTrans<T> extends AbstractMathObject<T> implements PointTrans<T>, Invertible<PAffineTrans<T>> {
+public final class PAffineTrans<T> extends AbstractMathObjectReal<T> implements PointTrans<T>, Invertible<PAffineTrans<T>> {
     /*
      * Describes the transformation matrix as:
      * a1 b1
@@ -38,6 +39,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
 
 
     /**
+     *
      * @param mc
      */
     protected PAffineTrans(RealCalculator<T> mc, TransMatrix<T> mat, PVector<T> v) {
@@ -178,8 +180,8 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
      */
     @Override
-    public <N> @NotNull PAffineTrans<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new PAffineTrans<>(newCalculator, mat.mapTo(newCalculator, mapper), v.mapTo(newCalculator, mapper));
+    public <N> @NotNull PAffineTrans<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new PAffineTrans<>((RealCalculator<N>) newCalculator, mat.mapTo(newCalculator, mapper), v.mapTo(newCalculator, mapper));
     }
 
     /* (non-Javadoc)
@@ -215,8 +217,9 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
     /* (non-Javadoc)
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
+
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (this == obj) {
             return true;
         }
@@ -243,7 +246,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
     @Override
-    public @NotNull String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public @NotNull String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         sb.append("Affine Transformation: x'=");
         append(sb, nf, 0);
@@ -253,7 +256,7 @@ public final class PAffineTrans<T> extends AbstractMathObject<T> implements Poin
         return sb.toString();
     }
 
-    private void append(StringBuilder sb, FlexibleNumberFormatter<T> nf, int n) {
+    private void append(StringBuilder sb, NumberFormatter<T> nf, int n) {
         boolean appended = false;
         if (!getMc().isZero(mat.get(n, 0))) {
             appended = true;

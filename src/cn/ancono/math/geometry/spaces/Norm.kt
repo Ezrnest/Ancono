@@ -30,7 +30,6 @@ fun interface Norm<in T, out R> {
      */
     fun apply(x: T): R
 
-    @JvmDefault
     operator fun invoke(x: T): R = apply(x)
 
     companion object {

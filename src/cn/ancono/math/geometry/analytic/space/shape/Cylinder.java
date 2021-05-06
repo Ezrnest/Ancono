@@ -1,6 +1,7 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.space.SPoint;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,7 @@ public final class Cylinder<T> extends SpaceObject<T> {
 
     @NotNull
     @Override
-    public <N> Cylinder<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Cylinder<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -59,16 +60,11 @@ public final class Cylinder<T> extends SpaceObject<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         // TODO Auto-generated method stub
         return false;
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     /* (non-Javadoc)
      * @see cn.ancono.cn.ancono.utilities.math.spaceAG.shape.SpaceObject#volume()

@@ -1,9 +1,11 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +39,7 @@ import java.util.function.Function;
  * @param <T>
  * @author lyc
  */
-public final class Triangle<T> implements MathObject<T> {
+public final class Triangle<T> implements MathObjectReal<T> {
 
     /**
      * The three vertexes of this triangle.
@@ -492,8 +494,8 @@ public final class Triangle<T> implements MathObject<T> {
     }
 
     @Override
-    public <N> Triangle<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Triangle<>(newCalculator, A.mapTo(newCalculator, mapper),
+    public <N> Triangle<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Triangle<>((RealCalculator<N>) newCalculator, A.mapTo(newCalculator, mapper),
                 B.mapTo(newCalculator, mapper),
                 C.mapTo(newCalculator, mapper),
                 a == null ? null : a.mapTo(newCalculator, mapper),
@@ -532,7 +534,7 @@ public final class Triangle<T> implements MathObject<T> {
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         return "Triangle: A:" + A.toString(nf) + " B:" + B.toString(nf) + " C:" + C.toString(nf);
     }
 
@@ -545,35 +547,11 @@ public final class Triangle<T> implements MathObject<T> {
     @NotNull
     @Override
     public String toString() {
-        return toString(FlexibleNumberFormatter.defaultFormatter());
+        return toString(NumberFormatter.defaultFormatter());
     }
 
     @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Triangle) {
-            Triangle<N> tri = (Triangle<N>) obj;
-            T x = mapper.apply(tri.A.x);
-            T y = mapper.apply(tri.A.y);
-            if (mc.isEqual(x, A.x) == false || mc.isEqual(y, A.y) == false) {
-                return false;
-            }
-            x = mapper.apply(tri.B.x);
-            y = mapper.apply(tri.B.y);
-            if (mc.isEqual(x, B.x) == false || mc.isEqual(y, B.y) == false) {
-                return false;
-            }
-            x = mapper.apply(tri.C.x);
-            y = mapper.apply(tri.C.y);
-            if (mc.isEqual(x, C.x) == false || mc.isEqual(y, C.y) == false) {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (obj == this) {
             return true;
         }

@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.numberModels;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import kotlin.Pair;
@@ -1091,11 +1092,11 @@ public class ComputeExpression {
         /* (non-Javadoc)
          * @see cn.ancono.math.number_models.ComputeExpression#mapTo(java.util.function.Function, cn.ancono.math.number_models.MathCalculator)
          */
-        public <N> TypeComputeExpression<N> mapTo(Function<Object, N> mapper, RealCalculator<N> newCalculator) {
+        public <N> TypeComputeExpression<N> mapTo(Function<Object, N> mapper, EqualPredicate<N> newCalculator) {
             N[] ncons = null;
             if (cons != null)
                 ncons = ArraySup.mapTo(cons, mapper);
-            return new TypeComputeExpression<>(this.argLen, root, ncons, newCalculator);
+            return new TypeComputeExpression<>(this.argLen, root, ncons, (RealCalculator<N>) newCalculator);
         }
 
 

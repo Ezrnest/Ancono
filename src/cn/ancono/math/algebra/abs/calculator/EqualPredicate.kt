@@ -6,8 +6,9 @@ package cn.ancono.math.algebra.abs.calculator
 import java.util.*
 
 /**
- * A predicate that tests whether two objects are equal. EqualPredicate
- * is the identity with [EqualRelation] but the method's name is "isEqual".
+ * A predicate that tests whether two objects are equal.
+ *
+ * EqualPredicate is at the top of the calculator hierarchy.
  *
  * @author liyicheng
  * 2018-02-28 17:33
@@ -34,6 +35,9 @@ interface EqualPredicate<T> {
      */
     fun isEqual(x: T, y: T): Boolean
 
+    /**
+     * Gets the class of the number that this calculator deals with.
+     */
     val numberClass: Class<T>
 
     companion object {

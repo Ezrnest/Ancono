@@ -1,11 +1,13 @@
 package cn.ancono.math.geometry;
 
-import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.AbstractMathObjectReal;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.*;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.ComputeExpression;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +21,7 @@ import java.util.function.Function;
 /**
  * A geometric triangle
  */
-public class GTriangle<T> extends AbstractMathObject<T> {
+public class GTriangle<T> extends AbstractMathObjectReal<T> {
     /**
      * sides
      */
@@ -247,8 +249,8 @@ public class GTriangle<T> extends AbstractMathObject<T> {
 
     @NotNull
     @Override
-    public <N> MathObject<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        GTriangle<N> tri = new GTriangle<>(newCalculator,
+    public <N> MathObjectReal<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        GTriangle<N> tri = new GTriangle<>((RealCalculator<N>) newCalculator,
                 mapper.apply(a),
                 mapper.apply(b),
                 mapper.apply(c));
@@ -306,19 +308,9 @@ public class GTriangle<T> extends AbstractMathObject<T> {
         return result;
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (!(obj instanceof GTriangle)) {
-            return false;
-        }
-        GTriangle<N> tri = (GTriangle<N>) obj;
-        return getMc().isEqual(a, mapper.apply(tri.a)) &&
-                getMc().isEqual(b, mapper.apply(tri.b)) &&
-                getMc().isEqual(c, mapper.apply(tri.c));
-    }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (!(obj instanceof GTriangle)) {
             return false;
         }
@@ -329,7 +321,7 @@ public class GTriangle<T> extends AbstractMathObject<T> {
     }
 
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder("Triangle:a=");
         sb.append(nf.format(a));
         sb.append(",b=").append(nf.format(b));

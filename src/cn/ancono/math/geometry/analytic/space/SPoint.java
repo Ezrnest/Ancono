@@ -2,7 +2,9 @@ package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +21,17 @@ public final class SPoint<T> extends SpacePointSet<T> {
 
     final T x, y, z;
 
-    public SPoint(RealCalculator<T> mc, T x, T y, T z) {
+    public SPoint(FieldCalculator<T> mc, T x, T y, T z) {
         super(mc);
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    @NotNull
+    @Override
+    public FieldCalculator<T> getCalculator() {
+        return (FieldCalculator<T>) super.getCalculator();
     }
 
     /**
@@ -60,7 +68,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @return a vector
      */
     public SVector<T> getVector() {
-        return new SVector<>(x, y, z, getMc());
+        return new SVector<>(x, y, z, getCalculator());
     }
 
     /**
@@ -72,7 +80,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      */
     @SuppressWarnings("SuspiciousNameCombination")
     public T distanceSq(SPoint<T> p) {
-        var mc = getMc();
+        var mc = getCalculator();
         T dx = mc.subtract(x, p.x);
         T dy = mc.subtract(y, p.y);
         T dz = mc.subtract(z, p.z);
@@ -89,7 +97,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @see SPoint#distance(SPoint)
      */
     public T distance(SPoint<T> p) {
-        return getMc().squareRoot(distanceSq(p));
+        return ((RealCalculator<T>) getCalculator()).squareRoot(distanceSq(p));
     }
 
     /**
@@ -100,10 +108,10 @@ public final class SPoint<T> extends SpacePointSet<T> {
      */
     @SuppressWarnings("SuspiciousNameCombination")
     public SVector<T> directVector(SPoint<T> p) {
-        T vx = getMc().subtract(p.x, x);
-        T vy = getMc().subtract(p.y, y);
-        T vz = getMc().subtract(p.z, z);
-        return SVector.valueOf(vx, vy, vz, getMc());
+        T vx = getCalculator().subtract(p.x, x);
+        T vy = getCalculator().subtract(p.y, y);
+        T vz = getCalculator().subtract(p.z, z);
+        return SVector.valueOf(vx, vy, vz, getCalculator());
     }
 
     /**
@@ -118,7 +126,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @return the proportion point.
      */
     public SPoint<T> proportionPoint(SPoint<T> p, T k) {
-        var mc = getMc();
+        var mc = getCalculator();
         T de = mc.add(k, mc.getOne());
         T xN = mc.add(mc.multiply(k, p.x), x);
         T yN = mc.add(mc.multiply(k, p.y), y);
@@ -135,7 +143,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @return a new point
      */
     public SPoint<T> moveToward(SVector<T> v) {
-        return new SPoint<>(getMc(), getMc().add(x, v.x), getMc().add(y, v.y), getMc().add(z, v.z));
+        return new SPoint<>(getCalculator(), getCalculator().add(x, v.x), getCalculator().add(y, v.y), getCalculator().add(z, v.z));
     }
 
     /**
@@ -144,7 +152,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @return a new point
      */
     public SPoint<T> moveToward(T vx, T vy, T vz) {
-        return new SPoint<>(getMc(), getMc().add(x, vx), getMc().add(y, vy), getMc().add(z, vz));
+        return new SPoint<>(getCalculator(), getCalculator().add(x, vx), getCalculator().add(y, vy), getCalculator().add(z, vz));
     }
 
     /**
@@ -154,7 +162,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @return middle point
      */
     public SPoint<T> middle(SPoint<T> p) {
-        var mc = getMc();
+        var mc = getCalculator();
         T xm = mc.divideLong(mc.add(x, p.x), 2);
         T ym = mc.divideLong(mc.add(y, p.y), 2);
         T zm = mc.divideLong(mc.add(z, p.z), 2);
@@ -166,7 +174,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      */
     @Override
     public boolean contains(SPoint<T> p) {
-        var mc = getMc();
+        var mc = getCalculator();
         return mc.isEqual(x, p.x) &&
                 mc.isEqual(y, p.y) &&
                 mc.isEqual(z, p.z);
@@ -174,8 +182,8 @@ public final class SPoint<T> extends SpacePointSet<T> {
 
     @NotNull
     @Override
-    public <N> SPoint<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new SPoint<>(newCalculator, mapper.apply(x), mapper.apply(y), mapper.apply(z));
+    public <N> SPoint<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new SPoint<>((FieldCalculator<N>) newCalculator, mapper.apply(x), mapper.apply(y), mapper.apply(z));
     }
 
 
@@ -201,23 +209,12 @@ public final class SPoint<T> extends SpacePointSet<T> {
     }
 
     @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof SPoint) {
-            SPoint<N> s = (SPoint<N>) obj;
-            return getMc().isEqual(x, mapper.apply(s.x)) &&
-                    getMc().isEqual(y, mapper.apply(s.y)) &&
-                    getMc().isEqual(z, mapper.apply(s.z));
-        }
-        return false;
-    }
-
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof SPoint) {
             SPoint<T> s = (SPoint<T>) obj;
-            return getMc().isEqual(x, s.x) &&
-                    getMc().isEqual(y, s.y) &&
-                    getMc().isEqual(z, s.z);
+            return getCalculator().isEqual(x, s.x) &&
+                    getCalculator().isEqual(y, s.y) &&
+                    getCalculator().isEqual(z, s.z);
         }
         return false;
     }
@@ -243,7 +240,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @param mc a MathCalculator
      * @return a new point
      */
-    public static <T> SPoint<T> valueOf(T x, T y, T z, RealCalculator<T> mc) {
+    public static <T> SPoint<T> valueOf(T x, T y, T z, FieldCalculator<T> mc) {
         return new SPoint<>(mc, x, y, z);
     }
 
@@ -253,7 +250,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      * @param mc a {@link RealCalculator}
      * @return point (0,0)
      */
-    public static <T> SPoint<T> pointO(RealCalculator<T> mc) {
+    public static <T> SPoint<T> pointO(FieldCalculator<T> mc) {
         return new SPoint<>(mc, mc.getZero(), mc.getZero(), mc.getZero());
     }
 
@@ -276,7 +273,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
      */
     @SafeVarargs
     public static <T> SPoint<T> average(SPoint<T>... points) {
-        RealCalculator<T> mc = points[0].getMc();
+        var mc = points[0].getCalculator();
         final int num = points.length;
         var arr = new ArrayList<T>(points.length);
         for (SPoint<T> point : points) {
@@ -297,12 +294,12 @@ public final class SPoint<T> extends SpacePointSet<T> {
         return new SPoint<T>(mc, xm, ym, zm);
     }
 
-    public static class SPointGenerator<T> extends AbstractMathObject<T> {
+    public static class SPointGenerator<T> extends AbstractMathObject<T, FieldCalculator<T>> {
 
         /**
          * @param mc
          */
-        public SPointGenerator(RealCalculator<T> mc) {
+        public SPointGenerator(FieldCalculator<T> mc) {
             super(mc);
         }
 
@@ -315,7 +312,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
          * @return
          */
         public SPoint<T> of(T x, T y, T z) {
-            return SPoint.valueOf(x, y, z, getMc());
+            return SPoint.valueOf(x, y, z, getCalculator());
         }
 
         /* (non-Javadoc)
@@ -323,8 +320,8 @@ public final class SPoint<T> extends SpacePointSet<T> {
          */
         @NotNull
         @Override
-        public <N> SPointGenerator<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new SPointGenerator<>(newCalculator);
+        public <N> SPointGenerator<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new SPointGenerator<>((FieldCalculator<N>) newCalculator);
         }
 
         /* (non-Javadoc)
@@ -333,7 +330,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof SPointGenerator) {
-                return getMc().equals(((SPointGenerator<?>) obj).getMc());
+                return getCalculator().equals(((SPointGenerator<?>) obj).getCalculator());
             }
             return false;
         }
@@ -343,31 +340,21 @@ public final class SPoint<T> extends SpacePointSet<T> {
          */
         @Override
         public int hashCode() {
-            return getMc().hashCode();
+            return getCalculator().hashCode();
         }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
-         */
         @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
             return equals(obj);
         }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-         */
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            return equals(obj);
-        }
 
         /* (non-Javadoc)
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        public String toString(@NotNull NumberFormatter<T> nf) {
             return "SPointGenerator";
         }
     }

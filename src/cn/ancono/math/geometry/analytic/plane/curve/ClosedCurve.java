@@ -3,18 +3,20 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
+import cn.ancono.math.MathObject;
 import cn.ancono.math.geometry.analytic.plane.Point;
 
 /**
- * Closed curve is a curve that keeps a relation of inside and outside 
+ * Closed curve is a curve that keeps a relation of inside and outside
  * determining whether a point in plane is inside this curve, on this curve
  * or outside this curve. A curve should always returns the identity result
  * for the methods as long as the given points are the identity or they are
- * {@link Point#valueEquals(cn.ancono.math.FlexibleMathObject)}.
+ * {@link MathObject#valueEquals(MathObject)}.
  * <p>
- * The closed curve may also provides the  
- * @author liyicheng
+ * The closed curve may also provides the
+ *
  * @param T the type of the number model
+ * @author liyicheng
  */
 public interface ClosedCurve<T> extends AreableCurve<T> {
     /**

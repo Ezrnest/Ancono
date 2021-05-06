@@ -4,7 +4,8 @@
 package cn.ancono.math.function
 
 import cn.ancono.math.MathObject
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
 import java.util.function.Function
 
@@ -21,7 +22,7 @@ abstract class CombinedFunction<T>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    abstract override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): CombinedFunction<N>
+    abstract override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): CombinedFunction<N>
 
     /**
      * Defines the combined function:
@@ -48,21 +49,21 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Add<N> {
-            return Add(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
+        override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Add<N> {
+            return Add(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator as RealCalculator)
         }
 
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        override fun toString(nf: NumberFormatter<T>): String {
             return f.toString(nf) + " + " + g.toString(nf)
         }
 
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T>): Boolean {
+        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
             if (obj !is Add<*>) {
                 return false
             }
@@ -121,21 +122,21 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Subtract<N> {
-            return Subtract(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
+        override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Subtract<N> {
+            return Subtract(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator as RealCalculator)
         }
 
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        override fun toString(nf: NumberFormatter<T>): String {
             return f.toString(nf) + " - " + g.toString(nf)
         }
 
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T>): Boolean {
+        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
             if (obj !is Subtract<*>) {
                 return false
             }
@@ -191,21 +192,21 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Multiply<N> {
-            return Multiply(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
+        override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Multiply<N> {
+            return Multiply(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator as RealCalculator)
         }
 
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        override fun toString(nf: NumberFormatter<T>): String {
             return "(" + f.toString(nf) + ")*(" + g.toString(nf) + ")"
         }
 
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T>): Boolean {
+        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
             if (obj !is Multiply<*>) {
                 return false
             }
@@ -268,21 +269,21 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Divide<N> {
-            return Divide(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
+        override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Divide<N> {
+            return Divide(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator as RealCalculator)
         }
 
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        override fun toString(nf: NumberFormatter<T>): String {
             return "(" + f.toString(nf) + ")/(" + g.toString(nf) + ")"
         }
 
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T>): Boolean {
+        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
             if (obj !is Divide<*>) {
                 return false
             }
@@ -317,21 +318,21 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.function.CombinedFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
-        override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Combine<N> {
-            return Combine(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator)
+        override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Combine<N> {
+            return Combine(f.mapTo(newCalculator, mapper), g.mapTo(newCalculator, mapper), newCalculator as RealCalculator)
         }
 
         /*
          * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
          */
-        override fun toString(nf: FlexibleNumberFormatter<T>): String {
+        override fun toString(nf: NumberFormatter<T>): String {
             return "(" + f.toString(nf) + ")/(" + g.toString(nf) + ")"
         }
 
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T>): Boolean {
+        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
             if (obj !is Combine<*>) {
                 return false
             }

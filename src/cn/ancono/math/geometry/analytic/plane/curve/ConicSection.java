@@ -7,7 +7,7 @@ import cn.ancono.math.equation.SVPEquation.QEquation;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.*;
 import cn.ancono.math.numberModels.ComputeExpression;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
@@ -599,7 +598,7 @@ ConicSection<T>
 
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (obj instanceof ConicSection) {
             ConicSection<T> cs = (ConicSection<T>) obj;
             T p;
@@ -623,30 +622,6 @@ ConicSection<T>
         return false;
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof ConicSection) {
-            ConicSection<N> cs = (ConicSection<N>) obj;
-            T p;
-            if (getMc().isZero(A)) {
-                //use the
-                p = getMc().divide(mapper.apply(cs.C), C);
-            } else {
-                p = getMc().divide(mapper.apply(cs.A), A);
-            }
-            if (getMc().isZero(p)) {
-                return false;
-            }
-
-            return getMc().isEqual(getMc().multiply(A, p), mapper.apply(cs.A)) &&
-                    getMc().isEqual(getMc().multiply(B, p), mapper.apply(cs.B)) &&
-                    getMc().isEqual(getMc().multiply(C, p), mapper.apply(cs.C)) &&
-                    getMc().isEqual(getMc().multiply(D, p), mapper.apply(cs.D)) &&
-                    getMc().isEqual(getMc().multiply(E, p), mapper.apply(cs.E)) &&
-                    getMc().isEqual(getMc().multiply(F, p), mapper.apply(cs.F));
-        }
-        return false;
-    }
 
     /*
      * @see java.lang.Object#hashCode()
@@ -703,7 +678,7 @@ ConicSection<T>
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         final String str = " + ";
         sb.append("ConicSection : ");

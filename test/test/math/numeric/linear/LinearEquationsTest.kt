@@ -5,7 +5,6 @@ import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numeric.linear.LinearEquations
-import cn.ancono.math.times
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import test.math.TestUtils

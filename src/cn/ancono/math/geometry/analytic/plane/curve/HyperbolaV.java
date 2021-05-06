@@ -1,6 +1,7 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation.QEquation;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.Line;
@@ -261,19 +262,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 
 
     @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof HyperbolaV) {
-            HyperbolaV<N> ev = (HyperbolaV<N>) obj;
-            if (ev.onX == onX) {
-                return getMc().isEqual(mapper.apply(ev.a), a) && getMc().isEqual(mapper.apply(ev.b), b);
-            }
-            return false;
-        }
-        return super.valueEquals(obj, mapper);
-    }
-
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (obj instanceof HyperbolaV) {
             HyperbolaV<T> ev = (HyperbolaV<T>) obj;
             if (ev.onX == onX) {
@@ -295,8 +284,8 @@ public final class HyperbolaV<T> extends EHSection<T> {
 
     @NotNull
     @Override
-    public <N> HyperbolaV<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        HyperbolaV<N> nell = new HyperbolaV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
+    public <N> HyperbolaV<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        HyperbolaV<N> nell = new HyperbolaV<N>((RealCalculator<N>) newCalculator, mapper.apply(A), mapper.apply(C)
                 , mapper.apply(a), mapper.apply(b), mapper.apply(c)
                 , mapper.apply(a2), mapper.apply(b2), mapper.apply(c2)
                 , onX);

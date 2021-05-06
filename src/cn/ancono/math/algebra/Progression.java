@@ -1,12 +1,12 @@
 package cn.ancono.math.algebra;
 
-import cn.ancono.math.AbstractFlexibleMathObject;
-import cn.ancono.math.FMathObject;
+import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.AbelSemiGroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.BiMathFunction;
 import cn.ancono.math.function.MathFunction;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.structure.WithLong;
@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
  * @param <T> the type of number returned as the number in the progression
  * @author lyc
  */
-public abstract class Progression<T> extends AbstractFlexibleMathObject<T, EqualPredicate<T>> implements Iterable<T> {
+public abstract class Progression<T> extends AbstractMathObject<T, EqualPredicate<T>> implements Iterable<T> {
     /**
      * The length of this progression, set it as UNLIMITED to indicate this progression is
      * unlimited.
@@ -345,7 +345,7 @@ public abstract class Progression<T> extends AbstractFlexibleMathObject<T, Equal
 //    }
 
     @Override
-    public boolean valueEquals(@NotNull FMathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof Progression) {
             Progression<T> pro = (Progression<T>) obj;
             if (this.isLimited() && length == pro.length) {
@@ -368,7 +368,7 @@ public abstract class Progression<T> extends AbstractFlexibleMathObject<T, Equal
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         return "Progression:" + this.getClass().getName();
     }
 

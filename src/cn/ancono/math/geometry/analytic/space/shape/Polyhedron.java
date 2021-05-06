@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.space.Line;
 import cn.ancono.math.geometry.analytic.space.Plane;
 import cn.ancono.math.geometry.analytic.space.SPoint;
@@ -118,5 +119,5 @@ public abstract class Polyhedron<T> extends SpaceObject<T> {
 
     @NotNull
     @Override
-    public abstract <N> Polyhedron<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> Polyhedron<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 }

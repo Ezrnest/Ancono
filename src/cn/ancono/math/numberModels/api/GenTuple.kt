@@ -30,7 +30,6 @@ interface GenTuple<T> {
      *
      * @see elementSequence
      */
-    @JvmDefault
     @Suppress("UNCHECKED_CAST")
     fun flattenToList(): List<T> {
         val size = this.size
@@ -76,7 +75,6 @@ interface GenMatrix<T> : GenTuple<T> {
      */
     val column: Int
 
-    @JvmDefault
     override val size: Int
         get() = row * column
 
@@ -84,7 +82,6 @@ interface GenMatrix<T> : GenTuple<T> {
 
     override fun applyAll(f: (T) -> T): GenMatrix<T>
 
-    @JvmDefault
     override fun elementSequence(): Sequence<T> {
         return IterUtils.prodIdx(intArrayOf(row, column)).map { (i, j) -> this[i, j] }
     }
@@ -93,7 +90,6 @@ interface GenMatrix<T> : GenTuple<T> {
     /**
      * Determines whether this matrix is the same shape as [y].
      */
-    @JvmDefault
     fun isSameShape(y: GenMatrix<*>): Boolean {
         return row == y.row && column == y.column
     }
@@ -101,7 +97,6 @@ interface GenMatrix<T> : GenTuple<T> {
     /**
      * Determines whether this matrix is a square matrix.
      */
-    @JvmDefault
     fun isSquare(): Boolean {
         return row == column
     }
@@ -119,7 +114,6 @@ interface GenVector<T> : GenTuple<T> {
 
     fun toList(): List<T>
 
-    @JvmDefault
     override fun flattenToList(): List<T> {
         return toList()
     }
@@ -132,7 +126,6 @@ interface GenVector<T> : GenTuple<T> {
      * @param v another vector.
      * @return `true` if they are the identity in size.
      */
-    @JvmDefault
     open fun isSameSize(v: Vector<*>): Boolean {
         return size == v.size
     }

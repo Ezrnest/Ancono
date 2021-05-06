@@ -1,12 +1,12 @@
 package cn.ancono.math.set;
 
-import cn.ancono.math.AbstractFlexibleMathObject;
-import cn.ancono.math.FMathObject;
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.CollectionSup;
 import cn.ancono.utilities.ModelPatterns;
@@ -21,7 +21,7 @@ import java.util.function.Function;
  * @author liyicheng
  * 2017-09-09 11:38
  */
-public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPredicate<T>> implements MathSet<T> {
+public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<T>> implements MathSet<T> {
     /**
      * A sorted list. May be empty.
      * No change to this list is permitted.
@@ -459,7 +459,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
     }
 
     /**
-     * @see MathObject#equals(java.lang.Object)
+     * @see MathObjectReal#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
@@ -471,7 +471,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
     }
 
     @Override
-    public boolean valueEquals(@NotNull FMathObject<T, TotalOrderPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, TotalOrderPredicate<T>> obj) {
         if (!(obj instanceof IntervalUnion)) {
             return false;
         }
@@ -493,7 +493,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
 
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         if (is.isEmpty()) {
             return MathSymbol.EMPTY_SET;
         } else {
@@ -748,7 +748,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
         for (T t : set) {
             list[n++] = t;
         }
-        RealCalculator<T> mc = set.getCalculator();
+        var mc = (TotalOrderPredicate<T>) set.getCalculator();
         Arrays.sort(list, mc);
         List<Interval<T>> ins = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
@@ -765,7 +765,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
      * @param mc a {@link RealCalculator}
      * @return {@literal [x,x]}
      */
-    public static <T> IntervalUnion<T> single(T x, RealCalculator<T> mc) {
+    public static <T> IntervalUnion<T> single(T x, TotalOrderPredicate<T> mc) {
         return new IntervalUnion<T>(mc, Interval.single(x, mc));
     }
 
@@ -776,7 +776,7 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
      * @param mc a {@link RealCalculator}
      * @return {@literal (-∞,x) ∪ (x,+∞)}
      */
-    public static <T> IntervalUnion<T> except(T x, RealCalculator<T> mc) {
+    public static <T> IntervalUnion<T> except(T x, TotalOrderPredicate<T> mc) {
         List<Interval<T>> list = new ArrayList<>(2);
         list.add(Interval.fromNegativeInf(x, false, mc));
         list.add(Interval.toPositiveInf(x, false, mc));
@@ -789,10 +789,9 @@ public class IntervalUnion<T> extends AbstractFlexibleMathObject<T, TotalOrderPr
      *
      * @param x1 a number
      * @param x2 another number
-     * @param mc
      * @return {@literal (x1,x2)} (or maybe {@literal (x2,x1)})
      */
-    public static <T> IntervalUnion<T> between(T x1, T x2, RealCalculator<T> mc) {
+    public static <T> IntervalUnion<T> between(T x1, T x2, TotalOrderPredicate<T> mc) {
         if (mc.isEqual(x1, x2)) {
             return empty(mc);
         }

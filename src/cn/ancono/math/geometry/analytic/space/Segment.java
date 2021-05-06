@@ -1,6 +1,8 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.space.Line.Relation;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +56,13 @@ public final class Segment<T> extends SpacePointSet<T> {
         this.p2 = p2;
         this.comp = comp;
         v = SVector.vector(p1, p2);
+    }
+
+
+    @NotNull
+    @Override
+    public RealCalculator<T> getCalculator() {
+        return (RealCalculator<T>) super.getCalculator();
     }
 
     /**
@@ -211,7 +220,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return a segment
      */
     public Segment<T> middleA() {
-        return new Segment<>(getMc(), l, p1, middlePoint());
+        return new Segment<>(getCalculator(), l, p1, middlePoint());
     }
 
     /**
@@ -220,7 +229,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return a segment
      */
     public Segment<T> middleB() {
-        return new Segment<>(getMc(), l, p2, middlePoint());
+        return new Segment<>(getCalculator(), l, p2, middlePoint());
     }
 
     /**
@@ -232,7 +241,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return a segment
      */
     public Segment<T> propotionSegmentA(T k) {
-        return new Segment<>(getMc(), l, p1, p1.proportionPoint(p2, k));
+        return new Segment<>(getCalculator(), l, p1, p1.proportionPoint(p2, k));
     }
 
     /**
@@ -244,7 +253,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return a segment
      */
     public Segment<T> propotionSegmentB(T k) {
-        return new Segment<>(getMc(), l, p2, p2.proportionPoint(p1, k));
+        return new Segment<>(getCalculator(), l, p2, p2.proportionPoint(p1, k));
     }
 
     /**
@@ -254,7 +263,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return a new segment
      */
     public Segment<T> moveToward(SVector<T> s) {
-        return new Segment<>(getMc(), l.moveToward(s), p1.moveToward(s), p2.moveToward(s), v, comp);
+        return new Segment<>(getCalculator(), l.moveToward(s), p1.moveToward(s), p2.moveToward(s), v, comp);
     }
 
     /**
@@ -263,7 +272,7 @@ public final class Segment<T> extends SpacePointSet<T> {
      * @return a new segment
      */
     public Segment<T> reverse() {
-        return new Segment<>(getMc(), l, p2, p1, v == null ? null : v.negate(), comp);
+        return new Segment<>(getCalculator(), l, p2, p1, v == null ? null : v.negate(), comp);
     }
 
     @Override
@@ -271,13 +280,13 @@ public final class Segment<T> extends SpacePointSet<T> {
         if (l.contains(p)) {
             switch (comp) {
                 case 0: {
-                    return getMc().compare(p1.x, p.x) * getMc().compare(p.x, p2.x) >= 0;
+                    return getCalculator().compare(p1.x, p.x) * getCalculator().compare(p.x, p2.x) >= 0;
                 }
                 case 1: {
-                    return getMc().compare(p1.y, p.y) * getMc().compare(p.y, p2.y) >= 0;
+                    return getCalculator().compare(p1.y, p.y) * getCalculator().compare(p.y, p2.y) >= 0;
                 }
                 case 2: {
-                    return getMc().compare(p1.z, p.z) * getMc().compare(p.z, p2.z) >= 0;
+                    return getCalculator().compare(p1.z, p.z) * getCalculator().compare(p.z, p2.z) >= 0;
                 }
                 default: {
                     throw new AssertionError();
@@ -289,8 +298,8 @@ public final class Segment<T> extends SpacePointSet<T> {
 
     @NotNull
     @Override
-    public <N> Segment<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Segment<>(newCalculator, l.mapTo(newCalculator, mapper)
+    public <N> Segment<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Segment<>((RealCalculator<N>) newCalculator, l.mapTo(newCalculator, mapper)
                 , p1.mapTo(newCalculator, mapper)
                 , p2.mapTo(newCalculator, mapper), comp);
     }
@@ -321,7 +330,7 @@ public final class Segment<T> extends SpacePointSet<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof Segment) {
             Segment<T> seg = (Segment<T>) obj;
             return l.valueEquals(seg.l) && ((p1.valueEquals(seg.p1) && p2.valueEquals(seg.p2))
@@ -330,15 +339,6 @@ public final class Segment<T> extends SpacePointSet<T> {
         return false;
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Segment) {
-            Segment<N> seg = (Segment<N>) obj;
-            return l.valueEquals(seg.l, mapper) && ((p1.valueEquals(seg.p1, mapper) && p2.valueEquals(seg.p2, mapper))
-                    || (p1.valueEquals(seg.p1, mapper) && p2.valueEquals(seg.p2, mapper)));
-        }
-        return false;
-    }
 
     /**
      * Returns <pre>
@@ -356,7 +356,7 @@ public final class Segment<T> extends SpacePointSet<T> {
     /**
      * Create a Segment passing through the two points, throws an exception if the two
      * points are the identity.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p1
      * @param p2
@@ -366,7 +366,7 @@ public final class Segment<T> extends SpacePointSet<T> {
         if (p1.valueEquals(p2)) {
             throw new IllegalArgumentException("p1=p2");
         }
-        RealCalculator<T> mc = p1.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) p1.getCalculator();
         Line<T> l = new Line<>(mc, p1, SVector.vector(p1, p2));
         return new Segment<>(mc, l, p1, p2);
     }
@@ -382,14 +382,14 @@ public final class Segment<T> extends SpacePointSet<T> {
         if (p1.valueEquals(p2)) {
             return p1;
         }
-        RealCalculator<T> mc = p1.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) p1.getCalculator();
         Line<T> l = new Line<>(mc, p1, SVector.vector(p1, p2));
         return new Segment<>(mc, l, p1, p2);
     }
 
     /**
      * Create a Segment with a point and a vector,the vector's length will be the line's.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p
      * @param v

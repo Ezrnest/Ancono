@@ -31,27 +31,22 @@ interface ModuleCalculator<R, V> : AbelGroupCal<V> {
      */
     override fun add(x: V, y: V): V
 
-    @JvmDefault
     fun rAdd(r1: R, r2: R): R {
         return scalarCalculator.add(r1, r2)
     }
 
-    @JvmDefault
     fun rSubtract(r1: R, r2: R): R {
         return scalarCalculator.subtract(r1, r2)
     }
 
-    @JvmDefault
     fun rNegate(r: R): R {
         return scalarCalculator.negate(r)
     }
 
-    @JvmDefault
     fun rMultiply(r1: R, r2: R): R {
         return scalarCalculator.multiply(r1, r2)
     }
 
-    @JvmDefault
     val rZero: R
         get() = scalarCalculator.zero
 }

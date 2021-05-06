@@ -1,10 +1,10 @@
 package cn.ancono.math.set;
 
-import cn.ancono.math.FMathObject;
+import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.AbelGroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -310,7 +310,7 @@ public final class IntervalI<T> extends Interval<T> {
     @NotNull
     @Override
     public String toString() {
-        return toString(FlexibleNumberFormatter.defaultFormatter());
+        return toString(NumberFormatter.defaultFormatter());
     }
 
     /* (non-Javadoc)
@@ -318,7 +318,7 @@ public final class IntervalI<T> extends Interval<T> {
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         if (isDownerBoundInclusive()) {
             sb.append('[');
@@ -402,7 +402,7 @@ public final class IntervalI<T> extends Interval<T> {
 //    }
 
     @Override
-    public boolean valueEquals(@NotNull FMathObject<T, TotalOrderPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, TotalOrderPredicate<T>> obj) {
         if (obj instanceof Interval) {
             Interval<T> iv = (Interval<T>) obj;
             if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()

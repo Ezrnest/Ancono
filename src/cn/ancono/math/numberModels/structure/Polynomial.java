@@ -3,8 +3,8 @@
  */
 package cn.ancono.math.numberModels.structure;
 
-import cn.ancono.math.AbstractFlexibleMathObject;
-import cn.ancono.math.FMathObject;
+import cn.ancono.math.AbstractMathObject;
+import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.PolynomialUtil;
@@ -16,7 +16,7 @@ import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.*;
 import cn.ancono.math.numberModels.api.AlgebraModel;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifier;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
@@ -42,7 +42,7 @@ import java.util.function.IntFunction;
  * @author liyicheng
  * @see IPolynomial
  *///created by liyicheng at 2017-11-21 17:10
-public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalculator<T>> implements
+public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>> implements
         IPolynomial<T>,
         Comparable<Polynomial<T>>,
         AlgebraModel<T, Polynomial<T>>,
@@ -896,7 +896,7 @@ public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalcu
     }
 
     @Override
-    public boolean valueEquals(@NotNull FMathObject<T, RingCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RingCalculator<T>> obj) {
         if (!(obj instanceof Polynomial)) {
             return false;
         }
@@ -920,7 +920,7 @@ public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalcu
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         return IPolynomial.stringOf(this, getCalculator(), nf);
     }
 
@@ -1890,7 +1890,7 @@ public final class Polynomial<T> extends AbstractFlexibleMathObject<T, RingCalcu
 //    }
 
 
-    public static <T> FlexibleNumberFormatter<Polynomial<T>> formatterOf(FlexibleNumberFormatter<T> formatter) {
+    public static <T> NumberFormatter<Polynomial<T>> formatterOf(NumberFormatter<T> formatter) {
         return (p) -> p.toString(formatter);
     }
 

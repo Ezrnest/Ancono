@@ -29,7 +29,7 @@ public final class MathSets {
 
 
     public static <T> SingletonSet<T> singleton(T t, EqualPredicate<T> mc) {
-        return new SingletonSet<>(GroupCalculators.toMathCalculatorEqual(mc), t);
+        return new SingletonSet<>(mc, t);
     }
 
     @SafeVarargs

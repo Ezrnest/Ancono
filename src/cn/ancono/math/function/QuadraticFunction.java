@@ -5,6 +5,7 @@ package cn.ancono.math.function;
 
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
 import cn.ancono.math.geometry.analytic.plane.Line;
@@ -13,7 +14,7 @@ import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneFunction;
 import cn.ancono.math.geometry.analytic.plane.curve.ConicSection;
 import cn.ancono.math.geometry.analytic.plane.curve.GeneralConicSection;
 import cn.ancono.math.numberModels.ComputeExpression;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -128,8 +129,8 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      */
     @NotNull
     @Override
-    public <N> QuadraticFunction<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new QuadraticFunction<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
+    public <N> QuadraticFunction<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new QuadraticFunction<N>((RealCalculator<N>) newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
     }
 
     /* (non-Javadoc)
@@ -165,7 +166,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      */
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (this == obj) {
             return true;
         }
@@ -177,21 +178,6 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
         return SVPFunction.isEqual(this, f, getMc()::isEqual);
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof SVPFunction)) {
-            return false;
-        }
-        @SuppressWarnings("unchecked")
-        SVPFunction<N> f = (SVPFunction<N>) obj;
-        return SVPFunction.isEqual(this, f, (x, y) -> getMc().isEqual(x, mapper.apply(y)));
-    }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.function.SVPFunction#getCoefficient(int)
@@ -235,7 +221,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         for (int i = 2; i > 0; i--) {
             if (getMc().isZero(get(i)))

@@ -4,11 +4,11 @@
 package cn.ancono.math.set;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.MathSymbol;
-import cn.ancono.math.function.Bijection;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
-import cn.ancono.utilities.ArraySup;
 import cn.ancono.utilities.CollectionSup;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +33,7 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
      *
      * @param mc
      */
-    CollectionSet(RealCalculator<T> mc, Collection<T> coll) {
+    CollectionSet(EqualPredicate<T> mc, Collection<T> coll) {
         super(mc);
         list = new ArrayList<>(coll);
     }
@@ -44,7 +44,7 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
      * @param mc
      * @param list
      */
-    CollectionSet(RealCalculator<T> mc, List<T> list) {
+    CollectionSet(EqualPredicate<T> mc, List<T> list) {
         super(mc);
         this.list = list;
     }
@@ -79,8 +79,9 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
      */
     @Override
     public boolean contains(T t) {
+        var mc = getCalculator();
         for (T e : list) {
-            if (getMc().isEqual(t, e)) {
+            if (mc.isEqual(t, e)) {
                 return true;
             }
         }
@@ -89,11 +90,11 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
 
 
     /**
-     * @see MathObject#mapTo(RealCalculator, Function)
+     * @see MathObjectReal#mapTo(RealCalculator, Function)
      */
     @NotNull
     @Override
-    public <N> CollectionSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> CollectionSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         List<N> nlist = new ArrayList<>(list.size());
         for (T t : list) {
             nlist.add(mapper.apply(t));
@@ -101,12 +102,8 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
         return new CollectionSet<>(newCalculator, nlist);
     }
 
-    /**
-     * @see MathObject#valueEquals(MathObject)
-     */
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj == this) {
             return true;
         }
@@ -115,36 +112,16 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
             if (cs.size() != size()) {
                 return false;
             }
-            return ArraySup.arrayEqualNoOrder(list.toArray(), cs.list.toArray(), (x, y) -> getMc().isEqual((T) x, (T) y));
+            return CollectionSup.collectionEqualSorted(list, cs.list, getCalculator()::isEqual);
         }
 
-        return super.valueEquals(obj);
+        return false;
     }
 
-    /**
-     * @see MathObject#valueEquals(MathObject, java.util.function.Function)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj instanceof CollectionSet) {
-            CollectionSet<N> cs = (CollectionSet<N>) obj;
-            if (cs.size() != size()) {
-                return false;
-            }
-            return ArraySup.arrayEqualNoOrder(list.toArray(), ArraySup.modifyAll(list.toArray(), (x) ->
-                    mapper.apply((N) x)), (x, y) -> getMc().isEqual((T) x, (T) y));
-        }
-
-        return super.valueEquals(obj, mapper);
-    }
 
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         if (size() == 0) {
             return MathSymbol.EMPTY_SET;
         }
@@ -159,10 +136,10 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
         return sb.toString();
     }
 
-    @NotNull
-    @Override
-    public <S> CollectionSet<S> mapTo(@NotNull Bijection<T, S> f) {
-        return new CollectionSet<>(RealCalculator.Companion.mappedCalculator(getCalculator(), f),
-                CollectionSup.mapList(list, f));
-    }
+//    @NotNull
+//    @Override
+//    public <S> CollectionSet<S> mapTo(@NotNull Bijection<T, S> f) {
+//        return new CollectionSet<>(RealCalculator.Companion.mappedCalculator(getCalculator(), f),
+//                CollectionSup.mapList(list, f));
+//    }
 }

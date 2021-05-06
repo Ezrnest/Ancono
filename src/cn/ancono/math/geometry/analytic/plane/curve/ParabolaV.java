@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.Line;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.Point;
@@ -107,8 +108,8 @@ public final class ParabolaV<T> extends ConicSection<T> {
      */
     @NotNull
     @Override
-    public <N> ParabolaV<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new ParabolaV<>(newCalculator, mapper.apply(A), mapper.apply(B),
+    public <N> ParabolaV<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new ParabolaV<>((RealCalculator<N>) newCalculator, mapper.apply(A), mapper.apply(B),
                 mapper.apply(C), mapper.apply(D), mapper.apply(E), mapper.apply(F), mapper.apply(p), onX);
     }
 

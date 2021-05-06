@@ -1,7 +1,7 @@
 package cn.ancono.math.set;
 
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.function.Bijection;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.property.Mappable;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * only provides {@link #contains(Object)} method. The MathSet should always uses {@link RealCalculator#isEqual(Object,
  * Object)}
  * method to test whether the two elements is the identity.<p>
- * A MathSet should always be immutable, which is the identity as the general idea for {@link MathObject}.
+ * A MathSet should always be immutable, which is the identity as the general idea for {@link MathObjectReal}.
  * Therefore, add, remove union and intersect operations are not provided.
  *
  * @author liyicheng

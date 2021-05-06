@@ -20,7 +20,6 @@ interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
     /**
      * Return `x ^ n` as defined in the multiplicative monoid.
      */
-    @JvmDefault
     override fun pow(x: T, n: Long): T {
         return if (n == 0L) {
             one
@@ -34,17 +33,22 @@ interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
      *
      * @exception UnsupportedOperationException if this method is not implemented.
      */
-    @JvmDefault
-    fun isUnit(x: T): Boolean {
-        throw UnsupportedOperationException("Not supported")
-    }
+    fun isUnit(x: T): Boolean
 
-    @JvmDefault
+
+    /**
+     * Performs the exact division `x / y`.
+     *
+     * This method is optional.
+     *
+     * @exception UnsupportedOperationException if this method is not implemented.
+     */
+    fun exactDivide(x: T, y: T): T
+
     override val numberClass: Class<T>
         get() = super<RingCalculator>.numberClass
 
 
-    @JvmDefault
     fun of(x: Long): T {
         return multiplyLong(one, x)
     }

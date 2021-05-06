@@ -3,8 +3,8 @@
  */
 package test.math;
 
-import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.hamcrest.BaseMatcher;
@@ -76,13 +76,13 @@ public final class TestUtils {
         }
     }
 
-    public static <T> void assertValueEquals(MathObject<T> expected, MathObject<T> actual) {
+    public static <T> void assertValueEquals(MathObjectReal<T> expected, MathObjectReal<T> actual) {
         if (!expected.valueEquals(actual)) {
             throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
         }
     }
 
-    public static <T, S extends EqualPredicate<T>> void assertValueEquals(FMathObject<T, S> expected, FMathObject<T, S> actual) {
+    public static <T, S extends EqualPredicate<T>> void assertValueEquals(MathObject<T, S> expected, MathObject<T, S> actual) {
         if (!expected.valueEquals(actual)) {
             throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
         }

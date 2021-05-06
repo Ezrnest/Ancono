@@ -4,6 +4,8 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
@@ -69,13 +71,20 @@ public final class Sphere<T> extends SpaceObject<T> {
         this.r2 = r2;
     }
 
+    @NotNull
+    @Override
+    public RealCalculator<T> getCalculator() {
+        return (RealCalculator<T>) super.getCalculator();
+    }
+
     /**
      * Gets the radius of this sphere
+     *
      * @return
      */
     public T getRadius() {
         if (r == null) {
-            r = getMc().squareRoot(r2);
+            r = getCalculator().squareRoot(r2);
         }
         return r;
     }
@@ -104,8 +113,8 @@ public final class Sphere<T> extends SpaceObject<T> {
     @Override
     public T surfaceArea() {
         if (surfaceArea == null) {
-            surfaceArea = getMc().multiplyLong(getMc().multiply(r2,
-                    getMc().constantValue(RealCalculator.STR_PI)), 2l);
+            surfaceArea = getCalculator().multiplyLong(getCalculator().multiply(r2,
+                    getCalculator().constantValue(RealCalculator.STR_PI)), 2l);
         }
         return surfaceArea;
     }
@@ -118,8 +127,8 @@ public final class Sphere<T> extends SpaceObject<T> {
     @Override
     public T volume() {
         if (volume == null) {
-            volume = getMc().divideLong(getMc().multiplyLong(getMc().multiply(
-                    getMc().multiply(r2, getRadius()), getMc().constantValue(RealCalculator.STR_PI)), 4l), 3l);
+            volume = getCalculator().divideLong(getCalculator().multiplyLong(getCalculator().multiply(
+                    getCalculator().multiply(r2, getRadius()), getCalculator().constantValue(RealCalculator.STR_PI)), 4l), 3l);
         }
         return volume;
     }
@@ -130,7 +139,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @see Sphere#getRadius()
      */
     public T getDiameter() {
-        return getMc().multiplyLong(getRadius(), 2l);
+        return getCalculator().multiplyLong(getRadius(), 2l);
     }
 
     /**
@@ -157,7 +166,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @return
      */
     public T distanceSurface(SPoint<T> p) {
-        return getMc().abs(getMc().subtract(o.distance(p), getRadius()));
+        return getCalculator().abs(getCalculator().subtract(o.distance(p), getRadius()));
     }
 
     /* (non-Javadoc)
@@ -165,7 +174,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @Override
     public boolean isInside(SPoint<T> p) {
-        return getMc().compare(o.distanceSq(p), r2) < 0;
+        return getCalculator().compare(o.distanceSq(p), r2) < 0;
     }
 
     /* (non-Javadoc)
@@ -173,7 +182,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @Override
     public boolean isOnSurface(SPoint<T> p) {
-        return getMc().compare(o.distanceSq(p), r2) == 0;
+        return getCalculator().compare(o.distanceSq(p), r2) == 0;
     }
 
     /* (non-Javadoc)
@@ -181,11 +190,11 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @Override
     public boolean contains(SPoint<T> p) {
-        return getMc().compare(o.distanceSq(p), r2) <= 0;
+        return getCalculator().compare(o.distanceSq(p), r2) <= 0;
     }
 
     private T square(T x) {
-        return getMc().multiply(x, x);
+        return getCalculator().multiply(x, x);
     }
 
     /**
@@ -197,10 +206,10 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     public T getChordLength(T d) {
         T d2 = square(d);
-        if (getMc().compare(d2, r2) > 0) {
+        if (getCalculator().compare(d2, r2) > 0) {
             return null;
         }
-        return getMc().multiplyLong(getMc().squareRoot(getMc().subtract(r2, d2)), 2l);
+        return getCalculator().multiplyLong(getCalculator().squareRoot(getCalculator().subtract(r2, d2)), 2l);
     }
 
     /**
@@ -210,7 +219,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @return the square of the length of the chord
      */
     public T getChordLengthSq(T d2) {
-        return getMc().multiplyLong(getMc().subtract(r2, d2), 4l);
+        return getCalculator().multiplyLong(getCalculator().subtract(r2, d2), 4l);
     }
 
     /**
@@ -226,7 +235,7 @@ public final class Sphere<T> extends SpaceObject<T> {
         if (an == null) {
             return null;
         }
-        return getMc().multiplyLong(an, 2l);
+        return getCalculator().multiplyLong(an, 2l);
     }
 
     /**
@@ -238,11 +247,11 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @return the angle of
      */
     public T getCircumAngle(T cl, MathFunction<T, T> arccos) {
-        T l_2 = getMc().divideLong(cl, 2l);
-        if (getMc().compare(l_2, getRadius()) > 0) {
+        T l_2 = getCalculator().divideLong(cl, 2l);
+        if (getCalculator().compare(l_2, getRadius()) > 0) {
             return null;
         }
-        return arccos.apply(getMc().divide(l_2, r));
+        return arccos.apply(getCalculator().divide(l_2, r));
     }
 
     /**
@@ -255,7 +264,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     public int relation(SPoint<T> p) {
         T dis = o.distanceSq(p);
-        return getMc().compare(dis, square(getRadius()));
+        return getCalculator().compare(dis, square(getRadius()));
     }
 
     /**
@@ -266,7 +275,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     public int relation(Line<T> l) {
         T d2 = l.distanceSq(o);
-        return getMc().compare(d2, r2);
+        return getCalculator().compare(d2, r2);
     }
 
     /**
@@ -279,16 +288,16 @@ public final class Sphere<T> extends SpaceObject<T> {
     public Relation relation(Sphere<T> c) {
         //first compute the distance of two centers.
         T dis = c.o.distance(c.o);
-        T rs = getMc().add(getRadius(), c.getRadius());
-        int t = getMc().compare(dis, rs);
+        T rs = getCalculator().add(getRadius(), c.getRadius());
+        int t = getCalculator().compare(dis, rs);
         if (t > 0) {
             return Relation.DISJOINT;
         } else if (t == 0) {
             return Relation.CIRCUMSCRIBED;
         }
         //o1o2 < r1+r2
-        T rd = getMc().abs(getMc().subtract(r, c.r));
-        t = getMc().compare(dis, rd);
+        T rd = getCalculator().abs(getCalculator().subtract(r, c.r));
+        t = getCalculator().compare(dis, rd);
         if (t > 0) {
             return Relation.INTERSECT;
         } else if (t == 0) {
@@ -303,8 +312,8 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @NotNull
     @Override
-    public <N> Sphere<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        Sphere<N> sp = new Sphere<N>(newCalculator,
+    public <N> Sphere<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        Sphere<N> sp = new Sphere<N>((RealCalculator<N>) newCalculator,
                 r == null ? null : mapper.apply(r)
                 , mapper.apply(r2), o.mapTo(newCalculator, mapper));
         if (volume != null) {
@@ -340,25 +349,14 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof Sphere) {
             Sphere<T> sp = (Sphere<T>) obj;
-            return o.valueEquals(sp.o) && getMc().isEqual(r2, sp.r2);
+            return o.valueEquals(sp.o) && getCalculator().isEqual(r2, sp.r2);
         }
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Sphere) {
-            Sphere<N> sp = (Sphere<N>) obj;
-            return o.valueEquals(sp.o, mapper) && getMc().isEqual(r2, mapper.apply(sp.r2));
-        }
-        return false;
-    }
 
     /**
      * Returns
@@ -384,14 +382,14 @@ public final class Sphere<T> extends SpaceObject<T> {
 
     /**
      * Creates a sphere with its center point and its radius.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p a point
      * @param r the radius, must be positive.
      * @return a new sphere
      */
     public static <T> Sphere<T> centerRadius(SPoint<T> p, T r) {
-        RealCalculator<T> mc = p.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) p.getCalculator();
         if (mc.compare(r, mc.getZero()) <= 0) {
             throw new IllegalArgumentException("r<=0");
         }
@@ -400,13 +398,13 @@ public final class Sphere<T> extends SpaceObject<T> {
 
     /**
      * Creates a sphere with its center point and its radius' square.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      * @param p a point
      * @param r2 square of the radius, must be positive.
      * @return a new sphere
      */
     public static <T> Sphere<T> centerRadiusSq(SPoint<T> p, T r2) {
-        RealCalculator<T> mc = p.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) p.getCalculator();
         if (mc.compare(r2, mc.getZero()) <= 0) {
             throw new IllegalArgumentException("r<=0");
         }
@@ -415,7 +413,7 @@ public final class Sphere<T> extends SpaceObject<T> {
 
     /**
      * Creates a sphere with four points, they must not be on the identity plane.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      * @param a
      * @param b
      * @param c
@@ -424,7 +422,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> Sphere<T> fourPoints(SPoint<T> a, SPoint<T> b, SPoint<T> c, SPoint<T> d) {
-        RealCalculator<T> mc = a.getCalculator();
+        RealCalculator<T> mc = (RealCalculator<T>) a.getCalculator();
         SPoint<T>[] ps = new SPoint[]{a, b, c, d};
         T[][] mat = (T[][]) new Object[3][4];
         for (int i = 0; i < 3; i++) {

@@ -1,8 +1,8 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
@@ -10,7 +10,7 @@ import cn.ancono.math.algebra.linear.*;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.AlgebraModel;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import kotlin.jvm.functions.Function1;
 import kotlin.sequences.Sequence;
@@ -471,10 +471,10 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
 
     @Override
-    public boolean valueEquals(@NotNull FMathObject<T, RingCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RingCalculator<T>> obj) {
         if (obj instanceof SVector) {
             var mc = getCalculator();
-            SVector<T> s = (SVector<T>) obj;
+            @SuppressWarnings("unchecked") SVector<T> s = (SVector<T>) obj;
             return mc.isEqual(x, s.x) &&
                     mc.isEqual(y, s.y) &&
                     mc.isEqual(z, s.z);
@@ -524,7 +524,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @param mc a {@link RealCalculator}
      * @return a new SVector
      */
-    public static <T> SVector<T> valueOf(T x, T y, T z, RealCalculator<T> mc) {
+    public static <T> SVector<T> valueOf(T x, T y, T z, FieldCalculator<T> mc) {
         if (x == null || y == null || z == null) {
             throw new NullPointerException("");
         }
@@ -543,7 +543,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * @param mc a {@link RealCalculator}
      * @return a new vector
      */
-    public static <T> SVector<T> vector(SPoint<T> A, SPoint<T> B, RealCalculator<T> mc) {
+    public static <T> SVector<T> vector(SPoint<T> A, SPoint<T> B, FieldCalculator<T> mc) {
         return new SVector<>(mc.subtract(B.x, A.x), mc.subtract(B.y, A.y), mc.subtract(B.z, A.z), mc);
     }
 
@@ -553,14 +553,14 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
      * __
      * AB
      * </pre>
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param A point A
      * @param B point B
      * @return a new vector
      */
     public static <T> SVector<T> vector(SPoint<T> A, SPoint<T> B) {
-        return vector(A, B, A.getCalculator());
+        return vector(A, B, (FieldCalculator<T>) A.getCalculator());
     }
 
     /**
@@ -727,7 +727,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
     /**
      * Create a new vector base, the three SVector must not be parallel.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param x
      * @param y
@@ -863,12 +863,12 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 //
 //    }
 
-    public static class SVectorGenerator<T> extends AbstractMathObject<T> {
+    public static class SVectorGenerator<T> extends AbstractMathObject<T, FieldCalculator<T>> {
 
         /**
          * @param mc
          */
-        public SVectorGenerator(RealCalculator<T> mc) {
+        public SVectorGenerator(FieldCalculator<T> mc) {
             super(mc);
         }
 
@@ -889,8 +889,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
          */
         @NotNull
         @Override
-        public <N> SVectorGenerator<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new SVectorGenerator<>(newCalculator);
+        public <N> SVectorGenerator<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new SVectorGenerator<>((FieldCalculator<N>) newCalculator);
         }
 
         /* (non-Javadoc)
@@ -914,19 +914,8 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
             return mc.hashCode();
         }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
-         */
         @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
-            return equals(obj);
-        }
-
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-         */
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+        public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
             return equals(obj);
         }
 
@@ -934,7 +923,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
         @Override
-        public @NotNull String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        public @NotNull String toString(@NotNull NumberFormatter<T> nf) {
             return "SVectorGenerator";
         }
     }

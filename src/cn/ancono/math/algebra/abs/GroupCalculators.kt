@@ -108,50 +108,6 @@ object GroupCalculators {
         }
     }
 
-    /**
-     * Returns a [RealCalculator] from the GroupCalculator, mapping the group's operation to "add" in MathCalculator
-     * @param gc
-     * @return
-     */
-    @JvmStatic
-    fun <T> toMathCalculatorAdd(gc: GroupCalculator<T>): RealCalculator<T> {
-        return object : MathCalculatorAdapter<T>() {
-
-            /*
-			 * @see cn.ancono.math.numberModels.MathCalculatorAdapter#getZero()
-			 */
-            override val zero: T
-                get() = gc.identity
-
-            /*
-			 * @see cn.ancono.math.numberModels.MathCalculatorAdapter#isEqual(java.lang.Object, java.lang.Object)
-			 */
-            override fun isEqual(x: T, y: T): Boolean {
-                return gc.isEqual(x, y)
-            }
-
-            /*
-			 * @see cn.ancono.math.numberModels.MathCalculatorAdapter#add(java.lang.Object, java.lang.Object)
-			 */
-            override fun add(x: T, y: T): T {
-                return gc.apply(x, y)
-            }
-
-            /*
-			 * @see cn.ancono.math.numberModels.MathCalculatorAdapter#negate(java.lang.Object)
-			 */
-            override fun negate(x: T): T {
-                return gc.inverse(x)
-            }
-
-            /*
-			 * @see cn.ancono.math.numberModels.MathCalculatorAdapter#multiplyLong(java.lang.Object, long)
-			 */
-            override fun multiplyLong(x: T, n: Long): T {
-                return gc.gpow(x, n)
-            }
-        }
-    }
 
     /**
      * Returns a [RealCalculator] from the EqualPredicate, which only supports `isEqual(Object,Object)` method.

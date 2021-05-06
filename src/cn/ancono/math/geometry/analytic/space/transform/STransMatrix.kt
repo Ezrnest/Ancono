@@ -1,11 +1,14 @@
 package cn.ancono.math.geometry.analytic.space.transform
 
+import cn.ancono.math.AbstractMathObject
 import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.algebra.abs.calculator.FieldCalculator
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.geometry.analytic.space.SPoint
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.utilities.StringSup
 import java.util.function.Function
@@ -20,7 +23,8 @@ import java.util.function.Function
  * </pre>
  * (x',y',z', _ ) = mat * (x,y,z,1)T
  */
-class STransMatrix<T> internal constructor(mc: RealCalculator<T>, val matrix: Matrix<T>) : MathObjectExtend<T>(mc) {
+class STransMatrix<T> internal constructor(mc: FieldCalculator<T>, val matrix: Matrix<T>)
+    : AbstractMathObject<T, FieldCalculator<T>>(mc) {
 
     val rotateMatrix: SRotateMatrix<T> = SRotateMatrix.valueOf(matrix.subMatrix(0, 0, 3, 3))
 
@@ -28,30 +32,24 @@ class STransMatrix<T> internal constructor(mc: RealCalculator<T>, val matrix: Ma
         val v = p.extendVector()
         val nv = Vector.multiplyToVector(matrix, v)
         val k: T = nv[3]
-        return SPoint.valueOf(nv[0] / k, nv[1] / k, nv[2] / k, mc)
+        return calculator.eval {
+            SPoint.valueOf(nv[0] / k, nv[1] / k, nv[2] / k, this as RealCalculator<T>)  //TODO fix
+        }
     }
 
 
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): STransMatrix<N> {
-        return STransMatrix(newCalculator, matrix.mapTo(newCalculator, mapper))
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): STransMatrix<N> {
+        return STransMatrix(newCalculator as FieldCalculator, matrix.mapTo(newCalculator, mapper))
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is STransMatrix) {
             return false
         }
         return matrix.valueEquals(obj.matrix)
     }
 
-    override fun <N> valueEquals(obj: MathObject<N>, mapper: Function<N, T>): Boolean {
-        if (obj !is STransMatrix) {
-            return false
-        }
-//        matrix.mapTo(obj.calculator,mapper).valueEquals(obj.matrix)
-        return matrix.valueEquals(obj.matrix.mapTo(calculator, mapper)) //TODO
-    }
-
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return StringSup.formatMatrix(Array(4) { i ->
             Array(4) { j ->
                 nf.format(matrix[i, j])

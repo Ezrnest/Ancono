@@ -42,7 +42,6 @@ interface RingCalculator<T> : AbelGroupCal<T>, MulSemiGroupCal<T> {
      * @param n a positive number
      * @return `x ^ n`
      */
-    @JvmDefault
     override fun pow(x: T, n: Long): T {
         return super.pow(x, n)
     }
@@ -52,7 +51,6 @@ interface RingCalculator<T> : AbelGroupCal<T>, MulSemiGroupCal<T> {
      * `x` for `n` times. This method can be implemented for better performance.
      * @param n a long
      */
-    @JvmDefault
     override fun multiplyLong(x: T, n: Long): T {
         return super.multiplyLong(x, n)
     }

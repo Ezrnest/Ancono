@@ -2,11 +2,13 @@ package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
-import cn.ancono.math.numberModels.api.RealCalculator;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.set.InfiniteSet;
 import cn.ancono.math.set.MathSet;
 import cn.ancono.utilities.ArraySup;
+import cn.ancono.utilities.CollectionSup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -23,14 +25,14 @@ import java.util.function.Function;
  * implemented by default in this abstract class, and proper overriding is
  * recommended.<p>
  * This class also provides basic point sets by method
- * {@link #getEmptySet(RealCalculator)} and {@link #getUniverseSet(RealCalculator)}.
+ * {@link #getEmptySet(EqualPredicate)} and {@link #getUniverseSet(EqualPredicate)}.
  *
  * @param <T>
  * @author liyicheng
  */
-public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements MathSet<SPoint<T>> {
+public abstract class SpacePointSet<T> extends AbstractMathObject<T, EqualPredicate<T>> implements MathSet<SPoint<T>> {
 
-    protected SpacePointSet(RealCalculator<T> mc) {
+    protected SpacePointSet(EqualPredicate<T> mc) {
         super(mc);
     }
 
@@ -47,7 +49,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
      */
     @NotNull
     @Override
-    public abstract <N> SpacePointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SpacePointSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * Returns the intersect of the two space point sets.
@@ -74,18 +76,18 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         return this.getClass().getName();
     }
 
     /**
      * Return a UniversePointSet which contains all the points.
      *
-     * @param mc a {@link RealCalculator}
+     * @param mc a {@link EqualPredicate}
      * @return a space point set
      */
     @SuppressWarnings("unchecked")
-    public static <T> UniversePointSet<T> getUniverseSet(RealCalculator<T> mc) {
+    public static <T> UniversePointSet<T> getUniverseSet(EqualPredicate<T> mc) {
         UniversePointSet<T> u = (UniversePointSet<T>) usets.get(mc);
         if (u == null) {
             u = new UniversePointSet<>(mc);
@@ -97,11 +99,11 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     /**
      * Return a EmptyPointSet which contains no point.
      *
-     * @param mc a {@link RealCalculator}
+     * @param mc a {@link EqualPredicate}
      * @return a space point set
      */
     @SuppressWarnings("unchecked")
-    public static <T> EmptyPointSet<T> getEmptySet(RealCalculator<T> mc) {
+    public static <T> EmptyPointSet<T> getEmptySet(EqualPredicate<T> mc) {
         EmptyPointSet<T> u = (EmptyPointSet<T>) esets.get(mc);
         if (u == null) {
             u = new EmptyPointSet<>(mc);
@@ -114,10 +116,10 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
      * Returns an empty set if it is {@code null}, or return the given set.
      *
      * @param set
-     * @param mc  a {@link RealCalculator}
+     * @param mc  a {@link EqualPredicate}
      * @return a set, not null.
      */
-    public static <T> SpacePointSet<T> cenvertNull(SpacePointSet<T> set, RealCalculator<T> mc) {
+    public static <T> SpacePointSet<T> cenvertNull(SpacePointSet<T> set, EqualPredicate<T> mc) {
         if (set == null) {
             return getEmptySet(mc);
         }
@@ -144,12 +146,12 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         return set instanceof UniversePointSet;
     }
 
-    private static final Map<RealCalculator<?>, UniversePointSet<?>> usets = new HashMap<>();
-    private static final Map<RealCalculator<?>, EmptyPointSet<?>> esets = new HashMap<>();
+    private static final Map<EqualPredicate<?>, UniversePointSet<?>> usets = new HashMap<>();
+    private static final Map<EqualPredicate<?>, EmptyPointSet<?>> esets = new HashMap<>();
 
     /**
      * Returns a new intersect set of the two sets.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link EqualPredicate} will be taken from the first parameter of {@link MathObjectReal}.
      *
      * @param s1 a space point set.
      * @param s2 another space point set.
@@ -167,7 +169,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
 
     /**
      * Returns a new intersect set of the sets.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link EqualPredicate} will be taken from the first parameter of {@link MathObjectReal}.
      *
      * @param sets
      * @return an intersect set
@@ -175,7 +177,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     @SafeVarargs
     public static <T> SpacePointSet<T> intersectOf(SpacePointSet<T>... sets) {
         List<SpacePointSet<T>> list = new ArrayList<>(sets.length);
-        RealCalculator<T> mc = sets[0].getCalculator();
+        EqualPredicate<T> mc = sets[0].getCalculator();
         for (SpacePointSet<T> sps : sets) {
             if (isEmptySet(sps)) {
                 return getEmptySet(mc);
@@ -187,7 +189,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
 
     /**
      * Returns a new union set of the two sets.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link EqualPredicate} will be taken from the first parameter of {@link MathObjectReal}.
      *
      * @param s1 a space point set.
      * @param s2 another space point set.
@@ -205,7 +207,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
 
     /**
      * Returns a new union set of the sets.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}.
+     * <p>The {@link EqualPredicate} will be taken from the first parameter of {@link MathObjectReal}.
      *
      * @param sets
      * @return an union set
@@ -213,7 +215,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
     @SafeVarargs
     public static <T> SpacePointSet<T> unionOf(SpacePointSet<T>... sets) {
         List<SpacePointSet<T>> list = new ArrayList<>(sets.length);
-        RealCalculator<T> mc = sets[0].getCalculator();
+        EqualPredicate<T> mc = sets[0].getCalculator();
         for (SpacePointSet<T> sps : sets) {
             if (isUniverseSet(sps)) {
                 return getUniverseSet(mc);
@@ -228,7 +230,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         /**
          * @param mc
          */
-        UniversePointSet(RealCalculator<T> mc) {
+        UniversePointSet(EqualPredicate<T> mc) {
             super(mc);
         }
 
@@ -253,7 +255,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public <N> UniversePointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> UniversePointSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new UniversePointSet<>(newCalculator);
         }
 
@@ -264,7 +266,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         public boolean equals(Object obj) {
             if (obj instanceof UniversePointSet) {
                 UniversePointSet<?> set = (UniversePointSet<?>) obj;
-                return getMc().equals(set.getMc());
+                return getCalculator().equals(set.getCalculator());
             }
             return false;
         }
@@ -274,29 +276,13 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @Override
         public int hashCode() {
-            return getMc().hashCode();
+            return getCalculator().hashCode();
         }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
-         */
-        @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
-            if (obj instanceof UniversePointSet) {
-                return true;
-            }
-            return false;
-        }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-         */
         @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof UniversePointSet) {
-                return true;
-            }
-            return false;
+        public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+            return obj instanceof UniversePointSet;
         }
 
         /* (non-Javadoc)
@@ -304,7 +290,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        public String toString(@NotNull NumberFormatter<T> nf) {
             return "Universe set";
         }
 
@@ -329,7 +315,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         /**
          * @param mc
          */
-        EmptyPointSet(RealCalculator<T> mc) {
+        EmptyPointSet(EqualPredicate<T> mc) {
             super(mc);
         }
 
@@ -346,7 +332,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public <N> EmptyPointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> EmptyPointSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             return new EmptyPointSet<>(newCalculator);
         }
 
@@ -357,7 +343,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         public boolean equals(Object obj) {
             if (obj instanceof EmptyPointSet) {
                 EmptyPointSet<?> set = (EmptyPointSet<?>) obj;
-                return getMc().equals(set.getMc());
+                return getCalculator().equals(set.getCalculator());
             }
             return false;
         }
@@ -367,37 +353,18 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @Override
         public int hashCode() {
-            return getMc().hashCode();
+            return getCalculator().hashCode();
         }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
-         */
         @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
-            if (obj instanceof EmptyPointSet) {
-                return true;
-            }
-            return false;
+        public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+            return obj instanceof EmptyPointSet;
         }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-         */
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof EmptyPointSet) {
-                return true;
-            }
-            return false;
-        }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        public String toString(@NotNull NumberFormatter<T> nf) {
             return "Empty set";
         }
 
@@ -426,7 +393,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
         /**
          * @param mc
          */
-        CombinedSpacePointSet(RealCalculator<T> mc, List<SpacePointSet<T>> list, int flag) {
+        CombinedSpacePointSet(EqualPredicate<T> mc, List<SpacePointSet<T>> list, int flag) {
             super(mc);
             this.list = list;
             this.flag = flag;
@@ -465,7 +432,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public <N> CombinedSpacePointSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> CombinedSpacePointSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             List<SpacePointSet<N>> ln = new ArrayList<>(list.size());
             for (SpacePointSet<T> set : list) {
                 ln.add(set.mapTo(newCalculator, mapper));
@@ -495,33 +462,13 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
             return list.hashCode();
         }
 
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
-         */
-        @SuppressWarnings("unchecked")
+
         @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
             if (obj instanceof CombinedSpacePointSet) {
                 CombinedSpacePointSet<T> isp = (CombinedSpacePointSet<T>) obj;
-                return this.flag == isp.flag && ArraySup.arrayEqualNoOrder(
-                        list.toArray(), isp.list.toArray(), (e1, e2) -> e1 == e2 ||
-                                ((MathObject<T>) e1).valueEquals((MathObject<T>) e2));
-            }
-            return false;
-        }
-
-
-        /* (non-Javadoc)
-         * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-         */
-        @SuppressWarnings("unchecked")
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof CombinedSpacePointSet) {
-                CombinedSpacePointSet<N> isp = (CombinedSpacePointSet<N>) obj;
-                return this.flag == isp.flag && ArraySup.arrayEqualNoOrder(
-                        list.toArray(), isp.list.toArray(), (e1, e2) -> e1 == e2 ||
-                                ((MathObject<T>) e1).valueEquals((MathObject<N>) e2, mapper));
+                return this.flag == isp.flag && CollectionSup.listEqual(
+                        list, isp.list, SpacePointSet::valueEquals);
             }
             return false;
         }
@@ -531,7 +478,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T> implements 
          */
         @NotNull
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        public String toString(@NotNull NumberFormatter<T> nf) {
             return "CombinedSpacePointSet:" + (flag == INTERSECT ? "Intersect" : "Union") + ":" + list.toString();
         }
     }

@@ -4,6 +4,7 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.Circle;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -35,7 +36,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      */
     @Override
     public boolean contains(SPoint<T> p) {
-        return pl.contains(p) && getMc().compare(o.distanceSq(p), r2) <= 0;
+        return pl.contains(p) && getCalculator().compare(o.distanceSq(p), r2) <= 0;
     }
 
     /**
@@ -44,7 +45,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return
      */
     public boolean isOnEgde(SPoint<T> p) {
-        return pl.contains(p) && getMc().compare(o.distanceSq(p), r2) == 0;
+        return pl.contains(p) && getCalculator().compare(o.distanceSq(p), r2) == 0;
     }
 
     /**
@@ -54,7 +55,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return square of x
      */
     private T square(T x) {
-        return getMc().multiply(x, x);
+        return getCalculator().multiply(x, x);
     }
 
     /**
@@ -72,7 +73,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      */
     public T getRadius() {
         if (r == null) {
-            r = getMc().squareRoot(r2);
+            r = getCalculator().squareRoot(r2);
         }
         return r;
     }
@@ -84,7 +85,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @see Circle#getRadius()
      */
     public T getDiameter() {
-        return getMc().multiplyLong(getRadius(), 2l);
+        return getCalculator().multiplyLong(getRadius(), 2l);
     }
 
     /**
@@ -94,7 +95,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return the length of the arc
      */
     public T getArcLength(T angle) {
-        return getMc().multiply(angle, getRadius());
+        return getCalculator().multiply(angle, getRadius());
     }
 
 
@@ -104,8 +105,8 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return the area of this circle
      */
     public T getArea() {
-        T pi = getMc().constantValue(RealCalculator.STR_PI);
-        return getMc().multiply(pi, r2);
+        T pi = getCalculator().constantValue(RealCalculator.STR_PI);
+        return getCalculator().multiply(pi, r2);
     }
 
     /**
@@ -114,8 +115,8 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return the perimeter of this circle.
      */
     public T getPerimeter() {
-        T pi = getMc().constantValue(RealCalculator.STR_PI);
-        return getMc().multiply(getMc().multiplyLong(pi, 2l), getRadius());
+        T pi = getCalculator().constantValue(RealCalculator.STR_PI);
+        return getCalculator().multiply(getCalculator().multiplyLong(pi, 2l), getRadius());
     }
 
     /**
@@ -127,10 +128,10 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      */
     public T getChordLength(T d) {
         T d2 = square(d);
-        if (getMc().compare(d2, r2) > 0) {
+        if (getCalculator().compare(d2, r2) > 0) {
             return null;
         }
-        return getMc().multiplyLong(getMc().squareRoot(getMc().subtract(r2, d2)), 2l);
+        return getCalculator().multiplyLong(getCalculator().squareRoot(getCalculator().subtract(r2, d2)), 2l);
     }
 
     /**
@@ -140,7 +141,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return the square of the length of the chord
      */
     public T getChordLengthSq(T d2) {
-        return getMc().multiplyLong(getMc().subtract(r2, d2), 4l);
+        return getCalculator().multiplyLong(getCalculator().subtract(r2, d2), 4l);
     }
 
     /**
@@ -156,7 +157,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
         if (an == null) {
             return null;
         }
-        return getMc().multiplyLong(an, 2l);
+        return getCalculator().multiplyLong(an, 2l);
     }
 
     /**
@@ -168,11 +169,11 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @return the angle of
      */
     public T getCircumAngle(T cl, MathFunction<T, T> arccos) {
-        T l_2 = getMc().divideLong(cl, 2l);
-        if (getMc().compare(l_2, getRadius()) > 0) {
+        T l_2 = getCalculator().divideLong(cl, 2l);
+        if (getCalculator().compare(l_2, getRadius()) > 0) {
             return null;
         }
-        return arccos.apply(getMc().divide(l_2, r));
+        return arccos.apply(getCalculator().divide(l_2, r));
     }
 
     /**
@@ -188,7 +189,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
             throw new IllegalArgumentException("Not on this plane");
         }
         T dis = o.distanceSq(p);
-        return getMc().compare(dis, square(getRadius()));
+        return getCalculator().compare(dis, square(getRadius()));
     }
 
     public Circle<T> toPlaneCircle(Plane.PlaneCoordinateConverter<T> pcc) {
@@ -206,8 +207,8 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      */
     @NotNull
     @Override
-    public <N> SCircle<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        SCircle<N> sc = new SCircle<N>(newCalculator,
+    public <N> SCircle<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        SCircle<N> sc = new SCircle<N>((RealCalculator<N>) newCalculator,
                 o.mapTo(newCalculator, mapper), mapper.apply(r2), pl.mapTo(newCalculator, mapper));
         fillFields(sc, mapper);
         return sc;
@@ -240,29 +241,16 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof SCircle) {
             SCircle<T> sp = (SCircle<T>) obj;
             return pl.valueEquals(sp.pl) &&
                     o.valueEquals(sp.o) &&
-                    getMc().isEqual(r2, sp.r2);
+                    getCalculator().isEqual(r2, sp.r2);
         }
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof SCircle) {
-            SCircle<N> sp = (SCircle<N>) obj;
-            return pl.valueEquals(sp.pl, mapper) &&
-                    o.valueEquals(sp.o, mapper) &&
-                    getMc().isEqual(r2, mapper.apply(sp.r2));
-        }
-        return false;
-    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

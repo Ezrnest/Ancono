@@ -43,7 +43,7 @@ import java.util.function.Function
  *
  *
  */
-interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
+interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
     //Created by lyc at 2021-04-06 22:12
 
     /**
@@ -287,7 +287,6 @@ interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<
      *
      * @see elementSequence
      */
-    @JvmDefault
     @Suppress("UNCHECKED_CAST")
     override fun flattenToList(): List<T> {
         val size = this.size
@@ -452,7 +451,7 @@ interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<
     }
 
 
-    override fun valueEquals(obj: FMathObject<T, EqualPredicate<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, EqualPredicate<T>>): Boolean {
         if (obj !is Tensor) {
             return false
         }
@@ -463,7 +462,7 @@ interface Tensor<T> : FMathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<
         return elementSequence().zip(obj.elementSequence()).all { (a, b) -> mc.isEqual(a, b) }
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return joinTo(StringBuilder()) {
             nf.format(it)
         }.toString()
@@ -1030,7 +1029,7 @@ abstract class AbstractTensor<T>(
         /**
          * The shape of the tensor, it should not be modified
          */
-        protected val sh: IntArray) : AbstractFlexibleMathObject<T, EqualPredicate<T>>(mc), Tensor<T> {
+        protected val sh: IntArray) : AbstractMathObject<T, EqualPredicate<T>>(mc), Tensor<T> {
 
     //Created by lyc at 2021-03-31 20:39
 

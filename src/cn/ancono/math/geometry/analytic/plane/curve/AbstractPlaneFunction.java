@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.AbstractSVFunction;
 import cn.ancono.math.function.SVFunction;
 import cn.ancono.math.geometry.analytic.plane.PlanePointSet;
@@ -47,5 +48,5 @@ public abstract class AbstractPlaneFunction<T> extends AbstractSVFunction<T> imp
      */
     @NotNull
     @Override
-    public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractPlaneFunction<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 }

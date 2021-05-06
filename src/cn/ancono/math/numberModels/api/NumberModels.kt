@@ -15,7 +15,6 @@ interface MonoidNumberModel<T : MonoidNumberModel<T>> {
      * 'multiply' this with the given long, which is the result of summing `this`
      * for `k` times.
      */
-    @JvmDefault
     fun multiply(n: Long): T {
         @Suppress("UNCHECKED_CAST")
         val x = this as T
@@ -26,7 +25,6 @@ interface MonoidNumberModel<T : MonoidNumberModel<T>> {
 interface MulMonoidNumberModel<T : MulMonoidNumberModel<T>> {
     fun multiply(y: T): T
 
-    @JvmDefault
     fun pow(n: Long): T {
         @Suppress("UNCHECKED_CAST")
         val x = this as T
@@ -54,7 +52,6 @@ interface GroupNumberModel<T : GroupNumberModel<T>> : MonoidNumberModel<T> {
      */
     fun subtract(y: T): T = add(y.negate())
 
-    @JvmDefault
     override fun multiply(n: Long): T {
         if (n < 0) {
             return negate().multiply(n)
@@ -87,7 +84,6 @@ interface MulGroupNumberModel<T : MulGroupNumberModel<T>> : MulMonoidNumberModel
      */
     fun divide(y: T): T = multiply(y.reciprocal())
 
-    @JvmDefault
     override fun pow(n: Long): T {
         if (n < 0) {
             return reciprocal().pow(n)
@@ -166,10 +162,8 @@ interface VectorModel<K, V : VectorModel<K, V>> : ModuleModel<K, V> {
      */
     fun divide(k: K): V
 
-    @JvmDefault
     operator fun times(k: K): V = multiply(k)
 
-    @JvmDefault
     operator fun div(k: K): V = divide(k)
 
     /**
@@ -190,7 +184,6 @@ operator fun <K, V : ModuleModel<K, V>> K.times(v: ModuleModel<K, V>) = v.multip
 interface AlgebraModel<K, V : AlgebraModel<K, V>> : VectorModel<K, V>, RingNumberModel<V> {
     override fun multiply(y: V): V
 
-    @JvmDefault
     operator fun times(y: V): V = multiply(y) //
 }
 

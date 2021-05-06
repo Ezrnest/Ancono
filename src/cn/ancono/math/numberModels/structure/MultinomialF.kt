@@ -9,7 +9,7 @@ import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.*
 import cn.ancono.math.numberModels.api.AlgebraModel
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.utilities.CollectionSup
 import cn.ancono.utilities.ModelPatterns
@@ -160,7 +160,7 @@ internal constructor(
          */
         internal val ts: NavigableSet<TermF<F>>) :
 
-        AbstractFlexibleMathObject<F, FieldCalculator<F>>(mc),
+        AbstractMathObject<F, FieldCalculator<F>>(mc),
         IMultinomial<F>,
         AlgebraModel<F, MultinomialF<F>> {
 
@@ -483,7 +483,7 @@ internal constructor(
                 ts.mapTo(getDefaultTermsSet()) { TermF(mapper.apply(it.coefficient), it.characters) })
     }
 
-    override fun valueEquals(obj: FMathObject<F, FieldCalculator<F>>): Boolean {
+    override fun valueEquals(obj: MathObject<F, FieldCalculator<F>>): Boolean {
         if (obj !is MultinomialF) {
             return false
         }
@@ -508,7 +508,7 @@ internal constructor(
         return true
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<F>): String {
+    override fun toString(nf: NumberFormatter<F>): String {
         return IMultinomial.stringOf(this, nf)
     }
 

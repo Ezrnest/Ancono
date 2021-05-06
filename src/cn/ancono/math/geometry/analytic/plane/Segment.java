@@ -1,11 +1,12 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
 import cn.ancono.math.numberModels.CalculatorUtils;
 import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
@@ -37,16 +38,16 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
 
     @NotNull
     @Override
-    public <N> AbstractPlaneCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Segment<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         var nline = line.mapTo(newCalculator, mapper);
         var nA = A.mapTo(newCalculator, mapper);
         var nB = B.mapTo(newCalculator, mapper);
         var nv = v.mapTo(newCalculator, mapper);
-        return new Segment<>(nline, nA, nB, nv, newCalculator);
+        return new Segment<>(nline, nA, nB, nv, (RealCalculator<N>) newCalculator);
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (!(obj instanceof Segment)) {
             return false;
         }
@@ -54,19 +55,9 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
         return line.valueEquals(seg.line) && A.valueEquals(seg.A) && B.valueEquals(seg.B);
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (!(obj instanceof Segment)) {
-            return false;
-        }
-        Segment<N> seg = (Segment<N>) obj;
-        return line.valueEquals(seg.line, mapper)
-                && A.valueEquals(seg.A, mapper)
-                && B.valueEquals(seg.B, mapper);
-    }
 
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         return "Segment:A" + A.toString(nf) + "-B" + B.toString(nf);
     }
 

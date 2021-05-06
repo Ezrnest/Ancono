@@ -1,6 +1,6 @@
 package cn.ancono.math.algebra.linear.space
 
-import cn.ancono.math.FMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.linear.IVectorBasis
@@ -9,7 +9,7 @@ import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.algebra.linear.VectorBasis
 import cn.ancono.math.geometry.analytic.AbstractCoordinateSystem
 import cn.ancono.math.geometry.analytic.CoordinateSystem
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.minus
 import cn.ancono.math.numberModels.api.plus
 import java.util.function.Function
@@ -138,13 +138,13 @@ abstract class AffineSpace<T>(mc: FieldCalculator<T>,
         return valueOf(ori, nBases)
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
+    override fun toString(nf: NumberFormatter<T>): String = buildString {
         append("{$originVector;")
         vectorBasis.vectors.joinTo(this)
         append("}")
     }
 
-    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is AffineSpace) {
             return false
         }

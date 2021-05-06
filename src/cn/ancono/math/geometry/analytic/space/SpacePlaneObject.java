@@ -4,6 +4,7 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.numberModels.api.RealCalculator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Describes an object that is on a plane in the space.
@@ -31,6 +32,7 @@ public abstract class SpacePlaneObject<T> extends SpacePointSet<T> {
 
     /**
      * Determines whether this plane object is on the plane.
+     *
      * @param pl
      * @return
      */
@@ -38,4 +40,9 @@ public abstract class SpacePlaneObject<T> extends SpacePointSet<T> {
         return this.pl.valueEquals(pl);
     }
 
+    @NotNull
+    @Override
+    public RealCalculator<T> getCalculator() {
+        return (RealCalculator<T>) super.getCalculator();
+    }
 }

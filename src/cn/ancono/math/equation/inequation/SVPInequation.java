@@ -5,13 +5,13 @@ package cn.ancono.math.equation.inequation;
 
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.IPolynomial;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.equation.Type;
 import cn.ancono.math.function.AbstractSVPFunction;
 import cn.ancono.math.function.AbstractSVPFunction.LinearFunction;
 import cn.ancono.math.function.QuadraticFunction;
-import cn.ancono.math.numberModels.CalculatorUtils;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.property.Solveable;
 import cn.ancono.math.set.Interval;
@@ -57,9 +57,11 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
      * {@literal 2x>0} and {@literal x>0} are considered to be not the identity.
      * This assures that if two equations are equal, then the functions returned
      * by {@link #asFunction()} are equal.
+     *
+     * @param obj
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (obj == this) {
             return true;
         }
@@ -68,21 +70,6 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
         }
         SVPInequation<T> sv = (SVPInequation<T>) obj;
         return op == sv.op && IPolynomial.isEqual(this, sv, getMc()::isEqual);
-    }
-
-    /*
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof SVPInequation)) {
-            return false;
-        }
-        SVPInequation<N> sv = (SVPInequation<N>) obj;
-        return op == sv.op && IPolynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
     }
 
     /*
@@ -114,7 +101,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder(IPolynomial.stringOf(this, getMc(), nf));
         sb.append(' ').append(op.toString());
         sb.append(" 0");
@@ -127,7 +114,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
      */
     @NotNull
     @Override
-    public abstract <N> SVPInequation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SVPInequation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
 
     static class FromFunction<T> extends SVPInequation<T> {
@@ -155,9 +142,9 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          */
         @NotNull
         @Override
-        public <N> SVPInequation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            AbstractSVPFunction<N> t = (AbstractSVPFunction<N>) f.mapTo(newCalculator, mapper);
-            return new FromFunction<>(newCalculator, op, t);
+        public <N> SVPInequation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            AbstractSVPFunction<N> t = f.mapTo((RealCalculator<N>) newCalculator, mapper);
+            return new FromFunction<>((RealCalculator<N>) newCalculator, op, t);
         }
 
         /*
@@ -219,8 +206,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
         @Override
-        public <N> LinearInequation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new LinearInequation<>(newCalculator, op, f.mapTo(newCalculator, mapper));
+        public <N> LinearInequation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new LinearInequation<>((RealCalculator<N>) newCalculator, op, f.mapTo((RealCalculator<N>) newCalculator, mapper));
         }
 
         private Interval<T> solution;
@@ -392,8 +379,8 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
          * @see cn.ancono.math.equation.inequation.SVPInequation#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
          */
         @Override
-        public <N> QuadraticInequation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new QuadraticInequation<>(newCalculator, op, f.mapTo(newCalculator, mapper));
+        public <N> QuadraticInequation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new QuadraticInequation<>((RealCalculator<N>) newCalculator, op, (QuadraticFunction<N>) f.mapTo(newCalculator, mapper));
         }
 
     }

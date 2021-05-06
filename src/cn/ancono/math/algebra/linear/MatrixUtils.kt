@@ -418,7 +418,7 @@ object MatrixUtils {
     }
 
 
-    fun <T> toLatexString(M: Matrix<T>, formatter: FlexibleNumberFormatter<T> = FlexibleNumberFormatter.defaultFormatter(),
+    fun <T> toLatexString(M: Matrix<T>, formatter: NumberFormatter<T> = NumberFormatter.defaultFormatter(),
                           displayType: String = "pmatrix"): String = buildString {
         append("\\begin{$displayType}")
         appendLine()

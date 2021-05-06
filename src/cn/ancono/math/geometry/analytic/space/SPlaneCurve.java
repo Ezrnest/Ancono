@@ -4,6 +4,7 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.space.Plane.PlaneCoordinateConverter;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -20,10 +21,6 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
     final AbstractPlaneCurve<T> pc;
     final PlaneCoordinateConverter<T> pcc;
 
-    /**
-     * @param mc
-     * @param pl
-     */
     protected SPlaneCurve(RealCalculator<T> mc, PlaneCoordinateConverter<T> pcc, AbstractPlaneCurve<T> pc) {
         super(mc, pcc.getPlane());
         this.pc = pc;
@@ -43,8 +40,8 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
      */
     @NotNull
     @Override
-    public <N> SPlaneCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new SPlaneCurve<N>(newCalculator, pcc.mapTo(newCalculator, mapper),
+    public <N> SPlaneCurve<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new SPlaneCurve<N>((RealCalculator<N>) newCalculator, pcc.mapTo(newCalculator, mapper),
                 pc.mapTo(newCalculator, mapper));
     }
 
@@ -72,7 +69,7 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof SPlaneCurve) {
             SPlaneCurve<T> spc = (SPlaneCurve<T>) obj;
             return pc.valueEquals(spc.pc) && pcc.valueEquals(spc.pcc);
@@ -80,17 +77,6 @@ public class SPlaneCurve<T> extends SpacePlaneObject<T> {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof SPlaneCurve) {
-            SPlaneCurve<N> spc = (SPlaneCurve<N>) obj;
-            return pc.valueEquals(spc.pc, mapper) && pcc.valueEquals(spc.pcc, mapper);
-        }
-        return false;
-    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

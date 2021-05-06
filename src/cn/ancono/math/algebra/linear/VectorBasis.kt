@@ -1,12 +1,12 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.AbstractFlexibleMathObject
-import cn.ancono.math.FMathObject
+import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.structure.FiniteLinearBasis
 import cn.ancono.math.exceptions.OutOfDomainException
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.plus
 import cn.ancono.math.property.Composable
 import cn.ancono.math.property.Intersectable
@@ -30,7 +30,6 @@ interface IVectorBasis<T> : FiniteLinearBasis<T, Vector<T>> {
     /**
      * The rank of this vector base, which is equal to the number of base vectors.
      */
-    @JvmDefault
     override val rank: Int
         get() = vectors.size
 
@@ -191,7 +190,7 @@ fun <T> IVectorBasis<T>.asVectorBase(): VectorBasis<T> {
 }
 
 @Suppress("RedundantOverride")//Provided for Java extension
-abstract class VectorBasis<T>(mc: FieldCalculator<T>) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc),
+abstract class VectorBasis<T>(mc: FieldCalculator<T>) : AbstractMathObject<T, FieldCalculator<T>>(mc),
         IVectorBasis<T>, Composable<VectorBasis<T>>, Intersectable<VectorBasis<T>> {
 
 
@@ -405,7 +404,7 @@ abstract class VectorBasis<T>(mc: FieldCalculator<T>) : AbstractFlexibleMathObje
         return DVectorBasis(newCalculator as FieldCalculator<N>, vectorLength, nVectors)
     }
 
-    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         if (this == obj) {
             return true
         }
@@ -430,7 +429,7 @@ abstract class VectorBasis<T>(mc: FieldCalculator<T>) : AbstractFlexibleMathObje
 //                CollectionSup.listEqual(vectors, vb.vectors) { v1, v2 -> v1.valueEquals(v2, mapper) }
 //    }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
+    override fun toString(nf: NumberFormatter<T>): String = buildString {
         appendLine("VectorBase: dimension=$vectorLength, baseSize=$rank")
         for (v in vectors) {
             appendLine(v.toString(nf))
@@ -560,7 +559,7 @@ abstract class VectorBasis<T>(mc: FieldCalculator<T>) : AbstractFlexibleMathObje
 
         @JvmStatic
         fun <T> directSumAll(vectors: List<VectorBasis<T>>): VectorBasis<T> {
-            val rankSum = vectors.sumBy { it.rank }
+            val rankSum = vectors.sumOf { it.rank }
             val ves = vectors.flatMapTo(ArrayList(rankSum)) { it.vectors }
             val sum = generate(ves)
             if (sum.rank != rankSum) {
@@ -713,7 +712,7 @@ class StandardVectorBasis<T> internal constructor(mc: FieldCalculator<T>, dimens
         return cordInThisBase
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String =
+    override fun toString(nf: NumberFormatter<T>): String =
             "StandardVectorBase: dimension=$vectorLength"
 
     override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): FullVectorBasis<N> {

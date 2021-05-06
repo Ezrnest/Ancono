@@ -129,7 +129,7 @@ class TensorTest {
     fun testEinsum4() {
         val mc = Calculators.integer()
         val shape = intArrayOf(2, 3, 4)
-        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
+        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumOf { (1 + it.index) * it.value } }
         assertValueEquals(u.sum(-1), Tensor.einsum("ijk->ij", u))
         assertValueEquals(u.sum(0, 1), Tensor.einsum("ijk->k", u))
     }
@@ -139,7 +139,7 @@ class TensorTest {
         val mc = Calculators.integer()
         val shape = intArrayOf(2, 2, 3)
         val shape2 = intArrayOf(2, 3, 4)
-        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
+        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumOf { (1 + it.index) * it.value } }
         val w = Tensor.of(shape2, mc) { it[0] + 1 }
 
         val r1 = u.matmul(w, r = 2)
@@ -152,7 +152,7 @@ class TensorTest {
         val mc = Calculators.integer()
         val shape = intArrayOf(3, 2)
         val shape2 = intArrayOf(3, 3)
-        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
+        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumOf({ (1 + it.index) * it.value }) }
         val w = Tensor.of(shape2, mc) { it[0] }
         val v = Tensor.concatM(u, w, axis = 1)
         assertArrayEquals(intArrayOf(3, 5), v.shape)
@@ -167,7 +167,7 @@ class TensorTest {
         val mc = Calculators.integer()
         val shape = intArrayOf(3, 3)
         val shape2 = intArrayOf(3, 3)
-        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumBy { (1 + it.index) * it.value } }
+        val u = Tensor.of(shape, mc) { idx -> idx.withIndex().sumOf { (1 + it.index) * it.value } }
         val w = Tensor.of(shape2, mc) { it[0] }
         val v = Tensor.stackM(u, w, axis = 1)
         assertValueEquals(v.slice(null, 0, null), u)

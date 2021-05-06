@@ -2,11 +2,12 @@ package cn.ancono.math.geometry.analytic.plane;
 
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
@@ -793,8 +794,8 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
 
     @NotNull
     @Override
-    public <N> Line<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Line<>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
+    public <N> Line<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Line<>((RealCalculator<N>) newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c));
     }
 
 
@@ -824,7 +825,7 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
     }
 
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         sb.append("Line: ");
         T z = getMc().getZero();
@@ -852,23 +853,12 @@ public final class Line<T> extends AbstractPlaneCurve<T> implements Simplifiable
      * Determines whether the two lines are the identity,the determinant is used in this method to
      * compare the two lines are the identity instead of just comparing their coefficients.
      *
-     * @param obj
      * @param mapper
+     * @param obj
      * @return
      */
     @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Line) {
-            //we just map the line to a new line type T
-            Line<N> l = (Line<N>) obj;
-            Line<T> ll = l.mapTo(getMc(), mapper);
-            return relationWith(ll) == Relation.COINCIDE;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (this == obj) {
             return true;
         }

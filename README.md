@@ -113,55 +113,60 @@ concrete implementation for such an object in programming as a 'number model'.
 
 Since we can use the same type in programming to represent different mathematical objects
 (for example, `int` for both natural numbers and integers), we separate the number model type from the operations on it.
-The latter is provided in the interface `MathCalculator`, while the former can be arbitrary. We use the name 'number
-model' to refer to both the type and the operations.
+The latter is provided in a hierarchy of calculator interfaces, while the former can be arbitrary. We use the name '
+number model' to refer to both the type and the operations.
 
 Math objects (in Ancono the class `MathObject`) are usually based on number models. For example, we have matrices of
 integers, rational numbers or so on. Although the number model can be different, the operations(or properties) defined
-in math objects are in general the same (for example the matrix multiplication). When creating a math object,
-a `MathCalculator` is generally required.
+in math objects are in general the same (for example the matrix multiplication). When creating a math object, a
+calculator is generally required.
 
 Various number models are defined in Ancono, such as fraction, complex and expression. Generally, you can get the
-corresponding calculator by calling the static method `getCalculator()`. Implementations of `MathCalculator` of built-in
-number types(`int`, `long`, `double`) are provided in `Calculators`.
+corresponding calculator by calling the static method `calculator()`. Implementations of calculators of built-in number
+types(`int`, `long`, `double`) are provided in `Calculators`.
 
-If user want to use an external number model, simply implement the `MathCalculator` interface and pass the instance of
-the calculator when needed. Then, it can be used just as other number models.
+If user want to use an external number model, simply implement the corresponding calculator interface and pass the
+instance of the calculator when needed. Then, it can be used just as other number models.
 
-### Math Calculator
+### Calculator
 
-`MathCalculator` is an interface defining a set of basic operations that might be used. The generic parameter of a
-`MathCalculator` defines the class that this `MathCalculator` operates. Ancono uses a calculator to define all the
+Calculator interface defines a set of basic operations that might be used. Ancono uses a calculator to define all the
 operations other than creates general interface for all number models, because multiple kinds of operations can be
 defined on a number model class, and some number classes may be unmodifiable (such as primitive types).
 
-With concepts in abstract algebra and corresponding interfaces, we have a more delicate structure for `MathCalculator`.
-The hierarchy structure can be listed below:
+With concepts in abstract algebra and corresponding interfaces, we have a more delicate structure for calculators. The
+hierarchy structure can be listed below:
 
 1. `EqualPredicate` to define a equivalence relation.
+
 2. `SemigroupCalculator` to define a binary operation `apply(x,y)`.
+
+   `AbelSemiGroupCal` and `MulSemiGroupCal` are another versions of the interface with the operation named `add`
+   and `multiply`. And in `AbelSemiGroupCal` the operation is commutative.
+
 3. `MonoidCalculator` to provide the identity element for the operation `apply(x,y)`.
+
+   The corresponding abelian and multiplicative versions are `AbelMonoidCal` and `MulMonoidCal`.
+
 4. `GroupCalculator` to provide the inversion of the operation, now the number model forms a group with respect to the
    calculator.
+
+   The corresponding abelian and multiplicative versions are `AbelGroupCal` and `MulGroupCal`.
+
 5. `RingCalculator` The number model now can add and multiply. Addition corresponds to the operation in the group, which
    should be commutative.
+
 6. `UnitRingCalculator` to provide the multiplicative identity.
+
 7. `DivisionRingCalculator`  to provide the multiplicative inverse.
+
 8. `FieldCalculator` The number model now forms a field with respect to the calculator.
-9. `MathCalculator` to define other methods that may be required.
 
-On one hand, some usages of the `MathCalculator` may only require a subset of the methods. For example, matrix
-multiplication only requires that the calculator provides the functionality of `RingCalculator`. On the other hand, it
-is not always possible to implement all the methods defined. For example, calculators for integers cannot implement
-division. However, it is convenient to use the interface`MathCalculator` in general cases. Methods that can not be
-implemented can throw an `UnsupportedCalculationException`. Users can usually find out the set of operations required
-for specific usages of `MathCalculator`.
+9. `QuotientCalculator` specializes the field to be quotient field and `RealCalculator` specializes the field to be
+   real, while providing primary functions like `exp` and `sin`.
 
-To implement  `MathCalculator`, one can use the adapter class `MathCalculatorAdapter`and only implement the required
-methods.
-
-Besides `MathCalculator`, there are also extra interfaces for number models with special structure, such
-as `EUDCalculator`(calculator for Euclidean domain) and `FunctionCalculator`(provides differential).
+There are also extra interfaces for number models with special structure, such as `EUDCalculator`(calculator for
+Euclidean domain) and `FunctionCalculator`(provides differential).
 
 (To be detailed)
 
@@ -312,21 +317,21 @@ System.out.println(f3);
 
 ```java
 var cal=Calculators.integer();
-        var calFrac=Fraction.getCalculator();
-        var m1=Matrix.of(2,2,cal,
-        1,2,
-        4,5)
-        .mapTo(calFrac,Fraction::of);
-        var m2=Matrix.of(2,2,cal,
-        3,-6,
-        -4,8)
-        .mapTo(calFrac,Fraction::of);
-        var m3=m1.multiply(m2);
-        System.out.println(m3);
-        var det=m3.det();
-        var rank=m3.rank();
-        System.out.println("Det of the matrix: "+det);
-        System.out.println("Rank of the matrix: "+rank);
+var calFrac=Fraction.getCalculator();
+var m1=Matrix.of(2,2,cal,
+                 1,2,
+                 4,5)
+    .mapTo(calFrac,Fraction::of);
+var m2=Matrix.of(2,2,cal,
+                 3,-6,
+                 -4,8)
+    .mapTo(calFrac,Fraction::of);
+var m3=m1.multiply(m2);
+System.out.println(m3);
+var det=m3.det();
+var rank=m3.rank();
+System.out.println("Det of the matrix: "+det);
+System.out.println("Rank of the matrix: "+rank);
 ```
 
 Kernel and image: (in Kotlin)

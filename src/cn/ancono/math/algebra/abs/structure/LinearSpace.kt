@@ -26,7 +26,6 @@ interface FiniteLinearSpace<K, V> : LinearSpace<K, V> {
     /**
      * Gets the dimension of this linear space.
      */
-    @JvmDefault
     val dim: Int
         get() = basis.rank
 
@@ -50,7 +49,6 @@ interface FiniteLinearBasis<T, V> : FiniteGenerator<T, V> {
     /**
      * Gets the rank of this linear basis, which is equal to the size of the elements.
      */
-    @JvmDefault
     val rank: Int
         get() = elements.size
 }

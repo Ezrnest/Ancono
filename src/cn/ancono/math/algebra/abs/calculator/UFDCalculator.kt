@@ -41,7 +41,6 @@ interface UFDCalculator<T> : UnitRingCalculator<T> {
      * Determines whether the two numbers `a` and `b`
      * are co-prime.
      */
-    @JvmDefault
     fun isCoprime(a: T, b: T): Boolean {
         return isUnit(gcd(a, b))
     }
@@ -49,7 +48,7 @@ interface UFDCalculator<T> : UnitRingCalculator<T> {
     /**
      * Returns the result of exact division `x/y`, throws an `UnsupportedCalculationException` if it is not exact division.
      */
-    fun exactDivide(x: T, y: T): T
+    override fun exactDivide(x: T, y: T): T
 
     /**
      * Determines whether `x` exactly divides `y`.

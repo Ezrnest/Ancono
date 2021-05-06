@@ -3,7 +3,7 @@ package cn.ancono.math.algebra;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
 import org.jetbrains.annotations.NotNull;
@@ -148,7 +148,7 @@ public final class ProgressionSup {
          * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
          */
         @Override
-        public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+        public String toString(@NotNull NumberFormatter<T> nf) {
             StringBuilder sb = new StringBuilder();
             sb.append("ArithmeticProgression:");
             sb.append("a[n]=(").append(nf.format(k))

@@ -1,8 +1,10 @@
 package cn.ancono.math.calculus
 
 import cn.ancono.math.MathObject
-import cn.ancono.math.MathObjectExtend
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.MathObjectReal
+import cn.ancono.math.MathObjectRealExtend
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.api.RingNumberModel
 import cn.ancono.math.numberModels.structure.Polynomial
@@ -21,20 +23,21 @@ operator fun <T> IntFunction<T>.invoke(i: Int): T = this.apply(i)
  * @author  lyc
  */
 class PowerSeries<T>(mc: RealCalculator<T>, val coefficient: Coefficient<T>)
-    : MathObjectExtend<T>(mc), RingNumberModel<PowerSeries<T>> {
+    : MathObjectRealExtend<T>(mc), RingNumberModel<PowerSeries<T>> {
 
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): MathObject<N> {
-        return PowerSeries(newCalculator, IntFunction { mapper.apply(coefficient.apply(it)) })
+
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): MathObjectReal<N> {
+        return PowerSeries(newCalculator as RealCalculator<N>) { mapper.apply(coefficient.apply(it)) }
     }
 
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
         if (obj !is PowerSeries) {
             return false
         }
         return coefficient == obj.coefficient
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return (0..3).asSequence().map { i ->
             when (i) {
                 0 -> {
@@ -51,22 +54,22 @@ class PowerSeries<T>(mc: RealCalculator<T>, val coefficient: Coefficient<T>)
     }
 
     override fun add(y: PowerSeries<T>): PowerSeries<T> {
-        return PowerSeries(mc, IntFunction { i -> mc.add(coefficient(i), y.coefficient(i)) })
+        return PowerSeries(mc) { i -> mc.add(coefficient(i), y.coefficient(i)) }
     }
 
     override fun negate(): PowerSeries<T> {
-        return PowerSeries(mc, IntFunction { i -> mc.negate(coefficient(i)) })
+        return PowerSeries(mc) { i -> mc.negate(coefficient(i)) }
     }
 
     override fun multiply(y: PowerSeries<T>): PowerSeries<T> {
-        return PowerSeries(mc, IntFunction { r ->
+        return PowerSeries(mc) { r ->
             var sum = mc.zero
             for (i in 0..r) {
                 val j = r - i
                 sum = mc.add(sum, mc.multiply(coefficient(i), y.coefficient(j)))
             }
             sum
-        })
+        }
     }
 
     fun toPolynomial(n: Int): Polynomial<T> {
@@ -94,13 +97,13 @@ class PowerSeries<T>(mc: RealCalculator<T>, val coefficient: Coefficient<T>)
          */
         fun <T> series1P(mc: RealCalculator<T>): PowerSeries<T> {
             val negateOne = mc.negate(mc.one)
-            return PowerSeries(mc, IntFunction { i ->
+            return PowerSeries(mc) { i ->
                 if (i % 2 == 0) {
                     mc.one
                 } else {
                     negateOne
                 }
-            })
+            }
         }
     }
 }

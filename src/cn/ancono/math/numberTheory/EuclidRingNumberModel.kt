@@ -62,10 +62,8 @@ interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<
         return q to r
     }
 
-    @JvmDefault
     fun divideToInteger(y: T): T = divideAndRemainder(y).first
 
-    @JvmDefault
     fun exactDivide(y: T): T {
         val (q, r) = divideAndRemainder(y)
         if (!r.isZero()) {
@@ -74,10 +72,8 @@ interface EuclidRingNumberModel<T : EuclidRingNumberModel<T>> : RingNumberModel<
         return q
     }
 
-    @JvmDefault
     fun remainder(y: T): T = divideAndRemainder(y).second
 
-    @JvmDefault
     fun mod(y: T): T = remainder(y)
 
 

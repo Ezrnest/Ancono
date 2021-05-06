@@ -13,7 +13,6 @@ interface LinearSpaceCalculator<K, V> : ModuleCalculator<K, V> {
     /**
      * Determines whether the two vectors are linear dependent.
      */
-    @JvmDefault
     fun isLinearDependent(u: V, v: V): Boolean {
         throw UnsupportedOperationException()
     }
@@ -22,13 +21,11 @@ interface LinearSpaceCalculator<K, V> : ModuleCalculator<K, V> {
     /**
      * Determines whether the given vectors are linear dependent.
      */
-    @JvmDefault
     fun isLinearDependent(vs: List<V>): Boolean {
         throw UnsupportedOperationException()
     }
 
 
-    @JvmDefault
     fun scalarDivide(x: V, k: K): V {
         return scalarMultiply(scalarCalculator.reciprocal(k), x)
     }

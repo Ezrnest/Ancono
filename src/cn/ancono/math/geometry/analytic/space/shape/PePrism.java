@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,6 @@ public abstract class PePrism<T> extends Prism<T> {
 
     @NotNull
     @Override
-    public abstract <N> PePrism<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> PePrism<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
 }

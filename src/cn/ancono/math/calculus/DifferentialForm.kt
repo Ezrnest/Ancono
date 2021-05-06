@@ -204,7 +204,7 @@ class DFBaseCalculator<T>(val mc: FunctionCalculator<T>) : AlgebraCalculator<T, 
         var i2 = 0
         var i = 0
         var invCount = 0
-        var invParts = b1.sumBy { it.n }
+        var invParts = b1.sumOf { it.n }
         while (i1 < b1.size && i2 < b2.size) {
             val comp = b1[i1].compareTo(b2[i2])
             when {
@@ -451,6 +451,10 @@ class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
 
     fun divideLong(x: DifferentialForm<T>, n: Long): DifferentialForm<T> {
         return x.multiply(mc.of(Fraction.of(1, n)))
+    }
+
+    override fun exactDivide(x: DifferentialForm<T>, y: DifferentialForm<T>): DifferentialForm<T> {
+        throw ArithmeticException()
     }
 
 

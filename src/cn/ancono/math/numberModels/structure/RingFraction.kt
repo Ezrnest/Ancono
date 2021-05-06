@@ -1,13 +1,11 @@
 package cn.ancono.math.numberModels.structure
 
 
-import cn.ancono.math.FlexibleMathObject
-import cn.ancono.math.algebra.abs.calculator.FieldCalculator
-import cn.ancono.math.algebra.abs.calculator.RingCalculator
-import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
+import cn.ancono.math.MathObject
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
 import cn.ancono.math.numberModels.api.IntCalculator
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.Simplifier
 import java.util.*
 import java.util.function.Function
@@ -30,7 +28,7 @@ import java.util.function.Function
  */
 open class RingFraction<T>
 internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
-    : FlexibleMathObject<T, RingCalculator<T>> {
+    : MathObject<T, RingCalculator<T>> {
     override val calculator: RingCalculator<T>
         get() = mc
 
@@ -50,18 +48,31 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
 //    fun
 
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return "(" + nf.format(nume) +
                 ")/(" + nf.format(deno) +
                 ')'.toString()
     }
 
     override fun toString(): String {
-        return toString(FlexibleNumberFormatter.defaultFormatter())
+        return toString(NumberFormatter.defaultFormatter())
     }
 
     fun <N> mapTo(mapper: Function<T, N>, ringCalculator: RingCalculator<N>): RingFraction<N> {
         return RingFraction(mapper.apply(nume), mapper.apply(deno), ringCalculator)
+    }
+
+    override fun valueEquals(obj: MathObject<T, RingCalculator<T>>): Boolean {
+        if (obj !is RingFraction) {
+            return false
+        }
+        return calculator.eval {
+            isEqual(nume * obj.deno, obj.nume * deno)
+        }
+    }
+
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): MathObject<N, *> {
+        return mapTo(mapper, newCalculator as RingCalculator<N>)
     }
 
     override fun equals(other: Any?): Boolean {

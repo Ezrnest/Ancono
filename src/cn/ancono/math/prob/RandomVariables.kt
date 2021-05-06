@@ -154,7 +154,7 @@ object RandomVariables {
         require(n > 0)
         val ns = (0 until n).map { normal() }
         return map(ns) { list ->
-            list.sumByDouble { it * it }
+            list.sumOf { it * it }
         }
     }
 

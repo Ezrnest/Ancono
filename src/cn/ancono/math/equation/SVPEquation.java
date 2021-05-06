@@ -4,10 +4,10 @@ import cn.ancono.math.MathCalculatorHolder;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.AbstractSVPFunction;
-import cn.ancono.math.numberModels.CalculatorUtils;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.Simplifiable;
 import cn.ancono.math.numberModels.api.Simplifier;
@@ -78,9 +78,11 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * This assures that if two equations are equal, then the functions returned
      * <p>To compare the another
      * by {@link #asFunction()} are equal.
+     *
+     * @param obj
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (!(obj instanceof SVPEquation)) {
             return false;
         }
@@ -91,24 +93,24 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         return IPolynomial.isEqual(this, sv, getMc()::isEqual);
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (!(obj instanceof SVPEquation)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        SVPEquation<N> sv = (SVPEquation<N>) obj;
-        return IPolynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
-    }
+//    @Override
+//    public <N> boolean valueEquals(@NotNull MathObjectReal<N> obj, @NotNull Function<N, T> mapper) {
+//        if (!(obj instanceof SVPEquation)) {
+//            return false;
+//        }
+//        if (obj == this) {
+//            return true;
+//        }
+//        SVPEquation<N> sv = (SVPEquation<N>) obj;
+//        return IPolynomial.isEqual(this, sv, CalculatorUtils.mappedIsEqual(getMc(), mapper));
+//    }
 
     /* (non-Javadoc)
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         return IPolynomial.stringOf(this, getMc(), nf) + " = 0";
 
     }
@@ -141,7 +143,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      */
     @NotNull
     @Override
-    public abstract <N> SVPEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> SVPEquation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
     /**
      * A default implements for the equation.
@@ -183,13 +185,13 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
         @NotNull
         @Override
-        public <N> DSVPEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+        public <N> DSVPEquation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
             @SuppressWarnings("unchecked")
             N[] newCoes = (N[]) new Object[coes.length];
             for (int i = 0; i < newCoes.length; i++) {
                 newCoes[i] = mapper.apply(coes[i]);
             }
-            return new DSVPEquation<>(newCalculator, newCoes);
+            return new DSVPEquation<>((RealCalculator<N>) newCalculator, newCoes);
         }
 
         @Override
@@ -212,12 +214,12 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
             if (obj instanceof SVPEquation) {
-                DSVPEquation<N> sv = (DSVPEquation<N>) obj;
+                var sv = (DSVPEquation<T>) obj;
                 if (sv.mp == this.mp) {
                     for (int i = 0; i < coes.length; i++) {
-                        if (!getMc().isEqual(coes[i], mapper.apply(sv.coes[i]))) {
+                        if (!getMc().isEqual(coes[i], sv.coes[i])) {
                             return false;
                         }
                     }
@@ -276,8 +278,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
          */
         @NotNull
         @Override
-        public <N> SVPEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new SVPFEquation<>(newCalculator, (AbstractSVPFunction<N>) f.mapTo(newCalculator, mapper));
+        public <N> SVPEquation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new SVPFEquation<>((RealCalculator<N>) newCalculator, f.mapTo(newCalculator, mapper));
         }
 
 
@@ -395,8 +397,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public <N> RootEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new RootEquation<>(newCalculator, p.map(newCalculator, mapper::apply));
+        public <N> RootEquation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new RootEquation<>((RealCalculator<N>) newCalculator, p.map((RealCalculator<N>) newCalculator, mapper::apply));
         }
 
         @Override
@@ -663,8 +665,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public <N> QEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new QEquation<>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c)
+        public <N> QEquation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new QEquation<>((RealCalculator<N>) newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(c)
                     , x1 == null ? null : mapper.apply(x1), x2 == null ? null : mapper.apply(x2), delta == null ? null : mapper.apply(delta), d);
         }
 
@@ -686,24 +688,13 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
             if (obj instanceof QEquation) {
                 QEquation<T> eq = (QEquation<T>) obj;
                 return getMc().isEqual(a, eq.a) && getMc().isEqual(b, eq.b) && getMc().isEqual(c, eq.c);
             }
             return super.valueEquals(obj);
 
-        }
-
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof QEquation) {
-                QEquation<N> eq = (QEquation<N>) obj;
-                return getMc().isEqual(a, mapper.apply(eq.a))
-                        && getMc().isEqual(b, mapper.apply(eq.b))
-                        && getMc().isEqual(c, mapper.apply(eq.c));
-            }
-            return super.valueEquals(obj, mapper);
         }
 
 
@@ -795,8 +786,8 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public <N> LEquation<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-            return new LEquation<N>(newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(sol));
+        public <N> LEquation<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+            return new LEquation<N>((RealCalculator<N>) newCalculator, mapper.apply(a), mapper.apply(b), mapper.apply(sol));
         }
 
         @Override
@@ -814,21 +805,12 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T> obj) {
+        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
             if (obj instanceof LEquation) {
                 LEquation<T> leq = (LEquation<T>) obj;
                 return getMc().isEqual(a, leq.a) && getMc().isEqual(b, leq.b);
             }
             return super.valueEquals(obj);
-        }
-
-        @Override
-        public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-            if (obj instanceof LEquation) {
-                LEquation<N> leq = (LEquation<N>) obj;
-                return getMc().isEqual(a, mapper.apply(leq.a)) && getMc().isEqual(b, mapper.apply(leq.b));
-            }
-            return super.valueEquals(obj, mapper);
         }
 
     }

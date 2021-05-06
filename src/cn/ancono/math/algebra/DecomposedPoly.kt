@@ -34,7 +34,7 @@ open class DecomposedPoly<T>(val decomposed: List<Pair<Polynomial<T>, Int>>) {
 
     val degree: Int
         get() {
-            return decomposed.sumBy { (p, n) -> p.degree * n }
+            return decomposed.sumOf { (p, n): Pair<Polynomial<T>, Int> -> p.degree * n }
         }
 
     fun compute(x: T): T {

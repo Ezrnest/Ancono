@@ -32,7 +32,6 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      * @return {@code a \ b}
      * @see divideAndRemainder
      */
-    @JvmDefault
     fun divideToInteger(a: T, b: T): T = divideAndRemainder(a, b).first
 
     /**
@@ -43,7 +42,6 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      * @return {@code a \ b}
      * @see divideAndRemainder
      */
-    @JvmDefault
     fun remainder(a: T, b: T): T = divideAndRemainder(a, b).second
 
 
@@ -51,10 +49,8 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      * Returns `a mod b`, which is generally the same as [remainder]. Note that
      * the result may differ with respect to a unit in the ring.
      */
-    @JvmDefault
     fun mod(a: T, b: T): T = remainder(a, b)
 
-    @JvmDefault
     override fun exactDivide(x: T, y: T): T {
         val (q, r) = divideAndRemainder(x, y)
         if (!isZero(r)) {
@@ -63,12 +59,10 @@ interface EUDCalculator<T> : UFDCalculator<T> {
         return q
     }
 
-    @JvmDefault
     override fun isExactDivide(a: T, b: T): Boolean {
         return isZero(remainder(a, b))
     }
 
-    @JvmDefault
     override fun gcd(a: T, b: T): T {
         var x = a
         var y = b
@@ -91,7 +85,6 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      *
      * @return a tuple of `(gcd(a,b), u, v)`.
      */
-    @JvmDefault
     fun gcdUV(a: T, b: T): Triple<T, T, T> {
         //trivial cases
         if (isZero(a)) {
@@ -147,7 +140,6 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      *
      * @return the modular inverse of `a`
      */
-    @JvmDefault
     fun modInverse(a: T, p: T): T {
         val (g, u, _) = gcdUV(a, p)
         if (!isUnit(g)) {
@@ -168,7 +160,6 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      * @param n the power, a non-negative number.
      * @param m the modular.
      */
-    @JvmDefault
     fun powerAndMod(x: T, n: Long, m: T): T {
         var a = x
         require(n >= 0) { "n<0" }
@@ -200,7 +191,6 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      * @param mods a list of the modular, they must be co-prime
      *
      */
-    @JvmDefault
     fun chineseRemainder(mods: List<T>, remainders: List<T>): T {
 //        val prod: T = mods.reduce(this::multiply)
 //        var x: T = zero

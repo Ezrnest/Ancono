@@ -1,7 +1,9 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathObject;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +17,7 @@ import java.util.function.Function;
  * @param <T> the type of number
  * @author lyc
  */
-public final class Point<T> implements MathObject<T> {
+public final class Point<T> implements MathObjectReal<T> {
 
     public final T x, y;
     private final RealCalculator<T> mc;
@@ -123,8 +125,8 @@ public final class Point<T> implements MathObject<T> {
     }
 
     @Override
-    public <N> Point<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new Point<>(newCalculator, mapper.apply(x), mapper.apply(y));
+    public <N> Point<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        return new Point<>((RealCalculator<N>) newCalculator, mapper.apply(x), mapper.apply(y));
     }
 
     @Override
@@ -148,16 +150,7 @@ public final class Point<T> implements MathObject<T> {
     }
 
     @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Point) {
-            Point<N> p = (Point<N>) obj;
-            return mc.isEqual(x, mapper.apply(p.x)) && mc.isEqual(y, mapper.apply(p.y));
-        }
-        return false;
-    }
-
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (obj == this) {
             return true;
         }
@@ -177,7 +170,7 @@ public final class Point<T> implements MathObject<T> {
      */
     @Override
     public String toString() {
-        return toString(FlexibleNumberFormatter.defaultFormatter());
+        return toString(NumberFormatter.defaultFormatter());
     }
 
     /**
@@ -190,7 +183,7 @@ public final class Point<T> implements MathObject<T> {
      * @param nf
      */
     @Override
-    public String toString(FlexibleNumberFormatter<T> nf) {
+    public String toString(NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder();
         sb.append("( ");
         sb.append(nf.format(x)).append(" , ").append(nf.format(y)).append(" )");

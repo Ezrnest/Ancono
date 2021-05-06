@@ -3,6 +3,7 @@
  */
 package cn.ancono.math.equation;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +36,6 @@ public abstract class AbstractMVCompareStructure<T> extends AbstractCompareStruc
 
 
     @NotNull
-    public abstract <N> AbstractMVCompareStructure<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractMVCompareStructure<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
 }

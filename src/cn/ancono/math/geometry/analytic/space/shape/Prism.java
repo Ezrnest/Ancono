@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.space.Plane;
 import cn.ancono.math.geometry.analytic.space.Segment;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -89,5 +90,5 @@ public abstract class Prism<T> extends Polyhedron<T> {
 
     @NotNull
     @Override
-    public abstract <N> Prism<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> Prism<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 }

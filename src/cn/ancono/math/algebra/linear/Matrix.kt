@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.AbstractFlexibleMathObject
-import cn.ancono.math.FMathObject
+import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.equation.EquationSolver
 import cn.ancono.math.equation.SVPEquation
@@ -28,7 +28,7 @@ abstract class AbstractMatrix<T>(
         mc: RingCalculator<T>,
         final override val row: Int,
         final override val column: Int)
-    : AbstractFlexibleMathObject<T, RingCalculator<T>>(mc), GenMatrix<T> {
+    : AbstractMathObject<T, RingCalculator<T>>(mc), GenMatrix<T> {
 
     protected fun checkIdx(i: Int, j: Int) {
         require(i in rowIndices && j in colIndices) {
@@ -288,7 +288,7 @@ abstract class AbstractMatrix<T>(
         return mc.exp(r, mc.reciprocal(p))
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         val data = Array(row) { i ->
             Array<String>(column) { j ->
                 nf.format(this[i, j])
@@ -297,7 +297,7 @@ abstract class AbstractMatrix<T>(
         return StringSup.formatMatrix(data)
     }
 
-    override fun valueEquals(obj: FMathObject<T, RingCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RingCalculator<T>>): Boolean {
         if (obj !is AbstractMatrix) {
             return false
         }
@@ -595,7 +595,7 @@ abstract class Matrix<T>(
      * `λI-this`, which is a matrix of polynomial.
      */
     open fun charMatrix(): Matrix<Polynomial<T>> {
-        return MatrixImpl.charMatrix(this, Polynomial.calculator(calculator as RealCalculator<T>)) //TODO
+        return MatrixImpl.charMatrix(this, Polynomial.calculator(calculator as FieldCalculator))
     }
 
     /**
@@ -1021,10 +1021,10 @@ abstract class MutableMatrix<T>(mc: RingCalculator<T>, row: Int, column: Int) : 
     }
 
     open operator fun divAssign(k: T) {
-        val mc = calculator as FieldCalculator
+        val mc = calculator as UnitRingCalculator
         for (i in rowIndices) {
             for (j in colIndices) {
-                this[i, j] = mc.divide(this[i, j], k)
+                this[i, j] = mc.exactDivide(this[i, j], k)
             }
         }
     }
@@ -1582,9 +1582,9 @@ internal object MatrixImpl {
     }
 
     internal fun <T> divide(x: Matrix<T>, k: T): AMatrix<T> {
-        val mc = x.calculator as FieldCalculator
+        val mc = x.calculator as UnitRingCalculator
         return apply1(x, mc) {
-            mc.divide(k, it)
+            mc.exactDivide(k, it)
         }
     }
 
@@ -1968,6 +1968,14 @@ class SquareMatrixCal<T>(override val mc: FieldCalculator<T>, n: Int) :
 
     override val numberClass: Class<Matrix<T>>
         get() = super<MatrixCal>.numberClass
+
+    override fun exactDivide(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
+        return x * y.inverse()
+    }
+
+    override fun isUnit(x: Matrix<T>): Boolean {
+        return x.isInvertible()
+    }
 }
 
 

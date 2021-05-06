@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.numberModels.api.RealCalculator;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -19,7 +19,7 @@ public abstract class AbstractCountableSet<T> extends AbstractMathSet<T> impleme
     /**
      * @param mc
      */
-    protected AbstractCountableSet(RealCalculator<T> mc) {
+    protected AbstractCountableSet(EqualPredicate<T> mc) {
         super(mc);
     }
 
@@ -31,5 +31,5 @@ public abstract class AbstractCountableSet<T> extends AbstractMathSet<T> impleme
 
     @NotNull
     @Override
-    public abstract <N> AbstractCountableSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractCountableSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 }

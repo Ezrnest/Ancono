@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.MatrixSup;
 import cn.ancono.math.algebra.linear.Vector;
@@ -34,14 +35,14 @@ public final class GeneralConicSection<T> extends ConicSection<T> {
 
     @NotNull
     @Override
-    public <N> GeneralConicSection<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> GeneralConicSection<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         N a = mapper.apply(A);
         N b = mapper.apply(B);
         N c = mapper.apply(C);
         N d = mapper.apply(D);
         N e = mapper.apply(E);
         N f = mapper.apply(F);
-        return new GeneralConicSection<N>(newCalculator, a, b, c, d, e, f);
+        return new GeneralConicSection<N>((RealCalculator<N>) newCalculator, a, b, c, d, e, f);
     }
 
     @Override

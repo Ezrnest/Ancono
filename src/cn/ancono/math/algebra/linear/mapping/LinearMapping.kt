@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear.mapping
 
-import cn.ancono.math.AbstractFlexibleMathObject
-import cn.ancono.math.FMathObject
+import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.linear.*
 import cn.ancono.math.function.Bijection
@@ -135,7 +135,7 @@ abstract class LinearMapping<T> internal constructor(
         override val dimSrc: Int,
         override val dimDest: Int,
         mc: FieldCalculator<T>
-) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc), VLinearMapping<T> {
+) : AbstractMathObject<T, FieldCalculator<T>>(mc), VLinearMapping<T> {
 
     override val kernel: VectorBasis<T> by lazy { super.kernel }
 
@@ -169,7 +169,7 @@ abstract class LinearMapping<T> internal constructor(
         return fromMatrix(transMatrix.multiply(k))
     }
 
-    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         if (obj !is LinearMapping) {
             return false
         }
@@ -184,7 +184,7 @@ abstract class LinearMapping<T> internal constructor(
 //        return dimSrc == obj.dimSrc && dimDest == obj.dimDest && transMatrix.valueEquals(obj.transMatrix, mapper)
 //    }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
+    override fun toString(nf: NumberFormatter<T>): String = buildString {
         appendLine("Linear mapping, dimSrc=$dimSrc, dimDest=$dimDest, matrix = ")
         appendLine(transMatrix.toString(nf))
     }
@@ -336,7 +336,7 @@ internal constructor(
     }
 
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String = buildString {
+    override fun toString(nf: NumberFormatter<T>): String = buildString {
         appendLine("Linear trans, dim=$dimension, matrix = ")
         appendLine(transMatrix.toString(nf))
     }

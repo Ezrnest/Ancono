@@ -1,6 +1,6 @@
 package cn.ancono.math.algebra
 
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 
 
 /**
@@ -11,7 +11,7 @@ interface IMTerm<T> {
     val coefficient: T
 
     companion object {
-        fun <T> stringOf(term: IMTerm<T>, nf: FlexibleNumberFormatter<T>): String = buildString {
+        fun <T> stringOf(term: IMTerm<T>, nf: NumberFormatter<T>): String = buildString {
             append(nf.format(term.coefficient))
             if (term.characters.isNotEmpty()) {
                 var hasMul = true
@@ -58,7 +58,7 @@ interface IMultinomial<T> {
             return c == '+' || c == '-'
         }
 
-        fun <T> stringOf(m: IMultinomial<T>, nf: FlexibleNumberFormatter<T>) = buildString {
+        fun <T> stringOf(m: IMultinomial<T>, nf: NumberFormatter<T>) = buildString {
             var start = true
             for (term in m.terms) {
                 val s = IMTerm.stringOf(term, nf)

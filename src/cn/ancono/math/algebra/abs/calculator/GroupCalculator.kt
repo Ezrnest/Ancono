@@ -15,16 +15,13 @@ interface AbelSemiGroupCal<T> : EqualPredicate<T> {
     fun add(x: T, y: T): T
 
 
-    @JvmDefault
     operator fun T.plus(y: T): T = add(this, y)
 
-    @JvmDefault
     fun multiplyLong(x: T, n: Long): T {
         require(n > 0)
         return ModelPatterns.binaryProduce(n, x, this::add)
     }
 
-    @JvmDefault
     fun sum(ps: List<T>): T {
         require(ps.isNotEmpty())
         return ps.reduce(this::add)
@@ -34,14 +31,12 @@ interface AbelSemiGroupCal<T> : EqualPredicate<T> {
      * Operator function for [T].
      * @see multiplyLong
      */
-    @JvmDefault
     operator fun Long.times(x: T): T = multiplyLong(x, this)
 
     /**
      * Operator function for [T].
      * @see multiplyLong
      */
-    @JvmDefault
     operator fun T.times(n: Long) = multiplyLong(this, n)
 
 
@@ -59,11 +54,9 @@ interface AbelMonoidCal<T> : AbelSemiGroupCal<T> {
      *
      * This method is the same as `isEqual(zero, x)`.
      */
-    @JvmDefault
     fun isZero(x: T) = isEqual(zero, x)
 
 
-    @JvmDefault
     override fun multiplyLong(x: T, n: Long): T {
         if (n == 0L) {
             return zero
@@ -71,7 +64,6 @@ interface AbelMonoidCal<T> : AbelSemiGroupCal<T> {
         return super.multiplyLong(x, n)
     }
 
-    @JvmDefault
     override fun sum(ps: List<T>): T {
         return ps.fold(zero, this::add)
     }
@@ -79,7 +71,6 @@ interface AbelMonoidCal<T> : AbelSemiGroupCal<T> {
     /**
      * Returns the class of the number.
      */
-    @JvmDefault
     override val numberClass: Class<T>
         @Suppress("UNCHECKED_CAST")
         get() = (zero as Any).javaClass as Class<T>
@@ -88,7 +79,6 @@ interface AbelMonoidCal<T> : AbelSemiGroupCal<T> {
 
 interface AbelGroupCal<T> : AbelMonoidCal<T> {
 
-    @JvmDefault
     override fun multiplyLong(x: T, n: Long): T {
         if (n == 0L) {
             return zero
@@ -103,7 +93,6 @@ interface AbelGroupCal<T> : AbelMonoidCal<T> {
 
     fun negate(x: T): T
 
-    @JvmDefault
     fun subtract(x: T, y: T): T {
         return add(x, negate(y))
     }
@@ -113,14 +102,12 @@ interface AbelGroupCal<T> : AbelMonoidCal<T> {
      * Operator function inverse.
      * @see inverse
      */
-    @JvmDefault
     operator fun T.unaryMinus(): T = negate(this)
 
     /**
      * Operator function subtract.
      * @see subtract
      */
-    @JvmDefault
     operator fun T.minus(y: T): T = subtract(this, y)
 }
 
@@ -139,16 +126,13 @@ interface MulSemiGroupCal<T> : EqualPredicate<T> {
     /**
      * Determines whether the operation is commutative. It is false by default.
      */
-    @JvmDefault
     val isCommutative: Boolean
         get() = false
 
-    @JvmDefault
     fun pow(x: T, n: Long): T {
         return ModelPatterns.binaryProduce(n, x, this::multiply)
     }
 
-    @JvmDefault
     fun product(ps: List<T>): T {
         return ps.reduce(this::multiply)
     }
@@ -158,7 +142,6 @@ interface MulSemiGroupCal<T> : EqualPredicate<T> {
      * Operator function of add for [T].
      * @see apply
      */
-    @JvmDefault
     operator fun T.times(y: T): T = multiply(this, y)
 
 
@@ -179,7 +162,6 @@ interface MulMonoidCal<T> : MulSemiGroupCal<T> {
      */
     val one: T
 
-    @JvmDefault
     override fun pow(x: T, n: Long): T {
         return if (n == 0L) {
             one
@@ -188,7 +170,6 @@ interface MulMonoidCal<T> : MulSemiGroupCal<T> {
         }
     }
 
-    @JvmDefault
     override fun product(ps: List<T>): T {
         return ps.fold(one, this::multiply)
     }
@@ -196,7 +177,6 @@ interface MulMonoidCal<T> : MulSemiGroupCal<T> {
     /**
      * Returns the class of the number.
      */
-    @JvmDefault
     override val numberClass: Class<T>
         @Suppress("UNCHECKED_CAST")
         get() = (one as Any).javaClass as Class<T>
@@ -219,12 +199,10 @@ interface MulGroupCal<T> : MulMonoidCal<T> {
      * Returns the result of `x * y^{-1}`, which is equal to `multiply(x,inverse(y))`.
      * @return `x * y^{-1}`
      */
-    @JvmDefault
     fun divide(x: T, y: T): T {
         return multiply(x, reciprocal(y))
     }
 
-    @JvmDefault
     override fun pow(x: T, n: Long): T {
         if (n == 0L) {
             return one
@@ -249,7 +227,6 @@ interface MulGroupCal<T> : MulMonoidCal<T> {
      * Operator function subtract.
      * @see subtract
      */
-    @JvmDefault
     operator fun T.div(y: T): T = divide(this, y)
 
 }
@@ -269,11 +246,9 @@ interface SemigroupCalculator<T> : EqualPredicate<T>, MathBinaryOperator<T> {
     /**
      * Determines whether the operation is commutative. It is false by default.
      */
-    @JvmDefault
     val isCommutative: Boolean
         get() = false
 
-    @JvmDefault
     fun gpow(x: T, n: Long): T {
         return ModelPatterns.binaryProduce(n, x) { a: T, b: T -> this.apply(a, b) }
     }
@@ -293,7 +268,6 @@ interface MonoidCalculator<T> : SemigroupCalculator<T> {
      */
     val identity: T
 
-    @JvmDefault
     override fun gpow(x: T, n: Long): T {
         return if (n == 0L) {
             identity
@@ -305,7 +279,6 @@ interface MonoidCalculator<T> : SemigroupCalculator<T> {
     /**
      * Returns the class of the number.
      */
-    @JvmDefault
     override val numberClass: Class<T>
         @Suppress("UNCHECKED_CAST")
         get() = (identity as Any).javaClass as Class<T>
@@ -328,12 +301,10 @@ interface GroupCalculator<T> : MonoidCalculator<T> {
      * Returns the result of `x-y`, which is equal to `x+inverse(y)`.
      * @return `x-y`
      */
-    @JvmDefault
     fun applyInv(x: T, y: T): T {
         return apply(x, inverse(y))
     }
 
-    @JvmDefault
     override fun gpow(x: T, n: Long): T {
         if (n == 0L) {
             return identity

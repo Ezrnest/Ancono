@@ -1,6 +1,7 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
@@ -231,7 +232,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * Assume {@code d2} is the square of the distance of the center of this circle to a chord,
      * return the square of the length of the chord.
      *
-     * @param d square of distance
+     * @param d2 square of distance
      * @return the square of the length of the chord
      */
     public T getChordLengthSq(T d2) {
@@ -636,14 +637,14 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 
     @NotNull
     @Override
-    public <N> Circle<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Circle<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         Point<N> op = o.mapTo(newCalculator, mapper);
         N r2 = mapper.apply(this.r2);
         N r = this.r == null ? null : mapper.apply(this.r);
         N D = mapper.apply(this.D);
         N E = mapper.apply(this.E);
         N F = mapper.apply(this.F);
-        return new Circle<N>(newCalculator, op, r2, D, E, F, r);
+        return new Circle<N>((RealCalculator<N>) newCalculator, op, r2, D, E, F, r);
     }
 
     @Override
@@ -658,25 +659,14 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (obj instanceof Circle) {
             Circle<T> c = (Circle<T>) obj;
             return o.valueEquals(c.o) &&
                     getMc().isEqual(r, c.r);
 
         }
-        return super.valueEquals(obj);
-    }
-
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof Circle) {
-            Circle<N> c = (Circle<N>) obj;
-            return o.valueEquals(c.o, mapper) &&
-                    getMc().isEqual(r, mapper.apply(c.r));
-
-        }
-        return super.valueEquals(obj, mapper);
+        return false;
     }
 
 
@@ -709,7 +699,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
      * Create a circle with the given point {@code o} as its center and {@code r} as the radius's square.
      *
      * @param o  center of this circle
-     * @param r  the square of the radius of this circle,positive.
+     * @param r2 the square of the radius of this circle,positive.
      * @param mc a {@link RealCalculator}
      * @return a new circle
      * @throws IllegalArgumentException if {@code r<=0}

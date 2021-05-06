@@ -8,7 +8,7 @@ import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.algebra.linear.Vector;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ListIterator;
@@ -161,7 +161,7 @@ public interface IPolynomial<T> {
         return hash;
     }
 
-    static <T> String stringOf(IPolynomial<T> m, RingCalculator<T> mc, FlexibleNumberFormatter<T> nf) {
+    static <T> String stringOf(IPolynomial<T> m, RingCalculator<T> mc, NumberFormatter<T> nf) {
         if (mc instanceof UnitRingCalculator) {
             return stringOf(m, (UnitRingCalculator<T>) mc, nf);
         }
@@ -190,7 +190,7 @@ public interface IPolynomial<T> {
         return sb.toString();
     }
 
-    static <T> String stringOf(IPolynomial<T> m, UnitRingCalculator<T> mc, FlexibleNumberFormatter<T> nf) {
+    static <T> String stringOf(IPolynomial<T> m, UnitRingCalculator<T> mc, NumberFormatter<T> nf) {
         int maxPower = m.getDegree();
         if (maxPower <= 0) {
             return nf.format(m.get(0));

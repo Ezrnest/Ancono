@@ -4,9 +4,10 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.Point;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,10 +60,10 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
 
     @NotNull
     @Override
-    public <N> TransformedCurve<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> TransformedCurve<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         // this should be assured that the returned type is a plane curve of type N.
         AbstractPlaneCurve<N> npc = original.mapTo(newCalculator, mapper);
-        return new TransformedCurve<N>(newCalculator, npc, backward.mapTo(newCalculator, mapper));
+        return new TransformedCurve<N>((RealCalculator<N>) newCalculator, npc, backward.mapTo(newCalculator, mapper));
     }
 
     /* (non-Javadoc)
@@ -80,11 +81,8 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
         return original.equals(tc.original) && backward.equals(tc.backward);
     }
 
-    /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
-     */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (this == obj) {
             return true;
         }
@@ -96,22 +94,10 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
     }
 
     /* (non-Javadoc)
-     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (!(obj instanceof TransformedCurve)) {
-            return false;
-        }
-        TransformedCurve<N> tc = (TransformedCurve<N>) obj;
-        return original.valueEquals(tc.original, mapper) && backward.valueEquals(tc.backward, mapper);
-    }
-
-    /* (non-Javadoc)
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
      */
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         StringBuilder sb = new StringBuilder(64);
         sb.append("TransformedCurve:original=").append(original.toString(nf)).append(", inversed transformation=").append(backward.toString(nf));
         return sb.toString();

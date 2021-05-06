@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels.structure
 
-import cn.ancono.math.AbstractFlexibleMathObject
-import cn.ancono.math.FMathObject
+import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
@@ -24,7 +24,7 @@ Created by liyicheng 2020/2/24
 /**
  * Describes the expanded complex including the infinity point.
  */
-sealed class ComplexE<T> constructor(mc: FieldCalculator<T>) : AbstractFlexibleMathObject<T, FieldCalculator<T>>(mc) {
+sealed class ComplexE<T> constructor(mc: FieldCalculator<T>) : AbstractMathObject<T, FieldCalculator<T>>(mc) {
 
     abstract fun isInf(): Boolean
 
@@ -41,11 +41,11 @@ class ComplexInf<T> internal constructor(mc: FieldCalculator<T>) : ComplexE<T>(m
         return ComplexInf(newCalculator as FieldCalculator)
     }
 
-    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         return obj is ComplexInf
     }
 
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return "Inf"
     }
 
@@ -421,7 +421,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
      * Return the form of (a)+(b)i
      * @return
      */
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         val mc = calculator
         if (mc.isZero(a)) {
             return when {
@@ -463,7 +463,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
         }
     }
 
-    override fun valueEquals(obj: FMathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
         if (obj is Complex<*>) {
             val mc = calculator
             val com = obj as Complex<T>

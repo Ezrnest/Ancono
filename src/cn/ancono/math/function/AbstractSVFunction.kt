@@ -3,11 +3,12 @@
  */
 package cn.ancono.math.function
 
-import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.AbstractMathObjectReal
 import cn.ancono.math.MathObject
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.calculus.Derivable
 import cn.ancono.math.numberModels.Fraction
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter
+import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.set.Interval
 import cn.ancono.math.set.IntervalUnion
@@ -21,20 +22,20 @@ import java.util.function.Function
  * 2017-10-06 10:02
  */
 abstract class AbstractSVFunction<T>
-protected constructor(mc: RealCalculator<T>) : AbstractMathObject<T>(mc), SVFunction<T> {
+protected constructor(mc: RealCalculator<T>) : AbstractMathObjectReal<T>(mc), SVFunction<T> {
 
     /**
      * Returns the String representation of this function, the prefix 'f(x)='
      * should not be included.
      */
-    abstract override fun toString(nf: FlexibleNumberFormatter<T>): String
+    abstract override fun toString(nf: NumberFormatter<T>): String
 
 
     /*
 	 * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
 	 */
     abstract override fun <N> mapTo(
-            newCalculator: RealCalculator<N>,
+            newCalculator: EqualPredicate<N>,
             mapper: Function<T, N>
     ): AbstractSVFunction<N>
 
@@ -187,14 +188,14 @@ internal constructor(mc: RealCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Ln<N> {
-        return Ln(newCalculator)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Ln<N> {
+        return Ln(newCalculator as RealCalculator<N>)
     }
 
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
         if (obj is Log<*>) {
             return mc.isEqual((obj as Log<T>).a, mc.constantValue(RealCalculator.STR_E)!!)
         }
@@ -204,7 +205,7 @@ internal constructor(mc: RealCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return "ln(x)"
     }
 }
@@ -246,21 +247,21 @@ class Log<T>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return "log(" + nf.format(a) + ",x)"
     }
 
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Log<N> {
-        return Log(newCalculator, mapper.apply(a))
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Log<N> {
+        return Log(newCalculator as RealCalculator, mapper.apply(a))
     }
 
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
         if (obj is Ln<*>) {
             return (obj as Ln<T>).valueEquals(this)
         }
@@ -373,7 +374,7 @@ class Power<T>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         if (mc.isZero(a)) {
             return "0"
         } else if (n.signum == 0) {
@@ -397,14 +398,14 @@ class Power<T>
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Power<N> {
-        return Power(newCalculator, mapper.apply(a), n)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Power<N> {
+        return Power(newCalculator as RealCalculator, mapper.apply(a), n)
     }
 
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
         if (obj !is Power<*>) {
             return false
         }
@@ -454,7 +455,7 @@ internal constructor(mc: RealCalculator<T>,
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         val sb = StringBuilder()
         if (!mc.isEqual(mc.one, a)) {
             sb.append(nf.format(a))
@@ -473,14 +474,14 @@ internal constructor(mc: RealCalculator<T>,
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Exp<N> {
-        return Exp(newCalculator, mapper.apply(c), mapper.apply(a))
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Exp<N> {
+        return Exp(newCalculator as RealCalculator, mapper.apply(c), mapper.apply(a))
     }
 
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
         if (obj is Ex<*>) {
             return (obj as Ex<T>).valueEquals(this)
         }
@@ -520,21 +521,21 @@ internal constructor(mc: RealCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#toString(cn.ancono.math.numberModels.api.NumberFormatter)
      */
-    override fun toString(nf: FlexibleNumberFormatter<T>): String {
+    override fun toString(nf: NumberFormatter<T>): String {
         return "e^x"
     }
 
     /*
      * @see cn.ancono.math.function.AbstractSVFunction#mapTo(java.util.function.Function, cn.ancono.math.numberModels.api.MathCalculator)
      */
-    override fun <N> mapTo(newCalculator: RealCalculator<N>, mapper: Function<T, N>): Ex<N> {
-        return Ex(newCalculator)
+    override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Ex<N> {
+        return Ex(newCalculator as RealCalculator)
     }
 
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T>): Boolean {
+    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
         if (obj is Exp<*>) {
             val exp = obj as Exp<T>
             return mc.isEqual(mc.one, exp.c) && mc.isEqual(mc.constantValue(RealCalculator.STR_E)!!, exp.a)

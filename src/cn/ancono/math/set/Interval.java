@@ -1,16 +1,14 @@
 package cn.ancono.math.set;
 
-import cn.ancono.math.AbstractFlexibleMathObject;
+import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import cn.ancono.math.numberModels.Calculators;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
@@ -31,7 +29,7 @@ import java.util.function.Function;
  * @param <T> the format of number to be stored
  * @author lyc
  */
-public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrderPredicate<T>> implements IntersectableSet<T, Interval<T>> {
+public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredicate<T>> implements IntersectableSet<T, Interval<T>> {
 
     protected Interval(TotalOrderPredicate<T> mc) {
         super(mc);
@@ -66,7 +64,8 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
     }
 
     /**
-     * Returns the downer bound of this interval, which means for any number {@code n in this} , {@code n >= downerBound}.
+     * Returns the downer bound of this interval, which means for any number {@code n in this} , {@code n >=
+     * downerBound}.
      * If this interval doesn't have an downer bound, {@code null} will be returned.
      *
      * @return the downer bound of this interval, or {@code null}
@@ -97,7 +96,8 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
     public abstract T lengthOf();
 
     /**
-     * Returns a new interval that fits {@code downerBound = this.downerBound} and {@code upperBound = n}.Whether the new
+     * Returns a new interval that fits {@code downerBound = this.downerBound} and {@code upperBound = n}.Whether the
+     * new
      * interval should include the number {@code n} is determined by this interval.For example , if this = [0,5) , then
      * {@code downerPart(4)} will be {@code [0,4)}.
      *
@@ -110,8 +110,10 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
     public abstract Interval<T> downerPart(T n);
 
     /**
-     * Returns a new interval that fits {@code downerBound = this.downerBound} and {@code upperBound = n}.Whether the new
-     * interval should include the number {@code n} is determined by {@code include}.For example , if this = [0,5) , then
+     * Returns a new interval that fits {@code downerBound = this.downerBound} and {@code upperBound = n}.Whether the
+     * new
+     * interval should include the number {@code n} is determined by {@code include}.For example , if this = [0,5) ,
+     * then
      * {@code downerPart(4,true)} will be {@code [0,4]}.
      *
      * @param n       a number
@@ -135,8 +137,10 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
     public abstract Interval<T> upperPart(T n);
 
     /**
-     * Returns a new interval that fits {@code upperBound = this.upperBound} and {@code downerBound = n}.Whether the new
-     * interval should include the number {@code n} is determined by {@code include}.For example , if this = [0,5) , then
+     * Returns a new interval that fits {@code upperBound = this.upperBound} and {@code downerBound = n}.Whether the
+     * new
+     * interval should include the number {@code n} is determined by {@code include}.For example , if this = [0,5) ,
+     * then
      * {@code upperPart(1,false)} will be {@code (1,5)}.
      *
      * @param n       a number
@@ -207,8 +211,10 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
 
 
     /**
-     * Returns {@code true} if the given interval is in the range of this.If {@code iv} has identity upper or downer bound
-     * with {@code this} and the bound in this is exclusive while in {@code iv} is inclusive, then {@literal iv ⊆  this} is false,
+     * Returns {@code true} if the given interval is in the range of this.If {@code iv} has identity upper or downer
+     * bound
+     * with {@code this} and the bound in this is exclusive while in {@code iv} is inclusive, then {@literal iv ⊆  this}
+     * is false,
      * so {@code false} will be returned.
      *
      * @param iv another interval
@@ -247,7 +253,7 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      */
     @NotNull
     @Override
-    public abstract String toString(@NotNull FlexibleNumberFormatter<T> nf);
+    public abstract String toString(@NotNull NumberFormatter<T> nf);
 
 
     /**
@@ -336,13 +342,13 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      * @return (- ∞, + ∞)
      */
     public static <T> Interval<T> universe(TotalOrderPredicate<T> mc) {
-        return new IntervalI<T>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
+        return new IntervalI<>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
     }
 
     /**
      * Create a new Interval with the given arguments.
      *
-     * @param mc              the math calculator,only compare methods will be used.
+     * @param mc              the  calculator, only compare methods will be used.
      * @param downer          the downer bound of this interval, or {@code null} to indicate unlimited.
      * @param upper           the upper bound of this interval, or {@code null} to indicate unlimited.
      * @param downerInclusive determines whether downer should be inclusive
@@ -350,50 +356,39 @@ public abstract class Interval<T> extends AbstractFlexibleMathObject<T, TotalOrd
      */
     public static <T> Interval<T> valueOf(T downer, T upper, boolean downerInclusive, boolean upperInclusive,
                                           TotalOrderPredicate<T> mc) {
-        return new IntervalI<T>(mc, downer, upper, downerInclusive, upperInclusive);
+        return new IntervalI<>(mc, downer, upper, downerInclusive, upperInclusive);
     }
 
     /**
      * Returns the interval representing a single real number, whose downer bound
      * and upper bound are both {@code x}
      *
-     * @param mc a {@link RealCalculator}
      * @return [x, x]
      */
-    public static <T> Interval<T> single(T x, RealCalculator<T> mc) {
-        return new IntervalI<T>(mc, x, x, 0);
+    public static <T> Interval<T> single(T x, TotalOrderPredicate<T> mc) {
+        return new IntervalI<>(mc, x, x, 0);
     }
 
     /**
      * Returns the interval representing the positive numbers.
      *
-     * @param mc
      * @return {@literal (0,+∞)}
      */
     public static <T> Interval<T> positive(RealCalculator<T> mc) {
         return toPositiveInf(mc.getZero(), false, mc);
     }
 
-    private static final Map<RealCalculator<?>, Interval<?>> negativemap = new ConcurrentHashMap<>();
-
     /**
      * Returns the interval representing the negative numbers.
      *
-     * @param mc
      * @return {@literal (-∞,0)}
      */
     public static <T> Interval<T> negative(RealCalculator<T> mc) {
-        @SuppressWarnings("unchecked")
-        Interval<T> in = (Interval<T>) negativemap.get(mc);
-        if (in == null) {
-            in = fromNegativeInf(mc.getZero(), false, mc);
-            negativemap.put(mc, in);
-        }
-        return in;
+        return fromNegativeInf(mc.getZero(), false, mc);
     }
 
     static <T> Interval<T> instanceNonNull(T a, T b, boolean dc, boolean uc, TotalOrderPredicate<T> mc) {
-        return new IntervalI<T>(mc, Objects.requireNonNull(a), Objects.requireNonNull(b), dc, uc);
+        return new IntervalI<>(mc, Objects.requireNonNull(a), Objects.requireNonNull(b), dc, uc);
     }
 
     /**

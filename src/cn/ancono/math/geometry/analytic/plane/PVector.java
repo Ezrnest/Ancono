@@ -3,8 +3,8 @@
  */
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.FMathObject;
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
@@ -13,7 +13,7 @@ import cn.ancono.math.algebra.linear.LinearEquationSolution;
 import cn.ancono.math.algebra.linear.Matrix;
 import cn.ancono.math.algebra.linear.Vector;
 import cn.ancono.math.function.MathFunction;
-import cn.ancono.math.numberModels.api.FlexibleNumberFormatter;
+import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.VectorModel;
 import kotlin.jvm.functions.Function1;
@@ -333,7 +333,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
 
     @NotNull
     @Override
-    public String toString(@NotNull FlexibleNumberFormatter<T> nf) {
+    public String toString(@NotNull NumberFormatter<T> nf) {
         return '(' + nf.format(x) +
                 ',' + nf.format(y) +
                 ')';
@@ -365,7 +365,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
     }
 
     @Override
-    public boolean valueEquals(@NotNull FMathObject<T, RingCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RingCalculator<T>> obj) {
         if (this == obj) {
             return true;
         }
@@ -438,7 +438,7 @@ public final class PVector<T> extends AbstractVector<T> implements VectorModel<T
      * __
      * AB
      * </pre>
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param A point A
      * @param B point B

@@ -1,6 +1,7 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.space.Line;
 import cn.ancono.math.geometry.analytic.space.Plane;
 import cn.ancono.math.geometry.analytic.space.SPoint;
@@ -163,12 +164,12 @@ public final class Cube<T> extends RightPrism<T> {
 
     @Override
     public T surfaceArea() {
-        return getMc().multiplyLong(getMc().multiply(a, a), 6l);
+        return getCalculator().multiplyLong(getCalculator().multiply(a, a), 6l);
     }
 
     @Override
     public T volume() {
-        return getMc().pow(a, 3);
+        return getCalculator().pow(a, 3);
     }
 
     @Override
@@ -193,7 +194,7 @@ public final class Cube<T> extends RightPrism<T> {
 
     @NotNull
     @Override
-    public <N> Cube<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
+    public <N> Cube<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -213,13 +214,7 @@ public final class Cube<T> extends RightPrism<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         // TODO Auto-generated method stub
         return false;
     }

@@ -1,6 +1,7 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
@@ -525,19 +526,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
     }
 
     @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof EllipseV) {
-            EllipseV<N> ev = (EllipseV<N>) obj;
-            if (ev.onX == onX) {
-                return getMc().isEqual(mapper.apply(ev.a), a) && getMc().isEqual(mapper.apply(ev.b), b);
-            }
-            return false;
-        }
-        return super.valueEquals(obj, mapper);
-    }
-
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
         if (obj instanceof EllipseV) {
             EllipseV<T> ev = (EllipseV<T>) obj;
             if (ev.onX == onX) {
@@ -560,8 +549,8 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
 
     @NotNull
     @Override
-    public <N> EllipseV<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        EllipseV<N> nell = new EllipseV<N>(newCalculator, mapper.apply(A), mapper.apply(C)
+    public <N> EllipseV<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        EllipseV<N> nell = new EllipseV<N>((RealCalculator<N>) newCalculator, mapper.apply(A), mapper.apply(C)
                 , mapper.apply(a), mapper.apply(b), mapper.apply(c)
                 , mapper.apply(a2), mapper.apply(b2), mapper.apply(c2)
                 , onX);

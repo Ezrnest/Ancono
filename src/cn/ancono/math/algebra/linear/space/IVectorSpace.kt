@@ -36,32 +36,26 @@ interface VectorSpaceCalculator<T> : LinearSpaceCalculator<T, Vector<T>> {
      */
     val vectorLength: Int
 
-    @JvmDefault
     override fun isLinearDependent(u: Vector<T>, v: Vector<T>): Boolean {
         return u.isParallel(v)
     }
 
-    @JvmDefault
     override fun isLinearDependent(vs: List<Vector<T>>): Boolean {
         return Vector.isLinearDependent(vs)
     }
 
-    @JvmDefault
     override fun scalarMultiply(k: T, v: Vector<T>): Vector<T> {
         return v.multiply(k)
     }
 
-    @JvmDefault
     override fun add(x: Vector<T>, y: Vector<T>): Vector<T> {
         return x + y
     }
 
-    @JvmDefault
     override fun negate(x: Vector<T>): Vector<T> {
         return -x
     }
 
-    @JvmDefault
     override fun isEqual(x: Vector<T>, y: Vector<T>): Boolean {
         return x.valueEquals(y)
     }

@@ -1692,11 +1692,17 @@ public final class Calculators {
             return inverseOf(x);
         }
 
-        @NotNull
-        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
-            //noinspection SuspiciousNameCombination
+//        @NotNull
+//        public Integer divide(@NotNull Integer x, @NotNull Integer y) {
+//            //noinspection SuspiciousNameCombination
+//            return multiply(x.intValue(), inverseOf(y));
+//        }
+
+        @Override
+        public Integer exactDivide(Integer x, Integer y) {
             return multiply(x.intValue(), inverseOf(y));
         }
+
         //        protected int divide(int a, int b) {
 //
 //        }

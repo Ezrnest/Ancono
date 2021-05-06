@@ -3,8 +3,7 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathObject;
-import cn.ancono.math.numberModels.api.RealCalculator;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -28,7 +27,7 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
     /**
      * @param mc
      */
-    protected AbstractLimitedSet(RealCalculator<T> mc) {
+    protected AbstractLimitedSet(EqualPredicate<T> mc) {
         super(mc);
     }
 
@@ -52,9 +51,6 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
      */
     public abstract T get(BigInteger index);
 
-    /**
-     * @see cn.ancono.math.set.CountableSet#isInfinite()
-     */
     @Override
     public boolean isFinite() {
         return true;
@@ -91,22 +87,6 @@ public abstract class AbstractLimitedSet<T> extends AbstractCountableSet<T> impl
 
     @NotNull
     @Override
-    public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper);
+    public abstract <N> AbstractLimitedSet<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper);
 
-
-    /**
-     * @see MathObject#valueEquals(MathObject)
-     */
-    @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
-        return false;
-    }
-
-    /**
-     * @see MathObject#valueEquals(MathObject, java.util.function.Function)
-     */
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        return super.valueEquals(obj, mapper);
-    }
 }

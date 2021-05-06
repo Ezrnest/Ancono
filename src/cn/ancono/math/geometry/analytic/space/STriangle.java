@@ -1,6 +1,8 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.MathObject;
+import cn.ancono.math.MathObjectReal;
+import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.Triangle;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.ArraySup;
@@ -49,7 +51,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
         if (!pl.contains(point)) {
             return false;
         }
-        var mc = getMc();
+        var mc = getCalculator();
         SVector<T> vt = SVector.vector(A, point);
         SVector<T> v1 = c.getDirectVector(),
                 v2 = b.getDirectVector();
@@ -164,7 +166,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      */
     public T area() {
         if (area == null) {
-            area = getMc().divideLong(
+            area = getCalculator().divideLong(
                     a.getDirectVector()
                             .outerProduct(
                                     c.getDirectVector()).norm(), 2l);
@@ -173,7 +175,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
     }
 
     public T areaSq() {
-        return getMc().divideLong(a.getDirectVector().outerProduct(c.getDirectVector()).normSq(), 4l);
+        return getCalculator().divideLong(a.getDirectVector().outerProduct(c.getDirectVector()).normSq(), 4l);
     }
 
     /**
@@ -183,7 +185,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return the center of gravity of this triangle.
      */
     public SPoint<T> centerG() {
-        var mc = getMc();
+        var mc = getCalculator();
         T x = mc.divideLong(mc.sum(Arrays.asList(A.x, B.x, C.x)), 3);
         T y = mc.divideLong(mc.sum(Arrays.asList(A.y, B.y, C.y)), 3);
         T z = mc.divideLong(mc.sum(Arrays.asList(A.z, B.z, C.z)), 3);
@@ -232,7 +234,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      */
     public SPoint<T> centerI() {
         //calculate the length
-        var mc = getMc();
+        var mc = getCalculator();
         T nx = mc.add(mc.add(mc.multiply(A.x, a.getLength()), mc.multiply(B.x, b.getLength())),
                 mc.multiply(C.x, c.getLength()));
         T ny = mc.add(mc.add(mc.multiply(A.y, a.getLength()), mc.multiply(B.y, b.getLength())),
@@ -352,7 +354,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return the angle <i>A</i>'s angular bisector
      */
     public Line<T> angularBisectorA() {
-        SPoint<T> p = B.proportionPoint(C, getMc().divide(c.getLength(), b.getLength()));
+        SPoint<T> p = B.proportionPoint(C, getCalculator().divide(c.getLength(), b.getLength()));
         return Line.twoPoints(p, A);
     }
 
@@ -363,7 +365,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return the angle <i>B</i>'s angular bisector
      */
     public Line<T> angularBisectorB() {
-        SPoint<T> p = A.proportionPoint(C, getMc().divide(c.getLength(), a.getLength()));
+        SPoint<T> p = A.proportionPoint(C, getCalculator().divide(c.getLength(), a.getLength()));
         return Line.twoPoints(p, B);
     }
 
@@ -374,7 +376,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return the angle <i>A</i>'s angular bisector
      */
     public Line<T> angularBisectorC() {
-        SPoint<T> p = A.proportionPoint(B, getMc().divide(b.getLength(), a.getLength()));
+        SPoint<T> p = A.proportionPoint(B, getCalculator().divide(b.getLength(), a.getLength()));
         return Line.twoPoints(p, C);
     }
 
@@ -402,7 +404,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return
      */
     public STriangle<T> changeOrderReverse() {
-        STriangle<T> s = new STriangle<>(getMc(), pl, A, C, B, c.reverse(), b.reverse(), a.reverse());
+        STriangle<T> s = new STriangle<>(getCalculator(), pl, A, C, B, c.reverse(), b.reverse(), a.reverse());
         fillField(s);
         return s;
     }
@@ -424,9 +426,9 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
     public STriangle<T> changeOrderMove(boolean forward) {
         STriangle<T> s;
         if (forward) {
-            s = new STriangle<>(getMc(), pl, C, A, B, c, a, b);
+            s = new STriangle<>(getCalculator(), pl, C, A, B, c, a, b);
         } else {
-            s = new STriangle<>(getMc(), pl, B, C, A, b, c, a);
+            s = new STriangle<>(getCalculator(), pl, B, C, A, b, c, a);
         }
         fillField(s);
         return s;
@@ -442,8 +444,8 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 
     @NotNull
     @Override
-    public <N> STriangle<N> mapTo(@NotNull RealCalculator<N> newCalculator, @NotNull Function<T, N> mapper) {
-        STriangle<N> s = new STriangle<>(newCalculator, pl.mapTo(newCalculator, mapper),
+    public <N> STriangle<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
+        STriangle<N> s = new STriangle<N>((RealCalculator<N>) newCalculator, pl.mapTo(newCalculator, mapper),
                 A.mapTo(newCalculator, mapper), B.mapTo(newCalculator, mapper), C.mapTo(newCalculator, mapper),
                 a.mapTo(newCalculator, mapper), b.mapTo(newCalculator, mapper), c.mapTo(newCalculator, mapper));
         fillField(s, mapper);
@@ -468,7 +470,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
         if (obj instanceof STriangle) {
             if (this == obj) {
                 return true;
@@ -479,14 +481,6 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
         return false;
     }
 
-    @Override
-    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-        if (obj instanceof STriangle) {
-            STriangle<N> s = (STriangle<N>) obj;
-            return A.valueEquals(s.A, mapper) && B.valueEquals(s.B, mapper) && C.valueEquals(s.C, mapper);
-        }
-        return false;
-    }
 
     /**
      * Returns a triangle on this plane and
@@ -514,7 +508,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
 
     /**
      * Creates a new STriangle.
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param A
      * @param B
@@ -528,7 +522,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
         SVector<T> ab = c.getDirectVector(),
                 bc = a.getDirectVector();
         Plane<T> p = Plane.vectorPoint(ab, bc, A);
-        return new STriangle<>(A.getCalculator(), p, A, B, C, a, b, c);
+        return new STriangle<>((RealCalculator<T>) A.getCalculator(), p, A, B, C, a, b, c);
     }
 
     /**
@@ -545,13 +539,13 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
             throw new IllegalArgumentException("End point not the identity");
         }
         Plane<T> p = Plane.vectorPoint(a.getDirectVector(), c.getDirectVector(), A);
-        return new STriangle<>(A.getCalculator(), p, A, B, C, a, b, c);
+        return new STriangle<>((RealCalculator<T>) A.getCalculator(), p, A, B, C, a, b, c);
     }
 
     private static <T> STriangle<T> sides0(Segment<T> a, Segment<T> b, Segment<T> c) {
         SPoint<T> A = a.getEndPointA(), B = b.getEndPointA(), C = c.getEndPointA();
         Plane<T> p = Plane.vectorPoint(a.getDirectVector(), c.getDirectVector(), A);
-        return new STriangle<>(A.getCalculator(), p, A, B, C, a, b, c);
+        return new STriangle<>((RealCalculator<T>) A.getCalculator(), p, A, B, C, a, b, c);
     }
 
     /**
@@ -591,7 +585,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * The order of the triangles is specified, as well as the vertexes. Assume the points in {@code points} are
      * named <tt>P0,P1,P2,...</tt>, then the first triangle returned will be <tt>P0-P-P1</tt>, which the vertexA of this
      * triangle will be <tt>P0</tt>
-     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObject}
+     * <p>The {@link RealCalculator} will be taken from the first parameter of {@link MathObjectReal}
      *
      * @param p
      * @param points
@@ -599,7 +593,7 @@ public final class STriangle<T> extends SpacePlaneObject<T> {
      * @return
      */
     public static <T> List<STriangle<T>> prismSurfaces(SPoint<T> p, List<SPoint<T>> points) {
-        return prismSurfaces(p, points, points.iterator().next().getCalculator());
+        return prismSurfaces(p, points, (RealCalculator<T>) points.iterator().next().getCalculator());
     }
 
     /**

@@ -5,6 +5,7 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.OrderedAbelGroupCal;
 import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.exceptions.ExceptionUtil;
@@ -23,7 +24,7 @@ import java.math.MathContext;
 import java.util.List;
 
 /**
- * Provides some utility methods for {@link RealCalculator}
+ * Provides some utility methods for calculators.
  *
  * @author liyicheng
  * 2017-09-22 20:35
@@ -41,7 +42,7 @@ public final class Calculators {
      * Determines whether the two numbers are the identity in sign, which means they are both positive, negative or
      * zero.
      */
-    public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, RealCalculator<T> mc) {
+    public static <T> boolean isSameSign(@NotNull T x, @NotNull T y, OrderedAbelGroupCal<T> mc) {
         T z = mc.getZero();
         //noinspection SuspiciousNameCombination
         return mc.compare(x, z) == mc.compare(y, z);
@@ -54,29 +55,29 @@ public final class Calculators {
      * @param mc
      * @return
      */
-    public static <T> int signum(@NotNull T x, RealCalculator<T> mc) {
+    public static <T> int signum(@NotNull T x, OrderedAbelGroupCal<T> mc) {
         return mc.compare(x, mc.getZero());
     }
 
-    public static <T> boolean isPositive(@NotNull T x, @NotNull RealCalculator<T> mc) {
+    public static <T> boolean isPositive(@NotNull T x, @NotNull OrderedAbelGroupCal<T> mc) {
         return signum(x, mc) > 0;
     }
 
-    public static <T> boolean isNegative(@NotNull T x, @NotNull RealCalculator<T> mc) {
+    public static <T> boolean isNegative(@NotNull T x, @NotNull OrderedAbelGroupCal<T> mc) {
         return signum(x, mc) < 0;
     }
 
     /**
-     * Determines whether a<x<b or b<x<a.
+     * Determines whether a< x< b or b < x< a.
      */
-    public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, RealCalculator<T> mc) {
+    public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, TotalOrderPredicate<T> mc) {
         return mc.compare(a, x) * mc.compare(x, b) > 0;
     }
 
     /**
      * Returns {@code (x-a)(y-a)<=0}
      */
-    public static <T> boolean oppositeSign(T x, T y, T a, RealCalculator<T> mc) {
+    public static <T> boolean oppositeSign(T x, T y, T a, OrderedAbelGroupCal<T> mc) {
         return mc.compare(x, a) * mc.compare(y, a) <= 0;
     }
 
@@ -113,9 +114,6 @@ public final class Calculators {
     }
 
 
-    private static void throwFor() throws UnsupportedCalculationException {
-        throw new UnsupportedCalculationException("Adapter");
-    }
 
     private static void throwFor(String s) throws UnsupportedCalculationException {
         throw new UnsupportedCalculationException(s);

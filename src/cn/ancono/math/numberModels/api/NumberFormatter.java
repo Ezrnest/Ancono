@@ -16,6 +16,10 @@ public interface NumberFormatter<T> {
      */
     String format(T number);
 
+//    default String format(T number, boolean bracketRequired) {
+//        return format(number);
+//    }
+
     NumberFormatter<?> toString = (NumberFormatter<Object>) Object::toString;
 
     NumberFormatter<?> defaultFormatter = (NumberFormatter<Object>) (number) -> {

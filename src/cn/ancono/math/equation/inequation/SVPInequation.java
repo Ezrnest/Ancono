@@ -102,7 +102,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
     @NotNull
     @Override
     public String toString(@NotNull NumberFormatter<T> nf) {
-        StringBuilder sb = new StringBuilder(IPolynomial.stringOf(this, getMc(), nf));
+        StringBuilder sb = new StringBuilder(IPolynomial.stringOf(this, getMc(), nf, "x"));
         sb.append(' ').append(op.toString());
         sb.append(" 0");
         return sb.toString();

@@ -111,7 +111,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
     @NotNull
     @Override
     public String toString(@NotNull NumberFormatter<T> nf) {
-        return IPolynomial.stringOf(this, getMc(), nf) + " = 0";
+        return IPolynomial.stringOf(this, getMc(), nf, "x") + " = 0";
 
     }
 

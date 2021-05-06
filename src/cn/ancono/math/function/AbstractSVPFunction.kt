@@ -99,7 +99,7 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
 	 * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.number_models.NumberFormatter)
 	 */
     override fun toString(nf: NumberFormatter<T>): String {
-        return IPolynomial.stringOf(this, mc, nf)
+        return IPolynomial.stringOf(this, mc, nf, "x")
     }
 
 

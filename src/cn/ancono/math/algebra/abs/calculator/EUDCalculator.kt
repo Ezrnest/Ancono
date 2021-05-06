@@ -214,4 +214,70 @@ interface EUDCalculator<T> : UFDCalculator<T> {
         }
         return x
     }
+
+    companion object {
+
+        /**
+         * Creates a quotient field calculator with a prime element [prime].
+         */
+        fun <T> quotientFieldCalculator(cal: EUDCalculator<T>, prime: T): FieldCalculator<T> {
+            return QuotientFieldCal(cal, prime)
+        }
+
+
+        class QuotientFieldCal<T>(val cal: EUDCalculator<T>, val p: T) : FieldCalculator<T> {
+
+            override fun reciprocal(x: T): T {
+                return cal.modInverse(x, p)
+            }
+
+            override fun isEqual(x: T, y: T): Boolean {
+                return cal.eval {
+                    isZero(mod(x - y, p))
+                }
+            }
+
+            override fun multiply(x: T, y: T): T {
+                return cal.eval {
+                    mod(multiply(x, y), p)
+                }
+            }
+
+            override val characteristic: Long
+                get() = throw UnsupportedOperationException()
+            override val zero: T
+                get() = cal.zero
+
+            override fun add(x: T, y: T): T {
+                return cal.eval {
+                    mod(add(x, y), p)
+                }
+            }
+
+            override fun negate(x: T): T {
+                return cal.negate(x)
+            }
+
+            override val one: T
+                get() = cal.one
+
+            override fun multiplyLong(x: T, n: Long): T {
+                return cal.eval { mod(multiplyLong(x, n), p) }
+            }
+
+
+            override fun of(x: Long): T {
+                return cal.eval { mod(of(x), p) }
+            }
+
+            override fun subtract(x: T, y: T): T {
+                return cal.eval { mod(subtract(x, y), p) }
+            }
+
+            override val isCommutative: Boolean
+                get() = cal.isCommutative
+        }
+
+    }
+
 }

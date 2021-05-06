@@ -315,9 +315,7 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
     }
 
     /**
-     * Determines whether this polynomial is invertible, that is, whether this polynomial is a
-     *
-     * @return
+     * Determines whether this polynomial is invertible, that is, whether this polynomial is a constant which is a unit.
      */
     @Override
     public boolean isUnit() {
@@ -539,7 +537,7 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
         if (exp == 0) {
             return one((UnitRingCalculator<T>) mc);
         }
-        return ModelPatterns.<Polynomial<T>>binaryProduce(exp, this, Polynomial::multiply);
+        return ModelPatterns.binaryProduce(exp, this, Polynomial<T>::multiply);
     }
 
 
@@ -660,7 +658,6 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
      */
     public T cont() {
         var mc = getCalculator();
-        @SuppressWarnings("unchecked")
         var gc = (UFDCalculator<T>) mc;
         T re = gc.getZero();
         for (T coe : coes) {
@@ -802,17 +799,13 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
         if (p < 0) {
             throw new IllegalArgumentException("p<0");
         }
-        switch (p) {
-            case 0:
-                return oneX(mc);
-            case 1:
-                return sumOfX1(mc);
-            case 2:
-                return sumOfX2(mc);
-            case 3:
-                return sumOfX3(mc);
-        }
-        return powerX(p, mc).sumOfN();
+        return switch (p) {
+            case 0 -> oneX(mc);
+            case 1 -> sumOfX1(mc);
+            case 2 -> sumOfX2(mc);
+            case 3 -> sumOfX3(mc);
+            default -> powerX(p, mc).sumOfN();
+        };
     }
 
     private static <T> Polynomial<T> sumOfX1(FieldCalculator<T> mc) {
@@ -886,9 +879,6 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
     }
 
 
-    /*
-     * @see cn.ancono.math.FlexibleMathObject#mapTo(java.util.function.Function, cn.ancono.math.RingCalculator)
-     */
     @Override
     public <N> @NotNull Polynomial<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
         var arr = ArraySup.mapTo(coes, mapper);
@@ -904,24 +894,15 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
     }
 
 
-//    /*
-//     * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject, java.util.function.Function)
-//     */
-//    @Override
-//    public <N> boolean valueEquals(@NotNull MathObject<N> obj, @NotNull Function<N, T> mapper) {
-//        if (!(obj instanceof Polynomial)) {
-//            return false;
-//        }
-//        return IPolynomial.isEqual(this, (Polynomial<N>) obj, (x, y) -> getCalculator().isEqual(x, mapper.apply(y)));
-//    }
-
-    /*
-     * @see cn.ancono.math.FlexibleMathObject#toString(cn.ancono.math.numberModels.api.NumberFormatter)
-     */
     @NotNull
     @Override
     public String toString(@NotNull NumberFormatter<T> nf) {
-        return IPolynomial.stringOf(this, getCalculator(), nf);
+        return IPolynomial.stringOf(this, getCalculator(), nf, "x");
+    }
+
+    @NotNull
+    public String toString(String variable) {
+        return IPolynomial.stringOf(this, getCalculator(), NumberFormatter.defaultFormatter(), variable);
     }
 
     /*
@@ -1245,7 +1226,7 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
         for (Term f : p.getTerms()) {
             Fraction powf = f.getCharacterPower(ch);
             if (powf.isNegative() || !powf.isInteger()) {
-                throw new ArithmeticException("Unsupported exponent for:[" + ch + "] in " + f.toString());
+                throw new ArithmeticException("Unsupported exponent for:[" + ch + "] in " + f);
             }
             int pow = powf.intValue();
             if (pow > deg) {
@@ -1906,8 +1887,7 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
                                                                      RingCalculator<T> cal,
                                                                      Simplifier<T> sim) {
 
-        if (cal instanceof RealCalculator) {
-            var mc = (RealCalculator<T>) cal;
+        if (cal instanceof RealCalculator<T> mc) {
             if (mc.isComparable()) {
                 if (mc.compare(g.first(), mc.getZero()) < 0) {
                     return new Pair<>(f.negate(), g.negate());

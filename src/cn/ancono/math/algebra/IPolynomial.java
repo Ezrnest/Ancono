@@ -161,9 +161,9 @@ public interface IPolynomial<T> {
         return hash;
     }
 
-    static <T> String stringOf(IPolynomial<T> m, RingCalculator<T> mc, NumberFormatter<T> nf) {
+    static <T> String stringOf(IPolynomial<T> m, RingCalculator<T> mc, NumberFormatter<T> nf, String variable) {
         if (mc instanceof UnitRingCalculator) {
-            return stringOf(m, (UnitRingCalculator<T>) mc, nf);
+            return stringOf(m, (UnitRingCalculator<T>) mc, nf, variable);
         }
         int maxPower = m.getDegree();
         if (maxPower <= 0) {
@@ -173,11 +173,10 @@ public interface IPolynomial<T> {
         for (int i = maxPower; i > 0; i--) {
             if (mc.isZero(m.get(i)))
                 continue;
-            sb.append(nf.format(m.get(i)));
+            sb.append('(').append(nf.format(m.get(i))).append(')')
+                    .append("*").append(variable);
             if (i != 1) {
-                sb.append("*x^").append(i);
-            } else {
-                sb.append("*x");
+                sb.append("^").append(i);
             }
             sb.append(" + ");
         }
@@ -190,7 +189,7 @@ public interface IPolynomial<T> {
         return sb.toString();
     }
 
-    static <T> String stringOf(IPolynomial<T> m, UnitRingCalculator<T> mc, NumberFormatter<T> nf) {
+    static <T> String stringOf(IPolynomial<T> m, UnitRingCalculator<T> mc, NumberFormatter<T> nf, String variable) {
         int maxPower = m.getDegree();
         if (maxPower <= 0) {
             return nf.format(m.get(0));
@@ -202,18 +201,13 @@ public interface IPolynomial<T> {
                 continue;
             T a = m.get(i);
             if (mc.isEqual(mc.getOne(), a)) {
-                if (i != 1) {
-                    sb.append("x^").append(i);
-                } else {
-                    sb.append("x");
-                }
+                sb.append(variable);
             } else {
-                sb.append(nf.format(m.get(i)));
-                if (i != 1) {
-                    sb.append("*x^").append(i);
-                } else {
-                    sb.append("*x");
-                }
+                sb.append('(').append(nf.format(m.get(i)))
+                        .append(")*").append(variable);
+            }
+            if (i != 1) {
+                sb.append("^").append(i);
             }
             sb.append(" + ");
 

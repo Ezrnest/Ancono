@@ -271,8 +271,6 @@ class Log<T>
         val log = obj as Log<T>
         return mc.isEqual(a, log.a)
     }
-
-
 }
 
 /**

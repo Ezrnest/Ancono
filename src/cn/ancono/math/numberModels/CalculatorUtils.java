@@ -4,6 +4,8 @@
 package cn.ancono.math.numberModels;
 
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.OrderedRingCal;
+import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.function.SVFunction;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberTheory.EuclidRingNumberModel;
@@ -137,7 +139,7 @@ public final class CalculatorUtils {
         return re;
     }
 
-    public static <T> T multiplyAll(int startInclusive, int endExclusive, RealCalculator<T> mc, IntFunction<T> f) {
+    public static <T> T multiplyAll(int startInclusive, int endExclusive, UnitRingCalculator<T> mc, IntFunction<T> f) {
         T re = mc.getOne();
         for (int i = startInclusive; i < endExclusive; i++) {
             re = mc.multiply(re, f.apply(i));
@@ -150,10 +152,7 @@ public final class CalculatorUtils {
      * and has the difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T multiplyAll(T start, T end, T step, RealCalculator<T> mc) {
-        if (!mc.isComparable()) {
-            throw new ArithmeticException("MathCalculator of type " + mc.getNumberClass() + " is not comparable.");
-        }
+    public static <T> T multiplyAll(T start, T end, T step, OrderedRingCal<T> mc) {
         T t = start;
         int signum = mc.compare(start, end);
         if (signum > 0) {
@@ -172,10 +171,7 @@ public final class CalculatorUtils {
      * which starts from {@code start} and has the difference of
      * {@code step}, and all its elements are smaller or equal to {@code end}.
      */
-    public static <T> T multiplyAll(T start, T end, T step, RealCalculator<T> mc, SVFunction<T> f) {
-        if (!mc.isComparable()) {
-            throw new ArithmeticException("MathCalculator of type " + mc.getNumberClass() + " is not comparable.");
-        }
+    public static <T> T multiplyAll(T start, T end, T step, OrderedRingCal<T> mc, SVFunction<T> f) {
         T t = start;
         int signum = mc.compare(start, end);
         if (signum > 0) {

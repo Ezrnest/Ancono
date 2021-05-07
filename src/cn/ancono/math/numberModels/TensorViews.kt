@@ -192,7 +192,7 @@ class MutableSliceView<T>(
     }
 
     override fun sumAll(): T {
-        val mc = calculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemigroupCal
         return originalIndicesNoOrder.map { idx -> t[idx] }.reduce(mc::add) // no order here
     }
 
@@ -208,7 +208,7 @@ abstract class CombinedView<T>(tensors: List<Tensor<T>>, shape: IntArray)
 
 
     override fun sumAll(): T {
-        val mc = calculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemigroupCal
         return ts.asSequence().map { it.sumAll() }.reduce(mc::add)
     }
 
@@ -285,7 +285,7 @@ open class StackView<T>(val axis: Int, tensors: List<Tensor<T>>, shape: IntArray
     }
 
     override fun sumAll(): T {
-        val mc = calculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemigroupCal
         return ts.asSequence().map { it.sumAll() }.reduce(mc::add)
     }
 
@@ -462,7 +462,7 @@ class BroadcastView<T>(
         for (ax in 0 until d) {
             k *= sh[ax]
         }
-        val mc = calculator as AbelSemiGroupCal
+        val mc = calculator as AbelSemigroupCal
         return mc.multiplyLong(re, k)
     }
 
@@ -515,7 +515,7 @@ internal object TensorImpl {
 
     fun <T> add(x: Tensor<T>, y: Tensor<T>): MutableTensor<T> {
         val (x1, y1) = broadcast(x, y)
-        val mc = x.calculator as AbelSemiGroupCal<T>
+        val mc = x.calculator as AbelSemigroupCal<T>
         return ATensor.buildFromSequence(mc, x1.shape, x1.indices.map { idx -> mc.add(x1[idx], y1[idx]) })
     }
 

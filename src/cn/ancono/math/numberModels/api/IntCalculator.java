@@ -5,7 +5,7 @@ package cn.ancono.math.numberModels.api;
 
 
 import cn.ancono.math.algebra.abs.calculator.EUDCalculator;
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
+import cn.ancono.math.algebra.abs.calculator.OrderedRingCal;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ import java.math.BigInteger;
  *
  * @author liyicheng 2017-09-09 20:33
  */
-public interface IntCalculator<T> extends EUDCalculator<T>, TotalOrderPredicate<T> {
+public interface IntCalculator<T> extends EUDCalculator<T>, OrderedRingCal<T> {
 
     /**
      * Returns the integer <code>1</code> of type T.

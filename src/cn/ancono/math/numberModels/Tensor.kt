@@ -217,7 +217,7 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
      * Returns the sum of all the elements in this tensor.
      */
     fun sumAll(): T {
-        val mc = calculator as AbelSemiGroupCal<T>
+        val mc = calculator as AbelSemigroupCal<T>
         return elementSequence().reduce(mc::add)
     }
 
@@ -762,7 +762,7 @@ interface MutableTensor<T> : Tensor<T> {
 
 
     operator fun plusAssign(y: Tensor<T>) {
-        val mc = calculator as AbelSemiGroupCal<T>
+        val mc = calculator as AbelSemigroupCal<T>
         val y1 = y.broadcastTo(*shape)
         for (idx in indices) {
             this[idx] = mc.add(this[idx], y1[idx])
@@ -1239,7 +1239,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
 
     override fun add(y: Tensor<T>): MutableTensor<T> {
         if (y is ATensor && isSameShape(y)) {
-            val mc = calculator as AbelSemiGroupCal<T>
+            val mc = calculator as AbelSemigroupCal<T>
             return apply2(this, y, mc::add)
         }
         return super.add(y)
@@ -1305,7 +1305,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
 
     override fun plusAssign(y: Tensor<T>) {
         val y1 = y.broadcastTo(*sh)
-        return apply2InPlace(y1, (calculator as AbelSemiGroupCal<T>)::add)
+        return apply2InPlace(y1, (calculator as AbelSemigroupCal<T>)::add)
     }
 
     override fun minusAssign(y: Tensor<T>) {

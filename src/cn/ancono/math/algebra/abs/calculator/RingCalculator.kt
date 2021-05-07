@@ -9,7 +9,7 @@ package cn.ancono.math.algebra.abs.calculator
  * @author liyicheng
  * 2018-02-28 18:28
  */
-interface RingCalculator<T> : AbelGroupCal<T>, MulSemiGroupCal<T> {
+interface RingCalculator<T> : AbelGroupCal<T>, MulSemigroupCal<T> {
 
     /**
      * Gets the zero element in this ring, which is the identity element of the addition group.

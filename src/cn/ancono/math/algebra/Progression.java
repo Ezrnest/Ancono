@@ -2,7 +2,7 @@ package cn.ancono.math.algebra;
 
 import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.MathObject;
-import cn.ancono.math.algebra.abs.calculator.AbelSemiGroupCal;
+import cn.ancono.math.algebra.abs.calculator.AbelSemigroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.BiMathFunction;
 import cn.ancono.math.function.MathFunction;
@@ -147,7 +147,7 @@ public abstract class Progression<T> extends AbstractMathObject<T, EqualPredicat
      */
     public T sumOf(long start, long end) {
         T sum = get(start);
-        var mc = (AbelSemiGroupCal<T>) getCalculator();
+        var mc = (AbelSemigroupCal<T>) getCalculator();
         while (++start < end) {
             sum = mc.add(sum, get(start));
         }
@@ -608,7 +608,7 @@ public abstract class Progression<T> extends AbstractMathObject<T, EqualPredicat
             int s = (int) start;
             int e = (int) end;
             T sum = arr[s];
-            var mc = (AbelSemiGroupCal<T>) getCalculator();
+            var mc = (AbelSemigroupCal<T>) getCalculator();
             while (++s < e) {
                 sum = mc.add(sum, arr[s]);
             }

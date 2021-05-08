@@ -2,7 +2,7 @@ package cn.ancono.math.set
 
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
+import cn.ancono.math.algebra.abs.calculator.OrderPredicate
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.numberModels.api.IntCalculator
 import cn.ancono.math.numberModels.api.NumberFormatter
@@ -119,7 +119,7 @@ class FiniteInterval<T>(override val calculator: IntCalculator<T>, val downer: T
         return "[${nf.format(downer)},${nf.format(upper)}]"
     }
 
-    override fun valueEquals(obj: MathObject<T, TotalOrderPredicate<T>>): Boolean {
+    override fun valueEquals(obj: MathObject<T, OrderPredicate<T>>): Boolean {
         if (obj !is FiniteInterval) {
             return false
         }

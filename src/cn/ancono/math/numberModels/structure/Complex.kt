@@ -490,8 +490,8 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
          */
         val i: Complex<T> = imaginary(mc.one, mc)
 
-        override fun of(x: Long): Complex<T> {
-            return real(mc.of(x))
+        override fun of(n: Long): Complex<T> {
+            return real(mc.of(n))
         }
 
         override fun of(x: Fraction): Complex<T> {
@@ -656,8 +656,8 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
         val i: ComplexE<T> = mc.i
         val inf: ComplexE<T> = inf(mc.mc)
 
-        override fun of(x: Long): ComplexE<T> {
-            return mc.of(x)
+        override fun of(n: Long): ComplexE<T> {
+            return mc.of(n)
         }
 
         override fun of(x: Fraction): ComplexE<T> {

@@ -471,8 +471,8 @@ class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
         return v.multiply(k)
     }
 
-    override fun of(x: Long): DifferentialForm<T> {
-        return DifferentialForm.zeroForm(mc.of(x), dc)
+    override fun of(n: Long): DifferentialForm<T> {
+        return DifferentialForm.zeroForm(mc.of(n), dc)
     }
 
 //    override fun of(x: Fraction): DifferentialForm<T> {

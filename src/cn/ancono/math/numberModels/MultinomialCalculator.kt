@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels
 
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate
+import cn.ancono.math.algebra.abs.calculator.OrderPredicate
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
 import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.numberModels.Multinomial.*
@@ -10,7 +10,7 @@ import java.math.BigInteger
 import java.util.*
 
 @Suppress("NAME_SHADOWING")
-class MultinomialCalculator : UFDCalculator<Multinomial>, TotalOrderPredicate<Multinomial> {
+class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multinomial> {
 
 
     override val zero: Multinomial
@@ -22,8 +22,8 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, TotalOrderPredicate<Mu
     override val numberClass: Class<Multinomial>
         get() = Multinomial::class.java
 
-    override fun of(x: Long): Multinomial {
-        return of(x)
+    override fun of(n: Long): Multinomial {
+        return Multinomial.of(n)
     }
 
     fun of(x: Fraction): Multinomial {
@@ -45,7 +45,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, TotalOrderPredicate<Mu
 //    }
 
 
-    private class Pair internal constructor(internal val n: BigInteger, internal val d: BigInteger) {
+    private class Pair(val n: BigInteger, val d: BigInteger) {
         override fun hashCode(): Int {
             return n.hashCode() * 31 + d.hashCode()
         }
@@ -105,6 +105,9 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, TotalOrderPredicate<Mu
     override fun isZero(x: Multinomial): Boolean {
         return x == ZERO
     }
+
+    override val isCommutative: Boolean
+        get() = true
 
     override fun multiply(x: Multinomial, y: Multinomial): Multinomial {
         return x.multiply(y)
@@ -241,9 +244,9 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, TotalOrderPredicate<Mu
         throw UnsupportedCalculationException()
     }
 
-    fun log(a: Multinomial, b: Multinomial): Multinomial {
-        throw UnsupportedCalculationException()//TODO
-    }
+//    fun log(a: Multinomial, b: Multinomial): Multinomial {
+//        throw UnsupportedCalculationException()//TODO
+//    }
 
     fun ln(x: Multinomial): Multinomial {
         if (!x.isMonomial) {

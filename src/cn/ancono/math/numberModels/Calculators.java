@@ -5,8 +5,8 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
+import cn.ancono.math.algebra.abs.calculator.OrderPredicate;
 import cn.ancono.math.algebra.abs.calculator.OrderedAbelGroupCal;
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.exceptions.UnsupportedCalculationException;
@@ -70,7 +70,7 @@ public final class Calculators {
     /**
      * Determines whether a< x< b or b < x< a.
      */
-    public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, TotalOrderPredicate<T> mc) {
+    public static <T> boolean between(@NotNull T x, @NotNull T a, @NotNull T b, OrderPredicate<T> mc) {
         return mc.compare(a, x) * mc.compare(x, b) > 0;
     }
 
@@ -312,7 +312,7 @@ public final class Calculators {
         }
 
         @Override
-        public @NotNull Integer powerAndMod(@NotNull Integer x, long n, @NotNull Integer m) {
+        public @NotNull Integer powMod(@NotNull Integer x, long n, @NotNull Integer m) {
             return MathUtils.powMod(x, n, m);
         }
 
@@ -328,8 +328,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Integer of(long x) {
-            return Math.toIntExact(x);
+        public Integer of(long n) {
+            return Math.toIntExact(n);
         }
 
         @NotNull
@@ -552,11 +552,10 @@ public final class Calculators {
                 throwFor("Negative Exp");
             } else if (z == 0L) {
                 if (d == 0L) {
-                    throw new ArithmeticException("0^0");
+                    ExceptionUtil.zeroExponent();
                 }
                 return 1L;
             }
-            // log(z)
             long re = 1;
             while (z != 0) {
                 if ((z & 1) != 0) {
@@ -593,7 +592,7 @@ public final class Calculators {
         }
 
         @Override
-        public @NotNull Long powerAndMod(@NotNull Long x, long n, @NotNull Long m) {
+        public @NotNull Long powMod(@NotNull Long x, long n, @NotNull Long m) {
             return MathUtils.powMod(x, n, m);
         }
 
@@ -711,8 +710,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Long of(long x) {
-            return x;
+        public Long of(long n) {
+            return n;
         }
 
         @NotNull
@@ -977,7 +976,7 @@ public final class Calculators {
         }
 
         @Override
-        public @NotNull BigInteger powerAndMod(@NotNull BigInteger x, long n, @NotNull BigInteger m) {
+        public @NotNull BigInteger powMod(@NotNull BigInteger x, long n, @NotNull BigInteger m) {
             return x.modPow(BigInteger.valueOf(n), m);
         }
 
@@ -988,8 +987,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigInteger of(long x) {
-            return BigInteger.valueOf(x);
+        public BigInteger of(long n) {
+            return BigInteger.valueOf(n);
         }
 
         @NotNull
@@ -1147,8 +1146,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public BigDecimal of(long x) {
-            return BigDecimal.valueOf(x);
+        public BigDecimal of(long n) {
+            return BigDecimal.valueOf(n);
         }
 
         @NotNull
@@ -1409,8 +1408,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Double of(long x) {
-            return (double) x;
+        public Double of(long n) {
+            return (double) n;
         }
 
         @NotNull
@@ -1585,7 +1584,7 @@ public final class Calculators {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
-    public static class ZModNCalculator implements UnitRingCalculator<Integer>, TotalOrderPredicate<Integer> {
+    public static class ZModNCalculator implements UnitRingCalculator<Integer>, OrderPredicate<Integer> {
         protected final int n;
 
         ZModNCalculator(int n) {
@@ -1762,8 +1761,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Integer of(long x) {
-            return modN(x);
+        public Integer of(long n) {
+            return modN(n);
         }
     }
 
@@ -1981,7 +1980,7 @@ public final class Calculators {
         return new ZModNCalculator(n);
     }
 
-    static class BooleanCalculator implements FieldCalculator<Boolean>, TotalOrderPredicate<Boolean> {
+    static class BooleanCalculator implements FieldCalculator<Boolean>, OrderPredicate<Boolean> {
 
         @Override
         public long getCharacteristic() {
@@ -2102,8 +2101,8 @@ public final class Calculators {
 
         @NotNull
         @Override
-        public Boolean of(long x) {
-            return x % 2 != 0;
+        public Boolean of(long n) {
+            return n % 2 != 0;
         }
 
         static BooleanCalculator INSTANCE = new BooleanCalculator();

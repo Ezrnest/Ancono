@@ -81,9 +81,6 @@ interface RealCalculator<T> : QuotientCalculator<T> {
         get() = super.numberClass
 
 
-    override val characteristic: Long
-        get() = 0
-
     /**
      * Compare the two numbers and determines whether these two numbers are the
      * identity.
@@ -452,8 +449,8 @@ interface RealCalculator<T> : QuotientCalculator<T> {
     /**
      * Returns a value that represents the given integer.
      */
-    override fun of(x: Long): T {
-        return one * x
+    override fun of(n: Long): T {
+        return one * n
     }
 
     /**
@@ -493,7 +490,6 @@ interface RealCalculator<T> : QuotientCalculator<T> {
          * Returns a [RealCalculator] based on the given [mc] and the [Bijection] [f]. It is assured that [mappedCalculator(mc,Bijection.identity()]
          * returns the identity value of all methods as [mc].
          */
-        @Suppress("unused")
         fun <T, S> mappedCalculator(mc: RealCalculator<T>, f: Bijection<T, S>): RealCalculator<S> {
             return object : RealCalculator<S> {
                 override val isComparable: Boolean = mc.isComparable
@@ -605,8 +601,8 @@ interface RealCalculator<T> : QuotientCalculator<T> {
                     return f(mc.arctan(f.deply(x)))
                 }
 
-                override fun of(x: Long): S {
-                    return f(mc.of(x))
+                override fun of(n: Long): S {
+                    return f(mc.of(n))
                 }
 
                 override fun of(x: Fraction): S {

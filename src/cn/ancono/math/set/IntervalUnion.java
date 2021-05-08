@@ -5,7 +5,7 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
+import cn.ancono.math.algebra.abs.calculator.OrderPredicate;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.utilities.CollectionSup;
@@ -21,7 +21,7 @@ import java.util.function.Function;
  * @author liyicheng
  * 2017-09-09 11:38
  */
-public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<T>> implements MathSet<T> {
+public class IntervalUnion<T> extends AbstractMathObject<T, OrderPredicate<T>> implements MathSet<T> {
     /**
      * A sorted list. May be empty.
      * No change to this list is permitted.
@@ -31,7 +31,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
     /**
      *
      */
-    public IntervalUnion(TotalOrderPredicate<T> mc) {
+    public IntervalUnion(OrderPredicate<T> mc) {
         super(mc);
         is = Collections.emptyList();
     }
@@ -40,7 +40,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      * @param mc
      * @param is a list of intervals, sorted by it bounds and no intersection.
      */
-    IntervalUnion(TotalOrderPredicate<T> mc, List<Interval<T>> is) {
+    IntervalUnion(OrderPredicate<T> mc, List<Interval<T>> is) {
         super(mc);
         this.is = is;
     }
@@ -49,7 +49,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      * @param mc
      * @param is a list of intervals, sorted by it bounds and no intersection.
      */
-    IntervalUnion(TotalOrderPredicate<T> mc, Interval<T> v) {
+    IntervalUnion(OrderPredicate<T> mc, Interval<T> v) {
         super(mc);
         this.is = Collections.singletonList(v);
     }
@@ -454,7 +454,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
     @NotNull
     @Override
     public <N> IntervalUnion<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new IntervalUnion<>((TotalOrderPredicate<N>) newCalculator, CollectionSup.mapList(is,
+        return new IntervalUnion<>((OrderPredicate<N>) newCalculator, CollectionSup.mapList(is,
                 (Interval<T> x) -> x.mapTo(newCalculator, mapper)));
     }
 
@@ -471,7 +471,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, TotalOrderPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, OrderPredicate<T>> obj) {
         if (!(obj instanceof IntervalUnion)) {
             return false;
         }
@@ -508,7 +508,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
     }
 
 
-    private static <T> int findSmallerDownerBound0(List<Interval<T>> is, T t, TotalOrderPredicate<T> mc) {
+    private static <T> int findSmallerDownerBound0(List<Interval<T>> is, T t, OrderPredicate<T> mc) {
         int n = ModelPatterns.binarySearch(0, is.size(), x -> {
             T downer = is.get(x).downerBound();
             if (downer == null) {
@@ -522,7 +522,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
         return n;
     }
 
-    private static <T> void unionWith0(List<Interval<T>> is, Interval<T> v, TotalOrderPredicate<T> mc) {
+    private static <T> void unionWith0(List<Interval<T>> is, Interval<T> v, OrderPredicate<T> mc) {
         if (is.isEmpty()) {
             is.add(v);
             return;
@@ -630,7 +630,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
         replaceIntervalRange0(indexDowner, indexUpper, nin, is);
     }
 
-    private static <T> boolean shouldUnionWithThePrevInterval0(Interval<T> v, int downer, List<Interval<T>> is, TotalOrderPredicate<T> mc) {
+    private static <T> boolean shouldUnionWithThePrevInterval0(Interval<T> v, int downer, List<Interval<T>> is, OrderPredicate<T> mc) {
         if (v.isDownerBoundInclusive() && downer > 0) {
             Interval<T> prev = is.get(downer - 1);
             return !prev.isUpperBoundInclusive() && mc.isEqual(v.downerBound(), prev.upperBound());
@@ -672,7 +672,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      * @return a new IntervalUnion
      */
     public static <T> IntervalUnion<T> valueOf(List<Interval<T>> intervals) {
-        TotalOrderPredicate<T> mc = intervals.get(0).getCalculator();
+        OrderPredicate<T> mc = intervals.get(0).getCalculator();
         List<Interval<T>> is = new ArrayList<>(intervals.size());
         for (Interval<T> inv : intervals) {
             unionWith0(is, inv, mc);
@@ -690,7 +690,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      */
     @SafeVarargs
     public static <T> IntervalUnion<T> valueOf(Interval<T> interval, Interval<T>... intervals) {
-        TotalOrderPredicate<T> mc = interval.getCalculator();
+        OrderPredicate<T> mc = interval.getCalculator();
         List<Interval<T>> is = new ArrayList<>(intervals.length);
         is.add(interval);
         for (Interval<T> inv : intervals) {
@@ -718,7 +718,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      *
      * @return {@literal ∅}
      */
-    public static <T> IntervalUnion<T> empty(TotalOrderPredicate<T> mc) {
+    public static <T> IntervalUnion<T> empty(OrderPredicate<T> mc) {
         return new IntervalUnion<>(mc);
     }
 
@@ -728,7 +728,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      *
      * @return {@literal (-∞,+∞)}
      */
-    public static <T> IntervalUnion<T> universe(TotalOrderPredicate<T> mc) {
+    public static <T> IntervalUnion<T> universe(OrderPredicate<T> mc) {
         return new IntervalUnion<>(mc, Interval.universe(mc));
     }
 
@@ -748,7 +748,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
         for (T t : set) {
             list[n++] = t;
         }
-        var mc = (TotalOrderPredicate<T>) set.getCalculator();
+        var mc = (OrderPredicate<T>) set.getCalculator();
         Arrays.sort(list, mc);
         List<Interval<T>> ins = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
@@ -765,7 +765,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      * @param mc a {@link RealCalculator}
      * @return {@literal [x,x]}
      */
-    public static <T> IntervalUnion<T> single(T x, TotalOrderPredicate<T> mc) {
+    public static <T> IntervalUnion<T> single(T x, OrderPredicate<T> mc) {
         return new IntervalUnion<T>(mc, Interval.single(x, mc));
     }
 
@@ -776,7 +776,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      * @param mc a {@link RealCalculator}
      * @return {@literal (-∞,x) ∪ (x,+∞)}
      */
-    public static <T> IntervalUnion<T> except(T x, TotalOrderPredicate<T> mc) {
+    public static <T> IntervalUnion<T> except(T x, OrderPredicate<T> mc) {
         List<Interval<T>> list = new ArrayList<>(2);
         list.add(Interval.fromNegativeInf(x, false, mc));
         list.add(Interval.toPositiveInf(x, false, mc));
@@ -791,7 +791,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, TotalOrderPredicate<
      * @param x2 another number
      * @return {@literal (x1,x2)} (or maybe {@literal (x2,x1)})
      */
-    public static <T> IntervalUnion<T> between(T x1, T x2, TotalOrderPredicate<T> mc) {
+    public static <T> IntervalUnion<T> between(T x1, T x2, OrderPredicate<T> mc) {
         if (mc.isEqual(x1, x2)) {
             return empty(mc);
         }

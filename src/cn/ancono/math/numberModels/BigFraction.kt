@@ -394,8 +394,8 @@ object BigFractionCalculator : QuotientCalculator<BigFraction> {
         return x.reciprocal()
     }
 
-    override fun of(x: Long): BigFraction {
-        return valueOf(x)
+    override fun of(n: Long): BigFraction {
+        return valueOf(n)
     }
 
     override fun of(x: Fraction): BigFraction {

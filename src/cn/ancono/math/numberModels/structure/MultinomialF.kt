@@ -661,7 +661,7 @@ internal constructor(
 }
 
 class MultinomialFCalculator<T>(val mc: RealCalculator<T>)
-    : UFDCalculator<MultinomialF<T>>, TotalOrderPredicate<MultinomialF<T>> {
+    : UFDCalculator<MultinomialF<T>>, OrderPredicate<MultinomialF<T>> {
     override val one: MultinomialF<T> = MultinomialF.one(mc)
     override val zero: MultinomialF<T> = MultinomialF.zero(mc)
 
@@ -754,8 +754,8 @@ class MultinomialFCalculator<T>(val mc: RealCalculator<T>)
         return x.pow(n)
     }
 
-    override fun of(x: Long): MultinomialF<T> {
-        return MultinomialF.monomial(TermF.constant(mc.of(x)), mc)
+    override fun of(n: Long): MultinomialF<T> {
+        return MultinomialF.monomial(TermF.constant(mc.of(n)), mc)
 
     }
 

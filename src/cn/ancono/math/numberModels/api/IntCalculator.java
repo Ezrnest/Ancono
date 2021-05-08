@@ -523,8 +523,8 @@ public interface IntCalculator<T> extends EUDCalculator<T>, OrderedRingCal<T> {
      */
 
     @Override
-    default T powerAndMod(T x, long n, T m) {
-        return EUDCalculator.super.powerAndMod(x, n, m);
+    default T powMod(T x, long n, T m) {
+        return EUDCalculator.super.powMod(x, n, m);
     }
 
 }

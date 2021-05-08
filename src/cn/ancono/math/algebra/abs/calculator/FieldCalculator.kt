@@ -21,6 +21,9 @@ interface FieldCalculator<T> : DivisionRingCalculator<T> {
      */
     override fun multiply(x: T, y: T): T
 
+    /**
+     * A field is always commutative.
+     */
     override val isCommutative: Boolean
         get() = true
 
@@ -30,6 +33,11 @@ interface FieldCalculator<T> : DivisionRingCalculator<T> {
     val characteristic: Long
 
 
+    /**
+     * Returns the value that is equal to `one * x.numerator / x.denominator`.
+     *
+     * Note: If this field is of characteristic zero, then this method is the injection from Q to the field.
+     */
     fun of(x: Fraction): T {
         return divideLong(of(x.numerator), x.denominator)
     }

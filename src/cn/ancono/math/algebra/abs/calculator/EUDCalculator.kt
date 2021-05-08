@@ -10,6 +10,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
  * Describes a calculator for an Euclidean domain. The fundamental operation of this type of calculator is
  * [divideAndRemainder].
  *
+ *
  * All calculators for integers are `EUDCalculator`.
  *
  * See [EuclideanDomain](https://mathworld.wolfram.com/EuclideanDomain.html) for more information.
@@ -17,10 +18,11 @@ import cn.ancono.math.exceptions.ExceptionUtil
 interface EUDCalculator<T> : UFDCalculator<T> {
 
     /**
-     * Returns a pair of two elements containing `a / b`
-     * followed by `a % b`.
+     * Returns a pair of `(q, r)` such that
      *
-     * @param
+     *     a = qb + r
+     *
+     * where `q` is the quotient and `r` the remainder.
      */
     fun divideAndRemainder(a: T, b: T): Pair<T, T>
 
@@ -29,7 +31,7 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      *
      * @param a the dividend
      * @param b the divisor
-     * @return {@code a \ b}
+     * @return the quotient `q` of `a = qb + r`.
      * @see divideAndRemainder
      */
     fun divideToInteger(a: T, b: T): T = divideAndRemainder(a, b).first
@@ -39,15 +41,16 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      *
      * @param a the dividend
      * @param b the divisor
-     * @return {@code a \ b}
+     * @return the remainder `r` of `a = qb + r`.
      * @see divideAndRemainder
      */
     fun remainder(a: T, b: T): T = divideAndRemainder(a, b).second
 
 
     /**
-     * Returns `a mod b`, which is generally the same as [remainder]. Note that
-     * the result may differ with respect to a unit in the ring.
+     * Returns `a mod b`, which is generally the same as [remainder].
+     *
+     * Note that the result may differ with respect to a unit in the ring.
      */
     fun mod(a: T, b: T): T = remainder(a, b)
 
@@ -63,6 +66,11 @@ interface EUDCalculator<T> : UFDCalculator<T> {
         return isZero(remainder(a, b))
     }
 
+    /**
+     * Returns the greatest common divisor of [a] and [b].
+     *
+     * The default implementation uses Euclidean algorithm.
+     */
     override fun gcd(a: T, b: T): T {
         var x = a
         var y = b
@@ -76,12 +84,15 @@ interface EUDCalculator<T> : UFDCalculator<T> {
     }
 
     /**
-     * Returns the greatest common divisor of two numbers and a pair of number (u,v) such that
-     * <pre>ua+vb=gcd(a,b)</pre>
+     * Returns the greatest common divisor of two numbers and a pair of number `(u,v)` such that
+     *
+     *     ua + vb = gcd(a, b)
+     *
      * The returned greatest common divisor is the same as [gcd].
      * Note that the pair of `u` and `v` returned is not unique and different implementation
-     * may return differently when a,b is the same.<P></P>
-     * The default implementation is based on the Euclid's algorithm.
+     * may return differently when `a, b` is the same.
+     *
+     * The default implementation is based on the extended Euclid's algorithm.
      *
      * @return a tuple of `(gcd(a,b), u, v)`.
      */
@@ -138,7 +149,10 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      * Returns the modular inverse of `a` with respect to `p`, that is, find the element `b` such
      * that `ab = 1 (mod p)`.
      *
+     * The default implementation is based on [gcdUV].
+     *
      * @return the modular inverse of `a`
+     *
      */
     fun modInverse(a: T, p: T): T {
         val (g, u, _) = gcdUV(a, p)
@@ -150,19 +164,18 @@ interface EUDCalculator<T> : UFDCalculator<T> {
 
 
     /**
-     * Returns `(a^n) mod m`, where `n` is a long.
+     * Returns `(a^n) mod m`, where `n` is a non-negative integer.
      *
      *
-     * For example, `powerAndMod(2,2,3) = 1`, and
-     * `powerAndMod(3,9,7) = 6`.
+     * This method is mathematically equivalent to `mod(pow(x, n), m)`.
      *
      * @param x a number
      * @param n the power, a non-negative number.
      * @param m the modular.
      */
-    fun powerAndMod(x: T, n: Long, m: T): T {
+    fun powMod(x: T, n: Long, m: T): T {
         var a = x
-        require(n >= 0) { "n<0" }
+        require(n >= 0) { "n must be non-negative!" }
         if (isEqual(m, one)) {
             return zero
         }
@@ -266,8 +279,8 @@ interface EUDCalculator<T> : UFDCalculator<T> {
             }
 
 
-            override fun of(x: Long): T {
-                return cal.eval { mod(of(x), p) }
+            override fun of(n: Long): T {
+                return cal.eval { mod(of(n), p) }
             }
 
             override fun subtract(x: T, y: T): T {

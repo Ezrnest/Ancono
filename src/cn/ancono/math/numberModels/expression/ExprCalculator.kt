@@ -252,8 +252,8 @@ class ExprCalculator
         updateSimplificationIdentifier()
     }
 
-    override fun of(x: Long): Expression {
-        return Expression.valueOf(x)
+    override fun of(n: Long): Expression {
+        return Expression.valueOf(n)
     }
 
     override fun of(x: Fraction): Expression {

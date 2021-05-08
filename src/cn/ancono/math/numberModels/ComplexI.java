@@ -851,8 +851,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
         @NotNull
         @Override
-        public ComplexI of(long x) {
-            return real(x);
+        public ComplexI of(long n) {
+            return real(n);
         }
 
         @NotNull

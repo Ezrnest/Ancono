@@ -3,7 +3,7 @@ package cn.ancono.math.set;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.AbelGroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
+import cn.ancono.math.algebra.abs.calculator.OrderPredicate;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ public final class IntervalI<T> extends Interval<T> {
      * @param downerInclusive determines whether downer should be inclusive
      * @param upperInclusive  determines whether upper should be inclusive
      */
-    public IntervalI(TotalOrderPredicate<T> mc, T downerBound, T upperBound, boolean downerInclusive, boolean upperInclusive) {
+    public IntervalI(OrderPredicate<T> mc, T downerBound, T upperBound, boolean downerInclusive, boolean upperInclusive) {
         super(mc);
         int type = 0;
         if (downerBound == null || !downerInclusive) {
@@ -58,7 +58,7 @@ public final class IntervalI<T> extends Interval<T> {
     }
 
 
-    IntervalI(TotalOrderPredicate<T> mc, T left, T right, int type) {
+    IntervalI(OrderPredicate<T> mc, T left, T right, int type) {
         super(mc);
         this.left = left;
         this.right = right;
@@ -347,7 +347,7 @@ public final class IntervalI<T> extends Interval<T> {
     @NotNull
     @Override
     public <N> Interval<N> mapTo(@NotNull EqualPredicate<N> newCalculator, @NotNull Function<T, N> mapper) {
-        return new IntervalI<>((TotalOrderPredicate<N>) newCalculator, mapper.apply(left), mapper.apply(right), type);
+        return new IntervalI<>((OrderPredicate<N>) newCalculator, mapper.apply(left), mapper.apply(right), type);
     }
 
 
@@ -402,7 +402,7 @@ public final class IntervalI<T> extends Interval<T> {
 //    }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, TotalOrderPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull MathObject<T, OrderPredicate<T>> obj) {
         if (obj instanceof Interval) {
             Interval<T> iv = (Interval<T>) obj;
             if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()

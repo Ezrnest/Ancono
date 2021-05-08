@@ -9,6 +9,8 @@ package cn.ancono.math.algebra.abs.calculator
  *
  * @author liyicheng
  * 2018-02-28 19:05
+ *
+ * @see RingCalculator
  */
 interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
 
@@ -17,21 +19,13 @@ interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
      */
     override val one: T
 
-    /**
-     * Return `x ^ n` as defined in the multiplicative monoid.
-     */
-    override fun pow(x: T, n: Long): T {
-        return if (n == 0L) {
-            one
-        } else super<MulMonoidCal>.pow(x, n)
-    }
 
     /**
      * Determines whether the given element is a unit, namely invertible with respect to multiplication.
      *
      * This method is optional.
      *
-     * @exception UnsupportedOperationException if this method is not implemented.
+     * @exception UnsupportedOperationException if this method is not supported.
      */
     fun isUnit(x: T): Boolean
 
@@ -41,7 +35,7 @@ interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
      *
      * This method is optional.
      *
-     * @exception UnsupportedOperationException if this method is not implemented.
+     * @exception UnsupportedOperationException if this method is not supported.
      */
     fun exactDivide(x: T, y: T): T
 
@@ -49,8 +43,11 @@ interface UnitRingCalculator<T> : RingCalculator<T>, MulMonoidCal<T> {
         get() = super<RingCalculator>.numberClass
 
 
-    fun of(x: Long): T {
-        return multiplyLong(one, x)
+    /**
+     * Returns the value of adding [one] for [n] times, which is equivalent to `multiplyLong(one, x)`.
+     */
+    fun of(n: Long): T {
+        return multiplyLong(one, n)
     }
 
 }

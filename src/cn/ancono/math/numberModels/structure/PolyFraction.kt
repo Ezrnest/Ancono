@@ -232,8 +232,8 @@ class PFractionCalculator<T>(val mc: FieldCalculator<T>, val sim: Simplifier<T>?
         return x.reciprocal()
     }
 
-    override fun of(x: Long): PFraction<T> {
-        return PFraction.of(Polynomial.constant(mc, mc.of(x)))
+    override fun of(n: Long): PFraction<T> {
+        return PFraction.of(Polynomial.constant(mc, mc.of(n)))
     }
 
     override fun of(x: Fraction): PFraction<T> {

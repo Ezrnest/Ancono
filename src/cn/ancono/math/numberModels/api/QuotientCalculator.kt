@@ -3,7 +3,7 @@ package cn.ancono.math.numberModels.api
 import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal
 
 /**
- * Calculator for Quotient numbers.
+ * Calculator for the Quotient numbers **Q**.
  */
 interface QuotientCalculator<T> : OrderedFieldCal<T> {
 

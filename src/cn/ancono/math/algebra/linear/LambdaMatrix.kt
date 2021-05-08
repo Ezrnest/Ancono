@@ -40,7 +40,7 @@ fun <T> LambdaMatrix<T>.toNormalForm(): LambdaMatrix<T> {
             get(i, j)
         }
     }
-    toNormalForm(data, calculator as Polynomial.PolynomialCalculator<T>, 0)
+    toNormalForm(data, calculator as Polynomial.PolyCalField<T>, 0)
     return Matrix.of(data, calculator)
 }
 
@@ -147,7 +147,7 @@ fun <T> LambdaMatrix<T>.toFrobeniusForm(mc: FieldCalculator<T>): Matrix<T> {
         }
     }
 //    toNormalForm(data,mathCalculator,)
-    toNormalForm(data, calculator as Polynomial.PolynomialCalculator<T>, 0)
+    toNormalForm(data, calculator as Polynomial.PolyCalField<T>, 0)
     val builder = Matrix.zero(row, column, mc)
     var pos = 0
     val one = mc.one

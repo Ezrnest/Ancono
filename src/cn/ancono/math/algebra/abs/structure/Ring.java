@@ -36,7 +36,7 @@ import cn.ancono.math.algebra.abs.calculator.RingCalculator;
  * Multiplication is distributive with respect to addition:
  * <ul>
  *
- * <li>{@code a ⋅ (b + c) = (a · b) + (a · c)} for all a, b, c in R (left
+ * <li>{@code a · (b + c) = (a · b) + (a · c)} for all a, b, c in R (left
  * distributivity).
  * <li>{@code (b + c) · a = (b · a) + (c · a)} for all a, b, c in R (right
  * distributivity).

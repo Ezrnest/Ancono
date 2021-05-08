@@ -429,7 +429,7 @@ interface MulSemigroupCal<T> : EqualPredicate<T> {
 
     /**
      * Operator function of add for [T].
-     * @see apply
+     * @see multiply
      */
     operator fun T.times(y: T): T = multiply(this, y)
 

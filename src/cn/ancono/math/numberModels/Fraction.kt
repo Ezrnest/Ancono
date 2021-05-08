@@ -638,8 +638,8 @@ internal constructor(
             return a.exp(b)
         }
 
-        override fun of(x: Long): Fraction {
-            return Fraction.of(x)
+        override fun of(n: Long): Fraction {
+            return Fraction.of(n)
         }
 
         override fun of(x: Fraction): Fraction {

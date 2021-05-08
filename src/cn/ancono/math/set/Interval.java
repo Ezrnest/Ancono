@@ -2,7 +2,7 @@ package cn.ancono.math.set;
 
 import cn.ancono.math.AbstractMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
-import cn.ancono.math.algebra.abs.calculator.TotalOrderPredicate;
+import cn.ancono.math.algebra.abs.calculator.OrderPredicate;
 import cn.ancono.math.numberModels.Calculators;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -29,9 +29,9 @@ import java.util.function.Function;
  * @param <T> the format of number to be stored
  * @author lyc
  */
-public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredicate<T>> implements IntersectableSet<T, Interval<T>> {
+public abstract class Interval<T> extends AbstractMathObject<T, OrderPredicate<T>> implements IntersectableSet<T, Interval<T>> {
 
-    protected Interval(TotalOrderPredicate<T> mc) {
+    protected Interval(OrderPredicate<T> mc) {
         super(mc);
     }
 
@@ -265,7 +265,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param mc     a {@link RealCalculator}
      * @return [downer, upper]
      */
-    public static <T> Interval<T> closedInterval(T downer, T upper, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> closedInterval(T downer, T upper, OrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, true, true, mc);
     }
 
@@ -278,7 +278,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param mc     a {@link RealCalculator}
      * @return (downer, upper)
      */
-    public static <T> Interval<T> openInterval(T downer, T upper, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> openInterval(T downer, T upper, OrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, false, false, mc);
     }
 
@@ -291,7 +291,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param mc     a {@link RealCalculator}
      * @return (downer, upper]
      */
-    public static <T> Interval<T> leftOpenRightClosed(T downer, T upper, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> leftOpenRightClosed(T downer, T upper, OrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, false, true, mc);
     }
 
@@ -304,7 +304,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param mc     a {@link RealCalculator}
      * @return [downer, upper)
      */
-    public static <T> Interval<T> leftClosedRightOpen(T downer, T upper, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> leftClosedRightOpen(T downer, T upper, OrderPredicate<T> mc) {
         return instanceNonNull(downer, upper, true, false, mc);
     }
 
@@ -316,7 +316,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param mc     a {@link RealCalculator}
      * @return (- ∞, upper) or (-∞,upper]
      */
-    public static <T> Interval<T> fromNegativeInf(T upper, boolean closed, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> fromNegativeInf(T upper, boolean closed, OrderPredicate<T> mc) {
         return new IntervalI<>(mc, null, Objects.requireNonNull(upper),
                 IntervalI.LEFT_OPEN_MASK | (closed ? 0 : IntervalI.RIGHT_OPEN_MASK));
     }
@@ -329,7 +329,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param mc     a {@link RealCalculator}
      * @return (downer, + ∞) or [downer,+∞)
      */
-    public static <T> Interval<T> toPositiveInf(T downer, boolean closed, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> toPositiveInf(T downer, boolean closed, OrderPredicate<T> mc) {
         return new IntervalI<>(mc, Objects.requireNonNull(downer), null,
                 IntervalI.RIGHT_OPEN_MASK | (closed ? 0 : IntervalI.LEFT_OPEN_MASK));
     }
@@ -341,7 +341,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param mc a {@link RealCalculator}
      * @return (- ∞, + ∞)
      */
-    public static <T> Interval<T> universe(TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> universe(OrderPredicate<T> mc) {
         return new IntervalI<>(mc, null, null, IntervalI.BOTH_OPEN_MASK);
     }
 
@@ -355,7 +355,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      * @param upperInclusive  determines whether upper should be inclusive
      */
     public static <T> Interval<T> valueOf(T downer, T upper, boolean downerInclusive, boolean upperInclusive,
-                                          TotalOrderPredicate<T> mc) {
+                                          OrderPredicate<T> mc) {
         return new IntervalI<>(mc, downer, upper, downerInclusive, upperInclusive);
     }
 
@@ -365,7 +365,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
      *
      * @return [x, x]
      */
-    public static <T> Interval<T> single(T x, TotalOrderPredicate<T> mc) {
+    public static <T> Interval<T> single(T x, OrderPredicate<T> mc) {
         return new IntervalI<>(mc, x, x, 0);
     }
 
@@ -387,7 +387,7 @@ public abstract class Interval<T> extends AbstractMathObject<T, TotalOrderPredic
         return fromNegativeInf(mc.getZero(), false, mc);
     }
 
-    static <T> Interval<T> instanceNonNull(T a, T b, boolean dc, boolean uc, TotalOrderPredicate<T> mc) {
+    static <T> Interval<T> instanceNonNull(T a, T b, boolean dc, boolean uc, OrderPredicate<T> mc) {
         return new IntervalI<>(mc, Objects.requireNonNull(a), Objects.requireNonNull(b), dc, uc);
     }
 

@@ -4,15 +4,28 @@ package cn.ancono.math.algebra.abs.calculator
  * Created by liyicheng at 2020-03-07 10:25
  */
 /**
- * The ring calculator defines some basic operations in a group.
+ * A ring calculator is the combination of an abelian group calculator of addition `+` and
+ * a multiplicative group calculator of multiplication `*`.
+ *
+ * The operation satisfies:
+ *
+ * 1. Abelian group of `+`.
+ * 2. Semi-group of `*`.
+ * 3. Distribution law:
+ *
+ *     x * (y+z) = x * y + x * z
+ *
+ *     (y + z) * x = y * x + z * x
+ *
  *
  * @author liyicheng
  * 2018-02-28 18:28
+ * @see cn.ancono.math.algebra.abs.structure.Ring
  */
 interface RingCalculator<T> : AbelGroupCal<T>, MulSemigroupCal<T> {
 
     /**
-     * Gets the zero element in this ring, which is the identity element of the addition group.
+     * Gets the zero element in this ring, which is the identity element of the additive group.
      * @return `0`
      */
     override val zero: T
@@ -35,28 +48,6 @@ interface RingCalculator<T> : AbelGroupCal<T>, MulSemigroupCal<T> {
      * @return `x*y`
      */
     override fun multiply(x: T, y: T): T
-
-    /**
-     * Return `x ^ n` as defined in the multiplicative semigroup.
-     *
-     * @param n a positive number
-     * @return `x ^ n`
-     */
-    override fun pow(x: T, n: Long): T {
-        return super.pow(x, n)
-    }
-
-    /**
-     * Return the result of `n * p`, which is equal to applying addition to
-     * `x` for `n` times. This method can be implemented for better performance.
-     * @param n a long
-     */
-    override fun multiplyLong(x: T, n: Long): T {
-        return super.multiplyLong(x, n)
-    }
-
-
-
 }
 
 

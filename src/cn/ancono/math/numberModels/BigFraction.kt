@@ -15,6 +15,7 @@ import kotlin.math.absoluteValue
 
 /**
  * A fraction which uses BigInteger as its numerator and denominator.
+ *
  * Created at 2018/10/16 12:30
  * @author  liyicheng
  */
@@ -354,8 +355,8 @@ object BigFractionCalculator : QuotientCalculator<BigFraction> {
         return x == y
     }
 
-    override fun compare(x: BigFraction, y: BigFraction): Int {
-        return x.compareTo(y)
+    override fun compare(o1: BigFraction, o2: BigFraction): Int {
+        return o1.compareTo(o2)
     }
 
     override fun add(x: BigFraction, y: BigFraction): BigFraction {

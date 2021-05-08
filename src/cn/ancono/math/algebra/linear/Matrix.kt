@@ -6,13 +6,11 @@ import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.equation.EquationSolver
 import cn.ancono.math.equation.SVPEquation
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.utilities.ArraySup
 import cn.ancono.utilities.ModelPatterns
 import cn.ancono.utilities.StringSup
-import java.util.*
 import java.util.function.Function
 import kotlin.math.min
 
@@ -277,7 +275,7 @@ abstract class AbstractMatrix<T>(
      *
      * It is required that the calculator supports `abs()` and `exp()`.
      */
-    open fun norm(p: T = (calculator as RealCalculator).of(2L)): T {
+    open fun norm(p: T = (calculator as UnitRingCalculator).of(2L)): T {
         val mc = calculator as RealCalculator
         var r = mc.zero
         for (i in 0 until row) {
@@ -579,7 +577,6 @@ abstract class Matrix<T>(
      */
     open fun toSmithForm(): Matrix<T> {
         //Created by lyc at 2020-03-10 14:54
-//        TODO()
         return LambdaMatrixSup.toSmithForm(this)
     }
 
@@ -612,13 +609,9 @@ abstract class Matrix<T>(
     }
 
     /**
-     * Computes the eigenvalues of this matrix.
-     * <p>For example, assume {@code this} =
-     * <pre>(1 0)
-     * (0,1)</pre>
-     * then this method will return a list of {@code [1,1]}
+     * Computes the eigenvalues of a matrix.
      *
-     * @param equationSolver a MathFunction to solve the equation, the length of the list should be equal to
+     * @param solver a function to solve the equation, the length of the list should be equal to
      *                       the degree of the equation.
      * @return a list of eigenvalues
      */
@@ -652,7 +645,8 @@ abstract class Matrix<T>(
                     break
                 }
             }
-            val A: Matrix<T> = this.subtract(diag(x, row, mc))
+            @Suppress("LocalVariableName")
+            val A = this.subtract(diag(x, row, mc))
             val basis = solveHomo(A)
             for (k1 in basis.vectors) {
                 result.add(Pair(x, k1))
@@ -1979,25 +1973,25 @@ class SquareMatrixCal<T>(override val mc: FieldCalculator<T>, n: Int) :
 }
 
 
-fun main() {
-    val m = Matrix(4, 4, Calculators.doubleDev()) { i, j ->
-        i + (j + 2) * 2.0 + 1 + j * j
-    }
-//    println(MatrixImpl.toHessenberg(m))
-    val H = MatrixImpl.toHessenberg(m)
-    println(m.det())
-    println(H.det())
-//    val m = AMatrix.of(3, 3, Fraction.calculator) { i, j ->
-////        Fraction.of(i+j+0L)
-//        if (i == j && (i == 0 || i == 2)) {
-//            Fraction.ONE
-//        } else {
-//            Fraction.ZERO
-//        }
-//
+//fun main() {
+//    val m = Matrix(4, 4, Calculators.doubleDev()) { i, j ->
+//        i + (j + 2) * 2.0 + 1 + j * j
 //    }
-//    println(m)
-//    val (u, ops) = m.toUpperTriangleWay()
-//    println(u)
-//    println(ops)
-}
+////    println(MatrixImpl.toHessenberg(m))
+//    val H = MatrixImpl.toHessenberg(m)
+//    println(m.det())
+//    println(H.det())
+////    val m = AMatrix.of(3, 3, Fraction.calculator) { i, j ->
+//////        Fraction.of(i+j+0L)
+////        if (i == j && (i == 0 || i == 2)) {
+////            Fraction.ONE
+////        } else {
+////            Fraction.ZERO
+////        }
+////
+////    }
+////    println(m)
+////    val (u, ops) = m.toUpperTriangleWay()
+////    println(u)
+////    println(ops)
+//}

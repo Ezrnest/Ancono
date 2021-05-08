@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels.api
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.function.invoke
 import cn.ancono.math.numberModels.Fraction
@@ -16,7 +16,7 @@ import cn.ancono.math.numberModels.Fraction
  *
  * All methods in this calculator may not be operational because of the limit of
  * number's format and other reasons, so if necessary, an
- * [UnsupportedCalculationException] can be thrown. For some special
+ * [UnsupportedOperationException] can be thrown. For some special
  * operations, exceptional arithmetic condition may occur, so an
  * [ArithmeticException] may be thrown.
  *
@@ -55,11 +55,10 @@ interface RealCalculator<T> : QuotientCalculator<T> {
     val isComparable: Boolean
 
     /**
-     * Return the value zero in this kind of number type.The returned number should
-     * be equal to `this.subtract(t,t)`.
+     * Return the value zero in this kind of number type.
      *
      * @return 0
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      */
     override val zero: T
 
@@ -68,7 +67,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      * be equal to `this.divide(t,t)`.
      *
      * @return 1
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      */
     override val one: T
 
@@ -99,13 +98,13 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      * recommended to be literally the identity to the method `compareTo()` if the
      * object `T` is comparable.
      *
-     * @param x a number
-     * @param y another number
+     * @param o1 a number
+     * @param o2 another number
      * @return -1 if `para1 < para2 `, 0 if `para1==para2` , or 1 if
      * `para1 > para2`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      */
-    override fun compare(x: T, y: T): Int
+    override fun compare(o1: T, o2: T): Int
 
     /**
      * Add two parameters, this method is required to be commutative, so is it
@@ -157,7 +156,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `|x|`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     override fun abs(x: T): T
@@ -255,7 +254,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `x ^ 0.5`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun squareRoot(x: T): T
@@ -266,7 +265,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `x ^ (1/n)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun nroot(x: T, n: Long): T
@@ -303,7 +302,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param name the name of the constant value,case insensitive
      * @return a number that represents the constant value.
-     * @throws UnsupportedCalculationException if this operation can not be done. (optional)
+     * @throws UnsupportedOperationException if this operation can not be done. (optional)
      */
     fun constantValue(name: String): T?
 
@@ -315,7 +314,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      * @param a a number
      * @param b the exponent
      * @return `a^b`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun exp(a: T, b: T): T {
@@ -328,7 +327,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x the exponent
      * @return `e^x`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun exp(x: T): T
@@ -345,7 +344,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      * @param a a number
      * @param b another number
      * @return `log(a,b) = ln(b) / ln(a)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun log(a: T, b: T): T {
@@ -361,7 +360,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `ln(x)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun ln(x: T): T
@@ -371,7 +370,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `sin(x)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun sin(x: T): T
@@ -384,7 +383,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `cos(x)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun cos(x: T): T {
@@ -399,7 +398,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `tan(x)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun tan(x: T): T {
@@ -411,7 +410,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `arcsin(x)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun arcsin(x: T): T
@@ -424,7 +423,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `arccos(x)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun arccos(x: T): T {
@@ -439,7 +438,7 @@ interface RealCalculator<T> : QuotientCalculator<T> {
      *
      * @param x a number
      * @return `arctan(x)`
-     * @throws UnsupportedCalculationException if this operation can not be done.(optional)
+     * @throws UnsupportedOperationException if this operation can not be done.(optional)
      * @throws ArithmeticException             if this operation causes an exceptional arithmetic condition.
      */
     fun arctan(x: T): T {

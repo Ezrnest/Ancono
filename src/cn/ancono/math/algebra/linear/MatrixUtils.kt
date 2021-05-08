@@ -1,9 +1,6 @@
 package cn.ancono.math.algebra.linear
 
-import cn.ancono.math.algebra.abs.calculator.EUDCalculator
-import cn.ancono.math.algebra.abs.calculator.FieldCalculator
-import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
-import cn.ancono.math.algebra.abs.calculator.eval
+import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.api.*
 import java.util.*
@@ -132,7 +129,7 @@ object MatrixUtils {
         require(m.isSquare()) {
             "The matrix must be square!"
         }
-        val mc = m.calculator as RealCalculator
+        val mc = m.calculator as OrderedFieldCal
         val n = m.row
         val matrix = m.toMutable()
 //        val operations = mutableListOf<MatrixOperation<T>>()

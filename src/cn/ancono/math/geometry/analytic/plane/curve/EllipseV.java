@@ -4,7 +4,6 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.Line;
 import cn.ancono.math.geometry.analytic.plane.LineSup;
@@ -16,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+
+;
 
 /**
  * Ellipse is a special kind of conic section,it is a set of point that
@@ -305,7 +306,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
         int rn = 2;
         try {
             rn = equa.getNumberOfRoots();
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore
         }
         if (rn == 0) {
@@ -348,7 +349,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
         int rn = 2;
         try {
             rn = equa.getNumberOfRoots();
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore
         }
         if (rn == 0) {
@@ -499,7 +500,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
             if (getMc().compare(tv, getMc().getZero()) <= 0 || getMc().compare(tv, getMc().divide(c, b)) > 0) {
                 throw new IllegalArgumentException("angle too big");
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore
         }
         return getMc().multiply(b2, tv);
@@ -596,7 +597,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
             if (mc.compare(c, zero) <= 0) {
                 throw new IllegalArgumentException("c<=0");
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore it.
         }
         T a2 = mc.multiply(a, a);
@@ -679,7 +680,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
             if (onX ^ (t > 0)) {
                 throw new IllegalArgumentException("a,b doesn't match argument onX");
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore
         }
         return standardEquation0(a, b, onX, mc);
@@ -706,7 +707,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
             if (onX ^ (t > 0)) {
                 throw new IllegalArgumentException("a,b doesn't match argument onX");
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore
         }
         T c2 = mc.subtract(a2, b2);

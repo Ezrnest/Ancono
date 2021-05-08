@@ -98,7 +98,7 @@ class VectorSpace<T>(override val basis: VectorBasis<T>) : AbstractMathObject<T,
          */
         @JvmStatic
         fun <T> getCalculator(vectorLength: Int, mc: FieldCalculator<T>): VectorSpaceCalculator<T> {
-            return VectorSpaceCalculatorImpl(vectorLength, mc)
+            return Vector.calculator(vectorLength, mc)
         }
     }
 

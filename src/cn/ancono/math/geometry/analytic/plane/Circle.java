@@ -3,7 +3,6 @@ package cn.ancono.math.geometry.analytic.plane;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.EquationSup;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.curve.ClosedCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.ConicSection;
@@ -16,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+
+;
 
 /**
  * A class that describes a circle in a plane.
@@ -367,7 +368,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
         T ca = getMc().getOne();
         T cb = getMc().multiplyLong(t1, 2l);
         T cc = getMc().subtract(t2, getMc().multiply(r2, getMc().add(getMc().multiply(x, x), getMc().multiply(y, y))));
-        List<T> c = EquationSup.INSTANCE.solveEquation(ca, cb, cc, getMc());
+        List<T> c = EquationSup.INSTANCE.solveQuadraticR(ca, cb, cc, getMc());
         List<Line<T>> re = new ArrayList<>(2);
         re.add(Line.generalFormula(x, y, c.get(0), getMc()));
         re.add(Line.generalFormula(x, y, c.get(1), getMc()));
@@ -489,7 +490,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
             if (getMc().compare(len2, getMc().getZero()) < 0) {
                 return null;
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //disable check
         }
         return getMc().squareRoot(len2);
@@ -684,7 +685,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
             if (mc.compare(r, mc.getZero()) <= 0) {
                 throw new IllegalArgumentException("Not Positive Radius");
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //disable range check
         }
         T r2 = mc.multiply(r, r);
@@ -709,7 +710,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
             if (mc.compare(r2, mc.getZero()) <= 0) {
                 throw new IllegalArgumentException("Not Positive Radius");
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //disable range check
         }
         T D = mc.multiplyLong(o.x, -2);
@@ -741,7 +742,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
             if (mc.compare(delta, mc.getZero()) <= 0) {
                 throw new IllegalArgumentException("Delta <= 0");
             }
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //disable range check
         }
         Point<T> o = new Point<>(mc, mc.divideLong(D, -2l), mc.divideLong(E, -2l));

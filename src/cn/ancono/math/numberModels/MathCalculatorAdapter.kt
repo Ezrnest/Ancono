@@ -1,6 +1,6 @@
 package cn.ancono.math.numberModels
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.numberModels.api.RealCalculator
 
 
@@ -27,9 +27,9 @@ abstract class MathCalculatorAdapter<T> : RealCalculator<T> {
     override val characteristic: Long
         get() = 0
 
-    @Throws(UnsupportedCalculationException::class)
+    @Throws(UnsupportedOperationException::class)
     private fun throwFor(): Nothing {
-        throw UnsupportedCalculationException("Adapter")
+        throw UnsupportedOperationException("Adapter")
     }
 
     override fun isZero(x: T): Boolean {

@@ -355,19 +355,12 @@ public final class MathSets {
 //    }
 
 
-    static final class CombinedSet<T> implements MathSet<T> {
+    record CombinedSet<T>(Collection<MathSet<T>> sets,
+                          MathSets.CombinedSet.OperatorType type) implements MathSet<T> {
 
 
         enum OperatorType {
             UNION, INTERSECT
-        }
-
-        private final Collection<MathSet<T>> sets;
-        private final OperatorType type;
-
-        CombinedSet(Collection<MathSet<T>> sets, OperatorType type) {
-            this.sets = sets;
-            this.type = type;
         }
 
         @Override
@@ -426,4 +419,8 @@ public final class MathSets {
         }
         return new CollectionSet<>(GroupCalculators.toMathCalculatorEqual(er), list);
     }
+
+
+    public static MathSet<Integer> NaturalNumbers = integer -> integer >= 0;
+
 }

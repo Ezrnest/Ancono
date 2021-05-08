@@ -32,44 +32,9 @@ public interface IntCalculator<T> extends EUDCalculator<T>, OrderedRingCal<T> {
     @Override
     T getOne();
 
-    /**
-     * Returns the absolute value of <code>x</code>.
-     */
-    T abs(T x);
-
     // methods that is often used as a number theory calculator.
 
-    /**
-     * Determines whether the number is positive.
-     * <p>
-     * This method is added for convenience. The default implement is
-     *
-     * <pre>
-     * return compare(x, getZero()) > 0;
-     * </pre>
-     *
-     * @param x a number
-     * @return {@code x>0}
-     */
-    default boolean isPositive(T x) {
-        return compare(x, getZero()) > 0;
-    }
 
-    /**
-     * Determines whether the number is negative.
-     * <p>
-     * This method is added for convenience. The default implement is
-     *
-     * <pre>
-     * return compare(x, getZero()) < 0;
-     * </pre>
-     *
-     * @param x a number
-     * @return {@code x<0}
-     */
-    default boolean isNegative(T x) {
-        return compare(x, getZero()) < 0;
-    }
 
     /**
      * Returns {@code x+1}.
@@ -240,18 +205,6 @@ public interface IntCalculator<T> extends EUDCalculator<T>, OrderedRingCal<T> {
         return isEqual(mod(a, b), getZero());
     }
 
-
-//    @Override
-//    T exactDivide(T x, T y)
-    /*
-    {
-        if (!isExactDivide(x, y)) {
-            ExceptionUtil.notExactDivision(x, y);
-        }
-        return divide(x, y);
-    }
-     */
-
     /**
      * Determines whether the number is an odd number. A number is an odd number
      * if it is an integer and {@code mod(x,2)==1}.
@@ -326,99 +279,6 @@ public interface IntCalculator<T> extends EUDCalculator<T>, OrderedRingCal<T> {
         return a;
     }
 
-//    /**
-//     * Returns the greatest common divisor of two numbers and a pair of number (u,v) such that
-//     * <pre>ua+vb=gcd(a,b)</pre>
-//     * The returned greatest common divisor is the same as {@link NTCalculator#gcd(Object, Object)}.
-//     * Note that the pair of <code>u</code> and <code>v</code> returned is not unique and different implementation
-//     * may return differently when a,b is the same.<P></P>
-//     * The default implementation is based on the Euclid's algorithm.
-//     *
-//     * @return a tuple of <code>{gcd(a,b), u, v}</code>.
-//     */
-//    
-//    default Triple<T, T, T> gcdUV( T a, T b) {
-//        if (isZero(a)) {
-//            return new Triple<>(b, getZero(), getOne());
-//        }
-//        if (isZero(b)) {
-//            return new Triple<>(a, getOne(), getZero());
-//        }
-//        return gcdUV0(a, b);
-//    }
-
-
-//    private Triple<T, T, T> gcdUV0(T a, T b) {
-////        T[] quotients = (T[]) new Object[4];
-////        int n = 0;
-////        while (true) {
-////            var t = divideAndReminder(a, b);
-////            T q = t.getFirst();
-////            T r = t.getSecond();
-////            if (isZero(r)) {
-////                break;
-////            }
-////            quotients = ArraySup.ensureCapacityAndAdd(quotients, q, n++);
-////            a = b;
-////            b = r;
-////        }
-////        // computes u and v
-////        T one = getOne();
-////        T zero = getZero();
-////        T u0 = one, u1 = zero,
-////                v0 = zero, v1 = one;
-////        // u[s] = u[s-2]-q[s-2]*u[s-1]
-////        for (int i = 0; i < n; i++) {
-////            T nextU = subtract(u0, multiply(quotients[i], u1));
-////            T nextV = subtract(v0, multiply(quotients[i], v1));
-////            u0 = u1;
-////            u1 = nextU;
-////            v0 = v1;
-////            v1 = nextV;
-////        }
-////        return new Triple<>(b, u1, v1);
-//        if (isZero(b)) {
-//            return new Triple<>(a, getOne(), getZero());
-//        }
-//        /*
-//        Explanation of the algorithm:
-//        we want to maintain the following equation while computing the gcd using the Euclid's algorithm
-//        let d0=a, d1=b, d2, d3 ... be the sequence of remainders in Euclid's algorithm,
-//        then we have
-//            a*1 + b*0 = d0
-//            a*0 + b*1 = d1
-//        let
-//            u0 = 1, v0 = 0
-//            u1 = 0, v1 = 1
-//        then we want to build a sequence of u_i, v_i such that
-//            a*u_i + b*v_i = d_i,
-//        when we find the d_n = gcd(a,b), the corresponding u_n and v_n is what we want.
-//        We have:
-//            d_i = q_i * d_{i+1} + d_{i+2}        (by Euclid's algorithm
-//        so
-//            a*u_i + b*v_i = q_i * (a*u_{i+1} + b*v_{i+1}) + (a*u_{i+2} + b*v_{i+2})
-//            u_i - q_i * u_{i+1} = u_{i+2}
-//            v_i - q_i * v_{i+1} = v_{i+2}
-//        but it is only necessary for us to record u_i, since v_i can be calculated from the equation
-//            a*u_i + b*v_i = d_i
-//         */
-//        var d0 = a;
-//        var d1 = b;
-//        var u0 = getOne();
-//        var u1 = getZero();
-//        while (!isZero(d1)) {
-//            var pair = divideAndRemainder(d0, d1);
-//            var q = pair.getFirst();
-//            var d2 = pair.getSecond();
-//            d0 = d1;
-//            d1 = d2;
-//            var u2 = subtract(u0, multiply(q, u1));
-//            u0 = u1;
-//            u1 = u2;
-//        }
-//        var v = divide(subtract(d0, multiply(a, u0)), b);
-//        return new Triple<>(d0, u0, v);
-//    }
 
     /**
      * Returns {@literal lcm(|a|,|b|)}, the two numbers' positive least common multiple.
@@ -482,14 +342,8 @@ public interface IntCalculator<T> extends EUDCalculator<T>, OrderedRingCal<T> {
      */
     default T powMod(T a, T n, T m) {
         if (isNegative(n)) {
-            throw new IllegalArgumentException("n<0");
+            throw new IllegalArgumentException("n < 0");
         }
-//        if (!isPositive(a)) {
-//            throw new IllegalArgumentException("a<=0");
-//        }
-//        if (!isPositive(m)) {
-//            throw new IllegalArgumentException("mod<=0");
-//        }
 
         T one = getOne();
         if (isEqual(m, one)) {

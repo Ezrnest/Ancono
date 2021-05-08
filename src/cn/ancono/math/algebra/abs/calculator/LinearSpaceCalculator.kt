@@ -2,9 +2,11 @@ package cn.ancono.math.algebra.abs.calculator
 
 /*
  * Created by liyicheng at 2020-03-07 10:42
- */ /**
- * Created at 2018/11/29 16:57
- * @author  liyicheng
+ */
+/**
+ *
+ *
+ * @author  liyicheng Created at 2018/11/29 16:57
  * @see cn.ancono.math.algebra.abs.structure.LinearSpace
  */
 interface LinearSpaceCalculator<K, V> : ModuleCalculator<K, V> {

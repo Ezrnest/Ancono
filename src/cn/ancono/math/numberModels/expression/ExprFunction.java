@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.numberModels.expression;
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.MultinomialCalculator;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.expression.simplification.SimplificationStrategy;
@@ -12,6 +11,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+;
 
 /**
  * An expression function describes a function that the calculator should
@@ -151,7 +152,7 @@ public class ExprFunction {
      * @return
      */
     public static List<ExprFunction> createBasicCalculatorFunctions(MultinomialCalculator pc) {
-        final int number = 15;
+        final int number = 14;
         ExprFunction[] fs = new ExprFunction[number];
         fs[0] = createSingle(FUNCTION_NAME_ABS, pc::abs, "Returns the absolute value of the polynomial:|x|");
         fs[1] = createSingle(FUNCTION_NAME_ARCCOS, pc::arccos, "Returns the arccos value of the polynomial:arccos(x)");
@@ -168,7 +169,7 @@ public class ExprFunction {
         fs[12] = createSingle(FUNCTION_NAME_LN, pc::ln, "Returns ln(x).");
 
         fs[13] = createDouble(FUNCTION_NAME_EXP, false, pc::exp, "Returns exp(x,y) = x^y");
-        fs[14] = createDouble(FUNCTION_NAME_LOG, false, pc::log, "Returns log(x,y). (exp(x,log(x,y)) = y) ");
+//        fs[14] = createDouble(FUNCTION_NAME_LOG, false, pc::log, "Returns log(x,y). (exp(x,log(x,y)) = y) ");
 
 
         return Arrays.asList(fs);
@@ -196,7 +197,7 @@ public class ExprFunction {
             md.setAccessible(true);
             return (T) md.invoke(mc, (Object[]) args);
         } catch (Exception e) {
-            throw new UnsupportedCalculationException("Failed to invoke method", e);
+            throw new UnsupportedOperationException("Failed to invoke method", e);
         }
     }
 

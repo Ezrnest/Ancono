@@ -38,6 +38,26 @@ interface OrderedAbelGroupCal<T> : AbelGroupCal<T>, OrderPredicate<T> {
         }
         return x
     }
+
+    /**
+     * Determines whether the number is positive. This method is equivalent to `compare(x, zero) > 0`.
+     *
+     * @param x a number
+     * @return `x > 0`
+     */
+    fun isPositive(x: T): Boolean {
+        return compare(x, zero) > 0
+    }
+
+    /**
+     * Determines whether the number is negative. This method is equivalent to `compare(x, zero) < 0`.
+     *
+     * @param x a number
+     * @return `x < 0`
+     */
+    fun isNegative(x: T): Boolean {
+        return compare(x, zero) < 0
+    }
 }
 
 /**

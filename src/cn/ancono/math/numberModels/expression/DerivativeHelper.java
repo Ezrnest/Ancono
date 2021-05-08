@@ -1,7 +1,6 @@
 package cn.ancono.math.numberModels.expression;
 
 import cn.ancono.math.calculus.Calculus;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.expression.anno.DisallowModify;
 
@@ -10,6 +9,8 @@ import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 import static cn.ancono.math.numberModels.expression.ExprFunction.FUNCTION_NAME_EXP;
+
+;
 
 /**
  * Helps compute derivative of expression.
@@ -143,7 +144,7 @@ public class DerivativeHelper {
     }
 
     private static Node unsupportedDerivatorFunction(String functionName, int parameterLength) {
-        throw new UnsupportedCalculationException("Cannot compute derivative of " + functionName +
+        throw new UnsupportedOperationException("Cannot compute derivative of " + functionName +
                 " with " + parameterLength + " parameter(s)");
     }
 

@@ -4,7 +4,7 @@ import cn.ancono.math.algebra.abs.calculator.AlgebraCalculator
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.api.AlgebraModel
 import cn.ancono.math.numberModels.api.FunctionCalculator
@@ -499,6 +499,6 @@ class DiffFormCalculator<T>(val mc: FunctionCalculator<T>)
 
 
     override fun isUnit(x: DifferentialForm<T>): Boolean {
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 }

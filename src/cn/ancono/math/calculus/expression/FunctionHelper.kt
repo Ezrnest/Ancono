@@ -2,7 +2,7 @@ package cn.ancono.math.calculus.expression
 
 import cn.ancono.math.calculus.*
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.api.Computable
 import cn.ancono.math.numberModels.expression.*
@@ -51,7 +51,7 @@ object FunctionHelper {
 
 
     private fun unsupportedFunctionLimit(functionName: String, parameterLength: Int): Nothing {
-        throw UnsupportedCalculationException("Cannot compute limit of " + functionName +
+        throw UnsupportedOperationException("Cannot compute limit of " + functionName +
                 " with " + parameterLength + " parameter(s)")
     }
 

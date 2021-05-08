@@ -4,12 +4,12 @@
 package cn.ancono.math.equation
 
 import cn.ancono.math.MathUtils
+import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.calculus.Calculus
 import cn.ancono.math.calculus.Calculus.DEFAULT_DELTA
 import cn.ancono.math.calculus.Calculus.DEFAULT_RANGE
 import cn.ancono.math.equation.inequation.Inequation
 import cn.ancono.math.equation.inequation.SVPInequation
-import cn.ancono.math.exceptions.UnsupportedCalculationException
 import cn.ancono.math.function.SVFunction
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.api.RealCalculator
@@ -17,7 +17,6 @@ import cn.ancono.math.set.Interval
 import cn.ancono.math.set.IntervalUnion
 import cn.ancono.math.set.MathSets
 import java.util.*
-import java.util.function.Function
 import kotlin.math.absoluteValue
 
 /**
@@ -45,79 +44,72 @@ object EquationSup {
      * @param b  the coefficient of x.
      * @param c  the constant coefficient
      * @param mc a MathCalculator
-     * @return the list of solution,regardless of order.
+     * @return the list of solution with no order.
      */
-    fun <T> solveEquation(a: T, b: T, c: T, mc: RealCalculator<T>): List<T> {
+    fun <T> solveQuadraticR(a: T, b: T, c: T, mc: RealCalculator<T>): List<T> {
         //Calculate the delta
-        var delta: T
-        run {
-            //=mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4l));;
-            val t1 = mc.multiply(b, b)
-            val t2 = mc.multiply(a, c)
-            val t3 = mc.multiplyLong(t2, 4L)
-            delta = mc.subtract(t1, t3)
-        }
+        val delta = mc.eval { b * b - 4L * a * c }
         var compare = 1
         try {
             compare = mc.compare(delta, mc.zero)
-        } catch (ex: UnsupportedCalculationException) {
+        } catch (ex: UnsupportedOperationException) {
             try {
                 if (mc.isZero(delta)) compare = 0
-            } catch (ex2: UnsupportedCalculationException) {
+            } catch (ex2: UnsupportedOperationException) {
             }
         }
         //		Printer.print(delta);
-        return if (compare < 0) {
-            //no solution
-            emptyList()
-        } else if (compare == 0) {
-            val so: MutableList<T> = ArrayList(1)
-            // -b/2a
-            val re = mc.divide(mc.divideLong(b, -2L), a)
-            so.add(re)
-            so
-        } else {
-            // x1 = (-b + sqr(delta)) / 2a
-            // x2 = (-b - sqr(delta)) / 2a
-            val so: MutableList<T> = ArrayList(2)
-            delta = mc.squareRoot(delta)
-            val a2 = mc.multiplyLong(a, 2)
-            var re = mc.divide(mc.subtract(delta, b), a2)
-            so.add(re)
-            re = mc.negate(mc.divide(mc.add(b, delta), a2))
-            so.add(re)
-            so
+        return when {
+            compare < 0 -> {
+                //no solution
+                emptyList()
+            }
+            compare == 0 -> {
+                val re = mc.eval { -(b / a / 2L) }
+                // -b/2a
+                listOf(re)
+            }
+            else -> {
+                // x1 = (-b + sqr(delta)) / 2a
+                // x2 = (-b - sqr(delta)) / 2a
+                solveQuadraticDelta(a, b, c, delta, mc)
+            }
         }
+    }
+
+    private fun <T> solveQuadraticDelta(a: T, b: T, c: T, delta: T, mc: RealCalculator<T>): List<T> {
+        val t = mc.squareRoot(delta)
+        val a2 = mc.eval { 2L * a }
+        val x1 = mc.eval {
+            (-b + t) / a2
+        }
+        val x2 = mc.eval {
+            (-b - t) / a2
+        }
+        return listOf(x1, x2)
     }
 
     /**
      * Solve an equation of
-     * <pre>ax^2 + bx + c = 0</pre>
-     * This method will use the root-formula and will compute all of the solutions(include imaginary
-     * solutions),and always returns two solutions even if the two solutions are the identity.
      *
-     * @param a  the coefficient of x^2.
+     *     ax^2 + bx + c = 0
+     *
+     * This method will use the root-formula and will compute all of the solutions(include imaginary
+     * solutions), and always returns two solutions even if the two solutions are the identity.
+     *
+     * @param a  the coefficient of x^2, non-zero
      * @param b  the coefficient of x.
      * @param c  the constant coefficient
-     * @param mc a MathCalculator
+     * @param mc a RealCalculator
      * @return a list of the solutions
      */
-    fun <T> solveEquationIma(a: T, b: T, c: T, mc: RealCalculator<T>): List<T> {
-        var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
-        // x1 = (-b + sqr(delta)) / 2a
-        // x2 = (-b - sqr(delta)) / 2a
-        val so: MutableList<T> = ArrayList(2)
-        delta = mc.squareRoot(delta)
-        val a2 = mc.multiplyLong(a, 2)
-        var re = mc.divide(mc.subtract(delta, b), a2)
-        so.add(re)
-        re = mc.negate(mc.divide(mc.add(b, delta), a2))
-        so.add(re)
-        return so
+    fun <T> solveQuadraticC(a: T, b: T, c: T, mc: RealCalculator<T>): List<T> {
+        val delta = mc.eval { b * b - 4L * a * c }
+        return solveQuadraticDelta(a, b, c, delta, mc)
     }
 
     /**
-     * Solves an inequation of
+     * Solves an inequality of
      * <pre>ax^2 + bx + c = 0</pre>
      *
      * @param a   the coefficient of x^2.
@@ -127,7 +119,7 @@ object EquationSup {
      * @param <T>
      * @return
     </T> */
-    fun <T> solveInequation(a: T, b: T, c: T, op: Type?, mc: RealCalculator<T>?): IntervalUnion<T> {
+    fun <T> solveInequality(a: T, b: T, c: T, op: Type, mc: RealCalculator<T>?): IntervalUnion<T> {
         return SVPInequation.quadratic(a, b, c, op, mc).solution
     }
 
@@ -144,26 +136,13 @@ object EquationSup {
     @JvmStatic
     fun <T> solveUsingFormula(sv: SVPEquation<T>): List<T> {
         val mc = sv.calculator
-        when (sv.mp) {
+        return when (sv.mp) {
             1 -> {
-                return Arrays.asList(mc.negate(mc.divide(sv.get(0),
+                listOf(mc.negate(mc.divide(sv.get(0),
                         sv.get(1))))
             }
             2 -> {
-                val a = sv.get(2)
-                val b = sv.get(1)
-                val c = sv.get(0)
-                var delta = mc.subtract(mc.multiply(b, b), mc.multiplyLong(mc.multiply(a, c), 4L))
-                // x1 = (-b + sqr(delta)) / 2a
-                // x2 = (-b - sqr(delta)) / 2a
-                val so = ArrayList<T>(2)
-                delta = mc.squareRoot(delta)
-                val a2 = mc.multiplyLong(a, 2)
-                var re = mc.divide(mc.subtract(delta, b), a2)
-                so.add(re)
-                re = mc.negate(mc.divide(mc.add(b, delta), a2))
-                so.add(re)
-                return so
+                solveQuadraticC(sv[2], sv[1], sv[0], mc)
             }
             //TODO implement the formulas
             else -> {
@@ -186,14 +165,14 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T> solveQInequation(a: T, b: T, c: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
+    fun <T> solveQuadraticInequality(a: T, b: T, c: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
-            return solveLInequation(b, c, op, mc)
+            return solveLinearInequality(b, c, op, mc)
         } else {
             if (Inequation.isOperation(op)) {
                 return SVPInequation.quadratic(a, b, c, op, mc).solution
             } else {
-                val solution = solveEquation(a, b, c, mc)
+                val solution = solveQuadraticR(a, b, c, mc)
                 if (op === Type.EQUAL) {
                     return if (solution.isEmpty()) {
                         IntervalUnion.empty(mc)
@@ -239,9 +218,9 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T> solveLInequation(a: T, b: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
+    fun <T> solveLinearInequality(a: T, b: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
         if (mc.isZero(a)) {
-            return solveCInequation(b, op, mc)
+            return solveConstantIequality(b, op, mc)
         }
         if (Inequation.isOperation(op)) {
             return IntervalUnion.valueOf(SVPInequation.linear(a, b, op, mc).solution)
@@ -267,7 +246,7 @@ object EquationSup {
      * @return the solution
      */
     @JvmStatic
-    fun <T> solveCInequation(a: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
+    fun <T> solveConstantIequality(a: T, op: Type, mc: RealCalculator<T>): IntervalUnion<T> {
         val universe = op.matches(mc.compare(a, mc.zero))
         return if (universe) IntervalUnion.universe(mc) else IntervalUnion.empty(mc)
     }
@@ -287,7 +266,7 @@ object EquationSup {
             }
         }
         if (multiplier != 1L) {
-            equa = equa.mapTo(equa.calculator, Function { it.multiply(multiplier) })
+            equa = equa.mapTo(equa.calculator) { it.multiply(multiplier) }
         }
 
         val first = equa.first()!!.numerator.absoluteValue

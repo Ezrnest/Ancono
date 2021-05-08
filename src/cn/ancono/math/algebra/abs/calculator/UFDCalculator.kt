@@ -46,7 +46,7 @@ interface UFDCalculator<T> : UnitRingCalculator<T> {
     }
 
     /**
-     * Returns the result of exact division `x/y`, throws an `UnsupportedCalculationException` if it is not exact division.
+     * Returns the result of exact division `x/y`, throws an `UnsupportedOperationException` if it is not exact division.
      */
     override fun exactDivide(x: T, y: T): T
 

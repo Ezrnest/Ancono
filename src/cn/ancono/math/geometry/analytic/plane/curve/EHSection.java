@@ -1,6 +1,5 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.Line;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.Point;
@@ -12,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+
+;
 
 /**
  * An abstract super class for Ellipse and Hyperbola
@@ -195,7 +196,7 @@ public abstract class EHSection<T> extends ConicSection<T> {
     /**
      * Computes the corresponding positive value x of the given value {@code y},
      * regardless of the range of y.
-     * <p>This method may throw a {@link UnsupportedCalculationException}.
+     * <p>This method may throw a {@link UnsupportedOperationException}.
      *
      * @param y y coordinate of a point.
      * @return the x coordinate.
@@ -205,7 +206,7 @@ public abstract class EHSection<T> extends ConicSection<T> {
     /**
      * Computes the corresponding positive value y of the given value {@code x },
      * regardless of the range of x.
-     * <p>This method may throw a {@link UnsupportedCalculationException}.
+     * <p>This method may throw a {@link UnsupportedOperationException}.
      *
      * @param x x coordinate of a point.
      * @return the y coordinate.

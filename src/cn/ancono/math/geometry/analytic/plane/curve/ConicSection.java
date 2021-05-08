@@ -4,7 +4,6 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.LEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.*;
 import cn.ancono.math.numberModels.ComputeExpression;
 import cn.ancono.math.numberModels.api.NumberFormatter;
@@ -19,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+
+;
 
 /**
  * Conic section is a set of curves that can be described with the equation
@@ -358,7 +359,7 @@ ConicSection<T>
                 int ren = 2;
                 try {
                     ren = eq.getNumberOfRoots();
-                } catch (UnsupportedCalculationException ece) {
+                } catch (UnsupportedOperationException ece) {
 
                 }
                 switch (ren) {
@@ -443,7 +444,7 @@ ConicSection<T>
         int degree = 2;
         try {
             degree = eq.getNumberOfRoots();
-        } catch (UnsupportedCalculationException ece) {
+        } catch (UnsupportedOperationException ece) {
         }
         if (degree < 2) {
             return null;

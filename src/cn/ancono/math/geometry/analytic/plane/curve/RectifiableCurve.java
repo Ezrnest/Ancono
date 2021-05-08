@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
+;
 
 /**
  * RectifiableCurve is curve with a specified length, such as 
@@ -21,8 +21,9 @@ import cn.ancono.math.exceptions.UnsupportedCalculationException;
 public interface RectifiableCurve<T> {
     /**
      * Computes the length of this curve.
+     *
      * @return
-     * @throws UnsupportedCalculationException if the result cannot be computed.
+     * @throws UnsupportedOperationException if the result cannot be computed.
      */
     T computeLength();
 }

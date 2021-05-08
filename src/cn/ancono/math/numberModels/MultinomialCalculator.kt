@@ -2,7 +2,7 @@ package cn.ancono.math.numberModels
 
 import cn.ancono.math.algebra.abs.calculator.OrderPredicate
 import cn.ancono.math.algebra.abs.calculator.UFDCalculator
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.numberModels.Multinomial.*
 import cn.ancono.math.numberModels.api.RealCalculator
 import cn.ancono.math.numberModels.api.Simplifier
@@ -157,7 +157,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
         if (x.isMonomial) {
             return monomial(x.first.squareRoot())
         }
-        throw UnsupportedCalculationException("Too complex")
+        throw UnsupportedOperationException("Too complex")
     }
 
     fun nroot(x: Multinomial, n: Long): Multinomial {
@@ -176,7 +176,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
         if (x.isMonomial) {
             return monomial(Term.nroot(x.first, n))
         }
-        throw UnsupportedCalculationException("Too complex")
+        throw UnsupportedOperationException("Too complex")
     }
 
     override fun pow(x: Multinomial, n: Long): Multinomial {
@@ -189,7 +189,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
             RealCalculator.STR_E -> return E
             RealCalculator.STR_I -> return I
         }
-        throw UnsupportedCalculationException(name)
+        throw UnsupportedOperationException(name)
     }
 
     fun exp(a: Multinomial, b: Multinomial): Multinomial {
@@ -230,7 +230,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
                 }
             }
         }
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
     fun exp(x: Multinomial): Multinomial {
@@ -241,16 +241,16 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
                 return monomial(Term.characterPower(Term.E_STR, t.toFraction()))
             }
         }
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
 //    fun log(a: Multinomial, b: Multinomial): Multinomial {
-//        throw UnsupportedCalculationException()//TODO
+//        throw UnsupportedOperationException()//TODO
 //    }
 
     fun ln(x: Multinomial): Multinomial {
         if (!x.isMonomial) {
-            throw UnsupportedCalculationException()
+            throw UnsupportedOperationException()
         }
         val t = x.first
         if (t == Term.ONE) {
@@ -259,7 +259,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
         if (t.haveSameChar(Term.E) && t.isCoefficientOne) {
             return monomial(Term.valueOf(t.getCharacterPower(RealCalculator.STR_E)))
         }
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
     fun sin(x: Multinomial): Multinomial {
@@ -270,7 +270,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
                 return re
             }
         }
-        throw UnsupportedCalculationException("Can't calculate sin")
+        throw UnsupportedOperationException("Can't calculate sin")
     }
 
     fun cos(x: Multinomial): Multinomial {
@@ -281,7 +281,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
                 return re
             }
         }
-        throw UnsupportedCalculationException("Can't calculate cos")
+        throw UnsupportedOperationException("Can't calculate cos")
     }
 
     private fun sinf(f: Term): Multinomial? {
@@ -373,7 +373,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
                 return re
             }
         }
-        throw UnsupportedCalculationException("Can't calculate tan")
+        throw UnsupportedOperationException("Can't calculate tan")
     }
 
     private fun tanf(f: Term): Multinomial? {
@@ -415,7 +415,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
                 return re
             }
         }
-        throw UnsupportedCalculationException("Can't calculate cot")
+        throw UnsupportedOperationException("Can't calculate cot")
     }
 
     private fun cotf(f: Term): Multinomial? {
@@ -461,7 +461,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
                     throw ArithmeticException("Arcsin undefined  :  $f")
             }
         }
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
     fun arccos(x: Multinomial): Multinomial {
@@ -477,7 +477,7 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
         //try negative value
         if (result != null)
             return negate(result)
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
 //    override fun isInteger(x: Multinomial): Boolean {

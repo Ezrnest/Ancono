@@ -6,7 +6,6 @@ import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.PolynomialUtil;
 import cn.ancono.math.discrete.combination.Permutation;
 import cn.ancono.math.discrete.combination.Permutations;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.api.RingNumberModel;
@@ -21,6 +20,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.function.*;
+
+;
 
 /**
  * An improved class for multinomial.
@@ -462,7 +463,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         var pair = extractGCD();
         var m0 = pair.getSecond();
         if (!m0.containsOnlyAlgebraicChar()) {
-            throw new UnsupportedCalculationException("Not invertible: 1/(" + this + ")");
+            throw new UnsupportedOperationException("Not invertible: 1/(" + this + ")");
         }
         return inverseSqr(m0).divide(pair.getFirst());
     }
@@ -635,7 +636,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
     }
 
     /**
-     * Tries the divide this multinomial with the given multinomial, throws an UnsupportedCalculationException
+     * Tries the divide this multinomial with the given multinomial, throws an UnsupportedOperationException
      * if the result cannot be represented by a multinomial.
      */
     public Multinomial divide(Multinomial p2) {
@@ -643,7 +644,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
         if (qr[1].isZero()) {
             return qr[0];
         } else {
-            throw new UnsupportedCalculationException("(" + this + ")/(" + p2 + ")");
+            throw new UnsupportedOperationException("(" + this + ")/(" + p2 + ")");
         }
 //        int num = p2.getNumOfTerms();
 //        if (num == 1) {
@@ -790,7 +791,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
 //        NavigableSet<Term> quotient = singleTerm(Term.ZERO); //the quotient
 //        multinomialDivision(m, divisor, quotient);
 //        if (m.size() > 1 || !m.first().isZero()) {
-//            throw new UnsupportedCalculationException();
+//            throw new UnsupportedOperationException();
 //        }
 //        return quotient;
 //    }
@@ -802,11 +803,11 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
                 Term t = terms.first();
                 return new Multinomial(t.pow(pow));
             }
-            throw new UnsupportedCalculationException("This Method Cannot Calculate while Power is less than 0");
+            throw new UnsupportedOperationException("This Method Cannot Calculate while Power is less than 0");
         }
         if (pow == 0) {
             if (ZERO.equals(this))
-                throw new UnsupportedCalculationException("0^0 has not been Defined");
+                throw new UnsupportedOperationException("0^0 has not been Defined");
             else
                 return ONE;
         }
@@ -894,7 +895,7 @@ public class Multinomial implements Comparable<Multinomial>, Computable, Seriali
                     } else if (ZERO.equals(expr)) {
                         // zero
                     } else {
-                        throw new UnsupportedCalculationException("Cannot calculate : Decimal exponent");
+                        throw new UnsupportedOperationException("Cannot calculate : Decimal exponent");
                     }
                 }
             } else {

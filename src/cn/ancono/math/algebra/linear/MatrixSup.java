@@ -514,7 +514,6 @@ public class MatrixSup {
 //
 //    @SuppressWarnings("unchecked")
 //    public static <T> LinearEquationSolution.Situation determineSolutionType(Matrix<T> expandedMatrix) {
-//        //TODO NEED simplification
 //        MathCalculator<T> mc = expandedMatrix.getMathCalculator();
 //        Matrix.MatResult<T> matRe = expandedMatrix.toStepMatrix();
 //        DMatrix<T> step = (DMatrix<T>) matRe.result;

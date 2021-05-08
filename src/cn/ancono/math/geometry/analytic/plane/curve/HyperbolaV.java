@@ -3,7 +3,6 @@ package cn.ancono.math.geometry.analytic.plane.curve;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation.QEquation;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.Line;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -12,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
+;
 
 /**
  * A hyperbola is a special kind of conic section,it is a set of point that
@@ -197,7 +198,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
             int re = 2;
             try {
                 re = equ.getNumberOfRoots();
-            } catch (UnsupportedCalculationException ex) {
+            } catch (UnsupportedOperationException ex) {
                 //ignore
             }
             if (re == 0) {
@@ -211,7 +212,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
         int re = 2;
         try {
             re = equ.getNumberOfRoots();
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore
         }
         if (re == 0) {
@@ -234,7 +235,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
             int re = 2;
             try {
                 re = equ.getNumberOfRoots();
-            } catch (UnsupportedCalculationException ex) {
+            } catch (UnsupportedOperationException ex) {
                 //ignore
             }
             if (re == 0) {
@@ -248,7 +249,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
         int re = 2;
         try {
             re = equ.getNumberOfRoots();
-        } catch (UnsupportedCalculationException ex) {
+        } catch (UnsupportedOperationException ex) {
             //ignore
         }
         if (re == 0) {

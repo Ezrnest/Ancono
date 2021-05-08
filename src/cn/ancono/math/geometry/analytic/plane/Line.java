@@ -6,7 +6,6 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
 import cn.ancono.math.numberModels.api.NumberFormatter;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+
+;
 
 /**
  * Line is a straight line in the plane.The general equation {@literal ax + by + c = 0} is used by this class to
@@ -103,7 +104,7 @@ public final class Line<T> extends AbstractMathObject<T, FieldCalculator<T>>
                 //possible unsupported operation
                 c = mc.divide(c, b);
                 b = mc.getOne();
-            } catch (UnsupportedCalculationException re) {
+            } catch (UnsupportedOperationException re) {
                 //just ignore
             }
         } else if (mc.isZero(b)) {
@@ -111,7 +112,7 @@ public final class Line<T> extends AbstractMathObject<T, FieldCalculator<T>>
                 //possible unsupported operation
                 c = mc.divide(c, a);
                 a = mc.getOne();
-            } catch (UnsupportedCalculationException re) {
+            } catch (UnsupportedOperationException re) {
                 //just ignore
             }
         }

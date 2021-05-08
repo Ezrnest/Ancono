@@ -2,7 +2,6 @@ package cn.ancono.math.numberModels;
 
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
 import cn.ancono.math.discrete.combination.CombUtils;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.addableSet.MathAdder;
 import cn.ancono.math.numberModels.api.Computable;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -19,6 +18,8 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+;
 
 /**
  * Term is an improved class for representing a single term in a polynomial. It is designed to compute and output in
@@ -1103,14 +1104,14 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
 
     /**
      * Returns the square root of this term, if the result can't be represented as a term, throws an
-     * {@link cn.ancono.math.exceptions.UnsupportedCalculationException}
+     * {@link cn.ancono.math.exceptions.UnsupportedOperationException}
      */
     public Term squareRoot() {
         if (this.signum == 0) {
             return ZERO;
         }
         if (!radical.equals(BigInteger.ONE)) {
-            throw new UnsupportedCalculationException();
+            throw new UnsupportedOperationException();
         }
         NavigableMap<String, Fraction> nchars = new TreeMap<>();
         for (Map.Entry<String, Fraction> en : character.entrySet()) {
@@ -1968,7 +1969,7 @@ public final class Term implements Mergeable<Term>, Comparable<Term>, Computable
             if (n % 4 == 2)
                 return I;
         }
-        throw new UnsupportedCalculationException();
+        throw new UnsupportedOperationException();
     }
 
 //    public static void main(String[] args) {

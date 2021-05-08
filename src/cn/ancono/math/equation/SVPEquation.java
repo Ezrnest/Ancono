@@ -5,7 +5,6 @@ import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.function.AbstractSVPFunction;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -20,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
+
+;
 
 
 /**
@@ -599,7 +600,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
             if (d == UNKNOWN) {
                 try {
                     getNumberOfRoots();
-                } catch (UnsupportedCalculationException uoe) {
+                } catch (UnsupportedOperationException uoe) {
                     return solve();
                 }
             }

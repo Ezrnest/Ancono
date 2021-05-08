@@ -1,10 +1,10 @@
 package cn.ancono.math.numeric.linear
 
+import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal
 import cn.ancono.math.algebra.abs.calculator.eval
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.MatrixOperation
 import cn.ancono.math.algebra.linear.MatrixSup
-import cn.ancono.math.numberModels.api.RealCalculator
 
 object Matrices {
 
@@ -78,7 +78,7 @@ object Matrices {
      */
     fun <T> inverseGaussJordanSteps(m: Matrix<T>): List<MatrixOperation<T>> {
         require(m.isSquare())
-        val mc = m.calculator as RealCalculator
+        val mc = m.calculator as OrderedFieldCal
 
         @Suppress("UNCHECKED_CAST")
         val matrix = m.getValues() as Array<Array<T>>

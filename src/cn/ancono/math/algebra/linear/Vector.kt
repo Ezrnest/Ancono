@@ -3,6 +3,7 @@ package cn.ancono.math.algebra.linear
 import cn.ancono.math.AbstractMathObject
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.*
+import cn.ancono.math.algebra.linear.space.VectorSpaceCalculator
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.utilities.ArraySup
 import java.util.function.Function
@@ -298,7 +299,7 @@ abstract class Vector<T>(
         /**
          * Returns a unit column vector of the given [size].
          */
-        fun <T> unitVector(size: Int, unitIndex: Int, mc: UnitRingCalculator<T>): Vector<T> {
+        fun <T> unitVector(size: Int, unitIndex: Int, mc: UnitRingCalculator<T>): MutableVector<T> {
             return AVector.unitVector(size, unitIndex, mc)
         }
 
@@ -808,6 +809,11 @@ fun <T> Vector<T>.asRowMatrix(): Matrix<T> {
 
 open class VectorCalRing<T>(calculator: RingCalculator<T>, val size: Int) : ModuleCalculator<T, Vector<T>> {
     open val cal: RingCalculator<T> = calculator
+
+
+    override val scalarCalculator: RingCalculator<T>
+        get() = cal
+
     override fun isEqual(x: Vector<T>, y: Vector<T>): Boolean {
         return x.valueEquals(y)
     }
@@ -821,9 +827,6 @@ open class VectorCalRing<T>(calculator: RingCalculator<T>, val size: Int) : Modu
     override fun scalarMultiply(k: T, v: Vector<T>): Vector<T> {
         return v.multiply(k)
     }
-
-    override val scalarCalculator: RingCalculator<T>
-        get() = cal
 
     override fun add(x: Vector<T>, y: Vector<T>): Vector<T> {
         return x.add(y)
@@ -854,7 +857,11 @@ open class VectorCalRing<T>(calculator: RingCalculator<T>, val size: Int) : Modu
 }
 
 class VectorCalField<T>(override val cal: FieldCalculator<T>, size: Int)
-    : VectorCalRing<T>(cal, size), LinearSpaceCalculator<T, Vector<T>> {
+    : VectorCalRing<T>(cal, size), VectorSpaceCalculator<T> {
     override val scalarCalculator: FieldCalculator<T>
         get() = cal
+
+    override val vectorLength: Int
+        get() = size
+
 }

@@ -9,7 +9,6 @@ import cn.ancono.math.algebra.abs.calculator.OrderPredicate;
 import cn.ancono.math.algebra.abs.calculator.OrderedAbelGroupCal;
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
 import cn.ancono.math.exceptions.ExceptionUtil;
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.api.IntCalculator;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberTheory.NTUtils;
@@ -22,6 +21,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.List;
+
+;
 
 /**
  * Provides some utility methods for calculators.
@@ -114,11 +115,9 @@ public final class Calculators {
     }
 
 
-
-    private static void throwFor(String s) throws UnsupportedCalculationException {
-        throw new UnsupportedCalculationException(s);
+    private static void throwFor(String s) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException(s);
     }
-
 
 
     /**
@@ -1139,7 +1138,7 @@ public final class Calculators {
                     || ad == Double.POSITIVE_INFINITY ||
                     ab == Double.NEGATIVE_INFINITY
                     || ab == Double.POSITIVE_INFINITY) {
-                throw new UnsupportedCalculationException("Too big.");
+                throw new UnsupportedOperationException("Too big.");
             }
             return BigDecimal.valueOf(Math.pow(ad, ab));
         }

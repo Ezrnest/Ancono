@@ -237,7 +237,7 @@ abstract class AbstractFiniteGroup<T>
 	 * @see cn.ancono.math.algebra.abstractAlgebra.structure.finite.FiniteGroup#getSubgroups()
 	 */
     override fun getSubgroups(): FiniteSet<out AbstractFiniteGroup<T>> {
-        //TODO: find methods to find all the subgroups of this finit group
+        //find methods to find all the subgroups of this finite group
         TODO()
 //        return MathSets.asSet(EqualPredicate.naturalEqual(), this, FiniteGroups.identityGroup(calculator))
     }

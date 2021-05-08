@@ -3,11 +3,12 @@
  */
 package cn.ancono.math.numberModels.expression;
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.numberModels.Multinomial;
 import cn.ancono.math.numberModels.MultinomialCalculator;
 
 import java.util.*;
+
+;
 
 /**
  * @author liyicheng
@@ -65,7 +66,7 @@ public final class ExprFunctionHolder {
         }
         try {
             return f.apply(x);
-        } catch (UnsupportedCalculationException uce) {
+        } catch (UnsupportedOperationException uce) {
             return null;
         }
     }
@@ -85,7 +86,7 @@ public final class ExprFunctionHolder {
         }
         try {
             return f.apply(x, y);
-        } catch (UnsupportedCalculationException uce) {
+        } catch (UnsupportedOperationException uce) {
             return null;
         }
     }
@@ -105,7 +106,7 @@ public final class ExprFunctionHolder {
         }
         try {
             return f.apply(xs);
-        } catch (UnsupportedCalculationException uce) {
+        } catch (UnsupportedOperationException uce) {
             return null;
         }
     }

@@ -2,7 +2,7 @@ package cn.ancono.math.numberModels
 
 import cn.ancono.math.MathUtils
 import cn.ancono.math.exceptions.ExceptionUtil
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.numberModels.api.FieldNumberModel
 import cn.ancono.math.numberModels.api.QuotientCalculator
 import cn.ancono.math.numberModels.api.Simplifier
@@ -565,8 +565,8 @@ internal constructor(
             return x == y
         }
 
-        override fun compare(x: Fraction, y: Fraction): Int {
-            return x.compareTo(y)
+        override fun compare(o1: Fraction, o2: Fraction): Int {
+            return o1.compareTo(o2)
         }
 
 
@@ -626,7 +626,7 @@ internal constructor(
             if (noe != -1L && deo != -1L) {
                 return Fraction(noe, deo)
             }
-            throw UnsupportedCalculationException("The sqrt of $this is not rational!")
+            throw UnsupportedOperationException("The sqrt of $this is not rational!")
         }
 
         override fun pow(x: Fraction, n: Long): Fraction {

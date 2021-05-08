@@ -4,7 +4,7 @@ import cn.ancono.math.AbstractMathObject
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.function.Bijection
 import cn.ancono.math.geometry.analytic.plane.PVector
 import cn.ancono.math.geometry.analytic.plane.Point
@@ -510,7 +510,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
         }
 
         override fun compare(x: Complex<T>, y: Complex<T>): Int {
-            throw UnsupportedCalculationException("Complex is not comparable.")
+            throw UnsupportedOperationException("Complex is not comparable.")
         }
 
         override fun add(x: Complex<T>, y: Complex<T>): Complex<T> {

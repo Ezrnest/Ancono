@@ -1,6 +1,5 @@
 package cn.ancono.math.numberModels;
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException;
 import cn.ancono.math.geometry.analytic.plane.PVector;
 import cn.ancono.math.geometry.analytic.plane.Point;
 import cn.ancono.math.numberModels.api.FieldNumberModel;
@@ -11,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
+
+;
 
 /**
  * An implement of complex number where double is used and more methods are
@@ -91,7 +92,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code this + z}
      */
     @Override
-    public ComplexI add(ComplexI z) {
+    public @NotNull ComplexI add(ComplexI z) {
         return new ComplexI(a + z.a, b + z.b);
     }
 
@@ -101,7 +102,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code -this}
      */
     @Override
-    public ComplexI negate() {
+    public @NotNull ComplexI negate() {
         return new ComplexI(-a, -b);
     }
 
@@ -112,7 +113,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code this - z}
      */
     @Override
-    public ComplexI subtract(ComplexI z) {
+    public @NotNull ComplexI subtract(ComplexI z) {
         return new ComplexI(a - z.a, b - z.b);
     }
 
@@ -123,7 +124,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code this * z}
      */
     @Override
-    public ComplexI multiply(ComplexI z) {
+    public @NotNull ComplexI multiply(ComplexI z) {
         return new ComplexI(a * z.a - b * z.b, a * z.b + b * z.a);
     }
 
@@ -139,7 +140,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @throws ArithmeticException if z = 0
      */
     @Override
-    public ComplexI divide(ComplexI z) {
+    public @NotNull ComplexI divide(ComplexI z) {
         double d = z.a * z.a + z.b * z.b;
         double an = a * z.a + b * z.b;
         double bn = b * z.a - a * z.b;
@@ -159,7 +160,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code 1/this}
      */
     @Override
-    public ComplexI reciprocal() {
+    public @NotNull ComplexI reciprocal() {
         double mod2 = a * a + b * b;
         return new ComplexI(a / mod2, -b / mod2);
     }
@@ -529,7 +530,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         }
 
         @Override
-        public Iterator<ComplexI> iterator() {
+        public @NotNull Iterator<ComplexI> iterator() {
             return new Iterator<>() {
                 long index = 0;
 
@@ -693,7 +694,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
         @Override
         public int compare(@NotNull ComplexI x, @NotNull ComplexI y) {
-            throw new UnsupportedCalculationException("Complex is not comparable.");
+            throw new UnsupportedOperationException("Complex is not comparable.");
         }
 
         @Override
@@ -821,7 +822,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
             } else if (name.equals("e")) {
                 return ComplexI.E;
             }
-            throw new UnsupportedCalculationException("No constant value for: " + name);
+            throw new UnsupportedOperationException("No constant value for: " + name);
         }
 
         @NotNull

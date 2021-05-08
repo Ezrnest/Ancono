@@ -8,7 +8,7 @@
 //import cn.ancono.math.algebra.abs.calculator.UFDCalculator;
 //import cn.ancono.math.equation.EquationSolver;
 //import cn.ancono.math.equation.SVPEquation;
-//import cn.ancono.math.exceptions.UnsupportedCalculationException;
+//;
 //import cn.ancono.math.function.MathFunction;
 //import cn.ancono.math.numberModels.Calculators;
 //import cn.ancono.math.numberModels.Fraction;
@@ -2938,7 +2938,7 @@
 //        @NotNull
 //        @Override
 //        public Matrix<T> getOne() {
-//            throw new UnsupportedCalculationException();
+//            throw new UnsupportedOperationException();
 //        }
 //
 //        @NotNull

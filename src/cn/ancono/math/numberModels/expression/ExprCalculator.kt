@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.numberModels.expression
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.MultinomialCalculator
@@ -287,7 +287,7 @@ class ExprCalculator
         try {
             return x.computeDouble(compareCompute).compareTo(y.computeDouble(compareCompute))
         } catch (e: java.lang.Exception) {
-            throw UnsupportedCalculationException()
+            throw UnsupportedOperationException()
         }
     }
 
@@ -467,7 +467,7 @@ class ExprCalculator
         try {
             val p = multinomialCalculator.constantValue(name)
             return Expression.fromMultinomial(p)
-        } catch (uce: UnsupportedCalculationException) {
+        } catch (uce: UnsupportedOperationException) {
             throw uce
         }
 
@@ -773,7 +773,7 @@ class ExprCalculator
 //                try {
 //                    val quotient = multinomialCalculator.divide(pnume.p, pdeno.p)
 //                    return newPolyNode(quotient, node.parent)
-//                } catch (ex: UnsupportedCalculationException) {
+//                } catch (ex: UnsupportedOperationException) {
 //                    // cannot compute
 //                }
 
@@ -796,7 +796,7 @@ class ExprCalculator
                 val n = wrapNodeMultiply(nume, _p)
                 n.parent = node.parent
                 return n
-            } catch (ex: UnsupportedCalculationException) {
+            } catch (ex: UnsupportedOperationException) {
             }
 
         }

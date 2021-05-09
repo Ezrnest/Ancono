@@ -4,6 +4,7 @@ import cn.ancono.math.geometry.analytic.plane.PVector
 import cn.ancono.math.geometry.analytic.plane.Point
 import cn.ancono.math.geometry.analytic.space.SPoint
 import cn.ancono.math.geometry.analytic.space.SVector
+import cn.ancono.math.numberModels.ComplexD
 import cn.ancono.math.numberModels.Multinomial
 import cn.ancono.math.numberModels.Term
 import cn.ancono.math.numberModels.structure.Complex
@@ -14,6 +15,11 @@ import cn.ancono.math.set.MathSets
  * Provides extension methods for convenience.
  */
 
+
+operator fun ComplexD.times(k: Double): ComplexD = this.multiply(k)
+operator fun ComplexD.div(k: Double): ComplexD = this.divide(k)
+operator fun ComplexD.plus(y: Double): ComplexD = this.add(ComplexD.real(y))
+operator fun ComplexD.minus(y: Double): ComplexD = this.subtract(ComplexD.real(y))
 
 operator fun <T> PVector<T>.component1(): T = this.x
 operator fun <T> PVector<T>.component2(): T = this.y

@@ -4,6 +4,7 @@ import cn.ancono.math.numeric.NumericSup
 import java.util.*
 import java.util.function.DoubleUnaryOperator
 import kotlin.math.sqrt
+import kotlin.math.tan
 
 
 typealias DoubleRV = RandomVariable<Double>
@@ -312,6 +313,12 @@ object RandomVariables {
         }
         val data = DoubleArray(counting.size) { i -> counting[i].toDouble() / times }
         return data
+    }
+
+    fun cauchy(lambda: Double, mu: Double): DoubleRV {
+        return uniform(0.0, 1.0).map { x ->
+            mu + lambda * tan(kotlin.math.PI * (x - 0.5))
+        }
     }
 
 }

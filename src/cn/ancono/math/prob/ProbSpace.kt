@@ -138,13 +138,7 @@ class BinomialSpace(val p: Double, val n: Int) : AbstractProbSpace<Int>() {
     }
 
     override fun randomPoint(): Int {
-        var i = 0
-        repeat(n) {
-            if (rd.nextDouble() <= p) {
-                i++
-            }
-        }
-        return i
+        return RandomNumbersImpl.generateBinomial(rd, n, p)
     }
 }
 
@@ -171,21 +165,15 @@ class GeomSpace(val p: Double) : AbstractProbSpace<Int>() {
  * A probability space of positive integers. The possibility of an integer `n` is equal to `pq^(n-1)`,
  * where `q = 1-p`.
  */
-class PascalSpace(val p: Double, val n: Int) : AbstractProbSpace<Int>() {
+class PascalSpace(val p: Double, val r: Int) : AbstractProbSpace<Int>() {
 
     init {
         require(p in 0.0..1.0)
-        require(n > 0)
+        require(r > 0)
     }
 
     override fun randomPoint(): Int {
-        var i = 0
-        repeat(n) {
-            do {
-                i++
-            } while (rd.nextDouble() > p)
-        }
-        return i
+        return RandomNumbersImpl.generatePascal(rd, r, p)
     }
 }
 
@@ -202,16 +190,7 @@ class PoissonSpace(val k: Double) : AbstractProbSpace<Int>() {
     private val base = exp(-k)
 
     override fun randomPoint(): Int {
-        val d = rd.nextDouble()
-        var total = base
-        var current = base
-        var i = 0
-        while (total < d) {
-            i++
-            current = current * k / i
-            total += current
-        }
-        return i
+        return RandomNumbersImpl.generatePoisson(rd, k, base)
     }
 }
 

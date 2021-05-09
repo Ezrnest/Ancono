@@ -76,7 +76,7 @@ class ComplexInf<T> internal constructor(mc: FieldCalculator<T>) : ComplexE<T>(m
  *
  * The complex itself requires a type of number to implement A and B,such as
  * `Complex<Double>` and `Complex<Long>`,and complex is a kind of number too.
- * This may cause some waste, to use complex number only as a kind of number type, you may use [cn.ancono.math.numberModels.ComplexI]
+ * This may cause some waste, to use complex number only as a kind of number type, you may use [cn.ancono.math.numberModels.ComplexD]
  *
  * @author lyc
  *

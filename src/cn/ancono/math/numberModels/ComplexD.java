@@ -8,7 +8,6 @@ import cn.ancono.utilities.SNFSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.DecimalFormat;
 import java.util.Iterator;
 
 ;
@@ -19,28 +18,21 @@ import java.util.Iterator;
  *
  * @author lyc
  */
-public final class ComplexI implements FieldNumberModel<ComplexI> {
+public record ComplexD(double a, double b) implements FieldNumberModel<ComplexD> {
     /**
      * An useful value in complex.
      */
     private static final double TWO_PI = 2 * Math.PI;
 
-    private final double a, b;
-    //    private static final double UNCALCULATED = Double.NaN;
-    private double m = Double.NaN, arg = Double.NaN;
     public static final double ANGLE_UPPER_BOUND = Math.PI;
     public static final double ANGLE_DOWNER_BOUND = -Math.PI;
-    public static final ComplexI ZERO = new ComplexI(0d, 0d),
-            ONE = new ComplexI(1d, 0d),
-            I = new ComplexI(0d, 1d),
-            PI = new ComplexI(Math.PI, 0d),
-            E = new ComplexI(Math.E, 0d);
 
+    public static final ComplexD ZERO = new ComplexD(0d, 0d);
+    public static final ComplexD ONE = new ComplexD(1d, 0d);
+    public static final ComplexD I = new ComplexD(0d, 1d);
+    public static final ComplexD PI = new ComplexD(Math.PI, 0d);
+    public static final ComplexD E = new ComplexD(Math.E, 0d);
 
-    public ComplexI(double a, double b) {
-        this.a = a;
-        this.b = b;
-    }
 
     /**
      * Returns Re(this).
@@ -64,7 +56,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * Returns arg(this),the angle must be in [-pi,pi]
      */
     public double arg() {
-        return Double.isNaN(arg) ? (arg = Math.atan2(b, a)) : arg;
+        return Math.atan2(b, a);
     }
 
     /**
@@ -73,7 +65,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return |this|
      */
     public double mod() {
-        return Double.isNaN(m) ? (m = Math.hypot(a, b)) : m;
+        return Math.hypot(a, b);
     }
 
     /**
@@ -81,8 +73,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      *
      * @return |this|
      */
-    public ComplexI modAsC() {
-        return ComplexI.real(mod());
+    public ComplexD modAsC() {
+        return ComplexD.real(mod());
     }
 
     /**
@@ -92,8 +84,9 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code this + z}
      */
     @Override
-    public @NotNull ComplexI add(ComplexI z) {
-        return new ComplexI(a + z.a, b + z.b);
+    public @NotNull
+    ComplexD add(ComplexD z) {
+        return new ComplexD(a + z.a, b + z.b);
     }
 
     /**
@@ -102,8 +95,9 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code -this}
      */
     @Override
-    public @NotNull ComplexI negate() {
-        return new ComplexI(-a, -b);
+    public @NotNull
+    ComplexD negate() {
+        return new ComplexD(-a, -b);
     }
 
     /**
@@ -113,8 +107,9 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code this - z}
      */
     @Override
-    public @NotNull ComplexI subtract(ComplexI z) {
-        return new ComplexI(a - z.a, b - z.b);
+    public @NotNull
+    ComplexD subtract(ComplexD z) {
+        return new ComplexD(a - z.a, b - z.b);
     }
 
     /**
@@ -124,12 +119,13 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code this * z}
      */
     @Override
-    public @NotNull ComplexI multiply(ComplexI z) {
-        return new ComplexI(a * z.a - b * z.b, a * z.b + b * z.a);
+    public @NotNull
+    ComplexD multiply(ComplexD z) {
+        return new ComplexD(a * z.a - b * z.b, a * z.b + b * z.a);
     }
 
-    public ComplexI multiply(double d) {
-        return new ComplexI(a * d, b * d);
+    public ComplexD multiply(double d) {
+        return new ComplexD(a * d, b * d);
     }
 
     /**
@@ -140,17 +136,18 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @throws ArithmeticException if z = 0
      */
     @Override
-    public @NotNull ComplexI divide(ComplexI z) {
+    public @NotNull
+    ComplexD divide(ComplexD z) {
         double d = z.a * z.a + z.b * z.b;
         double an = a * z.a + b * z.b;
         double bn = b * z.a - a * z.b;
         an /= d;
         bn /= d;
-        return new ComplexI(an, bn);
+        return new ComplexD(an, bn);
     }
 
-    public ComplexI divide(double d) {
-        return new ComplexI(a / d, b / d);
+    public ComplexD divide(double d) {
+        return new ComplexD(a / d, b / d);
     }
 
 
@@ -160,17 +157,18 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code 1/this}
      */
     @Override
-    public @NotNull ComplexI reciprocal() {
+    public @NotNull
+    ComplexD reciprocal() {
         double mod2 = a * a + b * b;
-        return new ComplexI(a / mod2, -b / mod2);
+        return new ComplexD(a / mod2, -b / mod2);
     }
 
     /**
      * Returns the conjugate complex number of {@code this}:
      * <span style="text-decoration: overline">this</span>
      */
-    public ComplexI conjugate() {
-        return new ComplexI(a, -b);
+    public ComplexD conjugate() {
+        return new ComplexD(a, -b);
     }
 
 
@@ -181,7 +179,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @return {@code this^p}
      * @see #pow(long)
      */
-    public ComplexI powArg(long p) {
+    public ComplexD powArg(long p) {
         if (p == 0) {
             return ONE;
         }
@@ -197,19 +195,19 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * Returns {@code this^p}.This method is based on multiply operation.If
      * {@code p==0},ONE will be returned.<p>
      *
-     * @param n
      * @return {@code this^p}
      * @see #powArg(long)
      */
+    @NotNull
     @Override
-    public @NotNull ComplexI pow(long n) {
+    public ComplexD pow(long n) {
         if (n < 0) {
             return this.reciprocal().pow(-n);
         }
 //		if(p==0){
 //			return ONE;
 //		}
-        ComplexI t = ONE, mul = this;
+        ComplexD t = ONE, mul = this;
         while (n != 0) {
             if ((n & 1) != 0) {
                 t = t.multiply(mul);
@@ -226,8 +224,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      *
      * @param y a complex number
      */
-    public ComplexI exp(ComplexI y) {
-        return ComplexI.expZ(y.multiply(ComplexI.logarithmZ(this).mainValue()));
+    public ComplexD pow(ComplexD y) {
+        return ComplexD.exp(y.multiply(ComplexD.logarithm(this).mainValue()));
     }
 //    /**
 //     * Returns <code>log<sub>x</sub>(y) = ln(y)/ln(x), where <code>x</code> is the complex number of <code>this</code>.
@@ -296,13 +294,13 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
         @NotNull
         @Override
-        public Iterator<ComplexI> iterator() {
-            return new Iterator<ComplexI>() {
+        public Iterator<ComplexD> iterator() {
+            return new Iterator<>() {
                 private long index = 0;
 
                 @Override
-                public ComplexI next() {
-                    return ComplexI.modArg(m, ((index++) * TWO_PI + arg) / size);
+                public ComplexD next() {
+                    return ComplexD.modArg(m, ((index++) * TWO_PI + arg) / size);
                 }
 
                 @Override
@@ -313,8 +311,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         }
 
         @Override
-        public ComplexI mainValue() {
-            return ComplexI.modArg(m, arg / size);
+        public ComplexD mainValue() {
+            return ComplexD.modArg(m, arg / size);
         }
 
         @Override
@@ -323,7 +321,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         }
 
         @Override
-        public boolean contains(ComplexI z) {
+        public boolean contains(ComplexD z) {
             if (z.mod() == m) {
                 //we use two-divide method
                 double arg = z.arg();
@@ -345,7 +343,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
     }
 
-//	public ComplexResult 
+//	public ComplexResult
 
     /**
      * This class describes the complex result set of multiple result functions in complex
@@ -356,7 +354,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      *
      * @author lyc
      */
-    public static abstract class ComplexResult implements Iterable<ComplexI> {
+    public static abstract class ComplexResult implements Iterable<ComplexD> {
         protected final long size;
 
         ComplexResult(long size) {
@@ -375,8 +373,6 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
         /**
          * Returns {@code true} if the number of result.
-         *
-         * @return
          */
         public boolean isInfinite() {
             return size == -1;
@@ -387,7 +383,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
          *
          * @return a complex number
          */
-        public abstract ComplexI mainValue();
+        public abstract ComplexD mainValue();
 
         /**
          * Returns {@code true} if the result contains the result.This method is
@@ -396,7 +392,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
          * @param z complex number
          * @return {@code true} if the result contains the specific complex.
          */
-        public abstract boolean contains(ComplexI z);
+        public abstract boolean contains(ComplexD z);
     }
 
 
@@ -422,8 +418,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ComplexI) {
-            ComplexI z = (ComplexI) obj;
+        if (obj instanceof ComplexD z) {
             return a == z.a && b == z.b;
         }
         return false;
@@ -442,12 +437,12 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         return sb.toString();
     }
 
-    public static ComplexI real(double a) {
-        return new ComplexI(a, 0d);
+    public static ComplexD real(double a) {
+        return new ComplexD(a, 0d);
     }
 
-    public static ComplexI imag(double b) {
-        return new ComplexI(0d, b);
+    public static ComplexD imag(double b) {
+        return new ComplexD(0d, b);
     }
 
 
@@ -457,33 +452,11 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * it will be in [-pi,pi] and of {@code mod} is negative,then it will be turned to positive and corresponding {@code
      * arg} will
      * be modified.
-     *
-     * @param arg
-     * @param mod
-     * @return
      */
-    public static ComplexI modArg(double mod, double arg) {
-        if (mod < 0) {
-            mod = -mod;
-            arg += Math.PI;
-        }
-        if (arg > ANGLE_UPPER_BOUND || arg < ANGLE_DOWNER_BOUND) {
-            //adjustment first.
-            double pi = TWO_PI;
-            if (arg > ANGLE_UPPER_BOUND) {
-                pi = -pi;
-            }
-            do {
-                arg += pi;
-            } while (arg > ANGLE_UPPER_BOUND || arg < ANGLE_DOWNER_BOUND);
-        }
-
+    public static ComplexD modArg(double mod, double arg) {
         double a = Math.cos(arg) * mod;
         double b = Math.sin(arg) * mod;
-        ComplexI z = new ComplexI(a, b);
-        z.arg = arg;
-        z.m = mod;
-        return z;
+        return new ComplexD(a, b);
     }
 
     /**
@@ -492,9 +465,19 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @param z a complex number
      * @return {@code e^z}
      */
-    public static ComplexI expZ(ComplexI z) {
+    public static ComplexD exp(ComplexD z) {
         double m = Math.exp(z.a);
         return modArg(m, z.b);
+    }
+
+    /**
+     * Returns the result of <code>e<sup>it</sup></code>.
+     */
+    public static ComplexD expIt(ComplexD t) {
+        var a = -t.b;
+        var b = t.a;
+        var m = Math.exp(a);
+        return modArg(m, b);
     }
 
     /**
@@ -504,20 +487,31 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * </pre>
      * and the primary value is
      * <pre> ln(|z|) + arg(z)i</pre>
-     * The number of results is infinite,and
+     * The number of results is infinite, and
      * the iterator of the ComplexResult will iterate from
      *
      * @param z a complex number except 0.
      * @return the results.
      */
-    public static ComplexResult logarithmZ(ComplexI z) {
+    public static ComplexResult logarithm(ComplexD z) {
+        var main = ln(z);
+        return new LogResult(main.a, main.b);
+    }
+
+    /**
+     * Returns the primary value of <code>ln(z)</code>
+     * <pre>
+     *     result = ln(|z|) + arg(z)i
+     * </pre>
+     */
+    public static ComplexD ln(ComplexD z) {
         double mod = z.mod();
         if (mod == 0) {
             throw new ArithmeticException("ln(0)");
         }
         double x = Math.log(mod);
         double arg = z.arg();
-        return new LogResult(x, arg);
+        return new ComplexD(x, arg);
     }
 
     private static class LogResult extends ComplexResult {
@@ -530,7 +524,8 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         }
 
         @Override
-        public @NotNull Iterator<ComplexI> iterator() {
+        public @NotNull
+        Iterator<ComplexD> iterator() {
             return new Iterator<>() {
                 long index = 0;
 
@@ -540,15 +535,15 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
                 }
 
                 @Override
-                public ComplexI next() {
-                    return new ComplexI(x, arg + TWO_PI * index++);
+                public ComplexD next() {
+                    return new ComplexD(x, arg + TWO_PI * index++);
                 }
             };
         }
 
         @Override
-        public ComplexI mainValue() {
-            return new ComplexI(x, arg);
+        public ComplexD mainValue() {
+            return new ComplexD(x, arg);
         }
 
         @Override
@@ -557,7 +552,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         }
 
         @Override
-        public boolean contains(ComplexI z) {
+        public boolean contains(ComplexD z) {
             if (z.a == x) {
                 double b = z.b;
                 if (b < 0) {
@@ -581,14 +576,14 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @param z a complex
      * @return sin(z)
      */
-    public static ComplexI sinZ(ComplexI z) {
-        ComplexI iz = new ComplexI(-z.b, z.a);
-        ComplexI eiz = expZ(iz);
+    public static ComplexD sin(ComplexD z) {
+        ComplexD iz = new ComplexD(-z.b, z.a);
+        ComplexD eiz = exp(iz);
         double t = eiz.a * eiz.a + eiz.b * eiz.b;
         double tt = t * 2d;
         double a = eiz.b * (t + 1) / tt;
         double b = eiz.a * (t - 1) / tt;
-        return new ComplexI(a, b);
+        return new ComplexD(a, b);
     }
 
     /**
@@ -600,14 +595,14 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @param z a complex
      * @return cos(z)
      */
-    public static ComplexI cosZ(ComplexI z) {
-        ComplexI iz = new ComplexI(-z.b, z.a);
-        ComplexI eiz = expZ(iz);
+    public static ComplexD cos(ComplexD z) {
+        ComplexD iz = new ComplexD(-z.b, z.a);
+        ComplexD eiz = exp(iz);
         double t = eiz.a * eiz.a + eiz.b * eiz.b;
         double tt = t * 2d;
         double a = eiz.b * (t - 1) / tt;
         double b = eiz.a * (t + 1) / tt;
-        return new ComplexI(a, b);
+        return new ComplexD(a, b);
     }
 
     /**
@@ -619,14 +614,14 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      * @param z a complex
      * @return tan(z)
      */
-    public static ComplexI tanZ(ComplexI z) {
-        ComplexI iz = new ComplexI(-z.b, z.a);
-        ComplexI t = expZ(iz);
+    public static ComplexD tan(ComplexD z) {
+        ComplexD iz = new ComplexD(-z.b, z.a);
+        ComplexD t = exp(iz);
         //a^2-b^2
         double a0 = t.a * t.a - t.b * t.b;
         double b0 = 2 * t.a * t.b;
-        ComplexI re = of(a0 - 1, b0).divide(of(a0 + 1, b0));
-        return new ComplexI(-re.b, re.a);
+        ComplexD re = of(a0 - 1, b0).divide(of(a0 + 1, b0));
+        return new ComplexD(-re.b, re.a);
     }
 
     /**
@@ -634,7 +629,7 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      *
      * @param precision indicate the precision.
      */
-    public static String format(ComplexI z, int precision) {
+    public static String format(ComplexD z, int precision) {
         return format(z);
     }
 
@@ -643,8 +638,9 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
      *
      * @param z a complex number
      */
-    public static String format(ComplexI z) {
+    public static String format(ComplexD z) {
         StringBuilder sb = new StringBuilder();
+        var df = SNFSupport.DF;
         if (z.b < -DEFAULT_RANGE_OF_ZERO || z.b > DEFAULT_RANGE_OF_ZERO) {
             sb.append(df.format(z.a));
         } else {
@@ -661,39 +657,38 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
         return sb.toString();
     }
 
-    private static final DecimalFormat df = SNFSupport.DF;
     private static final double DEFAULT_RANGE_OF_ZERO = 0.0005d;
 
-    private static ComplexI of(double a, double b) {
-        return new ComplexI(a, b);
+    private static ComplexD of(double a, double b) {
+        return new ComplexD(a, b);
     }
 
 
-    static class ComplexICalculator extends MathCalculatorAdapter<ComplexI> {
+    static class ComplexICalculator extends MathCalculatorAdapter<ComplexD> {
         @NotNull
         @Override
-        public ComplexI getOne() {
-            return ComplexI.ONE;
+        public ComplexD getOne() {
+            return ComplexD.ONE;
         }
 
         @NotNull
         @Override
-        public ComplexI getZero() {
-            return ComplexI.ZERO;
+        public ComplexD getZero() {
+            return ComplexD.ZERO;
         }
 
         @Override
-        public boolean isZero(@NotNull ComplexI para) {
+        public boolean isZero(@NotNull ComplexD para) {
             return para.isZero();
         }
 
         @Override
-        public boolean isEqual(@NotNull ComplexI x, @NotNull ComplexI y) {
+        public boolean isEqual(@NotNull ComplexD x, @NotNull ComplexD y) {
             return x.equals(y);
         }
 
         @Override
-        public int compare(@NotNull ComplexI x, @NotNull ComplexI y) {
+        public int compare(@NotNull ComplexD x, @NotNull ComplexD y) {
             throw new UnsupportedOperationException("Complex is not comparable.");
         }
 
@@ -704,161 +699,161 @@ public final class ComplexI implements FieldNumberModel<ComplexI> {
 
         @NotNull
         @Override
-        public ComplexI add(@NotNull ComplexI x, @NotNull ComplexI y) {
+        public ComplexD add(@NotNull ComplexD x, @NotNull ComplexD y) {
             return x.add(y);
         }
 
         @NotNull
         @Override
-        public ComplexI negate(@NotNull ComplexI x) {
+        public ComplexD negate(@NotNull ComplexD x) {
             return x.negate();
         }
 
         @NotNull
         @Override
-        public ComplexI abs(@NotNull ComplexI x) {
+        public ComplexD abs(@NotNull ComplexD x) {
             return x.modAsC();
         }
 
         @NotNull
         @Override
-        public ComplexI subtract(@NotNull ComplexI x, @NotNull ComplexI y) {
+        public ComplexD subtract(@NotNull ComplexD x, @NotNull ComplexD y) {
             return x.subtract(y);
         }
 
         @NotNull
         @Override
-        public ComplexI multiply(@NotNull ComplexI x, @NotNull ComplexI y) {
+        public ComplexD multiply(@NotNull ComplexD x, @NotNull ComplexD y) {
             return x.multiply(y);
         }
 
         @NotNull
         @Override
-        public ComplexI divide(@NotNull ComplexI x, @NotNull ComplexI y) {
+        public ComplexD divide(@NotNull ComplexD x, @NotNull ComplexD y) {
             return x.divide(y);
         }
 
         @NotNull
         @Override
-        public ComplexI divideLong(@NotNull ComplexI x, long n) {
+        public ComplexD divideLong(@NotNull ComplexD x, long n) {
             return x.divide(n);
         }
 
         @NotNull
         @Override
-        public ComplexI multiplyLong(@NotNull ComplexI x, long n) {
+        public ComplexD multiplyLong(@NotNull ComplexD x, long n) {
             return x.multiply(n);
         }
 
         @NotNull
         @Override
-        public ComplexI reciprocal(@NotNull ComplexI x) {
+        public ComplexD reciprocal(@NotNull ComplexD x) {
             return x.reciprocal();
         }
 
         @NotNull
         @Override
-        public ComplexI squareRoot(@NotNull ComplexI x) {
+        public ComplexD squareRoot(@NotNull ComplexD x) {
             return x.root(2).mainValue();
         }
 
         @NotNull
         @Override
-        public ComplexI pow(@NotNull ComplexI x, long n) {
+        public ComplexD pow(@NotNull ComplexD x, long n) {
             return x.pow(n);
         }
 
         @NotNull
         @Override
-        public ComplexI exp(@NotNull ComplexI a, @NotNull ComplexI b) {
-            return a.exp(b);
+        public ComplexD exp(@NotNull ComplexD a, @NotNull ComplexD b) {
+            return a.pow(b);
         }
 
         @NotNull
         @Override
-        public ComplexI log(@NotNull ComplexI a, @NotNull ComplexI b) {
-            return logarithmZ(b).mainValue().divide(logarithmZ(a).mainValue());
+        public ComplexD log(@NotNull ComplexD a, @NotNull ComplexD b) {
+            return ComplexD.logarithm(b).mainValue().divide(ComplexD.logarithm(a).mainValue());
         }
 
         @NotNull
         @Override
-        public ComplexI cos(@NotNull ComplexI x) {
-            return cosZ(x);
+        public ComplexD cos(@NotNull ComplexD x) {
+            return ComplexD.cos(x);
         }
 
         @NotNull
         @Override
-        public ComplexI tan(@NotNull ComplexI x) {
-            return tanZ(x);
+        public ComplexD tan(@NotNull ComplexD x) {
+            return ComplexD.tan(x);
         }
 
         @NotNull
         @Override
-        public ComplexI arccos(@NotNull ComplexI x) {
+        public ComplexD arccos(@NotNull ComplexD x) {
             //TODO
             return super.arccos(x);
         }
 
         @NotNull
         @Override
-        public ComplexI arctan(@NotNull ComplexI x) {
+        public ComplexD arctan(@NotNull ComplexD x) {
             //TODO
             return super.arctan(x);
         }
 
         @NotNull
         @Override
-        public ComplexI nroot(@NotNull ComplexI x, long n) {
+        public ComplexD nroot(@NotNull ComplexD x, long n) {
             return x.root(n).mainValue();
         }
 
         @Nullable
         @Override
-        public ComplexI constantValue(@NotNull String name) {
+        public ComplexD constantValue(@NotNull String name) {
             if (name.equals("i")) {
-                return ComplexI.I;
+                return ComplexD.I;
             } else if (name.equalsIgnoreCase("pi")) {
-                return ComplexI.PI;
+                return ComplexD.PI;
             } else if (name.equals("e")) {
-                return ComplexI.E;
+                return ComplexD.E;
             }
             throw new UnsupportedOperationException("No constant value for: " + name);
         }
 
         @NotNull
         @Override
-        public ComplexI exp(@NotNull ComplexI x) {
-            return expZ(x);
+        public ComplexD exp(@NotNull ComplexD x) {
+            return ComplexD.exp(x);
         }
 
         @NotNull
         @Override
-        public ComplexI ln(@NotNull ComplexI x) {
-            return ComplexI.logarithmZ(x).mainValue();
+        public ComplexD ln(@NotNull ComplexD x) {
+            return ComplexD.logarithm(x).mainValue();
         }
 
         @NotNull
         @Override
-        public ComplexI sin(@NotNull ComplexI x) {
-            return sinZ(x);
+        public ComplexD sin(@NotNull ComplexD x) {
+            return ComplexD.sin(x);
         }
 
         @NotNull
         @Override
-        public ComplexI arcsin(@NotNull ComplexI x) {
+        public ComplexD arcsin(@NotNull ComplexD x) {
             //TODO
             return super.arcsin(x);
         }
 
         @NotNull
         @Override
-        public ComplexI of(long n) {
+        public ComplexD of(long n) {
             return real(n);
         }
 
         @NotNull
         @Override
-        public ComplexI of(@NotNull Fraction x) {
+        public ComplexD of(@NotNull Fraction x) {
             return real(x.toDouble());
         }
     }

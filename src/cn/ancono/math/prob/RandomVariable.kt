@@ -1,6 +1,6 @@
 package cn.ancono.math.prob
 
-import cn.ancono.math.exceptions.UnsupportedCalculationException
+
 import cn.ancono.math.numberModels.MathCalculatorAdapter
 import cn.ancono.math.numberModels.api.RealCalculator
 
@@ -221,18 +221,18 @@ class RVCalculator<T>(val mc: RealCalculator<T>) : MathCalculatorAdapter<RandomV
         if (x == zero) {
             return true
         }
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
     override fun isEqual(x: RandomVariable<T>, y: RandomVariable<T>): Boolean {
         if (x == y) {
             return true
         }
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
     override fun compare(x: RandomVariable<T>, y: RandomVariable<T>): Int {
-        throw UnsupportedCalculationException()
+        throw UnsupportedOperationException()
     }
 
     override val isComparable: Boolean

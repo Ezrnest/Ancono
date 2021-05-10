@@ -916,7 +916,7 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
         } else if (mp < degree) {
             return 1;
         }
-        var mc = (RealCalculator<T>) getCalculator();
+        var mc = (OrderedRingCal<T>) getCalculator();
         for (int i = mp; i > -1; i--) {
             T a = get(i);
             T b = o.get(i);

@@ -4,10 +4,7 @@
 package cn.ancono.math.numberModels;
 
 import cn.ancono.math.MathUtils;
-import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
-import cn.ancono.math.algebra.abs.calculator.OrderPredicate;
-import cn.ancono.math.algebra.abs.calculator.OrderedAbelGroupCal;
-import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
+import cn.ancono.math.algebra.abs.calculator.*;
 import cn.ancono.math.exceptions.ExceptionUtil;
 import cn.ancono.math.numberModels.api.IntCalculator;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -1583,7 +1580,7 @@ public final class Calculators {
         return new DoubleCalculatorWithDeviation(Math.abs(dev));
     }
 
-    public static class ZModNCalculator implements UnitRingCalculator<Integer>, OrderPredicate<Integer> {
+    public static class ZModNCalculator implements UnitRingCalculator<Integer>, OrderedRingCal<Integer> {
         protected final int n;
 
         ZModNCalculator(int n) {
@@ -1979,7 +1976,7 @@ public final class Calculators {
         return new ZModNCalculator(n);
     }
 
-    static class BooleanCalculator implements FieldCalculator<Boolean>, OrderPredicate<Boolean> {
+    static class BooleanCalculator implements OrderedFieldCal<Boolean> {
 
         @Override
         public long getCharacteristic() {

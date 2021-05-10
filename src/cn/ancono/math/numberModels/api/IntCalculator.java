@@ -13,13 +13,8 @@ import java.math.BigInteger;
 
 /**
  * IntCalculator represents a common supertype for all calculator that deal with integers(int, long, BigInteger...),
- * which provides some necessary methods that is required but is difficult to implement using the
- * normal MathCalculator, such as <code>mod</code> operation and so on.
+ * which provides more methods related to integers.
  * <p>
- * <p>
- * This calculator do not necessarily support all the calculations in
- * MathCalculator, but it is recommended that all the added methods related to
- * number theory should be fully implemented.
  *
  * @author liyicheng 2017-09-09 20:33
  */

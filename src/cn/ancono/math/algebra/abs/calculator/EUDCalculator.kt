@@ -11,7 +11,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
  * [divideAndRemainder].
  *
  *
- * All calculators for integers are `EUDCalculator`.
+ * For example, calculators for integers and calculators for polynomials on a field are both `EUDCalculator`,
  *
  * See [EuclideanDomain](https://mathworld.wolfram.com/EuclideanDomain.html) for more information.
  */
@@ -157,7 +157,7 @@ interface EUDCalculator<T> : UFDCalculator<T> {
     fun modInverse(a: T, p: T): T {
         val (g, u, _) = gcdUV(a, p)
         if (!isUnit(g)) {
-            throw ArithmeticException("$a is not invertible with respect to $p")
+            throw ArithmeticException("[$a] is not invertible with respect to modular [$p]")
         }
         return u
     }

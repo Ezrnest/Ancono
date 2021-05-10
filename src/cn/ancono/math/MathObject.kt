@@ -7,23 +7,8 @@ import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.NumberFormatter
 import java.util.function.Function
 
-/**
- * Describes a (computational) math object which holds a subclass of `EqualPredicate` as it 'calculator' for
- * computational purpose.
- *
- *
- *
- *
- * @author liyicheng
- * @see MathObjectReal
- */
-interface MathObject<T, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
 
-    /**
-     * Gets the calculator of this math object.
-     */
-    override val calculator: S
-
+interface IMathObject<T> {
 
     /**
      * Returns a String representing this object, the [NumberFormatter] should
@@ -34,6 +19,24 @@ interface MathObject<T, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
      */
     fun toString(nf: NumberFormatter<T>): String
 
+    fun valueEquals(obj: IMathObject<T>): Boolean
+}
+
+/**
+ * Describes a (computational) math object which holds a subclass of `EqualPredicate` as it 'calculator' for
+ * computational purpose.
+ *
+ * @author liyicheng
+ * @see MathObjectReal
+ */
+interface MathObject<T, S : EqualPredicate<T>> : CalculatorHolder<T, S>, IMathObject<T> {
+
+    /**
+     * Gets the calculator of this math object.
+     */
+    override val calculator: S
+
+
 //    /**
 //     * Returns a String representing this object, it is recommended that
 //     * the output of the number model should be formatted
@@ -41,8 +44,6 @@ interface MathObject<T, S : EqualPredicate<T>> : CalculatorHolder<T, S> {
 //     * @return
 //     */
 //    override fun toString(): String
-
-    fun valueEquals(obj: MathObject<T, S>): Boolean
 
     /**
      * Maps this math object to use a new calculator.

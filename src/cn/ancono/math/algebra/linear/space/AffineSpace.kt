@@ -1,6 +1,6 @@
 package cn.ancono.math.algebra.linear.space
 
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.linear.IVectorBasis
@@ -144,7 +144,7 @@ abstract class AffineSpace<T>(mc: FieldCalculator<T>,
         append("}")
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is AffineSpace) {
             return false
         }

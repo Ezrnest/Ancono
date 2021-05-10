@@ -4,7 +4,7 @@
 package cn.ancono.math.geometry.analytic.plane;
 
 import cn.ancono.math.AbstractMathObjectReal;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.numberModels.api.NumberFormatter;
@@ -219,7 +219,7 @@ public final class PAffineTrans<T> extends AbstractMathObjectReal<T> implements 
      */
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (this == obj) {
             return true;
         }

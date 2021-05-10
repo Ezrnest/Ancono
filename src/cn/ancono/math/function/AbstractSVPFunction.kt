@@ -3,8 +3,8 @@
  */
 package cn.ancono.math.function
 
+import cn.ancono.math.IMathObject
 import cn.ancono.math.MathCalculatorHolder
-import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.IPolynomial
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.calculus.Calculus
@@ -83,7 +83,7 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
      * Compares whether the another one is also a SVPFunction and determines whether
      * they are equal
      */
-    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is SVPFunction<*>) {
             return false
         }
@@ -288,7 +288,7 @@ protected constructor(mc: RealCalculator<T>, internal val mp: Int) : AbstractSVF
             return super<AbstractSVPFunction>.mapTo(mapper)
         }
 
-        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+        override fun valueEquals(obj: IMathObject<T>): Boolean {
             return if (obj !is ConstantFunction<*>) {
                 false
             } else mc.isEqual(result, (obj as ConstantFunction<T>).result)

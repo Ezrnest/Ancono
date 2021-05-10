@@ -1,7 +1,7 @@
 package cn.ancono.math.calculus
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.eval
@@ -69,7 +69,7 @@ abstract class OrthPolynomials<T>(val name: String, mc: QuotientCalculator<T>)
         return "$name Polynomials"
     }
 
-    override fun valueEquals(obj: MathObject<T, QuotientCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         return this == obj
     }
 

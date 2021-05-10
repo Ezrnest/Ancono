@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear.mapping
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.linear.*
 import cn.ancono.math.function.Bijection
@@ -169,7 +169,7 @@ abstract class LinearMapping<T> internal constructor(
         return fromMatrix(transMatrix.multiply(k))
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is LinearMapping) {
             return false
         }

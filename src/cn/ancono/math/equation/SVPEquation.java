@@ -1,7 +1,7 @@
 package cn.ancono.math.equation;
 
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathCalculatorHolder;
-import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
@@ -83,7 +83,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
      * @param obj
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (!(obj instanceof SVPEquation)) {
             return false;
         }
@@ -215,7 +215,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
 
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             if (obj instanceof SVPEquation) {
                 var sv = (DSVPEquation<T>) obj;
                 if (sv.mp == this.mp) {
@@ -689,7 +689,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             if (obj instanceof QEquation) {
                 QEquation<T> eq = (QEquation<T>) obj;
                 return getMc().isEqual(a, eq.a) && getMc().isEqual(b, eq.b) && getMc().isEqual(c, eq.c);
@@ -806,7 +806,7 @@ public abstract class SVPEquation<T> extends SVEquation<T>
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             if (obj instanceof LEquation) {
                 LEquation<T> leq = (LEquation<T>) obj;
                 return getMc().isEqual(a, leq.a) && getMc().isEqual(b, leq.b);

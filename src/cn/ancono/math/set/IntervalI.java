@@ -1,6 +1,6 @@
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.AbelGroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.OrderPredicate;
@@ -402,7 +402,7 @@ public final class IntervalI<T> extends Interval<T> {
 //    }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, OrderPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Interval) {
             Interval<T> iv = (Interval<T>) obj;
             if (isDownerBoundInclusive() == iv.isDownerBoundInclusive()

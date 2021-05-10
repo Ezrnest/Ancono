@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
@@ -103,7 +103,7 @@ public class CollectionSet<T> extends AbstractLimitedSet<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj == this) {
             return true;
         }

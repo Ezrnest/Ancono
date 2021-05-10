@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
@@ -369,7 +369,7 @@ public final class Line<T> extends SpacePointSet<T> implements Simplifiable<T, L
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Line) {
             Line<T> line = (Line<T>) obj;
             return isParallel(line) && line.contains(p0);

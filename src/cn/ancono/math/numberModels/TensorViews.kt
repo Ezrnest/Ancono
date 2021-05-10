@@ -4,6 +4,7 @@ import cn.ancono.math.MathUtils
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.discrete.combination.Permutation
 import cn.ancono.math.numberModels.api.Index
+import cn.ancono.math.numberModels.api.shapeString
 import cn.ancono.utilities.ArraySup
 import cn.ancono.utilities.IterUtils
 import java.util.*
@@ -1126,6 +1127,20 @@ internal object TensorImpl {
 
     }
 
+    /**
+     * Returns the matrix multiplication of [x] and [y].
+     *
+     * To perform matrix multiplication of rank `r` for two tensors `x,y`, first it is
+     * required that the last `r` dimensions of `x` and first `r` dimensions of `y` have
+     * the same shape.
+     * The resulting tensor `z` has the shape of `x.shape[:-r] + y.shape[r:]`.
+     *
+     * Denote `i, j, k` indices of length `x.dim-r, y.dim-r, r` respectively, the following
+     * equation is satisfied:
+     *
+     *     z[i,j] = sum(k, x[i,k] * y[k,j])
+     *
+     */
     fun <T> matmul(x: Tensor<T>, y: Tensor<T>, r: Int): MutableTensor<T> {
         val shape1 = x.shape
         val shape2 = y.shape
@@ -1137,11 +1152,10 @@ internal object TensorImpl {
             return Tensor.scalar(x.inner(y), mc)
         }
         val mShape = shape1.sliceArray(dim1 - r until dim1)
-        require(mShape.contentEquals(shape2.sliceArray(0 until r)))
-        var rShape = shape1.sliceArray(0 until (dim1 - r)) + shape2.sliceArray(r until dim2)
-        if (rShape.isEmpty()) {
-            rShape = intArrayOf(1)
+        require(mShape.contentEquals(shape2.sliceArray(0 until r))) {
+            "Shape mismatch in matmul of rank $r: ${x.shapeString} and ${y.shapeString}"
         }
+        val rShape = shape1.sliceArray(0 until (dim1 - r)) + shape2.sliceArray(r until dim2)
         val result = ATensor.zeros(rShape, mc)
         val data = result.data
         val xIdx = IntArray(dim1)
@@ -1161,6 +1175,56 @@ internal object TensorImpl {
         }
         return result
 
+    }
+
+    /**
+     * Returns the tensor dot product of [x] and [y].
+     *
+     * To perform tensor dot product of rank `r` for two tensors `x,y`, first it is
+     * required that the last `r` dimensions of `x` and `y` are the same.
+     * The resulting tensor `z` has the shape of `x.shape[:-r] + y.shape[:-r]`.
+     *
+     * Denote `i, j, k` indices of length `x.dim-r, y.dim-r, r` respectively, the following
+     * equation is satisfied:
+     *
+     *     z[i,j] = sum(k, x[i,k] * y[j,k])
+     *
+     *
+     *
+     */
+    fun <T> tensorDot(x: Tensor<T>, y: Tensor<T>, r: Int): MutableTensor<T> {
+        val shape1 = x.shape
+        val shape2 = y.shape
+        val dim1 = shape1.size
+        val dim2 = shape2.size
+        val rem1 = dim1 - r
+        val rem2 = dim2 - r
+        require(rem1 >= 0 && rem2 >= 0)
+        val mc = x.calculator as RingCalculator
+        if (dim1 == r && dim2 == r) {
+            return Tensor.scalar(x.inner(y), mc)
+        }
+        val mShape = shape1.sliceArray(rem1 until dim1)
+        require(mShape.contentEquals(shape2.sliceArray(rem2 until dim2)))
+        val rShape = shape1.sliceArray(0 until rem1) + shape2.sliceArray(0 until rem2)
+        val result = ATensor.zeros(rShape, mc)
+        val data = result.data
+        val xIdx = IntArray(dim1)
+        val yIdx = IntArray(dim2)
+        val mIndices = IterUtils.prodIdxN(mShape)
+        var pos = 0
+        for (rIdx in result.indices) {
+            rIdx.copyInto(xIdx, endIndex = rem1)
+            rIdx.copyInto(xIdx, endIndex = rem2)
+            var re = mc.zero
+            for (mIdx in mIndices) {
+                mIdx.copyInto(xIdx, destinationOffset = rem1)
+                mIdx.copyInto(yIdx, destinationOffset = rem2)
+                re = mc.eval { re + x[xIdx] * y[yIdx] }
+            }
+            data[pos++] = re
+        }
+        return result
     }
 
     private fun prepareDiag(x: Tensor<*>, axis1: Int, axis2: Int, offset: Int): Triple<IntArray, IntArray, IntArray> {

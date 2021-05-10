@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.structure.FiniteLinearBasis
@@ -404,7 +404,7 @@ abstract class VectorBasis<T>(mc: FieldCalculator<T>) : AbstractMathObject<T, Fi
         return DVectorBasis(newCalculator as FieldCalculator<N>, vectorLength, nVectors)
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (this == obj) {
             return true
         }

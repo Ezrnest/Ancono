@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
@@ -527,7 +527,7 @@ public final class EllipseV<T> extends EHSection<T> implements ClosedCurve<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof EllipseV) {
             EllipseV<T> ev = (EllipseV<T>) obj;
             if (ev.onX == onX) {

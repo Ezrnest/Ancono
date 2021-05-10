@@ -4,7 +4,7 @@
 package cn.ancono.math.function;
 
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation;
 import cn.ancono.math.equation.SVPEquation.QEquation;
@@ -166,7 +166,7 @@ public final class QuadraticFunction<T> extends AbstractPlaneFunction<T> impleme
      */
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (this == obj) {
             return true;
         }

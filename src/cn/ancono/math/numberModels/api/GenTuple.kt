@@ -60,6 +60,9 @@ interface GenTensor<T> : GenTuple<T> {
     override fun applyAll(f: (T) -> T): GenTensor<T>
 }
 
+val GenTensor<*>.shapeString: String
+    get() = shape.contentToString()
+
 /**
  * Generic matrix-like container.
  */

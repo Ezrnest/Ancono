@@ -1,6 +1,7 @@
 package cn.ancono.math.numberModels.structure
 
 
+import cn.ancono.math.IMathObject
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.exceptions.ExceptionUtil
@@ -62,7 +63,7 @@ internal constructor(nume: T, deno: T, val mc: RingCalculator<T>)
         return RingFraction(mapper.apply(nume), mapper.apply(deno), ringCalculator)
     }
 
-    override fun valueEquals(obj: MathObject<T, RingCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is RingFraction) {
             return false
         }

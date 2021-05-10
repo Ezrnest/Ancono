@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry;
 
 import cn.ancono.math.AbstractMathObjectReal;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.*;
@@ -310,7 +310,7 @@ public class GTriangle<T> extends AbstractMathObjectReal<T> {
 
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (!(obj instanceof GTriangle)) {
             return false;
         }

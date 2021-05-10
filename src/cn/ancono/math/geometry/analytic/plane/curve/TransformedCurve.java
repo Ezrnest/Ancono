@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.PAffineTrans;
 import cn.ancono.math.geometry.analytic.plane.Point;
@@ -82,7 +82,7 @@ public final class TransformedCurve<T> extends AbstractPlaneCurve<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (this == obj) {
             return true;
         }

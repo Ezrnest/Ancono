@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.AbelSemigroupCal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.BiMathFunction;
@@ -345,7 +345,7 @@ public abstract class Progression<T> extends AbstractMathObject<T, EqualPredicat
 //    }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Progression) {
             Progression<T> pro = (Progression<T>) obj;
             if (this.isLimited() && length == pro.length) {

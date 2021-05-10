@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels.structure
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.exceptions.ExceptionUtil
@@ -129,7 +129,7 @@ class PFraction<T>(mc: FieldCalculator<T>, val nume: Polynomial<T>, val deno: Po
         return PFraction(newCalculator as FieldCalculator<N>, n2, d2)
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is PFraction) {
             return false
         }

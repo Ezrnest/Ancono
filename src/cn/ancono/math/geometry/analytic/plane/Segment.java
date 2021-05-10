@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.plane.curve.AbstractPlaneCurve;
 import cn.ancono.math.geometry.analytic.plane.curve.SubstituableCurve;
@@ -47,7 +47,7 @@ public final class Segment<T> extends AbstractPlaneCurve<T> implements Simplifia
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (!(obj instanceof Segment)) {
             return false;
         }

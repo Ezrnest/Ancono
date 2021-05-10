@@ -4,7 +4,7 @@
 package cn.ancono.math.function
 
 import cn.ancono.math.AbstractMathObjectReal
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.calculus.Derivable
 import cn.ancono.math.numberModels.Fraction
@@ -195,7 +195,7 @@ internal constructor(mc: RealCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj is Log<*>) {
             return mc.isEqual((obj as Log<T>).a, mc.constantValue(RealCalculator.STR_E)!!)
         }
@@ -261,7 +261,7 @@ class Log<T>
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj is Ln<*>) {
             return (obj as Ln<T>).valueEquals(this)
         }
@@ -403,7 +403,7 @@ class Power<T>
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is Power<*>) {
             return false
         }
@@ -479,7 +479,7 @@ internal constructor(mc: RealCalculator<T>,
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj is Ex<*>) {
             return (obj as Ex<T>).valueEquals(this)
         }
@@ -533,7 +533,7 @@ internal constructor(mc: RealCalculator<T>) : AbstractSVFunction<T>(mc), Derivab
     /*
      * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
      */
-    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj is Exp<*>) {
             val exp = obj as Exp<T>
             return mc.isEqual(mc.one, exp.c) && mc.isEqual(mc.constantValue(RealCalculator.STR_E)!!, exp.a)

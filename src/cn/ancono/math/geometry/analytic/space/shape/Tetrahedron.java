@@ -1,7 +1,7 @@
 
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.exceptions.UnsatisfiedCalculationResultException;
@@ -412,7 +412,7 @@ public final class Tetrahedron<T> extends Pyramid<T> {
      * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Tetrahedron) {
             Tetrahedron<T> tr = (Tetrahedron<T>) obj;
             return ArraySup.arrayEqualNoOrder(ps, tr.ps, (p1, p2) -> p1.valueEquals(p2));

@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear.space
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.linear.Vector
@@ -80,7 +80,7 @@ class VectorSpace<T>(override val basis: VectorBasis<T>) : AbstractMathObject<T,
         return VectorSpace(basis.mapTo(newCalculator as FieldCalculator, mapper))
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is VectorSpace) {
             return false
         }

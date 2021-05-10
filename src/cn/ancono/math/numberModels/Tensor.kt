@@ -13,7 +13,6 @@ import java.util.*
 import java.util.function.Function
 
 
-
 /*
  * Created at 2019/9/12 11:11
  *
@@ -211,6 +210,8 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
     fun matmul(y: Tensor<T>, r: Int = 1): Tensor<T> {
         return TensorImpl.matmul(this, y, r)
     }
+
+//    fun tensorDot()
 
 
     /**
@@ -451,7 +452,7 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
     }
 
 
-    override fun valueEquals(obj: MathObject<T, EqualPredicate<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is Tensor) {
             return false
         }
@@ -546,8 +547,8 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
          *
          *
          */
-        inline fun <reified T> of(elements: List<Any>, mc: EqualPredicate<T>): MutableTensor<T> {
-            return ATensor.fromNestingList(elements, mc, T::class.java)
+        fun <T> of(elements: List<Any>, mc: EqualPredicate<T>): MutableTensor<T> {
+            return ATensor.fromNestingList(elements, mc, mc.numberClass)
         }
 
         /**
@@ -563,6 +564,23 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
             val data = Arrays.copyOf(elements, size, Array<Any>::class.java)
             @Suppress("UNCHECKED_CAST")
             return ATensor(mc, shape, data as Array<T>)
+        }
+
+        /**
+         * Creates a tensor of the given [shape] with a sequence of elements, it is required that the size of
+         * [elements] not smaller than the product of [shape].
+         */
+        fun <T> of(shape: IntArray, mc: EqualPredicate<T>, elements: Sequence<T>): MutableTensor<T> {
+            checkValidShape(shape)
+            return ATensor.buildFromSequence(mc, shape, elements)
+        }
+
+        /**
+         * Creates a tensor of the given [shape] with a iterable of elements, it is required that the size of
+         * [elements] not smaller than the product of [shape].
+         */
+        fun <T> of(shape: IntArray, mc: EqualPredicate<T>, elements: Iterable<T>): MutableTensor<T> {
+            return of(shape, mc, elements.asSequence())
         }
 
         /**
@@ -929,6 +947,7 @@ interface MutableTensor<T> : Tensor<T> {
 
 
 }
+
 
 fun <T, A : Appendable> Tensor<T>.joinToL(buffer: A, separators: List<CharSequence>,
                                           prefixes: List<CharSequence>,
@@ -1346,7 +1365,7 @@ internal constructor(mc: EqualPredicate<T>, shape: IntArray, val data: Array<T>)
             val size = MathUtils.product(shape)
             val data = arrayOfNulls<Any>(size)
             var pos = 0
-            for (t in sequence) {
+            for (t in sequence.take(size)) {
                 data[pos++] = t
             }
             require(pos == size)

@@ -1,5 +1,6 @@
 package cn.ancono.math.algebra.abs.module
 
+import cn.ancono.math.IMathObject
 import cn.ancono.math.MathObject
 import cn.ancono.math.algebra.abs.EqualRelation
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
@@ -168,7 +169,7 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
         return toString(NumberFormatter.defaultFormatter())
     }
 
-    override fun valueEquals(obj: MathObject<Z, IntCalculator<Z>>): Boolean {
+    override fun valueEquals(obj: IMathObject<Z>): Boolean {
         TODO("Not yet implemented")
     }
 

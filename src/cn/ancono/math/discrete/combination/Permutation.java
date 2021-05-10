@@ -29,16 +29,12 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
      * Returns the size of this permutation, which is equal to the
      * size of the finite set.
      *
-     * @return
      */
     int size();
 
     /**
      * Returns the index of the element of index {@code x} after the this permutation.<P>
      * For example, if the permutation is (1,0,2), then {@code apply(1)} returns 0.
-     *
-     * @param x
-     * @return
      */
     int apply(int x);
 
@@ -48,15 +44,12 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
      * <p>
      * For example, if the permutation is (1,0,2), then {@code inverse(1)} returns 0.
      *
-     * @param y
-     * @return
      */
     int inverse(int y);
 
     /**
      * Returns the inverse of this permutation.
      *
-     * @return
      */
     Permutation inverse();
 
@@ -71,7 +64,6 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
      * 3-permutations are sorted as
      * {@code (0,1,2),(0,2,1),(1,0,2),(1,2,0),(2,0,1),(2,1,0)}.
      *
-     * @return
      */
     default long index() {
         long sum = 0;

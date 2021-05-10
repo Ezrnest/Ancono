@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels.structure
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 
@@ -41,7 +41,7 @@ class ComplexInf<T> internal constructor(mc: FieldCalculator<T>) : ComplexE<T>(m
         return ComplexInf(newCalculator as FieldCalculator)
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         return obj is ComplexInf
     }
 
@@ -463,7 +463,7 @@ class Complex<T> internal constructor(mc: FieldCalculator<T>, a: T, b: T) : Comp
         }
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj is Complex<*>) {
             val mc = calculator
             val com = obj as Complex<T>

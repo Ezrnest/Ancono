@@ -2,7 +2,7 @@ package cn.ancono.math.geometry.analytic.plane;
 
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.algebra.abs.calculator.OrderedFieldCal;
@@ -891,9 +891,11 @@ public final class Line<T> extends AbstractMathObject<T, FieldCalculator<T>>
     /**
      * Determines whether the two lines are the identity,the determinant is used in this method to
      * compare the two lines are the identity instead of just comparing their coefficients.
+     *
+     * @param obj
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (this == obj) {
             return true;
         }

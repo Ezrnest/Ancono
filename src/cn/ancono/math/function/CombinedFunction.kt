@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.function
 
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.numberModels.api.RealCalculator
@@ -63,7 +63,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+        override fun valueEquals(obj: IMathObject<T>): Boolean {
             if (obj !is Add<*>) {
                 return false
             }
@@ -136,7 +136,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+        override fun valueEquals(obj: IMathObject<T>): Boolean {
             if (obj !is Subtract<*>) {
                 return false
             }
@@ -206,7 +206,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+        override fun valueEquals(obj: IMathObject<T>): Boolean {
             if (obj !is Multiply<*>) {
                 return false
             }
@@ -283,7 +283,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+        override fun valueEquals(obj: IMathObject<T>): Boolean {
             if (obj !is Divide<*>) {
                 return false
             }
@@ -332,7 +332,7 @@ abstract class CombinedFunction<T>
         /*
          * @see cn.ancono.math.FlexibleMathObject#valueEquals(cn.ancono.math.FlexibleMathObject)
          */
-        override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+        override fun valueEquals(obj: IMathObject<T>): Boolean {
             if (obj !is Combine<*>) {
                 return false
             }

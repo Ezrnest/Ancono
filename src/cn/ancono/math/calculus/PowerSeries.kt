@@ -1,6 +1,6 @@
 package cn.ancono.math.calculus
 
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.MathObjectReal
 import cn.ancono.math.MathObjectRealExtend
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
@@ -30,7 +30,7 @@ class PowerSeries<T>(mc: RealCalculator<T>, val coefficient: Coefficient<T>)
         return PowerSeries(newCalculator as RealCalculator<N>) { mapper.apply(coefficient.apply(it)) }
     }
 
-    override fun valueEquals(obj: MathObject<T, RealCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is PowerSeries) {
             return false
         }

@@ -4,7 +4,7 @@
 package cn.ancono.math.numberModels.structure;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.DecomposedPoly;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.PolynomialUtil;
@@ -886,7 +886,7 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RingCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (!(obj instanceof Polynomial)) {
             return false;
         }

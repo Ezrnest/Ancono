@@ -649,8 +649,6 @@ public final class Permutations {
      * Returns a new permutation that reverse the order of the array, which can be
      * written as {@code (n-1,n-2,...2,1,0)}
      *
-     * @param n
-     * @return
      */
     public static Permutation flipAll(int n) {
         sizeCheck(n);

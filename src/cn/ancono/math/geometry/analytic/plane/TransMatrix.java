@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.RingCalculator;
 import cn.ancono.math.algebra.abs.calculator.UnitRingCalculator;
@@ -166,7 +166,7 @@ public final class TransMatrix<T> extends AbstractMatrix<T> implements GenMatrix
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RingCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (!(obj instanceof TransMatrix)) {
             return false;
         }

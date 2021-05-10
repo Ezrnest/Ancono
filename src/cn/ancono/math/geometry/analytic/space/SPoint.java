@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
 import cn.ancono.math.numberModels.api.NumberFormatter;
@@ -209,7 +209,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof SPoint) {
             SPoint<T> s = (SPoint<T>) obj;
             return getCalculator().isEqual(x, s.x) &&
@@ -344,7 +344,7 @@ public final class SPoint<T> extends SpacePointSet<T> {
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             return equals(obj);
         }
 

@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane.curve;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.SVPEquation.QEquation;
 import cn.ancono.math.geometry.analytic.plane.Line;
@@ -263,7 +263,7 @@ public final class HyperbolaV<T> extends EHSection<T> {
 
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof HyperbolaV) {
             HyperbolaV<T> ev = (HyperbolaV<T>) obj;
             if (ev.onX == onX) {

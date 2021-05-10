@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.linear.space.VectorSpaceCalculator
 import cn.ancono.math.numberModels.api.*
@@ -89,7 +89,7 @@ abstract class AbstractVector<T>(
 
     abstract override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AbstractVector<N>
 
-    override fun valueEquals(obj: MathObject<T, RingCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is Vector) {
             return false
         }

@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.EquationSup;
 import cn.ancono.math.function.MathFunction;
@@ -660,7 +660,7 @@ public final class Circle<T> extends ConicSection<T> implements ClosedCurve<T>, 
 
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Circle) {
             Circle<T> c = (Circle<T>) obj;
             return o.valueEquals(c.o) &&

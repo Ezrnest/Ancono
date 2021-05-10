@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.linear.LinearEquationSolution;
@@ -349,7 +349,7 @@ public final class Sphere<T> extends SpaceObject<T> {
      * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Sphere) {
             Sphere<T> sp = (Sphere<T>) obj;
             return o.valueEquals(sp.o) && getCalculator().isEqual(r2, sp.r2);

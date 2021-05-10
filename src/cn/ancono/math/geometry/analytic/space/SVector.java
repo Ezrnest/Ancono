@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
@@ -472,7 +472,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
 
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RingCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof SVector) {
             var mc = getCalculator();
             @SuppressWarnings("unchecked") SVector<T> s = (SVector<T>) obj;
@@ -916,7 +916,7 @@ public final class SVector<T> extends AbstractVector<T> implements AlgebraModel<
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             return equals(obj);
         }
 

@@ -1,5 +1,6 @@
 package cn.ancono.math.geometry.analytic.plane;
 
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
@@ -555,7 +556,7 @@ public final class Triangle<T> implements MathObject<T, FieldCalculator<T>> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj == this) {
             return true;
         }

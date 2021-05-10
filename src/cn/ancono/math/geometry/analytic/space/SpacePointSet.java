@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.NumberFormatter;
@@ -281,7 +281,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T, EqualPredic
 
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             return obj instanceof UniversePointSet;
         }
 
@@ -357,7 +357,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T, EqualPredic
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             return obj instanceof EmptyPointSet;
         }
 
@@ -464,7 +464,7 @@ public abstract class SpacePointSet<T> extends AbstractMathObject<T, EqualPredic
 
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             if (obj instanceof CombinedSpacePointSet) {
                 CombinedSpacePointSet<T> isp = (CombinedSpacePointSet<T>) obj;
                 return this.flag == isp.flag && CollectionSup.listEqual(

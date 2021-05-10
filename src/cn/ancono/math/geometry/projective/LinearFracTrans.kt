@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.projective
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator
 import cn.ancono.math.algebra.abs.calculator.eval
@@ -67,7 +67,7 @@ class LinearFracTrans<T> internal constructor(private val m: TransMatrix<T>)
         return LinearFracTrans(m.mapTo(newCalculator, mapper))
     }
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is LinearFracTrans) {
             return false
         }

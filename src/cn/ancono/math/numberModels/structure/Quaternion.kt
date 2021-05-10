@@ -1,7 +1,7 @@
 package cn.ancono.math.numberModels.structure
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.FiniteGroups
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.abs.group.finite.AbstractFiniteGroup
@@ -158,7 +158,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: FieldCalculator<
 
     fun vectorPart(): SVector<T> = SVector.valueOf(b, c, d, calculator as RealCalculator<T>) //TODO type
 
-    override fun valueEquals(obj: MathObject<T, FieldCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is Quaternion) {
             return false
         }

@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.function.MathFunction;
 import cn.ancono.math.geometry.analytic.plane.Circle;
@@ -241,7 +241,7 @@ public final class SCircle<T> extends SpacePlaneObject<T> {
      * @see cn.ancono.cn.ancono.utilities.math.FlexibleMathObject#valueEquals(cn.ancono.cn.ancono.utilities.math.FlexibleMathObject)
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof SCircle) {
             SCircle<T> sp = (SCircle<T>) obj;
             return pl.valueEquals(sp.pl) &&

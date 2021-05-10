@@ -11,7 +11,7 @@ import cn.ancono.math.geometry.analytic.plane.Point;
  * determining whether a point in plane is inside this curve, on this curve
  * or outside this curve. A curve should always returns the identity result
  * for the methods as long as the given points are the identity or they are
- * {@link MathObject#valueEquals(MathObject)}.
+ * {@link MathObject#valueEquals(cn.ancono.math.IMathObject)}.
  * <p>
  * The closed curve may also provides the
  *

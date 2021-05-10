@@ -1,7 +1,7 @@
 package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.AbstractMathObject
-import cn.ancono.math.MathObject
+import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.equation.EquationSolver
 import cn.ancono.math.equation.SVPEquation
@@ -295,7 +295,7 @@ abstract class AbstractMatrix<T>(
         return StringSup.formatMatrix(data)
     }
 
-    override fun valueEquals(obj: MathObject<T, RingCalculator<T>>): Boolean {
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is AbstractMatrix) {
             return false
         }

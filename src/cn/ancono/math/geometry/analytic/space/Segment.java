@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.space;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
@@ -332,7 +332,7 @@ public final class Segment<T> extends SpacePointSet<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Segment) {
             Segment<T> seg = (Segment<T>) obj;
             return l.valueEquals(seg.l) && ((p1.valueEquals(seg.p1) && p2.valueEquals(seg.p2))

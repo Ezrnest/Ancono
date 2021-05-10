@@ -1,6 +1,6 @@
 package cn.ancono.math.geometry.analytic.space.shape;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.geometry.analytic.space.SPoint;
 import cn.ancono.math.numberModels.api.RealCalculator;
@@ -60,7 +60,7 @@ public final class Cylinder<T> extends SpaceObject<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         // TODO Auto-generated method stub
         return false;
     }

@@ -483,7 +483,7 @@ internal constructor(
                 ts.mapTo(getDefaultTermsSet()) { TermF(mapper.apply(it.coefficient), it.characters) })
     }
 
-    override fun valueEquals(obj: MathObject<F, FieldCalculator<F>>): Boolean {
+    override fun valueEquals(obj: IMathObject<F>): Boolean {
         if (obj !is MultinomialF) {
             return false
         }

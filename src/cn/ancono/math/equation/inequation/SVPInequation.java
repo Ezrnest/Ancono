@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.equation.inequation;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.IPolynomial;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.equation.EquationSup;
@@ -61,7 +61,7 @@ public abstract class SVPInequation<T> extends SVInquation<T> implements IPolyno
      * @param obj
      */
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, RealCalculator<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj == this) {
             return true;
         }

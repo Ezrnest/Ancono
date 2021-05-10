@@ -1,7 +1,7 @@
 package cn.ancono.math.geometry.analytic.space;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.algebra.abs.calculator.FieldCalculator;
@@ -722,7 +722,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
         }
 
         @Override
-        public boolean valueEquals(@NotNull MathObject<T, FieldCalculator<T>> obj) {
+        public boolean valueEquals(@NotNull IMathObject<T> obj) {
             if (obj instanceof PlaneCoordinateConverter) {
                 PlaneCoordinateConverter<T> pcc = (PlaneCoordinateConverter<T>) obj;
                 var mc = getCalculator();
@@ -788,7 +788,7 @@ public final class Plane<T> extends SpacePointSet<T> implements Simplifiable<T, 
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (obj instanceof Line) {
             return this == obj || relationWith((Plane<T>) obj) == Relation.COINCIDE;
         }

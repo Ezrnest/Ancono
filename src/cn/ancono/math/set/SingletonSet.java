@@ -3,7 +3,7 @@
  */
 package cn.ancono.math.set;
 
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
 import cn.ancono.math.numberModels.api.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
@@ -113,7 +113,7 @@ public final class SingletonSet<T> extends AbstractLimitedSet<T> {
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, EqualPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (this == obj) {
             return true;
         }

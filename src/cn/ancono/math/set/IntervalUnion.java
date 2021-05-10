@@ -1,7 +1,7 @@
 package cn.ancono.math.set;
 
 import cn.ancono.math.AbstractMathObject;
-import cn.ancono.math.MathObject;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.MathObjectReal;
 import cn.ancono.math.MathSymbol;
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
@@ -471,7 +471,7 @@ public class IntervalUnion<T> extends AbstractMathObject<T, OrderPredicate<T>> i
     }
 
     @Override
-    public boolean valueEquals(@NotNull MathObject<T, OrderPredicate<T>> obj) {
+    public boolean valueEquals(@NotNull IMathObject<T> obj) {
         if (!(obj instanceof IntervalUnion)) {
             return false;
         }

@@ -60,7 +60,6 @@ abstract class AbstractMatrix<T>(
         return MatrixImpl.apply1(this, calculator, f)
     }
 
-
     /**
      * Returns the adjoint matrix of this matrix.
      *
@@ -104,6 +103,11 @@ abstract class AbstractMatrix<T>(
             z = mc.add(z, this[i, i])
         }
         return z
+    }
+
+    open fun diag(): AbstractVector<T> {
+        requireSquare()
+        return Vector.of(row, calculator) { i -> get(i, i) }
     }
 
     /**
@@ -424,10 +428,22 @@ abstract class Matrix<T>(
         return super.pow(n)
     }
 
+    open fun hadamard(y: Matrix<T>): Matrix<T> {
+        return MatrixImpl.hadamard(this, y)
+    }
+
+    /*
+    Slices, sub matrix:
+     */
+
     override fun transpose(): Matrix<T> {
         return TransposeMatrixView(this)
     }
 
+    override fun diag(): Vector<T> {
+        requireSquare()
+        return Vector.of(row, calculator) { i -> get(i, i) }
+    }
 
     override fun factor(rows: IntArray, columns: IntArray): Matrix<T> {
         return FactorMatrixView.factorOf(this, rows, columns)
@@ -448,6 +464,7 @@ abstract class Matrix<T>(
     override fun adjoint(): Matrix<T> {
         return MatrixImpl.adjointOf(this)
     }
+
 
     /*
     Primary transformations:
@@ -471,6 +488,9 @@ abstract class Matrix<T>(
         return m to list
     }
 
+    /**
+     * Transforms this matrix to its Echelon form.
+     */
     open fun toEchelon(): Matrix<T> {
         return toEchelonWay().first
     }
@@ -485,11 +505,64 @@ abstract class Matrix<T>(
     }
 
     /**
-     * Computes the (general) LU decomposition of the given matrix `A` , returns a tuple of matrices
+     * Returns the right inverse of a matrix `A`.
+     *
+     * It is required that `A` has full row rank, that is `rank(A) = row`.
+     *
+     * >    right inverse = A.T * (A * A.T)^-1
+     */
+    open fun rightInverse(): Matrix<T> {
+        val x = this
+        return x.T * (x * x.T).inverse()
+    }
+
+    /**
+     * Returns the left inverse of a matrix `A`.
+     *
+     * It is required that `A` has full column rank, that is `rank(A) = column`.
+     *
+     * >   left inverse = (A.T * A)^-1 * A.T
+     */
+    open fun leftInverse(): Matrix<T> {
+        val x = this
+        return (x.T * x).inverse() * x.T
+    }
+
+    /**
+     * Returns the general inverse of a matrix `A` of shape `(m,n)`, that is, a matrix `B` of shape
+     * `(n,m)` such that
+     *
+     * >    ABA = A
+     *
+     * @return the general inverse `B` in the above
+     */
+    open fun gInverse(): Matrix<T> {
+        val (L, R) = decompRank()
+        return R.rightInverse() * L.leftInverse()
+    }
+
+    /**
+     * Returns the rank decomposition of a matrix `A` of shape `(n,m)`, returns
+     * a pair of matrix `(L, R)` such that `A = LR`, `L, R` are column full-rank and
+     * row full-rank respectively and their shapes are
+     * `(n,r), (r,m)` respectively.
+     *
+     * > A = LR
+     *
+     * @return a pair of `(L, R)`.
+     */
+    open fun decompRank(): Pair<Matrix<T>, Matrix<T>> {
+        return MatrixImpl.decompRank(this)
+    }
+
+    /**
+     * Computes the (general) LU decomposition of a matrix `A` , returns a tuple of matrices
      * `(P,L,U)` such that
      * `PA = LU`, `P` is a permutation matrix, `L` is a lower triangular matrix with 1
      * as diagonal elements, and
      * `U` is a upper triangular matrix.
+     *
+     * > PA = LU
      *
      * It is required that the matrix is invertible.
      *
@@ -497,34 +570,58 @@ abstract class Matrix<T>(
      *
      * @return a tuple a matrices `(P,L,U)`
      */
-    open fun decompLU(): Triple<Matrix<T>, Matrix<T>, Matrix<T>> {
+    open fun decompPLU(): Triple<Matrix<T>, Matrix<T>, Matrix<T>> {
         return MatrixUtils.decompositionLU(this)
     }
 
     /**
      * Returns the QR-decomposition of this square matrix. `Q` is an orthogonal matrix and `R` is an
-     * upper-triangle matrix. If this matrix is invertible, there is only one decomposition.
+     * upper-triangle matrix.
+     *
+     * > A = QR
+     *
+     * If this matrix is invertible, the decomposition is unique.
      *
      * @return `(Q, R)` as a pair
+     * @see decompKAN
      */
     open fun decompQR(): Pair<Matrix<T>, Matrix<T>> {
         return MatrixUtils.decompQR(this)
     }
 
     /**
+     * Returns the KAN-decomposition of a square matrix `A = KAN`, where `K` is an orthogonal matrix, `D` diagonal and
+     * `R` upper-triangle matrix.
+     *
+     * > A = KAN
+     *
+     * If this matrix is invertible, the decomposition is unique.
+     *
+     * @return `(K,A,N)` as a triple
+     * @see decompQR
+     */
+    open fun decompKAN(): Triple<Matrix<T>, Vector<T>, Matrix<T>> {
+        return MatrixUtils.decompKAN(this)
+    }
+
+    /**
      * Decomposes a symmetric semi-positive definite matrix `A = L L^T`, where
      * `L` is a lower triangular matrix.
+     *
+     * > A = LL^T
      *
      * @return a lower triangular matrix `L`.
      */
     open fun decompCholesky(): Matrix<T> {
         //Created by lyc at 2020-09-26 10:47
-        return MatrixUtils.decompositionCholesky(this);
+        return MatrixUtils.decompositionCholesky(this)
     }
 
     /**
      * Decomposes a symmetric matrix `A = L D L^T`, where
      * `L` is a lower triangular matrix and `D` is a diagonal matrix.
+     *
+     * > A = LDL^T
      *
      * @return `(L, diag(D))`, where `L` is a lower triangular matrix, `diag(D)` is a vector of diagonal elements
      * of `D`.
@@ -1083,6 +1180,7 @@ class AMatrix<T> internal constructor(
         return i * column + j
     }
 
+
     override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): AMatrix<N> {
         val newData = Array<Any?>(data.size) {
             @Suppress("UNCHECKED_CAST")
@@ -1236,6 +1334,22 @@ class AMatrix<T> internal constructor(
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AMatrix<*>
+
+        return row == other.row && column == other.column && data.contentEquals(other.data)
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + data.contentHashCode()
+        return result
+    }
+
+
     companion object {
 
         @Suppress("UNCHECKED_CAST")
@@ -1334,8 +1448,24 @@ class AMatrix<T> internal constructor(
             require(elements.isNotEmpty()) {
                 "The matrix must not be empty!"
             }
-
             val data = elements.toTypedArray<Any?>()
+            return AMatrix(mc, row, column, data)
+        }
+
+        fun <T> of(row: Int, column: Int, mc: RingCalculator<T>, elements: Sequence<T>): AMatrix<T> {
+//            require(elements.size == row * column) {
+//                "Required $row * $column = ${row * column} elements, but ${elements.size} is given."
+//            }
+//            require(elements.isNotEmpty()) {
+//                "The matrix must not be empty!"
+//            }
+            val size = row * column
+            require(size > 0)
+            val data = arrayOfNulls<Any>(size)
+            var pos = 0
+            for (e in elements.take(size)) {
+                data[pos++] = e
+            }
             return AMatrix(mc, row, column, data)
         }
 
@@ -1531,6 +1661,30 @@ internal object MatrixImpl {
         return result
     }
 
+    fun <T> hadamard(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
+        val mc = x.calculator
+        return apply2(x, y, mc::multiply)
+    }
+
+    fun <T> kronecker(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
+        val mc = x.calculator
+        val r1 = x.row
+        val r2 = y.row
+        val c1 = x.column
+        val c2 = y.column
+        val result = AMatrix.zero(r1 * r2, c1 * c2, mc)
+        for (i in x.rowIndices) {
+            for (j in x.colIndices) {
+                result.setAll(i * r2, j * c2, y.multiply(x[i, j]))
+            }
+        }
+        return result
+    }
+
+//    fun <T> khatriRao(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
+//
+//    }
+
     private inline fun <T> apply2(x: Matrix<T>, y: Matrix<T>, f: (T, T) -> T): AMatrix<T> {
         require(x.isSameShape(y))
         val mc = x.calculator
@@ -1639,7 +1793,10 @@ internal object MatrixImpl {
         return toUpperTriangle(copy).size
     }
 
-
+    /**
+     *
+     * @return a list of strictly increasing pivots of the column. The size of it is equal to the rank of the matrix.
+     */
     internal fun <T> toEchelon(M: MutableMatrix<T>,
                                column: Int = M.column,
                                operations: MutableList<MatrixOperation<T>>? = null): List<Int> {
@@ -1764,6 +1921,15 @@ internal object MatrixImpl {
         return expanded.subMatrix(0, n, n, 2 * n)
     }
 
+    fun <T> decompRank(x: Matrix<T>): Pair<Matrix<T>, Matrix<T>> {
+        val m = Matrix.copyOf(x)
+        val pivots = toEchelon(m)
+        val a = Matrix.fromVectors(pivots.map { x.getColumn(it) })
+        val b = m.subMatrix(0, 0, pivots.size, m.column)
+        return a to b
+    }
+
+
     fun <T> charMatrix(m: AbstractMatrix<T>, pc: RingCalculator<Polynomial<T>>): Matrix<Polynomial<T>> {
         val mc = m.calculator as FieldCalculator
         m.requireSquare()
@@ -1879,6 +2045,8 @@ internal object MatrixImpl {
         return H
 
     }
+
+
 }
 
 /**

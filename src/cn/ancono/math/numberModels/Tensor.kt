@@ -40,7 +40,7 @@ import java.util.function.Function
  * the number of dimensions.
  *
  *
- *
+ * Note: this implementation is not intentioned for fast numeric computation.
  */
 interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T>>, GenTensor<T> {
     //Created by lyc at 2021-04-06 22:12
@@ -288,7 +288,6 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
      *
      * @see elementSequence
      */
-    @Suppress("UNCHECKED_CAST")
     override fun flattenToList(): List<T> {
         val size = this.size
         val data = ArrayList<T>(size)
@@ -445,7 +444,6 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
     override fun isLinearRelevant(v: Tensor<T>): Boolean {
         return TensorImpl.isLinearDependent(this, v)
     }
-
 
     override fun <N> mapTo(newCalculator: EqualPredicate<N>, mapper: Function<T, N>): Tensor<N> {
         return ATensor.buildFromSequence(newCalculator, shape, elementSequence().map { mapper.apply(it) })

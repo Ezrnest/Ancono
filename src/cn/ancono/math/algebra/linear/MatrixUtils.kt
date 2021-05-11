@@ -11,13 +11,7 @@ import java.util.*
  */
 @Suppress("LocalVariableName") // we often use upper letter to name a matrix
 object MatrixUtils {
-    /**
-     * Returns the QR-decomposition of a square matrix `A = QR`, where `Q` is an orthogonal matrix and `R` is an
-     * upper-triangle matrix. If this matrix is invertible, there is only one decomposition.
-     *
-     * @return `(Q, R)` as a pair
-     */
-    fun <T> decompQR(A: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
+    private fun <T> decompQR0(A: AbstractMatrix<T>): Pair<Matrix<T>, MutableMatrix<T>> {
         //Re-written by lyc at 2021-04-30 13:00
         A.requireSquare()
         val vs = A.columnVectors()
@@ -40,6 +34,36 @@ object MatrixUtils {
         }
         val Q = Matrix.fromVectors(ws)
         return Q to R
+    }
+
+
+    /**
+     * Returns the QR-decomposition of a square matrix `A = QR`, where `Q` is an orthogonal matrix and `R` is an
+     * upper-triangle matrix. If this matrix is invertible, there is only one decomposition.
+     *
+     * @return `(Q, R)` as a pair
+     */
+    fun <T> decompQR(A: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
+        return decompQR0(A)
+    }
+
+    /**
+     * Returns the QR-decomposition of a square matrix `A = KAN`, where `K` is an orthogonal matrix, `D` diagonal and
+     * `R` upper-triangle matrix.
+     * If this matrix is invertible, there is only one decomposition.
+     *
+     * @return `(K,A,N)` as a triple
+     */
+    fun <T> decompKAN(A: AbstractMatrix<T>): Triple<Matrix<T>, Vector<T>, Matrix<T>> {
+        //Created by lyc at 2021-05-11 20:25
+        val (Q, R) = decompQR0(A)
+        val d = R.diag()
+        val one = (A.calculator as UnitRingCalculator).one
+        for (i in 0 until R.row) {
+            R[i, i] = one
+            R.divideRow(i, d[i], i + 1)
+        }
+        return Triple(Q, d, R)
     }
 
     private fun <T> checkSymmetric(A: AbstractMatrix<T>) {

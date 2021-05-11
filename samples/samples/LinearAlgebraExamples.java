@@ -12,7 +12,7 @@ import static cn.ancono.math.numberModels.Fraction.of;
  * Created by lyc at 2020/2/29
  */
 public class LinearAlgebraExamples {
-    public static void sample1() {
+    public static void example1() {
         var cal = Calculators.integer();
         var calFrac = Fraction.getCalculator();
         var m1 = Matrix.of(2, 2, cal,

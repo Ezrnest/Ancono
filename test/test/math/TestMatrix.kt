@@ -246,7 +246,7 @@ class TestMatrix {
                 arrayOf(3, 2, 5, 6),
                 arrayOf(6, -2, -8, 4)), Calculators.integer())
                 .mapTo(calculator) { Fraction.of(it.toLong()) }
-        val (P, L, U) = A.decompLU()
+        val (P, L, U) = A.decompPLU()
         //        P.printMatrix();
 //        L.printMatrix();
         Assert.assertTrue("L should be lower triangular.", isUpperTriangular(L.transpose()))

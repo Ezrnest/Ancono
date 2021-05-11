@@ -81,20 +81,6 @@ abstract class AbstractMathObject<T, S : EqualPredicate<T>>(override val calcula
         return toString(NumberFormatter.defaultFormatter())
     }
 
-    /**
-     * The equals method describes the equivalence in program of two math objects instead of the equal in math.
-     */
-    override fun equals(other: Any?): Boolean {
-        return this === other
-    }
-
-    /**
-     * A good `hashCode` method is recommended for every subclass extends the FlexibleMathObject, and
-     * this method should be implemented whenever `equals()` is implemented.
-     */
-    override fun hashCode(): Int {
-        return System.identityHashCode(this)
-    }
 
 }
 

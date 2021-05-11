@@ -394,15 +394,13 @@ abstract class Vector<T>(
         fun <T> orthogonalize(vs: List<Vector<T>>): List<Vector<T>> {
             //vs    : a1,a2,a3 ... an
             //list  : b1,b2,b3 ... bn
-            //temp1 : -b1/b1^2 ... -bn/bn^2
-            //temp2 : used when adding
             val n = vs.size
             if (n < 2) {
                 return vs
             }
             val size = vs[0].size
             require(vs.all { it.size == size })
-            val mc = vs[0].calculator
+            val mc = vs[0].calculator as FieldCalculator
 
             val list: MutableList<Vector<T>> = ArrayList(n)
             val us = ArrayList<Vector<T>>(n - 1)
@@ -411,7 +409,8 @@ abstract class Vector<T>(
             //b1 = a1
             for (i in 1 until n) {
                 val u = vs[i - 1]
-                us += u.divide(mc.negate(u.normSq()))
+                val t = mc.negate(u.normSq())
+                us += u.divide(t)
 
                 val v = copyOf(vs[i])
                 for (j in 0 until i) {
@@ -421,6 +420,30 @@ abstract class Vector<T>(
             }
             return list
         }
+
+        fun <T> orthogonalizeAndTrans(vs: List<Vector<T>>): Pair<List<Vector<T>>, Matrix<T>> {
+            //Created by lyc at 2021-05-11 20:53
+            val mc = vs[0].calculator as FieldCalculator
+            val n = vs.size
+            val R = Matrix.identity(n, mc)
+            val ws = ArrayList<Vector<T>>(n)
+            val d = ArrayList<T>(n)
+            for (i in 0 until n) {
+                val u = copyOf(vs[i])
+                for (j in 0 until i) {
+                    val k = mc.eval { u.inner(ws[j]) * d[j] }
+                    u.addMulAssign(mc.negate(k), ws[j])
+                    R[j, i] = k
+                }
+                if (!u.isZero()) {
+                    val length = u.normSq()
+                    d += mc.reciprocal(length)
+                }
+                ws += u
+            }
+            return ws to R
+        }
+
 
         @JvmStatic
         @SafeVarargs

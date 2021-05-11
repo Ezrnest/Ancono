@@ -19,7 +19,7 @@ interface IMathObject<T> {
      */
     fun toString(nf: NumberFormatter<T>): String
 
-    fun valueEquals(obj: IMathObject<T>): Boolean
+    infix fun valueEquals(obj: IMathObject<T>): Boolean
 }
 
 /**

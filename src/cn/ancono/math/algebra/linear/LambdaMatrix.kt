@@ -62,6 +62,7 @@ fun <T> LambdaMatrix<T>.invariantFactor(): List<Polynomial<T>> {
 
 @Suppress("UNCHECKED_CAST")
 object LambdaMatrixSup {
+
     @JvmStatic
     fun jordanFormAndTrans(matrix: Matrix<Fraction>): Pair<Matrix<Fraction>, Matrix<Fraction>>? {
         val lamM = matrix.charMatrix()

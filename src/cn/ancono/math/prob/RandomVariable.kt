@@ -15,12 +15,12 @@ import cn.ancono.math.numberModels.api.RealCalculator
  * @see ProbSpace
  * @see RandomVariables
  */
-sealed class RandomVariable<out T> {
+interface RandomVariable<out T> {
 
     /**
      * A set of all the probability spaces that this random variable depends on.
      */
-    abstract val spaces: Set<ProbSpace<*>>
+    val spaces: Set<ProbSpace<*>>
 
     /**
      * Returns the value that corresponds to the random event, that is, a
@@ -28,13 +28,13 @@ sealed class RandomVariable<out T> {
      *
      * This method should return the same for the same input.
      */
-    abstract fun fromEvent(event: Event): T
+    fun fromEvent(event: Event): T
 
     /**
      * Randomly gets a value of this random variable according to the
      * probability.
      */
-    abstract fun get(): T
+    fun sample(): T
 
     companion object{
         /**
@@ -48,18 +48,18 @@ sealed class RandomVariable<out T> {
     }
 }
 
-fun <T> RandomVariable<T>.getAsSequence(): Sequence<T> = generateSequence { this.get() }
+fun <T> RandomVariable<T>.samples(): Sequence<T> = generateSequence { this.sample() }
 
 /**
  * A simple random variable is only involved with single probability space.
  */
-abstract class SimpleRV<E, out T> : RandomVariable<T>() {
-    abstract val space: ProbSpace<E>
+interface SimpleRV<E, out T> : RandomVariable<T> {
+    val space: ProbSpace<E>
 
     override val spaces: Set<ProbSpace<*>>
         get() = setOf(space)
 
-    override fun get(): T {
+    override fun sample(): T {
         return fromPoint(space.randomPoint())
     }
 
@@ -69,16 +69,16 @@ abstract class SimpleRV<E, out T> : RandomVariable<T>() {
         return fromPoint(e)
     }
 
-    abstract fun fromPoint(e: E): T
+    fun fromPoint(e: E): T
 
 }
 
-abstract class ComposedRV<out T> : RandomVariable<T>() {
+interface ComposedRV<out T> : RandomVariable<T> {
 
-    abstract val rvs: List<RandomVariable<*>>
+    val rvs: List<RandomVariable<*>>
 
 
-    override fun get(): T {
+    override fun sample(): T {
         val result = HashMap<ProbSpace<*>, Any?>(spaces.size)
         for (space in spaces) {
             result[space] = space.randomPoint()
@@ -88,7 +88,7 @@ abstract class ComposedRV<out T> : RandomVariable<T>() {
 }
 
 
-class UnaryMappedRV<T, out R>(val rv: RandomVariable<T>, val f: (T) -> R) : ComposedRV<R>() {
+class UnaryMappedRV<T, out R>(val rv: RandomVariable<T>, val f: (T) -> R) : ComposedRV<R> {
     override val spaces: Set<ProbSpace<*>>
         get() = rv.spaces
 
@@ -99,12 +99,13 @@ class UnaryMappedRV<T, out R>(val rv: RandomVariable<T>, val f: (T) -> R) : Comp
         return f(rv.fromEvent(event))
     }
 
-    override fun get(): R {
-        return f(rv.get())
+    override fun sample(): R {
+        return f(rv.sample())
     }
 }
 
-class MappedRV<out T, S>(override val rvs: List<RandomVariable<S>>, val mapping: (List<S>) -> T) : ComposedRV<T>() {
+class MappedRV<out T, S>(override val rvs: List<RandomVariable<S>>, val mapping: (List<S>) -> T)
+    : ComposedRV<T> {
     override val spaces: Set<ProbSpace<*>> = rvs.flatMapTo(hashSetOf()) { rv ->
         rv.spaces
     }
@@ -127,7 +128,7 @@ class MappedRV<out T, S>(override val rvs: List<RandomVariable<S>>, val mapping:
 }
 
 
-class ConstantRV<out T>(val c: T) : SimpleRV<Unit, T>() {
+class ConstantRV<out T>(val c: T) : SimpleRV<Unit, T> {
     override fun fromPoint(e: Unit): T {
         return c
     }
@@ -139,7 +140,7 @@ class ConstantRV<out T>(val c: T) : SimpleRV<Unit, T>() {
 /**
  * A random variable that simply returns the event.
  */
-class IdentityRV<E, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E>() {
+class IdentityRV<E, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E> {
     override fun fromPoint(e: E): E {
         return e
     }
@@ -157,7 +158,8 @@ class IdentityRV<E, S : ProbSpace<E>>(override val space: S) : SimpleRV<E, E>() 
 //    }
 //}
 
-class NormalRV(val a: Double, val sigma: Double, override val space: StandardNormalDistSpace) : SimpleRV<Double, Double>() {
+class NormalRV(val a: Double, val sigma: Double, override val space: StandardNormalDistSpace)
+    : SimpleRV<Double, Double> {
     init {
         require(sigma > 0)
     }
@@ -202,7 +204,7 @@ class NormalRV(val a: Double, val sigma: Double, override val space: StandardNor
 //}
 
 
-class ExpRV(val k: Double, override val space: StandardExpSpace) : SimpleRV<Double, Double>() {
+class ExpRV(val k: Double, override val space: StandardExpSpace) : SimpleRV<Double, Double> {
     override fun fromPoint(e: Double): Double {
         return e / k
     }

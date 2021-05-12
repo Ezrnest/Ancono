@@ -207,7 +207,7 @@ object RandomVariables {
         val space = ProductSpace(Collections.nCopies(n, x.space))
 
         return (0 until n).map { i ->
-            object : SimpleRV<List<E>, T>() {
+            object : SimpleRV<List<E>, T> {
                 override val space: ProbSpace<List<E>> = space
 
                 override fun fromPoint(e: List<E>): T {
@@ -223,7 +223,7 @@ object RandomVariables {
      */
     fun <T> copyToSimple(x: RandomVariable<T>): SimpleRV<Event, T> {
         val space = BundledSpace(x.spaces)
-        return object : SimpleRV<Event, T>() {
+        return object : SimpleRV<Event, T> {
             override val space: ProbSpace<Event> = space
 
             override fun fromPoint(e: Event): T {
@@ -272,23 +272,35 @@ object RandomVariables {
         return map(rvs) { it.average() }
     }
 
+    fun <T : Comparable<T>> min(x: RandomVariable<T>, y: RandomVariable<T>): RandomVariable<T> {
+        return map2(x, y) { a, b ->
+            minOf(a, b)
+        }
+    }
+
+    fun <T : Comparable<T>> max(x: RandomVariable<T>, y: RandomVariable<T>): RandomVariable<T> {
+        return map2(x, y) { a, b ->
+            maxOf(a, b)
+        }
+    }
+
     /**
      * Estimates the expectation of the random variable `x` basing on the law of large number.
      */
-    fun estimateExpectation(x: DoubleRV, times: Int = 1000000): Double {
-        return x.getAsSequence().take(times).average()
+    fun estimateExpectation(x: DoubleRV, times: Int = 10000): Double {
+        return x.samples().take(times).average()
     }
 
     fun estimateDensity(x: DoubleRV,
                         from: Double, to: Double, blockCount: Int = 100,
-                        times: Int = 1000000): DoubleUnaryOperator {
+                        times: Int = 100000): DoubleUnaryOperator {
         require(to > from)
         val interval = from..to
         val counting = IntArray(blockCount)
         val d = (to - from) / blockCount
 
         repeat(times) {
-            val a = x.get()
+            val a = x.sample()
             if (a in interval) {
                 val i = ((a - from) / d).toInt()
                 counting[i]++
@@ -305,7 +317,7 @@ object RandomVariables {
         val length = to - from + 1
         val counting = IntArray(length)
         repeat(times) {
-            val a = x.get()
+            val a = x.sample()
             val i = a - from
             if (i < length) {
                 counting[i]++

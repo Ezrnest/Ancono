@@ -2,8 +2,7 @@ package test.math.prob
 
 import cn.ancono.math.prob.RandomVariables
 import cn.ancono.math.prob.minus
-import cn.ancono.math.prob.plus
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /*
@@ -15,7 +14,7 @@ class RandomVariableTest {
     fun t1() {
         val x = RandomVariables.uniform()
         val y = x - x
-        assertEquals(0.0, y.get(), 0.000001)
+        assertEquals(0.0, y.sample(), 0.000001)
     }
 
 }

@@ -41,6 +41,10 @@ operator fun DoubleRV.unaryMinus(): DoubleRV {
 //    return this.map
 }
 
+fun <T : Number> RandomVariable<T>.estimateExpectation(n: Int = 10000): Double {
+    return this.samples().take(n).map { it.toDouble() }.average()
+}
+
 
 /**
  * Provides methods of constructing random variables.
@@ -258,6 +262,10 @@ object RandomVariables {
      */
     fun <T, S, R> map2(x: RandomVariable<T>, y: RandomVariable<S>, f: (T, S) -> R): RandomVariable<R> {
         return MappedRV.binary(x, y, f)
+    }
+
+    fun <T, S> product(x: RandomVariable<T>, y: RandomVariable<S>): RandomVariable<Pair<T, S>> {
+        return map2(x, y) { a, b -> Pair(a, b) }
     }
 
     fun sum(rvs: List<DoubleRV>): DoubleRV {

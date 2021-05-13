@@ -3,9 +3,7 @@
  */
 package test.math;
 
-import cn.ancono.math.MathObject;
-import cn.ancono.math.MathObjectReal;
-import cn.ancono.math.algebra.abs.calculator.EqualPredicate;
+import cn.ancono.math.IMathObject;
 import cn.ancono.math.numberModels.api.RealCalculator;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -76,15 +74,10 @@ public final class TestUtils {
         }
     }
 
-    public static <T> void assertValueEquals(MathObjectReal<T> expected, MathObjectReal<T> actual) {
+    public static <T> void assertValueEquals(IMathObject<T> expected, IMathObject<T> actual) {
         if (!expected.valueEquals(actual)) {
             throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
         }
     }
 
-    public static <T, S extends EqualPredicate<T>> void assertValueEquals(MathObject<T, S> expected, MathObject<T, S> actual) {
-        if (!expected.valueEquals(actual)) {
-            throw new AssertionError("Expected <" + expected + ">, actual <" + actual + ">");
-        }
-    }
 }

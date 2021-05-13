@@ -7,7 +7,7 @@ import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.api.NumberFormatter
-import cn.ancono.math.numberModels.api.indices
+import cn.ancono.utilities.ArraySup
 import java.util.function.Function
 
 
@@ -35,6 +35,9 @@ interface MarkovSpace<R> : ProbSpace<Realization<R>> {
         return randomPointSeq.elementAt(t)
     }
 
+    fun startFrom(r: R): MarkovSpace<R> {
+        return MarkovSpaceStartFrom(r, this)
+    }
 }
 
 internal class CachedIntFunction<R>(x0: R, val nextFunction: (R) -> R) : Function<Int, R> {
@@ -58,40 +61,74 @@ internal class CachedIntFunction<R>(x0: R, val nextFunction: (R) -> R) : Functio
 
 typealias State = Int
 
-class MarkovSpaceWithTransition(val p: Matrix<Double>, val initial: Vector<Double>)
+/**
+ *
+ */
+class MarkovSpaceWithTransition
+private constructor(val initialCDF: DoubleArray, val transCDF: List<DoubleArray>)
     : AbstractProbSpace<Function<Time, State>>(), MarkovSpace<State> {
-    //TODO cdf
-    val n = p.row
-
-    init {
-        require(p.isSquare())
-        require(n == initial.size)
-    }
+    val n: Int
+        get() = initialCDF.size
 
 
-    protected fun categorical(v: Vector<Double>): Int {
-        var r = rd.nextDouble()
-        for (i in v.indices) {
-            r -= v[i]
-            if (r <= 0) {
-                return i
-            }
-        }
-        return n - 1
+    protected fun categorical(cdf: DoubleArray): Int {
+        val r = rd.nextDouble()
+        val idx = ArraySup.binarySearchCeiling(cdf, 0, cdf.size, r)
+        return idx.coerceAtMost(cdf.lastIndex)
     }
 
     override fun randomPointInitial(): Int {
-        return categorical(initial)
+        return categorical(initialCDF)
     }
 
     override fun randomPointFromPrev(x: Int): Int {
-        return categorical(p.getRow(x))
+        return categorical(transCDF[x])
+    }
+
+    override fun startFrom(r: State): MarkovSpace<State> {
+        val dirac = DoubleArray(n)
+        dirac[r] = 1.0
+        return MarkovSpaceWithTransition(dirac, transCDF)
+    }
+
+    companion object {
+
+        fun of(initial: Vector<Double>, p: Matrix<Double>): MarkovSpaceWithTransition {
+            val initialCDF = makeCDF(initial)
+            val transCDF = p.rowVectors().map { makeCDF(it) }
+            return MarkovSpaceWithTransition(initialCDF, transCDF)
+        }
+
+        fun makeCDF(v: Vector<Double>): DoubleArray {
+            val result = DoubleArray(v.size + 1)
+            result[0] = v[0]
+            for (i in 1 until v.size) {
+                result[i] = v[i] + result[i - 1]
+            }
+            return result
+        }
     }
 
 }
 
+class MarkovSpaceStartFrom<R>(val initial: R, val space: MarkovSpace<R>) : MarkovSpace<R> {
 
-abstract class MarkovChain<R>(override val space: MarkovSpace<R>) : SimpleRV<Realization<R>, Realization<R>>, RandomProcess<R> {
+    override fun randomPointInitial(): R {
+        return initial
+    }
+
+    override fun randomPointFromPrev(x: R): R {
+        return space.randomPointFromPrev(x)
+    }
+
+
+}
+
+/**
+ * A markov chain is a random process that has the markov property:
+ * > E(X_{n+1} | F_n) = E(X_{n+1} | X_n)
+ */
+open class MarkovChain<R>(override val space: MarkovSpace<R>) : RandomProcess<R> {
     override fun fromPoint(e: Realization<R>): Realization<R> {
         return e
     }
@@ -100,17 +137,17 @@ abstract class MarkovChain<R>(override val space: MarkovSpace<R>) : SimpleRV<Rea
         return space.randomPointAt(t)
     }
 
-    override fun randomVariableAt(t: Int): RandomVariable<R> {
+    override fun rvAt(t: Int): RandomVariable<R> {
         return map { r -> r.apply(t) }
     }
 
-    override fun sampleUntil(t: Int): List<R> {
-        return space.randomPointSeq.take(t).toList()
+    override fun sampleTo(t: Int): List<R> {
+        return space.randomPointSeq.take(t + 1).toList()
     }
 
-    override fun randomVariableUntil(t: Int): RandomVariable<List<R>> {
+    override fun randomVariableTo(t: Int): RandomVariable<List<R>> {
         return map { r ->
-            (0 until t).map { r.apply(it) }
+            (0..t).map { r.apply(it) }
         }
     }
 
@@ -118,28 +155,22 @@ abstract class MarkovChain<R>(override val space: MarkovSpace<R>) : SimpleRV<Rea
         return space.randomPointSeq
     }
 
-    override fun randomVariableSeq(): RandomVariable<Sequence<R>> {
-        val process = this
-        return object : SimpleRV<Realization<R>, Sequence<R>> {
-            override val space: ProbSpace<Realization<R>>
-                get() = process.space
 
-            override fun fromPoint(e: Realization<R>): Sequence<R> {
-                return (0..Int.MAX_VALUE).asSequence().map { e.apply(it) }
-            }
-
-            override fun sample(): Sequence<R> {
-                return process.sampleAsSeq()
-            }
-        }
+    /**
+     * Returns a markov chain with the same transition probability that starts from [r].
+     */
+    fun startFrom(r: R): MarkovChain<R> {
+        return MarkovChain(space.startFrom(r))
     }
-
-
 }
 
 
 class RandomWalkSpace<R>(mc: AbelGroupCal<R>, val s0: R, val sampler: () -> R)
     : AbstractMathObject<R, AbelGroupCal<R>>(mc), MarkovSpace<R> {
+
+    override fun startFrom(r: R): MarkovSpace<R> {
+        return RandomWalkSpace(calculator, r, sampler)
+    }
 
     override fun randomPointInitial(): R {
         return s0

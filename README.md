@@ -14,8 +14,8 @@ This library contains the following modules:
 
 1. Math functions:
 
-   GCD, LCM, mod, power and mod, mod inverse, Chinese remainder, factoring, Miller-Rabin prime test, gamma function and
-   more...
+   Basic math functions including GCD, LCM, mod, power and mod, mod inverse, Chinese remainder, factoring, primitive
+   root and more.
 
 2. Numbers:
 
@@ -28,7 +28,8 @@ This library contains the following modules:
 
 3. Polynomials, multinomials and expression:
 
-   Ancono enables users to operate polynomials and multinomials over a field (or even only over some kind of ring).
+   Ancono enables users to operate polynomials and multinomials over a field (or over some kind of ring). Methods of
+   polynomial algebra, gcd, remainder, factorizing over Z/p and more are provided.
 
    General expression internally stored as abstract syntax tree is also supported. Expressions can be simplified using
    simplification rules. Currently, basic simplification rules are implemented, and user can also add extensions if
@@ -38,17 +39,24 @@ This library contains the following modules:
 
 4. Linear algebra
 
-   Ancono supports computations of matrices and vectors on a field. Linear spaces and linear transformations are also
-   included.
+   Ancono supports computations of matrices and vectors over a ring or over a field. Linear spaces and linear
+   transformations are also included. A tensor class that is
 
-   Matrix class and vector class are provided with full functionality. There are all kinds of methods related to matrix,
-   such as determination, rank, solution space, characteristic polynomial, QR decomposition, lambda-matrix and so on.
+   like numpy's ndarray is also provided.
+
+   Matrix: determinant, rank, solution space, null space, characteristic polynomial, adjoint, QR, LU and Cholesky
+   decomposition, Echelon, Frobenious normal forms and so on. Special methods for matrix over a ring or UFD are also
+   provided.
+
+   Vector: inner product, outer product(in R^3), linear independent sets, Schmidt method and more.
+
+   Tensor: tensor algebra, inner, wedge, einsum, slicing, reshaping and so on.
 
    See examples <a href="#linearAlg">here</a>.
 
 5. Abstract algebra
 
-   A general framework of interfaces is defined. There are also various methods for finite groups and finite fields.
+   A general framework of interfaces is defined. There are also some methods for finite groups and finite fields.
 
    See examples <a href="#finiteGroups">here</a>.
 
@@ -56,7 +64,7 @@ This library contains the following modules:
 
    Line, triangle, conic sections (including circle, ellipse, hyperbola and parabola) and affine transformations are
    provided in Ancono. Useful methods are available, including computing the intersection points, computing the four
-   kinds of centers of a triangle and so much more. Ancono also supports visualization for curves and objects on plane.
+   kinds of centers of a triangle and so much more.
 
    See examples <a href="#planeAG">here</a>.
 

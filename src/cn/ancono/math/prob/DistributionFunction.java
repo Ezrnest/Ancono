@@ -1,4 +1,4 @@
-/**
+/*
  *
  */
 package cn.ancono.math.prob;

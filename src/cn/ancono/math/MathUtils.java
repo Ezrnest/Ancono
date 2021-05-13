@@ -1056,6 +1056,14 @@ public class MathUtils {
         return Double.compare(x, 0);
     }
 
+    public static int indicator(boolean b) {
+        if (b) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
 
     /**
      * Returns the so-called 'Tschebyscheff distance':

@@ -1011,6 +1011,38 @@ public class ArraySup {
         return lo; // lo == hi
     }
 
+    /**
+     * Returns the index of the max element that is smaller or equal to target.
+     * If no such element exists, -1 will be returned.
+     */
+    public static int binarySearchFloor(double[] arr, int lo, int hi, double target) {
+        while (lo < hi) {
+            int mid = (lo + hi) / 2;
+            if (target < arr[mid]) {
+                hi = mid;
+            } else {
+                lo = mid + 1;
+            }
+        }
+        return lo - 1;
+    }
+
+    /**
+     * Returns the index of the min element that is bigger or equal to target.
+     * If no such element exists, hi+1 will be returned.
+     */
+    public static int binarySearchCeiling(double[] arr, int lo, int hi, double target) {
+        while (lo < hi) {
+            int mid = (lo + hi) / 2;
+            if (arr[mid] < target) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        return lo; // lo == hi
+    }
+
 
 //	public static void main(String[] args) {
 //		Integer[] arr = new Integer[10]; 

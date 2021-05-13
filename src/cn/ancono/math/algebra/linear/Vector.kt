@@ -30,6 +30,10 @@ abstract class AbstractVector<T>(
         }
     }
 
+    open fun sum(): T {
+        return elementSequence().reduce(calculator::add)
+    }
+
     /**
      * Returns the square of the Euclidean norm of this vector, which
      * is equal to the sum of square of each element.
@@ -685,6 +689,17 @@ internal constructor(mc: RingCalculator<T>, val data: Array<Any?>)
     override fun toList(): List<T> {
         @Suppress("UNCHECKED_CAST")
         return data.asList() as List<T>
+    }
+
+    override fun sum(): T {
+        val v = this
+        var t = this[0]
+        calculator.eval {
+            for (i in 1 until size) {
+                t += v[i]
+            }
+        }
+        return t
     }
 
     override fun add(y: Vector<T>): Vector<T> {

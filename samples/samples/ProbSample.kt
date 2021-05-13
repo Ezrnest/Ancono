@@ -1,15 +1,14 @@
 package samples
 
-//import cn.ancono.math.geometry.visual.visual2D.Plotting
-import cn.ancono.math.prob.RandomVariables
+
+import cn.ancono.math.MathUtils
+import cn.ancono.math.prob.*
 import cn.ancono.math.prob.RandomVariables.bernoulli
 import cn.ancono.math.prob.RandomVariables.binomial
 import cn.ancono.math.prob.RandomVariables.estimateDist
 import cn.ancono.math.prob.RandomVariables.iid
 import cn.ancono.math.prob.RandomVariables.sumInt
-import cn.ancono.math.prob.getAsSequence
-import cn.ancono.math.prob.minus
-import cn.ancono.math.prob.times
+import kotlin.math.pow
 
 
 /*
@@ -43,9 +42,6 @@ object ProbSample {
         val Z = sumInt(iid(X, n))
         val c1 = estimateDist(Y, 0, n + 1)
         val c2 = estimateDist(Z, 0, n + 1)
-//        val c = DoubleArray(c1.size){ i ->
-//            c1[i] - c2[i]
-//        }
         println(c1.contentToString())
         println(c2.contentToString())
     }
@@ -53,14 +49,56 @@ object ProbSample {
     fun rvAlgebra() {
         val X = RandomVariables.normal(0.0, 1.0)
         val Y = RandomVariables.constant(1.0)
-        println(X.getAsSequence().take(5).toList()) // random numbers from normal dist.
+        println(X.samples().take(5).toList()) // random numbers from normal dist.
         val Z = Y * X - X // random variable algebra
-        println(Z.getAsSequence().take(5).toList()) // all zeros
+        println(Z.samples().take(5).toList()) // all zeros
+    }
+
+    fun randomWalk() {
+        val ssrw = RandomProcesses.simpleRandomWalk()
+        val a = -4
+        val b = 6
+        val T0 = ssrw.hittingTimeOf(-4)
+        val T1 = ssrw.hittingTimeOf(6)
+        val T = T0 min T1
+        val X_T = ssrw.rvAt(T)
+        println("E(X_T) = " + X_T.estimateExpectation()) // ~ 0
+        val p1 = X_T.map { MathUtils.indicator(it == a) }.estimateExpectation()
+        val p2 = X_T.map { MathUtils.indicator(it == b) }.estimateExpectation()
+        println(p1) // ~ 0.6
+        println(p2) // ~ 0.4
+        println(T.estimateExpectation()) // ~ 4 * 6 = 24
+    }
+
+    fun randomWalk2() {
+        val p = 18.0 / 38
+        val q = 1 - p
+        val start = 20
+
+        val rw = RandomProcesses.simpleRandomWalk(p, start)
+        val T0 = rw.hittingTimeOf(0)
+        val T40 = rw.hittingTimeOf(40)
+        val T = T0 min T40
+
+        val pWin = (T40 lessThan T0).estimateExpectation()
+        println("Estimation:")
+        println("P_20 {T40 < T0} = $pWin")
+        println("ET = " + T.estimateExpectation())
+        println("Theoretic: ")
+        fun phi(n: Int): Double {
+            val r = q / p
+            return (r.pow(n) - 1) / (r - 1)
+        }
+
+        val pExact = (phi(20) - phi(0)) / (phi(40) - phi(0))
+        println("P_20 {T40 < T0} = $pExact")
+        println("ET = " + (20 - 40 * pExact) / (q - p))
+
     }
 
 
 }
 
 fun main() {
-    ProbSample.rvAlgebra()
+    ProbSample.randomWalk2()
 }

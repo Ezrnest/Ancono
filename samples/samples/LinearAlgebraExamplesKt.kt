@@ -85,12 +85,7 @@ object LinearAlgebraExamplesKt {
         println(K * Matrix.diag(d) * N valueEquals A)
 
 
-        println("PLU:")
-        val (P, L, U) = A.decompPLU()
-        println(P * A)
-        println(A * P)
-        println(L * U)
-        println(P * A valueEquals L * U)
+
 
     }
 
@@ -115,12 +110,29 @@ object LinearAlgebraExamplesKt {
         println(A)
 
         val (L, R) = A.decompRank()
+        println("L=")
         println(L)
+        println("R=")
         println(R)
-        println(L * R)
+        println("LR = A: " + (L * R valueEquals A))
 
         val B = A.gInverse()
+        println("B=")
+        println(B)
+        print("ABA = A: ")
         println(A * B * A valueEquals A)
+    }
+
+    fun decompositions4() {
+        val A = Matrix(5, 5, Calculators.doubleDev()) { _, _ ->
+            Random.nextDouble()
+        }
+        println(A)
+        println("PLU:")
+        val (P, L, U) = A.decompPLU()
+        println(P * A)
+        println(L * U)
+        println(P * A valueEquals L * U)
     }
 
 }

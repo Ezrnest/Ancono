@@ -1,7 +1,6 @@
 package samples
 
 
-import cn.ancono.math.MathUtils
 import cn.ancono.math.prob.*
 import cn.ancono.math.prob.RandomVariables.bernoulli
 import cn.ancono.math.prob.RandomVariables.binomial
@@ -55,19 +54,20 @@ object ProbSample {
     }
 
     fun randomWalk() {
-        val ssrw = RandomProcesses.simpleRandomWalk()
-        val a = -4
-        val b = 6
+        /*
+        This example estimates the hitting times of simple symmetric random walk
+         */
+        val ssrw = StochasticProcesses.simpleRandomWalk()
         val T0 = ssrw.hittingTimeOf(-4)
         val T1 = ssrw.hittingTimeOf(6)
-        val T = T0 min T1
+        val T = T0 min T1 // T = min(T0, T1), also stopping time
         val X_T = ssrw.rvAt(T)
-        println("E(X_T) = " + X_T.estimateExpectation()) // ~ 0
-        val p1 = X_T.map { MathUtils.indicator(it == a) }.estimateExpectation()
-        val p2 = X_T.map { MathUtils.indicator(it == b) }.estimateExpectation()
-        println(p1) // ~ 0.6
-        println(p2) // ~ 0.4
-        println(T.estimateExpectation()) // ~ 4 * 6 = 24
+        println("E(X_T) = " + X_T.estimateExpectation()) // ~ 0 by optional stopping theorem
+        val p1 = (T0 lessThan T1).estimateExpectation() // T0 lessThan T1: creates a indicator r.v.
+        val p2 = (T1 lessThan T0).estimateExpectation()
+        println(p1) // ~ 0.6 = b / (b-a)
+        println(p2) // ~ 0.4 = a / (b-a)
+        println(T.estimateExpectation()) // ~ 4 * 6 = |ab| =  24
     }
 
     fun randomWalk2() {
@@ -75,7 +75,7 @@ object ProbSample {
         val q = 1 - p
         val start = 20
 
-        val rw = RandomProcesses.simpleRandomWalk(p, start)
+        val rw = StochasticProcesses.simpleRandomWalk(p, start)
         val T0 = rw.hittingTimeOf(0)
         val T40 = rw.hittingTimeOf(40)
         val T = T0 min T40

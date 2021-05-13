@@ -90,7 +90,7 @@ This library contains the following modules:
 10. Probability
 
     Probability spaces and random variables. Ancono provides a framework resembling the mathematic view of random
-    variables.
+    variable. Stochastic processes are also included.
 
     See examples <a href="#prob">here</a>.
 
@@ -482,6 +482,25 @@ val Y = RandomVariables.constant(1.0)
 println(X.getAsSequence().take(5).toList()) // random numbers from normal dist.
 val Z = Y * X - X // random variable algebra
 println(Z.getAsSequence().take(5).toList()) // all zeros
+```
+
+Stochastic process:
+
+```kotlin
+/*
+ This example estimates the hitting times of simple symmetric random walk
+ */
+val ssrw = StochasticProcesses.simpleRandomWalk()
+val T0 = ssrw.hittingTimeOf(-4)
+val T1 = ssrw.hittingTimeOf(6)
+val T = T0 min T1 // T = min(T0, T1), also stopping time
+val X_T = ssrw.rvAt(T)
+println("E(X_T) = " + X_T.estimateExpectation()) // ~ 0 by optional stopping theorem
+val p1 = (T0 lessThan T1).estimateExpectation() // T0 lessThan T1: creates a indicator r.v.
+val p2 = (T1 lessThan T0).estimateExpectation()
+println(p1) // ~ 0.6 = b / (b-a)
+println(p2) // ~ 0.4 = a / (b-a)
+println(T.estimateExpectation()) // ~ 4 * 6 = |ab| =  24
 ```
 
 #### <a name="dgeometry">Differential geometry</a>

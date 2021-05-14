@@ -93,12 +93,12 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
     List<Transposition> decomposeTransposition();
 
     /**
-     * Returns the count of inverted number in the array representing this permutation.
+     * Returns the count of reverse in the array representing this permutation.
      *
      * @return
      */
-    default int inverseCount() {
-        return CombUtils.inverseCount(getArray());
+    default int reverseCount() {
+        return CombUtils.reverseCount(getArray());
     }
 
     /**
@@ -107,7 +107,7 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
      * @return
      */
     default boolean isEven() {
-        return inverseCount() % 2 == 0;
+        return reverseCount() % 2 == 0;
     }
 
     /**

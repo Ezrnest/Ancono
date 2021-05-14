@@ -169,10 +169,14 @@ public final class CombUtils {
     /**
      * Returns the permutation of {@code m,n}.<br/>
      * P<sub>n</sub><sup>m</sup><br/>
-     * Throws an exception if overflow occurred.
-     * @param n
-     * @param m
-     * @return permutation of {@code m,n}.
+     * <p>
+     * That is, the number of ways of selecting <code>m</code> integers from <code>1,2,...,n</code> with order.
+     * <p></p>
+     * This method will throw an exception if overflow occurred.
+     *
+     * @param n the count of number to choose from
+     * @param m the count of number chosen
+     * @return permutation of {@code n,m}.
      * @throws ArithmeticException if overflow occurred.
      */
     public static long permutation(int n, int m) {
@@ -184,10 +188,8 @@ public final class CombUtils {
             return factorial(n);
         }
         long r = n;
-        n--;
-        while (n != m) {
-            r = Math.multiplyExact(r, n);
-            n--;
+        for (int i = m + 1; i < n; i++) {
+            r *= i;
         }
         return r;
     }
@@ -215,10 +217,8 @@ public final class CombUtils {
             return factorialX((int) n);
         }
         BigInteger r = BigInteger.valueOf(n);
-        n--;
-        while (n != m) {
-            r = r.multiply(BigInteger.valueOf(n));
-            n--;
+        for (var i = m + 1; i < n; i++) {
+            r = r.multiply(BigInteger.valueOf(i));
         }
         return r;
     }
@@ -617,9 +617,9 @@ public final class CombUtils {
     }
 
     /**
-     * Returns the inverse count of the array.
+     * Returns the reverse count of the array.
      */
-    public static int inverseCount(int[] arr) {
+    public static int reverseCount(int[] arr) {
         int count = 0;
         for (int i = 0; i < arr.length; i++) {
             int t = arr[i];

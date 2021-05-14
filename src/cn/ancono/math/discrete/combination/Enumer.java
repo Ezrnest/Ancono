@@ -29,9 +29,10 @@ public abstract class Enumer implements Iterable<int[]> {
 
     /**
      * Returns all the int[] arrays, ordered in a proper way.
+     *
      * @return
      */
-    public abstract List<int[]> enumration();
+    public abstract List<int[]> enumeration();
 
     /**
      * Returns an iterator, this iterator will always returns an copy of the array.
@@ -110,7 +111,7 @@ public abstract class Enumer implements Iterable<int[]> {
          * @see cn.ancono.math.prob.Enumer#enumration()
          */
         @Override
-        public List<int[]> enumration() {
+        public List<int[]> enumeration() {
             List<int[]> list;
             if (enumeration != null) {
                 list = new ArrayList<>((int) total);
@@ -222,40 +223,6 @@ public abstract class Enumer implements Iterable<int[]> {
                 }
                 throw new NoSuchElementException();
             }
-			
-			
-			/*
-			 * //increase the last element ( exchange it )
-				if(ar[n-2]<ar[n-1]){
-					int t = ar[n-2];
-					ar[n-2] = ar[n-1];
-					ar[n-1] = t;
-				}else{
-					int max = ar[n-2];
-					int i;
-					for(i=n-3;i>-1;i--){
-						int x = ar[i];
-						if(x<max){
-							max = x;
-							break;
-						}else{
-							max = x;
-						}
-					}
-					int j;
-					//find the small one
-					for(j=n-3;i>-1;i--){
-						if(max<ar[j]){
-							break;
-						}
-					}
-					//swap them
-					ar[i] = ar[j];
-					ar[j] = max;
-					//flip
-					ArraySup.flip(ar, i+1, n);
-				}
-			 */
 
         }
 

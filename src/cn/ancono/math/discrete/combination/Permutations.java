@@ -326,7 +326,7 @@ public final class Permutations {
          * @see cn.ancono.math.numberTheory.combination.Permutation#inverseCount()
          */
         @Override
-        public int inverseCount() {
+        public int reverseCount() {
             return 0;
         }
 
@@ -773,14 +773,11 @@ public final class Permutations {
         return true;
     }
 
-    private static final class PermutationCalculator implements GroupCalculator<Permutation> {
-        private final int size;
-
-        PermutationCalculator(int size) {
+    private record PermutationCalculator(int size) implements GroupCalculator<Permutation> {
+        private PermutationCalculator {
             if (size <= 0) {
                 throw new IllegalArgumentException("size < 0");
             }
-            this.size = size;
         }
 
         @Override

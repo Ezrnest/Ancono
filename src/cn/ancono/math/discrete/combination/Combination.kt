@@ -2,7 +2,7 @@ package cn.ancono.math.discrete.combination
 
 
 class CEnumer(n: Int, val m: Int) : Enumer(n) {
-    override fun enumration(): MutableList<IntArray> {
+    override fun enumeration(): MutableList<IntArray> {
         val list = ArrayList<IntArray>(enumCount.toInt())
         for (ar in iterator()) {
             list.add(ar)

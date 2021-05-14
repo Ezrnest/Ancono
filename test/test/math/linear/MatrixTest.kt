@@ -1,21 +1,29 @@
 package test.math.linear
 
-import cn.ancono.math.algebra.linear.Matrix
-import cn.ancono.math.algebra.linear.MatrixSup
-import cn.ancono.math.algebra.linear.MatrixUtils
-import cn.ancono.math.algebra.linear.T
+import cn.ancono.math.algebra.linear.*
 import cn.ancono.math.numberModels.Calculators
 import cn.ancono.math.numberModels.Fraction
 import cn.ancono.math.numberModels.Tensor
 import org.junit.Test
 import test.math.TestUtils.assertValueEquals
 import kotlin.random.Random
+import kotlin.test.assertEquals
 
 /*
  * Created by liyicheng at 2020-03-10 13:36
  */
 @Suppress("LocalVariableName")
 class MatrixTest {
+
+    @Test
+    fun detTest() {
+        val n = 10
+        val A = Matrix(n, n, Calculators.doubleDev()) { _, _ ->
+            Random.nextDouble()
+        }
+        assertEquals(MatrixImpl.det(A), MatrixImpl.detSlow(A), 0.0001)
+    }
+
     @Test
     fun toHermitFrom() {
         val cal = Calculators.integerExact()

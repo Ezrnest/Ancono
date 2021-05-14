@@ -276,30 +276,19 @@ object MatrixUtils {
 
     /**
      * Computes the inverse of the matrix on an Euclidean domain.
+     *
+     * It is required that the calculator of `M` is an instance of EUDCalculator.
      */
     fun <T> inverseInEUD(M: AbstractMatrix<T>): Matrix<T> {
         //TODO check correctness
         M.requireSquare()
         val n = M.column
-        val mc = M.calculator as FieldCalculator
+        val mc = M.calculator as EUDCalculator<T>
 
-        @Suppress("UNCHECKED_CAST")
-        val euc = M.calculator as EUDCalculator<T>
-
-
-        @Suppress("UNCHECKED_CAST")
-        val A = Matrix(n, 2 * n, mc) { i, j ->
-            when {
-                j < n -> {
-                    M[i, j]
-                }
-                i == j - n -> {
-                    euc.one
-                }
-                else -> {
-                    euc.zero
-                }
-            }
+        val A = Matrix.zero(n, 2 * n, mc)
+        A.setAll(0, 0, M)
+        for (i in 0 until n) {
+            A[i, i + n] = mc.one
         }
 //        Printer.printMatrix(A)
         // to upper triangle
@@ -318,25 +307,26 @@ object MatrixUtils {
             outer@
             while (true) {
                 val p = A[j, j]
-
                 while (i < n) {
-                    val (q, r) = euc.divideAndRemainder(A[i, j], p)
-                    A.multiplyAddRow(j, i, euc.negate(q), j)
+                    // gcd
+                    val (q, r) = mc.divideAndRemainder(A[i, j], p)
+                    A.multiplyAddRow(j, i, mc.negate(q), j)
 //                    Printer.printMatrix(A)
-                    if (euc.isZero(r)) {
+                    if (mc.isZero(r)) {
                         i++
                         continue
                     }
-                    A.swapRow(j, i)
+                    A.swapRow(j, i, j)
                     continue@outer
                 }
-                try {
-                    val k = mc.reciprocal(p)
-                    A.multiplyRow(j, k, j)
-                } catch (e: ArithmeticException) {
+                if (!mc.isUnit(p)) {
                     ExceptionUtil.notInvertible()
                 }
+                A[j, j] = mc.one
+                A.divideRow(j, p, j + 1)
+                break
             }
+
         }
 
         for (j1 in (n - 1) downTo 1) {
@@ -345,8 +335,7 @@ object MatrixUtils {
                 A.multiplyAddRow(j1, j2, k, j1)
             }
         }
-
-        return A.subMatrix(0, n, M.row, M.column)
+        return A.subMatrix(0, n, A.row, A.column)
 
 
     }
@@ -422,7 +411,7 @@ object MatrixUtils {
     }
 
     /**
-     * Computes the 'inverse' of the given matrix on a unit ring. This method simply compute the adjugate matrix and
+     * Computes the 'inverse' of the given matrix over a unit ring. This method simply compute the adjoint matrix and
      * divide it with the determinant (so it is time-consuming).
      *
      * This method can be used to compute the modular inverse of a matrix on `Z/Zn`, where n is not necessarily a prime.

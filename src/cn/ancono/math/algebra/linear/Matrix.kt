@@ -9,6 +9,7 @@ import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.api.*
 import cn.ancono.math.numberModels.structure.Polynomial
 import cn.ancono.utilities.ArraySup
+import cn.ancono.utilities.IterUtils
 import cn.ancono.utilities.ModelPatterns
 import cn.ancono.utilities.StringSup
 import java.util.function.Function
@@ -196,10 +197,11 @@ abstract class AbstractMatrix<T>(
 
     /**
      * Returns the inverse of this matrix.
-     * It is required that this matrix is square.
+     * It is required that this matrix is square and the calculator is at least a unit ring calculator.
      *
      * The inverse of a square matrix `A` is a matrix `B` such
      * that `AB = I`, where `I` stands for identity matrix.
+     *
      *
      *
      * @throws ArithmeticException if this matrix is not invertible
@@ -211,6 +213,8 @@ abstract class AbstractMatrix<T>(
 
     /**
      * Determines whether this matrix is invertible.
+     *
+     * It is required that this matrix is square and the calculator is at least a unit ring calculator.
      */
     open fun isInvertible(): Boolean {
         val mc = calculator as UnitRingCalculator
@@ -428,8 +432,12 @@ abstract class Matrix<T>(
         return super.pow(n)
     }
 
-    open fun hadamard(y: Matrix<T>): Matrix<T> {
+    open infix fun hadamard(y: Matrix<T>): Matrix<T> {
         return MatrixImpl.hadamard(this, y)
+    }
+
+    open infix fun kronecker(y: Matrix<T>): Matrix<T> {
+        return MatrixImpl.kronecker(this, y)
     }
 
     /*
@@ -1309,10 +1317,10 @@ class AMatrix<T> internal constructor(
 
     override fun divideRow(r: Int, k: T, colStart: Int, colEnd: Int) {
         val d = toPos(r, 0)
-        val mc = calculator as FieldCalculator
+        val mc = calculator as UnitRingCalculator
         for (l in colStart until colEnd) {
             @Suppress("UNCHECKED_CAST")
-            data[d + l] = mc.divide(data[d + l] as T, k)
+            data[d + l] = mc.exactDivide(data[d + l] as T, k)
         }
     }
 
@@ -1326,11 +1334,11 @@ class AMatrix<T> internal constructor(
     }
 
     override fun divideCol(c: Int, k: T, rowStart: Int, rowEnd: Int) {
-        val mc = calculator as FieldCalculator
+        val mc = calculator as UnitRingCalculator
         for (r in rowStart until rowEnd) {
             val pos = toPos(r, c)
             @Suppress("UNCHECKED_CAST")
-            data[pos] = mc.divide(k, data[pos] as T)
+            data[pos] = mc.exactDivide(k, data[pos] as T)
         }
     }
 
@@ -1559,7 +1567,13 @@ internal object MatrixImpl {
                         m[0, 2] * m[1, 1] * m[2, 0]
             }
         }
-        return detGaussBareiss(copyOf(m))
+        if (mc is FieldCalculator) {
+            return detGaussBareiss(copyOf(m), mc, mc::divide)
+        }
+        if (mc is EUDCalculator) {
+            return detGaussBareiss(copyOf(m), mc, mc::divideToInteger)
+        }
+        return detSlow(m)
     }
 
     //    /**
@@ -1573,7 +1587,7 @@ internal object MatrixImpl {
     //        //just calculate the value by recursion definition.
     //
     //    }
-    internal fun <T> detGaussBareiss(mat: MutableMatrix<T>): T {
+    private inline fun <T> detGaussBareiss(mat: MutableMatrix<T>, mc: UnitRingCalculator<T>, division: (T, T) -> T): T {
         //Created by lyc at 2020-03-05 19:18
         /*
         Refer to 'A Course in Computational Algebraic Number Theory' Algorithm 2.2.6
@@ -1593,15 +1607,6 @@ internal object MatrixImpl {
         equal to the determinant of the remaining matrix.
 
          */
-        val mc = mat.calculator as UnitRingCalculator
-        val division: (T, T) -> T = if (mc is UFDCalculator<*>) {
-            val ufd: EUDCalculator<T> = mc as EUDCalculator<T>
-            ufd::divideToInteger
-            // avoid numeric imprecision
-            // for example, in Polynomial<Double>
-        } else {
-            (mc as FieldCalculator)::divide
-        }
         val n: Int = mat.row
         var d = mc.one // the denominator that we store
         var positive = true
@@ -1641,6 +1646,24 @@ internal object MatrixImpl {
         } else {
             mc.negate(mat[n - 1, n - 1])
         }
+    }
+
+    fun <T> detSlow(m: AbstractMatrix<T>): T {
+        val mc = m.calculator
+        var result = mc.zero
+        val n = m.row
+        for ((idx, rev) in IterUtils.permRev(n, false)) {
+            var t = m[0, idx[0]]
+            for (i in 1 until n) {
+                t = mc.eval { t * m[i, idx[i]] }
+            }
+            result = if (rev % 2 == 0) {
+                mc.add(result, t)
+            } else {
+                mc.subtract(result, t)
+            }
+        }
+        return result
     }
 
     internal fun <T> multiply(x: Matrix<T>, y: Matrix<T>): AMatrix<T> {
@@ -1905,8 +1928,7 @@ internal object MatrixImpl {
         return nullSpaceOf(expanded, m.column, pivots)
     }
 
-    fun <T> inverse(m: AbstractMatrix<T>): Matrix<T> {
-        require(m.isSquare())
+    private fun <T> inverseInField(m: AbstractMatrix<T>): Matrix<T> {
         val n = m.row
         val mc = m.calculator as FieldCalculator
         val expanded = AMatrix.zero(n, 2 * n, m.calculator)
@@ -1919,6 +1941,18 @@ internal object MatrixImpl {
             ExceptionUtil.notInvertible()
         }
         return expanded.subMatrix(0, n, n, 2 * n)
+    }
+
+    fun <T> inverse(m: AbstractMatrix<T>): Matrix<T> {
+        require(m.isSquare())
+        val mc = m.calculator
+        if (mc is FieldCalculator) {
+            return inverseInField(m)
+        }
+        if (mc is EUDCalculator) {
+            return MatrixUtils.inverseInEUD(m)
+        }
+        return MatrixUtils.inverseInRing(m)
     }
 
     fun <T> decompRank(x: Matrix<T>): Pair<Matrix<T>, Matrix<T>> {
@@ -1983,20 +2017,20 @@ internal object MatrixImpl {
          */
         val M = matrix.asMatrix()
         M.requireSquare()
-        val mc = M.calculator as FieldCalculator
+        val mc = M.calculator as UnitRingCalculator
         val n = M.row
         var C = Matrix.identity(n, mc)
         val a = ArrayList<T>(n + 1)
         a += mc.one
         for (i in 1 until n) {
             C = multiply(M, C)
-            val ai = mc.eval { -C.trace() / i.toLong() }
+            val ai = mc.eval { exactDivide(-C.trace(), of(i.toLong())) }
             for (j in 0 until n) {
                 mc.eval { C[j, j] += ai }
             }
             a += ai
         }
-        a += mc.eval { -(M * C).trace() / (n.toLong()) }
+        a += mc.eval { -exactDivide((M * C).trace(), of(n.toLong())) }
         val p = Polynomial.of(mc, a.asReversed())
         if (n % 2 == 0) {
             C.negateInplace()

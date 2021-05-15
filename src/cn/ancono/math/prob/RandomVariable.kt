@@ -10,7 +10,7 @@ import cn.ancono.math.numberModels.api.RealCalculator
  *
  *
  *
- * Created by liyicheng at 2020-06-01 10:54
+ * @author Created by liyicheng at 2020-06-01 10:54
  *
  * @see ProbSpace
  * @see RandomVariables

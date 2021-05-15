@@ -38,9 +38,7 @@ operator fun <T> SPoint<T>.component3(): T = this.z
 operator fun <T> Complex<T>.component1() = this.re()
 operator fun <T> Complex<T>.component2() = this.im()
 
-//operator fun <T> IPolynomial<T>.get(n: Int) = this.get(n)!!
-//operator fun Multinomial.minus(y: Multinomial) = this.subtract(y)
-//operator fun Multinomial.times(y: Multinomial) = this.multiply(y)
+
 operator fun Multinomial.times(y: Term) = this.multiply(y)!!
 operator fun Multinomial.div(y: Term) = this.divide(y)!!
 
@@ -82,20 +80,7 @@ fun <T : Comparable<T>> List<T>.isSorted(invertedNaturalOrder: Boolean = false):
     return true
 }
 
-//class CalWrapper<T>(val mc: MathCalculator<T>) {
-//    operator fun T.plus(y: T) = mc.add(this, y)
-//    operator fun T.minus(y: T) = mc.subtract(this, y)
-//    operator fun T.times(y: T) = mc.multiply(this, y)
-//    operator fun T.div(y: T) = mc.divide(this, y)
-//    operator fun T.times(y: Long) = mc.multiplyLong(this, y)
-//    operator fun T.div(y: Long) = mc.divideLong(this, y)
-//    operator fun T.compareTo(y: T) = mc.compare(this, y)
-//    operator fun T.unaryMinus() = mc.negate(this)
-//    operator fun T.rangeTo(y: T) = Interval.closedInterval(this, y, mc)!!
-//}
-//
-//fun <T, R> with(mc: MathCalculator<T>, block: CalWrapper<T>.() -> R): R =
-//        block.invoke(CalWrapper(mc))
+
 //
 //fun main(args: Array<String>) {
 //    val mc = Fraction.calculator

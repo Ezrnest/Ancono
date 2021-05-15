@@ -9,6 +9,7 @@ import cn.ancono.math.algebra.linear.Vector
 import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.utilities.ArraySup
 import java.util.function.Function
+import java.util.function.IntToDoubleFunction
 
 
 /*
@@ -112,7 +113,6 @@ private constructor(val initialCDF: DoubleArray, val transCDF: List<DoubleArray>
 }
 
 class MarkovSpaceStartFrom<R>(val initial: R, val space: MarkovSpace<R>) : MarkovSpace<R> {
-
     override fun randomPointInitial(): R {
         return initial
     }
@@ -120,15 +120,13 @@ class MarkovSpaceStartFrom<R>(val initial: R, val space: MarkovSpace<R>) : Marko
     override fun randomPointFromPrev(x: R): R {
         return space.randomPointFromPrev(x)
     }
-
-
 }
 
 /**
- * A markov chain is a random process that has the markov property:
+ * A markov chain is a stochastic process that has the markov property:
  * > E(X_{n+1} | F_n) = E(X_{n+1} | X_n)
  */
-open class MarkovChain<R>(override val space: MarkovSpace<R>) : RandomProcess<R> {
+open class MarkovChain<R>(override val space: MarkovSpace<R>) : StochasticProcess<R> {
     override fun fromPoint(e: Realization<R>): Realization<R> {
         return e
     }
@@ -196,7 +194,53 @@ class RandomWalkSpace<R>(mc: AbelGroupCal<R>, val s0: R, val sampler: () -> R)
     }
 }
 
-class RandomWalk<R>(val s0: R, val X: RandomVariable<R>, val mc: AbelGroupCal<R>)
-    : MarkovChain<R>(RandomWalkSpace(mc, s0, X::sample)) {
+class BranchingSpace(val sampler: () -> Int)
+    : MarkovSpace<State> {
+    override fun randomPointInitial(): Int {
+        return 1
+    }
+
+    override fun randomPointFromPrev(x: Int): Int {
+        return (0 until x).sumOf { sampler() }
+    }
+}
+
+class BirthDeathSpace(val p: IntToDoubleFunction, val q: IntToDoubleFunction)
+    : AbstractProbSpace<Function<Time, State>>(), MarkovSpace<State> {
+    override fun randomPointInitial(): State {
+        return 1
+    }
+
+    override fun randomPointFromPrev(x: State): State {
+        var d = rd.nextDouble()
+        val px = p.applyAsDouble(x)
+        if (d < px) {
+            return x + 1
+        }
+        if (d < px + q.applyAsDouble(x)) {
+            return x - 1
+        }
+        return x
+    }
+
+    companion object {
+
+        fun of(p: Double, q: Double): BirthDeathSpace {
+            val pf = IntToDoubleFunction { p }
+            val qf = IntToDoubleFunction { x ->
+                if (x <= 0) {
+                    0.0
+                } else {
+                    q
+                }
+            }
+            return BirthDeathSpace(pf, qf)
+        }
+
+
+    }
 
 }
+//class RandomWalk<R>(val s0: R, val X: RandomVariable<R>, val mc: AbelGroupCal<R>)
+//    : MarkovChain<R>(RandomWalkSpace(mc, s0, X::sample)) {
+//}

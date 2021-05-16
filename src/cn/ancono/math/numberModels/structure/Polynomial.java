@@ -267,7 +267,17 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
     }
 
     /**
+     * Determines whether <code>x</code> is a root of this polynomial, that is, whether the
+     * result of <code>compute(x)</code> is zero.
+     */
+    public boolean isRoot(T x) {
+        return getCalculator().isZero(compute(x));
+    }
+
+    /**
      * Returns a polynomial of substituting the variable with the given value.
+     *
+     * @see #compute(Object)
      */
     public Polynomial<T> substitute(Polynomial<T> sub) {
         if (degree < 0) {
@@ -561,6 +571,32 @@ public final class Polynomial<T> extends AbstractMathObject<T, RingCalculator<T>
         } else {
             System.arraycopy(coes, 0, arr, d, degree + 1);
             Arrays.fill(arr, 0, d, mc.getZero());
+        }
+        return new Polynomial<>(mc, arr);
+    }
+
+    /**
+     * Returns a new polynomial with coefficients reversed, which is equal to <code>x<sup>deg(f)</sup>f(x<sup>-1</sup>)</code>.
+     * <p></p>
+     * Suppose a polynomial is <code>f(x) = a<sub>n</sub>x<sup>n</sup> + ... + a<sub>0</sub></code>, then the reverse of
+     * it is
+     * <code>g(x) = a<sub>0</sub>x<sup>n</sup> + ... + a<sub>n</sub></code>.
+     * Note that leading terms with zero coefficient will be removed, so the
+     * resulting polynomial may have a lower degree.
+     */
+    public Polynomial<T> reversed() {
+        if (isZero()) {
+            return this;
+        }
+        var i = 0;
+        var mc = getCalculator();
+        while (mc.isZero(coes[i])) {
+            i++;
+        }
+        var length = coes.length - i;
+        var arr = getArr(length);
+        for (var j = i; j < coes.length; j++) {
+            arr[coes.length - j - 1] = coes[j];
         }
         return new Polynomial<>(mc, arr);
     }

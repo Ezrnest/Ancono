@@ -1,6 +1,5 @@
 package cn.ancono.utilities
 
-import cn.ancono.math.discrete.combination.CombUtils
 import cn.ancono.utilities.EnumState.*
 
 private enum class EnumState {
@@ -463,7 +462,7 @@ object IterUtils {
     /**
      * Returns a sequence of arrays representing permutations of `m` integers in the range of `0, 1, ..., n-1`.
      *
-     * For example, `perm(3,2)` will return a sequence of `[0,1],[0,2],[1,0],[1,2],[2,0],[2,1]`.
+     * For example, `perm(3,2)` will return a sequence of `[0,1], [0,2], [1,0], [1,2], [2,0], [2,1]`.
      */
     fun perm(n: Int, m: Int, copy: Boolean = true): Sequence<IntArray> {
         if (n < m) {
@@ -556,11 +555,11 @@ object IterUtils {
 }
 
 fun main() {
-    val n = 5
-    val seq = IterUtils.perm(3, 2, false)
-    for (x in seq) {
-        println(x.contentToString() + ": " + CombUtils.reverseCount(x))
-    }
+//    val n = 5
+//    val seq = IterUtils.perm(3, 2, false)
+//    for (x in seq) {
+//        println(x.contentToString() + ": " + CombUtils.reverseCount(x))
+//    }
 //    val seq2 = IterUtils.permRev(n,false)
 //    for ((x, inv) in seq2) {
 //        val rev = CombUtils.reverseCount(x)

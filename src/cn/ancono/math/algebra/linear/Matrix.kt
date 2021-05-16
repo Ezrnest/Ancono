@@ -1357,6 +1357,16 @@ class AMatrix<T> internal constructor(
         return result
     }
 
+    override fun valueEquals(obj: IMathObject<T>): Boolean {
+        if (obj !is AMatrix) {
+            return super.valueEquals(obj)
+        }
+        return row == obj.row && column == obj.column && data.indices.all { i ->
+            @Suppress("UNCHECKED_CAST")
+            calculator.isEqual(data[i] as T, obj.data[i] as T)
+        }
+    }
+
 
     companion object {
 

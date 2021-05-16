@@ -55,15 +55,14 @@ public interface Permutation extends Composable<Permutation>, Invertible<Permuta
 
     /**
      * Returns the index of this permutation. The index is
-     * a number ranged in [0,size!-1]. It represents the index of this
+     * a number ranged in [0,size! - 1]. It represents the index of this
      * permutation in all the permutations of the identity size ordered by
      * the natural of their representative array. The identity permutation always
      * has the index of {@code 0} and the total flip permutation always has the
-     * index of {@code size!-1}<P>
+     * index of {@code size! - 1}<P>
      * For example, the index of {@code (1,0,2)} is {@code 2}, because all
      * 3-permutations are sorted as
      * {@code (0,1,2),(0,2,1),(1,0,2),(1,2,0),(2,0,1),(2,1,0)}.
-     *
      */
     default long index() {
         long sum = 0;

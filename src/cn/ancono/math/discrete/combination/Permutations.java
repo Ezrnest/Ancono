@@ -6,7 +6,8 @@ import cn.ancono.math.discrete.combination.Permutation.Transposition;
 import cn.ancono.math.set.FiniteSet;
 import cn.ancono.math.set.MathSets;
 import cn.ancono.utilities.ArraySup;
-import cn.ancono.utilities.CollectionSup;
+import cn.ancono.utilities.IterUtils;
+import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -839,8 +840,8 @@ public final class Permutations {
         if (n <= 0) {
             throw new IllegalArgumentException("Invalid n=" + n);
         }
-        var en = Enumer.permutation(n, n);
-        return CollectionSup.mappedIterable(en, Permutations::valueOf);
+        var seq = SequencesKt.map(IterUtils.INSTANCE.perm(n, n, false), ArrPermutation::new);
+        return SequencesKt.asIterable(seq);
     }
 
 

@@ -158,6 +158,40 @@ public class MathUtils {
         return result;
     }
 
+    /**
+     * Computes the greatest common divisor of two numbers and a pair of number <code>(u,v)</code> such that
+     * <pre>ua+vb=gcd(a,b)</pre>
+     * <p></p>
+     * And it satisfies that <code>|u|,|v|</code> is minimal, that is, if <code>|a| != 0 </code>, then
+     * <pre>0 <= |v| < |a|/d</pre>
+     * <p>
+     * <p>
+     * The result <code>gcd(a,b)</code> will always be positive.
+     * It follows from common conventions that <code>gcd(a, 0) = gcd(0, a) = a</code>
+     *
+     * @return an int array of <code>[gcd(a,b), u, v]</code>.
+     */
+    public static int[] gcdUVMin(int a, int b) {
+
+        int[] result = gcdUV(a, b);
+        if (a == 0 || b == 0) {
+            return result;
+        }
+        var d = result[0];
+        var u = result[1];
+        var v = result[2];
+
+        var a1 = a / d;
+        var b1 = b / d;
+        var k = v / a1;
+        var v1 = v % a1;
+
+        var u1 = u + b1 * k;
+        result[1] = u1;
+        result[2] = v1;
+        return result;
+    }
+
 
     static long[] gcdUV0(long a, long b) {
 //        long[] quotients = new long[4];

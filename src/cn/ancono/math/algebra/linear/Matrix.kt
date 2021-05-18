@@ -659,10 +659,16 @@ abstract class Matrix<T>(
     }
 
     /**
-     * Transform this matrix to Hermit Form.
+     * Transform this matrix to Hermit normal form(HNF). The HNF of a matrix `A`
+     * is a matrix `M` whose first several columns are zero and the remaining sub-matrix
+     * is upper triangular and that the diagonal element is the largest in the row.
+     *
+     * 1. `M` is upper triangular.
+     * 2.
+     *
      *
      * It is required that the calculator is a
-     * [cn.ancono.math.algebra.abs.calculator.EUDCalculator].
+     * [IntCalculator].
      */
     open fun toHermitForm(): Matrix<T> {
         return MatrixUtils.toHermitForm(this)
@@ -705,12 +711,7 @@ abstract class Matrix<T>(
      * this matrix is a square matrix.
      */
     open fun charPoly(): Polynomial<T> {
-        return MatrixImpl.adjointAndCharPoly(this).second
-    }
-
-    open fun charEquation(): SVPEquation<T> {
-        requireSquare()
-        return SVPEquation.fromPolynomial(charPoly())
+        return MatrixImpl.charPolyOf(this)
     }
 
     /**
@@ -721,7 +722,7 @@ abstract class Matrix<T>(
      * @return a list of eigenvalues
      */
     fun eigenvalues(solver: EquationSolver<T, SVPEquation<T>>): List<T> {
-        val equation = charEquation();
+        val equation = SVPEquation.fromPolynomial(charPoly())
         return solver.solve(equation);
     }
 
@@ -1040,6 +1041,25 @@ abstract class Matrix<T>(
             y = y.toNormalForm()
             return x.valueEquals(y)
         }
+
+        /**
+         * Parses a matrix from a string.
+         */
+        @JvmStatic
+        fun <T> parse(str: String, mc: RingCalculator<T>,
+                      rowDeliminator: String = "(\r\n)|(\r)|(\n)", colDeliminator: String = " +",
+                      parser: (String) -> T): Matrix<T> {
+            return MatrixSup.parseMatrix(str, rowDeliminator, colDeliminator, mc, parser)
+        }
+
+        /**
+         * Parses a matrix from a string.
+         */
+        @JvmStatic
+        fun <T> parse(str: String, mc: RingCalculator<T>,
+                      parser: (String) -> T): Matrix<T> {
+            return MatrixSup.parseMatrixD(str, mc, parser)
+        }
     }
 
 
@@ -1171,6 +1191,16 @@ abstract class MutableMatrix<T>(mc: RingCalculator<T>, row: Int, column: Int) : 
 
     abstract fun divideCol(c: Int, k: T, rowStart: Int = 0, rowEnd: Int = row)
 
+    abstract fun negateRow(r: Int, colStart: Int = 0, colEnd: Int = column)
+
+    abstract fun negateCol(c: Int, rowStart: Int = 0, rowEnd: Int = row)
+
+    open fun setRow(r: Int, v: Vector<T>) {
+        require(v.size == column)
+        for (j in colIndices) {
+            this[r, j] = v[j]
+        }
+    }
 }
 
 
@@ -1267,6 +1297,11 @@ class AMatrix<T> internal constructor(
         }
     }
 
+    override fun getRow(row: Int): Vector<T> {
+        val pos0 = toPos(row, 0)
+        return AVector(calculator, data.copyOfRange(pos0, pos0 + column))
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun multiplyAddRow(r1: Int, r2: Int, k: T, colStart: Int, colEnd: Int) {
         val s1 = toPos(r1, 0)
@@ -1340,6 +1375,33 @@ class AMatrix<T> internal constructor(
             @Suppress("UNCHECKED_CAST")
             data[pos] = mc.exactDivide(k, data[pos] as T)
         }
+    }
+
+    override fun negateRow(r: Int, colStart: Int, colEnd: Int) {
+        val d = toPos(r, 0)
+        val mc = calculator as UnitRingCalculator
+        for (l in colStart until colEnd) {
+            @Suppress("UNCHECKED_CAST")
+            data[d + l] = mc.negate(data[d + l] as T)
+        }
+    }
+
+    override fun negateCol(c: Int, rowStart: Int, rowEnd: Int) {
+        val mc = calculator
+        for (r in rowStart until rowEnd) {
+            val pos = toPos(r, c)
+            @Suppress("UNCHECKED_CAST")
+            data[pos] = mc.negate(data[pos] as T)
+        }
+    }
+
+    override fun setRow(r: Int, v: Vector<T>) {
+        require(v.size == column)
+        if (v !is AVector) {
+            super.setRow(r, v)
+            return
+        }
+        v.data.copyInto(this.data, toPos(r, 0))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -2002,13 +2064,15 @@ internal object MatrixImpl {
         if (matrix.size == 1) {
             return Matrix.identity(1, matrix.calculator as UnitRingCalculator<T>)
         }
-        try {
-            return adjointAndCharPoly(matrix).first
-        } catch (e: ArithmeticException) {
-
-        }
-        val n = matrix.row
         val mc = matrix.calculator
+        if (mc is UnitRingCalculator) {
+            try {
+                return adjointAndCharPoly(matrix, mc).first
+            } catch (ignore: ArithmeticException) {
+            }
+        }
+
+        val n = matrix.row
         return Matrix(n, n, mc) { i, j ->
             val cof = matrix.cofactor(j, i)
             val d = cof.det()
@@ -2020,14 +2084,25 @@ internal object MatrixImpl {
         }
     }
 
-    fun <T> adjointAndCharPoly(matrix: AbstractMatrix<T>): Pair<Matrix<T>, Polynomial<T>> {
+    fun <T> charPolyOf(matrix: AbstractMatrix<T>): Polynomial<T> {
+        matrix.requireSquare()
+        val mc = matrix.calculator
+        if (mc is UnitRingCalculator) {
+            try {
+                return adjointAndCharPoly(matrix, mc).second
+            } catch (ignore: ArithmeticException) {
+            }
+        }
+        val ch = charMatrix(matrix, Polynomial.calculatorRing(matrix.calculator))
+        return ch.det() //slow det
+    }
+
+    fun <T> adjointAndCharPoly(matrix: AbstractMatrix<T>, mc: UnitRingCalculator<T>): Pair<Matrix<T>, Polynomial<T>> {
         /*
         Reference: A course in computational algebraic number theory, Algorithm 2.2.7
 
          */
         val M = matrix.asMatrix()
-        M.requireSquare()
-        val mc = M.calculator as UnitRingCalculator
         val n = M.row
         var C = Matrix.identity(n, mc)
         val a = ArrayList<T>(n + 1)

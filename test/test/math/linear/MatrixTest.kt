@@ -25,13 +25,65 @@ class MatrixTest {
     }
 
     @Test
-    fun toHermitFrom() {
+    fun toHermitForm() {
         val cal = Calculators.integerExact()
         val m = MatrixSup.parseMatrix("[[1 2 3][4 5 6][7 8 9]]", cal) { s: String -> s.toInt() }
         var w = m.toSmithForm()
         w = w.applyAll { para: Int? -> cal.abs(para!!) }
         assertValueEquals(Matrix.diag(listOf(1, 3, 0), cal), w)
     }
+
+    @Test
+    fun toHermitForm2() {
+        val cal = Calculators.integerExact()
+        val m = Matrix.parse("""
+            3 3 1 4
+            0 1 0 0
+            0 0 19 16
+            0 0 0 3
+        """.trimIndent(), cal, String::toInt)
+        val (H, U) = MatrixUtils.toHermitFormU(m)
+        val H0 = Matrix.parse("""
+            3 0 1 1
+            0 1 0 0
+            0 0 19 1
+            0 0 0 3
+        """.trimIndent(), cal, String::toInt)
+        val U0 = Matrix.parse("""
+            1 -3 0 -1
+            0 1 0 0 
+            0 0 1 -5
+            0 0 0 1
+        """.trimIndent(), cal, String::toInt)
+        assertValueEquals(H0, H)
+        assertValueEquals(U0, U)
+    }
+
+    @Test
+    fun toHermitForm3() {
+        val cal = Calculators.integerExact()
+        val m = Matrix.parse("""
+            2 3 6 2
+            5 6 1 6
+            8 3 1 1
+        """.trimIndent(), cal, String::toInt)
+        val (H, U) = MatrixUtils.toHermitFormU(m)
+        val H0 = Matrix.parse("""
+            1 0 50 -11
+            0 3 28 -2
+            0 0 61 -13
+        """.trimIndent(), cal, String::toInt)
+        val U0 = Matrix.parse("""
+            9 -5 1
+            5 -2 0
+            11 -6 1
+        """.trimIndent(), cal, String::toInt)
+//        println(U0 * m)
+//        println(H0)
+        assertValueEquals(H0, H)
+        assertValueEquals(U0, U)
+    }
+
 
     @Test
     fun modularInverse() {

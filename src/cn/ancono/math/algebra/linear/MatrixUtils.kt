@@ -4,6 +4,7 @@ import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.exceptions.ExceptionUtil
 import cn.ancono.math.numberModels.api.*
 import java.util.*
+import kotlin.math.min
 
 
 /**
@@ -340,75 +341,118 @@ object MatrixUtils {
 
     }
 
-    /**
-     * Transform this matrix to Hermit Form. It is required that the calculator is a
-     * [cn.ancono.math.algebra.abs.calculator.EUDCalculator].
-     */
-    fun <T> toHermitForm(m: AbstractMatrix<T>): Matrix<T> {
-        val mc = m.calculator as IntCalculator<T>
-        val mat = m.toMutable()
-        //        @SuppressWarnings("unchecked")
-//        T[] temp = (T[]) new Object[m.row];
-        var i = m.row - 1
-        var j = m.column - 1
-        var k = m.column - 1
-        val l = if (m.row <= m.column) {
-            0
-        } else {
-            m.row - m.column + 1
-        }
-        while (true) {
-            while (j > 0) {
-                j--
-                if (!mc.isZero(mat[i, j])) {
-                    break
-                }
+
+    internal fun <T> toUpperEUD0(M: MutableMatrix<T>, column: Int = M.column): List<Int> {
+        val mc = M.calculator as EUDCalculator<T>
+        val row = M.row
+        var i = 0
+        val pivots = ArrayList<Int>(min(M.row, column))
+        for (j in 0 until column) {
+            if (i >= row) {
+                break
             }
-            if (j > 0) {
-                val (d, u, v) = mc.gcdUV(mat[i, k], mat[i, j])
-                val k1 = mc.divideToInteger(mat[i, k], d)
-                val k2 = mc.divideToInteger(mat[i, j], d)
-                for (p in 0 until m.row) {
-                    val t = mc.add(mc.multiply(u, mat[k, p]), mc.multiply(v, mat[j, p]))
-                    mat[j, p] = mc.subtract(mc.multiply(k1, mat[j, p]), mc.multiply(k2, mat[k, p]))
-                    mat[k, p] = t
+            var found = false
+            for (i2 in i until row) {
+                if (mc.isZero(M[i2, j])) {
+                    continue
                 }
-            } else {
-                var b = mat[i, k]
-                if (mc.isNegative(b)) {
-                    for (p in 0 until m.row) {
-                        mat[k, p] = mc.negate(mat[k, p])
-                    }
-                    b = mc.negate(b)
+                found = true
+                if (i2 != i) {
+                    M.swapRow(i2, i)
                 }
-                if (mc.isZero(b)) {
-                    k++
-                } else {
-                    for (t in k + 1 until m.column) {
-                        val q = mc.divideToInteger(mat[i, t], b)
-                        mat.multiplyAddRow(k, j, mc.negate(q))
-//                        for (p in 0 until m.row) {
-//                            mat[j,p] = mc.subtract(mat[j,p], mc.multiply(q, mat[k,p]))
-//                        }
-                    }
-                }
-                j = if (i <= l) {
-                    break
-                } else {
-                    i--
-                    k--
-                    k
-                }
+                break
             }
-        }
-        val zero = mc.zero
-        for (r in 0 until m.row) {
-            for (c in 0 until k) {
-                mat[r, c] = zero
+            if (!found) {
+                //not found
+                continue
             }
+            for (i2 in (i + 1) until row) {
+                if (mc.isZero(M[i2, j])) {
+                    continue
+                }
+                val a = M[i, j]
+                val b = M[i2, j]
+                val (d, u, v) = mc.gcdUVMin(a, b)
+                // uni-modular transform
+                val a1 = mc.divideToInteger(M[i, j], d)
+                val b1 = mc.divideToInteger(M[i2, j], d)
+                val B = u * M.getRow(i) + v * M.getRow(i2)
+                M.multiplyRow(i2, a1, j)
+                M.multiplyAddRow(i, i2, mc.negate(b1), j)
+                M.setRow(i, B)
+            }
+            pivots += j
+            i++
         }
-        return mat
+        return pivots
     }
+
+    internal fun <T> toEchelonEUD0(M: MutableMatrix<T>, column: Int = M.column): List<Int> {
+        val pivots = toUpperEUD0(M, column)
+        val mc = M.calculator as EUDCalculator<T>
+        for (i in pivots.lastIndex downTo 0) {
+            val j = pivots[i]
+            val d = M[i, j]
+            for (k in (i - 1) downTo 0) {
+                if (mc.isZero(M[k, j])) {
+                    continue
+                }
+                val q = mc.eval { -divideToInteger(M[k, j], d) }
+                M.multiplyAddRow(i, k, q, j)
+            }
+        }
+        return pivots
+    }
+
+    internal fun <T> toHermitForm0(M: MutableMatrix<T>, column: Int = M.column): List<Int> {
+        val pivots = toUpperEUD0(M, column)
+        val mc = M.calculator as IntCalculator<T>
+        for (i in pivots.lastIndex downTo 0) {
+            val j = pivots[i]
+            if (mc.isNegative(M[i, j])) {
+                M.negateRow(i)
+            }
+            val d = M[i, j]
+            for (k in (i - 1) downTo 0) {
+                if (mc.isZero(M[k, j])) {
+                    continue
+                }
+                var q = mc.eval { -divideToInteger(M[k, j], d) }
+                if (mc.isNegative(M[k, j])) {
+                    q = mc.increase(q)
+                }
+                M.multiplyAddRow(i, k, q, j)
+            }
+        }
+        return pivots
+    }
+
+    /**
+     * Transform this matrix to (row) Hermit Form. It is required that the calculator is an
+     * [IntCalculator].
+     */
+    fun <T> toHermitForm(A: AbstractMatrix<T>): Matrix<T> {
+        val M = A.toMutable()
+        toHermitForm0(M)
+        return M
+    }
+
+    fun <T> toHermitFormU(m: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
+        val n = m.row
+        val col = m.column
+        val mc = m.calculator as EUDCalculator
+        val expanded = AMatrix.zero(n, n + col, mc)
+        expanded.setAll(0, 0, m)
+        for (i in 0 until n) {
+            expanded[i, i + col] = mc.one
+        }
+        toHermitForm0(expanded, column = col)
+        val H = expanded.subMatrix(0, 0, n, col)
+        val U = expanded.subMatrix(0, col, n, n + col)
+        return H to U
+    }
+
+//    fun <T> toHermitFormU()
 
     /**
      * Computes the 'inverse' of the given matrix over a unit ring. This method simply compute the adjoint matrix and

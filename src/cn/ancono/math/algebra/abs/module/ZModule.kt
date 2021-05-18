@@ -9,6 +9,7 @@ import cn.ancono.math.algebra.abs.calculator.ModuleCalculator
 import cn.ancono.math.algebra.abs.calculator.RingCalculator
 import cn.ancono.math.algebra.abs.group.Homomorphism
 import cn.ancono.math.algebra.abs.structure.*
+import cn.ancono.math.algebra.linear.Matrix
 import cn.ancono.math.numberModels.api.IntCalculator
 import cn.ancono.math.numberModels.api.NumberFormatter
 import cn.ancono.math.set.MathSet
@@ -24,34 +25,14 @@ object ZModules {
     fun <Z, V> fromAbelianGroup(cal: IntCalculator<Z>, group: AbelianGroup<V>): ZModule<Z, V> {
         return ZModuleFromAGroup(cal, group)
     }
-}
 
-class ZModuleCalFromAGroup<Z, V>(val ic: IntCalculator<Z>, val gc: GroupCalculator<V>) : ModuleCalculator<Z, V> {
-    override fun scalarMultiply(k: Z, v: V): V {
-        return gc.gpow(v, ic.asLong(k))
+
+    fun toHermiteForm(m: Matrix<Int>): Matrix<Int> {
+
+        TODO()
     }
 
-    override val scalarCalculator: RingCalculator<Z>
-        get() = ic
 
-    override fun add(x: V, y: V): V {
-        return gc.apply(x, y)
-    }
-
-    override fun negate(x: V): V {
-        return gc.inverse(x)
-    }
-
-    override val zero: V
-        get() = gc.identity
-
-
-    override fun isEqual(x: V, y: V): Boolean {
-        return gc.isEqual(x, y)
-    }
-
-    override val numberClass: Class<V>
-        get() = gc.numberClass
 }
 
 /**
@@ -177,3 +158,32 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
         TODO("Not yet implemented")
     }
 }
+
+class ZModuleCalFromAGroup<Z, V>(val ic: IntCalculator<Z>, val gc: GroupCalculator<V>) : ModuleCalculator<Z, V> {
+    override fun scalarMultiply(k: Z, v: V): V {
+        return gc.gpow(v, ic.asLong(k))
+    }
+
+    override val scalarCalculator: RingCalculator<Z>
+        get() = ic
+
+    override fun add(x: V, y: V): V {
+        return gc.apply(x, y)
+    }
+
+    override fun negate(x: V): V {
+        return gc.inverse(x)
+    }
+
+    override val zero: V
+        get() = gc.identity
+
+
+    override fun isEqual(x: V, y: V): Boolean {
+        return gc.isEqual(x, y)
+    }
+
+    override val numberClass: Class<V>
+        get() = gc.numberClass
+}
+

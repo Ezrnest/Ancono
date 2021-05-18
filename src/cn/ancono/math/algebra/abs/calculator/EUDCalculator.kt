@@ -89,7 +89,7 @@ interface EUDCalculator<T> : UFDCalculator<T> {
      *     ua + vb = gcd(a, b)
      *
      * The returned greatest common divisor is the same as [gcd].
-     * Note that the pair of `u` and `v` returned is not unique and different implementation
+     * Note that the pair of `u` and `v` returned is not unique and different implementations
      * may return differently when `a, b` is the same.
      *
      * The default implementation is based on the extended Euclid's algorithm.
@@ -143,6 +143,33 @@ interface EUDCalculator<T> : UFDCalculator<T> {
         }
         val v: T = divideToInteger(d0 - a * u0, b) // discard the possible remainder caused by numeric imprecision
         return Triple(d0, u0, v)
+    }
+
+    /**
+     * Returns the greatest common divisor of two numbers and a pair of number `(u,v)` such that
+     *
+     *     ua + vb = gcd(a, b)
+     *
+     * and that `u,v` is minimal, that is, `v` is equal to the modular of `a1 = a/d`.
+     *
+     * The default implementation is based on the extended Euclid's algorithm.
+     *
+     * @return a tuple of `(gcd(a,b), u, v)`.
+     * @see gcdUV
+     */
+    fun gcdUVMin(a: T, b: T): Triple<T, T, T> {
+        val result = gcdUV(a, b)
+        if (isZero(a)) {
+            return result
+        }
+        val (d, u, v) = result
+
+        val a1 = divideToInteger(a, d)
+        val b1 = divideToInteger(b, d)
+        val (k, v1) = divideAndRemainder(v, a1)
+
+        val u1 = u + b1 * k
+        return Triple(d, u1, v1)
     }
 
     /**

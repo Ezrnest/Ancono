@@ -276,7 +276,7 @@ public class MatrixSup {
     }
 
     public static <T> Matrix<T> parseMatrix(String str, String rowDeliminator, String columnDeliminator,
-                                            RealCalculator<T> mc, Function<String, ? extends T> parser) {
+                                            RingCalculator<T> mc, Function<String, ? extends T> parser) {
         String[] rows = str.split(rowDeliminator);
         String[][] data = new String[rows.length][];
         for (int i = 0; i < rows.length; i++) {

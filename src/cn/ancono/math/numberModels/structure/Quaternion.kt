@@ -156,7 +156,7 @@ class Quaternion<T>(val a: T, val b: T, val c: T, val d: T, mc: FieldCalculator<
     operator fun component3() = c
     operator fun component4() = d
 
-    fun vectorPart(): SVector<T> = SVector.valueOf(b, c, d, calculator as RealCalculator<T>) //TODO type
+    fun vectorPart(): SVector<T> = SVector.valueOf(b, c, d, calculator)
 
     override fun valueEquals(obj: IMathObject<T>): Boolean {
         if (obj !is Quaternion) {

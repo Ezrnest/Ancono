@@ -130,12 +130,12 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
         // no negative powers are allowed
     }
 
-    fun abs(x: Multinomial): Multinomial {
-        return x // TODO
-//        if (x.isMonomial) {
-//            return x.first.ab
-//        }
-    }
+//    fun abs(x: Multinomial): Multinomial {
+//        return x
+////        if (x.isMonomial) {
+////            return x.first.ab
+////        }
+//    }
 
     fun divide(x: Multinomial, y: Multinomial): Multinomial {
         return x.divide(y)
@@ -243,10 +243,6 @@ class MultinomialCalculator : UFDCalculator<Multinomial>, OrderPredicate<Multino
         }
         throw UnsupportedOperationException()
     }
-
-//    fun log(a: Multinomial, b: Multinomial): Multinomial {
-//        throw UnsupportedOperationException()//TODO
-//    }
 
     fun ln(x: Multinomial): Multinomial {
         if (!x.isMonomial) {

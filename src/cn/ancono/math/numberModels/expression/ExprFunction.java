@@ -8,6 +8,7 @@ import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberModels.expression.simplification.SimplificationStrategy;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -153,26 +154,25 @@ public class ExprFunction {
      */
     public static List<ExprFunction> createBasicCalculatorFunctions(MultinomialCalculator pc) {
         final int number = 14;
-        ExprFunction[] fs = new ExprFunction[number];
-        fs[0] = createSingle(FUNCTION_NAME_ABS, pc::abs, "Returns the absolute value of the polynomial:|x|");
-        fs[1] = createSingle(FUNCTION_NAME_ARCCOS, pc::arccos, "Returns the arccos value of the polynomial:arccos(x)");
-        fs[2] = createSingle(FUNCTION_NAME_ARCSIN, pc::arcsin, "Returns the arcsin value of the polynomial:arcsin(x)");
-        fs[3] = createSingle(FUNCTION_NAME_ARCTAN, pc::arctan, "Returns the arctan value of the polynomial:arctan(x)");
-        fs[4] = createSingle(FUNCTION_NAME_COS, pc::cos, "Returns the cos value of the polynomial:cos(x)");
-        fs[5] = createSingle(FUNCTION_NAME_COT, pc::cot, "Returns the cot value of the polynomial:cot(x)");
-        fs[6] = createSingle(FUNCTION_NAME_NEGATE, pc::negate, "Returns -x.");
-        fs[7] = createSingle(FUNCTION_NAME_RECIPROCAL, pc::reciprocal, "Returns 1/x.");
-        fs[8] = createSingle(FUNCTION_NAME_SIN, pc::sin, "Returns the sin value of the polynomial:sin(x)");
-        fs[9] = createSingle(FUNCTION_NAME_SQR, pc::squareRoot, "Returns the square origin of the polynomial:sqr(x)");
-        fs[10] = createSingle(FUNCTION_NAME_TAN, pc::tan, "Returns the tan value of the polynomial:tan(x)");
-        fs[11] = createSingle(FUNCTION_NAME_EXP, pc::exp, "Returns the exp value of the polynomial:exp(x)");
-        fs[12] = createSingle(FUNCTION_NAME_LN, pc::ln, "Returns ln(x).");
-
-        fs[13] = createDouble(FUNCTION_NAME_EXP, false, pc::exp, "Returns exp(x,y) = x^y");
+        var fs = new ArrayList<ExprFunction>();
+//        fs[0] = createSingle(FUNCTION_NAME_ABS, pc::abs, "Returns the absolute value of the polynomial:|x|");
+        fs.add(createSingle(FUNCTION_NAME_ARCCOS, pc::arccos, "Returns the arccos value of the polynomial:arccos(x)"));
+        fs.add(createSingle(FUNCTION_NAME_ARCSIN, pc::arcsin, "Returns the arcsin value of the polynomial:arcsin(x)"));
+        fs.add(createSingle(FUNCTION_NAME_ARCTAN, pc::arctan, "Returns the arctan value of the polynomial:arctan(x)"));
+        fs.add(createSingle(FUNCTION_NAME_COS, pc::cos, "Returns the cos value of the polynomial:cos(x)"));
+        fs.add(createSingle(FUNCTION_NAME_COT, pc::cot, "Returns the cot value of the polynomial:cot(x)"));
+        fs.add(createSingle(FUNCTION_NAME_NEGATE, pc::negate, "Returns -x."));
+        fs.add(createSingle(FUNCTION_NAME_RECIPROCAL, pc::reciprocal, "Returns 1/x."));
+        fs.add(createSingle(FUNCTION_NAME_SIN, pc::sin, "Returns the sin value of the polynomial:sin(x)"));
+        fs.add(createSingle(FUNCTION_NAME_SQR, pc::squareRoot, "Returns the square origin of the polynomial:sqr(x)"));
+        fs.add(createSingle(FUNCTION_NAME_TAN, pc::tan, "Returns the tan value of the polynomial:tan(x)"));
+        fs.add(createSingle(FUNCTION_NAME_EXP, pc::exp, "Returns the exp value of the polynomial:exp(x)"));
+        fs.add(createSingle(FUNCTION_NAME_LN, pc::ln, "Returns ln(x)."));
+        fs.add(createDouble(FUNCTION_NAME_EXP, false, pc::exp, "Returns exp(x,y) = x^y"));
 //        fs[14] = createDouble(FUNCTION_NAME_LOG, false, pc::log, "Returns log(x,y). (exp(x,log(x,y)) = y) ");
 
 
-        return Arrays.asList(fs);
+        return fs;
     }
 
     private static final Class<?>[][] TEMP = new Class[3][];

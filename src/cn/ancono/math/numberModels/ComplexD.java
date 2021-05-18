@@ -789,6 +789,13 @@ public record ComplexD(double a, double b) implements FieldNumberModel<ComplexD>
 
         @NotNull
         @Override
+        public ComplexD arcsin(@NotNull ComplexD x) {
+            //TODO
+            return super.arcsin(x);
+        }
+
+        @NotNull
+        @Override
         public ComplexD arccos(@NotNull ComplexD x) {
             //TODO
             return super.arccos(x);
@@ -838,12 +845,6 @@ public record ComplexD(double a, double b) implements FieldNumberModel<ComplexD>
             return ComplexD.sin(x);
         }
 
-        @NotNull
-        @Override
-        public ComplexD arcsin(@NotNull ComplexD x) {
-            //TODO
-            return super.arcsin(x);
-        }
 
         @NotNull
         @Override

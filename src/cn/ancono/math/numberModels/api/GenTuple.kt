@@ -113,8 +113,14 @@ fun GenMatrix<*>.requireSquare() {
 
 interface GenVector<T> : GenTuple<T> {
 
+    /**
+     * Gets the `i`-th element in the generic vector.
+     */
     operator fun get(i: Int): T
 
+    /**
+     * Returns a list containing all the elements in this generic vector in order.
+     */
     fun toList(): List<T>
 
     override fun flattenToList(): List<T> {
@@ -129,7 +135,7 @@ interface GenVector<T> : GenTuple<T> {
      * @param v another vector.
      * @return `true` if they are the identity in size.
      */
-    open fun isSameSize(v: Vector<*>): Boolean {
+    fun isSameSize(v: Vector<*>): Boolean {
         return size == v.size
     }
 }

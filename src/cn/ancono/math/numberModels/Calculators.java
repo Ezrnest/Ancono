@@ -11,6 +11,7 @@ import cn.ancono.math.numberModels.api.RealCalculator;
 import cn.ancono.math.numberTheory.NTUtils;
 import cn.ancono.math.numberTheory.Primes;
 import cn.ancono.math.numberTheory.ZModPCalculator;
+import kotlin.Pair;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 
@@ -256,6 +257,13 @@ public final class Calculators {
             return new Triple<>(arr[0], arr[1], arr[2]);
         }
 
+        @NotNull
+        @Override
+        public Triple<Integer, Integer, Integer> gcdUVMin(Integer a, Integer b) {
+            int[] arr = MathUtils.gcdUVMin(a, b);
+            return new Triple<>(arr[0], arr[1], arr[2]);
+        }
+
         @Override
         public Integer lcm(Integer a, Integer b) {
             return MathUtils.lcm(a, b);
@@ -290,6 +298,11 @@ public final class Calculators {
         @Override
         public Integer remainder(@NotNull Integer a, @NotNull Integer b) {
             return a % b;
+        }
+
+        @Override
+        public @NotNull Pair<Integer, Integer> divideAndRemainder(Integer a, Integer b) {
+            return new Pair<>(a / b, a % b);
         }
 
         @Override

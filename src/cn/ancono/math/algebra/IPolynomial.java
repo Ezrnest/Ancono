@@ -42,6 +42,7 @@ public interface IPolynomial<T> {
      */
     int getDegree();
 
+
     /**
      * Returns the power of the leading term. This method is equivalent to
      * <code>max(getDegree(),0)</code>
@@ -66,6 +67,7 @@ public interface IPolynomial<T> {
     default boolean isConstant() {
         return getDegree() <= 0;
     }
+
 
     /**
      * Gets a iterable for its coefficients, which can iterate

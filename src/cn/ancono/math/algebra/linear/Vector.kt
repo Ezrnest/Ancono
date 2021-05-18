@@ -1,6 +1,7 @@
 package cn.ancono.math.algebra.linear
 
 import cn.ancono.math.AbstractMathObject
+import cn.ancono.math.CalculatorHolder
 import cn.ancono.math.IMathObject
 import cn.ancono.math.algebra.abs.calculator.*
 import cn.ancono.math.algebra.linear.space.VectorSpaceCalculator
@@ -30,6 +31,9 @@ abstract class AbstractVector<T>(
         }
     }
 
+    /**
+     * Returns the sum of all elements in this vector.
+     */
     open fun sum(): T {
         return elementSequence().reduce(calculator::add)
     }
@@ -503,7 +507,10 @@ abstract class Vector<T>(
             return AVector.copyOf(v, mc)
         }
 
-        fun <T> copyOf(v: AbstractVector<T>): MutableVector<T> {
+        /**
+         * Returns a copy of the given generic vector.
+         */
+        fun <T, V> copyOf(v: V): MutableVector<T> where V : GenVector<T>, V : CalculatorHolder<T, RingCalculator<T>> {
             return copyOf(v, v.calculator)
         }
 

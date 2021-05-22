@@ -1,6 +1,7 @@
 package cn.ancono.math.numberTheory
 
 import cn.ancono.math.MathUtils
+import cn.ancono.math.discrete.combination.CombUtils
 import cn.ancono.math.numberModels.Fraction
 import kotlin.math.abs
 import kotlin.random.Random
@@ -344,6 +345,73 @@ object NTUtils {
 
     }
 
+    /**
+     * Factor a number `n = pq` where `p` and `q` are close.
+     */
+    fun factorFermat(n: Long): Pair<Long, Long> {
+        val s = MathUtils.sqrtInt(n)
+        for (b in s until n) {
+            val t = b * b - n
+            if (t < 0) {
+                continue
+            }
+            val a = MathUtils.sqrtInt(t)
+            if (a * a != t) {
+                continue
+            }
+            val p = b + a
+            val q = b - a
+            return p to q
+        }
+        return n to 1
+    }
+
+    /**
+     * Factor a
+     */
+    @Suppress("LocalVariableName")
+    fun pollard(n: Long, a: Long = 2L, B: Int = 5): Pair<Long, Long>? {
+        val M = CombUtils.factorial(B)
+        val b_B = MathUtils.powMod(a, M, n)
+        val d = MathUtils.gcd(b_B - 1, n)
+        if (d < n) {
+            return d to n / d
+        }
+        val (s, m) = factor2s(M)
+        for (i in (s - 1) downTo 0) {
+            val pow = (1 shl i) * m
+            val r = MathUtils.powMod(a, pow, n)
+            if (r == -1L) {
+                return null
+            }
+            if (r == 1L) {
+                val p = MathUtils.gcd(r + 1, n)
+                val q = MathUtils.gcd(r - 1, n)
+                return p to q
+            }
+        }
+        return null
+    }
+
+    fun pollardRho(n: Long, x1: Long = 2, c: Long = 1): Pair<Long, Long>? {
+        var a = x1
+        fun phi(x: Long): Long {
+            return MathUtils.mod(x * x + c, n)
+        }
+
+        var b = phi(x1)
+        while (true) {
+            val d = MathUtils.gcd(a - b, n)
+            if (d in 2 until n) {
+                return d to n / d
+            }
+            if (d == n) {
+                return null
+            }
+            a = phi(a)
+            b = phi(phi(b))
+        }
+    }
 
     @JvmStatic
     fun main(args: Array<String>) {

@@ -376,10 +376,7 @@ object MatrixUtils {
                 // uni-modular transform
                 val a1 = mc.divideToInteger(M[i, j], d)
                 val b1 = mc.divideToInteger(M[i2, j], d)
-                val B = u * M.getRow(i) + v * M.getRow(i2)
-                M.multiplyRow(i2, a1, j)
-                M.multiplyAddRow(i, i2, mc.negate(b1), j)
-                M.setRow(i, B)
+                M.transformRows(i, i2, u, v, mc.negate(b1), a1, j)
             }
             pivots += j
             i++
@@ -440,7 +437,7 @@ object MatrixUtils {
     fun <T> toHermitFormU(m: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
         val n = m.row
         val col = m.column
-        val mc = m.calculator as EUDCalculator
+        val mc = m.calculator as IntCalculator
         val expanded = AMatrix.zero(n, n + col, mc)
         expanded.setAll(0, 0, m)
         for (i in 0 until n) {
@@ -450,6 +447,35 @@ object MatrixUtils {
         val H = expanded.subMatrix(0, 0, n, col)
         val U = expanded.subMatrix(0, col, n, n + col)
         return H to U
+    }
+
+    fun <T> toEchelonEUD(A: AbstractMatrix<T>): Matrix<T> {
+        val M = A.toMutable()
+        toEchelonEUD0(M)
+        return M
+    }
+
+    fun <T> toEchelonEUDU(m: AbstractMatrix<T>): Pair<Matrix<T>, Matrix<T>> {
+        val n = m.row
+        val col = m.column
+        val mc = m.calculator as EUDCalculator
+        val expanded = AMatrix.zero(n, n + col, mc)
+        expanded.setAll(0, 0, m)
+        for (i in 0 until n) {
+            expanded[i, i + col] = mc.one
+        }
+        toEchelonEUD0(expanded, column = col)
+        val H = expanded.subMatrix(0, 0, n, col)
+        val U = expanded.subMatrix(0, col, n, n + col)
+        return H to U
+    }
+
+
+    fun <T> kernelLattice(m: AbstractMatrix<T>): List<Vector<T>> {
+        val M = m.toMutable()
+        val pivots = toEchelonEUD0(M)
+        return MatrixImpl.nullSpaceGenerator(M, m.column, pivots)
+
     }
 
 //    fun <T> toHermitFormU()

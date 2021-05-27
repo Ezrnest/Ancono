@@ -1195,10 +1195,24 @@ abstract class MutableMatrix<T>(mc: RingCalculator<T>, row: Int, column: Int) : 
 
     abstract fun negateCol(c: Int, rowStart: Int = 0, rowEnd: Int = row)
 
+    /**
+     *     v1 = this[r1], v2 = this[r2]
+     *     this[r1] = a11 * v1 + a12 * v2
+     *     this[r2] = a21 * v1 + a22 * v2
+     */
+    abstract fun transformRows(r1: Int, r2: Int, a11: T, a12: T, a21: T, a22: T, colStart: Int = 0, colEnd: Int = column)
+
     open fun setRow(r: Int, v: Vector<T>) {
         require(v.size == column)
         for (j in colIndices) {
             this[r, j] = v[j]
+        }
+    }
+
+    open fun setCol(c: Int, v: Vector<T>) {
+        require(v.size == row)
+        for (i in rowIndices) {
+            this[i, c] = v[i]
         }
     }
 }
@@ -1392,6 +1406,20 @@ class AMatrix<T> internal constructor(
             val pos = toPos(r, c)
             @Suppress("UNCHECKED_CAST")
             data[pos] = mc.negate(data[pos] as T)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun transformRows(r1: Int, r2: Int, a11: T, a12: T, a21: T, a22: T, colStart: Int, colEnd: Int) {
+        val s1 = toPos(r1, 0)
+        val s2 = toPos(r2, 0)
+        calculator.eval {
+            for (l in colStart until colEnd) {
+                val x = data[s1 + l] as T
+                val y = data[s2 + l] as T
+                data[s1 + l] = a11 * x + a12 * y
+                data[s2 + l] = a21 * x + a22 * y
+            }
         }
     }
 
@@ -1918,21 +1946,21 @@ internal object MatrixImpl {
         return pivots
     }
 
-    internal fun <T> nullSpaceOf(expanded: MutableMatrix<T>, column: Int, pivots: List<Int>): VectorBasis<T> {
+    internal fun <T> nullSpaceGenerator(matrix: MutableMatrix<T>, column: Int, pivots: List<Int>): List<Vector<T>> {
         val r = pivots.size
         val dim = column
         val k = dim - r
         if (k == 0) {
-            return VectorBasis.zero(dim, expanded.calculator as FieldCalculator<T>)
+            return emptyList()
         }
-        val mc = expanded.calculator as FieldCalculator
+        val mc = matrix.calculator as UnitRingCalculator
         val vectors = ArrayList<Vector<T>>(k)
         val negativeOne = mc.negate(mc.one)
         fun makeVector(j: Int) {
             val v = Vector.zero(dim, mc)
             v[j] = negativeOne
             for (i in pivots.indices) {
-                v[pivots[i]] = expanded[i, j]
+                v[pivots[i]] = matrix[i, j]
             }
             vectors += v
         }
@@ -1948,7 +1976,16 @@ internal object MatrixImpl {
         for (j in (pivots.last() + 1) until column) {
             makeVector(j)
         }
-        return VectorBasis.createBaseWithoutCheck(vectors)
+        return vectors
+    }
+
+    internal fun <T> nullSpaceOf(expanded: MutableMatrix<T>, column: Int, pivots: List<Int>): VectorBasis<T> {
+        val generators = nullSpaceGenerator(expanded, column, pivots)
+        val mc = expanded.calculator as FieldCalculator
+        if (generators.isEmpty()) {
+            return VectorBasis.zero(column, mc)
+        }
+        return VectorBasis.createBaseWithoutCheck(generators)
     }
 
     fun <T> specialSolutionOf(expanded: MutableMatrix<T>, column: Int, pivots: List<Int>): Matrix<T> {

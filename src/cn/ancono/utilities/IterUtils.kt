@@ -464,7 +464,7 @@ object IterUtils {
      *
      * For example, `perm(3,2)` will return a sequence of `[0,1], [0,2], [1,0], [1,2], [2,0], [2,1]`.
      */
-    fun perm(n: Int, m: Int, copy: Boolean = true): Sequence<IntArray> {
+    fun perm(n: Int, m: Int = n, copy: Boolean = true): Sequence<IntArray> {
         if (n < m) {
             return emptySequence()
         }

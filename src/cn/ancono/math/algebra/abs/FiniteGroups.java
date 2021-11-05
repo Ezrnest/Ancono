@@ -823,7 +823,6 @@ public final class FiniteGroups {
      *
      * @see GroupCalculatorKt#commutator(GroupCalculator, Object, Object)
      */
-
     public static <T> AbstractFiniteGroup<T> commutatorGroup(FiniteGroup<T> g) {
 //        GroupCalculatorKt.commutator()
         var gc = g.getCalculator();

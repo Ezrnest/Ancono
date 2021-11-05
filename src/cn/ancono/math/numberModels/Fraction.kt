@@ -825,7 +825,7 @@ internal constructor(
                 }
                 m = t
                 es = ArraySup.ensureCapacityAndAdd(es, l, i)
-                val ft = computeContinuousFraction(es, i)
+                val ft = computeContinuousFraction0(es, i)
                 if (max(ft[0], ft[1]) > bound || ft[0] < 0 || ft[1] < 0) {
                     break
                 }
@@ -845,13 +845,23 @@ internal constructor(
             return NTUtils.continuousFractionReduce(x, len)
         }
 
-        /**
-         * Computes the result of the continuous fraction stored in the array and
-         * returns an array of the numerator and denominator.
-         * @param index the highest element in the array to compute from
-         */
         @JvmStatic
-        fun computeContinuousFraction(array: LongArray, index: Int = array.lastIndex): LongArray {
+        fun continuousFraction(x: Fraction): LongArray {
+            var n = x.numerator
+            var d = x.denominator
+            val results = arrayListOf<Long>()
+            while (d != 0L) {
+                val q = n / d
+                val r = n % d
+                results += q
+                n = d
+                d = r
+            }
+            return results.toLongArray()
+        }
+
+
+        private fun computeContinuousFraction0(array: LongArray, index: Int = array.lastIndex): LongArray {
             var index1 = index
             var nume = array[index1]
             var deno: Long = 1
@@ -865,6 +875,43 @@ internal constructor(
                 index1--
             }
             return longArrayOf(nume, deno)
+        }
+
+        /**
+         * Computes the result of the continuous fraction stored in the array and
+         * returns an array of the numerator and denominator.
+         * @param index the highest element in the array to compute from
+         */
+        @JvmStatic
+        private fun computeContinuousFraction(array: LongArray, index: Int = array.lastIndex): Fraction {
+            val nd = computeContinuousFraction0(array, index)
+            return of(nd[0], nd[1])
+        }
+
+        /**
+         * Computes the result of the continuous fraction stored in the array and
+         * returns an array of the numerator and denominator.
+         * @param index the highest element in the array to compute from
+         */
+        @JvmStatic
+        fun computeContinuousFractionAll(array: LongArray, length: Int = array.size): List<Fraction> {
+            var b0 = 1L
+            var b1 = array[0]
+            var c0 = 0L
+            var c1 = 1L
+            val result = ArrayList<Fraction>(length)
+            result += Fraction(b1, c1)
+            for (i in 1 until length) {
+                val b2 = array[i] * b1 + b0
+                val c2 = array[i] * c1 + c0
+                result += Fraction(b2, c2)
+                b0 = b1
+                b1 = b2
+                c0 = c1
+                c1 = c2
+            }
+
+            return result
         }
 
         /**

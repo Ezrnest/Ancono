@@ -24,10 +24,10 @@ typealias TransformResult<T> = Pair<MutableMatrix<T>, List<MatrixOperation<T>>>
  * Defines the collection of basic methods for a matrix that is
  */
 abstract class AbstractMatrix<T>(
-        mc: RingCalculator<T>,
-        final override val row: Int,
-        final override val column: Int)
-    : AbstractMathObject<T, RingCalculator<T>>(mc), GenMatrix<T> {
+    mc: RingCalculator<T>,
+    final override val row: Int,
+    final override val column: Int
+) : AbstractMathObject<T, RingCalculator<T>>(mc), GenMatrix<T> {
 
     protected fun checkIdx(i: Int, j: Int) {
         require(i in rowIndices && j in colIndices) {
@@ -337,10 +337,10 @@ val <T> Matrix<T>.T: Matrix<T>
     get() = this.transpose()
 
 abstract class Matrix<T>(
-        mc: RingCalculator<T>,
-        row: Int,
-        column: Int)
-    : AbstractMatrix<T>(mc, row, column), AlgebraModel<T, Matrix<T>> {
+    mc: RingCalculator<T>,
+    row: Int,
+    column: Int
+) : AbstractMatrix<T>(mc, row, column), AlgebraModel<T, Matrix<T>> {
 
 
     /*
@@ -897,9 +897,14 @@ abstract class Matrix<T>(
             require(mats.isNotEmpty())
             val toModel = Function { x: Matrix<T> -> intArrayOf(x.row, x.column) }
             return ModelPatterns.reduceDP(0, mats.size,
-                    { x: Int -> mats[x] },
-                    { m1, m2 -> m1.multiply(m2) }, toModel,
-                    { x: IntArray, y: IntArray -> intArrayOf(x[0], y[1]) }) { x: IntArray, y: IntArray -> x[0] * y[0] * y[1] }
+                { x: Int -> mats[x] },
+                { m1, m2 -> m1.multiply(m2) }, toModel,
+                { x: IntArray, y: IntArray ->
+                    intArrayOf(
+                        x[0],
+                        y[1]
+                    )
+                }) { x: IntArray, y: IntArray -> x[0] * y[0] * y[1] }
         }
 
         /**
@@ -977,6 +982,25 @@ abstract class Matrix<T>(
             return calculator(m.row, m.column, m.calculator)
         }
 
+        @JvmStatic
+        fun <T> calculatorGL(n: Int, mc: UnitRingCalculator<T>): GroupCalculator<Matrix<T>> {
+            return object : GroupCalculator<Matrix<T>> {
+                override fun isEqual(x: Matrix<T>, y: Matrix<T>): Boolean {
+                    return x.valueEquals(y)
+                }
+
+                override fun apply(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
+                    return x.multiply(y)
+                }
+
+                override val identity: Matrix<T> = diag(mc.one, n, mc)
+
+                override fun inverse(x: Matrix<T>): Matrix<T> {
+                    return x.inverse()
+                }
+            }
+        }
+
         /**
          * Solves the linear matrix equation
          *
@@ -1046,9 +1070,11 @@ abstract class Matrix<T>(
          * Parses a matrix from a string.
          */
         @JvmStatic
-        fun <T> parse(str: String, mc: RingCalculator<T>,
-                      rowDeliminator: String = "(\r\n)|(\r)|(\n)", colDeliminator: String = " +",
-                      parser: (String) -> T): Matrix<T> {
+        fun <T> parse(
+            str: String, mc: RingCalculator<T>,
+            rowDeliminator: String = "(\r\n)|(\r)|(\n)", colDeliminator: String = " +",
+            parser: (String) -> T
+        ): Matrix<T> {
             return MatrixSup.parseMatrix(str, rowDeliminator, colDeliminator, mc, parser)
         }
 
@@ -1056,8 +1082,10 @@ abstract class Matrix<T>(
          * Parses a matrix from a string.
          */
         @JvmStatic
-        fun <T> parse(str: String, mc: RingCalculator<T>,
-                      parser: (String) -> T): Matrix<T> {
+        fun <T> parse(
+            str: String, mc: RingCalculator<T>,
+            parser: (String) -> T
+        ): Matrix<T> {
             return MatrixSup.parseMatrixD(str, mc, parser)
         }
     }
@@ -1200,7 +1228,16 @@ abstract class MutableMatrix<T>(mc: RingCalculator<T>, row: Int, column: Int) : 
      *     this[r1] = a11 * v1 + a12 * v2
      *     this[r2] = a21 * v1 + a22 * v2
      */
-    abstract fun transformRows(r1: Int, r2: Int, a11: T, a12: T, a21: T, a22: T, colStart: Int = 0, colEnd: Int = column)
+    abstract fun transformRows(
+        r1: Int,
+        r2: Int,
+        a11: T,
+        a12: T,
+        a21: T,
+        a22: T,
+        colStart: Int = 0,
+        colEnd: Int = column
+    )
 
     open fun setRow(r: Int, v: Vector<T>) {
         require(v.size == column)
@@ -1219,9 +1256,9 @@ abstract class MutableMatrix<T>(mc: RingCalculator<T>, row: Int, column: Int) : 
 
 
 class AMatrix<T> internal constructor(
-        mc: RingCalculator<T>, row: Int, column: Int,
-        val data: Array<Any?>)
-    : MutableMatrix<T>(mc, row, column) {
+    mc: RingCalculator<T>, row: Int, column: Int,
+    val data: Array<Any?>
+) : MutableMatrix<T>(mc, row, column) {
 
     init {
         require(row * column == data.size)
@@ -1497,9 +1534,11 @@ class AMatrix<T> internal constructor(
             return copy
         }
 
-        fun <T> copyOfRange(x: AMatrix<T>,
-                            r0: Int, c0: Int,
-                            r1: Int, c1: Int): AMatrix<T> {
+        fun <T> copyOfRange(
+            x: AMatrix<T>,
+            r0: Int, c0: Int,
+            r1: Int, c1: Int
+        ): AMatrix<T> {
             val r = r1 - r0
             val c = c1 - c0
             require(r > 0 && c > 0)
@@ -1512,9 +1551,11 @@ class AMatrix<T> internal constructor(
             return AMatrix(x.calculator, r, c, newData)
         }
 
-        fun <T> copyOfRange(x: GenMatrix<T>, mc: RingCalculator<T>,
-                            rowStart: Int, colStart: Int,
-                            rowEnd: Int, colEnd: Int): AMatrix<T> {
+        fun <T> copyOfRange(
+            x: GenMatrix<T>, mc: RingCalculator<T>,
+            rowStart: Int, colStart: Int,
+            rowEnd: Int, colEnd: Int
+        ): AMatrix<T> {
             if (x is AMatrix) {
                 return copyOfRange(x, rowStart, colStart, rowEnd, colEnd)
             }
@@ -1864,9 +1905,11 @@ internal object MatrixImpl {
      *
      * @return a list of strictly increasing pivots of the column. The size of it is equal to the rank of the matrix.
      */
-    internal fun <T> toUpperTriangle(M: MutableMatrix<T>,
-                                     operations: MutableList<MatrixOperation<T>>? = null,
-                                     column: Int = M.column): List<Int> {
+    internal fun <T> toUpperTriangle(
+        M: MutableMatrix<T>,
+        operations: MutableList<MatrixOperation<T>>? = null,
+        column: Int = M.column
+    ): List<Int> {
         //Created by lyc at 2021-04-29
         val mc = M.calculator as FieldCalculator
         val row = M.row
@@ -1920,9 +1963,11 @@ internal object MatrixImpl {
      *
      * @return a list of strictly increasing pivots of the column. The size of it is equal to the rank of the matrix.
      */
-    internal fun <T> toEchelon(M: MutableMatrix<T>,
-                               column: Int = M.column,
-                               operations: MutableList<MatrixOperation<T>>? = null): List<Int> {
+    internal fun <T> toEchelon(
+        M: MutableMatrix<T>,
+        column: Int = M.column,
+        operations: MutableList<MatrixOperation<T>>? = null
+    ): List<Int> {
         //Created by lyc at 2021-04-29
         val pivots = toUpperTriangle(M, operations, column)
         val mc = M.calculator as FieldCalculator
@@ -2257,7 +2302,7 @@ open class MatrixCal<T>(calculator: RingCalculator<T>, val r: Int, val c: Int) :
 }
 
 class SquareMatrixCalRing<T>(mc: RingCalculator<T>, n: Int) :
-        MatrixCal<T>(mc, n, n), RingCalculator<Matrix<T>> {
+    MatrixCal<T>(mc, n, n), RingCalculator<Matrix<T>> {
 
     override fun multiply(x: Matrix<T>, y: Matrix<T>): Matrix<T> {
         return x.multiply(y)
@@ -2270,7 +2315,7 @@ class SquareMatrixCalRing<T>(mc: RingCalculator<T>, n: Int) :
 
 
 class SquareMatrixCal<T>(override val mc: FieldCalculator<T>, n: Int) :
-        MatrixCal<T>(mc, n, n), AlgebraCalculator<T, Matrix<T>>, UnitRingCalculator<Matrix<T>> {
+    MatrixCal<T>(mc, n, n), AlgebraCalculator<T, Matrix<T>>, UnitRingCalculator<Matrix<T>> {
     override val one: Matrix<T> = Matrix.identity(r, mc)
 
     override val scalarCalculator: FieldCalculator<T>

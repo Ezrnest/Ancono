@@ -3,7 +3,6 @@
  */
 package cn.ancono.math.algebra.abs.structure;
 
-import cn.ancono.math.algebra.abs.EqualRelation;
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator;
 import cn.ancono.math.algebra.abs.group.Homomorphism;
 import cn.ancono.math.set.FiniteSet;
@@ -148,21 +147,21 @@ public interface Group<T> extends Monoid<T> {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns a equal relation which considers conjugate subgroups
-     * as the same.
-     */
-    default EqualRelation<Group<T>> conjugateClass() {
-        return this::isConjugate;
-    }
+//    /**
+//     * Returns a equal relation which considers conjugate subgroups
+//     * as the same.
+//     */
+//    default EqualRelation<Group<T>> conjugateGroupClasses() {
+//        return this::isConjugate;
+//    }
 
-    /**
-     * Returns a equal relation which considers conjugate elements
-     * as the same.
-     */
-    default EqualRelation<T> conjugateElementClass() {
-        return this::isConjugate;
-    }
+//    /**
+//     * Returns an equal relation which considers conjugate elements
+//     * as the same.
+//     */
+//    default MathSet<MathSet<T>> conjugateClasses() {
+//        return this::isConjugate;
+//    }
 
     /**
      * Returns the normalizer of a subgroup <code>h</code>, that is,

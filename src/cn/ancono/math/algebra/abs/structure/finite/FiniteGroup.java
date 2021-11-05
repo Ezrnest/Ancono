@@ -5,6 +5,7 @@ package cn.ancono.math.algebra.abs.structure.finite;
 
 import cn.ancono.math.MathUtils;
 import cn.ancono.math.algebra.abs.FiniteGroups;
+import cn.ancono.math.algebra.abs.calculator.GroupCalculatorKt;
 import cn.ancono.math.algebra.abs.group.Homomorphism;
 import cn.ancono.math.algebra.abs.group.NotASubgroupException;
 import cn.ancono.math.algebra.abs.group.finite.PermutationGroup;
@@ -12,6 +13,9 @@ import cn.ancono.math.algebra.abs.structure.Coset;
 import cn.ancono.math.algebra.abs.structure.Group;
 import cn.ancono.math.set.FiniteSet;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A limited group is a group with limited elements.
@@ -91,6 +95,35 @@ public interface FiniteGroup<T> extends Group<T> {
         return regularRepresent(true);
     }
 
+    /**
+     * Returns the conjugate classes of the finite group.
+     *
+     * @return a list of classes, each sublist contains elements in a conjugation class.
+     */
+    default List<List<T>> conjugationClasses() {
+        var classes = new ArrayList<List<T>>();
+        var elements = getSet();
+        var gc = getCalculator();
+        Element:
+        for (var a : elements) {
+            for (var x : elements) {
+                var z = GroupCalculatorKt.conjugateBy(gc, a, x);
+                for (List<T> cls : classes) {
+                    for (var y : cls) {
+                        if (gc.isEqual(z, y)) {
+                            cls.add(a);
+                            continue Element;
+                        }
+                    }
+                }
+            }
+            var cls = new ArrayList<T>();
+            cls.add(a);
+            classes.add(cls);
+        }
+//        var list = CollectionSup.partition(getSet(), pred);
+        return classes;
+    }
 
     @Override
     FiniteGroup<T> conjugateSubgroup(@NotNull Group<T> h, T x);

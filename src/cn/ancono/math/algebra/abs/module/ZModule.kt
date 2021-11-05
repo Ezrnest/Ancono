@@ -2,7 +2,6 @@ package cn.ancono.math.algebra.abs.module
 
 import cn.ancono.math.IMathObject
 import cn.ancono.math.MathObject
-import cn.ancono.math.algebra.abs.EqualRelation
 import cn.ancono.math.algebra.abs.calculator.EqualPredicate
 import cn.ancono.math.algebra.abs.calculator.GroupCalculator
 import cn.ancono.math.algebra.abs.calculator.ModuleCalculator
@@ -114,14 +113,6 @@ class ZModuleFromAGroup<Z, V>(val cal: IntCalculator<Z>,
 
     override fun indexOf(sub: Group<V>): Long {
         return group.indexOf(sub)
-    }
-
-    override fun conjugateClass(): EqualRelation<Group<V>> {
-        return group.conjugateClass()
-    }
-
-    override fun conjugateElementClass(): EqualRelation<V> {
-        return group.conjugateElementClass()
     }
 
     override fun quotientGroup(h: Group<V>): Group<out Coset<V, out Group<V>>> {

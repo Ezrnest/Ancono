@@ -54,6 +54,14 @@ class TensorTest {
     }
 
     @Test
+    fun testSum() {
+        val mc = Calculators.integer()
+        val t = Tensor.of(intArrayOf(2, 3), mc, 0, 1, 2, 2, 3, 4)
+        val re = Tensor.of(intArrayOf(3), mc, 2, 4, 6)
+        assertValueEquals(re, t.sum(0))
+    }
+
+    @Test
     fun testEinsum() {
         val mc = Calculators.integer()
         val shape = intArrayOf(3, 3)

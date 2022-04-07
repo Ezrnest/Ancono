@@ -545,7 +545,7 @@ extra features (such as operator override) are only possible if you use Kotlin.
 
 ## Dependencies
 Core:
-* Java: JDK 14
+* Java: JDK 17
 * Kotlin: 1.4
 
 Test:
@@ -562,3 +562,11 @@ Project Ancono welcomes anyone to join in the development.
 
 Modules to be added in future: Calculators for finite field `GF(p^n)`, computational number theory and computational
 algebraic geometry, numeric methods(interpolation, integration, optimization,...) and more unit tests.
+
+**Note**: Further improvement of this proejct requires more professional and advanced knowledge in the related
+mathematical(computer algebra or more) fields, but I am not currently working on these areas(statistics and ML, instead)
+, so this project may be **suspended indefinitely**. Even though, I will try to update this project occasionally for bug
+fixes and minor updates.
+
+
+

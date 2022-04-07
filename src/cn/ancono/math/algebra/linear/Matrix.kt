@@ -982,6 +982,9 @@ abstract class Matrix<T>(
             return calculator(m.row, m.column, m.calculator)
         }
 
+        /**
+         * Returns a group calculator for the general linear group `GL(n)`.
+         */
         @JvmStatic
         fun <T> calculatorGL(n: Int, mc: UnitRingCalculator<T>): GroupCalculator<Matrix<T>> {
             return object : GroupCalculator<Matrix<T>> {

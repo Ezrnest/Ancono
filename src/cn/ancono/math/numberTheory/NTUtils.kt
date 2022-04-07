@@ -228,6 +228,13 @@ object NTUtils {
         return k * kroneckerOdd(x, b)
     }
 
+    /**
+     * Computes the Legendre symbol `(x / y)`.
+     */
+    fun legendreSymbol(x: Long, y: Long): Int {
+        require(y > 0 && (y % 2) == 1L)
+        return kroneckerOdd(x, y)
+    }
 
     /**
      * @param a a positive integer.
@@ -367,7 +374,7 @@ object NTUtils {
     }
 
     /**
-     * Factor a
+     * Factor a number.
      */
     @Suppress("LocalVariableName")
     fun pollard(n: Long, a: Long = 2L, B: Int = 5): Pair<Long, Long>? {
@@ -413,10 +420,10 @@ object NTUtils {
         }
     }
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-//        println(kroneckerOdd(-2,97))
-//        println(kroneckerOdd(95,97))
-    }
+//    @JvmStatic
+//    fun main(args: Array<String>) {
+////        println(kroneckerOdd(-2,97))
+////        println(kroneckerOdd(95,97))
+//    }
 }
 

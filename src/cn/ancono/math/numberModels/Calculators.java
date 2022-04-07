@@ -23,7 +23,7 @@ import java.util.List;
 ;
 
 /**
- * Provides some utility methods for calculators.
+ * Provides basic calculators as well as some utility methods.
  *
  * @author liyicheng
  * 2017-09-22 20:35

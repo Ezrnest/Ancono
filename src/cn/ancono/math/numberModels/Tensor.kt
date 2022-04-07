@@ -77,7 +77,7 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
 
     /**
      * Gets a read-only-traversable sequence of the indices of this tensor.
-     * The indices iterates the last axis first.
+     * The indices iterate the last axis first.
      *
      * This method is generally equal to `IterUtils.prodIdxN(shape)`
      *
@@ -107,7 +107,7 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
     }
 
     /**
-     * Returns the negate of this tensor as a new tensor.
+     * Returns the negation of this tensor as a new tensor.
      *
      */
     override fun negate(): Tensor<T> {
@@ -225,6 +225,8 @@ interface Tensor<T> : MathObject<T, EqualPredicate<T>>, AlgebraModel<T, Tensor<T
     /**
      * Returns the sum of elements in the given axis(axes). If the given axes is empty, then it will
      * return the sum of all the elements as a scalar tensor.
+     *
+     * For example, assume the tensor `t = [[0,1,2],[2,3,4]]`, then `t.sum(0) = [2,4,6]`.
      *
      * @param axes the axes to sum, negative indices are allowed to indicate axes from the last.
      *
